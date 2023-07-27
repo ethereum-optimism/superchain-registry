@@ -1,0 +1,28 @@
+name: Sepolia
+l1:
+  chain_id: 11155111
+  public_rpc: https://ethereum-sepolia-rpc.allthatnode.com
+  explorer: https://sepolia.etherscan.io
+
+addresses:
+  protocol_version_contract: "" # todo
+
+genesis:  # settings at genesis / Bedrock upgrade
+  l1_fee_settings:  # L1 fee-settings at genesis
+    overhead: 188
+    scalar: 684000
+  gas:  # genesis gas parameters
+    limit: 30000000
+    elasticity: 6
+    denominator: 50
+  block:
+    basefee: 1000000000
+
+# Global Bedrock parameters
+max_sequencer_drift: 600
+seq_window_size: 3600
+channel_timeout: 300
+block_time: 2
+
+upgrades:
+  regolith_time: 0

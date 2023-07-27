@@ -1,0 +1,21 @@
+name: Base
+chain_id: 8453
+public_rpc: https://developer-access-mainnet.base.org
+sequencer_rpc: https://mainnet-sequencer.base.org
+explorer: https://basescan.org
+
+batch_inbox_address: "0xff00000000000000000000000000000000008453"
+
+genesis:
+  l1:  # L1 anchor-point of the rollup
+    hash: "0x5c13d307623a926cd31415036c8b7fa14572f9dac64528e857a470511fc30771"
+    number: 17481768
+  l2_time: 1686789347
+  batcher_addr: "0x5050f69a9786f081509234f1a7f4684b5e5b76c9"  # initial batcher at genesis
+  block:  # genesis block customization
+    extra_data: "0x616c6c20796f75722062617365206172652062656c6f6e6720746f20796f752e"
+
+addresses:
+  deposit_contract_address: "0x49048044d57e1c92a77f79988d21fa8faf74e97e"
+  l1_system_config_address: "0x73a79fab69143498ed3712e519a88a918e1f4072"
+

@@ -1,0 +1,31 @@
+name: OP-Mainnet
+chain_id: 10
+public_rpc: https://mainnet.optimism.io
+sequencer_rpc: https://mainnet-sequencer.optimism.io
+explorer: https://explorer.optimism.io
+
+batch_inbox_addr: "0xff00000000000000000000000000000000000010"
+
+genesis:
+  l1:
+    hash: "0x438335a20d98863a4c0c97999eb2481921ccd28553eac6f913af7c12aec04108"
+    number: 17422590
+  l2_time: 1686068903
+  batcher_addr: "0x6887246668a3b87f54deb3b94ba47a6f63f32985"
+
+addresses:
+  deposit_contract_address: "0xbEb5Fc579115071764c7423A4f12eDde41f106Ed"
+  l1_system_config_address: "0x229047fed2591dbec1eF1118d64F7aF3dB9EB290"
+
+upgrade_overrides:
+  bedrock:  # OP-Mainnet has pre-Bedrock history
+    hash: "0xdbf6a80fef073de06add9b0d14026d6e5a86c85f6d102c36d3d8e9cf89c2afd3"
+    number: 105235063
+  pre_bedrock:
+    istanbulBlock: 0
+    muirGlacierBlock: 0
+    berlinBlock: 3950000
+    londonBlock: 105235063
+    arrowGlacierBlock: 105235063
+    grayGlacierBlock: 105235063
+    mergeNetsplitBlock: 105235063

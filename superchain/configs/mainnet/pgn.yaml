@@ -1,0 +1,7 @@
+name: PGN
+chain_id: 424
+public_rpc: https://rpc.publicgoods.network
+sequencer_rpc: https://rpc.publicgoods.network
+explorer: https://explorer.publicgoods.network
+
+# TODO: PGN mainnet config

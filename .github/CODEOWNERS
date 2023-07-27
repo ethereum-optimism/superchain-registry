@@ -1,0 +1,17 @@
+# default code-owner
+* @protolambda
+
+# Mainnet superchain configuration
+# Note: the superchain registry is in active development,
+# and mainnet-configurations have a place-holder code-owner.
+/superchain/mainnet @protolambda
+
+# Testnet superchain configurations
+/superchain/goerli @protolambda
+/superchain/sepolia @protolambda
+
+# Configs / build system
+/.github @protolambda
+
+# Go bindings
+/superchain.go @protolambda

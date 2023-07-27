@@ -1,0 +1,20 @@
+name: Zora Goerli
+chain_id: 999
+public_rpc: https://testnet.rpc.zora.energy
+sequencer_rpc: https://testnet.rpc.zora.energy
+explorer: https://testnet.explorer.zora.energy
+
+batch_inbox_addr: "0xcF628E24aC574866D3d0a7CFE4e9DA7278b7ef13"
+
+genesis:
+  l1:
+    hash: "0x7bfd49b5dea286a11bd45bf49750f594b2940519e83a3d41e80ab64667b333eb"
+    number: 8942381
+  l2_time: 1683230928
+  batcher_addr: "0x427c9a666d3b27873111cE3894712Bf64C6343A0"
+  block:
+    extra_data: "0x424544524f434b"  # "BEDROCK" - like the OP-Mainnet upgrade block
+
+addresses:
+  deposit_contract_address: "0xDb9F51790365e7dc196e7D072728df39Be958ACe"
+  l1_system_config_address: "0xF66C9A5E4fE1A8a9bc44a4aF80505a4C3620Ee64"

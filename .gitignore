@@ -1,0 +1,12 @@
+.DS_Store
+
+# vim
+*.sw*
+
+# jetbrains
+.idea/
+
+.env
+.env*
+!.env.example
+*.log
