@@ -1,3 +1,5 @@
 module github.com/ethereum-optimism/superchain-registry/superchain
 
-go 1.20
+go 1.19
+
+require gopkg.in/yaml.v3 v3.0.1

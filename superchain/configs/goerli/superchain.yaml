@@ -4,21 +4,4 @@ l1:
   public_rpc: https://ethereum-goerli-rpc.allthatnode.com
   explorer: https://goerli.etherscan.io
 
-addresses:
-  protocol_version_contract: "" # todo
-
-genesis:
-  l1_fee_settings: # L1 fee-settings at genesis.
-    # Note that OP-Goerli, Base Goerli, Zora Goerli all started with legacy L1-fee settings.
-    overhead: 2100
-    scalar: 1000000
-  gas: # genesis gas parameters
-    limit: 30000000
-    elasticity: 6
-    denominator: 50
-
-# Global Bedrock parameters
-max_sequencer_drift: 600
-seq_window_size: 3600
-channel_timeout: 300
-block_time: 2
+protocol_version_addr: "" # todo

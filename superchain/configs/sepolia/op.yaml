@@ -1,2 +1,17 @@
-# TODO OP-Sepolia config
+name: OP-Sepolia
+chain_id: 11155420
+public_rpc: ""
+sequencer_rpc: ""
+explorer: ""
 
+system_config_addr: "0xf425ed544d2e1f1b7a8650d5897a7ccf43020791"
+batch_inbox_addr: "0xff00000000000000000000000000000011155420"
+
+genesis:
+  l1:
+    hash: "0x70e5634d09793b1cfaa7d0a2a5d3289a3b2308de1e82f682b4f817fc670f9797"
+    number: 3976708
+  l2:
+    hash: "0xfbfc64b34d705b0eb83ab8b2206c0da90a76e1ae54ae657c8cfbee0e802a9120"
+    number: 0
+  l2_time: 1690493568

@@ -1,17 +1,17 @@
 name: PGN Sepolia
+chain_id: 58008
 public_rpc: https://sepolia.publicgoods.network
 sequencer_rpc: https://sepolia.publicgoods.network
 explorer: https://explorer.sepolia.publicgoods.network
 
+system_config_addr: "0x4BCCC52151f0ad7C62D45Ce0aA77d9d8ffCE534e"
 batch_inbox_addr: "0x454A2A86132C937AD4eFc8721f1b85418f92cbCe"
 
 genesis:
   l1:
-    hash: ""  # TODO PGN L1 genesis block hash
-    number: 123
-  l2_time: 123
-  batcher_addr: "0x7224e05E6cF6E07aFBE1eFa09a3fA23A637DD485"
-
-addresses:
-  deposit_contract_address: "0xF04BdD5353Bb0EFF6CA60CfcC78594278eBfE179"
-  l1_system_config_address: "0x4BCCC52151f0ad7C62D45Ce0aA77d9d8ffCE534e"
+    hash: "0x41dc2afe8963b5ca8e1c7457ffc356acb4366c6fef6bec353b1463245f02cd8b"
+    number: 3610357
+  l2:
+    hash: "0x1d2ad9a8139d33161b1915698d2ae94019fd0817f2113198b6cb568110fa16ad"
+    number: 0
+  l2_time: 1685727972
