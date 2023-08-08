@@ -2,6 +2,7 @@ package superchain
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
 	"path"
 	"strings"
@@ -11,6 +12,9 @@ import (
 
 //go:embed configs
 var superchainFS embed.FS
+
+//go:embed extra/addresses extra/genesis-system-configs
+var extraFS embed.FS
 
 type BlockID struct {
 	Hash   Hash   `yaml:"hash"`
@@ -40,6 +44,24 @@ type ChainConfig struct {
 	Superchain string `yaml:"-"`
 }
 
+type AddressList struct {
+	AddressManager                    Address `json:"AddressManager"`
+	L1CrossDomainMessengerProxy       Address `json:"L1CrossDomainMessengerProxy"`
+	L1ERC721BridgeProxy               Address `json:"L1ERC721BridgeProxy"`
+	L1StandardBridgeProxy             Address `json:"L1StandardBridgeProxy"`
+	L2OutputOracleProxy               Address `json:"L2OutputOracleProxy"`
+	OptimismMintableERC20FactoryProxy Address `json:"OptimismMintableERC20FactoryProxy"`
+	OptimismPortalProxy               Address `json:"OptimismPortalProxy"`
+	ProxyAdmin                        Address `json:"ProxyAdmin"`
+}
+
+type GenesisSystemConfig struct {
+	BatcherAddr Address `json:"batcherAddr"`
+	Overhead    Hash    `json:"overhead"`
+	Scalar      Hash    `json:"scalar"`
+	GasLimit    uint64  `json:"gasLimit"`
+}
+
 type SuperchainL1Info struct {
 	ChainID   uint64 `yaml:"chain_id"`
 	PublicRPC string `yaml:"public_rpc"`
@@ -62,6 +84,10 @@ type Superchain struct {
 var Superchains = map[string]*Superchain{}
 
 var OPChains = map[uint64]*ChainConfig{}
+
+var Addresses = map[uint64]*AddressList{}
+
+var GenesisSystemConfigs = map[uint64]*GenesisSystemConfig{}
 
 func init() {
 	superchainTargets, err := superchainFS.ReadDir("configs")
@@ -104,6 +130,26 @@ func init() {
 			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
+
+			jsonName := strings.TrimSuffix(c.Name(), ".yaml") + ".json"
+			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
+			if err != nil {
+				panic(fmt.Errorf("failed to read addresses data of chain %s/%s: %w", s.Name(), jsonName, err))
+			}
+			var addrs AddressList
+			if err := json.Unmarshal(addressesData, &addrs); err != nil {
+				panic(fmt.Errorf("failed to decode addresses %s/%s: %w", s.Name(), jsonName, err))
+			}
+
+			genesisSysCfgData, err := extraFS.ReadFile(path.Join("extra", "genesis-system-configs", s.Name(), jsonName))
+			if err != nil {
+				panic(fmt.Errorf("failed to read genesis system config data of chain %s/%s: %w", s.Name(), jsonName, err))
+			}
+			var genesisSysCfg GenesisSystemConfig
+			if err := json.Unmarshal(genesisSysCfgData, &genesisSysCfg); err != nil {
+				panic(fmt.Errorf("failed to decode genesis system config %s/%s: %w", s.Name(), jsonName, err))
+			}
+
 			chainConfig.Superchain = s.Name()
 			if other, ok := OPChains[chainConfig.ChainID]; ok {
 				panic(fmt.Errorf("found chain config %q in superchain target %q with chain ID %d "+
@@ -113,6 +159,8 @@ func init() {
 			}
 			superchainEntry.ChainIDs = append(superchainEntry.ChainIDs, chainConfig.ChainID)
 			OPChains[chainConfig.ChainID] = &chainConfig
+			Addresses[chainConfig.ChainID] = &addrs
+			GenesisSystemConfigs[chainConfig.ChainID] = &genesisSysCfg
 		}
 		Superchains[superchainEntry.Config.Name] = &superchainEntry
 	}

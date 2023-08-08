@@ -24,4 +24,13 @@ func TestConfigs(t *testing.T) {
 	if len(Superchains) < 3 {
 		t.Errorf("only got %d superchains, has everything loaded?", len(Superchains))
 	}
+	// All chains require extra addresses data until the L1 SystemConfig can support address mappings.
+	if len(OPChains) != len(Addresses) {
+		t.Errorf("got %d chains and %d address lists", len(OPChains), len(Addresses))
+	}
+	// All chains require extra genesis system config data until the
+	// initial SystemConfig values can be read from the latest L1 chain state.
+	if len(OPChains) != len(GenesisSystemConfigs) {
+		t.Errorf("got %d chains and %d genesis system configs", len(OPChains), len(GenesisSystemConfigs))
+	}
 }
