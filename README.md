@@ -1,6 +1,6 @@
 # superchain-registry
 
-> This repository is a **work in progress**. The configuration described here will be ratified by governance at a later date.
+> ⚠️ This repository is a **work in progress**. The configuration described here will be ratified by governance at a later date.
 
 The Superchain Registry repository hosts Superchain-configuration data in a minimal human-readable form.
 This includes mainnet and testnet Superchain targets, and their respective member chains.
