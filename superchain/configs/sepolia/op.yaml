@@ -4,14 +4,14 @@ public_rpc: ""
 sequencer_rpc: ""
 explorer: ""
 
-system_config_addr: "0xf425ed544d2e1f1b7a8650d5897a7ccf43020791"
+system_config_addr: "0x034edd2a225f7f429a63e0f1d2084b9e0a93b538"
 batch_inbox_addr: "0xff00000000000000000000000000000011155420"
 
 genesis:
   l1:
-    hash: "0x70e5634d09793b1cfaa7d0a2a5d3289a3b2308de1e82f682b4f817fc670f9797"
-    number: 3976708
+    hash: "0x48f520cf4ddaf34c8336e6e490632ea3cf1e5e93b0b2bc6e917557e31845371b"
+    number: 4071408
   l2:
-    hash: "0xfbfc64b34d705b0eb83ab8b2206c0da90a76e1ae54ae657c8cfbee0e802a9120"
+    hash: "0x102de6ffb001480cc9b8b548fd05c34cd4f46ae4aa91759393db90ea0409887d"
     number: 0
-  l2_time: 1690493568
+  l2_time: 1691802540
