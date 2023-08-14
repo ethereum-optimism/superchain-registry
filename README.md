@@ -1,5 +1,7 @@
 # superchain-registry
 
+> ⚠️ This repository is a **work in progress**.  At a later date, it will be proposed to, and must be approved by, Optimism Governance.  Until that time, the configuration described here is subject to change.
+
 The Superchain Registry repository hosts Superchain-configuration data in a minimal human-readable form.
 This includes mainnet and testnet Superchain targets, and their respective member chains.
 
