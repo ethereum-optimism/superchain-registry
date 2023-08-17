@@ -34,3 +34,12 @@ func TestConfigs(t *testing.T) {
 		t.Errorf("got %d chains and %d genesis system configs", len(OPChains), len(GenesisSystemConfigs))
 	}
 }
+
+func TestGenesis(t *testing.T) {
+	for id := range OPChains {
+		_, err := LoadGenesis(id)
+		if err != nil {
+			t.Fatalf("failed to load genesis of chain %d: %v", id, err)
+		}
+	}
+}

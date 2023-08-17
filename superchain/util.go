@@ -3,6 +3,7 @@ package superchain
 import (
 	"encoding/hex"
 	"fmt"
+	"math/big"
 )
 
 // Util-types for hex-encoding/decoding.
@@ -82,4 +83,24 @@ func (b HexBytes) MarshalText() ([]byte, error) {
 
 func (b HexBytes) String() string {
 	return encodeHex(b[:])
+}
+
+type HexBig big.Int
+
+func (b HexBig) MarshalText() ([]byte, error) {
+	return []byte(b.String()), nil
+}
+
+func (b HexBig) String() string {
+	if sign := (*big.Int)(&b).Sign(); sign == 0 {
+		return "0x0"
+	} else if sign > 0 {
+		return "0x" + (*big.Int)(&b).Text(16)
+	} else {
+		return "-0x" + (*big.Int)(&b).Text(16)[1:]
+	}
+}
+
+func (b *HexBig) UnmarshalText(text []byte) error {
+	return (*big.Int)(b).UnmarshalText(text)
 }
