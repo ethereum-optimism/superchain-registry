@@ -1,9 +1,11 @@
 package superchain
 
 import (
+	"compress/gzip"
 	"embed"
 	"encoding/json"
 	"fmt"
+	"io"
 	"path"
 	"strings"
 
@@ -13,7 +15,7 @@ import (
 //go:embed configs
 var superchainFS embed.FS
 
-//go:embed extra/addresses extra/genesis-system-configs
+//go:embed extra/addresses extra/bytecodes extra/genesis extra/genesis-system-configs
 var extraFS embed.FS
 
 type BlockID struct {
@@ -40,8 +42,12 @@ type ChainConfig struct {
 
 	Genesis ChainGenesis `yaml:"genesis"`
 
-	// implied by directory structure, not encoded in the file itself
+	// Superchain is a simple string to identify the superchain.
+	// This is implied by directory structure, and not encoded in the config file itself.
 	Superchain string `yaml:"-"`
+	// Chain is a simple string to identify the chain, within its superchain context.
+	// This matches the resource filename, it is not encoded in the config file itself.
+	Chain string `yaml:"-"`
 }
 
 type AddressList struct {
@@ -62,6 +68,35 @@ type GenesisSystemConfig struct {
 	GasLimit    uint64  `json:"gasLimit"`
 }
 
+type GenesisAccount struct {
+	CodeHash Hash          `json:"codeHash,omitempty"` // code hash only, to reduce overhead of duplicate bytecode
+	Storage  map[Hash]Hash `json:"storage,omitempty"`
+	Balance  *HexBig       `json:"balance,omitempty"`
+	Nonce    uint64        `json:"nonce,omitempty"`
+}
+
+type Genesis struct {
+	// Block properties
+	Nonce      uint64  `json:"nonce"`
+	Timestamp  uint64  `json:"timestamp"`
+	ExtraData  []byte  `json:"extraData"`
+	GasLimit   uint64  `json:"gasLimit"`
+	Difficulty *HexBig `json:"difficulty"`
+	Mixhash    Hash    `json:"mixHash"`
+	Coinbase   Address `json:"coinbase"`
+	Number     uint64  `json:"number"`
+	GasUsed    uint64  `json:"gasUsed"`
+	ParentHash Hash    `json:"parentHash"`
+	BaseFee    *HexBig `json:"baseFeePerGas"`
+	// State data
+	Alloc map[Address]GenesisAccount `json:"alloc"`
+	// StateHash substitutes for a full embedded state allocation,
+	// for instantiating states with the genesis block only, to be state-synced before operation.
+	// Archive nodes should use a full external genesis.json or datadir.
+	StateHash *Hash `json:"stateHash,omitempty"`
+	// The chain-config is not included. This is derived from the chain and superchain definition instead.
+}
+
 type SuperchainL1Info struct {
 	ChainID   uint64 `yaml:"chain_id"`
 	PublicRPC string `yaml:"public_rpc"`
@@ -77,8 +112,13 @@ type SuperchainConfig struct {
 }
 
 type Superchain struct {
-	Config   SuperchainConfig
+	Config SuperchainConfig
+
+	// Chains that are part of this superchain
 	ChainIDs []uint64
+
+	// Superchain identifier, without capitalization or display changes.
+	Superchain string
 }
 
 var Superchains = map[string]*Superchain{}
@@ -108,6 +148,7 @@ func init() {
 		if err := yaml.Unmarshal(superchainConfigData, &superchainEntry.Config); err != nil {
 			panic(fmt.Errorf("failed to decode superchain config: %w", err))
 		}
+		superchainEntry.Superchain = s.Name()
 
 		// iterate over the chains of this superchain-target
 		chainEntries, err := superchainFS.ReadDir(path.Join("configs", s.Name()))
@@ -130,8 +171,9 @@ func init() {
 			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
+			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
 
-			jsonName := strings.TrimSuffix(c.Name(), ".yaml") + ".json"
+			jsonName := chainConfig.Chain + ".json"
 			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
 			if err != nil {
 				panic(fmt.Errorf("failed to read addresses data of chain %s/%s: %w", s.Name(), jsonName, err))
@@ -162,6 +204,42 @@ func init() {
 			Addresses[chainConfig.ChainID] = &addrs
 			GenesisSystemConfigs[chainConfig.ChainID] = &genesisSysCfg
 		}
-		Superchains[superchainEntry.Config.Name] = &superchainEntry
+		Superchains[superchainEntry.Superchain] = &superchainEntry
 	}
+}
+
+func LoadGenesis(chainID uint64) (*Genesis, error) {
+	ch, ok := OPChains[chainID]
+	if !ok {
+		return nil, fmt.Errorf("unknown chain %d", chainID)
+	}
+	f, err := extraFS.Open(path.Join("extra", "genesis", ch.Superchain, ch.Chain+".json.gz"))
+	if err != nil {
+		return nil, fmt.Errorf("failed to open chain genesis definition of %d: %w", chainID, err)
+	}
+	defer f.Close()
+	r, err := gzip.NewReader(f)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open gzip reader of genesis data of %d: %w", chainID, err)
+	}
+	defer r.Close()
+	var out Genesis
+	if err := json.NewDecoder(r).Decode(&out); err != nil {
+		return nil, fmt.Errorf("failed to decode genesis allocation of %d: %w", chainID, err)
+	}
+	return &out, nil
+}
+
+func LoadContractBytecode(codeHash Hash) ([]byte, error) {
+	f, err := extraFS.Open(path.Join("extra", "bytecodes", codeHash.String()+".bin.gz"))
+	if err != nil {
+		return nil, fmt.Errorf("failed to open bytecode %s: %w", codeHash, err)
+	}
+	defer f.Close()
+	r, err := gzip.NewReader(f)
+	if err != nil {
+		return nil, fmt.Errorf("")
+	}
+	defer r.Close()
+	return io.ReadAll(r)
 }
