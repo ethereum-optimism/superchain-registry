@@ -23,6 +23,12 @@ func (b Address) String() string {
 	return encodeHex(b[:])
 }
 
+func HexToAddress(s string) Address {
+	var a Address
+	_ = a.UnmarshalText([]byte(s))
+	return a
+}
+
 type Hash [32]byte
 
 func has0xPrefix(text []byte) bool {

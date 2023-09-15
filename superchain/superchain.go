@@ -9,6 +9,7 @@ import (
 	"path"
 	"strings"
 
+	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
 )
 
@@ -17,6 +18,9 @@ var superchainFS embed.FS
 
 //go:embed extra/addresses extra/bytecodes extra/genesis extra/genesis-system-configs
 var extraFS embed.FS
+
+//go:embed implementations/networks implementations
+var implementationsFS embed.FS
 
 type BlockID struct {
 	Hash   Hash   `yaml:"hash"`
@@ -59,6 +63,84 @@ type AddressList struct {
 	OptimismMintableERC20FactoryProxy Address `json:"OptimismMintableERC20FactoryProxy"`
 	OptimismPortalProxy               Address `json:"OptimismPortalProxy"`
 	ProxyAdmin                        Address `json:"ProxyAdmin"`
+}
+
+// ContractImplementations represent a set of contract implementations on a given network.
+// The key in the map represents the semantic version of the contract and the value is the
+// address that the contract is deployed to.
+type ContractImplementations struct {
+	L1CrossDomainMessenger       map[string]Address `yaml:"l1_cross_domain_messenger"`
+	L1ERC721Bridge               map[string]Address `yaml:"l1_erc721_bridge"`
+	L1StandardBridge             map[string]Address `yaml:"l1_standard_bridge"`
+	L2OutputOracle               map[string]Address `yaml:"l2_output_oracle"`
+	OptimismMintableERC20Factory map[string]Address `yaml:"optimism_mintable_erc20_factory"`
+	OptimismPortal               map[string]Address `yaml:"optimism_portal"`
+	SystemConfig                 map[string]Address `yaml:"system_config"`
+}
+
+// NewContractImplementations returns a new empty ContractImplementations.
+// Use this constructor to ensure that none of struct fields are nil.
+// The path argument is relative to the embedded fs that contains the implementations.
+func NewContractImplementations(path string) (ContractImplementations, error) {
+	var impls ContractImplementations
+	data, err := implementationsFS.ReadFile(path)
+	if err != nil {
+		return impls, fmt.Errorf("failed to read implementations: %w", err)
+	}
+	if err := yaml.Unmarshal(data, &impls); err != nil {
+		return impls, fmt.Errorf("failed to decode implementations: %w", err)
+	}
+
+	if impls.L1CrossDomainMessenger == nil {
+		impls.L1CrossDomainMessenger = make(map[string]Address)
+	}
+	if impls.L1ERC721Bridge == nil {
+		impls.L1ERC721Bridge = make(map[string]Address)
+	}
+	if impls.L1StandardBridge == nil {
+		impls.L1StandardBridge = make(map[string]Address)
+	}
+	if impls.L2OutputOracle == nil {
+		impls.L2OutputOracle = make(map[string]Address)
+	}
+	if impls.OptimismMintableERC20Factory == nil {
+		impls.OptimismMintableERC20Factory = make(map[string]Address)
+	}
+	if impls.OptimismPortal == nil {
+		impls.OptimismPortal = make(map[string]Address)
+	}
+	if impls.SystemConfig == nil {
+		impls.SystemConfig = make(map[string]Address)
+	}
+	return impls, nil
+}
+
+// copySemverMap is a concrete implementation of maps.Copy for map[string]Address.
+var copySemverMap = maps.Copy[map[string]Address, map[string]Address]
+
+// Merge will combine two ContractImplementations into one. Any conflicting keys will
+// be overwritten by the arguments. It assumes that nonce of the struct fields are nil.
+func (c ContractImplementations) Merge(other ContractImplementations) {
+	copySemverMap(c.L1CrossDomainMessenger, other.L1CrossDomainMessenger)
+	copySemverMap(c.L1ERC721Bridge, other.L1ERC721Bridge)
+	copySemverMap(c.L1StandardBridge, other.L1StandardBridge)
+	copySemverMap(c.L2OutputOracle, other.L2OutputOracle)
+	copySemverMap(c.OptimismMintableERC20Factory, other.OptimismMintableERC20Factory)
+	copySemverMap(c.OptimismPortal, other.OptimismPortal)
+	copySemverMap(c.SystemConfig, other.SystemConfig)
+}
+
+// Copy will return a shallow copy of the ContractImplementations.
+func (c ContractImplementations) Copy() ContractImplementations {
+	return ContractImplementations{
+		L1CrossDomainMessenger:       maps.Clone(c.L1CrossDomainMessenger),
+		L1ERC721Bridge:               maps.Clone(c.L1ERC721Bridge),
+		L1StandardBridge:             maps.Clone(c.L1StandardBridge),
+		L2OutputOracle:               maps.Clone(c.L2OutputOracle),
+		OptimismMintableERC20Factory: maps.Clone(c.OptimismMintableERC20Factory),
+		OptimismPortal:               maps.Clone(c.OptimismPortal),
+		SystemConfig:                 maps.Clone(c.SystemConfig),
+	}
 }
 
 type GenesisSystemConfig struct {
@@ -129,7 +211,23 @@ var Addresses = map[uint64]*AddressList{}
 
 var GenesisSystemConfigs = map[uint64]*GenesisSystemConfig{}
 
+var Implementations = map[uint64]ContractImplementations{}
+
+// networkToChainID maps a network name to a chain ID. Only the superchain targets
+// are required to be in this mapping
+var networkToChainID = map[string]uint64{
+	"mainnet": 1,
+	"goerli":  5,
+	"sepolia": 11155111,
+}
+
 func init() {
+	// read the global implementations
+	globalImpls, err := NewContractImplementations(path.Join("implementations", "implementations.yaml"))
+	if err != nil {
+		panic(fmt.Errorf("failed to read implementations: %w", err))
+	}
+
 	superchainTargets, err := superchainFS.ReadDir("configs")
 	if err != nil {
 		panic(fmt.Errorf("failed to read superchain dir: %w", err))
@@ -204,7 +302,23 @@ func init() {
 			Addresses[chainConfig.ChainID] = &addrs
 			GenesisSystemConfigs[chainConfig.ChainID] = &genesisSysCfg
 		}
+
 		Superchains[superchainEntry.Superchain] = &superchainEntry
+
+		networkImpls, err := NewContractImplementations(path.Join("implementations", "networks", s.Name()+".yaml"))
+		if err != nil {
+			panic(fmt.Errorf("failed to read implementations of superchain target %s: %w", s.Name(), err))
+		}
+
+		implementations := globalImpls.Copy()
+		implementations.Merge(networkImpls)
+
+		// Add the implementations to the global mapping
+		chainID, ok := networkToChainID[s.Name()]
+		if !ok {
+			panic(fmt.Errorf("chain id unknown for network %q", s.Name()))
+		}
+		Implementations[chainID] = implementations
 	}
 }
 
