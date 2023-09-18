@@ -213,14 +213,6 @@ var GenesisSystemConfigs = map[uint64]*GenesisSystemConfig{}
 
 var Implementations = map[uint64]ContractImplementations{}
 
-// networkToChainID maps a network name to a chain ID. Only the superchain targets
-// are required to be in this mapping
-var networkToChainID = map[string]uint64{
-	"mainnet": 1,
-	"goerli":  5,
-	"sepolia": 11155111,
-}
-
 func init() {
 	// read the global implementations
 	globalImpls, err := NewContractImplementations(path.Join("implementations", "implementations.yaml"))
@@ -313,11 +305,7 @@ func init() {
 		implementations := globalImpls.Copy()
 		implementations.Merge(networkImpls)
 
-		// Add the implementations to the global mapping
-		chainID, ok := networkToChainID[s.Name()]
-		if !ok {
-			panic(fmt.Errorf("chain id unknown for network %q", s.Name()))
-		}
+		chainID := superchainEntry.Config.L1.ChainID
 		Implementations[chainID] = implementations
 	}
 }
