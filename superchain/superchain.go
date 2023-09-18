@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"io"
 	"path"
+	"reflect"
 	"strings"
 
 	"golang.org/x/exp/maps"
+	"golang.org/x/mod/semver"
 	"gopkg.in/yaml.v3"
 )
 
@@ -21,6 +23,9 @@ var extraFS embed.FS
 
 //go:embed implementations/networks implementations
 var implementationsFS embed.FS
+
+//go:embed semver.yaml
+var semverFS embed.FS
 
 type BlockID struct {
 	Hash   Hash   `yaml:"hash"`
@@ -76,6 +81,43 @@ type ContractImplementations struct {
 	OptimismMintableERC20Factory map[string]Address `yaml:"optimism_mintable_erc20_factory"`
 	OptimismPortal               map[string]Address `yaml:"optimism_portal"`
 	SystemConfig                 map[string]Address `yaml:"system_config"`
+}
+
+// ContractVersions represents the desired semantic version of the contracts
+// in the superchain. This currently only supports L1 contracts but could
+// represent L2 predeploys in the future.
+type ContractVersions struct {
+	L1CrossDomainMessenger       string `yaml:"l1_cross_domain_messenger"`
+	L1ERC721Bridge               string `yaml:"l1_erc721_bridge"`
+	L1StandardBridge             string `yaml:"l1_standard_bridge"`
+	L2OutputOracle               string `yaml:"l2_output_oracle"`
+	OptimismMintableERC20Factory string `yaml:"optimism_mintable_erc20_factory"`
+	OptimismPortal               string `yaml:"optimism_portal"`
+	SystemConfig                 string `yaml:"system_config"`
+}
+
+// Check will sanity check the validity of the semantic version strings
+// in the ContractVersions struct.
+func (c ContractVersions) Check() error {
+	val := reflect.ValueOf(c)
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		str, ok := field.Interface().(string)
+		if !ok {
+			return fmt.Errorf("invalid type for field %s", val.Type().Field(i).Name)
+		}
+		if str == "" {
+			return fmt.Errorf("empty version for field %s", val.Type().Field(i).Name)
+		}
+		// Prepend a "v" if it's not there already
+		if !strings.HasPrefix(str, "v") {
+			str = "v" + str
+		}
+		if !semver.IsValid(str) {
+			return fmt.Errorf("invalid semver %s for field %s", str, val.Type().Field(i).Name)
+		}
+	}
+	return nil
 }
 
 // NewContractImplementations returns a new empty ContractImplementations.
@@ -211,9 +253,20 @@ var Addresses = map[uint64]*AddressList{}
 
 var GenesisSystemConfigs = map[uint64]*GenesisSystemConfig{}
 
+// Implementations represents a global mapping of contract implementations
+// to chain by chain id.
 var Implementations = map[uint64]ContractImplementations{}
 
+// SuperchainSemver represents a global mapping of contract name to desired semver version.
+var SuperchainSemver = ContractVersions{}
+
 func init() {
+	var err error
+	SuperchainSemver, err = NewContractVersions()
+	if err != nil {
+		panic(fmt.Errorf("failed to read semver.yaml: %w", err))
+	}
+
 	// read the global implementations
 	globalImpls, err := NewContractImplementations(path.Join("implementations", "implementations.yaml"))
 	if err != nil {
@@ -308,6 +361,23 @@ func init() {
 		chainID := superchainEntry.Config.L1.ChainID
 		Implementations[chainID] = implementations
 	}
+}
+
+// NewContractVersions will read the contract versions from semver.yaml
+// and check to make sure that it is valid.
+func NewContractVersions() (ContractVersions, error) {
+	var versions ContractVersions
+	semvers, err := semverFS.ReadFile("semver.yaml")
+	if err != nil {
+		return versions, fmt.Errorf("failed to read semver.yaml: %w", err)
+	}
+	if err := yaml.Unmarshal(semvers, &versions); err != nil {
+		return versions, fmt.Errorf("failed to unmarshal semver.yaml: %w", err)
+	}
+	if err := versions.Check(); err != nil {
+		return versions, fmt.Errorf("semver.yaml is invalid: %w", err)
+	}
+	return versions, nil
 }
 
 func LoadGenesis(chainID uint64) (*Genesis, error) {

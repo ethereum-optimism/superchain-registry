@@ -84,3 +84,11 @@ func TestContractImplementations(t *testing.T) {
 		t.Fatal("wrong SystemConfig address")
 	}
 }
+
+// TestContractVersions will fail if the superchain semver file
+// is not read correctly.
+func TestContractVersions(t *testing.T) {
+	if err := SuperchainSemver.Check(); err != nil {
+		t.Fatal(err)
+	}
+}
