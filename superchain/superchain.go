@@ -59,6 +59,7 @@ type ChainConfig struct {
 	Chain string `yaml:"-"`
 }
 
+// AddressList represents the set of network specific contracts for a given network.
 type AddressList struct {
 	AddressManager                    Address `json:"AddressManager"`
 	L1CrossDomainMessengerProxy       Address `json:"L1CrossDomainMessengerProxy"`
@@ -70,17 +71,124 @@ type AddressList struct {
 	ProxyAdmin                        Address `json:"ProxyAdmin"`
 }
 
+// ImplementationList represents the set of implementation contracts to be used together
+// for a network.
+type ImplementationList struct {
+	L1CrossDomainMessenger       VersionedContract `json:"L1CrossDomainMessenger"`
+	L1ERC721Bridge               VersionedContract `json:"L1ERC721Bridge"`
+	L1StandardBridge             VersionedContract `json:"L1StandardBridge"`
+	L2OutputOracle               VersionedContract `json:"L2OutputOracle"`
+	OptimismMintableERC20Factory VersionedContract `json:"OptimismMintableERC20Factory"`
+	OptimismPortal               VersionedContract `json:"OptimismPortal"`
+	SystemConfig                 VersionedContract `json:"SystemConfig"`
+}
+
 // ContractImplementations represent a set of contract implementations on a given network.
 // The key in the map represents the semantic version of the contract and the value is the
 // address that the contract is deployed to.
 type ContractImplementations struct {
-	L1CrossDomainMessenger       map[string]Address `yaml:"l1_cross_domain_messenger"`
-	L1ERC721Bridge               map[string]Address `yaml:"l1_erc721_bridge"`
-	L1StandardBridge             map[string]Address `yaml:"l1_standard_bridge"`
-	L2OutputOracle               map[string]Address `yaml:"l2_output_oracle"`
-	OptimismMintableERC20Factory map[string]Address `yaml:"optimism_mintable_erc20_factory"`
-	OptimismPortal               map[string]Address `yaml:"optimism_portal"`
-	SystemConfig                 map[string]Address `yaml:"system_config"`
+	L1CrossDomainMessenger       AddressSet `yaml:"l1_cross_domain_messenger"`
+	L1ERC721Bridge               AddressSet `yaml:"l1_erc721_bridge"`
+	L1StandardBridge             AddressSet `yaml:"l1_standard_bridge"`
+	L2OutputOracle               AddressSet `yaml:"l2_output_oracle"`
+	OptimismMintableERC20Factory AddressSet `yaml:"optimism_mintable_erc20_factory"`
+	OptimismPortal               AddressSet `yaml:"optimism_portal"`
+	SystemConfig                 AddressSet `yaml:"system_config"`
+}
+
+// AddressSet represents a set of addresses for a given
+// contract. They are keyed by the semantic version.
+type AddressSet map[string]Address
+
+// VersionedContract represents a contract that has a semantic version.
+type VersionedContract struct {
+	Version string  `json:"version"`
+	Address Address `json:"address"`
+}
+
+// Get will handle getting semantic versions from the set
+// in the case where the semver string is not prefixed with
+// a "v" as well as if it does have a "v" prefix.
+func (a AddressSet) Get(key string) Address {
+	if strings.HasPrefix(key, "v") {
+		if addr, ok := a[key]; ok {
+			return addr
+		}
+		if addr, ok := a[strings.TrimPrefix(key, "v")]; ok {
+			return addr
+		}
+	}
+	return a[key]
+}
+
+// Versions will return the list of semantic versions for a contract.
+// It handles the case where the versions are not prefixed with a "v".
+func (a AddressSet) Versions() []string {
+	keys := maps.Keys(a)
+	for i, k := range keys {
+		if !strings.HasPrefix(k, "v") {
+			keys[i] = "v" + k
+		}
+	}
+	semver.Sort(keys)
+	return keys
+}
+
+// Resolve will return a set of addresses that resolve a given
+// semantic version set.
+func (c ContractImplementations) Resolve(versions ContractVersions) (ImplementationList, error) {
+	var implementations ImplementationList
+	var err error
+	if implementations.L1CrossDomainMessenger, err = resolve(c.L1CrossDomainMessenger, versions.L1CrossDomainMessenger); err != nil {
+		return implementations, fmt.Errorf("L1CrossDomainMessenger: %w", err)
+	}
+	if implementations.L1ERC721Bridge, err = resolve(c.L1ERC721Bridge, versions.L1ERC721Bridge); err != nil {
+		return implementations, fmt.Errorf("L1ERC721Bridge: %w", err)
+	}
+	if implementations.L1StandardBridge, err = resolve(c.L1StandardBridge, versions.L1StandardBridge); err != nil {
+		return implementations, fmt.Errorf("L1StandardBridge: %w", err)
+	}
+	if implementations.L2OutputOracle, err = resolve(c.L2OutputOracle, versions.L2OutputOracle); err != nil {
+		return implementations, fmt.Errorf("L2OutputOracle: %w", err)
+	}
+	if implementations.OptimismMintableERC20Factory, err = resolve(c.OptimismMintableERC20Factory, versions.OptimismMintableERC20Factory); err != nil {
+		return implementations, fmt.Errorf("OptimismMintableERC20Factory: %w", err)
+	}
+	if implementations.OptimismPortal, err = resolve(c.OptimismPortal, versions.OptimismPortal); err != nil {
+		return implementations, fmt.Errorf("OptimismPortal: %w", err)
+	}
+	if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
+		return implementations, fmt.Errorf("SystemConfig: %w", err)
+	}
+	return implementations, nil
+}
+
+// resolve returns a VersionedContract that matches the passed in semver version
+// given a set of addresses.
+func resolve(set AddressSet, version string) (VersionedContract, error) {
+	if !strings.HasPrefix(version, "v") {
+		version = "v" + version
+	}
+
+	var out VersionedContract
+	keys := set.Versions()
+	if len(keys) == 0 {
+		return out, fmt.Errorf("no implementations found")
+	}
+
+	for _, k := range keys {
+		res := semver.Compare(k, version)
+		if res >= 0 {
+			out = VersionedContract{
+				Version: k,
+				Address: set.Get(k),
+			}
+		}
+	}
+	if out == (VersionedContract{}) {
+		return out, fmt.Errorf("cannot resolve semver")
+	}
+	return out, nil
 }
 
 // ContractVersions represents the desired semantic version of the contracts
@@ -120,41 +228,64 @@ func (c ContractVersions) Check() error {
 	return nil
 }
 
-// NewContractImplementations returns a new empty ContractImplementations.
+// newContractImplementations returns a new empty ContractImplementations.
 // Use this constructor to ensure that none of struct fields are nil.
-// The path argument is relative to the embedded fs that contains the implementations.
-func NewContractImplementations(path string) (ContractImplementations, error) {
+// It will also merge the local network implementations into the global implementations
+// because the global implementations were deployed with create2 and therefore should
+// be on every network.
+func newContractImplementations(network string) (ContractImplementations, error) {
+	var globals ContractImplementations
+	globalData, err := implementationsFS.ReadFile(path.Join("implementations", "implementations.yaml"))
+	if err != nil {
+		return globals, fmt.Errorf("failed to read implementations: %w", err)
+	}
+	if err := yaml.Unmarshal(globalData, &globals); err != nil {
+		return globals, fmt.Errorf("failed to decode implementations: %w", err)
+	}
+	setAddressSetsIfNil(&globals)
+	if network == "" {
+		return globals, nil
+	}
+
+	filepath := path.Join("implementations", "networks", network+".yaml")
 	var impls ContractImplementations
-	data, err := implementationsFS.ReadFile(path)
+	data, err := implementationsFS.ReadFile(filepath)
 	if err != nil {
 		return impls, fmt.Errorf("failed to read implementations: %w", err)
 	}
 	if err := yaml.Unmarshal(data, &impls); err != nil {
 		return impls, fmt.Errorf("failed to decode implementations: %w", err)
 	}
+	setAddressSetsIfNil(&impls)
+	globals.Merge(impls)
 
+	return globals, nil
+}
+
+// setAddressSetsIfNil will ensure that all of the struct values on a
+// ContractImplementations struct are non nil.
+func setAddressSetsIfNil(impls *ContractImplementations) {
 	if impls.L1CrossDomainMessenger == nil {
-		impls.L1CrossDomainMessenger = make(map[string]Address)
+		impls.L1CrossDomainMessenger = make(AddressSet)
 	}
 	if impls.L1ERC721Bridge == nil {
-		impls.L1ERC721Bridge = make(map[string]Address)
+		impls.L1ERC721Bridge = make(AddressSet)
 	}
 	if impls.L1StandardBridge == nil {
-		impls.L1StandardBridge = make(map[string]Address)
+		impls.L1StandardBridge = make(AddressSet)
 	}
 	if impls.L2OutputOracle == nil {
-		impls.L2OutputOracle = make(map[string]Address)
+		impls.L2OutputOracle = make(AddressSet)
 	}
 	if impls.OptimismMintableERC20Factory == nil {
-		impls.OptimismMintableERC20Factory = make(map[string]Address)
+		impls.OptimismMintableERC20Factory = make(AddressSet)
 	}
 	if impls.OptimismPortal == nil {
-		impls.OptimismPortal = make(map[string]Address)
+		impls.OptimismPortal = make(AddressSet)
 	}
 	if impls.SystemConfig == nil {
-		impls.SystemConfig = make(map[string]Address)
+		impls.SystemConfig = make(AddressSet)
 	}
-	return impls, nil
 }
 
 // copySemverMap is a concrete implementation of maps.Copy for map[string]Address.
@@ -262,15 +393,9 @@ var SuperchainSemver = ContractVersions{}
 
 func init() {
 	var err error
-	SuperchainSemver, err = NewContractVersions()
+	SuperchainSemver, err = newContractVersions()
 	if err != nil {
 		panic(fmt.Errorf("failed to read semver.yaml: %w", err))
-	}
-
-	// read the global implementations
-	globalImpls, err := NewContractImplementations(path.Join("implementations", "implementations.yaml"))
-	if err != nil {
-		panic(fmt.Errorf("failed to read implementations: %w", err))
 	}
 
 	superchainTargets, err := superchainFS.ReadDir("configs")
@@ -350,22 +475,18 @@ func init() {
 
 		Superchains[superchainEntry.Superchain] = &superchainEntry
 
-		networkImpls, err := NewContractImplementations(path.Join("implementations", "networks", s.Name()+".yaml"))
+		implementations, err := newContractImplementations(s.Name())
 		if err != nil {
 			panic(fmt.Errorf("failed to read implementations of superchain target %s: %w", s.Name(), err))
 		}
 
-		implementations := globalImpls.Copy()
-		implementations.Merge(networkImpls)
-
-		chainID := superchainEntry.Config.L1.ChainID
-		Implementations[chainID] = implementations
+		Implementations[superchainEntry.Config.L1.ChainID] = implementations
 	}
 }
 
-// NewContractVersions will read the contract versions from semver.yaml
+// newContractVersions will read the contract versions from semver.yaml
 // and check to make sure that it is valid.
-func NewContractVersions() (ContractVersions, error) {
+func newContractVersions() (ContractVersions, error) {
 	var versions ContractVersions
 	semvers, err := semverFS.ReadFile("semver.yaml")
 	if err != nil {
