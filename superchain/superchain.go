@@ -389,7 +389,7 @@ var GenesisSystemConfigs = map[uint64]*GenesisSystemConfig{}
 var Implementations = map[uint64]ContractImplementations{}
 
 // SuperchainSemver represents a global mapping of contract name to desired semver version.
-var SuperchainSemver = ContractVersions{}
+var SuperchainSemver ContractVersions
 
 func init() {
 	var err error
