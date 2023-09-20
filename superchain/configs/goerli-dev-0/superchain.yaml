@@ -1,4 +1,4 @@
-name: Goerli
+name: Goerli Dev 0
 l1:
   chain_id: 5
   public_rpc: https://ethereum-goerli-rpc.allthatnode.com

@@ -4,5 +4,5 @@ l1:
   public_rpc: https://ethereum-mainnet-rpc.allthatnode.com
   explorer: https://etherscan.io
 
-protocol_version_addr: "" # todo
+protocol_versions_addr: null # todo
 
