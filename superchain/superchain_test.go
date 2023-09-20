@@ -228,3 +228,26 @@ func TestResolve(t *testing.T) {
 		})
 	}
 }
+
+// TestAddressSet ensures that the AddressSet.Get method works with
+// both the "v" prefix and without the "v" prefix.
+func TestAddressSet(t *testing.T) {
+	set := AddressSet{
+		"v1.0.0": HexToAddress("0x123"),
+		"1.1.0":  HexToAddress("0x234"),
+	}
+
+	if set.Get("v1.0.0") != HexToAddress("0x123") {
+		t.Fatal("wrong address")
+	}
+	if set.Get("1.0.0") != HexToAddress("0x123") {
+		t.Fatal("wrong address")
+	}
+
+	if set.Get("v1.1.0") != HexToAddress("0x234") {
+		t.Fatal("wrong address")
+	}
+	if set.Get("1.1.0") != HexToAddress("0x234") {
+		t.Fatal("wrong address")
+	}
+}

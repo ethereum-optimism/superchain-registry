@@ -21,7 +21,7 @@ var superchainFS embed.FS
 //go:embed extra/addresses extra/bytecodes extra/genesis extra/genesis-system-configs
 var extraFS embed.FS
 
-//go:embed implementations/networks implementations
+//go:embed implementations
 var implementationsFS embed.FS
 
 //go:embed semver.yaml
@@ -110,13 +110,11 @@ type VersionedContract struct {
 // in the case where the semver string is not prefixed with
 // a "v" as well as if it does have a "v" prefix.
 func (a AddressSet) Get(key string) Address {
-	if strings.HasPrefix(key, "v") {
-		if addr, ok := a[key]; ok {
-			return addr
-		}
-		if addr, ok := a[strings.TrimPrefix(key, "v")]; ok {
-			return addr
-		}
+	if !strings.HasPrefix(key, "v") {
+		key = "v" + key
+	}
+	if addr, ok := a[strings.TrimPrefix(key, "v")]; ok {
+		return addr
 	}
 	return a[key]
 }
@@ -126,9 +124,7 @@ func (a AddressSet) Get(key string) Address {
 func (a AddressSet) Versions() []string {
 	keys := maps.Keys(a)
 	for i, k := range keys {
-		if !strings.HasPrefix(k, "v") {
-			keys[i] = "v" + k
-		}
+		keys[i] = canonicalizeSemver(k)
 	}
 	semver.Sort(keys)
 	return keys
@@ -166,9 +162,7 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 // resolve returns a VersionedContract that matches the passed in semver version
 // given a set of addresses.
 func resolve(set AddressSet, version string) (VersionedContract, error) {
-	if !strings.HasPrefix(version, "v") {
-		version = "v" + version
-	}
+	version = canonicalizeSemver(version)
 
 	var out VersionedContract
 	keys := set.Versions()
@@ -217,10 +211,7 @@ func (c ContractVersions) Check() error {
 		if str == "" {
 			return fmt.Errorf("empty version for field %s", val.Type().Field(i).Name)
 		}
-		// Prepend a "v" if it's not there already
-		if !strings.HasPrefix(str, "v") {
-			str = "v" + str
-		}
+		str = canonicalizeSemver(str)
 		if !semver.IsValid(str) {
 			return fmt.Errorf("invalid semver %s for field %s", str, val.Type().Field(i).Name)
 		}
@@ -290,6 +281,16 @@ func setAddressSetsIfNil(impls *ContractImplementations) {
 
 // copySemverMap is a concrete implementation of maps.Copy for map[string]Address.
 var copySemverMap = maps.Copy[map[string]Address, map[string]Address]
+
+// canonicalizeSemver will ensure that the version string has a "v" prefix.
+// This is because the semver library being used requires the "v" prefix,
+// even though
+func canonicalizeSemver(version string) string {
+	if !strings.HasPrefix(version, "v") {
+		version = "v" + version
+	}
+	return version
+}
 
 // Merge will combine two ContractImplementations into one. Any conflicting keys will
 // be overwritten by the arguments. It assumes that nonce of the struct fields are nil.
