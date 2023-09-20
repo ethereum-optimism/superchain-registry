@@ -11,6 +11,9 @@ The superchain configs are made available in minimal form, to embed in OP-Stack 
 Full deployment artifacts and genesis-states can be derived from the minimal form
 using the reference [`op-chain-ops`] tooling.
 
+The `semver.yaml` file represents the semantic versioning lockfile for the all of the smart contracts in the superchain.
+It is meant to be used when building transactions that upgrade the implementations set in the proxies.
+
 ## Go Module
 
 Superchain configs can be imported as Go-module:
