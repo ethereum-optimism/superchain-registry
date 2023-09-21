@@ -363,7 +363,7 @@ type SuperchainConfig struct {
 	Name string           `yaml:"name"`
 	L1   SuperchainL1Info `yaml:"l1"`
 
-	ProtocolVersionsAddr *Address `yaml:"protocol_version_addr,omitempty"`
+	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
 }
 
 type Superchain struct {
