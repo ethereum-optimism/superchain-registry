@@ -22,7 +22,7 @@ l1:
   public_rpc: https://ethereum-goerli-rpc.allthatnode.com
   explorer: https://goerli.etherscan.io
 
-protocol_version_addr: null # todo
+protocol_versions_addr: null # todo
 EOF
 ```
 Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.

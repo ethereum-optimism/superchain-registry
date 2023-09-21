@@ -1,7 +1,7 @@
-name: Goerli
+name: Goerli Dev 0
 l1:
   chain_id: 5
   public_rpc: https://ethereum-goerli-rpc.allthatnode.com
   explorer: https://goerli.etherscan.io
 
-protocol_versions_addr: null # todo
+protocol_versions_addr: "0x79ADD5713B383DAa0a138d3C4780C7A1804a8090"
