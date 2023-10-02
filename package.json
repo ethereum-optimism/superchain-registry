@@ -3,6 +3,13 @@
   "version": "0.0.1-alpha.1",
   "description": "[Optimism] Superchain Registry",
   "author": "Optimism",
+  "private": false,
+  "keywords": [
+    "superchain",
+    "optimism",
+    "op-stack",
+    "ethereum"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
