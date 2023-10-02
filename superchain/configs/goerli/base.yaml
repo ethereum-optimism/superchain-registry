@@ -2,7 +2,7 @@ name: Base Goerli
 chain_id: 84531
 public_rpc: https://goerli.base.org
 sequencer_rpc: https://goerli-sequencer.base.org
-explorer: https://goerli.basescan.org
+explorer: https://goerli-explorer.base.org
 
 system_config_addr: "0xb15eea247ece011c68a614e4a77ad648ff495bc1"
 batch_inbox_addr: "0x8453100000000000000000000000000000000000"
