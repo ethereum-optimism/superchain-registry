@@ -1,0 +1,26 @@
+version: 2.1
+
+orbs:
+  go: circleci/go@1.8.0
+
+jobs:
+  golang-lint-test:
+    working_directory: superchain
+    executor:
+      name: go/default  # is based on cimg/go
+      tag: '1.20'
+    steps:
+      - checkout
+      - go/load-cache
+      - go/mod-download
+      - go/save-cache
+      - run: golangci-lint run -c=.golangci.yml
+      - go/test:
+          covermode: atomic
+          failfast: true
+          race: true
+
+workflows:
+  main:
+    jobs:
+      - golang-lint-test
