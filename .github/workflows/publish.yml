@@ -1,0 +1,32 @@
+name: Publish Packages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.6.0
+
+      # Setup .npmrc file to publish to npm
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+          always-auth: 'true'
+          scope: '@eth-optimism'
+
+      - name: Build and publish package on NPM 📦
+        run: pnpm release
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
