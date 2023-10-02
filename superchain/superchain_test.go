@@ -1,6 +1,8 @@
 package superchain
 
 import (
+	"path"
+	"strings"
 	"testing"
 )
 
@@ -249,5 +251,33 @@ func TestAddressSet(t *testing.T) {
 	}
 	if set.Get("1.1.0") != HexToAddress("0x234") {
 		t.Fatal("wrong address")
+	}
+}
+
+// TestContractBytecodes verifies that all bytecodes can be loaded successfully,
+// and hash to the code-hash in the name.
+func TestContractBytecodes(t *testing.T) {
+	entries, err := extraFS.ReadDir(path.Join("extra", "bytecodes"))
+	if err != nil {
+		t.Fatalf("failed to open bytecodes dir: %v", err)
+	}
+	for _, e := range entries {
+		name := e.Name()
+		if !strings.HasSuffix(name, ".bin.gz") {
+			t.Fatalf("bytecode file has missing suffix: %q", name)
+		}
+		name = strings.TrimSuffix(name, ".bin.gz")
+		var expected Hash
+		if err := expected.UnmarshalText([]byte(name)); err != nil {
+			t.Fatalf("bytecode filename %q failed to parse as hash: %v", e.Name(), err)
+		}
+		value, err := LoadContractBytecode(expected)
+		if err != nil {
+			t.Fatalf("failed to load contract code of %q: %v", e.Name(), err)
+		}
+		computed := keccak256(value)
+		if expected != computed {
+			t.Fatalf("expected bytecode hash %s but computed %s", expected, computed)
+		}
 	}
 }
