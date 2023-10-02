@@ -16,6 +16,7 @@
     "url": "https://github.com/ethereum-optimism/superchain-registry.git",
   },
   "files": [
-    "superchain/"
+    "superchain/",
+    "assets/"
   ]
 }
