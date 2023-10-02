@@ -136,25 +136,25 @@ func TestContractVersionsResolve(t *testing.T) {
 		t.Fatalf("unable to resolve: %s", err)
 	}
 
-	if list.L1CrossDomainMessenger.Version != "v1.6.0" {
+	if list.L1CrossDomainMessenger.Version != "v1.6.1" {
 		t.Fatalf("wrong L1CrossDomainMessenger version: %s", list.L1CrossDomainMessenger.Version)
 	}
-	if list.L1ERC721Bridge.Version != "v1.3.0" {
+	if list.L1ERC721Bridge.Version != "v1.3.1" {
 		t.Fatalf("wrong L1ERC721Bridge version: %s", list.L1ERC721Bridge.Version)
 	}
-	if list.L1StandardBridge.Version != "v1.3.0" {
+	if list.L1StandardBridge.Version != "v1.3.1" {
 		t.Fatalf("wrong L1StandardBridge version: %s", list.L1StandardBridge.Version)
 	}
-	if list.L2OutputOracle.Version != "v1.5.0" {
+	if list.L2OutputOracle.Version != "v1.5.1" {
 		t.Fatalf("wrong L2OutputOracle version: %s", list.L2OutputOracle.Version)
 	}
-	if list.OptimismMintableERC20Factory.Version != "v1.4.0" {
+	if list.OptimismMintableERC20Factory.Version != "v1.5.0" {
 		t.Fatalf("wrong OptimismMintableERC20Factory version: %s", list.OptimismMintableERC20Factory.Version)
 	}
-	if list.OptimismPortal.Version != "v1.9.0" {
+	if list.OptimismPortal.Version != "v1.9.1" {
 		t.Fatalf("wrong OptimismPortal version: %s", list.OptimismPortal.Version)
 	}
-	if list.SystemConfig.Version != "v1.7.0" {
+	if list.SystemConfig.Version != "v1.8.0" {
 		t.Fatalf("wrong SystemConfig version: %s", list.SystemConfig.Version)
 	}
 }
