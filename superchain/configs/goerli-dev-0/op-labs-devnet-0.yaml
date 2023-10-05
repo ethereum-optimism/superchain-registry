@@ -4,7 +4,7 @@ public_rpc: ""
 sequencer_rpc: ""
 explorer: ""
 
-system_config_addr: "0x9673B370b773D9FFc4C282B3aF315ab05f17E20C"
+system_config_addr: "0x78c9876a3621b97cc9b3c13ad0f35091db49e8e3"
 batch_inbox_addr: "0xff00000000000000000000000000000000000997"
 
 genesis:
