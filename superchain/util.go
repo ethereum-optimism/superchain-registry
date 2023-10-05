@@ -4,6 +4,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math/big"
+
+	"golang.org/x/crypto/sha3"
 )
 
 // Util-types for hex-encoding/decoding.
@@ -109,4 +111,10 @@ func (b HexBig) String() string {
 
 func (b *HexBig) UnmarshalText(text []byte) error {
 	return (*big.Int)(b).UnmarshalText(text)
+}
+
+func keccak256(v []byte) Hash {
+	st := sha3.NewLegacyKeccak256()
+	st.Write(v)
+	return *(*[32]byte)(st.Sum(nil))
 }
