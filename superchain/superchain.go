@@ -18,7 +18,7 @@ import (
 //go:embed configs
 var superchainFS embed.FS
 
-//go:embed extra/addresses extra/bytecodes extra/genesis extra/genesis-system-configs
+//go:embed extra/L1Addresses extra/bytecodes extra/genesis extra/genesis-system-configs
 var extraFS embed.FS
 
 //go:embed implementations
@@ -445,7 +445,7 @@ func init() {
 			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
 
 			jsonName := chainConfig.Chain + ".json"
-			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
+			addressesData, err := extraFS.ReadFile(path.Join("extra", "L1Addresses", s.Name(), jsonName))
 			if err != nil {
 				panic(fmt.Errorf("failed to read addresses data of chain %s/%s: %w", s.Name(), jsonName, err))
 			}
