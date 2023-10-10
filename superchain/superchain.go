@@ -177,6 +177,9 @@ func resolve(set AddressSet, version string) (VersionedContract, error) {
 				Version: k,
 				Address: set.Get(k),
 			}
+			if res == 0 {
+				break
+			}
 		}
 	}
 	if out == (VersionedContract{}) {
