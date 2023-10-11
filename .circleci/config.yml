@@ -20,6 +20,21 @@ jobs:
           covermode: atomic
           failfast: true
           race: true
+  publish-bot:
+    environment:
+      NODE_AUTH_TOKEN: $NPM_TOKEN  # Use NPM_TOKEN as the auth token
+    docker:
+      - image: cimg/node:18  # Use Node.js 18
+    working_directory: ~/superchain-registry/
+    steps:
+      - checkout  # Checkout the code
+      - run:
+          name: Setup .npmrc for npm publishing
+          command: |
+            echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
+      - run:
+          name: Build and publish package on NPM 📦
+          command: pnpm release
 
 workflows:
   main:

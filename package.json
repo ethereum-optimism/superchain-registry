@@ -13,10 +13,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ethereum-optimism/superchain-registry.git",
+    "url": "https://github.com/ethereum-optimism/superchain-registry.git"
   },
   "files": [
     "superchain/",
-    "assets/"
+    "assets/",
+    "!**/*.go",
+    "!**/*.md"
   ]
 }
