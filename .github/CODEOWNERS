@@ -12,6 +12,7 @@
 
 # Configs / build system
 /.github @protolambda
+/.circleci @protolambda
 
 # Go bindings
 /superchain.go @protolambda
