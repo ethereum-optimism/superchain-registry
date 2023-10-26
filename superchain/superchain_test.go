@@ -281,3 +281,23 @@ func TestContractBytecodes(t *testing.T) {
 		}
 	}
 }
+
+// TestCanyonTimestampOnBlockBoundary asserts that Canyon will activate on a block's timestamp.
+// This is critical because the create2Deployer only activates on a block's timestamp.
+func TestCanyonTimestampOnBlockBoundary(t *testing.T) {
+	for superchainName, superchainConfig := range Superchains {
+		if superchainConfig.Config.CanyonTime == nil {
+			continue
+		}
+		ct := *superchainConfig.Config.CanyonTime
+		for _, id := range superchainConfig.ChainIDs {
+			chainCfg := OPChains[id]
+			canyonOffset := ct - chainCfg.Genesis.L2Time
+			// Block time is hardcoded in op-node/rollup/superchain.go
+			if canyonOffset%2 != 0 {
+				t.Fatalf("Canyon time on superchain %v for %v is not on the block time. canyon time: %v. L2 start time: %v, block time: %v",
+					superchainName, id, ct, chainCfg.Genesis.L2Time, 2)
+			}
+		}
+	}
+}
