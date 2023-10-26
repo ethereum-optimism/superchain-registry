@@ -51,6 +51,9 @@ type ChainConfig struct {
 
 	Genesis ChainGenesis `yaml:"genesis"`
 
+	// Hardfork Configuration
+	CanyonTime *uint64 `yaml:"canyon_time,omitempty"`
+
 	// Superchain is a simple string to identify the superchain.
 	// This is implied by directory structure, and not encoded in the config file itself.
 	Superchain string `yaml:"-"`
