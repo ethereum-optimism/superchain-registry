@@ -281,3 +281,18 @@ func TestContractBytecodes(t *testing.T) {
 		}
 	}
 }
+
+// TestCanyonTimestampOnBlockBoundary asserts that Canyon will activate on a block's timestamp.
+// This is critical because the create2Deployer only activates on a block's timestamp.
+func TestCanyonTimestampOnBlockBoundary(t *testing.T) {
+	for id, config := range OPChains {
+		if config.CanyonTime == nil {
+			continue // skip if canyon is not set
+		}
+		canyonOffset := *config.CanyonTime - config.Genesis.L2Time
+		if canyonOffset%2 != 0 {
+			t.Fatalf("Canyon time for %v is not on the block time. canyon time: %v. L2 start time: %v, block time: %v",
+				id, *config.CanyonTime, config.Genesis.L2Time, 2)
+		}
+	}
+}
