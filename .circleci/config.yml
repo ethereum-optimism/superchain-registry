@@ -27,10 +27,12 @@ jobs:
       - image: cimg/node:18  # Use Node.js 18
     working_directory: ~/superchain-registry/
     steps:
-      - checkout  # Checkout the code
-      - name: Set deployment token
-        run: npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-        env:
+      - checkout:  # Checkout the code
+          path: ~/superchain-registry
+      - run:
+          name: Set deployment token
+          command: npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+      - env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run:
           name: Build and publish package on NPM 📦
