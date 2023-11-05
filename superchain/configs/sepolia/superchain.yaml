@@ -4,4 +4,5 @@ l1:
   public_rpc: https://ethereum-sepolia-rpc.allthatnode.com
   explorer: https://sepolia.etherscan.io
 
-protocol_versions_addr: null # todo
+protocol_versions_addr: "0x79ADD5713B383DAa0a138d3C4780C7A1804a8090"
+canyon_time: 1699981200
