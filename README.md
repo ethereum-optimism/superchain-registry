@@ -39,7 +39,6 @@ graph TD
   L1CrossDomainMessengerProxy -- "addressManager[address(this)]" --> AddressManager
 
   L1ERC721BridgeProxy -- "admin()" --> ProxyAdmin
-  L1ERC721BridgeProxy -- "MESSENGER()" --> L1CrossDomainMessengerProxy
   L1ERC721BridgeProxy -- "messenger()" --> L1CrossDomainMessengerProxy
 
   L1StandardBridgeProxy -- "getOwner()" -->  ProxyAdmin
