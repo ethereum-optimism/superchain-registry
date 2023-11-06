@@ -18,10 +18,17 @@ import { StdAssertions } from "forge-std/StdAssertions.sol";
 contract CheckSecuityConfigs is Script, StdAssertions {
     struct ProtocolControllers {
         address FoundationMultisig;
-        address CoinbaseMultisig;
-        address ZoraMultisig;
+
+        address BaseChallenger1of2;
+        address BaseOpsMultisig;
+        address BaseUpgradeMultisig;
+
         address PgnOpsMultisig;
         address PgnUpgradeMultisig;
+
+        address ZoraChallengerMultisig;
+        address ZoraGuardianMultisig;
+        address ZoraUpgradeMultisig;
     }
     ProtocolControllers controllers;
 
@@ -52,9 +59,11 @@ contract CheckSecuityConfigs is Script, StdAssertions {
     function run() external {
         initializeControllers();
         initializeExceptions();
-        string[2] memory addressesJsonFiles = [
+        string[4] memory addressesJsonFiles = [
+            "superchain/extra/addresses/mainnet/base.json",
             "superchain/extra/addresses/mainnet/op.json",
-            "superchain/extra/addresses/mainnet/pgn.json"
+            "superchain/extra/addresses/mainnet/pgn.json",
+            "superchain/extra/addresses/mainnet/zora.json"
         ];
         for(uint i = 0; i < addressesJsonFiles.length; i++) {
             runOnSingleFile(addressesJsonFiles[i]);
@@ -178,7 +187,7 @@ contract CheckSecuityConfigs is Script, StdAssertions {
             ProxyAdmin: vm.parseJsonAddress(addressesJson, ".ProxyAdmin"),
 
             ProxyAdminOwner: proxyAdminOwnerExceptions[addressesJsonPath] == address(0)? controllers.FoundationMultisig : proxyAdminOwnerExceptions[addressesJsonPath],
-            Challenger: challengerExceptions[addressesJsonPath] == address(0)? controllers.FoundationMultisig : challengerExceptions[addressesJsonPath],
+            Challenger: challengerExceptions[addressesJsonPath],
             Guardian: guardianExceptions[addressesJsonPath] == address(0)? controllers.FoundationMultisig : guardianExceptions[addressesJsonPath]
             });
     }
@@ -186,16 +195,33 @@ contract CheckSecuityConfigs is Script, StdAssertions {
     function initializeControllers() internal {
         controllers = ProtocolControllers({
             FoundationMultisig: 0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A,
-            CoinbaseMultisig: 0x9855054731540A48b28990B63DcF4f33d8AE46A1,
-            ZoraMultisig: 0xC72aE5c7cc9a332699305E29F68Be66c73b60542,
+
+            BaseOpsMultisig: 0x14536667Cd30e52C0b458BaACcB9faDA7046E056,
+            BaseChallenger1of2: 0x6F8C5bA3F59ea3E76300E3BEcDC231D656017824,
+            BaseUpgradeMultisig: 0x7bB41C3008B3f03FE483B28b8DB90e19Cf07595c,
+
             PgnOpsMultisig: 0x39E13D1AB040F6EA58CE19998edCe01B3C365f84,
-            PgnUpgradeMultisig: 0x4a4962275DF8C60a80d3a25faEc5AA7De116A746
+            PgnUpgradeMultisig: 0x4a4962275DF8C60a80d3a25faEc5AA7De116A746,
+
+            ZoraChallengerMultisig: 0xcA4571b1ecBeC86Ea2E660d242c1c29FcB55Dc72,
+            ZoraGuardianMultisig: 0xC72aE5c7cc9a332699305E29F68Be66c73b60542,
+            ZoraUpgradeMultisig: 0xC72aE5c7cc9a332699305E29F68Be66c73b60542
             });
     }
 
     function initializeExceptions() internal {
+        proxyAdminOwnerExceptions["superchain/extra/addresses/mainnet/base.json"] = controllers.BaseUpgradeMultisig;
+        challengerExceptions["superchain/extra/addresses/mainnet/base.json"] = controllers.BaseChallenger1of2;
+        guardianExceptions["superchain/extra/addresses/mainnet/base.json"] = controllers.BaseOpsMultisig;
+
+        challengerExceptions["superchain/extra/addresses/mainnet/op.json"] = controllers.FoundationMultisig;
+
         proxyAdminOwnerExceptions["superchain/extra/addresses/mainnet/pgn.json"] = controllers.PgnUpgradeMultisig;
         challengerExceptions["superchain/extra/addresses/mainnet/pgn.json"] = controllers.PgnOpsMultisig;
         guardianExceptions["superchain/extra/addresses/mainnet/pgn.json"] = controllers.PgnOpsMultisig;
+
+        proxyAdminOwnerExceptions["superchain/extra/addresses/mainnet/zora.json"] = controllers.ZoraUpgradeMultisig;
+        challengerExceptions["superchain/extra/addresses/mainnet/zora.json"] = controllers.ZoraChallengerMultisig;
+        guardianExceptions["superchain/extra/addresses/mainnet/zora.json"] = controllers.ZoraGuardianMultisig;
     }
 }
