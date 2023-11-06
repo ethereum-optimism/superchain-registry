@@ -34,12 +34,9 @@ graph TD
   SystemConfigProxy -- "owner()" --> FoundationMultisig
 
   AddressManager -- "owner()" -->  ProxyAdmin
-  AddressManager -- "getAddress(OVM_L1CrossDomainMessenger)" -->  L1CrossDomainMessengerImpl
 
   L1CrossDomainMessengerProxy -- "PORTAL()" --> OptimismPortalProxy
-  L1CrossDomainMessengerProxy -- "addressManager[address(this)]" --> OptimismPortalProxy
-  L1CrossDomainMessengerProxy -- "implementationName[address(this)]" --> String_OVM_L1CrossDomainMessenger
-  L1CrossDomainMessengerProxy -- "addressManager[address(this)].getAddress((implementationName[address(this)]))" --> L1CrossDomainMessengerImpl
+  L1CrossDomainMessengerProxy -- "addressManager[address(this)]" --> AddressManager
 
   L1ERC721BridgeProxy -- "admin()" --> ProxyAdmin
   L1ERC721BridgeProxy -- "MESSENGER()" --> L1CrossDomainMessengerProxy
