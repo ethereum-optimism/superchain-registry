@@ -17,84 +17,56 @@ import { StdAssertions } from "forge-std/StdAssertions.sol";
 
 contract CheckSecuityConfigs is Script, StdAssertions {
 
-    struct ContractSet {
+    struct ProtocolControllers {
+        address FoundationMultisig;
+        address CoinbaseMultisig;
+        address ZoraMultisig;
+        address PgnMultisig;
+    }
+
+    struct ProtocolContracts {
         // Please keep these sorted by name.
         address AddressManager;
-        address L1CrossDomainMessengerImpl;
         address L1CrossDomainMessengerProxy;
-        address L1ERC721BridgeImpl;
         address L1ERC721BridgeProxy;
-        address L1ProxyAdmin;
-        address L1StandardBridgeImpl;
         address L1StandardBridgeProxy;
-        address L1ChallengerKey;
-        address L1UpgradeKey;
-        address L2OutputOracleImpl;
         address L2OutputOracleProxy;
-        address OptimismMintableERC20FactoryImpl;
         address OptimismMintableERC20FactoryProxy;
-        address OptimismPortalImpl;
         address OptimismPortalProxy;
-        address SystemConfigProxy;
+        address ProxyAdmin;
     }
 
     /**
      * @notice The entrypoint function.
      */
     function run() external {
-        string memory bedrockJsonDir = vm.envString("BEDROCK_JSON_DIR"); // deployments/zora;
-        console2.log("BEDROCK_JSON_DIR = %s", bedrockJsonDir);
-        console2.log("L1_UPGRADE_KEY = %s", vm.envAddress("L1_UPGRADE_KEY"));
-        console2.log("L1_CHALLENGER_KEY = %s", vm.envAddress("L1_CHALLENGER_KEY"));
-        ContractSet memory contracts = getContracts(bedrockJsonDir);
+        string[] memory addressesJsonFiles = [vm.envOr("ADDRESSES_JSON")];
+    }
+
+    function runOnSingleFile(string memory addressesJsonPath) {
+        ProtocolContracts memory contracts = getContracts(vm.readFile(addressesJsonPath));
+        ProtocolContracts memory controllers = getControllers();
         checkAddressManager(contracts);
         checkL1CrossDomainMessengerProxy(contracts);
         checkL1ERC721BridgeProxy(contracts);
-        checkL1ProxyAdmin(contracts);
         checkL1StandardBridgeProxy(contracts);
-        checkL1UpgradeKey(contracts);
         checkL2OutputOracleProxy(contracts);
         checkOptimismMintableERC20FactoryProxy(contracts);
         checkOptimismPortalProxy(contracts);
-        checkSystemConfigProxy(contracts);
+        // checkProxyAdmin(contracts);
     }
 
     function checkAddressManager(ContractSet memory contracts) internal {
         console2.log("Checking AddressManager %s", contracts.AddressManager);
-        checkAddressIsExpected(contracts.L1ProxyAdmin, contracts.AddressManager, "owner()");
-    }
-
-    function getMappingValue(address targetContract, uint256 mapSlot, address key) public view returns (uint256) {
-        bytes32 slotValue = vm.load(targetContract, keccak256(abi.encode(key, mapSlot)));
-        return uint256(slotValue);
-    }
-
-    function uint2str(uint256 from) internal pure returns (string memory str) {
-        bytes memory bytesString = new bytes(32);
-        for (uint j=0; j<32; j++) {
-            bytesString[32-j-1] = bytes1(uint8(from));
-            from = from / 0x100;
-        }
-        bool gotZero = false;
-        for (uint j=0; j<32; j++) {
-            if (gotZero) {
-                bytesString[j] = 0;
-            } else {
-                gotZero = bytesString[j] == 0;
-            }
-        }
-        bytesString[31] = 0;
-        return string(bytesString);
+        isOwnerOf(contracts.ProxyAdmin, contracts.AddressManager);
     }
 
     function checkL1CrossDomainMessengerProxy(ContractSet memory contracts) internal {
         console2.log("Checking L1CrossDomainMessengerProxy %s", contracts.L1CrossDomainMessengerProxy);
 
-        address addressManager = address(uint160(getMappingValue(contracts.L1CrossDomainMessengerProxy, 1, contracts.L1CrossDomainMessengerProxy)));
-        checkAddressIsExpected(contracts.L1ProxyAdmin, addressManager, "owner()");
+        address actualAddressManager = address(uint160(getMappingValue(contracts.L1CrossDomainMessengerProxy, 1, contracts.L1CrossDomainMessengerProxy)));
+        assertEq(contracts.AddressManager, actualAddressManager);
 
-        string memory implementationName = uint2str(getMappingValue(contracts.L1CrossDomainMessengerProxy, 0, contracts.L1CrossDomainMessengerProxy));
-        console2.log("  !!! TODO: check %s == cast call --flashbots %s \"getAddress(string)(address)\" \"%s\"", contracts.L1CrossDomainMessengerImpl, addressManager, implementationName);
         checkAddressIsExpected(contracts.OptimismPortalProxy, contracts.L1CrossDomainMessengerProxy, "PORTAL()");
     }
 
@@ -142,9 +114,37 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         checkAddressIsExpected(contracts.L2OutputOracleProxy, contracts.OptimismPortalProxy, "L2_ORACLE()");
     }
 
-    function checkSystemConfigProxy(ContractSet memory contracts) internal {
-        console2.log("Checking SystemConfigProxy %s", contracts.SystemConfigProxy);
-        checkAddressIsExpected(contracts.L1ProxyAdmin, contracts.SystemConfigProxy, "admin()");
+    /* function checkSystemConfigProxy(ContractSet memory contracts) internal { */
+    /*     console2.log("Checking SystemConfigProxy %s", contracts.SystemConfigProxy); */
+    /*     checkAddressIsExpected(contracts.L1ProxyAdmin, contracts.SystemConfigProxy, "admin()"); */
+    /* } */
+
+
+    function getMappingValue(address targetContract, uint256 mapSlot, address key) public view returns (uint256) {
+        bytes32 slotValue = vm.load(targetContract, keccak256(abi.encode(key, mapSlot)));
+        return uint256(slotValue);
+    }
+
+    function uint2str(uint256 from) internal pure returns (string memory str) {
+        bytes memory bytesString = new bytes(32);
+        for (uint j=0; j<32; j++) {
+            bytesString[32-j-1] = bytes1(uint8(from));
+            from = from / 0x100;
+        }
+        bool gotZero = false;
+        for (uint j=0; j<32; j++) {
+            if (gotZero) {
+                bytesString[j] = 0;
+            } else {
+                gotZero = bytesString[j] == 0;
+            }
+        }
+        bytesString[31] = 0;
+        return string(bytesString);
+    }
+
+    function isOwnerOf(address expectedOwner, address ownableContract) internal {
+        checkAddressIsExpected(expectedOwner, ownableContract, "owner()");
     }
 
     function checkAddressIsExpected(address expectedAddr, address contractAddr, string memory signature) internal {
@@ -167,31 +167,25 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         return abi.decode(addrBytes, (address));
     }
 
-    function getContracts(string memory bedrockJsonDir) internal returns (ContractSet memory) {
-        return ContractSet({
-                AddressManager: getAddressFromJson(string.concat(bedrockJsonDir, "/Lib_AddressManager.json")),
-                L1CrossDomainMessengerImpl: getAddressFromJson(string.concat(bedrockJsonDir, "/L1CrossDomainMessenger.json")),
-                L1CrossDomainMessengerProxy: getAddressFromJson(string.concat(bedrockJsonDir, "/Proxy__OVM_L1CrossDomainMessenger.json")),
-                L1ERC721BridgeImpl: getAddressFromJson(string.concat(bedrockJsonDir, "/L1ERC721Bridge.json")),
-                L1ERC721BridgeProxy: getAddressFromJson(string.concat(bedrockJsonDir, "/L1ERC721BridgeProxy.json")),
-                L1ProxyAdmin: getAddressFromJson(string.concat(bedrockJsonDir, "/ProxyAdmin.json")),
-                L1StandardBridgeImpl: getAddressFromJson(string.concat(bedrockJsonDir, "/L1StandardBridge.json")),
-                L1StandardBridgeProxy: getAddressFromJson(string.concat(bedrockJsonDir, "/Proxy__OVM_L1StandardBridge.json")),
-                L1ChallengerKey: vm.envAddress("L1_CHALLENGER_KEY"), //0xcA4571b1ecBeC86Ea2E660d242c1c29FcB55Dc72,
-                L1UpgradeKey: vm.envAddress("L1_UPGRADE_KEY"), //0xC72aE5c7cc9a332699305E29F68Be66c73b60542,
-                L2OutputOracleImpl: getAddressFromJson(string.concat(bedrockJsonDir, "/L2OutputOracle.json")),
-                L2OutputOracleProxy: getAddressFromJson(string.concat(bedrockJsonDir, "/L2OutputOracleProxy.json")),
-                OptimismMintableERC20FactoryImpl: getAddressFromJson(string.concat(bedrockJsonDir, "/OptimismMintableERC20Factory.json")),
-                OptimismMintableERC20FactoryProxy: getAddressFromJson(string.concat(bedrockJsonDir, "/OptimismMintableERC20FactoryProxy.json")),
-                OptimismPortalImpl: getAddressFromJson(string.concat(bedrockJsonDir, "/OptimismPortal.json")),
-                OptimismPortalProxy: getAddressFromJson(string.concat(bedrockJsonDir, "/OptimismPortalProxy.json")),
-                SystemConfigProxy: getAddressFromJson(string.concat(bedrockJsonDir, "/SystemConfigProxy.json"))
+    function getContracts(string memory addressesJson) internal returns (ProtocolContracts memory) {
+        return ProtocolContracts({
+            AddressManager: vm.parseJsonAddress(addressesJson, ".AddressManager"),
+            L1CrossDomainMessengerProxy: vm.parseJsonAddress(addressesJson, ".L1CrossDomainMessengerProxy"),
+            L1ERC721BridgeProxy: vm.parseJsonAddress(addressesJson, ".L1ERC721BridgeProxy"),
+            L1StandardBridgeProxy: vm.parseJsonAddress(addressesJson, ".L1StandardBridgeProxy"),
+            L2OutputOracleProxy: vm.parseJsonAddress(addressesJson, ".L2OutputOracleProxy"),
+            OptimismMintableERC20FactoryProxy: vm.parseJsonAddress(addressesJson, ".OptimismMintableERC20FactoryProxy"),
+            OptimismPortalProxy: vm.parseJsonAddress(addressesJson, ".OptimismPortalProxy"),
+            ProxyAdmin: vm.parseJsonAddress(addressesJson, ".ProxyAdmin"),
             });
     }
 
-    function getAddressFromJson(string memory jsonPath) internal returns (address) {
-        string memory json = vm.readFile(jsonPath);
-        return vm.parseJsonAddress(json, ".address");
+    function getControllers() internal returns (ProtocolControllers memory) {
+        return ProtocolControllers({
+            FoundationMultisig: 0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A,
+            CoinbaseMultisig: 0x9855054731540A48b28990B63DcF4f33d8AE46A1,
+            ZoraMultisig: 0xC72aE5c7cc9a332699305E29F68Be66c73b60542,
+            PgnMultisig: 0x4a4962275DF8C60a80d3a25faEc5AA7De116A746
+            });
     }
-
 }

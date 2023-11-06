@@ -26,6 +26,44 @@ See [`op-chain-ops`] for config tooling and
 [`op-chain-ops`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-chain-ops
 [`op-bindings`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-bindings
 
+## CheckSecuityConfigs
+
+``` mermaid
+graph TD
+  SystemConfigProxy -- "admin()" --> ProxyAdmin
+  SystemConfigProxy -- "owner()" --> FoundationMultisig
+
+  AddressManager -- "owner()" -->  ProxyAdmin
+  AddressManager -- "getAddress(OVM_L1CrossDomainMessenger)" -->  L1CrossDomainMessengerImpl
+
+  L1CrossDomainMessengerProxy -- "PORTAL()" --> OptimismPortalProxy
+  L1CrossDomainMessengerProxy -- "addressManager[address(this)]" --> OptimismPortalProxy
+  L1CrossDomainMessengerProxy -- "implementationName[address(this)]" --> String_OVM_L1CrossDomainMessenger
+  L1CrossDomainMessengerProxy -- "addressManager[address(this)].getAddress((implementationName[address(this)]))" --> L1CrossDomainMessengerImpl
+
+  L1ERC721BridgeProxy -- "admin()" --> ProxyAdmin
+  L1ERC721BridgeProxy -- "MESSENGER()" --> L1CrossDomainMessengerProxy
+  L1ERC721BridgeProxy -- "messenger()" --> L1CrossDomainMessengerProxy
+
+  L1StandardBridgeProxy -- "getOwner()" -->  ProxyAdmin
+  L1StandardBridgeProxy -- "MESSENGER()" --> L1CrossDomainMessengerProxy
+  L1StandardBridgeProxy -- "messenger()" --> L1CrossDomainMessengerProxy
+
+  L2OutputOracleProxy -- "admin()" --> ProxyAdmin
+  L2OutputOracleProxy -- "CHALLENGER()" --> OneOfNContract
+
+  OptimismMintableERC20FactoryProxy -- "admin()" --> ProxyAdmin
+  OptimismMintableERC20FactoryProxy -- "BRIDGE()" --> L1StandardBridgeProxy
+
+  OptimismPortalProxy -- "admin()" --> ProxyAdmin
+  OptimismPortalProxy -- "GUARDIAN()" --> FoundationMultisig
+  OptimismPortalProxy -- "L2_ORACLE()" --> L2OutputOracleProxy
+  OptimismPortalProxy -- "SYSTEM_CONFIG()" --> SystemConfigProxy
+
+  ProxyAdmin -- "addressManager()" --> AddressManager
+  ProxyAdmin -- "owner()" --> SecurityCouncilMultisig
+```
+
 ## License
 
 MIT License, see [`LICENSE` file](./LICENSE).
