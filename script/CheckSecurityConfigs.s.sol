@@ -81,6 +81,8 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         checkOptimismMintableERC20FactoryProxy(contracts);
         checkOptimismPortalProxy(contracts);
         checkProxyAdmin(contracts);
+
+        // TODO: Check implementations.
     }
 
     function checkAddressManager(ProtocolContracts memory contracts) internal {
