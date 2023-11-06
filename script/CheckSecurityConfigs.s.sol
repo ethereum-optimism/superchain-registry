@@ -20,12 +20,13 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         address FoundationMultisig;
         address CoinbaseMultisig;
         address ZoraMultisig;
-        address PgnMultisig;
+        address PgnOpsMultisig;
+        address PgnUpgradeMultisig;
     }
     ProtocolControllers controllers;
 
     struct ProtocolContracts {
-        // Please keep these sorted by name.
+        // ProtocolContracts
         address AddressManager;
         address L1CrossDomainMessengerProxy;
         address L1ERC721BridgeProxy;
@@ -34,21 +35,35 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         address OptimismMintableERC20FactoryProxy;
         address OptimismPortalProxy;
         address ProxyAdmin;
+
+        // Roles
+        address ProxyAdminOwner;
+        address Challenger;
+        address Guardian;
     }
+
+    mapping(string => address) proxyAdminOwnerExceptions;
+    mapping(string => address) challengerExceptions;
+    mapping(string => address) guardianExceptions;
 
     /**
      * @notice The entrypoint function.
      */
     function run() external {
         initializeControllers();
-        string[1] memory addressesJsonFiles = ["superchain/extra/addresses/mainnet/op.json"];
+        initializeExceptions();
+        string[2] memory addressesJsonFiles = [
+            "superchain/extra/addresses/mainnet/op.json",
+            "superchain/extra/addresses/mainnet/pgn.json"
+        ];
         for(uint i = 0; i < addressesJsonFiles.length; i++) {
             runOnSingleFile(addressesJsonFiles[i]);
         }
     }
 
     function runOnSingleFile(string memory addressesJsonPath) internal {
-        ProtocolContracts memory contracts = getContracts(vm.readFile(addressesJsonPath));
+        console2.log("Checking %s", addressesJsonPath);
+        ProtocolContracts memory contracts = getContracts(addressesJsonPath);
         checkAddressManager(contracts);
         checkL1CrossDomainMessengerProxy(contracts);
         checkL1ERC721BridgeProxy(contracts);
@@ -89,7 +104,7 @@ contract CheckSecuityConfigs is Script, StdAssertions {
     function checkL2OutputOracleProxy(ProtocolContracts memory contracts) internal {
         console2.log("Checking L2OutputOracleProxy %s", contracts.L2OutputOracleProxy);
         isAdminOf(contracts.ProxyAdmin, contracts.L2OutputOracleProxy);
-        checkAddressIsExpected(controllers.FoundationMultisig, contracts.L2OutputOracleProxy, "CHALLENGER()");
+        checkAddressIsExpected(contracts.Challenger, contracts.L2OutputOracleProxy, "CHALLENGER()");
         // 604800 seconds = 7 days, reusing the logic in
         // checkAddressIsExpected for simplicity.
         checkAddressIsExpected(address(604800), contracts.L2OutputOracleProxy, "FINALIZATION_PERIOD_SECONDS()");
@@ -104,7 +119,7 @@ contract CheckSecuityConfigs is Script, StdAssertions {
     function checkOptimismPortalProxy(ProtocolContracts memory contracts) internal {
         console2.log("Checking OptimismPortalProxy %s", contracts.OptimismPortalProxy);
         isAdminOf(contracts.ProxyAdmin, contracts.OptimismPortalProxy);
-        checkAddressIsExpected(controllers.FoundationMultisig, contracts.OptimismPortalProxy, "GUARDIAN()");
+        checkAddressIsExpected(contracts.Guardian, contracts.OptimismPortalProxy, "GUARDIAN()");
         checkAddressIsExpected(contracts.L2OutputOracleProxy, contracts.OptimismPortalProxy, "L2_ORACLE()");
         // TODO: Check SYSTEM_CONFIG()
     }
@@ -113,7 +128,7 @@ contract CheckSecuityConfigs is Script, StdAssertions {
 
     function checkProxyAdmin(ProtocolContracts memory contracts) internal {
         console2.log("Checking ProxyAdmin %s", contracts.ProxyAdmin);
-        isOwnerOf(controllers.FoundationMultisig, contracts.ProxyAdmin);
+        isOwnerOf(contracts.ProxyAdminOwner, contracts.ProxyAdmin);
         checkAddressIsExpected(contracts.AddressManager, contracts.ProxyAdmin, "addressManager()");
     }
 
@@ -150,7 +165,8 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         return abi.decode(addrBytes, (address));
     }
 
-    function getContracts(string memory addressesJson) internal pure returns (ProtocolContracts memory) {
+    function getContracts(string memory addressesJsonPath) internal view returns (ProtocolContracts memory) {
+        string memory addressesJson = vm.readFile(addressesJsonPath);
         return ProtocolContracts({
             AddressManager: vm.parseJsonAddress(addressesJson, ".AddressManager"),
             L1CrossDomainMessengerProxy: vm.parseJsonAddress(addressesJson, ".L1CrossDomainMessengerProxy"),
@@ -159,7 +175,11 @@ contract CheckSecuityConfigs is Script, StdAssertions {
             L2OutputOracleProxy: vm.parseJsonAddress(addressesJson, ".L2OutputOracleProxy"),
             OptimismMintableERC20FactoryProxy: vm.parseJsonAddress(addressesJson, ".OptimismMintableERC20FactoryProxy"),
             OptimismPortalProxy: vm.parseJsonAddress(addressesJson, ".OptimismPortalProxy"),
-            ProxyAdmin: vm.parseJsonAddress(addressesJson, ".ProxyAdmin")
+            ProxyAdmin: vm.parseJsonAddress(addressesJson, ".ProxyAdmin"),
+
+            ProxyAdminOwner: proxyAdminOwnerExceptions[addressesJsonPath] == address(0)? controllers.FoundationMultisig : proxyAdminOwnerExceptions[addressesJsonPath],
+            Challenger: challengerExceptions[addressesJsonPath] == address(0)? controllers.FoundationMultisig : challengerExceptions[addressesJsonPath],
+            Guardian: guardianExceptions[addressesJsonPath] == address(0)? controllers.FoundationMultisig : guardianExceptions[addressesJsonPath]
             });
     }
 
@@ -168,7 +188,14 @@ contract CheckSecuityConfigs is Script, StdAssertions {
             FoundationMultisig: 0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A,
             CoinbaseMultisig: 0x9855054731540A48b28990B63DcF4f33d8AE46A1,
             ZoraMultisig: 0xC72aE5c7cc9a332699305E29F68Be66c73b60542,
-            PgnMultisig: 0x4a4962275DF8C60a80d3a25faEc5AA7De116A746
+            PgnOpsMultisig: 0x39E13D1AB040F6EA58CE19998edCe01B3C365f84,
+            PgnUpgradeMultisig: 0x4a4962275DF8C60a80d3a25faEc5AA7De116A746
             });
+    }
+
+    function initializeExceptions() internal {
+        proxyAdminOwnerExceptions["superchain/extra/addresses/mainnet/pgn.json"] = controllers.PgnUpgradeMultisig;
+        challengerExceptions["superchain/extra/addresses/mainnet/pgn.json"] = controllers.PgnOpsMultisig;
+        guardianExceptions["superchain/extra/addresses/mainnet/pgn.json"] = controllers.PgnOpsMultisig;
     }
 }
