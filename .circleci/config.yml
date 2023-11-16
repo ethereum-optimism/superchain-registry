@@ -37,8 +37,22 @@ jobs:
       - run:
           name: Build and publish package on NPM 📦
           command: pnpm release
+  check-codegen:
+    docker:
+      - image: cimg/node:18.18.2
+    working_directory: ~/superchain-registry/
+    steps:
+      - checkout:
+          path: ~/superchain-registry
+      - run:
+          name: Run codegen
+          command: pnpm codegen
+      - run:
+          name: Check for changes
+          command: git diff --exit-code
 
 workflows:
   main:
     jobs:
       - golang-lint-test
+      - check-codegen
