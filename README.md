@@ -28,36 +28,72 @@ See [`op-chain-ops`] for config tooling and
 
 ## CheckSecuityConfigs
 
+The `CheckSecuityConfigs.s.sol` script is used in CI to perform
+security checks of OP Chains registered in the `superchain`
+directory. At high level, it performs checks to ensure priviledges are
+properly granted to the right addresses. More specifically, it checks
+the following priviledge grants and role designations:
+
+1. Generic privileges:
+   1. Proxy admins. For example, `L1ERC721BridgeProxy` and
+      `OptimismMintableERC20FactoryProxy` specify the proxy admin
+      addresses who can change their implementations.
+   2. Address managers. For example, `ProxyAdmin` specifies the
+      address manager it trusts to look up certain addresses by name.
+   3. Contract owners. For example, many `Ownable` contracts use this
+      role to specify the message senders allowed to make privileged
+      calls.
+2. Optimism privileged cross-contract calls:
+   1. Trusted messengers. For example, `L1ERC721BridgeProxy` and
+      `L1StandardBridgeProxy` specify the cross domain messenger
+      address they trust with cross domain message sender information.
+   2. Trusted bridges. For example,
+      `OptimismMintableERC20FactoryProxy` specifies the L1 standard
+      bridge it trusts to mint and burn tokens.
+   3. Trusted portal. For example, `L1CrossDomainMessengerProxy`
+      specifies the portal it trusts to deposit transactions and get
+      L2 senders.
+   4. Trusted oracles. For example, `OptimismPortalProxy` specifies
+      the L2 oracle they trust with the L2 state root information.
+   5. Trusted system config. For example, `OptimismPortalProxy`
+      specifies the system config they trust to get resouce config
+      from. TODO: add checks for the `ResourceMetering` contract.
+3. Optimism privileged operational roles:
+   1. Guardians. This is the role that can pause withdraws in the
+      Optimism protocol.
+   2. Challengers. This is the role that can delete
+      `L2OutputOracleProxy`'s output roots in the Optimism protocol
+
 ``` mermaid
 graph TD
-  SystemConfigProxy -- "admin()" --> ProxyAdmin
-  SystemConfigProxy -- "owner()" --> FoundationMultisig
-
-  AddressManager -- "owner()" -->  ProxyAdmin
-
-  L1CrossDomainMessengerProxy -- "PORTAL()" --> OptimismPortalProxy
-  L1CrossDomainMessengerProxy -- "addressManager[address(this)]" --> AddressManager
-
   L1ERC721BridgeProxy -- "admin()" --> ProxyAdmin
   L1ERC721BridgeProxy -- "messenger()" --> L1CrossDomainMessengerProxy
-
-  L1StandardBridgeProxy -- "getOwner()" -->  ProxyAdmin
-  L1StandardBridgeProxy -- "MESSENGER()" --> L1CrossDomainMessengerProxy
-  L1StandardBridgeProxy -- "messenger()" --> L1CrossDomainMessengerProxy
-
-  L2OutputOracleProxy -- "admin()" --> ProxyAdmin
-  L2OutputOracleProxy -- "CHALLENGER()" --> OneOfNContract
 
   OptimismMintableERC20FactoryProxy -- "admin()" --> ProxyAdmin
   OptimismMintableERC20FactoryProxy -- "BRIDGE()" --> L1StandardBridgeProxy
 
+  ProxyAdmin -- "addressManager()" --> AddressManager
+  ProxyAdmin -- "owner()" --> ProxyOwnerMultisig
+
+  L1CrossDomainMessengerProxy -- "PORTAL()" --> OptimismPortalProxy
+  L1CrossDomainMessengerProxy -- "addressManager[address(this)]" --> AddressManager
+
+  L1StandardBridgeProxy -- "getOwner()" -->  ProxyAdmin
+  L1StandardBridgeProxy -- "messenger()" --> L1CrossDomainMessengerProxy
+
+  AddressManager -- "owner()" -->  ProxyAdmin
+
   OptimismPortalProxy -- "admin()" --> ProxyAdmin
-  OptimismPortalProxy -- "GUARDIAN()" --> FoundationMultisig
+  OptimismPortalProxy -- "GUARDIAN()" --> GuardianMultisig
   OptimismPortalProxy -- "L2_ORACLE()" --> L2OutputOracleProxy
   OptimismPortalProxy -- "SYSTEM_CONFIG()" --> SystemConfigProxy
 
-  ProxyAdmin -- "addressManager()" --> AddressManager
-  ProxyAdmin -- "owner()" --> SecurityCouncilMultisig
+  L2OutputOracleProxy -- "admin()" --> ProxyAdmin
+  L2OutputOracleProxy -- "CHALLENGER()" --> ChallengerMultisig
+
+  SystemConfigProxy -- "admin()" --> ProxyAdmin
+  SystemConfigProxy -- "owner()" --> SystemConfigOwnerMultisig
+
 ```
 
 ## License
