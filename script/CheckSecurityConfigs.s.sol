@@ -4,7 +4,6 @@ pragma solidity 0.8.15;
 import { console2 } from "forge-std/console2.sol";
 import { Script } from "forge-std/Script.sol";
 import { stdStorage } from "forge-std/StdStorage.sol";
-import { StdAssertions } from "forge-std/StdAssertions.sol";
 
 /**
  * @title CheckSecuityConfigs
@@ -15,7 +14,7 @@ import { StdAssertions } from "forge-std/StdAssertions.sol";
  *             --rpc-url $ETH_RPC_URL
  */
 
-contract CheckSecuityConfigs is Script, StdAssertions {
+contract CheckSecuityConfigs is Script {
     struct ProtocolAddresses {
         // Protocol contracts
         address AddressManager;
@@ -51,7 +50,7 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         for(uint i = 0; i < addressesJsonFiles.length; i++) {
             runOnSingleFile(addressesJsonFiles[i]);
         }
-        assertEq(false, hasErrors);
+        assert(!hasErrors);
     }
 
     function runOnSingleFile(string memory addressesJsonPath) internal {
@@ -78,7 +77,7 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         console2.log("Checking L1CrossDomainMessengerProxy %s", addresses.L1CrossDomainMessengerProxy);
 
         address actualAddressManager = address(uint160(getMappingValue(addresses.L1CrossDomainMessengerProxy, 1, addresses.L1CrossDomainMessengerProxy)));
-        assertEq(addresses.AddressManager, actualAddressManager);
+        assert(addresses.AddressManager == actualAddressManager);
 
         checkAddressIsExpected(addresses.OptimismPortalProxy, addresses.L1CrossDomainMessengerProxy, "PORTAL()");
     }
