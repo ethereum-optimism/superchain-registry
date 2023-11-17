@@ -16,24 +16,8 @@ import { StdAssertions } from "forge-std/StdAssertions.sol";
  */
 
 contract CheckSecuityConfigs is Script, StdAssertions {
-    struct ProtocolControllers {
-        address FoundationMultisig;
-
-        address BaseChallenger1of2;
-        address BaseOpsMultisig;
-        address BaseUpgradeMultisig;
-
-        address PgnOpsMultisig;
-        address PgnUpgradeMultisig;
-
-        address ZoraChallengerMultisig;
-        address ZoraGuardianMultisig;
-        address ZoraUpgradeMultisig;
-    }
-    ProtocolControllers controllers;
-
-    struct ProtocolContracts {
-        // ProtocolContracts
+    struct ProtocolAddresses {
+        // Protocol contracts
         address AddressManager;
         address L1CrossDomainMessengerProxy;
         address L1ERC721BridgeProxy;
@@ -43,22 +27,17 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         address OptimismPortalProxy;
         address ProxyAdmin;
 
-        // Roles
+        // Privileged roles
         address ProxyAdminOwner;
+        address SystemConfigOwner;
         address Challenger;
         address Guardian;
     }
-
-    mapping(string => address) proxyAdminOwnerExceptions;
-    mapping(string => address) challengerExceptions;
-    mapping(string => address) guardianExceptions;
 
     /**
      * @notice The entrypoint function.
      */
     function run() external {
-        initializeControllers();
-        initializeExceptions();
         string[4] memory addressesJsonFiles = [
             "superchain/extra/addresses/mainnet/base.json",
             "superchain/extra/addresses/mainnet/op.json",
