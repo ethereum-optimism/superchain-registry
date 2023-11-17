@@ -58,6 +58,7 @@ jobs:
       - run:
           name: check security configs
           command: |
+            forge install --no-git foundry-rs/forge-std
             forge script CheckSecuityConfigs --rpc-url=https://ethereum.publicnode.com
 
 workflows:
