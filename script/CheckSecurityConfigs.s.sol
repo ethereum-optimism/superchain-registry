@@ -26,13 +26,16 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         address OptimismMintableERC20FactoryProxy;
         address OptimismPortalProxy;
         address ProxyAdmin;
+        address SystemConfigProxy;
 
         // Privileged roles
-        address ProxyAdminOwner;
-        address SystemConfigOwner;
         address Challenger;
         address Guardian;
+        address ProxyAdminOwner;
+        address SystemConfigOwner;
     }
+
+    bool internal hasErrors;
 
     /**
      * @notice The entrypoint function.
@@ -44,82 +47,86 @@ contract CheckSecuityConfigs is Script, StdAssertions {
             "superchain/extra/addresses/mainnet/pgn.json",
             "superchain/extra/addresses/mainnet/zora.json"
         ];
+        hasErrors = false;
         for(uint i = 0; i < addressesJsonFiles.length; i++) {
             runOnSingleFile(addressesJsonFiles[i]);
         }
+        assertEq(false, hasErrors);
     }
 
     function runOnSingleFile(string memory addressesJsonPath) internal {
         console2.log("Checking %s", addressesJsonPath);
-        ProtocolContracts memory contracts = getContracts(addressesJsonPath);
-        checkAddressManager(contracts);
-        checkL1CrossDomainMessengerProxy(contracts);
-        checkL1ERC721BridgeProxy(contracts);
-        checkL1StandardBridgeProxy(contracts);
-        checkL2OutputOracleProxy(contracts);
-        checkOptimismMintableERC20FactoryProxy(contracts);
-        checkOptimismPortalProxy(contracts);
-        checkProxyAdmin(contracts);
-
+        ProtocolAddresses memory addresses = getAddresses(addressesJsonPath);
+        checkAddressManager(addresses);
+        checkL1CrossDomainMessengerProxy(addresses);
+        checkL1ERC721BridgeProxy(addresses);
+        checkL1StandardBridgeProxy(addresses);
+        checkL2OutputOracleProxy(addresses);
+        checkOptimismMintableERC20FactoryProxy(addresses);
+        checkOptimismPortalProxy(addresses);
+        checkProxyAdmin(addresses);
+        checkSystemConfigProxy(addresses);
         // TODO: Check implementations.
     }
 
-    function checkAddressManager(ProtocolContracts memory contracts) internal {
-        console2.log("Checking AddressManager %s", contracts.AddressManager);
-        isOwnerOf(contracts.ProxyAdmin, contracts.AddressManager);
+    function checkAddressManager(ProtocolAddresses memory addresses) internal {
+        console2.log("Checking AddressManager %s", addresses.AddressManager);
+        isOwnerOf(addresses.ProxyAdmin, addresses.AddressManager);
     }
 
-    function checkL1CrossDomainMessengerProxy(ProtocolContracts memory contracts) internal {
-        console2.log("Checking L1CrossDomainMessengerProxy %s", contracts.L1CrossDomainMessengerProxy);
+    function checkL1CrossDomainMessengerProxy(ProtocolAddresses memory addresses) internal {
+        console2.log("Checking L1CrossDomainMessengerProxy %s", addresses.L1CrossDomainMessengerProxy);
 
-        address actualAddressManager = address(uint160(getMappingValue(contracts.L1CrossDomainMessengerProxy, 1, contracts.L1CrossDomainMessengerProxy)));
-        assertEq(contracts.AddressManager, actualAddressManager);
+        address actualAddressManager = address(uint160(getMappingValue(addresses.L1CrossDomainMessengerProxy, 1, addresses.L1CrossDomainMessengerProxy)));
+        assertEq(addresses.AddressManager, actualAddressManager);
 
-        checkAddressIsExpected(contracts.OptimismPortalProxy, contracts.L1CrossDomainMessengerProxy, "PORTAL()");
+        checkAddressIsExpected(addresses.OptimismPortalProxy, addresses.L1CrossDomainMessengerProxy, "PORTAL()");
     }
 
-    function checkL1ERC721BridgeProxy(ProtocolContracts memory contracts) internal {
-        console2.log("Checking L1ERC721BridgeProxy %s", contracts.L1ERC721BridgeProxy);
-        isAdminOf(contracts.ProxyAdmin, contracts.L1ERC721BridgeProxy);
-        checkAddressIsExpected(contracts.L1CrossDomainMessengerProxy, contracts.L1ERC721BridgeProxy, "messenger()");
+    function checkL1ERC721BridgeProxy(ProtocolAddresses memory addresses) internal {
+        console2.log("Checking L1ERC721BridgeProxy %s", addresses.L1ERC721BridgeProxy);
+        isAdminOf(addresses.ProxyAdmin, addresses.L1ERC721BridgeProxy);
+        checkAddressIsExpected(addresses.L1CrossDomainMessengerProxy, addresses.L1ERC721BridgeProxy, "messenger()");
     }
 
-    function checkL1StandardBridgeProxy(ProtocolContracts memory contracts) internal {
-        console2.log("Checking L1StandardBridgeProxy %s", contracts.L1StandardBridgeProxy);
-        checkAddressIsExpected(contracts.ProxyAdmin, contracts.L1StandardBridgeProxy, "getOwner()");
-        checkAddressIsExpected(contracts.L1CrossDomainMessengerProxy, contracts.L1StandardBridgeProxy, "messenger()");
-        checkAddressIsExpected(contracts.L1CrossDomainMessengerProxy, contracts.L1StandardBridgeProxy, "MESSENGER()");
+    function checkL1StandardBridgeProxy(ProtocolAddresses memory addresses) internal {
+        console2.log("Checking L1StandardBridgeProxy %s", addresses.L1StandardBridgeProxy);
+        checkAddressIsExpected(addresses.ProxyAdmin, addresses.L1StandardBridgeProxy, "getOwner()");
+        checkAddressIsExpected(addresses.L1CrossDomainMessengerProxy, addresses.L1StandardBridgeProxy, "messenger()");
     }
 
-    function checkL2OutputOracleProxy(ProtocolContracts memory contracts) internal {
-        console2.log("Checking L2OutputOracleProxy %s", contracts.L2OutputOracleProxy);
-        isAdminOf(contracts.ProxyAdmin, contracts.L2OutputOracleProxy);
-        checkAddressIsExpected(contracts.Challenger, contracts.L2OutputOracleProxy, "CHALLENGER()");
-        // 604800 seconds = 7 days, reusing the logic in
-        // checkAddressIsExpected for simplicity.
-        checkAddressIsExpected(address(604800), contracts.L2OutputOracleProxy, "FINALIZATION_PERIOD_SECONDS()");
+    function checkL2OutputOracleProxy(ProtocolAddresses memory addresses) internal {
+        console2.log("Checking L2OutputOracleProxy %s", addresses.L2OutputOracleProxy);
+        isAdminOf(addresses.ProxyAdmin, addresses.L2OutputOracleProxy);
+        checkAddressIsExpected(addresses.Challenger, addresses.L2OutputOracleProxy, "CHALLENGER()");
+        // 604800 seconds = 7 days, reusing the logic in checkAddressIsExpected for simplicity.
+        checkAddressIsExpected(address(604800), addresses.L2OutputOracleProxy, "FINALIZATION_PERIOD_SECONDS()");
     }
 
-    function checkOptimismMintableERC20FactoryProxy(ProtocolContracts memory contracts) internal {
-        console2.log("Checking OptimismMintableERC20FactoryProxy %s", contracts.OptimismMintableERC20FactoryProxy);
-        isAdminOf(contracts.ProxyAdmin, contracts.OptimismMintableERC20FactoryProxy);
-        checkAddressIsExpected(contracts.L1StandardBridgeProxy, contracts.OptimismMintableERC20FactoryProxy, "BRIDGE()");
+    function checkOptimismMintableERC20FactoryProxy(ProtocolAddresses memory addresses) internal {
+        console2.log("Checking OptimismMintableERC20FactoryProxy %s", addresses.OptimismMintableERC20FactoryProxy);
+        isAdminOf(addresses.ProxyAdmin, addresses.OptimismMintableERC20FactoryProxy);
+        checkAddressIsExpected(addresses.L1StandardBridgeProxy, addresses.OptimismMintableERC20FactoryProxy, "BRIDGE()");
     }
 
-    function checkOptimismPortalProxy(ProtocolContracts memory contracts) internal {
-        console2.log("Checking OptimismPortalProxy %s", contracts.OptimismPortalProxy);
-        isAdminOf(contracts.ProxyAdmin, contracts.OptimismPortalProxy);
-        checkAddressIsExpected(contracts.Guardian, contracts.OptimismPortalProxy, "GUARDIAN()");
-        checkAddressIsExpected(contracts.L2OutputOracleProxy, contracts.OptimismPortalProxy, "L2_ORACLE()");
-        // TODO: Check SYSTEM_CONFIG()
+    function checkOptimismPortalProxy(ProtocolAddresses memory addresses) internal {
+        console2.log("Checking OptimismPortalProxy %s", addresses.OptimismPortalProxy);
+        isAdminOf(addresses.ProxyAdmin, addresses.OptimismPortalProxy);
+        checkAddressIsExpected(addresses.Guardian, addresses.OptimismPortalProxy, "GUARDIAN()");
+        checkAddressIsExpected(addresses.L2OutputOracleProxy, addresses.OptimismPortalProxy, "L2_ORACLE()");
+        checkAddressIsExpected(addresses.SystemConfigProxy, addresses.OptimismPortalProxy, "SYSTEM_CONFIG()");
     }
 
-    // TODO: implement checkSystemConfigProxy(...)
+    function checkSystemConfigProxy(ProtocolAddresses memory addresses) internal {
+        console2.log("Checking SystemConfigProxy %s", addresses.SystemConfigProxy);
+        isAdminOf(addresses.ProxyAdmin, addresses.SystemConfigProxy);
+        isOwnerOf(addresses.SystemConfigOwner, addresses.SystemConfigProxy);
+    }
 
-    function checkProxyAdmin(ProtocolContracts memory contracts) internal {
-        console2.log("Checking ProxyAdmin %s", contracts.ProxyAdmin);
-        isOwnerOf(contracts.ProxyAdminOwner, contracts.ProxyAdmin);
-        checkAddressIsExpected(contracts.AddressManager, contracts.ProxyAdmin, "addressManager()");
+    function checkProxyAdmin(ProtocolAddresses memory addresses) internal {
+        console2.log("Checking ProxyAdmin %s", addresses.ProxyAdmin);
+        isOwnerOf(addresses.ProxyAdminOwner, addresses.ProxyAdmin);
+        checkAddressIsExpected(addresses.AddressManager, addresses.ProxyAdmin, "addressManager()");
     }
 
     function getMappingValue(address targetContract, uint256 mapSlot, address key) public view returns (uint256) {
@@ -140,6 +147,7 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         if (expectedAddr != actual) {
             console2.log("  !! Error: %s != %s.%s, ", expectedAddr, contractAddr, signature);
             console2.log("           which is %s", actual);
+            hasErrors = true;
         } else {
             console2.log("  -- Success: %s == %s.%s.", expectedAddr, contractAddr, signature);
         }
@@ -150,14 +158,15 @@ contract CheckSecuityConfigs is Script, StdAssertions {
         (bool success, bytes memory addrBytes) = contractAddr.staticcall(abi.encodeWithSignature(signature));
         if (!success) {
             console2.log("  !! Error calling %s.%s", contractAddr, signature);
+            hasErrors = true;
             return address(0);
         }
         return abi.decode(addrBytes, (address));
     }
 
-    function getContracts(string memory addressesJsonPath) internal view returns (ProtocolContracts memory) {
+    function getAddresses(string memory addressesJsonPath) internal view returns (ProtocolAddresses memory) {
         string memory addressesJson = vm.readFile(addressesJsonPath);
-        return ProtocolContracts({
+        return ProtocolAddresses({
             AddressManager: vm.parseJsonAddress(addressesJson, ".AddressManager"),
             L1CrossDomainMessengerProxy: vm.parseJsonAddress(addressesJson, ".L1CrossDomainMessengerProxy"),
             L1ERC721BridgeProxy: vm.parseJsonAddress(addressesJson, ".L1ERC721BridgeProxy"),
@@ -166,43 +175,12 @@ contract CheckSecuityConfigs is Script, StdAssertions {
             OptimismMintableERC20FactoryProxy: vm.parseJsonAddress(addressesJson, ".OptimismMintableERC20FactoryProxy"),
             OptimismPortalProxy: vm.parseJsonAddress(addressesJson, ".OptimismPortalProxy"),
             ProxyAdmin: vm.parseJsonAddress(addressesJson, ".ProxyAdmin"),
+            SystemConfigProxy: vm.parseJsonAddress(addressesJson, ".SystemConfigProxy"),
 
-            ProxyAdminOwner: proxyAdminOwnerExceptions[addressesJsonPath] == address(0)? controllers.FoundationMultisig : proxyAdminOwnerExceptions[addressesJsonPath],
-            Challenger: challengerExceptions[addressesJsonPath],
-            Guardian: guardianExceptions[addressesJsonPath] == address(0)? controllers.FoundationMultisig : guardianExceptions[addressesJsonPath]
+            Challenger: vm.parseJsonAddress(addressesJson, ".Challenger"),
+            Guardian: vm.parseJsonAddress(addressesJson, ".Guardian"),
+            ProxyAdminOwner: vm.parseJsonAddress(addressesJson, ".ProxyAdminOwner"),
+            SystemConfigOwner: vm.parseJsonAddress(addressesJson, ".SystemConfigOwner")
             });
-    }
-
-    function initializeControllers() internal {
-        controllers = ProtocolControllers({
-            FoundationMultisig: 0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A,
-
-            BaseOpsMultisig: 0x14536667Cd30e52C0b458BaACcB9faDA7046E056,
-            BaseChallenger1of2: 0x6F8C5bA3F59ea3E76300E3BEcDC231D656017824,
-            BaseUpgradeMultisig: 0x7bB41C3008B3f03FE483B28b8DB90e19Cf07595c,
-
-            PgnOpsMultisig: 0x39E13D1AB040F6EA58CE19998edCe01B3C365f84,
-            PgnUpgradeMultisig: 0x4a4962275DF8C60a80d3a25faEc5AA7De116A746,
-
-            ZoraChallengerMultisig: 0xcA4571b1ecBeC86Ea2E660d242c1c29FcB55Dc72,
-            ZoraGuardianMultisig: 0xC72aE5c7cc9a332699305E29F68Be66c73b60542,
-            ZoraUpgradeMultisig: 0xC72aE5c7cc9a332699305E29F68Be66c73b60542
-            });
-    }
-
-    function initializeExceptions() internal {
-        proxyAdminOwnerExceptions["superchain/extra/addresses/mainnet/base.json"] = controllers.BaseUpgradeMultisig;
-        challengerExceptions["superchain/extra/addresses/mainnet/base.json"] = controllers.BaseChallenger1of2;
-        guardianExceptions["superchain/extra/addresses/mainnet/base.json"] = controllers.BaseOpsMultisig;
-
-        challengerExceptions["superchain/extra/addresses/mainnet/op.json"] = controllers.FoundationMultisig;
-
-        proxyAdminOwnerExceptions["superchain/extra/addresses/mainnet/pgn.json"] = controllers.PgnUpgradeMultisig;
-        challengerExceptions["superchain/extra/addresses/mainnet/pgn.json"] = controllers.PgnOpsMultisig;
-        guardianExceptions["superchain/extra/addresses/mainnet/pgn.json"] = controllers.PgnOpsMultisig;
-
-        proxyAdminOwnerExceptions["superchain/extra/addresses/mainnet/zora.json"] = controllers.ZoraUpgradeMultisig;
-        challengerExceptions["superchain/extra/addresses/mainnet/zora.json"] = controllers.ZoraChallengerMultisig;
-        guardianExceptions["superchain/extra/addresses/mainnet/zora.json"] = controllers.ZoraGuardianMultisig;
     }
 }
