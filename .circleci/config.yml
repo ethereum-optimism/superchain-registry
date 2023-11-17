@@ -37,8 +37,18 @@ jobs:
       - run:
           name: Build and publish package on NPM 📦
           command: pnpm release
+  check-security-configs:
+    docker:
+      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:latest
+    steps:
+      - checkout
+      - run:
+          name: check security configs
+          command: |
+            forge script CheckSecuityConfigs --rpc-url=https://ethereum.publicnode.com
 
 workflows:
   main:
     jobs:
       - golang-lint-test
+      - check-security-configs

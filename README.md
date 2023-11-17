@@ -64,6 +64,9 @@ the following priviledge grants and role designations:
    2. Challengers. This is the role that can delete
       `L2OutputOracleProxy`'s output roots in the Optimism protocol
 
+As a result, here is a visualization of all the relationships the
+`CheckSecuityConfigs.s.sol` script checks:
+
 ``` mermaid
 graph TD
   L1ERC721BridgeProxy -- "admin()" --> ProxyAdmin

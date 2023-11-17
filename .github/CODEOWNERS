@@ -16,3 +16,6 @@
 
 # Go bindings
 /superchain.go @protolambda
+
+# Scripts
+/script/CheckSecurityConfigs.s.sol @ethereum-optimism/security-reviewers
