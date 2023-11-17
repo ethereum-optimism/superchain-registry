@@ -20,5 +20,8 @@
     "assets/",
     "!**/*.go",
     "!**/*.md"
-  ]
+  ],
+  "scripts": {
+    "codegen": "node ./scripts/codegen.js"
+  }
 }
