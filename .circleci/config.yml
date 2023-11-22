@@ -67,7 +67,7 @@ jobs:
       - run:
           name: check security configs
           command: |
-            forge script CheckSecurityConfigs --rpc-url=$MAINNET_RPC_URL
+            forge script CheckSecurityConfigs --rpc-url="https://ci-mainnet-l1.optimism.io"
 
 workflows:
   main:
