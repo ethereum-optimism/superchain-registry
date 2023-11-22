@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.15;
 
-import { console2 } from "forge-std/console2.sol";
-import { Script } from "forge-std/Script.sol";
+import {console2} from "forge-std/console2.sol";
+import {Script} from "forge-std/Script.sol";
 
 /**
  * @title CheckSecurityConfigs
  * @notice A script to check security configurations of an OP Chain,
-           such as upgrade key holder, challenger and guadian designations.
+ *            such as upgrade key holder, challenger and guadian designations.
  *         The usage is as follows:
  *         $ forge script CheckSecurityConfigs \
  *             --rpc-url $MAINNET_RPC_URL
@@ -25,7 +25,6 @@ contract CheckSecurityConfigs is Script {
         address OptimismPortalProxy;
         address ProxyAdmin;
         address SystemConfigProxy;
-
         // Privileged roles
         address Challenger;
         address Guardian;
@@ -46,7 +45,7 @@ contract CheckSecurityConfigs is Script {
             "superchain/extra/addresses/mainnet/zora.json"
         ];
         hasErrors = false;
-        for(uint i = 0; i < addressesJsonFiles.length; i++) {
+        for (uint256 i = 0; i < addressesJsonFiles.length; i++) {
             runOnSingleFile(addressesJsonFiles[i]);
         }
         require(!hasErrors, "Errors occurred: See logs above for more info");
@@ -75,7 +74,9 @@ contract CheckSecurityConfigs is Script {
     function checkL1CrossDomainMessengerProxy(ProtocolAddresses memory addresses) internal {
         console2.log("Checking L1CrossDomainMessengerProxy %s", addresses.L1CrossDomainMessengerProxy);
 
-        address actualAddressManager = address(uint160(getMappingValue(addresses.L1CrossDomainMessengerProxy, 1, addresses.L1CrossDomainMessengerProxy)));
+        address actualAddressManager = address(
+            uint160(getMappingValue(addresses.L1CrossDomainMessengerProxy, 1, addresses.L1CrossDomainMessengerProxy))
+        );
         assert(addresses.AddressManager == actualAddressManager);
 
         checkAddressIsExpected(addresses.OptimismPortalProxy, addresses.L1CrossDomainMessengerProxy, "PORTAL()");
@@ -174,11 +175,10 @@ contract CheckSecurityConfigs is Script {
             OptimismPortalProxy: vm.parseJsonAddress(addressesJson, ".OptimismPortalProxy"),
             ProxyAdmin: vm.parseJsonAddress(addressesJson, ".ProxyAdmin"),
             SystemConfigProxy: vm.parseJsonAddress(addressesJson, ".SystemConfigProxy"),
-
             Challenger: vm.parseJsonAddress(addressesJson, ".Challenger"),
             Guardian: vm.parseJsonAddress(addressesJson, ".Guardian"),
             ProxyAdminOwner: vm.parseJsonAddress(addressesJson, ".ProxyAdminOwner"),
             SystemConfigOwner: vm.parseJsonAddress(addressesJson, ".SystemConfigOwner")
-            });
+        });
     }
 }
