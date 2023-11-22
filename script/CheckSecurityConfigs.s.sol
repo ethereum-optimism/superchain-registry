@@ -3,7 +3,6 @@ pragma solidity 0.8.15;
 
 import { console2 } from "forge-std/console2.sol";
 import { Script } from "forge-std/Script.sol";
-import { stdStorage } from "forge-std/StdStorage.sol";
 
 /**
  * @title CheckSecurityConfigs
@@ -11,7 +10,7 @@ import { stdStorage } from "forge-std/StdStorage.sol";
            such as upgrade key holder, challenger and guadian designations.
  *         The usage is as follows:
  *         $ forge script CheckSecurityConfigs \
- *             --rpc-url $ETH_RPC_URL
+ *             --rpc-url $MAINNET_RPC_URL
  */
 
 contract CheckSecurityConfigs is Script {
@@ -50,7 +49,7 @@ contract CheckSecurityConfigs is Script {
         for(uint i = 0; i < addressesJsonFiles.length; i++) {
             runOnSingleFile(addressesJsonFiles[i]);
         }
-        assert(!hasErrors);
+        require(!hasErrors, "Errors occurred: See logs above for more info");
     }
 
     function runOnSingleFile(string memory addressesJsonPath) internal {
@@ -65,7 +64,7 @@ contract CheckSecurityConfigs is Script {
         checkOptimismPortalProxy(addresses);
         checkProxyAdmin(addresses);
         checkSystemConfigProxy(addresses);
-        // TODO: Check implementations.
+        // TODO(issues/33): Check the integrity of the implementations.
     }
 
     function checkAddressManager(ProtocolAddresses memory addresses) internal {
@@ -98,8 +97,8 @@ contract CheckSecurityConfigs is Script {
         console2.log("Checking L2OutputOracleProxy %s", addresses.L2OutputOracleProxy);
         isAdminOf(addresses.ProxyAdmin, addresses.L2OutputOracleProxy);
         checkAddressIsExpected(addresses.Challenger, addresses.L2OutputOracleProxy, "CHALLENGER()");
-        // 604800 seconds = 7 days, reusing the logic in checkAddressIsExpected for simplicity.
-        checkAddressIsExpected(address(604800), addresses.L2OutputOracleProxy, "FINALIZATION_PERIOD_SECONDS()");
+        // Reusing the logic in checkAddressIsExpected below for simplicity.
+        checkAddressIsExpected(address(7 days), addresses.L2OutputOracleProxy, "FINALIZATION_PERIOD_SECONDS()");
     }
 
     function checkOptimismMintableERC20FactoryProxy(ProtocolAddresses memory addresses) internal {

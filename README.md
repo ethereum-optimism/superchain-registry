@@ -30,9 +30,9 @@ See [`op-chain-ops`] for config tooling and
 
 The `CheckSecurityConfigs.s.sol` script is used in CI to perform
 security checks of OP Chains registered in the `superchain`
-directory. At high level, it performs checks to ensure priviledges are
+directory. At high level, it performs checks to ensure privileges are
 properly granted to the right addresses. More specifically, it checks
-the following priviledge grants and role designations:
+the following privilege grants and role designations:
 
 1. Generic privileges:
    1. Proxy admins. For example, `L1ERC721BridgeProxy` and
@@ -56,7 +56,7 @@ the following priviledge grants and role designations:
    4. Trusted oracles. For example, `OptimismPortalProxy` specifies
       the L2 oracle they trust with the L2 state root information.
    5. Trusted system config. For example, `OptimismPortalProxy`
-      specifies the system config they trust to get resouce config
+      specifies the system config they trust to get resource config
       from. TODO: add checks for the `ResourceMetering` contract.
 3. Optimism privileged operational roles:
    1. Guardians. This is the role that can pause withdraws in the
