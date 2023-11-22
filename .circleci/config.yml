@@ -58,7 +58,7 @@ jobs:
       - run:
           name: check security configs
           command: |
-            forge script CheckSecuityConfigs --rpc-url=https://ethereum.publicnode.com
+            forge script CheckSecurityConfigs --rpc-url=https://ethereum.publicnode.com
 
 workflows:
   main:

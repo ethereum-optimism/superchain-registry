@@ -6,15 +6,15 @@ import { Script } from "forge-std/Script.sol";
 import { stdStorage } from "forge-std/StdStorage.sol";
 
 /**
- * @title CheckSecuityConfigs
+ * @title CheckSecurityConfigs
  * @notice A script to check security configurations of an OP Chain,
            such as upgrade key holder, challenger and guadian designations.
  *         The usage is as follows:
- *         $ forge script CheckSecuityConfigs \
+ *         $ forge script CheckSecurityConfigs \
  *             --rpc-url $ETH_RPC_URL
  */
 
-contract CheckSecuityConfigs is Script {
+contract CheckSecurityConfigs is Script {
     struct ProtocolAddresses {
         // Protocol contracts
         address AddressManager;

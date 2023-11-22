@@ -26,9 +26,9 @@ See [`op-chain-ops`] for config tooling and
 [`op-chain-ops`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-chain-ops
 [`op-bindings`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-bindings
 
-## CheckSecuityConfigs
+## CheckSecurityConfigs
 
-The `CheckSecuityConfigs.s.sol` script is used in CI to perform
+The `CheckSecurityConfigs.s.sol` script is used in CI to perform
 security checks of OP Chains registered in the `superchain`
 directory. At high level, it performs checks to ensure priviledges are
 properly granted to the right addresses. More specifically, it checks
@@ -65,7 +65,7 @@ the following priviledge grants and role designations:
       `L2OutputOracleProxy`'s output roots in the Optimism protocol
 
 As a result, here is a visualization of all the relationships the
-`CheckSecuityConfigs.s.sol` script checks:
+`CheckSecurityConfigs.s.sol` script checks:
 
 ``` mermaid
 graph TD
