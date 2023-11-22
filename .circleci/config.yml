@@ -60,6 +60,7 @@ jobs:
           command: |
             forge fmt --check
   check-security-configs:
+    circleci_ip_ranges: true
     docker:
       - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:latest
     steps:
