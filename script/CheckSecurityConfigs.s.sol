@@ -3,6 +3,7 @@ pragma solidity 0.8.15;
 
 import {console2} from "forge-std/console2.sol";
 import {Script} from "forge-std/Script.sol";
+import {VmSafe} from "forge-std/Vm.sol";
 
 /**
  * @title CheckSecurityConfigs
@@ -38,17 +39,24 @@ contract CheckSecurityConfigs is Script {
      * @notice The entrypoint function.
      */
     function run() external {
-        string[4] memory addressesJsonFiles = [
-            "superchain/extra/addresses/mainnet/base.json",
-            "superchain/extra/addresses/mainnet/op.json",
-            "superchain/extra/addresses/mainnet/pgn.json",
-            "superchain/extra/addresses/mainnet/zora.json"
-        ];
+        VmSafe.DirEntry[] memory addressesJsonEntries = vm.readDir("superchain/extra/addresses/mainnet");
         hasErrors = false;
-        for (uint256 i = 0; i < addressesJsonFiles.length; i++) {
-            runOnSingleFile(addressesJsonFiles[i]);
+        for (uint256 i = 0; i < addressesJsonEntries.length; i++) {
+            require(bytes(addressesJsonEntries[i].errorMessage).length == 0, addressesJsonEntries[i].errorMessage);
+            runOnSingleFile(addressesJsonEntries[i].path);
         }
         require(!hasErrors, "Errors occurred: See logs above for more info");
+    }
+
+    function findInDirectory(string memory directory, string memory nameRegex) internal returns (string[] memory) {
+        string[] memory inputs = new string[](4);
+        inputs[0] = "find";
+        inputs[1] = directory;
+        inputs[2] = "-name";
+        inputs[3] = nameRegex;
+        string memory files = string(vm.ffi(inputs));
+        console2.log(files);
+        return inputs;
     }
 
     function runOnSingleFile(string memory addressesJsonPath) internal {
