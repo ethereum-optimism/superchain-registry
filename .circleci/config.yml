@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Check for changes
           command: git diff --exit-code
-  check-forge-fmt
+  check-forge-fmt:
     docker:
       - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:latest
     steps:
