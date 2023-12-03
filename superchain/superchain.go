@@ -369,7 +369,10 @@ type SuperchainConfig struct {
 	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
 
 	// Hardfork Configuration
-	CanyonTime *uint64 `yaml:"canyon_time,omitempty"`
+	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
+	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
+	EclipseTime *uint64 `yaml:"eclipse_time,omitempty"`
+	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
 }
 
 type Superchain struct {
