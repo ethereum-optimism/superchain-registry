@@ -48,17 +48,6 @@ contract CheckSecurityConfigs is Script {
         require(!hasErrors, "Errors occurred: See logs above for more info");
     }
 
-    function findInDirectory(string memory directory, string memory nameRegex) internal returns (string[] memory) {
-        string[] memory inputs = new string[](4);
-        inputs[0] = "find";
-        inputs[1] = directory;
-        inputs[2] = "-name";
-        inputs[3] = nameRegex;
-        string memory files = string(vm.ffi(inputs));
-        console2.log(files);
-        return inputs;
-    }
-
     function runOnSingleFile(string memory addressesJsonPath) internal {
         console2.log("Checking %s", addressesJsonPath);
         ProtocolAddresses memory addresses = getAddresses(addressesJsonPath);
