@@ -71,7 +71,7 @@ contract CheckSecurityConfigs is Script {
         checkOptimismPortalProxy(addresses);
         checkProxyAdmin(addresses);
         checkSystemConfigProxy(addresses);
-        // TODO(issues/33): Check the integrity of the implementations.
+        // TODO Check the integrity of the implementations: https://github.com/ethereum-optimism/superchain-registry/issues/33
     }
 
     function checkAddressManager(ProtocolAddresses memory addresses) internal {
