@@ -57,7 +57,8 @@ the following privilege grants and role designations:
       the L2 oracle they trust with the L2 state root information.
    5. Trusted system config. For example, `OptimismPortalProxy`
       specifies the system config they trust to get resource config
-      from. TODO: add checks for the `ResourceMetering` contract.
+      from. TODO(issues/37): add checks for the `ResourceMetering`
+      contract.
 3. Optimism privileged operational roles:
    1. Guardians. This is the role that can pause withdraws in the
       Optimism protocol.
