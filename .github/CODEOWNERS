@@ -1,18 +1,9 @@
 # default code-owner
-* @protolambda
+* @ethereum-optimism/security-reviewers
 
-# Mainnet superchain configuration
-# Note: the superchain registry is in active development,
-# and mainnet-configurations have a place-holder code-owner.
-/superchain/mainnet @protolambda
+*.go @protolambda
+*.js @roninjin10
+package.json @roninjin10
 
-# Testnet superchain configurations
-/superchain/goerli @protolambda
-/superchain/sepolia @protolambda
+/scripts/CheckSecurityConfigs.s.sol @ethereum-optimism/security-reviewers
 
-# Configs / build system
-/.github @protolambda
-/.circleci @protolambda
-
-# Go bindings
-/superchain.go @protolambda

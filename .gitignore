@@ -1,4 +1,14 @@
-.DS_Store
+# Compiler files
+cache/
+out/
+
+# Ignores development broadcast logs
+!/broadcast
+/broadcast/*/31337/
+/broadcast/**/dry-run/
+
+# Docs
+docs/
 
 # vim
 *.sw*
@@ -6,6 +16,8 @@
 # jetbrains
 .idea/
 
+# Misc
+.DS_Store
 .env
 .env*
 !.env.example
