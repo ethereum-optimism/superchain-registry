@@ -1,2 +1,8 @@
 # default code-owner
 * @ethereum-optimism/security-reviewers
+
+*.go @protolambda
+*.js @roninjin10
+
+/scripts/CheckSecurityConfigs.s.sol @ethereum-optimism/security-reviewers
+
