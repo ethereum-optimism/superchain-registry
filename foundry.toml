@@ -1,6 +1,7 @@
 [profile.default]
 src = "src"
 out = "out"
+script = "scripts"
 libs = ["lib"]
 fs_permissions = [ {access = "read", path = "./superchain/extra/addresses/mainnet/"} ]
 
