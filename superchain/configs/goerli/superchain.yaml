@@ -5,4 +5,4 @@ l1:
   explorer: https://goerli.etherscan.io
 
 protocol_versions_addr: "0x0C24F5098774aA366827D667494e9F889f7cFc08"
-canyon_time: 1699981200
+canyon_time: 1699981200 # Tue Nov 14 17:00:00 UTC 2023
