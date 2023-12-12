@@ -367,6 +367,7 @@ type SuperchainConfig struct {
 	L1   SuperchainL1Info `yaml:"l1"`
 
 	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
+	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration
 	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
