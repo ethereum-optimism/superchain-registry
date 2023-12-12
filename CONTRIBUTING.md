@@ -23,6 +23,7 @@ l1:
   explorer: https://goerli.etherscan.io
 
 protocol_versions_addr: null # todo
+superchain_config_addr: null # todo
 EOF
 ```
 Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.
@@ -127,7 +128,7 @@ The format is a gzipped JSON `genesis.json` file, with either:
   but with `codeHash` (bytes32, `keccak256` hash of contract code) attribute per account,
   instead of the `code` attribute seen in standard Ethereum genesis definitions.
 - a `stateHash` attribute: to omit a large state (e.g. for networks with a re-genesis or migration history).
-  Nodes can load the genesis block header, and state-sync to complete the node initialization. 
+  Nodes can load the genesis block header, and state-sync to complete the node initialization.
 
 ```bash
 # create extra genesis data
