@@ -1,6 +1,7 @@
 package superchain
 
 import (
+	"encoding/hex"
 	"path"
 	"strings"
 	"testing"
@@ -129,25 +130,25 @@ func TestContractImplementations(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to load contract implementations: %v", err)
 	}
-	if impls.L1CrossDomainMessenger.Get("1.6.0") != HexToAddress("0xf4d5682dA3ad1820ea83E1cEE5Fd92a3A7BabC30") {
+	if impls.L1CrossDomainMessenger.Get("1.6.0") != MustHexToAddress("0xf4d5682dA3ad1820ea83E1cEE5Fd92a3A7BabC30") {
 		t.Fatal("wrong L1CrossDomainMessenger address")
 	}
-	if impls.L1ERC721Bridge.Get("1.3.0") != HexToAddress("0x8ADd7FB53A242e827373519d260EE3B8F7612Ba1") {
+	if impls.L1ERC721Bridge.Get("1.3.0") != MustHexToAddress("0x8ADd7FB53A242e827373519d260EE3B8F7612Ba1") {
 		t.Fatal("wrong L1ERC721Bridge address")
 	}
-	if impls.L1StandardBridge.Get("1.3.0") != HexToAddress("0x9c540e769B9453d174EdB683a90D9170e6559F16") {
+	if impls.L1StandardBridge.Get("1.3.0") != MustHexToAddress("0x9c540e769B9453d174EdB683a90D9170e6559F16") {
 		t.Fatal("wrong L1StandardBridge address")
 	}
-	if impls.L2OutputOracle.Get("1.5.0") != HexToAddress("0x7a811C9862ab54E677EEdA7e6F075aC86a1f551e") {
+	if impls.L2OutputOracle.Get("1.5.0") != MustHexToAddress("0x7a811C9862ab54E677EEdA7e6F075aC86a1f551e") {
 		t.Fatal("wrong L2OutputOracle address")
 	}
-	if impls.OptimismMintableERC20Factory.Get("1.4.0") != HexToAddress("0x135B9097A0e1e56190251c62f111B676Fb4Ec494") {
+	if impls.OptimismMintableERC20Factory.Get("1.4.0") != MustHexToAddress("0x135B9097A0e1e56190251c62f111B676Fb4Ec494") {
 		t.Fatal("wrong OptimismMintableERC20 address")
 	}
-	if impls.OptimismPortal.Get("1.9.0") != HexToAddress("0x8Cfa294bD0c6F63cD65d492bdB754eAcf684D871") {
+	if impls.OptimismPortal.Get("1.9.0") != MustHexToAddress("0x8Cfa294bD0c6F63cD65d492bdB754eAcf684D871") {
 		t.Fatal("wrong OptimismPortal address")
 	}
-	if impls.SystemConfig.Get("1.7.0") != HexToAddress("0x09323D05868393c7EBa8190BAc173f843b82030a") {
+	if impls.SystemConfig.Get("1.7.0") != MustHexToAddress("0x09323D05868393c7EBa8190BAc173f843b82030a") {
 		t.Fatal("wrong SystemConfig address")
 	}
 }
@@ -229,6 +230,22 @@ func TestContractVersionsResolve(t *testing.T) {
 	}
 }
 
+func testAddr(v string) Address {
+	v = strings.TrimPrefix(v, "0x")
+	if len(v)%2 != 0 {
+		v += "0"
+	}
+	if len(v) > 2*addressLen {
+		panic("test address is too long")
+	}
+	var out Address
+	_, err := hex.Decode(out[:], []byte(v))
+	if err != nil {
+		panic(err)
+	}
+	return out
+}
+
 // TestResolve ensures that the low level resolve function works on semantic
 // versioning correctly. It will return the highest version that matches the
 // given semver string.
@@ -242,7 +259,7 @@ func TestResolve(t *testing.T) {
 		{
 			name: "exact",
 			set: AddressSet{
-				"v1.0.0": HexToAddress("0x123"),
+				"v1.0.0": testAddr("0x123"),
 			},
 			version: "v1.0.0",
 			expect:  "v1.0.0",
@@ -250,8 +267,8 @@ func TestResolve(t *testing.T) {
 		{
 			name: "largest-minor",
 			set: AddressSet{
-				"v1.2.0": HexToAddress("0x123"),
-				"v1.1.0": HexToAddress("0x234"),
+				"v1.2.0": testAddr("0x123"),
+				"v1.1.0": testAddr("0x234"),
 			},
 			version: "^1.0.0",
 			expect:  "v1.2.0",
@@ -259,8 +276,8 @@ func TestResolve(t *testing.T) {
 		{
 			name: "largest-patch",
 			set: AddressSet{
-				"v1.0.2": HexToAddress("0x123"),
-				"v1.0.1": HexToAddress("0x234"),
+				"v1.0.2": testAddr("0x123"),
+				"v1.0.1": testAddr("0x234"),
 			},
 			version: "^1.0.0",
 			expect:  "v1.0.2",
@@ -268,8 +285,8 @@ func TestResolve(t *testing.T) {
 		{
 			name: "x-patch",
 			set: AddressSet{
-				"v3.0.5": HexToAddress("0x123"),
-				"v3.0.2": HexToAddress("0x234"),
+				"v3.0.5": testAddr("0x123"),
+				"v3.0.2": testAddr("0x234"),
 			},
 			version: "v3.0.x",
 			expect:  "v3.0.5",
@@ -277,9 +294,9 @@ func TestResolve(t *testing.T) {
 		{
 			name: "x-minor",
 			set: AddressSet{
-				"v2.5.1": HexToAddress("0x456"),
-				"v2.5.0": HexToAddress("0x123"),
-				"v2.2.2": HexToAddress("0x234"),
+				"v2.5.1": testAddr("0x456"),
+				"v2.5.0": testAddr("0x123"),
+				"v2.2.2": testAddr("0x234"),
 			},
 			version: "v2.x",
 			expect:  "v2.5.1",
@@ -303,21 +320,21 @@ func TestResolve(t *testing.T) {
 // both the "v" prefix and without the "v" prefix.
 func TestAddressSet(t *testing.T) {
 	set := AddressSet{
-		"v1.0.0": HexToAddress("0x123"),
-		"1.1.0":  HexToAddress("0x234"),
+		"v1.0.0": testAddr("0x123"),
+		"1.1.0":  testAddr("0x234"),
 	}
 
-	if set.Get("v1.0.0") != HexToAddress("0x123") {
+	if set.Get("v1.0.0") != testAddr("0x123") {
 		t.Fatal("wrong address")
 	}
-	if set.Get("1.0.0") != HexToAddress("0x123") {
+	if set.Get("1.0.0") != testAddr("0x123") {
 		t.Fatal("wrong address")
 	}
 
-	if set.Get("v1.1.0") != HexToAddress("0x234") {
+	if set.Get("v1.1.0") != testAddr("0x234") {
 		t.Fatal("wrong address")
 	}
-	if set.Get("1.1.0") != HexToAddress("0x234") {
+	if set.Get("1.1.0") != testAddr("0x234") {
 		t.Fatal("wrong address")
 	}
 }
