@@ -69,7 +69,7 @@ jobs:
           name: check security configs
           command: |
             forge build
-            forge script CheckSecurityConfigs --rpc-url="https://ci-mainnet-l1.optimism.io"
+            forge script CheckSecurityConfigs --fork-url="https://ci-mainnet-l1.optimism.io"
 
 workflows:
   main:
