@@ -69,7 +69,10 @@ jobs:
           name: check security configs
           command: |
             forge build
-            forge script CheckSecurityConfigs --fork-url="https://ci-mainnet-l1.optimism.io"
+            # Note: If RPC is being rate-limited, consider reducing
+            # --compute-units-per-second or using --fork-retries and
+            # --fork-retry-backoff to stay under the limit.
+            forge script CheckSecurityConfigs --fork-url="https://ci-mainnet-l1.optimism.io" --compute-units-per-second=320
 
 workflows:
   main:
