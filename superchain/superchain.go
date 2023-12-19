@@ -322,9 +322,14 @@ func (c ContractImplementations) Copy() ContractImplementations {
 
 type GenesisSystemConfig struct {
 	BatcherAddr Address `json:"batcherAddr"`
-	Overhead    Hash    `json:"overhead"`
-	Scalar      Hash    `json:"scalar"`
-	GasLimit    uint64  `json:"gasLimit"`
+
+	Overhead Hash `json:"overhead,omitempty"` // ignored post-Ecotone upgrade
+	Scalar   Hash `json:"scalar,omitempty"`   // ignored post-Ecotone upgrade
+
+	GasLimit uint64 `json:"gasLimit"`
+
+	L1BasefeeScalar     uint32 `json:"l1BasefeeScalar,omitempty"`     // added in Ecotone upgrade
+	L1BlobBasefeeScalar uint32 `json:"l1BlobBasefeeScalar,omitempty"` // added in Ecotone upgrade
 }
 
 type GenesisAccount struct {
