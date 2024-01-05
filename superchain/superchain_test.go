@@ -299,5 +299,17 @@ func TestCanyonTimestampOnBlockBoundary(t *testing.T) {
 					superchainName, id, ct, chainCfg.Genesis.L2Time, 2)
 			}
 		}
+
+		// Aevo specific test, 10 second block time
+		if superchainName == "mainnet" {
+			const aevoGenesisL2Time = 1679193011
+			const aevoBlockTime = 10
+
+			canyonOffset := ct - aevoGenesisL2Time
+			if canyonOffset%aevoBlockTime != 0 {
+				t.Fatalf("Canyon time on superchain %v for %v is not on the block time. canyon time: %v. L2 start time: %v, block time: %v",
+					superchainName, "aevo", ct, aevoGenesisL2Time, aevoBlockTime)
+			}
+		}
 	}
 }
