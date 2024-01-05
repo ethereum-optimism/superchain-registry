@@ -1,6 +1,7 @@
 package superchain
 
 import (
+	"fmt"
 	"path"
 	"strings"
 	"testing"
@@ -286,18 +287,20 @@ func TestContractBytecodes(t *testing.T) {
 // This is critical because the create2Deployer only activates on a block's timestamp.
 func TestCanyonTimestampOnBlockBoundary(t *testing.T) {
 	for superchainName, superchainConfig := range Superchains {
-		if superchainConfig.Config.CanyonTime == nil {
-			continue
-		}
-		ct := *superchainConfig.Config.CanyonTime
 		for _, id := range superchainConfig.ChainIDs {
 			chainCfg := OPChains[id]
-			canyonOffset := ct - chainCfg.Genesis.L2Time
-			// Block time is hardcoded in op-node/rollup/superchain.go
-			if canyonOffset%2 != 0 {
-				t.Fatalf("Canyon time on superchain %v for %v is not on the block time. canyon time: %v. L2 start time: %v, block time: %v",
-					superchainName, id, ct, chainCfg.Genesis.L2Time, 2)
-			}
+			t.Run(fmt.Sprintf("%s_%s", superchainName, chainCfg.Name), testNetworkUpgradeTimestampOffset(chainCfg.Genesis.L2Time, 2, superchainConfig.Config.CanyonTime))
+		}
+	}
+}
+
+// TestEcotoneTimestampOnBlockBoundary asserts that Ecotone will activate on a block's timestamp.
+// This is critical because the L2 upgrade transactions only activates on a block's timestamp.
+func TestEcotoneTimestampOnBlockBoundary(t *testing.T) {
+	for superchainName, superchainConfig := range Superchains {
+		for _, id := range superchainConfig.ChainIDs {
+			chainCfg := OPChains[id]
+			t.Run(fmt.Sprintf("%s/%s", superchainName, chainCfg.Name), testNetworkUpgradeTimestampOffset(chainCfg.Genesis.L2Time, 2, superchainConfig.Config.EcotoneTime))
 		}
 	}
 }
@@ -315,7 +318,10 @@ func TestAveoForkTimestamps(t *testing.T) {
 func testNetworkUpgradeTimestampOffset(l2GenesisTime uint64, blockTime uint64, upgradeTime *uint64) func(t *testing.T) {
 	return func(t *testing.T) {
 		if upgradeTime == nil {
-			t.Skip("No network upgade time")
+			t.Skip("No network upgrade time")
+		}
+		if *upgradeTime == 0 {
+			t.Skip("Upgrade occurred at genesis")
 		}
 		offset := *upgradeTime - l2GenesisTime
 		if offset%blockTime != 0 {
