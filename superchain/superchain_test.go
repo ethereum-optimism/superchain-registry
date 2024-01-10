@@ -301,3 +301,25 @@ func TestCanyonTimestampOnBlockBoundary(t *testing.T) {
 		}
 	}
 }
+
+// TestAevoForkTimestamps ensures that network upgades that occur on a block boundary
+// also occur on Aevo which has a non-standard block time.
+func TestAevoForkTimestamps(t *testing.T) {
+	aevoGenesisL2Time := uint64(1679193011)
+	aevoBlockTime := uint64(10)
+	config := Superchains["mainnet"]
+	t.Run("canyon", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.CanyonTime))
+	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.EcotoneTime))
+}
+
+func testNetworkUpgradeTimestampOffset(l2GenesisTime uint64, blockTime uint64, upgradeTime *uint64) func(t *testing.T) {
+	return func(t *testing.T) {
+		if upgradeTime == nil {
+			t.Skip("No network upgade time")
+		}
+		offset := *upgradeTime - l2GenesisTime
+		if offset%blockTime != 0 {
+			t.Fatalf("HF time is not on the block time. network upgade time: %v. L2 start time: %v, block time: %v ", *upgradeTime, l2GenesisTime, blockTime)
+		}
+	}
+}
