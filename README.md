@@ -22,6 +22,7 @@ go get github.com/ethereum-optimism/superchain-registry/superchain@latest
 ```
 See [`op-chain-ops`] for config tooling and
  for smart-contract bindings.
+ 
 
 [`op-chain-ops`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-chain-ops
 [`op-bindings`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-bindings
