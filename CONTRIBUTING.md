@@ -152,4 +152,5 @@ by inspecting the `SystemConfig` receipts of this given L1 block.
 # (this is deprecated, users should load this from L1, when available via SystemConfig).
 mkdir -p $SUPERCHAIN_REPO/superchain/extra/genesis-system-configs/$SUPERCHAIN_TARGET
 jq -r .genesis.system_config $ROLLUP_CONFIG > $SUPERCHAIN_REPO/superchain/extra/genesis-system-configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.json
+
 ```
