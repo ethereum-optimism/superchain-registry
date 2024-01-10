@@ -285,21 +285,13 @@ func TestContractBytecodes(t *testing.T) {
 // TestCanyonTimestampOnBlockBoundary asserts that Canyon will activate on a block's timestamp.
 // This is critical because the create2Deployer only activates on a block's timestamp.
 func TestCanyonTimestampOnBlockBoundary(t *testing.T) {
-	for superchainName, superchainConfig := range Superchains {
-		if superchainConfig.Config.CanyonTime == nil {
-			continue
-		}
-		ct := *superchainConfig.Config.CanyonTime
-		for _, id := range superchainConfig.ChainIDs {
-			chainCfg := OPChains[id]
-			canyonOffset := ct - chainCfg.Genesis.L2Time
-			// Block time is hardcoded in op-node/rollup/superchain.go
-			if canyonOffset%2 != 0 {
-				t.Fatalf("Canyon time on superchain %v for %v is not on the block time. canyon time: %v. L2 start time: %v, block time: %v",
-					superchainName, id, ct, chainCfg.Genesis.L2Time, 2)
-			}
-		}
-	}
+	testStandardTimestampOnBlockBoundary(t, func(s *Superchain) *uint64 { return s.Config.CanyonTime })
+}
+
+// TestEcotoneTimestampOnBlockBoundary asserts that Ecotone will activate on a block's timestamp.
+// This is critical because the L2 upgrade transactions only activates on a block's timestamp.
+func TestEcotoneTimestampOnBlockBoundary(t *testing.T) {
+	testStandardTimestampOnBlockBoundary(t, func(s *Superchain) *uint64 { return s.Config.EcotoneTime })
 }
 
 // TestAevoForkTimestamps ensures that network upgades that occur on a block boundary
@@ -312,10 +304,22 @@ func TestAevoForkTimestamps(t *testing.T) {
 	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.EcotoneTime))
 }
 
+func testStandardTimestampOnBlockBoundary(t *testing.T, ts func(*Superchain) *uint64) {
+	for _, superchainConfig := range Superchains {
+		for _, id := range superchainConfig.ChainIDs {
+			chainCfg := OPChains[id]
+			t.Run(chainCfg.Name, testNetworkUpgradeTimestampOffset(chainCfg.Genesis.L2Time, 2, ts(superchainConfig)))
+		}
+	}
+}
+
 func testNetworkUpgradeTimestampOffset(l2GenesisTime uint64, blockTime uint64, upgradeTime *uint64) func(t *testing.T) {
 	return func(t *testing.T) {
 		if upgradeTime == nil {
-			t.Skip("No network upgade time")
+			t.Skip("No network upgrade time")
+		}
+		if *upgradeTime == 0 {
+			t.Skip("Upgrade occurred at genesis")
 		}
 		offset := *upgradeTime - l2GenesisTime
 		if offset%blockTime != 0 {
