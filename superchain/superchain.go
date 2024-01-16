@@ -192,6 +192,7 @@ func resolve(set AddressSet, version string) (VersionedContract, error) {
 // in the superchain. This currently only supports L1 contracts but could
 // represent L2 predeploys in the future.
 type ContractVersions struct {
+	AddressManager               string `yaml:"address_manager"`
 	L1CrossDomainMessenger       string `yaml:"l1_cross_domain_messenger"`
 	L1ERC721Bridge               string `yaml:"l1_erc721_bridge"`
 	L1StandardBridge             string `yaml:"l1_standard_bridge"`
@@ -199,6 +200,7 @@ type ContractVersions struct {
 	OptimismMintableERC20Factory string `yaml:"optimism_mintable_erc20_factory"`
 	OptimismPortal               string `yaml:"optimism_portal"`
 	SystemConfig                 string `yaml:"system_config"`
+	ProxyAdmin                   string `yaml:"proxy_admin"`
 }
 
 // Check will sanity check the validity of the semantic version strings
