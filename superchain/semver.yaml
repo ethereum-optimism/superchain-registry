@@ -1,3 +1,4 @@
+address_manager: 0.0.0
 l1_cross_domain_messenger: 1.7.0
 l1_erc721_bridge: 1.4.0
 l1_standard_bridge: 1.4.0
@@ -5,3 +6,4 @@ l2_output_oracle: 1.6.0
 optimism_mintable_erc20_factory: 1.6.0
 optimism_portal: 1.10.0
 system_config: 1.10.0
+proxy_admin: 0.0.0
