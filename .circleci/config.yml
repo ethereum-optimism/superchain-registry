@@ -37,6 +37,9 @@ jobs:
       - run:
           name: Build and publish package on NPM 📦
           command: pnpm release
+      - run: 
+          name: some
+          command: printenv
   check-codegen:
     docker:
       - image: cimg/node:18.18.2
