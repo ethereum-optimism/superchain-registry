@@ -4,7 +4,48 @@ import (
 	"path"
 	"strings"
 	"testing"
+
+	"gopkg.in/yaml.v3"
 )
+
+func checkErr(t *testing.T, err error) {
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+func TestChainIds(t *testing.T) {
+	chainIDs := map[uint64]bool{}
+
+	storeIfUnique := func(chainId uint64) {
+		if chainIDs[chainId] {
+			t.Fatalf("duplicate chain ID %d", chainId)
+		}
+		chainIDs[chainId] = true
+	}
+
+	targets, err := superchainFS.ReadDir("configs")
+	checkErr(t, err)
+
+	for _, target := range targets {
+		if target.IsDir() {
+			configs, err := superchainFS.ReadDir(path.Join("configs", target.Name()))
+			checkErr(t, err)
+			for _, config := range configs {
+				if strings.HasSuffix(config.Name(), ".yaml") {
+					configBytes, err := superchainFS.ReadFile(path.Join("configs", target.Name(), config.Name()))
+					checkErr(t, err)
+					var chainConfig ChainConfig
+					if config.Name() == "superchain.yaml" {
+						continue
+					} else {
+						checkErr(t, yaml.Unmarshal(configBytes, &chainConfig))
+						storeIfUnique(chainConfig.ChainID)
+					}
+				}
+			}
+		}
+	}
+}
 
 func TestConfigs(t *testing.T) {
 	n := 0
