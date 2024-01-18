@@ -37,10 +37,9 @@ func TestChainIds(t *testing.T) {
 					var chainConfig ChainConfig
 					if config.Name() == "superchain.yaml" {
 						continue
-					} else {
-						checkErr(t, yaml.Unmarshal(configBytes, &chainConfig))
-						storeIfUnique(chainConfig.ChainID)
 					}
+					checkErr(t, yaml.Unmarshal(configBytes, &chainConfig))
+					storeIfUnique(chainConfig.ChainID)
 				}
 			}
 		}
