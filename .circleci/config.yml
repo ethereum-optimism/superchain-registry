@@ -52,7 +52,7 @@ jobs:
           command: git diff --exit-code
   check-forge-fmt:
     docker:
-      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:latest
+      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.35.0
     steps:
       - checkout
       - run:
@@ -62,7 +62,7 @@ jobs:
   check-security-configs:
     circleci_ip_ranges: true
     docker:
-      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:latest
+      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.35.0
     steps:
       - checkout
       - run:
