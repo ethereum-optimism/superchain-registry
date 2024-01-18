@@ -13,7 +13,6 @@ import {VmSafe} from "forge-std/Vm.sol";
  *         $ forge script CheckSecurityConfigs \
  *             --rpc-url $MAINNET_RPC_URL
  */
-
 contract CheckSecurityConfigs is Script {
     struct ProtocolAddresses {
         // Protocol contracts
