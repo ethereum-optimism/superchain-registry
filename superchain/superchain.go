@@ -201,9 +201,9 @@ type ContractVersions struct {
 	SystemConfig                 string `yaml:"system_config"`
 }
 
-// Check will sanity check the validity of the semantic version strings
+// SanityCheck will sanity check the validity of the semantic version strings
 // in the ContractVersions struct.
-func (c ContractVersions) Check() error {
+func (c ContractVersions) SanityCheck() error {
 	val := reflect.ValueOf(c)
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
@@ -505,7 +505,7 @@ func newContractVersions() (ContractVersions, error) {
 	if err := yaml.Unmarshal(semvers, &versions); err != nil {
 		return versions, fmt.Errorf("failed to unmarshal semver.yaml: %w", err)
 	}
-	if err := versions.Check(); err != nil {
+	if err := versions.SanityCheck(); err != nil {
 		return versions, fmt.Errorf("semver.yaml is invalid: %w", err)
 	}
 	return versions, nil

@@ -9,7 +9,7 @@ import (
 // TestContractVersionsCheck will fail if the superchain semver file
 // is not read correctly.
 func TestContractVersionsCheck(t *testing.T) {
-	if err := superchain.SuperchainSemver.Check(); err != nil {
+	if err := superchain.SuperchainSemver.SanityCheck(); err != nil {
 		t.Fatal(err)
 	}
 }
