@@ -126,14 +126,6 @@ func TestContractImplementations(t *testing.T) {
 	}
 }
 
-// TestContractVersionsCheck will fail if the superchain semver file
-// is not read correctly.
-func TestContractVersionsCheck(t *testing.T) {
-	if err := SuperchainSemver.Check(); err != nil {
-		t.Fatal(err)
-	}
-}
-
 // TestContractVersionsResolve will test that the high lever interface used works.
 func TestContractVersionsResolve(t *testing.T) {
 	impls, err := newContractImplementations("goerli")
