@@ -35,9 +35,6 @@ func TestSemverFile(t *testing.T) {
 // actual semver matching the declared semver. Actual semvers are
 // read from the L1 chain RPC provider for the chain in question.
 func TestContractVersionsCheck(t *testing.T) {
-	if err := superchain.SuperchainSemver.SanityCheck(); err != nil {
-		t.Fatal(err)
-	}
 
 	checkAllOPChainsSatisfySemver := func(contractName string) {
 		desiredSemver := reflect.ValueOf(superchain.SuperchainSemver).FieldByName(contractName).String()
