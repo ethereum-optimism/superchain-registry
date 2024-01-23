@@ -1,7 +1,7 @@
 name: Mode
 chain_id: 34443
-public_rpc: https://rpc.mode.network
-sequencer_rpc: https://rpc.mode.network
+public_rpc: https://mainnet.mode.network
+sequencer_rpc: https://mainnet-sequencer.mode.network
 explorer: https://explorer.mode.network
 
 system_config_addr: "0x5e6432f18bc5d497b1ab2288a025fbf9d69e2221"
