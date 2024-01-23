@@ -3,6 +3,7 @@ package superchain_test
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
@@ -25,19 +26,31 @@ func TestContractVersionsCheck(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	desiredSemver := superchain.SuperchainSemver.OptimismPortal
-	// TODO complete all members of SuperchainSemver
-	// TODO resolve missing contracts
-	// TODO resolve extraneous contracts
-	for _, chain := range superchain.OPChains {
-		client, err := ethclient.Dial(superchain.Superchains[chain.Superchain].Config.L1.PublicRPC)
-		checkErr(t, err)
-		actualSemver, err := getVersion(context.Background(), common.Address(superchain.Addresses[chain.ChainID].OptimismPortalProxy), client) // TODO resolve difference in names
-		checkErr(t, err)
-		if desiredSemver != actualSemver {
-			t.Fatalf("OptimismPortalProxy should have version %v but has version %v (%s on %s)", desiredSemver, actualSemver, chain.Name, chain.Superchain)
+	checkAllOPChainsSatisfySemver := func(contractName string) {
+		desiredSemver := reflect.ValueOf(superchain.SuperchainSemver).FieldByName(contractName).String()
+
+		// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
+		proxyContractName := contractName + "Proxy"
+
+		for _, chain := range superchain.OPChains {
+			rpcEndpoint := superchain.Superchains[chain.Superchain].Config.L1.PublicRPC
+			t.Logf("Dialing %s...", rpcEndpoint)
+			client, err := ethclient.Dial(rpcEndpoint)
+			checkErr(t, err)
+			r := reflect.ValueOf(superchain.Addresses[chain.ChainID])
+			contractAddressValue := reflect.Indirect(r).FieldByName(proxyContractName)
+			if contractAddressValue == (reflect.Value{}) {
+				t.Fatalf("Semver for %s not specified for chain %s on %s", proxyContractName, chain.Name, chain.Superchain)
+			}
+			actualSemver, err := getVersion(context.Background(), common.Address(contractAddressValue.Bytes()), client)
+			checkErr(t, err)
+			if desiredSemver != actualSemver {
+				t.Fatalf("%v should have version %v but has version %v (%s on %s)", contractName, desiredSemver, actualSemver, chain.Name, chain.Superchain)
+			}
 		}
 	}
+	contractName := "OptimismPortal"
+	checkAllOPChainsSatisfySemver(contractName)
 
 }
 
