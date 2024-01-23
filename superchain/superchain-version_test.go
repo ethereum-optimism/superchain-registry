@@ -49,8 +49,11 @@ func TestContractVersionsCheck(t *testing.T) {
 			}
 		}
 	}
-	contractName := "OptimismPortal"
-	checkAllOPChainsSatisfySemver(contractName)
+
+	for i := 0; i < reflect.ValueOf(superchain.SuperchainSemver).NumField(); i++ {
+		contractName := reflect.ValueOf(superchain.SuperchainSemver).Field(i).String()
+		checkAllOPChainsSatisfySemver(contractName)
+	}
 
 }
 
