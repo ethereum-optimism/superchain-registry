@@ -21,6 +21,19 @@ func checkErr(t *testing.T, err error) {
 
 // TestContractVersionsCheck will fail if the superchain semver file
 // is not read correctly.
+func TestSemverFile(t *testing.T) {
+	if err := superchain.SuperchainSemver.SanityCheck(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// TestContractVersionsCheck will check that
+//   - for each declared contract "Foo" in superchain.SuperchainSemver
+//   - for each chain in superchain.OPChains
+//
+// there is a contract address declared for "FooProxy" which has an
+// actual semver matching the declared semver. Actual semvers are
+// read from the L1 chain RPC provider for the chain in question.
 func TestContractVersionsCheck(t *testing.T) {
 	if err := superchain.SuperchainSemver.SanityCheck(); err != nil {
 		t.Fatal(err)
