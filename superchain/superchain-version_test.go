@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"reflect"
-	"strings"
 	"testing"
 	"time"
 
@@ -70,8 +69,8 @@ func TestContractVersionsCheck(t *testing.T) {
 				continue // TODO this is specified in semver.yaml but not in an address list.
 			}
 			proxyContractName := field.Name + "Proxy"
-			desiredSemver := desiredSemver[field.Name]
 			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
+			desiredSemver := desiredSemver[field.Name]
 			rpcEndpoint := superchain.Superchains[chain.Superchain].Config.L1.PublicRPC
 			client, err := ethclient.Dial(rpcEndpoint)
 			checkErr(t, err)
@@ -92,9 +91,6 @@ func TestContractVersionsCheck(t *testing.T) {
 	}
 
 	for _, chain := range superchain.OPChains {
-		if strings.ToLower(chain.Superchain) != "mainnet" {
-			continue // TODO Check all superchains
-		}
 		checkOPChainSatisfiesSemver(chain)
 	}
 }
