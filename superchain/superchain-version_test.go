@@ -23,7 +23,7 @@ func checkErr(t *testing.T, err error) {
 // is not read correctly.
 func TestSemverFile(t *testing.T) {
 	if err := superchain.SuperchainSemver.SanityCheck(); err != nil {
-		t.Fatal(err)
+		t.Error(err)
 	}
 }
 
@@ -50,18 +50,21 @@ func TestContractVersionsCheck(t *testing.T) {
 			r := reflect.ValueOf(superchain.Addresses[chain.ChainID])
 			contractAddressValue := reflect.Indirect(r).FieldByName(proxyContractName)
 			if contractAddressValue == (reflect.Value{}) {
-				t.Fatalf("Semver for %s not specified for chain %s on %s", proxyContractName, chain.Name, chain.Superchain)
+				t.Errorf("Semver for %s not specified for chain %s on %s", proxyContractName, chain.Name, chain.Superchain)
 			}
 			actualSemver, err := getVersion(context.Background(), common.Address(contractAddressValue.Bytes()), client)
 			checkErr(t, err)
 			if desiredSemver != actualSemver {
-				t.Fatalf("%v should have version %v but has version %v (%s on %s)", contractName, desiredSemver, actualSemver, chain.Name, chain.Superchain)
+				t.Errorf("%v should have version %v but has version %v (%s on %s)", contractName, desiredSemver, actualSemver, chain.Name, chain.Superchain)
+			} else {
+				t.Logf("Semver for %s satisfied for chain %s on %s", proxyContractName, chain.Name, chain.Superchain)
 			}
 		}
 	}
 
-	for i := 0; i < reflect.ValueOf(superchain.SuperchainSemver).NumField(); i++ {
-		contractName := reflect.ValueOf(superchain.SuperchainSemver).Field(i).String()
+	fields := reflect.VisibleFields(reflect.TypeOf(superchain.SuperchainSemver))
+	for _, field := range fields {
+		contractName := field.Name
 		checkAllOPChainsSatisfySemver(contractName)
 	}
 
