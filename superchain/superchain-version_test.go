@@ -55,13 +55,14 @@ func TestContractVersionsCheck(t *testing.T) {
 			contractAddressValue := reflect.Indirect(r).FieldByName(proxyContractName)
 			if contractAddressValue == (reflect.Value{}) {
 				t.Errorf("Semver for %s not specified for chain %s on %s", proxyContractName, chain.Name, chain.Superchain)
+				continue
 			}
 			actualSemver, err := getVersionWithRetries(context.Background(), common.Address(contractAddressValue.Bytes()), client)
 			if err != nil {
 				t.Errorf("RPC endpoint %s: %s", rpcEndpoint, err)
 			}
 			if desiredSemver != actualSemver {
-				t.Errorf("%v should have version %v but has version %v (%s on %s)", contractName, desiredSemver, actualSemver, chain.Name, chain.Superchain)
+				t.Errorf("%s:%s:%s should have version %s but should have version %s", chain.Superchain, chain.Name, contractName, actualSemver, desiredSemver)
 			} else {
 				t.Logf("Semver for %s satisfied for chain %s on %s", proxyContractName, chain.Name, chain.Superchain)
 			}
