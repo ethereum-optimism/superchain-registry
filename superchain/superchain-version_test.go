@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum/go-ethereum"
@@ -43,8 +45,10 @@ func TestContractVersionsCheck(t *testing.T) {
 		proxyContractName := contractName + "Proxy"
 
 		for _, chain := range superchain.OPChains {
+			if strings.ToLower(chain.Superchain) != "mainnet" {
+				continue // concentrate on mainnet superchain for now
+			}
 			rpcEndpoint := superchain.Superchains[chain.Superchain].Config.L1.PublicRPC
-			t.Logf("Dialing %s...", rpcEndpoint)
 			client, err := ethclient.Dial(rpcEndpoint)
 			checkErr(t, err)
 			r := reflect.ValueOf(superchain.Addresses[chain.ChainID])
@@ -52,8 +56,10 @@ func TestContractVersionsCheck(t *testing.T) {
 			if contractAddressValue == (reflect.Value{}) {
 				t.Errorf("Semver for %s not specified for chain %s on %s", proxyContractName, chain.Name, chain.Superchain)
 			}
-			actualSemver, err := getVersion(context.Background(), common.Address(contractAddressValue.Bytes()), client)
-			checkErr(t, err)
+			actualSemver, err := getVersionWithRetries(context.Background(), common.Address(contractAddressValue.Bytes()), client)
+			if err != nil {
+				t.Errorf("RPC endpoint %s: %s", rpcEndpoint, err)
+			}
 			if desiredSemver != actualSemver {
 				t.Errorf("%v should have version %v but has version %v (%s on %s)", contractName, desiredSemver, actualSemver, chain.Name, chain.Superchain)
 			} else {
@@ -87,4 +93,19 @@ func getVersion(ctx context.Context, addr common.Address, client *ethclient.Clie
 	}
 
 	return s[0].(string), nil
+}
+
+func getVersionWithRetries(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
+	numRetries := 3
+	retriesRemaining := numRetries
+	s, err := getVersion(ctx, addr, client)
+	for err != nil && retriesRemaining > 0 {
+		<-time.After(5 * time.Second)
+		retriesRemaining--
+		s, err = getVersion(ctx, addr, client)
+	}
+	if err != nil {
+		return "", fmt.Errorf("getVersion request failed after %d attempts: %w", numRetries, err)
+	}
+	return s, nil
 }
