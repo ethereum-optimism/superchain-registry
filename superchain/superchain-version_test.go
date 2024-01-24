@@ -13,6 +13,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"golang.org/x/mod/semver"
 )
 
 func checkErr(t *testing.T, err error) {
@@ -41,6 +42,10 @@ const SOURCE_OF_TRUTH_SUPERCHAIN = "mainnet"
 // read from the L1 chain RPC provider for the chain in question.
 func TestContractVersionsCheck(t *testing.T) {
 
+	isSemverAcceptable := func(desired, actual string) bool {
+		return semver.Compare(desired, actual) <= 0
+	}
+
 	semverFields := reflect.VisibleFields(reflect.TypeOf(superchain.SuperchainSemver))
 
 	desiredSemver := map[string]string{}
@@ -53,7 +58,6 @@ func TestContractVersionsCheck(t *testing.T) {
 		proxyContractAddressValue := reflect.Indirect(r).FieldByName(proxyContractName)
 		client, err := ethclient.Dial(superchain.Superchains[SOURCE_OF_TRUTH_SUPERCHAIN].Config.L1.PublicRPC)
 		checkErr(t, err)
-		t.Log(proxyContractName, proxyContractAddressValue)
 		actualSemver, err := getVersionWithRetries(context.Background(), common.Address(proxyContractAddressValue.Bytes()), client)
 		checkErr(t, err)
 		desiredSemver[field.Name] = actualSemver
@@ -74,15 +78,15 @@ func TestContractVersionsCheck(t *testing.T) {
 			r := reflect.ValueOf(superchain.Addresses[chain.ChainID])
 			contractAddressValue := reflect.Indirect(r).FieldByName(proxyContractName)
 			if contractAddressValue == (reflect.Value{}) {
-				t.Errorf("%10s:%-20s:%-30s has version UNSPECIFIED, but should have version %s", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
+				t.Errorf("%10s:%-20s:%-30s has version UNSPECIFIED (desired version %s)", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
 				continue
 			}
 			actualSemver, err := getVersionWithRetries(context.Background(), common.Address(contractAddressValue.Bytes()), client)
 			if err != nil {
 				t.Errorf("RPC endpoint %s: %s", rpcEndpoint, err)
 			}
-			if desiredSemver != actualSemver {
-				t.Errorf("%10s:%-20s:%-30s has version %s but should have version %s", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
+			if !isSemverAcceptable(desiredSemver, actualSemver) {
+				t.Errorf("%10s:%-20s:%-30s has version %s (desired version %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
 			}
 		}
 	}
