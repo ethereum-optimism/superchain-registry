@@ -38,16 +38,15 @@ func TestSemverFile(t *testing.T) {
 // read from the L1 chain RPC provider for the chain in question.
 func TestContractVersionsCheck(t *testing.T) {
 
-	checkAllOPChainsSatisfySemver := func(contractName string) {
-		desiredSemver := reflect.ValueOf(superchain.SuperchainSemver).FieldByName(contractName).String()
+	semverFields := reflect.VisibleFields(reflect.TypeOf(superchain.SuperchainSemver))
 
-		// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
-		proxyContractName := contractName + "Proxy"
+	checkOPChainSatisfiesSemver := func(chain *superchain.ChainConfig) {
 
-		for _, chain := range superchain.OPChains {
-			if strings.ToLower(chain.Superchain) != "mainnet" {
-				continue // concentrate on mainnet superchain for now
-			}
+		for _, field := range semverFields {
+			contractName := field.Name
+			desiredSemver := reflect.ValueOf(superchain.SuperchainSemver).FieldByName(contractName).String()
+			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
+			proxyContractName := contractName + "Proxy"
 			rpcEndpoint := superchain.Superchains[chain.Superchain].Config.L1.PublicRPC
 			client, err := ethclient.Dial(rpcEndpoint)
 			checkErr(t, err)
@@ -69,12 +68,12 @@ func TestContractVersionsCheck(t *testing.T) {
 		}
 	}
 
-	fields := reflect.VisibleFields(reflect.TypeOf(superchain.SuperchainSemver))
-	for _, field := range fields {
-		contractName := field.Name
-		checkAllOPChainsSatisfySemver(contractName)
+	for _, chain := range superchain.OPChains {
+		if strings.ToLower(chain.Superchain) != "mainnet" {
+			continue // concentrate on mainnet superchain for now
+		}
+		checkOPChainSatisfiesSemver(chain)
 	}
-
 }
 
 // getVersion will get the version of a contract at a given address, if it exposes a version() method.
