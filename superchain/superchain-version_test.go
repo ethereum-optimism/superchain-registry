@@ -62,7 +62,7 @@ func TestContractVersionsCheck(t *testing.T) {
 				t.Errorf("RPC endpoint %s: %s", rpcEndpoint, err)
 			}
 			if desiredSemver != actualSemver {
-				t.Errorf("%s:%s:%s should have version %s but should have version %s", chain.Superchain, chain.Name, contractName, actualSemver, desiredSemver)
+				t.Errorf("%s:%s:%s has version %s but should have version %s", chain.Superchain, chain.Name, contractName, actualSemver, desiredSemver)
 			} else {
 				t.Logf("Semver for %s satisfied for chain %s on %s", proxyContractName, chain.Name, chain.Superchain)
 			}
