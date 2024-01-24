@@ -15,7 +15,7 @@ import (
 
 func checkErr(t *testing.T, err error) {
 	if err != nil {
-		t.Fatal(err)
+		t.Error(err)
 	}
 }
 
@@ -23,7 +23,7 @@ func checkErr(t *testing.T, err error) {
 // is not read correctly.
 func TestSemverFile(t *testing.T) {
 	if err := superchain.SuperchainSemver.SanityCheck(); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 
