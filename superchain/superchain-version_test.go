@@ -68,7 +68,7 @@ func TestContractVersionsCheck(t *testing.T) {
 
 	for _, chain := range superchain.OPChains {
 		if strings.ToLower(chain.Superchain) != "mainnet" {
-			continue // concentrate on mainnet superchain for now
+			continue // TODO Check all superchains
 		}
 		checkOPChainSatisfiesSemver(chain)
 	}
