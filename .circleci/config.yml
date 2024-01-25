@@ -20,6 +20,22 @@ jobs:
           covermode: atomic
           failfast: true
           race: true
+  golang-lint-test-validation:
+    working_directory: ~/superchain-registry/validation
+    executor:
+      name: go/default  # is based on cimg/go
+      tag: '1.20'
+    steps:
+      - checkout:
+          path: ~/superchain-registry
+      - go/load-cache
+      - go/mod-download
+      - go/save-cache
+      - run: golangci-lint run -c=.golangci.yml
+      - go/test:
+          covermode: atomic
+          failfast: true
+          race: true
   publish-bot:
     environment:
       NODE_AUTH_TOKEN: $NPM_TOKEN  # Use NPM_TOKEN as the auth token
