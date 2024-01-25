@@ -2,6 +2,7 @@ package validation
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
@@ -55,6 +56,11 @@ func TestContractVersions(t *testing.T) {
 		desiredSemver[field.Name] = actualSemver
 	}
 
+	logOutput, err := json.MarshalIndent(desiredSemver, "", " ")
+	checkErr(t, err)
+
+	t.Logf("Desired Semver from %s/%s : \n %+v", SOURCE_OF_TRUTH_SUPERCHAIN, superchain.OPChains[SOURCE_OF_TRUTH_CHAINID].Name, string(logOutput))
+
 	checkOPChainSatisfiesSemver := func(chain *superchain.ChainConfig) {
 
 		for _, field := range semverFields {
@@ -79,7 +85,10 @@ func TestContractVersions(t *testing.T) {
 			}
 			if !isSemverAcceptable(desiredSemver, actualSemver) {
 				t.Errorf("%10s:%-20s:%-30s has version %s (desired version %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
+			} else {
+				t.Logf("%s/%s.%s.version=%s (ACCEPTABLE)", chain.Superchain, chain.Name, proxyContractName, actualSemver)
 			}
+
 		}
 	}
 
