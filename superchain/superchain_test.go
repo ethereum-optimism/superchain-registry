@@ -35,7 +35,7 @@ func TestChainIds(t *testing.T) {
 					configBytes, err := superchainFS.ReadFile(path.Join("configs", target.Name(), config.Name()))
 					checkErr(t, err)
 					var chainConfig ChainConfig
-					if config.Name() == "superchain.yaml" {
+					if config.Name() == "superchain.yaml" || config.Name() == "semver.yaml" {
 						continue
 					}
 					checkErr(t, yaml.Unmarshal(configBytes, &chainConfig))
@@ -129,9 +129,12 @@ func TestContractImplementations(t *testing.T) {
 // TestContractVersionsCheck will fail if the superchain semver file
 // is not read correctly.
 func TestContractVersionsCheck(t *testing.T) {
-	if err := SuperchainSemver.Check(); err != nil {
-		t.Fatal(err)
+	for _, versions := range SuperchainSemver {
+		if err := versions.Check(); err != nil {
+			t.Fatal(err)
+		}
 	}
+
 }
 
 // TestContractVersionsResolve will test that the high lever interface used works.

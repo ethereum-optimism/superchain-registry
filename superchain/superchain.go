@@ -24,7 +24,7 @@ var extraFS embed.FS
 //go:embed implementations
 var implementationsFS embed.FS
 
-//go:embed semver.yaml
+//go:embed configs/**/semver.yaml
 var semverFS embed.FS
 
 type BlockID struct {
@@ -398,15 +398,12 @@ var GenesisSystemConfigs = map[uint64]*GenesisSystemConfig{}
 // to chain by chain id.
 var Implementations = map[uint64]ContractImplementations{}
 
-// SuperchainSemver represents a global mapping of contract name to desired semver version.
-var SuperchainSemver ContractVersions
+// SuperchainSemver maps superchain name to a contract name : approved semver version structure.
+var SuperchainSemver map[string]ContractVersions
 
 func init() {
 	var err error
-	SuperchainSemver, err = newContractVersions()
-	if err != nil {
-		panic(fmt.Errorf("failed to read semver.yaml: %w", err))
-	}
+	SuperchainSemver = make(map[string]ContractVersions)
 
 	superchainTargets, err := superchainFS.ReadDir("configs")
 	if err != nil {
@@ -414,9 +411,16 @@ func init() {
 	}
 	// iterate over superchain-target entries
 	for _, s := range superchainTargets {
+
 		if !s.IsDir() {
 			continue // ignore files, e.g. a readme
 		}
+
+		SuperchainSemver[s.Name()], err = newContractVersions(s.Name())
+		if err != nil {
+			panic(fmt.Errorf("failed to read semver.yaml: %w", err))
+		}
+
 		// Load superchain-target config
 		superchainConfigData, err := superchainFS.ReadFile(path.Join("configs", s.Name(), "superchain.yaml"))
 		if err != nil {
@@ -437,7 +441,7 @@ func init() {
 			if c.IsDir() || !strings.HasSuffix(c.Name(), ".yaml") {
 				continue // ignore files. Chains must be a directory of configs.
 			}
-			if c.Name() == "superchain.yaml" {
+			if c.Name() == "superchain.yaml" || c.Name() == "semver.yaml" {
 				continue // already processed
 			}
 			// load chain config
@@ -496,9 +500,9 @@ func init() {
 
 // newContractVersions will read the contract versions from semver.yaml
 // and check to make sure that it is valid.
-func newContractVersions() (ContractVersions, error) {
+func newContractVersions(superchain string) (ContractVersions, error) {
 	var versions ContractVersions
-	semvers, err := semverFS.ReadFile("semver.yaml")
+	semvers, err := semverFS.ReadFile(path.Join("configs", superchain, "semver.yaml"))
 	if err != nil {
 		return versions, fmt.Errorf("failed to read semver.yaml: %w", err)
 	}
