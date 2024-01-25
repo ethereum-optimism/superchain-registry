@@ -439,7 +439,7 @@ func init() {
 		}
 		for _, c := range chainEntries {
 			if c.IsDir() || !strings.HasSuffix(c.Name(), ".yaml") {
-				continue // ignore files. Chains must be a directory of configs.
+				continue // ignore directories and non YAML files.
 			}
 			if c.Name() == "superchain.yaml" || c.Name() == "semver.yaml" {
 				continue // already processed
