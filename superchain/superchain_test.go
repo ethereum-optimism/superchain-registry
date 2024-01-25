@@ -28,19 +28,18 @@ func TestChainIds(t *testing.T) {
 
 	for _, target := range targets {
 		if target.IsDir() {
-			configs, err := superchainFS.ReadDir(path.Join("configs", target.Name()))
+			entries, err := superchainFS.ReadDir(path.Join("configs", target.Name()))
 			checkErr(t, err)
-			for _, config := range configs {
-				if strings.HasSuffix(config.Name(), ".yaml") {
-					configBytes, err := superchainFS.ReadFile(path.Join("configs", target.Name(), config.Name()))
-					checkErr(t, err)
-					var chainConfig ChainConfig
-					if config.Name() == "superchain.yaml" {
-						continue
-					}
-					checkErr(t, yaml.Unmarshal(configBytes, &chainConfig))
-					storeIfUnique(chainConfig.ChainID)
+			for _, entry := range entries {
+				if !isConfigFile(entry) {
+					continue
 				}
+				configBytes, err := superchainFS.ReadFile(path.Join("configs", target.Name(), entry.Name()))
+				checkErr(t, err)
+				var chainConfig ChainConfig
+
+				checkErr(t, yaml.Unmarshal(configBytes, &chainConfig))
+				storeIfUnique(chainConfig.ChainID)
 			}
 		}
 	}
@@ -129,9 +128,12 @@ func TestContractImplementations(t *testing.T) {
 // TestContractVersionsCheck will fail if the superchain semver file
 // is not read correctly.
 func TestContractVersionsCheck(t *testing.T) {
-	if err := SuperchainSemver.Check(); err != nil {
-		t.Fatal(err)
+	for _, versions := range SuperchainSemver {
+		if err := versions.Check(); err != nil {
+			t.Fatal(err)
+		}
 	}
+
 }
 
 // TestContractVersionsResolve will test that the high lever interface used works.
