@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/fs"
 	"path"
 	"reflect"
 	"strings"
@@ -401,6 +402,14 @@ var Implementations = map[uint64]ContractImplementations{}
 // SuperchainSemver maps superchain name to a contract name : approved semver version structure.
 var SuperchainSemver map[string]ContractVersions
 
+func isConfigFile(c fs.DirEntry) bool {
+	return (!c.IsDir() &&
+		strings.HasSuffix(c.Name(), ".yaml") &&
+		c.Name() != "superchain.yaml" &&
+		c.Name() != "semver.yaml")
+
+}
+
 func init() {
 	var err error
 	SuperchainSemver = make(map[string]ContractVersions)
@@ -438,11 +447,8 @@ func init() {
 			panic(fmt.Errorf("failed to read superchain dir: %w", err))
 		}
 		for _, c := range chainEntries {
-			if c.IsDir() || !strings.HasSuffix(c.Name(), ".yaml") {
-				continue // ignore directories and non YAML files.
-			}
-			if c.Name() == "superchain.yaml" || c.Name() == "semver.yaml" {
-				continue // already processed
+			if !isConfigFile(c) {
+				continue
 			}
 			// load chain config
 			chainConfigData, err := superchainFS.ReadFile(path.Join("configs", s.Name(), c.Name()))
