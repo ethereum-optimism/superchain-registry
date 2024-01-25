@@ -1,4 +1,4 @@
-package superchain_test
+package validation_test
 
 import (
 	"context"
