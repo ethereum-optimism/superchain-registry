@@ -26,13 +26,14 @@ const SOURCE_OF_TRUTH_CHAINID = 10
 const SOURCE_OF_TRUTH_SUPERCHAIN = "mainnet"
 
 // TestContractVersions will check that
-//   - for each declared contract "FooProxy" in superchain.Addresses[SOURCE_OF_TRUTH_CHAINID]
+//   - for each declared contract "Foo" in semver.yaml
 //   - for each chain in superchain.OPChain
 //
 // there is a contract address declared for "FooProxy" which has an
 // actual semver matching the desired semver. Actual semvers are
 // read from the L1 chain RPC provider for the chain in question.
-// Desired semvers are read from the SOURCE_OF_TRUTH_SUPERCHAIN.
+// Desired semvers are read from the contracts on SOURCE_OF_TRUTH_SUPERCHAIN
+// with addresses given by superchain.Addresses[SOURCE_OF_TRUTH_CHAINID]
 func TestContractVersions(t *testing.T) {
 
 	isSemverAcceptable := func(desired, actual string) bool {
