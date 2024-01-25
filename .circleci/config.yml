@@ -94,6 +94,7 @@ workflows:
   main:
     jobs:
       - golang-lint-test
+      - golang-lint-test-validation
       - check-codegen
       - check-forge-fmt
       - check-security-configs
