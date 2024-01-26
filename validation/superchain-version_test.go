@@ -14,12 +14,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func checkErr(t *testing.T, err error) {
-	if err != nil {
-		t.Error(err)
-	}
-}
-
 // TestContractVersions will check that
 //   - for each chain in superchain.OPChain
 //   - for each declared contract "Foo" : version entry in the corresponding superchain's semver.yaml
@@ -54,20 +48,28 @@ func TestContractVersions(t *testing.T) {
 	}
 
 	checkOPChainSatisfiesSemver := func(chain *superchain.ChainConfig) {
+		rpcEndpoint := superchain.Superchains[chain.Superchain].Config.L1.PublicRPC
+		if rpcEndpoint == "" {
+			t.Errorf("%s has MISSING RPC endpoint", chain.Superchain)
+			return
+		}
+		client, err := ethclient.Dial(rpcEndpoint)
+		if err != nil {
+			t.Errorf("could not dial rpc endpoint %s: %w", rpcEndpoint, err)
+			return
+		}
 		r := reflect.TypeOf(superchain.SuperchainSemver[chain.Superchain])
 		semverFields := reflect.VisibleFields(r)
 		for _, field := range semverFields {
 
 			desiredSemver := reflect.Indirect(reflect.ValueOf(superchain.SuperchainSemver[chain.Superchain])).FieldByName(field.Name).String()
-			rpcEndpoint := superchain.Superchains[chain.Superchain].Config.L1.PublicRPC
-			client, err := ethclient.Dial(rpcEndpoint)
-			checkErr(t, err)
+
 			r := reflect.ValueOf(superchain.Addresses[chain.ChainID])
 			proxyContractName := field.Name + "Proxy"
 			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
 			contractAddressValue := reflect.Indirect(r).FieldByName(proxyContractName)
 			if contractAddressValue == (reflect.Value{}) {
-				t.Errorf("%10s:%-20s:%-30s has version UNSPECIFIED (desired version %s)", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
+				t.Errorf("%s/%s.%s.version= UNSPECIFIED (desired version %s)", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
 				continue
 			}
 			actualSemver, err := getVersionWithRetries(context.Background(), common.Address(contractAddressValue.Bytes()), client)
