@@ -63,7 +63,6 @@ func TestContractVersions(t *testing.T) {
 		for _, field := range semverFields {
 
 			desiredSemver := reflect.Indirect(reflect.ValueOf(superchain.SuperchainSemver[chain.Superchain])).FieldByName(field.Name).String()
-
 			r := reflect.ValueOf(superchain.Addresses[chain.ChainID])
 			proxyContractName := field.Name + "Proxy"
 			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
@@ -105,7 +104,7 @@ func getVersion(ctx context.Context, addr common.Address, client *ethclient.Clie
 
 	s, err := abi.Arguments{abi.Argument{Type: String}}.Unpack(result)
 	if err != nil {
-		panic(err)
+		return "", fmt.Errorf("%s: %w", addr, err)
 	}
 
 	return s[0].(string), nil
