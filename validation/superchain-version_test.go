@@ -37,7 +37,7 @@ const SOURCE_OF_TRUTH_SUPERCHAIN = "mainnet"
 func TestContractVersions(t *testing.T) {
 
 	isSemverAcceptable := func(desired, actual string) bool {
-		return semver.Compare(desired, actual) <= 0
+		return semver.Compare(desired, actual) == 0
 	}
 
 	semverFields := reflect.VisibleFields(reflect.TypeOf(superchain.SuperchainSemver))
