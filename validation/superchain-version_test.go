@@ -12,7 +12,6 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"golang.org/x/mod/semver"
 )
 
 func checkErr(t *testing.T, err error) {
@@ -29,9 +28,8 @@ func checkErr(t *testing.T, err error) {
 // Actual semvers are
 // read from the L1 chain RPC provider for the chain in question.
 func TestContractVersions(t *testing.T) {
-
 	isSemverAcceptable := func(desired, actual string) bool {
-		return semver.Compare(desired, actual) == 0
+		return desired == actual
 	}
 
 	checkOPChainSatisfiesSemver := func(chain *superchain.ChainConfig) {
@@ -55,10 +53,10 @@ func TestContractVersions(t *testing.T) {
 			if err != nil {
 				t.Errorf("RPC endpoint %s: %s", rpcEndpoint, err)
 			}
-			if !isSemverAcceptable(desiredSemver, actualSemver) {
-				t.Errorf("%10s:%-20s:%-30s has version %s (desired version %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
+			if isSemverAcceptable(desiredSemver, actualSemver) {
+				t.Logf("%s/%s.%s.version=%s (acceptable compared to %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
 			} else {
-				t.Logf("%s/%s.%s.version=%s (ACCEPTABLE)", chain.Superchain, chain.Name, proxyContractName, actualSemver)
+				t.Errorf("%s/%s.%s.version=%s (UNACCEPTABLE desired version %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
 			}
 
 		}
