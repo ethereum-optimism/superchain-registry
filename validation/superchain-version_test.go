@@ -2,7 +2,6 @@ package validation
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
@@ -22,59 +21,31 @@ func checkErr(t *testing.T, err error) {
 	}
 }
 
-const SOURCE_OF_TRUTH_CHAINID = 10
-const SOURCE_OF_TRUTH_SUPERCHAIN = "mainnet"
-
 // TestContractVersions will check that
-//   - for each declared contract "Foo" in semver.yaml
 //   - for each chain in superchain.OPChain
+//   - for each declared contract "Foo" : version entry in the corresponding superchain's semver.yaml
+//   - the chain has a contract FooProxy deployed at the same version
 //
-// there is a contract address declared for "FooProxy" which has an
-// actual semver matching the desired semver. Actual semvers are
+// Actual semvers are
 // read from the L1 chain RPC provider for the chain in question.
-// Desired semvers are read from the contracts on SOURCE_OF_TRUTH_SUPERCHAIN
-// with addresses given by superchain.Addresses[SOURCE_OF_TRUTH_CHAINID]
 func TestContractVersions(t *testing.T) {
 
 	isSemverAcceptable := func(desired, actual string) bool {
 		return semver.Compare(desired, actual) == 0
 	}
 
-	semverFields := reflect.VisibleFields(reflect.TypeOf(superchain.SuperchainSemver))
-
-	desiredSemver := map[string]string{}
-	for _, field := range semverFields {
-		if field.Name == "SystemConfig" {
-			continue // TODO this is specified in semver.yaml but not in an address list.
-		}
-		proxyContractName := field.Name + "Proxy"
-		r := reflect.ValueOf(superchain.Addresses[SOURCE_OF_TRUTH_CHAINID])
-		proxyContractAddressValue := reflect.Indirect(r).FieldByName(proxyContractName)
-		client, err := ethclient.Dial(superchain.Superchains[SOURCE_OF_TRUTH_SUPERCHAIN].Config.L1.PublicRPC)
-		checkErr(t, err)
-		actualSemver, err := getVersionWithRetries(context.Background(), common.Address(proxyContractAddressValue.Bytes()), client)
-		checkErr(t, err)
-		desiredSemver[field.Name] = actualSemver
-	}
-
-	logOutput, err := json.MarshalIndent(desiredSemver, "", " ")
-	checkErr(t, err)
-
-	t.Logf("Desired Semver from %s/%s : \n %+v", SOURCE_OF_TRUTH_SUPERCHAIN, superchain.OPChains[SOURCE_OF_TRUTH_CHAINID].Name, string(logOutput))
-
 	checkOPChainSatisfiesSemver := func(chain *superchain.ChainConfig) {
-
+		r := reflect.TypeOf(superchain.SuperchainSemver[chain.Superchain])
+		semverFields := reflect.VisibleFields(r)
 		for _, field := range semverFields {
-			if field.Name == "SystemConfig" {
-				continue // TODO this is specified in semver.yaml but not in an address list.
-			}
-			proxyContractName := field.Name + "Proxy"
-			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
-			desiredSemver := desiredSemver[field.Name]
+
+			desiredSemver := reflect.Indirect(reflect.ValueOf(superchain.SuperchainSemver[chain.Superchain])).FieldByName(field.Name).String()
 			rpcEndpoint := superchain.Superchains[chain.Superchain].Config.L1.PublicRPC
 			client, err := ethclient.Dial(rpcEndpoint)
 			checkErr(t, err)
 			r := reflect.ValueOf(superchain.Addresses[chain.ChainID])
+			proxyContractName := field.Name + "Proxy"
+			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
 			contractAddressValue := reflect.Indirect(r).FieldByName(proxyContractName)
 			if contractAddressValue == (reflect.Value{}) {
 				t.Errorf("%10s:%-20s:%-30s has version UNSPECIFIED (desired version %s)", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
