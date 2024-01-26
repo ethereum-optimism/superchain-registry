@@ -55,7 +55,7 @@ func TestContractVersions(t *testing.T) {
 		}
 		client, err := ethclient.Dial(rpcEndpoint)
 		if err != nil {
-			t.Errorf("could not dial rpc endpoint %s: %w", rpcEndpoint, err)
+			t.Errorf("could not dial rpc endpoint %s: %v", rpcEndpoint, err)
 			return
 		}
 		r := reflect.TypeOf(superchain.SuperchainSemver[chain.Superchain])
