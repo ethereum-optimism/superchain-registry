@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum-optimism/superchain-registry/superchain"
+	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
@@ -15,7 +15,7 @@ import (
 )
 
 // TestContractVersions will check that
-//   - for each chain in superchain.OPChain
+//   - for each chain in OPChain
 //   - for each declared contract "Foo" : version entry in the corresponding superchain's semver.yaml
 //   - the chain has a contract FooProxy deployed at the same version
 //
@@ -47,34 +47,41 @@ func TestContractVersions(t *testing.T) {
 		return desired == actual
 	}
 
-	checkOPChainSatisfiesSemver := func(chain *superchain.ChainConfig) {
-		rpcEndpoint := superchain.Superchains[chain.Superchain].Config.L1.PublicRPC
+	checkOPChainSatisfiesSemver := func(chain *ChainConfig) {
+		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
+
 		if rpcEndpoint == "" {
 			t.Errorf("%s has MISSING RPC endpoint", chain.Superchain)
 			return
 		}
+
 		client, err := ethclient.Dial(rpcEndpoint)
+
 		if err != nil {
 			t.Errorf("could not dial rpc endpoint %s: %v", rpcEndpoint, err)
 			return
 		}
-		r := reflect.TypeOf(superchain.SuperchainSemver[chain.Superchain])
-		semverFields := reflect.VisibleFields(r)
-		for _, field := range semverFields {
 
-			desiredSemver := reflect.Indirect(reflect.ValueOf(superchain.SuperchainSemver[chain.Superchain])).FieldByName(field.Name).String()
-			r := reflect.ValueOf(superchain.Addresses[chain.ChainID])
-			proxyContractName := field.Name + "Proxy"
+		semverFields := reflect.VisibleFields(reflect.TypeOf(SuperchainSemver[chain.Superchain]))
+
+		for _, field := range semverFields {
+			desiredSemver := reflect.Indirect(reflect.ValueOf(SuperchainSemver[chain.Superchain])).FieldByName(field.Name).String()
+
 			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
-			contractAddressValue := reflect.Indirect(r).FieldByName(proxyContractName)
+			proxyContractName := field.Name + "Proxy"
+
+			contractAddressValue := reflect.Indirect(reflect.ValueOf(Addresses[chain.ChainID])).FieldByName(proxyContractName)
 			if contractAddressValue == (reflect.Value{}) {
 				t.Errorf("%s/%s.%s.version= UNSPECIFIED (desired version %s)", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
 				continue
 			}
+
 			actualSemver, err := getVersionWithRetries(context.Background(), common.Address(contractAddressValue.Bytes()), client)
 			if err != nil {
 				t.Errorf("RPC endpoint %s: %s", rpcEndpoint, err)
+				continue
 			}
+
 			if isSemverAcceptable(desiredSemver, actualSemver) {
 				t.Logf("%s/%s.%s.version=%s (acceptable compared to %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
 			} else {
@@ -84,7 +91,7 @@ func TestContractVersions(t *testing.T) {
 		}
 	}
 
-	for chainID, chain := range superchain.OPChains {
+	for chainID, chain := range OPChains {
 		if !isExcluded[chainID] {
 			checkOPChainSatisfiesSemver(chain)
 		}
