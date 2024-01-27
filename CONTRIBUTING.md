@@ -117,6 +117,21 @@ cat > $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET/$CHAIN_NAME
 EOF
 ```
 
+#### `extra/genesis-system-configs`
+
+Genesis system config data is provided but may be optional for chains deployed with future OP-Stack protocol versions.
+
+Newer versions of the `SystemConfig` contract persist the L1 starting block in the contract storage,
+and a node can load the initial system-config values from L1
+by inspecting the `SystemConfig` receipts of this given L1 block.
+
+```bash
+# create genesis-system-config data
+# (this is deprecated, users should load this from L1, when available via SystemConfig).
+mkdir -p $SUPERCHAIN_REPO/superchain/extra/genesis-system-configs/$SUPERCHAIN_TARGET
+jq -r .genesis.system_config $ROLLUP_CONFIG > $SUPERCHAIN_REPO/superchain/extra/genesis-system-configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.json
+```
+
 #### `extra/genesis`
 
 The `extra/genesis` directory hosts compressed `genesis.json` definitions that pull in the bytecode by hash
@@ -138,19 +153,4 @@ go run ./op-chain-ops/cmd/registry-data \
   --l2-genesis=$GENESIS_CONFIG \
   --bytecodes-dir=$SUPERCHAIN_REPO/superchain/extra/bytecodes \
   --output=$SUPERCHAIN_REPO/superchain/extra/genesis/$SUPERCHAIN_TARGET/$CHAIN_NAME.json.gz
-```
-
-#### `extra/genesis-system-configs`
-
-Genesis system config data is provided but may be optional for chains deployed with future OP-Stack protocol versions.
-
-Newer versions of the `SystemConfig` contract persist the L1 starting block in the contract storage,
-and a node can load the initial system-config values from L1
-by inspecting the `SystemConfig` receipts of this given L1 block.
-
-```bash
-# create genesis-system-config data
-# (this is deprecated, users should load this from L1, when available via SystemConfig).
-mkdir -p $SUPERCHAIN_REPO/superchain/extra/genesis-system-configs/$SUPERCHAIN_TARGET
-jq -r .genesis.system_config $ROLLUP_CONFIG > $SUPERCHAIN_REPO/superchain/extra/genesis-system-configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.json
 ```
