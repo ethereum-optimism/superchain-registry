@@ -116,7 +116,7 @@ func getVersion(ctx context.Context, addr common.Address, client *ethclient.Clie
 // which retries up to 10 times with exponential backoff.
 func getVersionWithRetries(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
 	const maxAttempts = 10
-	return retry.Do(context.Background(), maxAttempts, retry.Exponential(), func() (string, error) {
+	return retry.Do(ctx, maxAttempts, retry.Exponential(), func() (string, error) {
 		return getVersion(context.Background(), addr, client)
 	})
 }
