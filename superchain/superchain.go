@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"embed"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -71,6 +72,34 @@ type AddressList struct {
 	OptimismPortalProxy               Address `json:"OptimismPortalProxy"`
 	SystemConfigProxy                 Address `json:"SystemConfigProxy"`
 	ProxyAdmin                        Address `json:"ProxyAdmin"`
+}
+
+// AddressFor returns the address for the supplied contract name, if it exits
+// (and an error otherwise). Useful for slicing into the struct using a string.
+func (a AddressList) AddressFor(contractName string) (string, error) {
+	var address string
+	switch contractName {
+	case "L1CrossDomainMessengerProxy":
+		address = a.L1CrossDomainMessengerProxy.String()
+	case "L1ERC721BridgeProxy":
+		address = a.L1ERC721BridgeProxy.String()
+	case "L1StandardBridgeProxy":
+		address = a.L1StandardBridgeProxy.String()
+	case "L2OutputOrcaleProxy":
+		address = a.L2OutputOracleProxy.String()
+	case "OptimismMintableERC20FactoryProxy":
+		address = a.OptimismMintableERC20FactoryProxy.String()
+	case "OptimismPortalProxy":
+		address = a.OptimismPortalProxy.String()
+	case "SystemConfigProxy":
+		address = a.SystemConfigProxy.String()
+	default:
+		return "", errors.New("no such contract name")
+	}
+	if address == "" {
+		return address, errors.New("no address or zero address specified")
+	}
+	return address, nil
 }
 
 // ImplementationList represents the set of implementation contracts to be used together
@@ -201,6 +230,34 @@ type ContractVersions struct {
 	OptimismMintableERC20Factory string `yaml:"optimism_mintable_erc20_factory"`
 	OptimismPortal               string `yaml:"optimism_portal"`
 	SystemConfig                 string `yaml:"system_config"`
+}
+
+// VersionFor returns the version for the supplied contract name, if it exits
+// (and an error otherwise). Useful for slicing into the struct using a string.
+func (c ContractVersions) VersionFor(contractName string) (string, error) {
+	var version string
+	switch contractName {
+	case "L1CrossDomainMessenger":
+		version = c.L1CrossDomainMessenger
+	case "L1ERC721Bridge":
+		version = c.L1ERC721Bridge
+	case "L1StandardBridge":
+		version = c.L1StandardBridge
+	case "L2OutputOrcale":
+		version = c.L2OutputOracle
+	case "OptimismMintableERC20Factory":
+		version = c.OptimismMintableERC20Factory
+	case "OptimismPortal":
+		version = c.OptimismPortal
+	case "SystemConfig":
+		version = c.SystemConfig
+	default:
+		return "", errors.New("no such contract name")
+	}
+	if version == "" {
+		return "", errors.New("no version specified")
+	}
+	return version, nil
 }
 
 // Check will sanity check the validity of the semantic version strings

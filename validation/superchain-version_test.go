@@ -3,7 +3,6 @@ package validation
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
@@ -58,18 +57,27 @@ func TestContractVersions(t *testing.T) {
 		client, err := ethclient.Dial(rpcEndpoint)
 		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-		semverFields := reflect.VisibleFields(reflect.TypeOf(SuperchainSemver[chain.Superchain]))
+		contractNames := []string{
+			"L1CrossDomainMessenger",
+			"L1ERC721Bridge",
+			"L1StandardBridge",
+			"L2OutputOrcale",
+			"OptimismMintableERC20Factory",
+			"OptimismPortal",
+			"SystemConfig",
+		}
 
-		for _, field := range semverFields {
-			desiredSemver := reflect.Indirect(reflect.ValueOf(SuperchainSemver[chain.Superchain])).FieldByName(field.Name).String()
+		for _, contractName := range contractNames {
+			desiredSemver, err := SuperchainSemver[chain.Superchain].VersionFor(contractName)
+			require.NoError(t, err)
 
 			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
-			proxyContractName := field.Name + "Proxy"
+			proxyContractName := contractName + "Proxy"
 
-			contractAddressValue := reflect.Indirect(reflect.ValueOf(Addresses[chain.ChainID])).FieldByName(proxyContractName)
-			require.NotEqual(t, reflect.Value{}, contractAddressValue, "%s/%s.%s.version= UNSPECIFIED (desired version %s)", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
+			contractAddress, err := Addresses[chain.ChainID].AddressFor(proxyContractName)
+			require.NoErrorf(t, err, "%s/%s.%s.version= UNSPECIFIED (desired version %s)", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
 
-			actualSemver, err := getVersionWithRetries(context.Background(), common.Address(contractAddressValue.Bytes()), client)
+			actualSemver, err := getVersionWithRetries(context.Background(), common.HexToAddress(contractAddress), client)
 			require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
 			require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
