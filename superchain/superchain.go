@@ -69,6 +69,7 @@ type AddressList struct {
 	L2OutputOracleProxy               Address `json:"L2OutputOracleProxy"`
 	OptimismMintableERC20FactoryProxy Address `json:"OptimismMintableERC20FactoryProxy"`
 	OptimismPortalProxy               Address `json:"OptimismPortalProxy"`
+	SystemConfigProxy                 Address `json:"SystemConfigProxy"`
 	ProxyAdmin                        Address `json:"ProxyAdmin"`
 }
 
