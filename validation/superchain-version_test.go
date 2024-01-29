@@ -8,6 +8,7 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -52,17 +53,10 @@ func TestContractVersions(t *testing.T) {
 	checkOPChainSatisfiesSemver := func(chain *ChainConfig) {
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
-		if rpcEndpoint == "" {
-			t.Errorf("%s has MISSING RPC endpoint", chain.Superchain)
-			return
-		}
+		require.NotEmpty(t, rpcEndpoint)
 
 		client, err := ethclient.Dial(rpcEndpoint)
-
-		if err != nil {
-			t.Errorf("could not dial rpc endpoint %s: %v", rpcEndpoint, err)
-			return
-		}
+		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
 		semverFields := reflect.VisibleFields(reflect.TypeOf(SuperchainSemver[chain.Superchain]))
 
@@ -73,22 +67,15 @@ func TestContractVersions(t *testing.T) {
 			proxyContractName := field.Name + "Proxy"
 
 			contractAddressValue := reflect.Indirect(reflect.ValueOf(Addresses[chain.ChainID])).FieldByName(proxyContractName)
-			if contractAddressValue == (reflect.Value{}) {
-				t.Errorf("%s/%s.%s.version= UNSPECIFIED (desired version %s)", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
-				continue
-			}
+			require.NotEqual(t, reflect.Value{}, contractAddressValue, "%s/%s.%s.version= UNSPECIFIED (desired version %s)", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
 
 			actualSemver, err := getVersionWithRetries(context.Background(), common.Address(contractAddressValue.Bytes()), client)
-			if err != nil {
-				t.Errorf("RPC endpoint %s: %s", rpcEndpoint, err)
-				continue
-			}
+			require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
-			if isSemverAcceptable(desiredSemver, actualSemver) {
-				t.Logf("%s/%s.%s.version=%s (acceptable compared to %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
-			} else {
-				t.Errorf("%s/%s.%s.version=%s (UNACCEPTABLE desired version %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
-			}
+			require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
+				"%s/%s.%s.version=%s (UNACCEPTABLE desired version %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
+
+			t.Logf("%s/%s.%s.version=%s (acceptable compared to %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
 
 		}
 	}

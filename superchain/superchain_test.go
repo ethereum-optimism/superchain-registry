@@ -5,14 +5,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
 
-func checkErr(t *testing.T, err error) {
-	if err != nil {
-		t.Fatal(err)
-	}
-}
 func TestChainIds(t *testing.T) {
 	chainIDs := map[uint64]bool{}
 
@@ -24,21 +20,22 @@ func TestChainIds(t *testing.T) {
 	}
 
 	targets, err := superchainFS.ReadDir("configs")
-	checkErr(t, err)
+	require.NoError(t, err)
 
 	for _, target := range targets {
 		if target.IsDir() {
 			entries, err := superchainFS.ReadDir(path.Join("configs", target.Name()))
-			checkErr(t, err)
+			require.NoError(t, err)
 			for _, entry := range entries {
 				if !isConfigFile(entry) {
 					continue
 				}
 				configBytes, err := superchainFS.ReadFile(path.Join("configs", target.Name(), entry.Name()))
-				checkErr(t, err)
+				require.NoError(t, err)
 				var chainConfig ChainConfig
 
-				checkErr(t, yaml.Unmarshal(configBytes, &chainConfig))
+				require.NoError(t, yaml.Unmarshal(configBytes, &chainConfig))
+
 				storeIfUnique(chainConfig.ChainID)
 			}
 		}
