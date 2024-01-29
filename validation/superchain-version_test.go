@@ -24,7 +24,6 @@ import (
 // Actual semvers are
 // read from the L1 chain RPC provider for the chain in question.
 func TestContractVersions(t *testing.T) {
-
 	isExcluded := map[uint64]bool{
 		291:          true,
 		424:          true,
@@ -37,6 +36,7 @@ func TestContractVersions(t *testing.T) {
 		84531:        true,
 		84532:        true,
 		7777777:      true,
+		11155421:     true, // sepolia-dev-0/oplabs-devnet-0
 		11763071:     true,
 		999999999:    true,
 		129831238013: true,
@@ -106,7 +106,6 @@ func getVersion(ctx context.Context, addr common.Address, client *ethclient.Clie
 	}
 
 	return version, nil
-
 }
 
 // getVersionWithRetries is a wrapper for getVersion
