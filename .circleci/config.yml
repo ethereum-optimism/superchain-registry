@@ -4,8 +4,17 @@ orbs:
   go: circleci/go@1.8.0
 
 jobs:
-  golang-lint-test:
-    working_directory: ~/superchain-registry/superchain
+  golang-lint:
+    working_directory: ~/superchain-registry/
+    executor:
+      name: go/default  # is based on cimg/go
+      tag: '1.20'
+    steps:
+      - checkout:
+          path: ~/superchain-registry
+      - run:  golangci-lint run superchain validation
+  golang-test:
+    working_directory: ~/superchain-registry/
     executor:
       name: go/default  # is based on cimg/go
       tag: '1.20'
@@ -15,8 +24,13 @@ jobs:
       - go/load-cache
       - go/mod-download
       - go/save-cache
-      - run: golangci-lint run -c=.golangci.yml
       - go/test:
+          packages: ./superchain/...
+          covermode: atomic
+          failfast: true
+          race: true
+      - go/test:
+          packages: ./validation/...
           covermode: atomic
           failfast: true
           race: true
@@ -77,7 +91,8 @@ jobs:
 workflows:
   main:
     jobs:
-      - golang-lint-test
+      - golang-lint
+      - golang-test
       - check-codegen
       - check-forge-fmt
       - check-security-configs
