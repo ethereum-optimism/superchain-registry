@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-	"time"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+
+	"github.com/ethereum-optimism/optimism/op-service/retry"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
@@ -118,18 +119,10 @@ func getVersion(ctx context.Context, addr common.Address, client *ethclient.Clie
 }
 
 // getVersionWithRetries is a wrapper for getVersion
-// which, on error, will wait 5 seconds an retry up to 3 times.
+// which retries up to 10 times with exponential backoff.
 func getVersionWithRetries(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
-	numRetries := 3
-	retriesRemaining := numRetries
-	s, err := getVersion(ctx, addr, client)
-	for err != nil && retriesRemaining > 0 {
-		<-time.After(5 * time.Second)
-		retriesRemaining--
-		s, err = getVersion(ctx, addr, client)
-	}
-	if err != nil {
-		return "", fmt.Errorf("getVersion request failed after %d attempts: %w", numRetries, err)
-	}
-	return s, nil
+	const maxAttempts = 10
+	return retry.Do(context.Background(), maxAttempts, retry.Exponential(), func() (string, error) {
+		return getVersion(context.Background(), addr, client)
+	})
 }
