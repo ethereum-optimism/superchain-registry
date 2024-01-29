@@ -14,7 +14,7 @@ jobs:
           path: ~/superchain-registry
       - run:  golangci-lint run superchain validation
   golang-test:
-    working_directory: ~/superchain-registry/superchain
+    working_directory: ~/superchain-registry/
     executor:
       name: go/default  # is based on cimg/go
       tag: '1.20'
@@ -25,21 +25,12 @@ jobs:
       - go/mod-download
       - go/save-cache
       - go/test:
+          packages: ./superchain/...
           covermode: atomic
           failfast: true
           race: true
-  golang-test-validation:
-    working_directory: ~/superchain-registry/validation
-    executor:
-      name: go/default  # is based on cimg/go
-      tag: '1.20'
-    steps:
-      - checkout:
-          path: ~/superchain-registry
-      - go/load-cache
-      - go/mod-download
-      - go/save-cache
       - go/test:
+          packages: ./validation/...
           covermode: atomic
           failfast: true
           race: true
@@ -102,7 +93,6 @@ workflows:
     jobs:
       - golang-lint
       - golang-test
-      - golang-test-validation
       - check-codegen
       - check-forge-fmt
       - check-security-configs
