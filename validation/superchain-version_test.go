@@ -77,7 +77,7 @@ func TestContractVersions(t *testing.T) {
 			contractAddress, err := Addresses[chain.ChainID].AddressFor(proxyContractName)
 			require.NoErrorf(t, err, "%s/%s.%s.version= UNSPECIFIED (desired version %s)", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
 
-			actualSemver, err := getVersionWithRetries(context.Background(), common.HexToAddress(contractAddress), client)
+			actualSemver, err := getVersionWithRetries(context.Background(), common.Address(contractAddress), client)
 			require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
 			require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
