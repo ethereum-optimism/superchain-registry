@@ -5,4 +5,4 @@ l1:
   explorer: https://sepolia.etherscan.io
 
 protocol_versions_addr: null # todo
-superchain_config_addr: null # todo
+superchain_config_addr: "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
