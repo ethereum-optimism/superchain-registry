@@ -26,9 +26,7 @@ import (
 func TestContractVersions(t *testing.T) {
 
 	isExcluded := map[uint64]bool{
-		10:           true,
 		291:          true,
-		420:          true,
 		424:          true,
 		888:          true,
 		957:          true,
@@ -39,7 +37,6 @@ func TestContractVersions(t *testing.T) {
 		84531:        true,
 		84532:        true,
 		7777777:      true,
-		11155420:     true,
 		11763071:     true,
 		999999999:    true,
 		129831238013: true,
