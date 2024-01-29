@@ -1,7 +1,7 @@
 name: Goerli
 l1:
   chain_id: 5
-  public_rpc: https://ethereum-goerli-rpc.allthatnode.com
+  public_rpc: https://goerli.gateway.tenderly.co	
   explorer: https://goerli.etherscan.io
 
 protocol_versions_addr: "0x0C24F5098774aA366827D667494e9F889f7cFc08"
