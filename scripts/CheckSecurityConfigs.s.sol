@@ -37,8 +37,8 @@ contract CheckSecurityConfigs is Script {
     /**
      * @notice The entrypoint function.
      */
-    function run() external {
-        VmSafe.DirEntry[] memory addressesJsonEntries = vm.readDir("superchain/extra/addresses/mainnet");
+    function run(string memory jsonDir) external {
+        VmSafe.DirEntry[] memory addressesJsonEntries = vm.readDir(jsonDir);
         hasErrors = false;
         for (uint256 i = 0; i < addressesJsonEntries.length; i++) {
             require(bytes(addressesJsonEntries[i].errorMessage).length == 0, addressesJsonEntries[i].errorMessage);
