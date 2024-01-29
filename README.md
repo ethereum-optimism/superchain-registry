@@ -14,7 +14,7 @@ using the reference [`op-chain-ops`] tooling.
 The `semver.yaml` file represents the semantic versioning lockfile for the all of the smart contracts in the superchain.
 It is meant to be used when building transactions that upgrade the implementations set in the proxies.
 
-## Go Module
+## Superchain Go Module
 
 Superchain configs can be imported as Go-module:
 ```
@@ -25,6 +25,10 @@ See [`op-chain-ops`] for config tooling and
 
 [`op-chain-ops`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-chain-ops
 [`op-bindings`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-bindings
+
+
+## Validation Go Module
+A second module exists in this repo whose purpose is to validate the config exported by the `superchain` module. It is a separate module to avoid import cycles and polluting downstream dependencies with things like `go-ethereum` (which is use in the validation tests). The modules are tracked by a top level `go.work` file. 
 
 ## CheckSecurityConfigs
 
