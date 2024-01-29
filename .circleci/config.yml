@@ -86,7 +86,10 @@ jobs:
             # Note: If RPC is being rate-limited, consider reducing
             # --compute-units-per-second or using --fork-retries and
             # --fork-retry-backoff to stay under the limit.
-            forge script CheckSecurityConfigs --fork-url="https://ci-mainnet-l1.optimism.io" --compute-units-per-second=320
+            forge script CheckSecurityConfigs --fork-url="https://ci-mainnet-l1.optimism.io" --compute-units-per-second=320 "superchain/extra/addresses/mainnet"
+            forge script CheckSecurityConfigs --fork-url="https://ci-sepolia-l1.optimism.io" --compute-units-per-second=320 "superchain/extra/addresses/sepolia"
+            forge script CheckSecurityConfigs --fork-url="https://ci-goerli-l1.optimism.io" --compute-units-per-second=320 "superchain/extra/addresses/goerli"
+            forge script CheckSecurityConfigs --fork-url="https://ci-holeky-l1.optimism.io" --compute-units-per-second=320 "superchain/extra/addresses/holesky"
 
 workflows:
   main:
