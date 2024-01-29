@@ -6,11 +6,12 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
@@ -101,21 +102,19 @@ func TestContractVersions(t *testing.T) {
 
 // getVersion will get the version of a contract at a given address, if it exposes a version() method.
 func getVersion(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
-	result, err := client.CallContract(context.Background(), ethereum.CallMsg{
-		To:   &addr,
-		Data: common.FromHex("0x54fd4d50")}, // this is the function selector for "version"
-		nil)
+	isemver, err := bindings.NewISemver(addr, client)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", addr, err)
 	}
-	var String, _ = abi.NewType("string", "string", nil)
-
-	s, err := abi.Arguments{abi.Argument{Type: String}}.Unpack(result)
+	version, err := isemver.Version(&bind.CallOpts{
+		Context: ctx,
+	})
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", addr, err)
 	}
 
-	return s[0].(string), nil
+	return version, nil
+
 }
 
 // getVersionWithRetries is a wrapper for getVersion
