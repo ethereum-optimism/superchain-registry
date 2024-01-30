@@ -21,13 +21,7 @@ jobs:
     steps:
       - checkout:
           path: ~/superchain-registry
-      - restore_cache:
-          key: v1-{{checksum "go.work"}}
       - go/mod-download
-      - save_cache:
-          key: v1-{{checksum "go.work"}}
-          paths:
-            - /home/circleci/go/pkg/mod
       - go/test:
           packages: ./superchain/...
           covermode: atomic
