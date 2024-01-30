@@ -11,7 +11,7 @@ The superchain configs are made available in minimal form, to embed in OP-Stack 
 Full deployment artifacts and genesis-states can be derived from the minimal form
 using the reference [`op-chain-ops`] tooling.
 
-The `semver.yaml` file represents the semantic versioning lockfile for the all of the smart contracts in the superchain.
+The `semver.yaml` files each represent the semantic versioning lockfile for the all of the smart contracts in that superchain.
 It is meant to be used when building transactions that upgrade the implementations set in the proxies.
 
 ## Superchain Go Module
@@ -28,7 +28,7 @@ See [`op-chain-ops`] for config tooling and
 
 
 ## Validation Go Module
-A second module exists in this repo whose purpose is to validate the config exported by the `superchain` module. It is a separate module to avoid import cycles and polluting downstream dependencies with things like `go-ethereum` (which is use in the validation tests). The modules are tracked by a top level `go.work` file. 
+A second module exists in this repo whose purpose is to validate the config exported by the `superchain` module. It is a separate module to avoid import cycles and polluting downstream dependencies with things like `go-ethereum` (which is use in the validation tests). The modules are tracked by a top level `go.work` file. The associated `go.work.sum` file is gitignored and not important to typical workflows, which should mirror those of the [CI configuration](.circleci/config.yml).
 
 ## CheckSecurityConfigs
 
