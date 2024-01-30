@@ -5,10 +5,14 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/fatih/color"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
 
+func TestDepencency(t *testing.T) {
+	t.Log(color.BgBlack)
+}
 func TestAddressFor(t *testing.T) {
 	al := AddressList{
 		ProxyAdmin:     HexToAddress("0xD98bD7a1F2384D890d0D6153CbCFcCF6F813ab6c"),
