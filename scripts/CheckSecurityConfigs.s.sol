@@ -37,24 +37,41 @@ contract CheckSecurityConfigs is Script {
     /**
      * @notice The entrypoint function.
      */
-    function run(string memory jsonDir, string memory network) external {
+    function run() public {
+        string memory jsonDir;
+        if (block.chainid == 1) {
+            jsonDir = "superchain/extra/addresses/mainnet";
+        } else if (block.chainid == 11155111) {
+            jsonDir = "superchain/extra/addresses/sepolia";
+        } else if (block.chainid == 5) {
+            jsonDir = "superchain/extra/addresses/goerli";
+        } else {
+            string memory chainId = vm.toString(block.chainid);
+            revert(string.concat("Unsupported chain ID: ", chainId,
+                                 ". Please call runOnDir(string,bool) directly."));
+        }
+        runOnDir(jsonDir, block.chainid == 1);
+    }
+
+
+    function runOnDir(string memory jsonDir, bool isMainnet) public {
         VmSafe.DirEntry[] memory addressesJsonEntries = vm.readDir(jsonDir);
         hasErrors = false;
         for (uint256 i = 0; i < addressesJsonEntries.length; i++) {
             require(bytes(addressesJsonEntries[i].errorMessage).length == 0, addressesJsonEntries[i].errorMessage);
-            runOnSingleFile(addressesJsonEntries[i].path, network);
+            runOnSingleFile(addressesJsonEntries[i].path, isMainnet);
         }
         require(!hasErrors, "Errors occurred: See logs above for more info");
     }
 
-    function runOnSingleFile(string memory addressesJsonPath, string memory network) internal {
+    function runOnSingleFile(string memory addressesJsonPath, bool isMainnet) internal {
         console2.log("Checking %s", addressesJsonPath);
         ProtocolAddresses memory addresses = getAddresses(addressesJsonPath);
         checkAddressManager(addresses);
         checkL1CrossDomainMessengerProxy(addresses);
         checkL1ERC721BridgeProxy(addresses);
         checkL1StandardBridgeProxy(addresses);
-        checkL2OutputOracleProxy(addresses, network);
+        checkL2OutputOracleProxy(addresses, isMainnet);
         checkOptimismMintableERC20FactoryProxy(addresses);
         checkOptimismPortalProxy(addresses);
         checkProxyAdmin(addresses);
@@ -90,11 +107,11 @@ contract CheckSecurityConfigs is Script {
         checkAddressIsExpected(addresses.L1CrossDomainMessengerProxy, addresses.L1StandardBridgeProxy, "messenger()");
     }
 
-    function checkL2OutputOracleProxy(ProtocolAddresses memory addresses, string memory network) internal {
+    function checkL2OutputOracleProxy(ProtocolAddresses memory addresses, bool isMainnet) internal {
         console2.log("Checking L2OutputOracleProxy %s", addresses.L2OutputOracleProxy);
         isAdminOf(addresses.ProxyAdmin, addresses.L2OutputOracleProxy);
         checkAddressIsExpected(addresses.Challenger, addresses.L2OutputOracleProxy, "CHALLENGER()");
-        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("mainnet"))) {
+        if (isMainnet) {
             // Reusing the logic in checkAddressIsExpected below for simplicity.
             checkAddressIsExpected(address(7 days), addresses.L2OutputOracleProxy, "FINALIZATION_PERIOD_SECONDS()");
         }
