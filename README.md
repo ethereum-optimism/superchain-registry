@@ -14,6 +14,8 @@ using the reference [`op-chain-ops`] tooling.
 The `semver.yaml` files each represent the semantic versioning lockfile for the all of the smart contracts in that superchain.
 It is meant to be used when building transactions that upgrade the implementations set in the proxies.
 
+If you would like to contribute a new chain or superchain, please see our [contributing guide](./CONTRIBUTING.md).
+
 ## Superchain Go Module
 
 Superchain configs can be imported as Go-module:
