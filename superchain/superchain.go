@@ -12,10 +12,13 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/fatih/color"
 	"golang.org/x/exp/maps"
 	"golang.org/x/mod/semver"
 	"gopkg.in/yaml.v3"
 )
+
+var foo color.Color
 
 //go:embed configs
 var superchainFS embed.FS
