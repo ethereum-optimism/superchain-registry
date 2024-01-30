@@ -39,15 +39,24 @@ contract CheckSecurityConfigs is Script {
      */
     function run() public {
         string memory network;
-        if (block.chainid == 1) network = "mainnet";
-        else if (block.chainid == 11155111) network = "sepolia";
-        else if (block.chainid == 5) network = "goerli";
-        else revert(string.concat("Unsupported chain ID: ", vm.toString(block.chainid),
-                                  ". Please call runOnDir(string,bool) directly."));
+        if (block.chainid == 1) {
+            network = "mainnet";
+        } else if (block.chainid == 11155111) {
+            network = "sepolia";
+        } else if (block.chainid == 5) {
+            network = "goerli";
+        } else {
+            revert(
+                string.concat(
+                    "Unsupported chain ID: ",
+                    vm.toString(block.chainid),
+                    ". Please call runOnDir(string,bool) directly."
+                )
+            );
+        }
         string memory jsonDir = string.concat("superchain/extra/addresses/", network);
         runOnDir(jsonDir, block.chainid == 1);
     }
-
 
     function runOnDir(string memory jsonDir, bool isMainnet) public {
         VmSafe.DirEntry[] memory addressesJsonEntries = vm.readDir(jsonDir);
