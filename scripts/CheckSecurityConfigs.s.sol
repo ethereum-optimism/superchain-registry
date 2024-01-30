@@ -38,18 +38,13 @@ contract CheckSecurityConfigs is Script {
      * @notice The entrypoint function.
      */
     function run() public {
-        string memory jsonDir;
-        if (block.chainid == 1) {
-            jsonDir = "superchain/extra/addresses/mainnet";
-        } else if (block.chainid == 11155111) {
-            jsonDir = "superchain/extra/addresses/sepolia";
-        } else if (block.chainid == 5) {
-            jsonDir = "superchain/extra/addresses/goerli";
-        } else {
-            string memory chainId = vm.toString(block.chainid);
-            revert(string.concat("Unsupported chain ID: ", chainId,
-                                 ". Please call runOnDir(string,bool) directly."));
-        }
+        string memory network;
+        if (block.chainid == 1) network = "mainnet";
+        else if (block.chainid == 11155111) network = "sepolia";
+        else if (block.chainid == 5) network = "goerli";
+        else revert(string.concat("Unsupported chain ID: ", vm.toString(block.chainid),
+                                  ". Please call runOnDir(string,bool) directly."));
+        string memory jsonDir = string.concat("superchain/extra/addresses/", network);
         runOnDir(jsonDir, block.chainid == 1);
     }
 
