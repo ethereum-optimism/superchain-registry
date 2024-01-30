@@ -8,30 +8,46 @@ jobs:
     working_directory: ~/superchain-registry/
     executor:
       name: go/default  # is based on cimg/go
-      tag: '1.20'
+      tag: '1.21'
     steps:
       - checkout:
           path: ~/superchain-registry
       - run:  golangci-lint run superchain validation
-  golang-test:
-    working_directory: ~/superchain-registry/
+  golang-modules-tidy:
+    working_directory: ~/superchain-registry
     executor:
       name: go/default  # is based on cimg/go
-      tag: '1.20'
+      tag: '1.21'
     steps:
       - checkout:
           path: ~/superchain-registry
-      - go/mod-download
-      - go/test:
-          packages: ./superchain/...
-          covermode: atomic
-          failfast: true
-          race: true
-      - go/test:
-          packages: ./validation/...
-          covermode: atomic
-          failfast: true
-          race: true
+      - run:
+          name: tidy superchain module
+          command: go mod tidy
+          working_directory: superchain 
+      - run:
+          name: tidy validation module
+          command: go mod tidy
+          working_directory: validation
+      - run:
+          name: check git tree is clean
+          command: git diff --exit-code 
+  golang-test:
+    working_directory: ~/superchain-registry
+    executor:
+      name: go/default  # is based on cimg/go
+      tag: '1.21'
+    steps:
+      - checkout:
+          path: ~/superchain-registry
+      - run:
+          name: run superchain module tests
+          command: go test ./... -v
+          working_directory: superchain
+      - run:
+          name: run validation module tests
+          command: go test ./... -v
+          working_directory: validation
   publish-bot:
     environment:
       NODE_AUTH_TOKEN: $NPM_TOKEN  # Use NPM_TOKEN as the auth token
@@ -95,6 +111,7 @@ workflows:
   main:
     jobs:
       - golang-lint
+      - golang-modules-tidy
       - golang-test
       - check-codegen
       - check-forge-fmt
