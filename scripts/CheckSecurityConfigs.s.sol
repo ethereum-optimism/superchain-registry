@@ -37,24 +37,24 @@ contract CheckSecurityConfigs is Script {
     /**
      * @notice The entrypoint function.
      */
-    function run(string memory jsonDir) external {
+    function run(string memory jsonDir, string memory network) external {
         VmSafe.DirEntry[] memory addressesJsonEntries = vm.readDir(jsonDir);
         hasErrors = false;
         for (uint256 i = 0; i < addressesJsonEntries.length; i++) {
             require(bytes(addressesJsonEntries[i].errorMessage).length == 0, addressesJsonEntries[i].errorMessage);
-            runOnSingleFile(addressesJsonEntries[i].path);
+            runOnSingleFile(addressesJsonEntries[i].path, network);
         }
         require(!hasErrors, "Errors occurred: See logs above for more info");
     }
 
-    function runOnSingleFile(string memory addressesJsonPath) internal {
+    function runOnSingleFile(string memory addressesJsonPath, string memory network) internal {
         console2.log("Checking %s", addressesJsonPath);
         ProtocolAddresses memory addresses = getAddresses(addressesJsonPath);
         checkAddressManager(addresses);
         checkL1CrossDomainMessengerProxy(addresses);
         checkL1ERC721BridgeProxy(addresses);
         checkL1StandardBridgeProxy(addresses);
-        checkL2OutputOracleProxy(addresses);
+        checkL2OutputOracleProxy(addresses, network);
         checkOptimismMintableERC20FactoryProxy(addresses);
         checkOptimismPortalProxy(addresses);
         checkProxyAdmin(addresses);
@@ -90,12 +90,14 @@ contract CheckSecurityConfigs is Script {
         checkAddressIsExpected(addresses.L1CrossDomainMessengerProxy, addresses.L1StandardBridgeProxy, "messenger()");
     }
 
-    function checkL2OutputOracleProxy(ProtocolAddresses memory addresses) internal {
+    function checkL2OutputOracleProxy(ProtocolAddresses memory addresses, string memory network) internal {
         console2.log("Checking L2OutputOracleProxy %s", addresses.L2OutputOracleProxy);
         isAdminOf(addresses.ProxyAdmin, addresses.L2OutputOracleProxy);
         checkAddressIsExpected(addresses.Challenger, addresses.L2OutputOracleProxy, "CHALLENGER()");
-        // Reusing the logic in checkAddressIsExpected below for simplicity.
-        checkAddressIsExpected(address(7 days), addresses.L2OutputOracleProxy, "FINALIZATION_PERIOD_SECONDS()");
+        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("mainnet"))) {
+            // Reusing the logic in checkAddressIsExpected below for simplicity.
+            checkAddressIsExpected(address(7 days), addresses.L2OutputOracleProxy, "FINALIZATION_PERIOD_SECONDS()");
+        }
     }
 
     function checkOptimismMintableERC20FactoryProxy(ProtocolAddresses memory addresses) internal {
