@@ -88,13 +88,13 @@ jobs:
             # --fork-retry-backoff to stay under the limit.
             forge script CheckSecurityConfigs \
               --fork-url="https://ci-mainnet-l1.optimism.io" --compute-units-per-second=320 \
-              --sig "run(string, string)" "superchain/extra/addresses/mainnet" "mainnet
+              --sig "run(string,string)" "superchain/extra/addresses/mainnet" "mainnet
             # forge script CheckSecurityConfigs \
             #   --fork-url="https://ci-sepolia-l1.optimism.io" --compute-units-per-second=320 \
             #   --sig "run(string)" "superchain/extra/addresses/sepolia"
             forge script CheckSecurityConfigs \
               --fork-url="https://ci-goerli-l1.optimism.io" --compute-units-per-second=320 \
-              --sig "run(string, string)" "superchain/extra/addresses/goerli" "goerli"
+              --sig "run(string,string)" "superchain/extra/addresses/goerli" "goerli"
 
 workflows:
   main:
