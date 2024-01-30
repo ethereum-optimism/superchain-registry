@@ -3,6 +3,6 @@ src = "src"
 out = "out"
 script = "scripts"
 libs = ["lib"]
-fs_permissions = [ {access = "read", path = "./superchain/extra/addresses/mainnet/"} ]
+fs_permissions = [ {access = "read", path = "./superchain/extra/addresses/"} ]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
