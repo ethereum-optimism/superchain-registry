@@ -91,7 +91,7 @@ jobs:
               --sig "run(string,string)" "superchain/extra/addresses/mainnet" "mainnet"
             forge script CheckSecurityConfigs \
               --fork-url="https://ci-sepolia-l1.optimism.io" --compute-units-per-second=320 \
-              --sig "run(string)" "superchain/extra/addresses/sepolia" "sepolia"
+              --sig "run(string,string)" "superchain/extra/addresses/sepolia" "sepolia"
             forge script CheckSecurityConfigs \
               --fork-url="https://ci-goerli-l1.optimism.io" --compute-units-per-second=320 \
               --sig "run(string,string)" "superchain/extra/addresses/goerli" "goerli"
