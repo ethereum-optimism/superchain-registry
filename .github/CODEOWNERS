@@ -2,6 +2,8 @@
 * @ethereum-optimism/security-reviewers
 
 *.go @protolambda
+go.mod @protolambda
+go.sum @protolambda
 *.js @roninjin10
 package.json @roninjin10
 
