@@ -16,15 +16,52 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+var isSemverAcceptable = func(desired, actual string) bool {
+	return desired == actual
+}
+
+// TestSuperchainWideContractVersions will check that
+//   - for each superchain
+//   - for each declared superchain-wide contract "Foo" : version entry in the corresponding superchain's semver.yaml
+//   - the superchain has a contract Foo deployed (at an address declared in superchain.yaml) at the same version
+//
+// Actual semvers are
+// read from the L1 chain RPC provider for the superchain in question.
 func TestSuperchainWideContractVersions(t *testing.T) {
-	t.Log("TODO: factor out version checking from sibling test")
-	t.Log("TODO: loop over superchains")
-	t.Log("TODO: getVersion and check against semver.yaml")
+	for name, superchain := range Superchains {
+		rpcEndpoint := superchain.Config.L1.PublicRPC
+		require.NotEmpty(t, rpcEndpoint)
+
+		client, err := ethclient.Dial(rpcEndpoint)
+		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+
+		contractNames := []string{
+			"ProtocolVersions",
+		}
+
+		for _, contractName := range contractNames {
+			var contractAddress *Address
+			switch contractName {
+			case "ProtocolVersions":
+				contractAddress = superchain.Config.ProtocolVersionsAddr
+			}
+			desiredSemver, err := SuperchainSemver[name].VersionFor(contractName)
+			require.NoError(t, err)
+
+			actualSemver, err := getVersionWithRetries(context.Background(), common.Address(*contractAddress), client)
+			require.NoError(t, err, "%s.%s.version= UNSPECIFIED (desired version %s)", name, contractName, desiredSemver)
+
+			require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
+				"%s.%s.version=%s (UNACCEPTABLE desired version %s)", name, contractName, actualSemver, desiredSemver)
+
+			t.Logf("%s.%s.version=%s (acceptable compared to %s)", name, contractName, actualSemver, desiredSemver)
+		}
+	}
 }
 
 // TestContractVersions will check that
 //   - for each chain in OPChain
-//   - for each declared contract "Foo" : version entry in the corresponding superchain's semver.yaml
+//   - for each declared chain-specific contract "Foo" : version entry in the corresponding superchain's semver.yaml
 //   - the chain has a contract FooProxy deployed at the same version
 //
 // Actual semvers are
