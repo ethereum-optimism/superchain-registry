@@ -4,6 +4,8 @@ go 1.21
 
 replace github.com/ethereum-optimism/superchain-registry/superchain => ../superchain
 
+replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101304.1
+
 require (
 	github.com/ethereum-optimism/optimism v1.4.2
 	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240123205429-fbb63d6367d2
@@ -24,6 +26,7 @@ require (
 	github.com/ethereum/c-kzg-4844 v0.4.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
+	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/holiman/uint256 v1.2.4 // indirect
