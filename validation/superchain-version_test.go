@@ -16,6 +16,12 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+func TestSuperchainWideContractVersions(t *testing.T) {
+	t.Log("TODO: factor out version checking from sibling test")
+	t.Log("TODO: loop over superchains")
+	t.Log("TODO: getVersion and check against semver.yaml")
+}
+
 // TestContractVersions will check that
 //   - for each chain in OPChain
 //   - for each declared contract "Foo" : version entry in the corresponding superchain's semver.yaml
