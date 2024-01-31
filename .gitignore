@@ -22,3 +22,7 @@ docs/
 .env*
 !.env.example
 *.log
+
+
+# Go workspaces checksum file
+go.work.sum
