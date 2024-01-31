@@ -255,6 +255,8 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 		version = c.OptimismPortal
 	case "SystemConfig":
 		version = c.SystemConfig
+	case "ProtocolVersions":
+		version = c.ProtocolVersions
 	default:
 		return "", errors.New("no such contract name")
 	}
