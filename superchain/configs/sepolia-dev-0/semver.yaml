@@ -7,4 +7,4 @@ optimism_portal: 1.9.0
 system_config: 1.7.0
 
 # superchain-wide contracts
-protocol_versions:
+protocol_versions: 1.0.0
