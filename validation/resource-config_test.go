@@ -19,11 +19,11 @@ import (
 
 func TestResourceConfig(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		888:          true,
-		997:          true,
-		11155421:     true,
-		11763071:     true,
-		129831238013: true,
+		888:          true, // OP_Labs_chaosnet_0
+		997:          true, // OP_Labs_devnet_0
+		11155421:     true, // OP_Labs_Sepolia_devnet_0
+		11763071:     true, // Base_devnet_0
+		129831238013: true, // Conduit_devnet_0
 	}
 
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig) {
