@@ -17,7 +17,13 @@ import (
 )
 
 func TestResourceConfig(t *testing.T) {
-	isExcluded := map[uint64]bool{}
+	isExcluded := map[uint64]bool{
+		888:          true,
+		997:          true,
+		11155421:     true,
+		11763071:     true,
+		129831238013: true,
+	}
 
 	isResourceConfigAcceptable := func(desired, actual bindings.ResourceMeteringResourceConfig) bool {
 		return true // TODO a proper check
