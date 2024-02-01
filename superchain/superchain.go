@@ -87,7 +87,7 @@ func (a AddressList) AddressFor(contractName string) (Address, error) {
 		address = a.L1ERC721BridgeProxy
 	case "L1StandardBridgeProxy":
 		address = a.L1StandardBridgeProxy
-	case "L2OutputOrcaleProxy":
+	case "L2OutputOracleProxy":
 		address = a.L2OutputOracleProxy
 	case "OptimismMintableERC20FactoryProxy":
 		address = a.OptimismMintableERC20FactoryProxy
