@@ -3,6 +3,7 @@ package validation
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
@@ -25,10 +26,6 @@ func TestResourceConfig(t *testing.T) {
 		129831238013: true,
 	}
 
-	isResourceConfigAcceptable := func(desired, actual bindings.ResourceMeteringResourceConfig) bool {
-		return true // TODO a proper check
-	}
-
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig) {
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
@@ -40,13 +37,23 @@ func TestResourceConfig(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
 		require.NoError(t, err)
 
-		desiredResourceConfig := bindings.ResourceMeteringResourceConfig{} // TODO a proper check
+		uint128Max, ok := new(big.Int).SetString("ffffffffffffffffffffffffffffffff", 16)
+		if !ok {
+			panic("cannot construct uint128Max")
+		}
+		desiredResourceConfig := bindings.ResourceMeteringResourceConfig{
+			MaxResourceLimit:            20000000,
+			ElasticityMultiplier:        10,
+			BaseFeeMaxChangeDenominator: 8,
+			MinimumBaseFee:              1000000000,
+			SystemTxMaxGas:              1000000,
+			MaximumBaseFee:              uint128Max,
+		} // from OP Mainnet
 
 		actualResourceConfig, err := getResourceConfigWithRetries(context.Background(), common.Address(contractAddress), client)
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
-		require.Condition(t, func() bool { return isResourceConfigAcceptable(desiredResourceConfig, actualResourceConfig) },
-			"resource config unacceptable")
+		require.Equal(t, desiredResourceConfig, actualResourceConfig, "resource config unacceptable")
 
 		t.Logf("resource metering acceptable")
 
