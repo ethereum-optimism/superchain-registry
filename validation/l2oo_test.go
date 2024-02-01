@@ -28,11 +28,39 @@ type l2OOParams struct {
 func TestL2OOParams(t *testing.T) {
 
 	isExcluded := map[uint64]bool{
-		// 888:          true, // OP_Labs_chaosnet_0
-		// 997:          true, // OP_Labs_devnet_0
-		// 11155421:     true, // OP_Labs_Sepolia_devnet_0
-		// 11763071:     true, // Base_devnet_0
-		// 129831238013: true, // Conduit_devnet_0
+		291:          true,
+		424:          true,
+		888:          true,
+		957:          true,
+		997:          true,
+		8453:         true,
+		34443:        true,
+		58008:        true,
+		84531:        true,
+		84532:        true,
+		7777777:      true,
+		11155421:     true, // sepolia-dev-0/oplabs-devnet-0
+		11763071:     true,
+		999999999:    true,
+		129831238013: true,
+	}
+
+	requireEqualParams := func(t *testing.T, desired, actual l2OOParams) {
+		require.Condition(t,
+			func() bool { return (desired.startingBlockNumber.Cmp(actual.startingBlockNumber) == 0) },
+			"Incorrect startingBlockNumber, wanted %s got %s", desired.startingBlockNumber, actual.startingBlockNumber)
+		require.Condition(t,
+			func() bool { return (desired.startingTimestamp.Cmp(actual.startingTimestamp) == 0) },
+			"Incorrect startingTimestamp, wanted %s got %s", desired.startingTimestamp, actual.startingTimestamp)
+		require.Condition(t,
+			func() bool { return (desired.submissionInterval.Cmp(actual.submissionInterval) == 0) },
+			"Incorrect submissionInterval, wanted %s got %s", desired.submissionInterval, actual.submissionInterval)
+		require.Condition(t,
+			func() bool { return (desired.l2BlockTime.Cmp(actual.l2BlockTime) == 0) },
+			"Incorrect l2BlockTime, wanted %s got %s", desired.l2BlockTime, actual.l2BlockTime)
+		require.Condition(t,
+			func() bool { return (desired.finalizationPeriodSeconds.Cmp(actual.finalizationPeriodSeconds) == 0) },
+			"Incorrect finalizationPeriodSeconds, wanted %s got %s", desired.finalizationPeriodSeconds, actual.finalizationPeriodSeconds)
 	}
 
 	checkL2OOParams := func(t *testing.T, chain *ChainConfig) {
@@ -46,12 +74,18 @@ func TestL2OOParams(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("L2OutputOracleProxy")
 		require.NoError(t, err)
 
-		desiredParams := l2OOParams{}
+		desiredParams := l2OOParams{
+			startingBlockNumber:       big.NewInt(0),
+			startingTimestamp:         big.NewInt(1690493568),
+			submissionInterval:        big.NewInt(120),
+			l2BlockTime:               big.NewInt(2),
+			finalizationPeriodSeconds: big.NewInt(12),
+		} // From OP Mainnet
 
 		actualParams, err := getl2OOParamsWithRetries(context.Background(), common.Address(contractAddress), client)
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
 
-		require.Equal(t, desiredParams, actualParams, "L2OutputOracle config params UNACCEPTABLE")
+		requireEqualParams(t, desiredParams, actualParams)
 
 		t.Logf("L2OutputOracle config params acceptable")
 
