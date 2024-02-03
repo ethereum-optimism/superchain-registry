@@ -37,7 +37,7 @@ func MustHexToAddress(s string) Address {
 	var a Address
 	err := a.UnmarshalText([]byte(s))
 	if err != nil {
-		panic(fmt.Errorf("invalid address: %s", s))
+		panic(err)
 	}
 	return a
 }

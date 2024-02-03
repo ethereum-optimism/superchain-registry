@@ -4,8 +4,8 @@ public_rpc: ""
 sequencer_rpc: ""
 explorer: ""
 
-system_config_addr: "0xa6b72407e2dc9ebf84b839b69a24c88929cf20f7"
-batch_inbox_addr: "0xff00000000000000000000000000000011155421"
+system_config_addr: "0xa6b72407e2dc9EBF84b839B69A24C88929cf20F7"
+batch_inbox_addr: "0xFf00000000000000000000000000000011155421"
 
 genesis:
   l1:
