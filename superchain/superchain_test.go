@@ -12,10 +12,10 @@ import (
 
 func TestAddressFor(t *testing.T) {
 	al := AddressList{
-		ProxyAdmin:     HexToAddress("0xD98bD7a1F2384D890d0D6153CbCFcCF6F813ab6c"),
+		ProxyAdmin:     MustHexToAddress("0xD98bd7A1F2384D890D0d6153cBcfCcF6F813Ab6c"),
 		AddressManager: Address{},
 	}
-	want := HexToAddress("0xD98bD7a1F2384D890d0D6153CbCFcCF6F813ab6c")
+	want := MustHexToAddress("0xD98bd7A1F2384D890D0d6153cBcfCcF6F813Ab6c")
 	got, err := al.AddressFor("ProxyAdmin")
 	require.NoError(t, err)
 	require.Equal(t, want, got)
