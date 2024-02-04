@@ -20,31 +20,24 @@ var isSemverAcceptable = func(desired, actual string) bool {
 	return desired == actual
 }
 
-func checkSemverForContract(t *testing.T, contractName string, contractAddress *Address, client *ethclient.Client, desiredSemver string) {
-
-	actualSemver, err := getVersionWithRetries(context.Background(), common.Address(*contractAddress), client)
-	require.NoError(t, err, "%s.version= UNSPECIFIED (desired version %s)", contractName, desiredSemver)
-
-	require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
-		"%s.version=%s (UNACCEPTABLE desired version %s)", contractName, actualSemver, desiredSemver)
-
-	t.Logf("%s.version=%s (acceptable compared to %s)", contractName, actualSemver, desiredSemver)
-}
 func TestSuperchainWideContractVersions(t *testing.T) {
-	for superchainName, superchain := range Superchains {
-		t.Run(superchainName, func(t *testing.T) {
-			rpcEndpoint := superchain.Config.L1.PublicRPC
-			require.NotEmpty(t, rpcEndpoint)
 
-			client, err := ethclient.Dial(rpcEndpoint)
-			require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	checkSuperchainTargetSatisfiesSemver := func(t *testing.T, superchain *Superchain) {
+		rpcEndpoint := superchain.Config.L1.PublicRPC
+		require.NotEmpty(t, rpcEndpoint)
 
-			desiredSemver, err := SuperchainSemver[superchainName].VersionFor("ProtocolVersions")
-			require.NoError(t, err)
-			checkSemverForContract(t, "ProtocolVersions", superchain.Config.ProtocolVersionsAddr, client, desiredSemver)
+		client, err := ethclient.Dial(rpcEndpoint)
+		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-		})
+		desiredSemver, err := SuperchainSemver[superchain.Superchain].VersionFor("ProtocolVersions")
+		require.NoError(t, err)
+		checkSemverForContract(t, "ProtocolVersions", superchain.Config.ProtocolVersionsAddr, client, desiredSemver)
 	}
+
+	for superchainName, superchain := range Superchains {
+		t.Run(superchainName, func(t *testing.T) { checkSuperchainTargetSatisfiesSemver(t, superchain) })
+	}
+
 }
 
 func TestContractVersions(t *testing.T) {
@@ -103,6 +96,16 @@ func TestContractVersions(t *testing.T) {
 			t.Run(chain.Name, func(t *testing.T) { checkOPChainSatisfiesSemver(t, chain) })
 		}
 	}
+}
+
+func checkSemverForContract(t *testing.T, contractName string, contractAddress *Address, client *ethclient.Client, desiredSemver string) {
+	actualSemver, err := getVersionWithRetries(context.Background(), common.Address(*contractAddress), client)
+	require.NoError(t, err, "Could not get version for %s", contractName)
+
+	require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
+		"%s.version=%s (UNACCEPTABLE desired version %s)", contractName, actualSemver, desiredSemver)
+
+	t.Logf("%s.version=%s (acceptable compared to %s)", contractName, actualSemver, desiredSemver)
 }
 
 // getVersion will get the version of a contract at a given address, if it exposes a version() method.
