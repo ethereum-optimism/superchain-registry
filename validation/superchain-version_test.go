@@ -39,20 +39,10 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 			client, err := ethclient.Dial(rpcEndpoint)
 			require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-			contractNames := []string{
-				"ProtocolVersions",
-			}
+			desiredSemver, err := SuperchainSemver[superchainName].VersionFor("ProtocolVersions")
+			require.NoError(t, err)
+			checkSemverForContract(t, "ProtocolVersions", superchain.Config.ProtocolVersionsAddr, client, desiredSemver)
 
-			for _, contractName := range contractNames {
-				var contractAddress *Address
-				switch contractName {
-				case "ProtocolVersions":
-					contractAddress = superchain.Config.ProtocolVersionsAddr
-				}
-				desiredSemver, err := SuperchainSemver[superchainName].VersionFor(contractName)
-				require.NoError(t, err)
-				checkSemverForContract(t, contractName, contractAddress, client, desiredSemver)
-			}
 		})
 	}
 }
