@@ -20,13 +20,6 @@ var isSemverAcceptable = func(desired, actual string) bool {
 	return desired == actual
 }
 
-// TestSuperchainWideContractVersions will check that
-//   - for each superchain
-//   - for each declared superchain-wide contract "Foo" : version entry in the corresponding superchain's semver.yaml
-//   - the superchain has a contract Foo deployed (at an address declared in superchain.yaml) at the same version
-//
-// Actual semvers are
-// read from the L1 chain RPC provider for the superchain in question.
 func TestSuperchainWideContractVersions(t *testing.T) {
 	for name, superchain := range Superchains {
 		rpcEndpoint := superchain.Config.L1.PublicRPC
@@ -59,13 +52,6 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 	}
 }
 
-// TestContractVersions will check that
-//   - for each chain in OPChain
-//   - for each declared chain-specific contract "Foo" : version entry in the corresponding superchain's semver.yaml
-//   - the chain has a contract FooProxy deployed at the same version
-//
-// Actual semvers are
-// read from the L1 chain RPC provider for the chain in question.
 func TestContractVersions(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		291:          true,
