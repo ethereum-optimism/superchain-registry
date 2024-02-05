@@ -17,14 +17,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-type l2OOParams struct {
-	startingBlockNumber       *big.Int
-	startingTimestamp         *big.Int
-	submissionInterval        *big.Int
-	l2BlockTime               *big.Int
-	finalizationPeriodSeconds *big.Int
-}
-
 func TestL2OOParams(t *testing.T) {
 
 	isExcluded := map[uint64]bool{
@@ -54,22 +46,22 @@ func TestL2OOParams(t *testing.T) {
 
 	}
 
-	requireEqualParams := func(t *testing.T, desired, actual l2OOParams) {
+	requireEqualParams := func(t *testing.T, desired, actual L2OOParams) {
 		require.Condition(t,
-			checkEquality(desired.startingBlockNumber, actual.startingBlockNumber),
-			incorrectMsg("startingBlockNumber", desired.startingBlockNumber, actual.startingBlockNumber))
+			checkEquality(desired.StartingBlockNumber, actual.StartingBlockNumber),
+			incorrectMsg("startingBlockNumber", desired.StartingBlockNumber, actual.StartingBlockNumber))
 		require.Condition(t,
-			checkEquality(desired.startingTimestamp, actual.startingTimestamp),
-			incorrectMsg("startingTimestamp", desired.startingTimestamp, actual.startingTimestamp))
+			checkEquality(desired.StartingTimestamp, actual.StartingTimestamp),
+			incorrectMsg("startingTimestamp", desired.StartingTimestamp, actual.StartingTimestamp))
 		require.Condition(t,
-			checkEquality(desired.submissionInterval, actual.submissionInterval),
-			incorrectMsg("submissionInterval", desired.submissionInterval, actual.submissionInterval))
+			checkEquality(desired.SubmissionInterval, actual.SubmissionInterval),
+			incorrectMsg("submissionInterval", desired.SubmissionInterval, actual.SubmissionInterval))
 		require.Condition(t,
-			checkEquality(desired.l2BlockTime, actual.l2BlockTime),
-			incorrectMsg("l2BlockTime", desired.l2BlockTime, actual.l2BlockTime))
+			checkEquality(desired.L2BlockTime, actual.L2BlockTime),
+			incorrectMsg("l2BlockTime", desired.L2BlockTime, actual.L2BlockTime))
 		require.Condition(t,
-			checkEquality(desired.finalizationPeriodSeconds, actual.finalizationPeriodSeconds),
-			incorrectMsg("finalizationPeriodSeconds", desired.finalizationPeriodSeconds, actual.finalizationPeriodSeconds))
+			checkEquality(desired.FinalizationPeriodSeconds, actual.FinalizationPeriodSeconds),
+			incorrectMsg("finalizationPeriodSeconds", desired.FinalizationPeriodSeconds, actual.FinalizationPeriodSeconds))
 	}
 
 	checkL2OOParams := func(t *testing.T, chain *ChainConfig) {
@@ -83,13 +75,7 @@ func TestL2OOParams(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("L2OutputOracleProxy")
 		require.NoError(t, err)
 
-		desiredParams := l2OOParams{
-			startingBlockNumber:       big.NewInt(0),
-			startingTimestamp:         big.NewInt(1690493568),
-			submissionInterval:        big.NewInt(120),
-			l2BlockTime:               big.NewInt(2),
-			finalizationPeriodSeconds: big.NewInt(12),
-		} // From OP Mainnet
+		desiredParams := OPMainnetL2OOParams
 
 		actualParams, err := getl2OOParamsWithRetries(context.Background(), common.Address(contractAddress), client)
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
@@ -109,48 +95,48 @@ func TestL2OOParams(t *testing.T) {
 
 // getResourceMeteringwill gets each of the parameters from the L2OutputOracle at l2OOAddr,
 // retrying up to 10 times with exponential backoff.
-func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (l2OOParams, error) {
-	const maxAttempts = 10
+func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (L2OOParams, error) {
+	const maxAttempts = 3
 	l2OO, err := bindings.NewL2OutputOracle(l2OOAddr, client)
 	if err != nil {
-		return l2OOParams{}, err
+		return L2OOParams{}, err
 	}
 
-	params := l2OOParams{}
-	params.startingBlockNumber, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
+	params := L2OOParams{}
+	params.StartingBlockNumber, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) {
 			return l2OO.StartingBlockNumber(&bind.CallOpts{Context: ctx})
 		})
 	if err != nil {
-		return l2OOParams{}, fmt.Errorf("could not get startingBlockNumber: %w", err)
+		return L2OOParams{}, fmt.Errorf("could not get startingBlockNumber: %w", err)
 	}
-	params.startingTimestamp, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
+	params.StartingTimestamp, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) {
 			return l2OO.StartingTimestamp(&bind.CallOpts{Context: ctx})
 		})
 	if err != nil {
-		return l2OOParams{}, fmt.Errorf("could not get startingTimestamp: %w", err)
+		return L2OOParams{}, fmt.Errorf("could not get startingTimestamp: %w", err)
 	}
-	params.submissionInterval, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
+	params.SubmissionInterval, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) {
 			return l2OO.SubmissionInterval(&bind.CallOpts{Context: ctx})
 		})
 	if err != nil {
-		return l2OOParams{}, fmt.Errorf("could not get submissionInterval: %w", err)
+		return L2OOParams{}, fmt.Errorf("could not get submissionInterval: %w", err)
 	}
-	params.l2BlockTime, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
+	params.L2BlockTime, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) {
 			return l2OO.L2BlockTime(&bind.CallOpts{Context: ctx})
 		})
 	if err != nil {
-		return l2OOParams{}, fmt.Errorf("could not get l2Blocktime: %w", err)
+		return L2OOParams{}, fmt.Errorf("could not get l2Blocktime: %w", err)
 	}
-	params.finalizationPeriodSeconds, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
+	params.FinalizationPeriodSeconds, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) {
 			return l2OO.FinalizationPeriodSeconds(&bind.CallOpts{Context: ctx})
 		})
 	if err != nil {
-		return l2OOParams{}, fmt.Errorf("could not get finalizationPeriodSeconds: %w", err)
+		return L2OOParams{}, fmt.Errorf("could not get finalizationPeriodSeconds: %w", err)
 	}
 
 	return params, nil
