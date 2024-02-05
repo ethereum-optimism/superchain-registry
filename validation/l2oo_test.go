@@ -20,6 +20,8 @@ import (
 func TestL2OOParams(t *testing.T) {
 
 	isExcluded := map[uint64]bool{
+		10: true, // mainnet/op (runs an old version of L2OutputOracle,
+		// which does not expose submissionInterval method)
 		291:          true,
 		424:          true,
 		888:          true,
@@ -33,6 +35,7 @@ func TestL2OOParams(t *testing.T) {
 		7777777:      true,
 		11155421:     true, // sepolia-dev-0/oplabs-devnet-0
 		11763071:     true,
+		11763072:     true, // sepolia-dev-0/base-devnet-0 incorrect startingTimestamp
 		999999999:    true,
 		129831238013: true,
 	}
@@ -75,7 +78,21 @@ func TestL2OOParams(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("L2OutputOracleProxy")
 		require.NoError(t, err)
 
-		desiredParams := OPMainnetL2OOParams
+		var desiredParams L2OOParams
+		switch chain.Superchain {
+		case "mainnet":
+			desiredParams = OPMainnetL2OOParams
+		case "goerli":
+			desiredParams = OPGoerliL2OOParams
+		case "sepolia":
+			desiredParams = OPSepoliaL2OOParams
+		case "goerli-dev-0":
+			desiredParams = OPGoerliDev0L2OOParams
+		case "sepolia-dev-0":
+			desiredParams = OPSepoliaDev0L2OOParams
+		default:
+			t.Fatalf("superchain not recognized: %s", chain.Superchain)
+		}
 
 		actualParams, err := getl2OOParamsWithRetries(context.Background(), common.Address(contractAddress), client)
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
