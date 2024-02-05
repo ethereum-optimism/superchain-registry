@@ -46,7 +46,7 @@ func TestContractVersions(t *testing.T) {
 		return desired == actual
 	}
 
-	checkOPChainSatisfiesSemver := func(chain *ChainConfig) {
+	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
 		require.NotEmpty(t, rpcEndpoint)
@@ -86,8 +86,10 @@ func TestContractVersions(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
-		if !isExcluded[chainID] {
-			checkOPChainSatisfiesSemver(chain)
+		if isExcluded[chainID] {
+			t.Logf("chain %d: EXCLUDED from contract version validation", chainID)
+		} else {
+			t.Run(chain.Name, func(t *testing.T) { checkOPChainSatisfiesSemver(t, chain) })
 		}
 	}
 }
