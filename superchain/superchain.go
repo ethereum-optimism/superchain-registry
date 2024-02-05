@@ -247,7 +247,7 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 		version = c.L1ERC721Bridge
 	case "L1StandardBridge":
 		version = c.L1StandardBridge
-	case "L2OutputOrcale":
+	case "L2OutputOracle":
 		version = c.L2OutputOracle
 	case "OptimismMintableERC20Factory":
 		version = c.OptimismMintableERC20Factory

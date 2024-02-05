@@ -71,7 +71,7 @@ func TestContractVersions(t *testing.T) {
 			"L1CrossDomainMessenger",
 			"L1ERC721Bridge",
 			"L1StandardBridge",
-			"L2OutputOrcale",
+			"L2OutputOracle",
 			"OptimismMintableERC20Factory",
 			"OptimismPortal",
 			"SystemConfig",
