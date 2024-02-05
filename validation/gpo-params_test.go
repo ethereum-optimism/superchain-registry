@@ -19,16 +19,16 @@ import (
 
 func TestGasPriceOracleParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		291:          true, // incorrect scalar parameter
-		888:          true, // no public endpoint
-		957:          true, // incorrect scalar parameter
-		997:          true, // no public endpoint
-		58008:        true, // incorrect overhead parameter
-		84532:        true, // incorrect overhead parameter
-		11155421:     true, // no public endpoint
-		11763071:     true, // no public endpoint
-		11763072:     true, // no public endpoint
-		129831238013: true, // no ground truth
+		291:          true, // mainnet/orderly                 (incorrect scalar parameter)
+		888:          true, // goerli-dev-0/op-labs-chaosnet-0 (no public endpoint)
+		957:          true, // mainnet/lyra                    (incorrect scalar parameter)
+		997:          true, // goerli-dev-0/op-labs-devnet-0   (no public endpoint)
+		58008:        true, // sepolia/pgn                     (incorrect overhead parameter)
+		84532:        true, // sepolia/base                    (incorrect overhead parameter)
+		11155421:     true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
+		11763071:     true, // goerli-dev-0/base-devnet-0      (no public endpoint)
+		11763072:     true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
+		129831238013: true, // goerli-dev-0/conduit-devnet-0   (no ground truth)
 	}
 
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig) {
