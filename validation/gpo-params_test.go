@@ -18,7 +18,18 @@ import (
 )
 
 func TestGasPriceOracleParams(t *testing.T) {
-	isExcluded := map[uint64]bool{}
+	isExcluded := map[uint64]bool{
+		291:          true, // incorrect scalar parameter
+		888:          true, // no public endpoint
+		957:          true, // incorrect scalar parameter
+		997:          true, // no public endpoint
+		58008:        true, // incorrect overhead parameter
+		84532:        true, // incorrect overhead parameter
+		11155421:     true, // no public endpoint
+		11763071:     true, // no public endpoint
+		11763072:     true, // no public endpoint
+		129831238013: true, // no ground truth
+	}
 
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig) {
 		rpcEndpoint := chain.PublicRPC
@@ -29,21 +40,31 @@ func TestGasPriceOracleParams(t *testing.T) {
 
 		contractAddress := predeploys.GasPriceOracleAddr
 
-		desiredParams := gasPriceOracleParams{
-			decimals: big.NewInt(6),
-			overhead: big.NewInt(188),
-			scalar:   big.NewInt(684000),
-		} // from OP Mainnet
+		var desiredParams GasPriceOracleParams
+		switch chain.Superchain {
+		case "mainnet":
+			desiredParams = OPMainnetGasPriceOracleParams
+		case "goerli":
+			desiredParams = OPGoerliGasPriceOracleParams
+		case "sepolia":
+			desiredParams = OPSepoliaGasPriceOracleParams
+		case "goerli-dev-0":
+			t.Fatalf("no ground truth for superchain %s", chain.Superchain)
+		case "sepolia-dev-0":
+			t.Fatalf("no ground truth for superchain %s", chain.Superchain)
+		default:
+			t.Fatalf("superchain not recognized: %s", chain.Superchain)
+		}
 
 		actualParams, err := getGasPriceOracleParamsWithRetries(context.Background(), contractAddress, client)
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
-		require.Condition(t, func() bool { return (actualParams.decimals.Cmp(desiredParams.decimals) == 0) },
-			"incorrect decimals parameter: got %d, wanted %d", actualParams.decimals, desiredParams.decimals)
-		require.Condition(t, func() bool { return (actualParams.overhead.Cmp(desiredParams.overhead) == 0) },
-			"incorrect overhead parameter: got %d, wanted %d", actualParams.overhead, desiredParams.overhead)
-		require.Condition(t, func() bool { return (actualParams.scalar.Cmp(desiredParams.scalar) == 0) },
-			"incorrect scalar parameter: got %d, wanted %d", actualParams.scalar, desiredParams.scalar)
+		require.Condition(t, func() bool { return (actualParams.Decimals.Cmp(desiredParams.Decimals) == 0) },
+			"incorrect decimals parameter: got %d, wanted %d", actualParams.Decimals, desiredParams.Decimals)
+		require.Condition(t, func() bool { return (actualParams.Overhead.Cmp(desiredParams.Overhead) == 0) },
+			"incorrect overhead parameter: got %d, wanted %d", actualParams.Overhead, desiredParams.Overhead)
+		require.Condition(t, func() bool { return (actualParams.Scalar.Cmp(desiredParams.Scalar) == 0) },
+			"incorrect scalar parameter: got %d, wanted %d", actualParams.Scalar, desiredParams.Scalar)
 
 		t.Logf("gas price oracle params are acceptable")
 
@@ -56,39 +77,33 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 }
 
-type gasPriceOracleParams struct {
-	decimals *big.Int
-	overhead *big.Int
-	scalar   *big.Int
-}
-
 // getGasPriceOracleParamsWithRetries get the params stored in the contract at addr.
-func getGasPriceOracleParamsWithRetries(ctx context.Context, addr common.Address, client *ethclient.Client) (gasPriceOracleParams, error) {
-	maxAttempts := 10
+func getGasPriceOracleParamsWithRetries(ctx context.Context, addr common.Address, client *ethclient.Client) (GasPriceOracleParams, error) {
+	maxAttempts := 3
 	gasPriceOracle, err := bindings.NewGasPriceOracle(addr, client)
 	if err != nil {
-		return gasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
+		return GasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
 	}
 
 	decimals, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) { return gasPriceOracle.Decimals(&bind.CallOpts{Context: ctx}) })
 	if err != nil {
-		return gasPriceOracleParams{}, fmt.Errorf("%s.decimals(): %w", addr, err)
+		return GasPriceOracleParams{}, fmt.Errorf("%s.Decimals(): %w", addr, err)
 	}
 
 	overhead, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) { return gasPriceOracle.Overhead(&bind.CallOpts{Context: ctx}) })
 	if err != nil {
-		return gasPriceOracleParams{}, fmt.Errorf("%s.overhead(): %w", addr, err)
+		return GasPriceOracleParams{}, fmt.Errorf("%s.Overhead(): %w", addr, err)
 	}
 
 	scalar, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) { return gasPriceOracle.Scalar(&bind.CallOpts{Context: ctx}) })
 	if err != nil {
-		return gasPriceOracleParams{}, fmt.Errorf("%s.scalar(): %w", addr, err)
+		return GasPriceOracleParams{}, fmt.Errorf("%s.Scalar(): %w", addr, err)
 	}
 
-	return gasPriceOracleParams{
-		decimals, overhead, scalar,
+	return GasPriceOracleParams{
+		Decimals: decimals, Overhead: overhead, Scalar: scalar,
 	}, nil
 }
