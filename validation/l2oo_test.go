@@ -45,22 +45,31 @@ func TestL2OOParams(t *testing.T) {
 		129831238013: true,
 	}
 
+	checkEquality := func(a, b *big.Int) func() bool {
+		return (func() bool { return (a.Cmp(b) == 0) })
+	}
+
+	incorrectMsg := func(name string, want, got *big.Int) string {
+		return fmt.Sprintf("Incorrect %s, wanted %d got %d", name, want, got)
+
+	}
+
 	requireEqualParams := func(t *testing.T, desired, actual l2OOParams) {
 		require.Condition(t,
-			func() bool { return (desired.startingBlockNumber.Cmp(actual.startingBlockNumber) == 0) },
-			"Incorrect startingBlockNumber, wanted %s got %s", desired.startingBlockNumber, actual.startingBlockNumber)
+			checkEquality(desired.startingBlockNumber, actual.startingBlockNumber),
+			incorrectMsg("startingBlockNumber", desired.startingBlockNumber, actual.startingBlockNumber))
 		require.Condition(t,
-			func() bool { return (desired.startingTimestamp.Cmp(actual.startingTimestamp) == 0) },
-			"Incorrect startingTimestamp, wanted %s got %s", desired.startingTimestamp, actual.startingTimestamp)
+			checkEquality(desired.startingTimestamp, actual.startingTimestamp),
+			incorrectMsg("startingTimestamp", desired.startingTimestamp, actual.startingTimestamp))
 		require.Condition(t,
-			func() bool { return (desired.submissionInterval.Cmp(actual.submissionInterval) == 0) },
-			"Incorrect submissionInterval, wanted %s got %s", desired.submissionInterval, actual.submissionInterval)
+			checkEquality(desired.submissionInterval, actual.submissionInterval),
+			incorrectMsg("submissionInterval", desired.submissionInterval, actual.submissionInterval))
 		require.Condition(t,
-			func() bool { return (desired.l2BlockTime.Cmp(actual.l2BlockTime) == 0) },
-			"Incorrect l2BlockTime, wanted %s got %s", desired.l2BlockTime, actual.l2BlockTime)
+			checkEquality(desired.l2BlockTime, actual.l2BlockTime),
+			incorrectMsg("l2BlockTime", desired.l2BlockTime, actual.l2BlockTime))
 		require.Condition(t,
-			func() bool { return (desired.finalizationPeriodSeconds.Cmp(actual.finalizationPeriodSeconds) == 0) },
-			"Incorrect finalizationPeriodSeconds, wanted %s got %s", desired.finalizationPeriodSeconds, actual.finalizationPeriodSeconds)
+			checkEquality(desired.finalizationPeriodSeconds, actual.finalizationPeriodSeconds),
+			incorrectMsg("finalizationPeriodSeconds", desired.finalizationPeriodSeconds, actual.finalizationPeriodSeconds))
 	}
 
 	checkL2OOParams := func(t *testing.T, chain *ChainConfig) {
