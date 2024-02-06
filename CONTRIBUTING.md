@@ -29,7 +29,7 @@ EOF
 Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.
 
 ### Approved contract versions
-Each superchain target should have a `semver.yaml` file in the same directory declaing the approved contract semantic versions for that superchain, e.g: 
+Each superchain target should have a `semver.yaml` file in the same directory declaring the approved contract semantic versions for that superchain, e.g: 
 ```yaml
 l1_cross_domain_messenger: 1.4.0
 l1_erc721_bridge: 1.0.0
