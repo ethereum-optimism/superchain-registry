@@ -59,11 +59,11 @@ func TestGasPriceOracleParams(t *testing.T) {
 		actualParams, err := getGasPriceOracleParamsWithRetries(context.Background(), contractAddress, client)
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
-		require.Condition(t, func() bool { return (actualParams.Decimals.Cmp(desiredParams.Decimals) == 0) },
+		require.Equal(t, actualParams.Decimals.Cmp(desiredParams.Decimals), 0,
 			"incorrect decimals parameter: got %d, wanted %d", actualParams.Decimals, desiredParams.Decimals)
-		require.Condition(t, func() bool { return (actualParams.Overhead.Cmp(desiredParams.Overhead) == 0) },
+		require.Equal(t, actualParams.Overhead.Cmp(desiredParams.Overhead), 0,
 			"incorrect overhead parameter: got %d, wanted %d", actualParams.Overhead, desiredParams.Overhead)
-		require.Condition(t, func() bool { return (actualParams.Scalar.Cmp(desiredParams.Scalar) == 0) },
+		require.Equal(t, actualParams.Scalar.Cmp(desiredParams.Scalar), 0,
 			"incorrect scalar parameter: got %d, wanted %d", actualParams.Scalar, desiredParams.Scalar)
 
 		t.Logf("gas price oracle params are acceptable")
