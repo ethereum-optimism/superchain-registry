@@ -30,7 +30,7 @@ func TestL2OOParams(t *testing.T) {
 		34443:        true, // mainnet/mode                    (old version of L2OutputOracle, no submissionInterval method)
 		58008:        true, // sepolia/pgn                     (old version of L2OutputOracle, no submissionInterval method)
 		84531:        true, // goerli/base                     (old version of L2OutputOracle, no submissionInterval method)
-		84532:        true, // sepolia/base                    iIncorrect startingTimestamp)
+		84532:        true, // sepolia/base                    incorrect startingTimestamp)
 		7777777:      true, // mainnet/zora                    (old version of L2OutputOracle, no submissionInterval method)
 		11155421:     true, // sepolia-dev-0/oplabs-devnet-0   (old version of L2OutputOracle, no submissionInterval method)
 		11763071:     true, // goerli-dev-0/base-devnet-0      (old version of L2OutputOracle, no submissionInterval method)
