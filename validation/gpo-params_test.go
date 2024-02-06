@@ -80,25 +80,26 @@ func TestGasPriceOracleParams(t *testing.T) {
 // getGasPriceOracleParamsWithRetries get the params stored in the contract at addr.
 func getGasPriceOracleParamsWithRetries(ctx context.Context, addr common.Address, client *ethclient.Client) (GasPriceOracleParams, error) {
 	maxAttempts := 3
+	callOpts := &bind.CallOpts{Context: ctx}
 	gasPriceOracle, err := bindings.NewGasPriceOracle(addr, client)
 	if err != nil {
 		return GasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
 	}
 
 	decimals, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) { return gasPriceOracle.Decimals(&bind.CallOpts{Context: ctx}) })
+		func() (*big.Int, error) { return gasPriceOracle.Decimals(callOpts) })
 	if err != nil {
 		return GasPriceOracleParams{}, fmt.Errorf("%s.Decimals(): %w", addr, err)
 	}
 
 	overhead, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) { return gasPriceOracle.Overhead(&bind.CallOpts{Context: ctx}) })
+		func() (*big.Int, error) { return gasPriceOracle.Overhead(callOpts) })
 	if err != nil {
 		return GasPriceOracleParams{}, fmt.Errorf("%s.Overhead(): %w", addr, err)
 	}
 
 	scalar, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) { return gasPriceOracle.Scalar(&bind.CallOpts{Context: ctx}) })
+		func() (*big.Int, error) { return gasPriceOracle.Scalar(callOpts) })
 	if err != nil {
 		return GasPriceOracleParams{}, fmt.Errorf("%s.Scalar(): %w", addr, err)
 	}
