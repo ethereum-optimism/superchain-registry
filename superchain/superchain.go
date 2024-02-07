@@ -87,7 +87,7 @@ func (a AddressList) AddressFor(contractName string) (Address, error) {
 		address = a.L1ERC721BridgeProxy
 	case "L1StandardBridgeProxy":
 		address = a.L1StandardBridgeProxy
-	case "L2OutputOrcaleProxy":
+	case "L2OutputOracleProxy":
 		address = a.L2OutputOracleProxy
 	case "OptimismMintableERC20FactoryProxy":
 		address = a.OptimismMintableERC20FactoryProxy
@@ -247,7 +247,7 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 		version = c.L1ERC721Bridge
 	case "L1StandardBridge":
 		version = c.L1StandardBridge
-	case "L2OutputOrcale":
+	case "L2OutputOracle":
 		version = c.L2OutputOracle
 	case "OptimismMintableERC20Factory":
 		version = c.OptimismMintableERC20Factory
