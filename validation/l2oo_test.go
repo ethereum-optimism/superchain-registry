@@ -23,18 +23,15 @@ func TestL2OOParams(t *testing.T) {
 		10:           true, // mainnet/op                      (old version of L2OutputOracle, no submissionInterval method)
 		291:          true, // mainnet/orderly                 (old version of L2OutputOracle, no submissionInterval method)
 		424:          true, // mainnet/pgn                     (old version of L2OutputOracle, no submissionInterval method)
-		888:          true, // goerli-dev-0/op-labs-chaosnet-0 (incorrect startingBlockNumber)
 		957:          true, // mainnet/lyra                    (old version of L2OutputOracle, no submissionInterval method)
 		997:          true, // goerli-dev-0/op-labs-devnet-0   (old version of L2OutputOracle, no submissionInterval method)
 		8453:         true, // mainnet/base                    (old version of L2OutputOracle, no submissionInterval method)
 		34443:        true, // mainnet/mode                    (old version of L2OutputOracle, no submissionInterval method)
 		58008:        true, // sepolia/pgn                     (old version of L2OutputOracle, no submissionInterval method)
 		84531:        true, // goerli/base                     (old version of L2OutputOracle, no submissionInterval method)
-		84532:        true, // sepolia/base                    incorrect startingTimestamp)
 		7777777:      true, // mainnet/zora                    (old version of L2OutputOracle, no submissionInterval method)
 		11155421:     true, // sepolia-dev-0/oplabs-devnet-0   (old version of L2OutputOracle, no submissionInterval method)
 		11763071:     true, // goerli-dev-0/base-devnet-0      (old version of L2OutputOracle, no submissionInterval method)
-		11763072:     true, // sepolia-dev-0/base-devnet-0     (incorrect startingTimestamp)
 		999999999:    true, // sepolia/zora                    (old version of L2OutputOracle, no submissionInterval method)
 		129831238013: true, // goerli-dev-0/conduit-devnet-0   (old version of L2OutputOracle, no submissionInterval method)
 	}
@@ -49,12 +46,6 @@ func TestL2OOParams(t *testing.T) {
 	}
 
 	requireEqualParams := func(t *testing.T, desired, actual L2OOParams) {
-		require.Condition(t,
-			checkEquality(desired.StartingBlockNumber, actual.StartingBlockNumber),
-			incorrectMsg("startingBlockNumber", desired.StartingBlockNumber, actual.StartingBlockNumber))
-		require.Condition(t,
-			checkEquality(desired.StartingTimestamp, actual.StartingTimestamp),
-			incorrectMsg("startingTimestamp", desired.StartingTimestamp, actual.StartingTimestamp))
 		require.Condition(t,
 			checkEquality(desired.SubmissionInterval, actual.SubmissionInterval),
 			incorrectMsg("submissionInterval", desired.SubmissionInterval, actual.SubmissionInterval))
@@ -119,20 +110,7 @@ func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, clie
 	}
 
 	params := L2OOParams{}
-	params.StartingBlockNumber, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) {
-			return l2OO.StartingBlockNumber(&bind.CallOpts{Context: ctx})
-		})
-	if err != nil {
-		return L2OOParams{}, fmt.Errorf("could not get startingBlockNumber: %w", err)
-	}
-	params.StartingTimestamp, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) {
-			return l2OO.StartingTimestamp(&bind.CallOpts{Context: ctx})
-		})
-	if err != nil {
-		return L2OOParams{}, fmt.Errorf("could not get startingTimestamp: %w", err)
-	}
+
 	params.SubmissionInterval, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) {
 			return l2OO.SubmissionInterval(&bind.CallOpts{Context: ctx})
