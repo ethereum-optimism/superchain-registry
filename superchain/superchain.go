@@ -232,6 +232,8 @@ type ContractVersions struct {
 	OptimismMintableERC20Factory string `yaml:"optimism_mintable_erc20_factory"`
 	OptimismPortal               string `yaml:"optimism_portal"`
 	SystemConfig                 string `yaml:"system_config"`
+	// Superchain-wide contracts:
+	ProtocolVersions string `yaml:"protocol_versions"`
 }
 
 // VersionFor returns the version for the supplied contract name, if it exits
@@ -253,6 +255,8 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 		version = c.OptimismPortal
 	case "SystemConfig":
 		version = c.SystemConfig
+	case "ProtocolVersions":
+		version = c.ProtocolVersions
 	default:
 		return "", errors.New("no such contract name")
 	}

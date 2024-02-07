@@ -16,13 +16,30 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-// TestContractVersions will check that
-//   - for each chain in OPChain
-//   - for each declared contract "Foo" : version entry in the corresponding superchain's semver.yaml
-//   - the chain has a contract FooProxy deployed at the same version
-//
-// Actual semvers are
-// read from the L1 chain RPC provider for the chain in question.
+var isSemverAcceptable = func(desired, actual string) bool {
+	return desired == actual
+}
+
+func TestSuperchainWideContractVersions(t *testing.T) {
+
+	checkSuperchainTargetSatisfiesSemver := func(t *testing.T, superchain *Superchain) {
+		rpcEndpoint := superchain.Config.L1.PublicRPC
+		require.NotEmpty(t, rpcEndpoint)
+
+		client, err := ethclient.Dial(rpcEndpoint)
+		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+
+		desiredSemver, err := SuperchainSemver[superchain.Superchain].VersionFor("ProtocolVersions")
+		require.NoError(t, err)
+		checkSemverForContract(t, "ProtocolVersions", superchain.Config.ProtocolVersionsAddr, client, desiredSemver)
+	}
+
+	for superchainName, superchain := range Superchains {
+		t.Run(superchainName, func(t *testing.T) { checkSuperchainTargetSatisfiesSemver(t, superchain) })
+	}
+
+}
+
 func TestContractVersions(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		291:          true,
@@ -40,10 +57,6 @@ func TestContractVersions(t *testing.T) {
 		11763071:     true,
 		999999999:    true,
 		129831238013: true,
-	}
-
-	isSemverAcceptable := func(desired, actual string) bool {
-		return desired == actual
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
@@ -67,20 +80,11 @@ func TestContractVersions(t *testing.T) {
 		for _, contractName := range contractNames {
 			desiredSemver, err := SuperchainSemver[chain.Superchain].VersionFor(contractName)
 			require.NoError(t, err)
-
 			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
 			proxyContractName := contractName + "Proxy"
-
 			contractAddress, err := Addresses[chain.ChainID].AddressFor(proxyContractName)
-			require.NoErrorf(t, err, "%s/%s.%s.version= UNSPECIFIED (desired version %s)", chain.Superchain, chain.Name, proxyContractName, desiredSemver)
-
-			actualSemver, err := getVersionWithRetries(context.Background(), common.Address(contractAddress), client)
-			require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
-
-			require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
-				"%s/%s.%s.version=%s (UNACCEPTABLE desired version %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
-
-			t.Logf("%s/%s.%s.version=%s (acceptable compared to %s)", chain.Superchain, chain.Name, proxyContractName, actualSemver, desiredSemver)
+			require.NoErrorf(t, err, "%s/%s.%s.version= UNSPECIFIED", chain.Superchain, chain.Name, proxyContractName)
+			checkSemverForContract(t, proxyContractName, &contractAddress, client, desiredSemver)
 
 		}
 	}
@@ -92,6 +96,16 @@ func TestContractVersions(t *testing.T) {
 			t.Run(chain.Name, func(t *testing.T) { checkOPChainSatisfiesSemver(t, chain) })
 		}
 	}
+}
+
+func checkSemverForContract(t *testing.T, contractName string, contractAddress *Address, client *ethclient.Client, desiredSemver string) {
+	actualSemver, err := getVersionWithRetries(context.Background(), common.Address(*contractAddress), client)
+	require.NoError(t, err, "Could not get version for %s", contractName)
+
+	require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
+		"%s.version=%s (UNACCEPTABLE desired version %s)", contractName, actualSemver, desiredSemver)
+
+	t.Logf("%s.version=%s (acceptable compared to %s)", contractName, actualSemver, desiredSemver)
 }
 
 // getVersion will get the version of a contract at a given address, if it exposes a version() method.

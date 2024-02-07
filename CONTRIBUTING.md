@@ -28,6 +28,21 @@ EOF
 ```
 Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.
 
+### Approved contract versions
+Each superchain target should have a `semver.yaml` file in the same directory declaring the approved contract semantic versions for that superchain, e.g: 
+```yaml
+l1_cross_domain_messenger: 1.4.0
+l1_erc721_bridge: 1.0.0
+l1_standard_bridge: 1.1.0
+l2_output_oracle: 1.3.0
+optimism_mintable_erc20_factory: 1.1.0
+optimism_portal: 1.6.0
+system_config: 1.3.0
+
+# superchain-wide contracts
+protocol_versions: 1.0.0
+```
+
 ### `implementations`
 
 Per superchain a set of canonical implementation deployments, per semver version, is tracked.

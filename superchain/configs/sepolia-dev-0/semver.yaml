@@ -5,3 +5,6 @@ l2_output_oracle: 1.5.0
 optimism_mintable_erc20_factory: 1.4.0
 optimism_portal: 1.9.0
 system_config: 1.7.0
+
+# superchain-wide contracts
+protocol_versions: 1.0.0
