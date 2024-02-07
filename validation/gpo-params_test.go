@@ -51,7 +51,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 			t.Fatalf("superchain not recognized: %s", chain.Superchain)
 		}
 
-		actualParams, err := getGasPriceOracleParamsWithRetries(context.Background(), gasPriceOraclAddr, client)
+		actualParams, err := getBedrockGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
 		require.Equal(t, actualParams.Decimals.Cmp(desiredParams.Decimals), 0,
@@ -65,9 +65,43 @@ func TestGasPriceOracleParams(t *testing.T) {
 
 	}
 
+	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
+
+		var desiredParams EcotoneGasPriceOracleParams
+		switch chain.Superchain {
+		case "mainnet":
+			desiredParams = OPMainnetEcotoneGasPriceOracleParams
+		case "goerli":
+			desiredParams = OPGoerliEcotoneGasPriceOracleParams
+		case "sepolia":
+			desiredParams = OPSepoliaEcotoneGasPriceOracleParams
+		case "goerli-dev-0":
+			t.Fatalf("no ground truth for superchain %s", chain.Superchain)
+		case "sepolia-dev-0":
+			t.Fatalf("no ground truth for superchain %s", chain.Superchain)
+		default:
+			t.Fatalf("superchain not recognized: %s", chain.Superchain)
+		}
+
+		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
+		require.NoError(t, err)
+
+		require.Equal(t, actualParams.Decimals.Cmp(desiredParams.Decimals), 0,
+			"incorrect decimals parameter: got %d, wanted %d", actualParams.Decimals, desiredParams.Decimals)
+		require.Equal(t, actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar,
+			"incorrect blobBaseFeeScalar parameter: got %d, wanted %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar)
+		require.Equal(t, actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar,
+			"incorrect baseFeeScalar: got %d, wanted %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar)
+		require.Equal(t, actualParams.BlobBaseFee.Cmp(desiredParams.BlobBaseFee), 0,
+			"incorrect blobBaseFee parameter: got %d, wanted %d", actualParams.BlobBaseFee, desiredParams.BlobBaseFee)
+
+		t.Logf("gas price oracle params are acceptable")
+
+	}
+
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
 		if Superchains[chain.Superchain].IsEcotone() {
-			t.Fatal("TODO cannot yet check Ecotone chains")
+			checkEcotoneResourceConfig(t, chain, client)
 		}
 		checkBedrockResourceConfig(t, chain, client)
 	}
@@ -85,8 +119,8 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 }
 
-// getGasPriceOracleParamsWithRetries get the params stored in the contract at addr.
-func getGasPriceOracleParamsWithRetries(ctx context.Context, addr common.Address, client *ethclient.Client) (BedrockGasPriceOracleParams, error) {
+// getBedrockGasPriceOracleParams gets the params by calling getters on the contract at addr. Will retry up to 3 times for each getter.
+func getBedrockGasPriceOracleParams(ctx context.Context, addr common.Address, client *ethclient.Client) (BedrockGasPriceOracleParams, error) {
 	maxAttempts := 3
 	callOpts := &bind.CallOpts{Context: ctx}
 	gasPriceOracle, err := bindings.NewGasPriceOracle(addr, client)
@@ -114,5 +148,46 @@ func getGasPriceOracleParamsWithRetries(ctx context.Context, addr common.Address
 
 	return BedrockGasPriceOracleParams{
 		Decimals: decimals, Overhead: overhead, Scalar: scalar,
+	}, nil
+}
+
+// getEcotoneGasPriceOracleParams gets the params by calling getters on the contract at addr. Will retry up to 3 times for each getter.
+func getEcotoneGasPriceOracleParams(ctx context.Context, addr common.Address, client *ethclient.Client) (EcotoneGasPriceOracleParams, error) {
+	maxAttempts := 3
+	callOpts := &bind.CallOpts{Context: ctx}
+	gasPriceOracle, err := bindings.NewGasPriceOracle(addr, client)
+	if err != nil {
+		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
+	}
+
+	decimals, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
+		func() (*big.Int, error) { return gasPriceOracle.Decimals(callOpts) })
+	if err != nil {
+		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s.Decimals(): %w", addr, err)
+	}
+
+	blobBaseFeeScalar, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
+		func() (uint32, error) { return gasPriceOracle.BlobBaseFeeScalar(callOpts) })
+	if err != nil {
+		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s.BlobBaseFeeScalar(): %w", addr, err)
+	}
+
+	baseFeeScalar, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
+		func() (uint32, error) { return gasPriceOracle.BaseFeeScalar(callOpts) })
+	if err != nil {
+		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s.BaseFeeScalar(): %w", addr, err)
+	}
+
+	blobBaseFee, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
+		func() (*big.Int, error) { return gasPriceOracle.BlobBaseFee(callOpts) })
+	if err != nil {
+		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s.BlobBaseFee(): %w", addr, err)
+	}
+
+	return EcotoneGasPriceOracleParams{
+		Decimals:          decimals,
+		BlobBaseFeeScalar: blobBaseFeeScalar,
+		BaseFeeScalar:     baseFeeScalar,
+		BlobBaseFee:       blobBaseFee,
 	}, nil
 }

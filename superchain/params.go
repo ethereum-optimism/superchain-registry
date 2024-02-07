@@ -94,3 +94,31 @@ var OPSepoliaBedrockGasPriceOracleParams = BedrockGasPriceOracleParams{
 	Overhead: big.NewInt(188),
 	Scalar:   big.NewInt(684000),
 }
+
+type EcotoneGasPriceOracleParams struct {
+	Decimals          *big.Int
+	BlobBaseFeeScalar uint32
+	BaseFeeScalar     uint32
+	BlobBaseFee       *big.Int
+}
+
+var OPMainnetEcotoneGasPriceOracleParams = EcotoneGasPriceOracleParams{
+	Decimals:          big.NewInt(6),
+	BlobBaseFeeScalar: 0,
+	BaseFeeScalar:     0,
+	BlobBaseFee:       big.NewInt(0),
+}
+
+var OPGoerliEcotoneGasPriceOracleParams = EcotoneGasPriceOracleParams{
+	Decimals:          big.NewInt(6),
+	BlobBaseFeeScalar: 0,
+	BaseFeeScalar:     1000000,
+	BlobBaseFee:       big.NewInt(25177585170),
+}
+
+var OPSepoliaEcotoneGasPriceOracleParams = EcotoneGasPriceOracleParams{
+	Decimals:          big.NewInt(6),
+	BlobBaseFeeScalar: 0,
+	BaseFeeScalar:     0,
+	BlobBaseFee:       big.NewInt(0),
+}
