@@ -41,6 +41,7 @@ system_config: 1.3.0
 
 # superchain-wide contracts
 protocol_versions: 1.0.0
+superchain_config: 
 ```
 
 ### `implementations`

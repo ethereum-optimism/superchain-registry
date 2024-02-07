@@ -235,6 +235,7 @@ type ContractVersions struct {
 	SystemConfig                 string `yaml:"system_config"`
 	// Superchain-wide contracts:
 	ProtocolVersions string `yaml:"protocol_versions"`
+	SuperchainConfig string `yaml:"superchain_config,omitempty"`
 }
 
 // VersionFor returns the version for the supplied contract name, if it exits
@@ -258,6 +259,8 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 		version = c.SystemConfig
 	case "ProtocolVersions":
 		version = c.ProtocolVersions
+	case "SuperchainConfig":
+		version = c.SuperchainConfig
 	default:
 		return "", errors.New("no such contract name")
 	}

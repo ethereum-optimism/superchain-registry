@@ -32,6 +32,10 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 		desiredSemver, err := SuperchainSemver[superchain.Superchain].VersionFor("ProtocolVersions")
 		require.NoError(t, err)
 		checkSemverForContract(t, "ProtocolVersions", superchain.Config.ProtocolVersionsAddr, client, desiredSemver)
+
+		desiredSemver, err = SuperchainSemver[superchain.Superchain].VersionFor("SuperchainConfig")
+		require.NoError(t, err)
+		checkSemverForContract(t, "SuperchainConfig", superchain.Config.SuperchainConfigAddr, client, desiredSemver)
 	}
 
 	for superchainName, superchain := range Superchains {
