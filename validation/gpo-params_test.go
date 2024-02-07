@@ -35,14 +35,14 @@ func TestGasPriceOracleParams(t *testing.T) {
 
 	checkBedrockResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
 
-		var desiredParams GasPriceOracleParams
+		var desiredParams BedrockGasPriceOracleParams
 		switch chain.Superchain {
 		case "mainnet":
-			desiredParams = OPMainnetGasPriceOracleParams
+			desiredParams = OPMainnetBedrockGasPriceOracleParams
 		case "goerli":
-			desiredParams = OPGoerliGasPriceOracleParams
+			desiredParams = OPGoerliBedrockGasPriceOracleParams
 		case "sepolia":
-			desiredParams = OPSepoliaGasPriceOracleParams
+			desiredParams = OPSepoliaBedrockGasPriceOracleParams
 		case "goerli-dev-0":
 			t.Fatalf("no ground truth for superchain %s", chain.Superchain)
 		case "sepolia-dev-0":
@@ -86,33 +86,33 @@ func TestGasPriceOracleParams(t *testing.T) {
 }
 
 // getGasPriceOracleParamsWithRetries get the params stored in the contract at addr.
-func getGasPriceOracleParamsWithRetries(ctx context.Context, addr common.Address, client *ethclient.Client) (GasPriceOracleParams, error) {
+func getGasPriceOracleParamsWithRetries(ctx context.Context, addr common.Address, client *ethclient.Client) (BedrockGasPriceOracleParams, error) {
 	maxAttempts := 3
 	callOpts := &bind.CallOpts{Context: ctx}
 	gasPriceOracle, err := bindings.NewGasPriceOracle(addr, client)
 	if err != nil {
-		return GasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
+		return BedrockGasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
 	}
 
 	decimals, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) { return gasPriceOracle.Decimals(callOpts) })
 	if err != nil {
-		return GasPriceOracleParams{}, fmt.Errorf("%s.Decimals(): %w", addr, err)
+		return BedrockGasPriceOracleParams{}, fmt.Errorf("%s.Decimals(): %w", addr, err)
 	}
 
 	overhead, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) { return gasPriceOracle.Overhead(callOpts) })
 	if err != nil {
-		return GasPriceOracleParams{}, fmt.Errorf("%s.Overhead(): %w", addr, err)
+		return BedrockGasPriceOracleParams{}, fmt.Errorf("%s.Overhead(): %w", addr, err)
 	}
 
 	scalar, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) { return gasPriceOracle.Scalar(callOpts) })
 	if err != nil {
-		return GasPriceOracleParams{}, fmt.Errorf("%s.Scalar(): %w", addr, err)
+		return BedrockGasPriceOracleParams{}, fmt.Errorf("%s.Scalar(): %w", addr, err)
 	}
 
-	return GasPriceOracleParams{
+	return BedrockGasPriceOracleParams{
 		Decimals: decimals, Overhead: overhead, Scalar: scalar,
 	}, nil
 }

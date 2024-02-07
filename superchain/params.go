@@ -71,24 +71,25 @@ var OPSepoliaDev0L2OOParams = L2OOParams{
 	L2BlockTime:               big.NewInt(2),
 	FinalizationPeriodSeconds: big.NewInt(12),
 type GasPriceOracleParams struct {
+type BedrockGasPriceOracleParams struct {
 	Decimals *big.Int
 	Overhead *big.Int
 	Scalar   *big.Int
 }
 
-var OPMainnetGasPriceOracleParams = GasPriceOracleParams{
+var OPMainnetBedrockGasPriceOracleParams = BedrockGasPriceOracleParams{
 	Decimals: big.NewInt(6),
 	Overhead: big.NewInt(188),
 	Scalar:   big.NewInt(684000),
 }
 
-var OPGoerliGasPriceOracleParams = GasPriceOracleParams{
+var OPGoerliBedrockGasPriceOracleParams = BedrockGasPriceOracleParams{
 	Decimals: big.NewInt(6),
 	Overhead: big.NewInt(2100),
 	Scalar:   big.NewInt(1000000),
 }
 
-var OPSepoliaGasPriceOracleParams = GasPriceOracleParams{
+var OPSepoliaBedrockGasPriceOracleParams = BedrockGasPriceOracleParams{
 	Decimals: big.NewInt(6),
 	Overhead: big.NewInt(188),
 	Scalar:   big.NewInt(684000),
