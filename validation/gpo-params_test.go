@@ -20,12 +20,10 @@ import (
 func TestGasPriceOracleParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		291:          true, // mainnet/orderly                 (incorrect scalar parameter)
-		420:          true, // goerli/op                       (isEcotone: ovehead,scalar parameters are deprecated)
 		888:          true, // goerli-dev-0/op-labs-chaosnet-0 (no public endpoint)
 		957:          true, // mainnet/lyra                    (incorrect scalar parameter)
 		997:          true, // goerli-dev-0/op-labs-devnet-0   (no public endpoint)
 		58008:        true, // sepolia/pgn                     (incorrect overhead parameter)
-		84531:        true, // goerli/base                     (isEcotone: ovehead,scalar parameters are deprecated)
 		84532:        true, // sepolia/base                    (incorrect overhead parameter)
 		11155421:     true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
 		11763071:     true, // goerli-dev-0/base-devnet-0      (no public endpoint)
@@ -68,6 +66,9 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
+		if Superchains[chain.Superchain].IsEcotone() {
+			t.Fatal("TODO cannot yet check Ecotone chains")
+		}
 		checkBedrockResourceConfig(t, chain, client)
 	}
 
