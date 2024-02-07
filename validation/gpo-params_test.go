@@ -92,8 +92,6 @@ func TestGasPriceOracleParams(t *testing.T) {
 			"incorrect blobBaseFeeScalar parameter: got %d, wanted %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar)
 		require.Equal(t, actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar,
 			"incorrect baseFeeScalar: got %d, wanted %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar)
-		require.Equal(t, actualParams.BlobBaseFee.Cmp(desiredParams.BlobBaseFee), 0,
-			"incorrect blobBaseFee parameter: got %d, wanted %d", actualParams.BlobBaseFee, desiredParams.BlobBaseFee)
 
 		t.Logf("gas price oracle params are acceptable")
 
@@ -178,16 +176,9 @@ func getEcotoneGasPriceOracleParams(ctx context.Context, addr common.Address, cl
 		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s.BaseFeeScalar(): %w", addr, err)
 	}
 
-	blobBaseFee, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) { return gasPriceOracle.BlobBaseFee(callOpts) })
-	if err != nil {
-		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s.BlobBaseFee(): %w", addr, err)
-	}
-
 	return EcotoneGasPriceOracleParams{
 		Decimals:          decimals,
 		BlobBaseFeeScalar: blobBaseFeeScalar,
 		BaseFeeScalar:     baseFeeScalar,
-		BlobBaseFee:       blobBaseFee,
 	}, nil
 }
