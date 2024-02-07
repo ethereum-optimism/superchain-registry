@@ -103,6 +103,7 @@ func TestL2OOParams(t *testing.T) {
 // getResourceMeteringwill gets each of the parameters from the L2OutputOracle at l2OOAddr,
 // retrying up to 10 times with exponential backoff.
 func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (L2OOParams, error) {
+	callOpts := &bind.CallOpts{Context: ctx}
 	const maxAttempts = 3
 	l2OO, err := bindings.NewL2OutputOracle(l2OOAddr, client)
 	if err != nil {
@@ -113,21 +114,21 @@ func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, clie
 
 	params.SubmissionInterval, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) {
-			return l2OO.SubmissionInterval(&bind.CallOpts{Context: ctx})
+			return l2OO.SubmissionInterval(callOpts)
 		})
 	if err != nil {
 		return L2OOParams{}, fmt.Errorf("could not get submissionInterval: %w", err)
 	}
 	params.L2BlockTime, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) {
-			return l2OO.L2BlockTime(&bind.CallOpts{Context: ctx})
+			return l2OO.L2BlockTime(callOpts)
 		})
 	if err != nil {
 		return L2OOParams{}, fmt.Errorf("could not get l2Blocktime: %w", err)
 	}
 	params.FinalizationPeriodSeconds, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) {
-			return l2OO.FinalizationPeriodSeconds(&bind.CallOpts{Context: ctx})
+			return l2OO.FinalizationPeriodSeconds(callOpts)
 		})
 	if err != nil {
 		return L2OOParams{}, fmt.Errorf("could not get finalizationPeriodSeconds: %w", err)
