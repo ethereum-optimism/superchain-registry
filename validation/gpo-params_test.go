@@ -33,14 +33,9 @@ func TestGasPriceOracleParams(t *testing.T) {
 		129831238013: true, // goerli-dev-0/conduit-devnet-0   (no ground truth)
 	}
 
-	checkResourceConfig := func(t *testing.T, chain *ChainConfig) {
-		rpcEndpoint := chain.PublicRPC
-		require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
+	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
-		client, err := ethclient.Dial(rpcEndpoint)
-		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-
-		contractAddress := predeploys.GasPriceOracleAddr
+	checkBedrockResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
 
 		var desiredParams GasPriceOracleParams
 		switch chain.Superchain {
@@ -58,8 +53,8 @@ func TestGasPriceOracleParams(t *testing.T) {
 			t.Fatalf("superchain not recognized: %s", chain.Superchain)
 		}
 
-		actualParams, err := getGasPriceOracleParamsWithRetries(context.Background(), contractAddress, client)
-		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
+		actualParams, err := getGasPriceOracleParamsWithRetries(context.Background(), gasPriceOraclAddr, client)
+		require.NoError(t, err)
 
 		require.Equal(t, actualParams.Decimals.Cmp(desiredParams.Decimals), 0,
 			"incorrect decimals parameter: got %d, wanted %d", actualParams.Decimals, desiredParams.Decimals)
@@ -72,9 +67,19 @@ func TestGasPriceOracleParams(t *testing.T) {
 
 	}
 
+	checkResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
+		checkBedrockResourceConfig(t, chain, client)
+	}
+
 	for chainID, chain := range OPChains {
 		if !isExcluded[chainID] {
-			t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) { checkResourceConfig(t, chain) })
+			t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) {
+				rpcEndpoint := chain.PublicRPC
+				require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
+				client, err := ethclient.Dial(rpcEndpoint)
+				require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+				checkResourceConfig(t, chain, client)
+			})
 		}
 	}
 }
