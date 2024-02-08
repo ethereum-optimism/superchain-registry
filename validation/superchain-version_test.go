@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"testing"
@@ -10,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -78,14 +80,18 @@ func TestContractVersions(t *testing.T) {
 		}
 
 		for _, contractName := range contractNames {
-			desiredSemver, err := SuperchainSemver[chain.Superchain].VersionFor(contractName)
-			require.NoError(t, err)
+
 			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
 			proxyContractName := contractName + "Proxy"
 			contractAddress, err := Addresses[chain.ChainID].AddressFor(proxyContractName)
 			require.NoErrorf(t, err, "%s/%s.%s.version= UNSPECIFIED", chain.Superchain, chain.Name, proxyContractName)
+
+			desiredSemver, err := SuperchainSemver[chain.Superchain].VersionFor(contractName)
+			require.NoError(t, err)
 			checkSemverForContract(t, proxyContractName, &contractAddress, client, desiredSemver)
 
+			desiredBytecode := []byte{1, 1} // TODO proper ground truth
+			checkBytecodeForProxiedContract(t, proxyContractName, &contractAddress, client, desiredBytecode)
 		}
 	}
 
@@ -106,6 +112,15 @@ func checkSemverForContract(t *testing.T, contractName string, contractAddress *
 		"%s.version=%s (UNACCEPTABLE desired version %s)", contractName, actualSemver, desiredSemver)
 
 	t.Logf("%s.version=%s (acceptable compared to %s)", contractName, actualSemver, desiredSemver)
+}
+
+func checkBytecodeForProxiedContract(t *testing.T, contractName string, contractAddress *Address, client *ethclient.Client, desiredBytecode []byte) {
+	actualBytecode, err := getBytecodeForProxiedContract(context.Background(), common.Address(*contractAddress), client)
+	require.NoError(t, err, "Could not get bytecode for %s", contractName)
+
+	require.True(t, bytes.Equal(actualBytecode, desiredBytecode), "unacceptable bytecode for %s", contractName)
+
+	t.Logf("acceptable bytecode for %s", contractName)
 }
 
 // getVersion will get the version of a contract at a given address, if it exposes a version() method.
@@ -130,5 +145,28 @@ func getVersionWithRetries(ctx context.Context, addr common.Address, client *eth
 	const maxAttempts = 10
 	return retry.Do(ctx, maxAttempts, retry.Exponential(), func() (string, error) {
 		return getVersion(context.Background(), addr, client)
+	})
+}
+
+// getBytecodeWithRetries will get the bytecode at a given address, retrying up to 10 times.
+func getBytecodeForProxiedContract(ctx context.Context, proxyAddr common.Address, client *ethclient.Client) ([]byte, error) {
+	const maxAttempts = 1
+
+	result, err := retry.Do(ctx, maxAttempts, retry.Exponential(), func() ([]byte, error) {
+		return client.CallContract(context.Background(), ethereum.CallMsg{
+			To:   &proxyAddr,
+			From: common.Address{0},             // This should avoid the call being proxied
+			Data: common.FromHex("0x5c60da1b")}, // this is the function selector for "Implementation()"
+			// TODO not all Proxies that are in use expose such a method
+			nil)
+	})
+	implementationAddr := common.BytesToAddress(result)
+
+	if err != nil {
+		return []byte{}, fmt.Errorf("%s: %w", proxyAddr, err)
+	}
+
+	return retry.Do(ctx, maxAttempts, retry.Exponential(), func() ([]byte, error) {
+		return client.CodeAt(ctx, implementationAddr, nil)
 	})
 }
