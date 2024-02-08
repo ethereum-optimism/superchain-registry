@@ -102,20 +102,8 @@ type EcotoneGasPriceOracleParams struct {
 	BaseFeeScalar     uint32
 }
 
-var OPMainnetEcotoneGasPriceOracleParams = EcotoneGasPriceOracleParams{
-	Decimals:          big.NewInt(6),
-	BlobBaseFeeScalar: 0,
-	BaseFeeScalar:     0,
-}
-
 var OPGoerliEcotoneGasPriceOracleParams = EcotoneGasPriceOracleParams{
 	Decimals:          big.NewInt(6),
-	BlobBaseFeeScalar: 0,       // TODO this parameter will update to 862000 very soon, see https://github.com/ethereum-optimism/superchain-ops/pull/58
-	BaseFeeScalar:     1000000, // TODO this parameter will update to 7600 very soons, see https://github.com/ethereum-optimism/superchain-ops/pull/58
-}
-
-var OPSepoliaEcotoneGasPriceOracleParams = EcotoneGasPriceOracleParams{
-	Decimals:          big.NewInt(6),
-	BlobBaseFeeScalar: 0,
-	BaseFeeScalar:     0,
+	BlobBaseFeeScalar: 862000,
+	BaseFeeScalar:     7600,
 }

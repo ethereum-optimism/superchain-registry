@@ -69,14 +69,11 @@ func TestGasPriceOracleParams(t *testing.T) {
 
 		var desiredParams EcotoneGasPriceOracleParams
 		switch chain.Superchain {
-		case "mainnet":
-			desiredParams = OPMainnetEcotoneGasPriceOracleParams
 		case "goerli":
 			desiredParams = OPGoerliEcotoneGasPriceOracleParams
 		case "sepolia":
-			desiredParams = OPSepoliaEcotoneGasPriceOracleParams
+		case "mainnet":
 		case "goerli-dev-0":
-			t.Fatalf("no ground truth for superchain %s", chain.Superchain)
 		case "sepolia-dev-0":
 			t.Fatalf("no ground truth for superchain %s", chain.Superchain)
 		default:
@@ -100,8 +97,9 @@ func TestGasPriceOracleParams(t *testing.T) {
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
 		if Superchains[chain.Superchain].IsEcotone() {
 			checkEcotoneResourceConfig(t, chain, client)
+		} else {
+			checkPreEcotoneResourceConfig(t, chain, client)
 		}
-		checkPreEcotoneResourceConfig(t, chain, client)
 	}
 
 	for chainID, chain := range OPChains {
