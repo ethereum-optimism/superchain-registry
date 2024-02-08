@@ -33,16 +33,16 @@ func TestGasPriceOracleParams(t *testing.T) {
 
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
-	checkBedrockResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
+	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
 
-		var desiredParams BedrockGasPriceOracleParams
+		var desiredParams PreEcotoneGasPriceOracleParams
 		switch chain.Superchain {
 		case "mainnet":
-			desiredParams = OPMainnetBedrockGasPriceOracleParams
+			desiredParams = OPMainnetPreEcotoneGasPriceOracleParams
 		case "goerli":
-			desiredParams = OPGoerliBedrockGasPriceOracleParams
+			desiredParams = OPGoerliPreEcotoneGasPriceOracleParams
 		case "sepolia":
-			desiredParams = OPSepoliaBedrockGasPriceOracleParams
+			desiredParams = OPSepoliaPreEcotoneGasPriceOracleParams
 		case "goerli-dev-0":
 			t.Fatalf("no ground truth for superchain %s", chain.Superchain)
 		case "sepolia-dev-0":
@@ -51,7 +51,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 			t.Fatalf("superchain not recognized: %s", chain.Superchain)
 		}
 
-		actualParams, err := getBedrockGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
+		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
 		require.Equal(t, actualParams.Decimals.Cmp(desiredParams.Decimals), 0,
@@ -101,7 +101,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 		if Superchains[chain.Superchain].IsEcotone() {
 			checkEcotoneResourceConfig(t, chain, client)
 		}
-		checkBedrockResourceConfig(t, chain, client)
+		checkPreEcotoneResourceConfig(t, chain, client)
 	}
 
 	for chainID, chain := range OPChains {
@@ -117,34 +117,34 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 }
 
-// getBedrockGasPriceOracleParams gets the params by calling getters on the contract at addr. Will retry up to 3 times for each getter.
-func getBedrockGasPriceOracleParams(ctx context.Context, addr common.Address, client *ethclient.Client) (BedrockGasPriceOracleParams, error) {
+// getPreEcotoneGasPriceOracleParams gets the params by calling getters on the contract at addr. Will retry up to 3 times for each getter.
+func getPreEcotoneGasPriceOracleParams(ctx context.Context, addr common.Address, client *ethclient.Client) (PreEcotoneGasPriceOracleParams, error) {
 	maxAttempts := 3
 	callOpts := &bind.CallOpts{Context: ctx}
 	gasPriceOracle, err := bindings.NewGasPriceOracle(addr, client)
 	if err != nil {
-		return BedrockGasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
+		return PreEcotoneGasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
 	}
 
 	decimals, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) { return gasPriceOracle.Decimals(callOpts) })
 	if err != nil {
-		return BedrockGasPriceOracleParams{}, fmt.Errorf("%s.Decimals(): %w", addr, err)
+		return PreEcotoneGasPriceOracleParams{}, fmt.Errorf("%s.Decimals(): %w", addr, err)
 	}
 
 	overhead, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) { return gasPriceOracle.Overhead(callOpts) })
 	if err != nil {
-		return BedrockGasPriceOracleParams{}, fmt.Errorf("%s.Overhead(): %w", addr, err)
+		return PreEcotoneGasPriceOracleParams{}, fmt.Errorf("%s.Overhead(): %w", addr, err)
 	}
 
 	scalar, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) { return gasPriceOracle.Scalar(callOpts) })
 	if err != nil {
-		return BedrockGasPriceOracleParams{}, fmt.Errorf("%s.Scalar(): %w", addr, err)
+		return PreEcotoneGasPriceOracleParams{}, fmt.Errorf("%s.Scalar(): %w", addr, err)
 	}
 
-	return BedrockGasPriceOracleParams{
+	return PreEcotoneGasPriceOracleParams{
 		Decimals: decimals, Overhead: overhead, Scalar: scalar,
 	}, nil
 }
