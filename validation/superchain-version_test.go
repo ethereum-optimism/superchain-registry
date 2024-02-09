@@ -170,7 +170,7 @@ func getImplementationAddressFromProxy(ctx context.Context, proxyAddr common.Add
 	if err != nil {
 		addr, err = getImplementationAddressFromProxyViaTrace(ctx, proxyAddr, client)
 		if err != nil {
-			return common.Address{}, fmt.Errorf("could not get implementation address from proxy via trace_call request: %w", err)
+			return common.Address{}, fmt.Errorf("could not get implementation address from proxy via trace request: %w", err)
 		}
 	}
 	return addr, nil
@@ -198,47 +198,51 @@ func getImplementationAddressFromProxyViaTrace(ctx context.Context, proxyAddr co
 		"data": "0x54fd4d50",
 	}
 
-	type Trace struct {
-		Action struct {
-			CallType string `json:"callType"`
-			From     string `json:"from"`
-			Gas      string `json:"gas"`
-			Input    string `json:"input"`
-			To       string `json:"to"`
-			Value    string `json:"value"`
-		} `json:"action"`
-		Result struct {
-			GasUsed string `json:"gasUsed"`
-			Output  string `json:"output"`
-		} `json:"result"`
-		Subtraces    int    `json:"subtraces"`
-		TraceAddress []int  `json:"traceAddress"`
-		Type         string `json:"type"`
+	type Call struct {
+		From    string `json:"from"`
+		Gas     string `json:"gas"`
+		GasUsed string `json:"gasUsed"`
+		Input   string `json:"input"`
+		Output  string `json:"output"`
+		To      string `json:"to"`
+		Type    string `json:"type"`
+		Value   string `json:"value,omitempty"` // Optional field, so use omitempty
 	}
 
-	type TraceResult struct {
+	// Define the structure for the result part of the JSON-RPC response
+	type Result struct {
+		Calls   []Call `json:"calls"`
+		From    string `json:"from"`
+		Gas     string `json:"gas"`
+		GasUsed string `json:"gasUsed"`
+		Input   string `json:"input"`
+		Output  string `json:"output"`
+		To      string `json:"to"`
+		Type    string `json:"type"`
+		Value   string `json:"value,omitempty"` // Optional field, so use omitempty
+	}
+
+	// Define the overall JSON-RPC response structure
+	type JSONRPCResponse struct {
 		Jsonrpc string `json:"jsonrpc"`
 		ID      int    `json:"id"`
-		Result  struct {
-			Output    string      `json:"output"`
-			StateDiff interface{} `json:"stateDiff"` // Use interface{} type for null
-			Trace     []Trace     `json:"trace"`
-			VmTrace   interface{} `json:"vmTrace"` // Use interface{} type for null
-		} `json:"result"`
+		Result  Result `json:"result"`
 	}
 
-	var result TraceResult
+	// var result JSONRPCResponse
+	var result Result
 
-	err := client.CallContext(ctx, &result, "trace_call", args, []string{"trace"})
+	err := client.CallContext(ctx, &result, "debug_traceCall", args, "latest", map[string]string{"tracer": "callTracer"})
+
+	fmt.Println(result, err)
 
 	if err != nil {
 		return common.Address{}, err
 	}
 
-	for _, trace := range result.Result.Trace {
-
-		if trace.Action.CallType == "delegatecall" {
-			return common.HexToAddress(trace.Action.To), nil
+	for _, call := range result.Calls {
+		if call.Type == "DELEGATECALL" {
+			return common.HexToAddress(call.To), nil
 		}
 
 	}
