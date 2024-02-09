@@ -99,7 +99,7 @@ func TestContractVersions(t *testing.T) {
 		if isExcluded[chainID] {
 			t.Logf("chain %d: EXCLUDED from contract version validation", chainID)
 		} else {
-			t.Run(chain.Name, func(t *testing.T) { checkOPChainSatisfiesSemver(t, chain) })
+			t.Run(chain.Superchain+"/"+chain.Name, func(t *testing.T) { checkOPChainSatisfiesSemver(t, chain) })
 		}
 	}
 }
