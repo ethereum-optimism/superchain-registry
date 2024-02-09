@@ -91,8 +91,20 @@ func TestContractVersions(t *testing.T) {
 			require.NoError(t, err)
 			checkSemverForContract(t, proxyContractName, &contractAddress, client, desiredSemver)
 
-			desiredBytecode := []byte{1, 1} // TODO proper ground truth
-			checkBytecodeForProxiedContract(t, proxyContractName, &contractAddress, client, desiredBytecode)
+			var desiredBytecode string
+			var ok bool
+
+			switch chain.Superchain {
+			case "goerli":
+				desiredBytecode, ok = OPGoerliBytecode[contractName]
+				if !ok {
+					t.Fatalf("no bytecode for %s", contractName)
+				}
+			default:
+				t.Skip("unimplemented")
+			}
+
+			checkBytecodeForProxiedContract(t, contractName, &contractAddress, client, common.Hex2Bytes(desiredBytecode))
 		}
 	}
 
