@@ -152,6 +152,18 @@ func getVersionWithRetries(ctx context.Context, addr common.Address, client *eth
 func getBytecodeForProxiedContract(ctx context.Context, proxyAddr common.Address, client *ethclient.Client) ([]byte, error) {
 	const maxAttempts = 1
 
+	implementationAddr, err := getImplementationAddressFromProxy(ctx, proxyAddr, client)
+	if err != nil {
+		return []byte{}, fmt.Errorf("%s: %w", proxyAddr, err)
+	}
+
+	return retry.Do(ctx, maxAttempts, retry.Exponential(), func() ([]byte, error) {
+		return client.CodeAt(ctx, implementationAddr, nil)
+	})
+}
+
+func getImplementationAddressFromProxy(ctx context.Context, proxyAddr common.Address, client *ethclient.Client) (common.Address, error) {
+	const maxAttempts = 1
 	result, err := retry.Do(ctx, maxAttempts, retry.Exponential(), func() ([]byte, error) {
 		return client.CallContract(context.Background(), ethereum.CallMsg{
 			To:   &proxyAddr,
@@ -160,13 +172,8 @@ func getBytecodeForProxiedContract(ctx context.Context, proxyAddr common.Address
 			// TODO not all Proxies that are in use expose such a method
 			nil)
 	})
-	implementationAddr := common.BytesToAddress(result)
-
 	if err != nil {
-		return []byte{}, fmt.Errorf("%s: %w", proxyAddr, err)
+		return common.Address{}, nil
 	}
-
-	return retry.Do(ctx, maxAttempts, retry.Exponential(), func() ([]byte, error) {
-		return client.CodeAt(ctx, implementationAddr, nil)
-	})
+	return common.BytesToAddress(result), nil
 }
