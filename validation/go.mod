@@ -10,6 +10,7 @@ require (
 	github.com/ethereum-optimism/optimism v1.4.2
 	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240123205429-fbb63d6367d2
 	github.com/ethereum/go-ethereum v1.13.11
+	github.com/google/go-cmp v0.6.0
 	github.com/stretchr/testify v1.8.4
 )
 

@@ -1,13 +1,13 @@
 package validation
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
@@ -103,7 +103,7 @@ func TestContractVersions(t *testing.T) {
 				t.Skip("unimplemented")
 			}
 
-			checkBytecodeForProxiedContract(t, chain, contractName, &contractAddress, client, common.Hex2Bytes(desiredBytecode))
+			checkBytecodeForProxiedContract(t, chain, contractName, &contractAddress, client, desiredBytecode)
 		}
 	}
 
@@ -127,11 +127,13 @@ func checkSemverForContract(t *testing.T, contractName string, contractAddress *
 	t.Logf("%s.version=%s (acceptable compared to %s)", contractName, actualSemver, desiredSemver)
 }
 
-func checkBytecodeForProxiedContract(t *testing.T, chain *ChainConfig, contractName string, contractAddress *Address, client *rpc.Client, desiredBytecode []byte) {
+func checkBytecodeForProxiedContract(t *testing.T, chain *ChainConfig, contractName string, contractAddress *Address, client *rpc.Client, desiredBytecode string) {
 	actualBytecode, err := getBytecodeForProxiedContract(context.Background(), chain, common.Address(*contractAddress), client)
 	require.NoError(t, err, "Could not get bytecode for %s", contractName)
 
-	require.True(t, bytes.Equal(actualBytecode, desiredBytecode), "unacceptable bytecode for %s, got %s wanted %s", contractName, common.Bytes2Hex(actualBytecode), common.Bytes2Hex(desiredBytecode))
+	if diff := cmp.Diff(desiredBytecode, common.Bytes2Hex(actualBytecode)); diff != "" {
+		t.Fatalf("bytecode mismatch (-want +got):\n%s", diff)
+	}
 
 	t.Logf("acceptable bytecode for %s", contractName)
 }
