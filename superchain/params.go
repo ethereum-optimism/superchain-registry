@@ -72,12 +72,12 @@ var OPSepoliaDev0L2OOParams = L2OOParams{
 	FinalizationPeriodSeconds: big.NewInt(12),
 }
 
-type BigIntAndTolerance struct {
+type BigIntAndBounds struct {
 	Value  *big.Int
 	Bounds [2]*big.Int
 }
 
-type Uint32AndTolerance struct {
+type Uint32AndBounds struct {
 	Value  uint32
 	Bounds [2]uint32
 }
@@ -95,15 +95,15 @@ type EcotoneGasPriceOracleParams struct {
 }
 
 type PreEcotoneGasPriceOracleParamsWithBounds struct {
-	Decimals BigIntAndTolerance
-	Overhead BigIntAndTolerance
-	Scalar   BigIntAndTolerance
+	Decimals BigIntAndBounds
+	Overhead BigIntAndBounds
+	Scalar   BigIntAndBounds
 }
 
 type EcotoneGasPriceOracleParamsWithBounds struct {
-	Decimals          BigIntAndTolerance
-	BlobBaseFeeScalar Uint32AndTolerance
-	BaseFeeScalar     Uint32AndTolerance
+	Decimals          BigIntAndBounds
+	BlobBaseFeeScalar Uint32AndBounds
+	BaseFeeScalar     Uint32AndBounds
 }
 
 type UpgradeFilter struct {
@@ -111,31 +111,35 @@ type UpgradeFilter struct {
 	Ecotone    EcotoneGasPriceOracleParamsWithBounds
 }
 
+func makeBigIntAndBounds(value int64, bounds [2]int64) BigIntAndBounds {
+	return BigIntAndBounds{big.NewInt(value), [2]*big.Int{big.NewInt(bounds[0]), big.NewInt(bounds[1])}}
+}
+
 var GasPriceOracleParams = map[string]UpgradeFilter{
 	"mainnet": {
 		PreEcotone: PreEcotoneGasPriceOracleParamsWithBounds{
-			Decimals: BigIntAndTolerance{big.NewInt(6), [2]*big.Int{big.NewInt(6), big.NewInt(6)}},
-			Overhead: BigIntAndTolerance{big.NewInt(188), [2]*big.Int{big.NewInt(188), big.NewInt(188)}},
-			Scalar:   BigIntAndTolerance{big.NewInt(684_000), [2]*big.Int{big.NewInt(684_000), big.NewInt(684_000)}},
+			Decimals: makeBigIntAndBounds(6, [2]int64{6, 6}),
+			Overhead: makeBigIntAndBounds(188, [2]int64{188, 188}),
+			Scalar:   makeBigIntAndBounds(684_000, [2]int64{684_000, 684_000}),
 		},
 	},
 	"sepolia": {
 		PreEcotone: PreEcotoneGasPriceOracleParamsWithBounds{
-			Decimals: BigIntAndTolerance{big.NewInt(6), [2]*big.Int{big.NewInt(6), big.NewInt(6)}},
-			Overhead: BigIntAndTolerance{big.NewInt(188), [2]*big.Int{big.NewInt(188), big.NewInt(188)}},
-			Scalar:   BigIntAndTolerance{big.NewInt(684_000), [2]*big.Int{big.NewInt(684_000), big.NewInt(684_000)}},
+			Decimals: makeBigIntAndBounds(6, [2]int64{6, 6}),
+			Overhead: makeBigIntAndBounds(188, [2]int64{188, 188}),
+			Scalar:   makeBigIntAndBounds(684_000, [2]int64{684_000, 684_000}),
 		},
 	},
 	"goerli": {
 		PreEcotone: PreEcotoneGasPriceOracleParamsWithBounds{
-			Decimals: BigIntAndTolerance{big.NewInt(6), [2]*big.Int{big.NewInt(6), big.NewInt(6)}},
-			Overhead: BigIntAndTolerance{big.NewInt(2100), [2]*big.Int{big.NewInt(2100), big.NewInt(2100)}},
-			Scalar:   BigIntAndTolerance{big.NewInt(100_000), [2]*big.Int{big.NewInt(100_000), big.NewInt(100_000)}},
+			Decimals: makeBigIntAndBounds(6, [2]int64{6, 6}),
+			Overhead: makeBigIntAndBounds(2_100, [2]int64{2_100, 2_100}),
+			Scalar:   makeBigIntAndBounds(100_000, [2]int64{100_000, 100_000}),
 		},
 		Ecotone: EcotoneGasPriceOracleParamsWithBounds{
-			Decimals:          BigIntAndTolerance{big.NewInt(6), [2]*big.Int{big.NewInt(6), big.NewInt(6)}},
-			BlobBaseFeeScalar: Uint32AndTolerance{862_000, [2]uint32{862_000, 862_000}},
-			BaseFeeScalar:     Uint32AndTolerance{7600, [2]uint32{7600, 7600}},
+			Decimals:          makeBigIntAndBounds(6, [2]int64{6, 6}),
+			BlobBaseFeeScalar: Uint32AndBounds{862_000, [2]uint32{862_000, 862_000}},
+			BaseFeeScalar:     Uint32AndBounds{7600, [2]uint32{7600, 7600}},
 		},
 	},
 }
