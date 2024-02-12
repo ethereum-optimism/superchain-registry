@@ -81,7 +81,7 @@ type PreEcotoneGasPriceOracleParams struct {
 var OPMainnetPreEcotoneGasPriceOracleParams = PreEcotoneGasPriceOracleParams{
 	Decimals: big.NewInt(6),
 	Overhead: big.NewInt(188),
-	Scalar:   big.NewInt(684000),
+	Scalar:   big.NewInt(0),
 }
 
 var OPGoerliPreEcotoneGasPriceOracleParams = PreEcotoneGasPriceOracleParams{
