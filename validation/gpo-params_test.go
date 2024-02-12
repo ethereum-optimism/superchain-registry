@@ -36,33 +36,22 @@ func TestGasPriceOracleParams(t *testing.T) {
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
 
-		var desiredParams PreEcotoneGasPriceOracleParams
-		switch chain.Superchain {
-		case "mainnet":
-			desiredParams = OPMainnetPreEcotoneGasPriceOracleParams
-		case "goerli":
-			desiredParams = OPGoerliPreEcotoneGasPriceOracleParams
-		case "sepolia":
-			desiredParams = OPSepoliaPreEcotoneGasPriceOracleParams
-		case "goerli-dev-0":
-			t.Fatalf("no ground truth for superchain %s", chain.Superchain)
-		case "sepolia-dev-0":
-			t.Fatalf("no ground truth for superchain %s", chain.Superchain)
-		default:
+		desiredParamsOuter, ok := GasPriceOracleParams[chain.Superchain]
+
+		if !ok {
 			t.Fatalf("superchain not recognized: %s", chain.Superchain)
 		}
+		desiredParams := desiredParamsOuter.PreEcotone
 
 		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		tolerance := uint32(10)
-
-		require.True(t, areCloseBigInts(actualParams.Decimals, desiredParams.Decimals, tolerance),
-			"incorrect decimals parameter: got %d, wanted %d +/- %d%%", actualParams.Decimals, desiredParams.Decimals, tolerance)
-		require.True(t, areCloseBigInts(actualParams.Overhead, desiredParams.Overhead, tolerance),
-			"incorrect overhead parameter: got %d, wanted %d +/-%d%%", actualParams.Overhead, desiredParams.Overhead, tolerance)
-		require.True(t, areCloseBigInts(actualParams.Scalar, desiredParams.Scalar, tolerance),
-			"incorrect scalar parameter: got %d, wanted %d +/- %d%%", actualParams.Scalar, desiredParams.Scalar, tolerance)
+		require.True(t, areCloseBigInts(actualParams.Decimals, desiredParams.Decimals.Value, desiredParams.Decimals.Tolerance),
+			"incorrect decimals parameter: got %d, wanted %d +/- %d%%", actualParams.Decimals, desiredParams.Decimals, desiredParams.Decimals.Tolerance)
+		require.True(t, areCloseBigInts(actualParams.Overhead, desiredParams.Overhead.Value, desiredParams.Overhead.Tolerance),
+			"incorrect overhead parameter: got %d, wanted %d +/-%d%%", actualParams.Overhead, desiredParams.Overhead, desiredParams.Overhead.Tolerance)
+		require.True(t, areCloseBigInts(actualParams.Scalar, desiredParams.Scalar.Value, desiredParams.Scalar.Tolerance),
+			"incorrect scalar parameter: got %d, wanted %d +/- %d%%", actualParams.Scalar, desiredParams.Scalar, desiredParams.Scalar.Tolerance)
 
 		t.Logf("gas price oracle params are acceptable")
 
@@ -70,30 +59,25 @@ func TestGasPriceOracleParams(t *testing.T) {
 
 	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
 
-		var desiredParams EcotoneGasPriceOracleParams
-		switch chain.Superchain {
-		case "goerli":
-			desiredParams = OPGoerliEcotoneGasPriceOracleParams
-		case "sepolia":
-		case "mainnet":
-		case "goerli-dev-0":
-		case "sepolia-dev-0":
-			t.Fatalf("no ground truth for superchain %s", chain.Superchain)
-		default:
+		desiredParamsOuter, ok := GasPriceOracleParams[chain.Superchain]
+
+		if !ok {
 			t.Fatalf("superchain not recognized: %s", chain.Superchain)
 		}
+		desiredParams := desiredParamsOuter.Ecotone
 
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		tolerance := uint32(10)
-
-		require.True(t, areCloseBigInts(actualParams.Decimals, actualParams.Decimals, tolerance),
-			"incorrect decimals parameter: got %d, wanted %d +/ %d%%", actualParams.Decimals, desiredParams.Decimals, tolerance)
-		require.True(t, areCloseInts(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar, tolerance),
-			"incorrect blobBaseFeeScalar parameter: got %d, wanted +/-%d%%", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar, tolerance)
-		require.True(t, areCloseInts(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar, tolerance),
-			"incorrect baseFeeScalar: got %d, wanted %d +/- %d%%", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar)
+		require.True(t, areCloseBigInts(actualParams.Decimals, desiredParams.Decimals.Value, desiredParams.Decimals.Tolerance),
+			"incorrect decimals parameter: got %d, wanted %d +/ %d%%", actualParams.Decimals, desiredParams.Decimals, desiredParams.Decimals.Tolerance)
+		require.True(t, areCloseInts(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Value, desiredParams.BlobBaseFeeScalar.Tolerance),
+			desiredParams.BlobBaseFeeScalar.Tolerance,
+			"incorrect blobBaseFeeScalar parameter: got %d, wanted +/-%d%%",
+			actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Tolerance)
+		require.True(t, areCloseInts(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Value, desiredParams.BaseFeeScalar.Tolerance),
+			"incorrect baseFeeScalar: got %d, wanted %d +/- %d%%",
+			actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Value, desiredParams.BaseFeeScalar.Tolerance)
 
 		t.Logf("gas price oracle params are acceptable")
 
