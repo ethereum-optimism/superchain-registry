@@ -11,6 +11,7 @@ import (
 	"path"
 	"reflect"
 	"strings"
+	"time"
 
 	"golang.org/x/exp/maps"
 	"golang.org/x/mod/semver"
@@ -449,6 +450,14 @@ type Superchain struct {
 
 	// Superchain identifier, without capitalization or display changes.
 	Superchain string
+}
+
+// IsEcotone returns true if the EcotoneTime for this chain in the past.
+func (s *Superchain) IsEcotone() bool {
+	if et := s.Config.EcotoneTime; et != nil {
+		return int64(*et) < time.Now().Unix()
+	}
+	return false
 }
 
 var Superchains = map[string]*Superchain{}
