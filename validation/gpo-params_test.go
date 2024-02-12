@@ -46,12 +46,12 @@ func TestGasPriceOracleParams(t *testing.T) {
 		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		require.True(t, areCloseBigInts(actualParams.Decimals, desiredParams.Decimals.Value, desiredParams.Decimals.Tolerance),
-			"incorrect decimals parameter: got %d, wanted %d +/- %d%%", actualParams.Decimals, desiredParams.Decimals, desiredParams.Decimals.Tolerance)
-		require.True(t, areCloseBigInts(actualParams.Overhead, desiredParams.Overhead.Value, desiredParams.Overhead.Tolerance),
-			"incorrect overhead parameter: got %d, wanted %d +/-%d%%", actualParams.Overhead, desiredParams.Overhead, desiredParams.Overhead.Tolerance)
-		require.True(t, areCloseBigInts(actualParams.Scalar, desiredParams.Scalar.Value, desiredParams.Scalar.Tolerance),
-			"incorrect scalar parameter: got %d, wanted %d +/- %d%%", actualParams.Scalar, desiredParams.Scalar, desiredParams.Scalar.Tolerance)
+		require.True(t, areCloseBigInts(actualParams.Decimals, desiredParams.Decimals.Bounds),
+			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals.Bounds)
+		require.True(t, areCloseBigInts(actualParams.Overhead, desiredParams.Overhead.Bounds),
+			"overhead parameter %d out of bounds %d", actualParams.Overhead, desiredParams.Overhead.Bounds)
+		require.True(t, areCloseBigInts(actualParams.Scalar, desiredParams.Scalar.Bounds),
+			"scalar parameter %d out of bounds %d", actualParams.Scalar, desiredParams.Scalar.Bounds)
 
 		t.Logf("gas price oracle params are acceptable")
 
@@ -69,15 +69,12 @@ func TestGasPriceOracleParams(t *testing.T) {
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		require.True(t, areCloseBigInts(actualParams.Decimals, desiredParams.Decimals.Value, desiredParams.Decimals.Tolerance),
-			"incorrect decimals parameter: got %d, wanted %d +/ %d%%", actualParams.Decimals, desiredParams.Decimals, desiredParams.Decimals.Tolerance)
-		require.True(t, areCloseInts(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Value, desiredParams.BlobBaseFeeScalar.Tolerance),
-			desiredParams.BlobBaseFeeScalar.Tolerance,
-			"incorrect blobBaseFeeScalar parameter: got %d, wanted +/-%d%%",
-			actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Tolerance)
-		require.True(t, areCloseInts(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Value, desiredParams.BaseFeeScalar.Tolerance),
-			"incorrect baseFeeScalar: got %d, wanted %d +/- %d%%",
-			actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Value, desiredParams.BaseFeeScalar.Tolerance)
+		require.True(t, areCloseBigInts(actualParams.Decimals, desiredParams.Decimals.Bounds),
+			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals.Bounds)
+		require.True(t, areCloseInts(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds),
+			desiredParams.BlobBaseFeeScalar.Bounds, "blobBaseFeeScalar %d out of bounds %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds)
+		require.True(t, areCloseInts(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Bounds),
+			"baseFeeScalar parameter %d out of bounds %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Bounds)
 
 		t.Logf("gas price oracle params are acceptable")
 

@@ -8,39 +8,43 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Returns true if actual is within bounds around desired. The bounds are (tolerance * desired / 100) either side.
-var areCloseBigInts = func(actual, desired *big.Int, tolerance uint32) bool {
-	difference := new(big.Int).Sub(desired, actual)                            // d - a
-	difference100 := new(big.Int).Mul(big.NewInt(100), difference)             // 100(d - a)
-	scaledTolerance := new(big.Int).Mul(desired, big.NewInt(int64(tolerance))) // dt
-	return difference100.CmpAbs(scaledTolerance) <= 0                          // 100|d-a| <= dt implying |d-a|/d <= t/100
+// Returns true if actual is within bounds, where the bounds are [lower bound, upper bound] and are inclusive.
+var areCloseBigInts = func(actual *big.Int, bounds [2]*big.Int) bool {
+	if (bounds[1].Cmp(bounds[0])) < 0 {
+		panic("bounds are in wrong order")
+	}
+	return (actual.Cmp(bounds[0]) >= 0 && actual.Cmp(bounds[1]) <= 0)
 }
 
-// Returns true if actual is within bounds around desired. The bounds are (tolerance * desired / 100) either side.
-var areCloseInts = func(actual, desired uint32, tolerance uint32) bool {
-	return areCloseBigInts(big.NewInt(int64(actual)), big.NewInt(int64(desired)), tolerance)
+// Returns true if actual is within bounds, where the bounds are [lower bound, upper bound] and are inclusive.
+var areCloseInts = func(actual uint32, bounds [2]uint32) bool {
+	if bounds[1] < bounds[0] {
+		panic("bounds are in wrong order")
+	}
+	return (actual >= bounds[0] && actual <= bounds[1])
 
 }
 
 func TestAreCloseInts(t *testing.T) {
 	tt := []struct {
-		desired     uint32
 		actual      uint32
-		tolerance   uint32
+		bounds      [2]uint32
 		expectation bool
 	}{
-		{50, 60, 20, true},
-		{50, 40, 20, true},
-		{50, 60, 9, false},
-		{50, 5, 10, false},
-		{5, 0, 100, true},
-		{100, 119, 20, true},
+		{50, [2]uint32{50, 50}, true},
+		{50, [2]uint32{40, 60}, true},
+		{50, [2]uint32{40, 50}, true},
+		{50, [2]uint32{50, 60}, true},
+		{50, [2]uint32{50, 50}, true},
+		{50, [2]uint32{30, 50}, true},
+		{51, [2]uint32{30, 50}, false},
+		{29, [2]uint32{30, 50}, false},
 	}
 
 	for _, test := range tt {
 		t.Run(fmt.Sprintf("%+v", test), func(t *testing.T) {
-			result := areCloseInts(test.actual, test.desired, test.tolerance)
-			require.Equal(t, result, test.expectation)
+			result := areCloseInts(test.actual, test.bounds)
+			require.Equal(t, test.expectation, result)
 		})
 	}
 }
