@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
-	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/rpc"
 
@@ -104,7 +103,7 @@ func TestContractVersions(t *testing.T) {
 				t.Skip("unimplemented")
 			}
 
-			checkBytecodeForProxiedContract(t, contractName, &contractAddress, client, common.Hex2Bytes(desiredBytecode))
+			checkBytecodeForProxiedContract(t, chain, contractName, &contractAddress, client, common.Hex2Bytes(desiredBytecode))
 		}
 	}
 
@@ -128,8 +127,8 @@ func checkSemverForContract(t *testing.T, contractName string, contractAddress *
 	t.Logf("%s.version=%s (acceptable compared to %s)", contractName, actualSemver, desiredSemver)
 }
 
-func checkBytecodeForProxiedContract(t *testing.T, contractName string, contractAddress *Address, client *rpc.Client, desiredBytecode []byte) {
-	actualBytecode, err := getBytecodeForProxiedContract(context.Background(), common.Address(*contractAddress), client)
+func checkBytecodeForProxiedContract(t *testing.T, chain *ChainConfig, contractName string, contractAddress *Address, client *rpc.Client, desiredBytecode []byte) {
+	actualBytecode, err := getBytecodeForProxiedContract(context.Background(), chain, common.Address(*contractAddress), client)
 	require.NoError(t, err, "Could not get bytecode for %s", contractName)
 
 	require.True(t, bytes.Equal(actualBytecode, desiredBytecode), "unacceptable bytecode for %s, got %s wanted %s", contractName, common.Bytes2Hex(actualBytecode), common.Bytes2Hex(desiredBytecode))
@@ -163,10 +162,10 @@ func getVersionWithRetries(ctx context.Context, addr common.Address, client *eth
 }
 
 // getBytecodeWithRetries will get the bytecode at a given address, retrying up to 10 times.
-func getBytecodeForProxiedContract(ctx context.Context, proxyAddr common.Address, client *rpc.Client) ([]byte, error) {
+func getBytecodeForProxiedContract(ctx context.Context, chain *ChainConfig, proxyAddr common.Address, client *rpc.Client) ([]byte, error) {
 	const maxAttempts = 1
 
-	implementationAddr, err := getImplementationAddressFromProxy(ctx, proxyAddr, client)
+	implementationAddr, err := getImplementationAddressForProxy(ctx, chain, proxyAddr, client)
 	if err != nil {
 		return []byte{}, fmt.Errorf("%s: %w", proxyAddr, err)
 	}
@@ -177,86 +176,21 @@ func getBytecodeForProxiedContract(ctx context.Context, proxyAddr common.Address
 	})
 }
 
-func getImplementationAddressFromProxy(ctx context.Context, proxyAddr common.Address, client *rpc.Client) (common.Address, error) {
-	addr, err := getImplementationAddressFromProxyViaGetter(ctx, proxyAddr, ethclient.NewClient(client))
-	if err != nil {
-		addr, err = getImplementationAddressFromProxyViaTrace(ctx, proxyAddr, client)
-		if err != nil {
-			return common.Address{}, fmt.Errorf("could not get implementation address from proxy via trace request: %w", err)
-		}
-	}
-	return addr, nil
-}
-
-func getImplementationAddressFromProxyViaGetter(ctx context.Context, proxyAddr common.Address, client *ethclient.Client) (common.Address, error) {
-	const maxAttempts = 1
-	result, err := retry.Do(ctx, maxAttempts, retry.Exponential(), func() ([]byte, error) {
-		return client.CallContract(context.Background(), ethereum.CallMsg{
-			To:   &proxyAddr,
-			From: common.Address{0},             // This should avoid the call being proxied
-			Data: common.FromHex("0x5c60da1b")}, // this is the function selector for "Implementation()"
-			nil)
-	})
+func getImplementationAddressForProxy(ctx context.Context, chain *ChainConfig, proxyAddr common.Address, client *rpc.Client) (common.Address, error) {
+	proxyAdminAddr, err := Addresses[chain.ChainID].AddressFor("ProxyAdmin")
 	if err != nil {
 		return common.Address{}, err
 	}
-	return common.BytesToAddress(result), nil
-}
-
-func getImplementationAddressFromProxyViaTrace(ctx context.Context, proxyAddr common.Address, client *rpc.Client) (common.Address, error) {
-
-	args := map[string]interface{}{
-		"to":   proxyAddr.Hex(),
-		"data": "0x54fd4d50",
-	}
-
-	type Call struct {
-		From    string `json:"from"`
-		Gas     string `json:"gas"`
-		GasUsed string `json:"gasUsed"`
-		Input   string `json:"input"`
-		Output  string `json:"output"`
-		To      string `json:"to"`
-		Type    string `json:"type"`
-		Value   string `json:"value,omitempty"` // Optional field, so use omitempty
-	}
-
-	// Define the structure for the result part of the JSON-RPC response
-	type Result struct {
-		Calls   []Call `json:"calls"`
-		From    string `json:"from"`
-		Gas     string `json:"gas"`
-		GasUsed string `json:"gasUsed"`
-		Input   string `json:"input"`
-		Output  string `json:"output"`
-		To      string `json:"to"`
-		Type    string `json:"type"`
-		Value   string `json:"value,omitempty"` // Optional field, so use omitempty
-	}
-
-	// Define the overall JSON-RPC response structure
-	type JSONRPCResponse struct {
-		Jsonrpc string `json:"jsonrpc"`
-		ID      int    `json:"id"`
-		Result  Result `json:"result"`
-	}
-
-	// var result JSONRPCResponse
-	var result Result
-
-	err := client.CallContext(ctx, &result, "debug_traceCall", args, "latest", map[string]string{"tracer": "callTracer"})
-
-	fmt.Println(result, err)
-
+	proxyAdmin, err := bindings.NewProxyAdmin(common.Address(proxyAdminAddr), ethclient.NewClient(client))
 	if err != nil {
 		return common.Address{}, err
 	}
+	maxAttempts := 3
+	return retry.Do(ctx, maxAttempts, retry.Exponential(), func() (common.Address, error) {
+		return proxyAdmin.GetProxyImplementation(&bind.CallOpts{
+			Context: ctx,
+		}, proxyAddr)
+	},
+	)
 
-	for _, call := range result.Calls {
-		if call.Type == "DELEGATECALL" {
-			return common.HexToAddress(call.To), nil
-		}
-
-	}
-	return common.Address{}, fmt.Errorf("could not infer implementation address")
 }
