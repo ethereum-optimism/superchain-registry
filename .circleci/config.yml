@@ -17,11 +17,6 @@ commands:
           event: fail
           template: basic_fail_1
           branch_pattern: main
-      - slack/notify: # DELETEME for temporary testing only
-          channel: << parameters.channel >>
-          event: pass 
-          template: basic_fail_1
-          branch_pattern: gk/nightly-ci-run
 jobs:
   golang-lint:
     executor:
