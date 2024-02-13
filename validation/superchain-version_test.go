@@ -23,6 +23,7 @@ var isSemverAcceptable = func(desired, actual string) bool {
 func TestSuperchainWideContractVersions(t *testing.T) {
 
 	checkSuperchainTargetSatisfiesSemver := func(t *testing.T, superchain *Superchain) {
+
 		rpcEndpoint := superchain.Config.L1.PublicRPC
 		require.NotEmpty(t, rpcEndpoint)
 
@@ -32,6 +33,17 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 		desiredSemver, err := SuperchainSemver[superchain.Superchain].VersionFor("ProtocolVersions")
 		require.NoError(t, err)
 		checkSemverForContract(t, "ProtocolVersions", superchain.Config.ProtocolVersionsAddr, client, desiredSemver)
+
+		isExcludedFromSuperchainConfigCheck := map[string]bool{
+			"Goerli":       true, // no version specified
+			"Goerli Dev 0": true, // no version specified
+			"Mainnet":      true, // no version specified
+		}
+
+		if isExcludedFromSuperchainConfigCheck[superchain.Config.Name] {
+			t.Logf("%s excluded from SuperChainConfig version check", superchain.Config.Name)
+			return
+		}
 
 		desiredSemver, err = SuperchainSemver[superchain.Superchain].VersionFor("SuperchainConfig")
 		require.NoError(t, err)
