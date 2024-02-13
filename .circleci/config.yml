@@ -114,7 +114,7 @@ jobs:
       - notify-failures-on-main
 
 workflows:
-  nightly:
+  hourly:
     jobs:
       - golang-test:
           context:
@@ -124,7 +124,7 @@ workflows:
             - slack
     triggers:
       - schedule: 
-          cron: "0 0 * * *"
+          cron: "0 * * * *"
           filters:
             branches:
               only:
