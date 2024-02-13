@@ -281,7 +281,7 @@ func (c ContractVersions) Check() error {
 			return fmt.Errorf("invalid type for field %s", val.Type().Field(i).Name)
 		}
 		if str == "" {
-			return fmt.Errorf("empty version for field %s", val.Type().Field(i).Name)
+			continue // we allow empty strings and rely on tests to assert (or except) a nonempty version
 		}
 		str = canonicalizeSemver(str)
 		if !semver.IsValid(str) {
@@ -590,9 +590,6 @@ func newContractVersions(superchain string) (ContractVersions, error) {
 	}
 	if err := yaml.Unmarshal(semvers, &versions); err != nil {
 		return versions, fmt.Errorf("failed to unmarshal semver.yaml: %w", err)
-	}
-	if err := versions.Check(); err != nil {
-		return versions, fmt.Errorf("semver.yaml is invalid: %w", err)
 	}
 	return versions, nil
 }
