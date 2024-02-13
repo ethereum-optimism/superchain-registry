@@ -163,9 +163,9 @@ func getVersionWithRetries(ctx context.Context, addr common.Address, client *eth
 	})
 }
 
-// getBytecodeWithRetries will get the bytecode at a given address, retrying up to 10 times.
+// getBytecodeWithRetries will get the bytecode for the implementation behind a proxy at the given address, retrying up to 5 times.
 func getBytecodeForProxiedContract(ctx context.Context, chain *ChainConfig, proxyAddr common.Address, client *rpc.Client) ([]byte, error) {
-	const maxAttempts = 1
+	const maxAttempts = 5
 
 	implementationAddr, err := getImplementationAddressForProxy(ctx, chain, proxyAddr, client)
 	if err != nil {
