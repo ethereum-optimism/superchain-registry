@@ -2,7 +2,26 @@ version: 2.1
 
 orbs:
   go: circleci/go@1.8.0
+  slack: circleci/slack@4.10.1
 
+commands:
+  notify-failures-on-main:
+    description: "Notify Slack"
+    parameters:
+      channel:
+        type: string
+        default: C03N11M0BBN
+    steps:
+      - slack/notify:
+          channel: << parameters.channel >>
+          event: fail
+          template: basic_fail_1
+          branch_pattern: main
+      - slack/notify: # DELETEME for temporary testing only
+          channel: << parameters.channel >>
+          event: pass 
+          template: basic_fail_1
+          branch_pattern: gk/nightly-ci-run
 jobs:
   golang-lint:
     executor:
@@ -42,6 +61,7 @@ jobs:
           name: run validation module tests
           command: go test ./... -v
           working_directory: validation
+      - notify-failures-on-main
   publish-bot:
     environment:
       NODE_AUTH_TOKEN: $NPM_TOKEN  # Use NPM_TOKEN as the auth token
@@ -96,6 +116,7 @@ jobs:
               --fork-url="https://ci-sepolia-l1.optimism.io" --compute-units-per-second=320
             forge script CheckSecurityConfigs \
               --fork-url="https://ci-goerli-l1.optimism.io" --compute-units-per-second=320
+      - notify-failures-on-main
 
 workflows:
   nightly:
