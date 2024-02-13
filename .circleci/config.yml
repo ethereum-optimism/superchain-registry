@@ -108,6 +108,17 @@ jobs:
               --fork-url="https://ci-goerli-l1.optimism.io" --compute-units-per-second=320
 
 workflows:
+  nightly:
+    jobs:
+      - golang-test
+      - check-security-configs
+    triggers:
+      - schedule: 
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - main
   main:
     jobs:
       - golang-lint
