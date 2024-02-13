@@ -121,8 +121,12 @@ jobs:
 workflows:
   nightly:
     jobs:
-      - golang-test
-      - check-security-configs
+      - golang-test:
+          context:
+            - slack
+      - check-security-configs:
+          context:
+            - slack
     triggers:
       - schedule: 
           cron: "0 0 * * *"
@@ -134,7 +138,11 @@ workflows:
     jobs:
       - golang-lint
       - golang-modules-tidy
-      - golang-test
+      - golang-test:
+          context:
+            - slack
       - check-codegen
       - check-forge-fmt
-      - check-security-configs
+      - check-security-configs:
+          context:
+            - slack
