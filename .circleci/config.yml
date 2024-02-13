@@ -5,22 +5,18 @@ orbs:
 
 jobs:
   golang-lint:
-    working_directory: ~/superchain-registry/
     executor:
       name: go/default  # is based on cimg/go
       tag: '1.21'
     steps:
-      - checkout:
-          path: ~/superchain-registry
+      - checkout
       - run:  golangci-lint run superchain validation
   golang-modules-tidy:
-    working_directory: ~/superchain-registry
     executor:
       name: go/default  # is based on cimg/go
       tag: '1.21'
     steps:
-      - checkout:
-          path: ~/superchain-registry
+      - checkout
       - run:
           name: tidy superchain module
           command: go mod tidy
@@ -33,13 +29,11 @@ jobs:
           name: check git tree is clean
           command: git diff --exit-code 
   golang-test:
-    working_directory: ~/superchain-registry
     executor:
       name: go/default  # is based on cimg/go
       tag: '1.21'
     steps:
-      - checkout:
-          path: ~/superchain-registry
+      - checkout
       - run:
           name: run superchain module tests
           command: go test ./... -v
@@ -53,10 +47,8 @@ jobs:
       NODE_AUTH_TOKEN: $NPM_TOKEN  # Use NPM_TOKEN as the auth token
     docker:
       - image: cimg/node:18  # Use Node.js 18
-    working_directory: ~/superchain-registry/
     steps:
-      - checkout:  # Checkout the code
-          path: ~/superchain-registry
+      - checkout
       - run:
           name: Set deployment token
           command: npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
@@ -68,10 +60,8 @@ jobs:
   check-codegen:
     docker:
       - image: cimg/node:18.18.2
-    working_directory: ~/superchain-registry/
     steps:
-      - checkout:
-          path: ~/superchain-registry
+      - checkout
       - run:
           name: Run codegen
           command: pnpm codegen
