@@ -43,6 +43,7 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 }
 
 func TestContractVersions(t *testing.T) {
+
 	isExcluded := map[uint64]bool{
 		291:          true,
 		424:          true,
@@ -83,27 +84,19 @@ func TestContractVersions(t *testing.T) {
 
 			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
 			proxyContractName := contractName + "Proxy"
-			contractAddress, err := Addresses[chain.ChainID].AddressFor(proxyContractName)
+			proxyContractAddress, err := Addresses[chain.ChainID].AddressFor(proxyContractName)
 			require.NoErrorf(t, err, "%s/%s.%s.version= UNSPECIFIED", chain.Superchain, chain.Name, proxyContractName)
 
 			desiredSemver, err := SuperchainSemver[chain.Superchain].VersionFor(contractName)
 			require.NoError(t, err)
-			checkSemverForContract(t, proxyContractName, &contractAddress, client, desiredSemver)
+			checkSemverForContract(t, proxyContractName, &proxyContractAddress, client, desiredSemver)
 
-			var desiredBytecode string
-			var ok bool
-
-			switch chain.Superchain {
-			case "goerli":
-				desiredBytecode, ok = OPGoerliBytecode[contractName]
-				if !ok {
-					t.Fatalf("no bytecode for %s", contractName)
-				}
-			default:
-				t.Skip("unimplemented")
+			desiredBytecode, ok := ExpectedBytecode[chain.Superchain][contractName]
+			if !ok {
+				t.Fatalf("no bytecode for %s", contractName)
 			}
 
-			checkBytecodeForProxiedContract(t, chain, contractName, &contractAddress, client, desiredBytecode)
+			checkBytecodeForProxiedContract(t, chain, contractName, &proxyContractAddress, client, desiredBytecode)
 		}
 	}
 
@@ -132,7 +125,8 @@ func checkBytecodeForProxiedContract(t *testing.T, chain *ChainConfig, contractN
 	require.NoError(t, err, "Could not get bytecode for %s", contractName)
 
 	if diff := cmp.Diff(desiredBytecode, common.Bytes2Hex(actualBytecode)); diff != "" {
-		t.Fatalf("bytecode mismatch (-want +got):\n%s", diff)
+		t.Fatalf("bytecode mismatch for %s (-want +got):\n%s", contractName, diff)
+
 	}
 
 	t.Logf("acceptable bytecode for %s", contractName)
