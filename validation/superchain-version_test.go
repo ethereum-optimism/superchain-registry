@@ -47,9 +47,9 @@ func TestContractVersions(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		291:          true, // mainnet/orderly
 		424:          true, // mainnet/pgn
-		888:          true, // goerli-dev-0/op-labs-chaosnet-0
+		888:          true, // goerli-dev-0/op-labs-chaosnet-0 (SystemConfigProxy address not specified)
 		957:          true, // mainnet/lyra
-		997:          true, // goerli-dev-0/op-labs-devnet-0
+		997:          true, // goerli-dev-0/op-labs-devnet-0 (SystemConfigProxy address not specified)
 		8453:         true, // mainnet/base
 		34443:        true, // mainnet/mode
 		58008:        true, // sepolia/pgn
@@ -57,9 +57,9 @@ func TestContractVersions(t *testing.T) {
 		84532:        true, // sepolia/base
 		7777777:      true, // mainnet/zora
 		11155421:     true, // sepolia-dev-0/oplabs-devnet-0
-		11763071:     true, // goerli-dev-0/base-devnet-0
+		11763071:     true, // goerli-dev-0/base-devnet-0 (SystemConfigProxy address not specified)
 		999999999:    true, // sepolia/zoras
-		129831238013: true, // goerli-dev-0/conduit-devnet-0
+		129831238013: true, // goerli-dev-0/conduit-devnet-0 (SystemConfigProxy address not specified)
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
