@@ -62,7 +62,6 @@ func TestContractVersions(t *testing.T) {
 		424:          true, // mainnet/pgn
 		888:          true, // goerli-dev-0/op-labs-chaosnet-0
 		957:          true, // mainnet/lyra
-		997:          true, // goerli-dev-0/op-labs-devnet-0
 		8453:         true, // mainnet/base
 		34443:        true, // mainnet/mode
 		58008:        true, // sepolia/pgn
