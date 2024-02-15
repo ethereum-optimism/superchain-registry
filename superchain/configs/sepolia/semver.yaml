@@ -8,3 +8,4 @@ system_config: 1.12.0
 
 # superchain-wide contracts
 protocol_versions: 1.0.0
+superchain_config: 1.1.0

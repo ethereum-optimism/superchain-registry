@@ -235,6 +235,7 @@ type ContractVersions struct {
 	SystemConfig                 string `yaml:"system_config"`
 	// Superchain-wide contracts:
 	ProtocolVersions string `yaml:"protocol_versions"`
+	SuperchainConfig string `yaml:"superchain_config,omitempty"`
 }
 
 // VersionFor returns the version for the supplied contract name, if it exits
@@ -258,6 +259,8 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 		version = c.SystemConfig
 	case "ProtocolVersions":
 		version = c.ProtocolVersions
+	case "SuperchainConfig":
+		version = c.SuperchainConfig
 	default:
 		return "", errors.New("no such contract name")
 	}
@@ -268,8 +271,8 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 }
 
 // Check will sanity check the validity of the semantic version strings
-// in the ContractVersions struct.
-func (c ContractVersions) Check() error {
+// in the ContractVersions struct. If allowEmptyVersions is true, empty version errors will be ignored.
+func (c ContractVersions) Check(allowEmptyVersions bool) error {
 	val := reflect.ValueOf(c)
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
@@ -278,6 +281,9 @@ func (c ContractVersions) Check() error {
 			return fmt.Errorf("invalid type for field %s", val.Type().Field(i).Name)
 		}
 		if str == "" {
+			if allowEmptyVersions {
+				continue // we allow empty strings and rely on tests to assert (or except) a nonempty version
+			}
 			return fmt.Errorf("empty version for field %s", val.Type().Field(i).Name)
 		}
 		str = canonicalizeSemver(str)
@@ -587,9 +593,6 @@ func newContractVersions(superchain string) (ContractVersions, error) {
 	}
 	if err := yaml.Unmarshal(semvers, &versions); err != nil {
 		return versions, fmt.Errorf("failed to unmarshal semver.yaml: %w", err)
-	}
-	if err := versions.Check(); err != nil {
-		return versions, fmt.Errorf("semver.yaml is invalid: %w", err)
 	}
 	return versions, nil
 }
