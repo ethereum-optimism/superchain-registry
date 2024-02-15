@@ -155,7 +155,7 @@ func TestContractImplementations(t *testing.T) {
 // is not read correctly.
 func TestContractVersionsCheck(t *testing.T) {
 	for _, versions := range SuperchainSemver {
-		if err := versions.Check(false); err != nil {
+		if err := versions.Check(true); err != nil {
 			t.Fatal(err)
 		}
 	}
