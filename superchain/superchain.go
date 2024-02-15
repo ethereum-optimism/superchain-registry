@@ -271,8 +271,8 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 }
 
 // Check will sanity check the validity of the semantic version strings
-// in the ContractVersions struct.
-func (c ContractVersions) Check() error {
+// in the ContractVersions struct. If allowEmptyVersions is true, empty version errors will be ignored.
+func (c ContractVersions) Check(allowEmptyVersions bool) error {
 	val := reflect.ValueOf(c)
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
@@ -281,7 +281,10 @@ func (c ContractVersions) Check() error {
 			return fmt.Errorf("invalid type for field %s", val.Type().Field(i).Name)
 		}
 		if str == "" {
-			continue // we allow empty strings and rely on tests to assert (or except) a nonempty version
+			if allowEmptyVersions {
+				continue // we allow empty strings and rely on tests to assert (or except) a nonempty version
+			}
+			return fmt.Errorf("empty version for field %s", val.Type().Field(i).Name)
 		}
 		str = canonicalizeSemver(str)
 		if !semver.IsValid(str) {
