@@ -20,7 +20,6 @@ func TestResourceConfig(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		888:          true, // OP_Labs_chaosnet_0 (no SystemConfigProxy address specified)
 		997:          true, // OP_Labs_devnet_0 (no SystemConfigProxy address specified)
-		11155421:     true, // OP_Labs_Sepolia_devnet_0 (no SystemConfigProxy address specified)
 		11763071:     true, // Base_devnet_0 (no SystemConfigProxy address specified)
 		129831238013: true, // Conduit_devnet_0 (no SystemConfigProxy address specified)
 	}
