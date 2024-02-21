@@ -59,6 +59,12 @@ type ChainConfig struct {
 	// Chain is a simple string to identify the chain, within its superchain context.
 	// This matches the resource filename, it is not encoded in the config file itself.
 	Chain string `yaml:"-"`
+
+	// Hardfork Configuration
+	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
+	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
+	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
+	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
 }
 
 // AddressList represents the set of network specific contracts for a given network.
@@ -441,10 +447,10 @@ type SuperchainConfig struct {
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration
-	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
-	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
-	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
-	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+	canyonTime  *uint64 `yaml:"canyon_time,omitempty"`
+	deltaTime   *uint64 `yaml:"delta_time,omitempty"`
+	ecotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
+	fjordTime   *uint64 `yaml:"fjord_time,omitempty"`
 }
 
 type Superchain struct {
