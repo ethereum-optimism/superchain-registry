@@ -19,14 +19,18 @@ import (
 
 func TestGasPriceOracleParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		291:          true, // mainnet/orderly                 (incorrect scalar parameter)
-		888:          true, // goerli-dev-0/op-labs-chaosnet-0 (no public endpoint)
-		957:          true, // mainnet/lyra                    (incorrect scalar parameter)
-		997:          true, // goerli-dev-0/op-labs-devnet-0   (no public endpoint)
-		84531:        true, // goerli/base                     (network sunset)
-		11155421:     true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
-		11763071:     true, // goerli-dev-0/base-devnet-0      (no public endpoint)
-		11763072:     true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
+		291:       true, // mainnet/orderly                 (incorrect scalar parameter)
+		888:       true, // goerli-dev-0/op-labs-chaosnet-0 (no public endpoint)
+		957:       true, // mainnet/lyra                    (incorrect scalar parameter)
+		997:       true, // goerli-dev-0/op-labs-devnet-0   (no public endpoint)
+		58008:     true, // sepolia/pgn                     (blobBaseFeeScalar out of bounds)
+		84531:     true, // goerli/base                     (network sunset)
+		84532:     true, // sepolia/base                    (blobBaseFeeScalar out of bounds)
+		11155421:  true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
+		11763071:  true, // goerli-dev-0/base-devnet-0      (no public endpoint)
+		11763072:  true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
+		999999999: true, // sepolia/zora                    (blobBaseFeeScalar out of bounds)
+
 		129831238013: true, // goerli-dev-0/conduit-devnet-0   (no ground truth)
 	}
 
@@ -44,11 +48,11 @@ func TestGasPriceOracleParams(t *testing.T) {
 		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		require.True(t, areCloseBigInts(actualParams.Decimals, desiredParams.Decimals.Bounds),
+		require.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals.Bounds),
 			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals.Bounds)
-		require.True(t, areCloseBigInts(actualParams.Overhead, desiredParams.Overhead.Bounds),
+		require.True(t, isBigIntWithinBounds(actualParams.Overhead, desiredParams.Overhead.Bounds),
 			"overhead parameter %d out of bounds %d", actualParams.Overhead, desiredParams.Overhead.Bounds)
-		require.True(t, areCloseBigInts(actualParams.Scalar, desiredParams.Scalar.Bounds),
+		require.True(t, isBigIntWithinBounds(actualParams.Scalar, desiredParams.Scalar.Bounds),
 			"scalar parameter %d out of bounds %d", actualParams.Scalar, desiredParams.Scalar.Bounds)
 
 		t.Logf("gas price oracle params are acceptable")
@@ -64,14 +68,18 @@ func TestGasPriceOracleParams(t *testing.T) {
 		}
 		desiredParams := desiredParamsOuter.Ecotone
 
+		if desiredParams == nil {
+			t.Fatal("no desiredParams.Ecotone set to compare Ecotone chain to")
+		}
+
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		require.True(t, areCloseBigInts(actualParams.Decimals, desiredParams.Decimals.Bounds),
+		require.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals.Bounds),
 			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals.Bounds)
-		require.True(t, areCloseInts(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds),
-			desiredParams.BlobBaseFeeScalar.Bounds, "blobBaseFeeScalar %d out of bounds %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds)
-		require.True(t, areCloseInts(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Bounds),
+		require.True(t, isWithinBounds(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds),
+			"blobBaseFeeScalar %d out of bounds %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds)
+		require.True(t, isWithinBounds(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Bounds),
 			"baseFeeScalar parameter %d out of bounds %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Bounds)
 
 		t.Logf("gas price oracle params are acceptable")

@@ -107,8 +107,8 @@ type EcotoneGasPriceOracleParamsWithBounds struct {
 }
 
 type UpgradeFilter struct {
-	PreEcotone PreEcotoneGasPriceOracleParamsWithBounds
-	Ecotone    EcotoneGasPriceOracleParamsWithBounds
+	PreEcotone *PreEcotoneGasPriceOracleParamsWithBounds
+	Ecotone    *EcotoneGasPriceOracleParamsWithBounds
 }
 
 func makeBigIntAndBounds(value int64, bounds [2]int64) BigIntAndBounds {
@@ -117,26 +117,31 @@ func makeBigIntAndBounds(value int64, bounds [2]int64) BigIntAndBounds {
 
 var GasPriceOracleParams = map[string]UpgradeFilter{
 	"mainnet": {
-		PreEcotone: PreEcotoneGasPriceOracleParamsWithBounds{
+		PreEcotone: &PreEcotoneGasPriceOracleParamsWithBounds{
 			Decimals: makeBigIntAndBounds(6, [2]int64{6, 6}),
 			Overhead: makeBigIntAndBounds(188, [2]int64{188, 188}),
 			Scalar:   makeBigIntAndBounds(684_000, [2]int64{684_000, 684_000}),
 		},
 	},
 	"sepolia": {
-		PreEcotone: PreEcotoneGasPriceOracleParamsWithBounds{
+		PreEcotone: &PreEcotoneGasPriceOracleParamsWithBounds{
 			Decimals: makeBigIntAndBounds(6, [2]int64{6, 6}),
 			Overhead: makeBigIntAndBounds(188, [2]int64{188, 2_100}),
 			Scalar:   makeBigIntAndBounds(684_000, [2]int64{684_000, 1_000_000}),
 		},
+		Ecotone: &EcotoneGasPriceOracleParamsWithBounds{
+			Decimals:          makeBigIntAndBounds(6, [2]int64{6, 6}),
+			BlobBaseFeeScalar: Uint32AndBounds{862_000, [2]uint32{862_000, 862_000}},
+			BaseFeeScalar:     Uint32AndBounds{7600, [2]uint32{7600, 7600}},
+		},
 	},
 	"goerli": {
-		PreEcotone: PreEcotoneGasPriceOracleParamsWithBounds{
+		PreEcotone: &PreEcotoneGasPriceOracleParamsWithBounds{
 			Decimals: makeBigIntAndBounds(6, [2]int64{6, 6}),
 			Overhead: makeBigIntAndBounds(2_100, [2]int64{2_100, 2_100}),
 			Scalar:   makeBigIntAndBounds(100_000, [2]int64{100_000, 100_000}),
 		},
-		Ecotone: EcotoneGasPriceOracleParamsWithBounds{
+		Ecotone: &EcotoneGasPriceOracleParamsWithBounds{
 			Decimals:          makeBigIntAndBounds(6, [2]int64{6, 6}),
 			BlobBaseFeeScalar: Uint32AndBounds{862_000, [2]uint32{862_000, 862_000}},
 			BaseFeeScalar:     Uint32AndBounds{7600, [2]uint32{7600, 7600}},
