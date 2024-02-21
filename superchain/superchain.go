@@ -464,8 +464,8 @@ type Superchain struct {
 }
 
 // IsEcotone returns true if the EcotoneTime for this chain in the past.
-func (s *Superchain) IsEcotone() bool {
-	if et := s.Config.EcotoneTime; et != nil {
+func (c *ChainConfig) IsEcotone() bool {
+	if et := c.EcotoneTime; et != nil {
 		return int64(*et) < time.Now().Unix()
 	}
 	return false
