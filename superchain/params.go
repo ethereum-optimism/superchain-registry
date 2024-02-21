@@ -129,6 +129,11 @@ var GasPriceOracleParams = map[string]UpgradeFilter{
 			Overhead: makeBigIntAndBounds(188, [2]int64{188, 2_100}),
 			Scalar:   makeBigIntAndBounds(684_000, [2]int64{684_000, 1_000_000}),
 		},
+		Ecotone: &EcotoneGasPriceOracleParamsWithBounds{
+			Decimals:          makeBigIntAndBounds(6, [2]int64{6, 6}),
+			BlobBaseFeeScalar: Uint32AndBounds{862_000, [2]uint32{862_000, 862_000}},
+			BaseFeeScalar:     Uint32AndBounds{7600, [2]uint32{7600, 7600}},
+		},
 	},
 	"goerli": {
 		PreEcotone: &PreEcotoneGasPriceOracleParamsWithBounds{
