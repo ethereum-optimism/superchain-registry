@@ -353,13 +353,13 @@ func TestContractBytecodes(t *testing.T) {
 // TestCanyonTimestampOnBlockBoundary asserts that Canyon will activate on a block's timestamp.
 // This is critical because the create2Deployer only activates on a block's timestamp.
 func TestCanyonTimestampOnBlockBoundary(t *testing.T) {
-	testStandardTimestampOnBlockBoundary(t, func(s *Superchain) *uint64 { return s.Config.CanyonTime })
+	testStandardTimestampOnBlockBoundary(t, func(c *ChainConfig) *uint64 { return c.CanyonTime })
 }
 
 // TestEcotoneTimestampOnBlockBoundary asserts that Ecotone will activate on a block's timestamp.
 // This is critical because the L2 upgrade transactions only activates on a block's timestamp.
 func TestEcotoneTimestampOnBlockBoundary(t *testing.T) {
-	testStandardTimestampOnBlockBoundary(t, func(s *Superchain) *uint64 { return s.Config.EcotoneTime })
+	testStandardTimestampOnBlockBoundary(t, func(c *ChainConfig) *uint64 { return c.EcotoneTime })
 }
 
 // TestAevoForkTimestamps ensures that network upgades that occur on a block boundary
@@ -368,15 +368,15 @@ func TestAevoForkTimestamps(t *testing.T) {
 	aevoGenesisL2Time := uint64(1679193011)
 	aevoBlockTime := uint64(10)
 	config := Superchains["mainnet"]
-	t.Run("canyon", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.CanyonTime))
-	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.EcotoneTime))
+	t.Run("canyon", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.canyonTime))
+	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.ecotoneTime))
 }
 
-func testStandardTimestampOnBlockBoundary(t *testing.T, ts func(*Superchain) *uint64) {
+func testStandardTimestampOnBlockBoundary(t *testing.T, ts func(*ChainConfig) *uint64) {
 	for _, superchainConfig := range Superchains {
 		for _, id := range superchainConfig.ChainIDs {
 			chainCfg := OPChains[id]
-			t.Run(chainCfg.Name, testNetworkUpgradeTimestampOffset(chainCfg.Genesis.L2Time, 2, ts(superchainConfig)))
+			t.Run(chainCfg.Name, testNetworkUpgradeTimestampOffset(chainCfg.Genesis.L2Time, 2, ts(chainCfg)))
 		}
 	}
 }
