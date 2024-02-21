@@ -60,11 +60,30 @@ type ChainConfig struct {
 	// This matches the resource filename, it is not encoded in the config file itself.
 	Chain string `yaml:"-"`
 
-	// Hardfork Configuration
+	// Hardfork Configuration Overrides
 	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
 	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
 	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
 	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+}
+
+// replaceMissingOverridesWithDefaults overwrites each unspecified hardfork activation time override
+// with the superchain default.
+func (c *ChainConfig) replaceMissingOverridesWithDefaults(s Superchain) {
+
+	if c.CanyonTime == nil {
+		c.CanyonTime = s.Config.canyonTime
+	}
+	if c.DeltaTime == nil {
+		c.DeltaTime = s.Config.deltaTime
+	}
+	if c.EcotoneTime == nil {
+		c.EcotoneTime = s.Config.ecotoneTime
+	}
+	if c.FjordTime == nil {
+		c.FjordTime = s.Config.fjordTime
+	}
+
 }
 
 // AddressList represents the set of network specific contracts for a given network.
@@ -545,19 +564,7 @@ func init() {
 			}
 			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
 
-			// if chain does not specify a hardfork override, use superchain default
-			if chainConfig.CanyonTime == nil {
-				chainConfig.CanyonTime = superchainEntry.Config.canyonTime
-			}
-			if chainConfig.DeltaTime == nil {
-				chainConfig.DeltaTime = superchainEntry.Config.deltaTime
-			}
-			if chainConfig.EcotoneTime == nil {
-				chainConfig.EcotoneTime = superchainEntry.Config.ecotoneTime
-			}
-			if chainConfig.FjordTime == nil {
-				chainConfig.FjordTime = superchainEntry.Config.fjordTime
-			}
+			chainConfig.replaceMissingOverridesWithDefaults(superchainEntry)
 
 			jsonName := chainConfig.Chain + ".json"
 			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
