@@ -8,16 +8,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Returns true if actual is within bounds, where the bounds are [lower bound, upper bound] and are inclusive.
-var areCloseBigInts = func(actual *big.Int, bounds [2]*big.Int) bool {
+// isBigIntWithinBounds returns true if actual is within bounds, where the bounds are [lower bound, upper bound] and are inclusive.
+var isBigIntWithinBounds = func(actual *big.Int, bounds [2]*big.Int) bool {
 	if (bounds[1].Cmp(bounds[0])) < 0 {
 		panic("bounds are in wrong order")
 	}
 	return (actual.Cmp(bounds[0]) >= 0 && actual.Cmp(bounds[1]) <= 0)
 }
 
-// Returns true if actual is within bounds, where the bounds are [lower bound, upper bound] and are inclusive.
-var areCloseInts = func(actual uint32, bounds [2]uint32) bool {
+// isWithinBounds returns true if actual is within bounds, where the bounds are [lower bound, upper bound] and are inclusive.
+var isWithinBounds = func(actual uint32, bounds [2]uint32) bool {
 	if bounds[1] < bounds[0] {
 		panic("bounds are in wrong order")
 	}
@@ -43,7 +43,7 @@ func TestAreCloseInts(t *testing.T) {
 
 	for _, test := range tt {
 		t.Run(fmt.Sprintf("%+v", test), func(t *testing.T) {
-			result := areCloseInts(test.actual, test.bounds)
+			result := isWithinBounds(test.actual, test.bounds)
 			require.Equal(t, test.expectation, result)
 		})
 	}

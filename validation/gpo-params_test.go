@@ -44,11 +44,11 @@ func TestGasPriceOracleParams(t *testing.T) {
 		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		require.True(t, areCloseBigInts(actualParams.Decimals, desiredParams.Decimals.Bounds),
+		require.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals.Bounds),
 			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals.Bounds)
-		require.True(t, areCloseBigInts(actualParams.Overhead, desiredParams.Overhead.Bounds),
+		require.True(t, isBigIntWithinBounds(actualParams.Overhead, desiredParams.Overhead.Bounds),
 			"overhead parameter %d out of bounds %d", actualParams.Overhead, desiredParams.Overhead.Bounds)
-		require.True(t, areCloseBigInts(actualParams.Scalar, desiredParams.Scalar.Bounds),
+		require.True(t, isBigIntWithinBounds(actualParams.Scalar, desiredParams.Scalar.Bounds),
 			"scalar parameter %d out of bounds %d", actualParams.Scalar, desiredParams.Scalar.Bounds)
 
 		t.Logf("gas price oracle params are acceptable")
@@ -71,11 +71,11 @@ func TestGasPriceOracleParams(t *testing.T) {
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		require.True(t, areCloseBigInts(actualParams.Decimals, desiredParams.Decimals.Bounds),
+		require.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals.Bounds),
 			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals.Bounds)
-		require.True(t, areCloseInts(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds),
+		require.True(t, isWithinBounds(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds),
 			desiredParams.BlobBaseFeeScalar.Bounds, "blobBaseFeeScalar %d out of bounds %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds)
-		require.True(t, areCloseInts(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Bounds),
+		require.True(t, isWithinBounds(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Bounds),
 			"baseFeeScalar parameter %d out of bounds %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Bounds)
 
 		t.Logf("gas price oracle params are acceptable")
