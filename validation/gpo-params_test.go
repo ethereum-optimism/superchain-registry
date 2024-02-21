@@ -74,7 +74,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 		require.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals.Bounds),
 			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals.Bounds)
 		require.True(t, isWithinBounds(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds),
-			desiredParams.BlobBaseFeeScalar.Bounds, "blobBaseFeeScalar %d out of bounds %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds)
+			"blobBaseFeeScalar %d out of bounds %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar.Bounds)
 		require.True(t, isWithinBounds(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Bounds),
 			"baseFeeScalar parameter %d out of bounds %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Bounds)
 
