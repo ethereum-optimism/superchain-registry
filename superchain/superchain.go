@@ -545,6 +545,20 @@ func init() {
 			}
 			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
 
+			// if chain does not specify a hardfork override, use superchain default
+			if chainConfig.CanyonTime == nil {
+				chainConfig.CanyonTime = superchainEntry.Config.canyonTime
+			}
+			if chainConfig.DeltaTime == nil {
+				chainConfig.DeltaTime = superchainEntry.Config.deltaTime
+			}
+			if chainConfig.EcotoneTime == nil {
+				chainConfig.EcotoneTime = superchainEntry.Config.ecotoneTime
+			}
+			if chainConfig.FjordTime == nil {
+				chainConfig.FjordTime = superchainEntry.Config.fjordTime
+			}
+
 			jsonName := chainConfig.Chain + ".json"
 			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
 			if err != nil {
