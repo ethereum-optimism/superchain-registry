@@ -64,6 +64,10 @@ func TestGasPriceOracleParams(t *testing.T) {
 		}
 		desiredParams := desiredParamsOuter.Ecotone
 
+		if desiredParams == nil {
+			t.Fatal("no desiredParams.Ecotone set to compare Ecotone chain to")
+		}
+
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
