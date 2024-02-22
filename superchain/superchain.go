@@ -65,6 +65,8 @@ type ChainConfig struct {
 	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
 	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
 	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+
+	RegolithTime *uint64 `yaml:"regolith_time"` // defaults to 0
 }
 
 // replaceMissingOverridesWithDefaults overwrites each unspecified hardfork activation time override

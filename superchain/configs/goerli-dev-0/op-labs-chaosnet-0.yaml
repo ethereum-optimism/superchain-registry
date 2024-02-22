@@ -14,3 +14,5 @@ genesis:
     hash: "0x92e26b8a6b0e0939d8e50844deec6890c8b7925f39c921e91944dcb9a87217f8"
     number: 0
   l2_time: 1677688044
+
+regolith_time: 1692156862	# August 16, 2023 @ 3:34:22 am UTC
