@@ -469,7 +469,7 @@ type SuperchainConfig struct {
 	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
-	// Hardfork Configuration
+	// Hardfork Configuration. These values may be overriden by individual chains.
 	canyonTime   *uint64 `yaml:"canyon_time,omitempty"`
 	deltaTime    *uint64 `yaml:"delta_time,omitempty"`
 	ecotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
