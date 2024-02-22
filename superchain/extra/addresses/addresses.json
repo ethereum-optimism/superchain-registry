@@ -67,7 +67,8 @@
     "L2OutputOracleProxy": "0x7D00A03f180d8C07B88d8c1384a15326c38FF9Ff",
     "OptimismMintableERC20FactoryProxy": "0x526920419b61153c1F80fD306B5Ab52b69110A6C",
     "OptimismPortalProxy": "0x1566c8Eea4A255C07Ef58edF91431c8A73ae0B62",
-    "ProxyAdmin": "0x64d1E91BD7B80354e77C05c7FBff3Ad00E05946a"
+    "ProxyAdmin": "0x64d1E91BD7B80354e77C05c7FBff3Ad00E05946a",
+    "SystemConfigProxy": "0xf2fa3621caa534a2ae9eb36667da57890e5c9e6a"
   },
   "957": {
     "AddressManager": "0xC845F9C4004EB35a8bde8ad89C4760a9c0e65CAB",
@@ -92,7 +93,8 @@
     "L2OutputOracleProxy": "0xddb2e0c86ae08f1249d528f1a810cebd1b4c4d72",
     "OptimismMintableERC20FactoryProxy": "0x00b75ed2e46c4c29bc363a75a6d97791018b3903",
     "OptimismPortalProxy": "0xc6170e048b7daef6d0b6cbbad9aca0e5370ddbbc",
-    "ProxyAdmin": "0xD98bD7a1F2384D890d0D6153Cb6F813ab6cCFcCF"
+    "ProxyAdmin": "0xD98bD7a1F2384D890d0D6153Cb6F813ab6cCFcCF",
+    "SystemConfigProxy": "0x78c9876a3621b97cc9b3c13ad0f35091db49e8e3"
   },
   "8453": {
     "AddressManager": "0x8EfB6B5c4767B09Dc9AA6Af4eAA89F749522BaE2",
@@ -218,7 +220,8 @@
     "L2OutputOracleProxy": "0x805fbEDB43E814b2216ce6926A0A19bdeDb0C8Cd",
     "OptimismMintableERC20FactoryProxy": "0x92210e86f7e71606394FD57Be284Ef46Eced62Da",
     "OptimismPortalProxy": "0x61A7dc680a0f3F67aDc357453d3f51bDc70fAE1B",
-    "ProxyAdmin": "0x4d56E97228bBF10DcB2ED7E8F455c57AbE247404"
+    "ProxyAdmin": "0x4d56E97228bBF10DcB2ED7E8F455c57AbE247404",
+    "SystemConfigProxy": "0x4f775d578e3ab8ce81f5ec065050938dbd5fb8c2"
   },
   "11763072": {
     "AddressManager": "0x882a60911d00867Fe4ea632C479cc48e583A8D69",
@@ -254,6 +257,7 @@
     "L2OutputOracleProxy": "0x689258a0dc1D421f6e884d0325B71e778ceda1DD",
     "OptimismMintableERC20FactoryProxy": "0x8e3ECF806D0921d69D646D5E5647308050640416",
     "OptimismPortalProxy": "0x0550548367B568C129b1dC7b2B5C6273Cbd2da76",
-    "ProxyAdmin": "0xf592f1730154cE9e3F1793b583582B31A00EFBf1"
+    "ProxyAdmin": "0xf592f1730154cE9e3F1793b583582B31A00EFBf1",
+    "SystemConfigProxy": "0xc4ffc7731D1842CE86b1DE3679f6E4AB0BA4F99B"
   }
 }

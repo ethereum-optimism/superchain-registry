@@ -90,7 +90,6 @@ public_rpc: ""
 sequencer_rpc: ""
 explorer: ""
 
-system_config_addr: "$(jq -j .l1_system_config_address $ROLLUP_CONFIG)"
 batch_inbox_addr: "$(jq -j .batch_inbox_address $ROLLUP_CONFIG)"
 
 genesis:

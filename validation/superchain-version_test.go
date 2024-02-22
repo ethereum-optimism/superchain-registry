@@ -58,21 +58,20 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 
 func TestContractVersions(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		291:          true,
-		424:          true,
-		888:          true,
-		957:          true,
-		997:          true,
-		8453:         true,
-		34443:        true,
-		58008:        true,
-		84531:        true,
-		84532:        true,
-		7777777:      true,
+		291:          true, // mainnet/orderly
+		424:          true, // mainnet/pgn
+		888:          true, // goerli-dev-0/op-labs-chaosnet-0
+		957:          true, // mainnet/lyra
+		8453:         true, // mainnet/base
+		34443:        true, // mainnet/mode
+		58008:        true, // sepolia/pgn
+		84531:        true, // goerli/base
+		84532:        true, // sepolia/base
+		7777777:      true, // mainnet/zora
 		11155421:     true, // sepolia-dev-0/oplabs-devnet-0
-		11763071:     true,
-		999999999:    true,
-		129831238013: true,
+		11763071:     true, // goerli-dev-0/base-devnet-0
+		999999999:    true, // sepolia/zoras
+		129831238013: true, // goerli-dev-0/conduit-devnet-0
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
