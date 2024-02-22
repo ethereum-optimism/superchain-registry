@@ -42,6 +42,14 @@ type ChainGenesis struct {
 	ExtraData *HexBytes `yaml:"extra_data,omitempty"`
 }
 
+type HardForkConfiguration struct {
+	RegolithTime *uint64 `yaml:"regolith_time,omitempty"`
+	CanyonTime   *uint64 `yaml:"canyon_time,omitempty"`
+	DeltaTime    *uint64 `yaml:"delta_time,omitempty"`
+	EcotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
+	FjordTime    *uint64 `yaml:"fjord_time,omitempty"`
+}
+
 type ChainConfig struct {
 	Name         string `yaml:"name"`
 	ChainID      uint64 `yaml:"chain_id"`
@@ -61,11 +69,7 @@ type ChainConfig struct {
 	Chain string `yaml:"-"`
 
 	// Hardfork Configuration Overrides
-	CanyonTime   *uint64 `yaml:"canyon_time,omitempty"`
-	DeltaTime    *uint64 `yaml:"delta_time,omitempty"`
-	EcotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
-	FjordTime    *uint64 `yaml:"fjord_time,omitempty"`
-	RegolithTime *uint64 `yaml:"regolith_time"`
+	HardForkConfiguration `yaml:",inline"`
 }
 
 // replaceMissingOverridesWithDefaults overwrites each unspecified hardfork activation time override
@@ -462,6 +466,31 @@ type SuperchainL1Info struct {
 	Explorer  string `yaml:"explorer"`
 }
 
+type hardForkConfigurationPrivate struct {
+	canyonTime   *uint64 `yaml:"canyon_time,omitempty"`
+	deltaTime    *uint64 `yaml:"delta_time,omitempty"`
+	ecotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
+	fjordTime    *uint64 `yaml:"fjord_time,omitempty"`
+	regolithTime *uint64 `yaml:"regolith_time,omitempty"`
+}
+
+func (h *hardForkConfigurationPrivate) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	temp := HardForkConfiguration{}
+
+	err := unmarshal(&temp)
+	if err != nil {
+		return err
+	}
+
+	h.canyonTime = temp.CanyonTime
+	h.deltaTime = temp.DeltaTime
+	h.ecotoneTime = temp.EcotoneTime
+	h.fjordTime = temp.FjordTime
+	h.regolithTime = temp.RegolithTime
+
+	return nil
+}
+
 type SuperchainConfig struct {
 	Name string           `yaml:"name"`
 	L1   SuperchainL1Info `yaml:"l1"`
@@ -470,11 +499,7 @@ type SuperchainConfig struct {
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration. These values may be overriden by individual chains.
-	canyonTime   *uint64 `yaml:"canyon_time,omitempty"`
-	deltaTime    *uint64 `yaml:"delta_time,omitempty"`
-	ecotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
-	fjordTime    *uint64 `yaml:"fjord_time,omitempty"`
-	regolithTime *uint64 `yaml:"regolith_time,omitempty"`
+	hardForkConfigurationPrivate `yaml:",inline"`
 }
 
 type Superchain struct {
