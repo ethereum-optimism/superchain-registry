@@ -398,5 +398,6 @@ func testNetworkUpgradeTimestampOffset(l2GenesisTime uint64, blockTime uint64, u
 
 func TestHardforkActivationTimeOverrides(t *testing.T) {
 	require.Equal(t, uint64(1679079600), *(OPChains[420].RegolithTime), "regolith time not overidden properly for chain 420")
-	require.Equal(t, uint64(0), *(OPChains[84532].RegolithTime), "regolith time not read properly for hain 84532")
+	require.Equal(t, uint64(0), *(OPChains[84532].RegolithTime), "regolith time not read properly for chain 84532")
+	require.Equal(t, uint64(1706634000), *(OPChains[11155421].EcotoneTime), "regolith time not read properly for chain 11155421")
 }
