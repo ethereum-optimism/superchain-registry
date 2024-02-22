@@ -61,12 +61,11 @@ type ChainConfig struct {
 	Chain string `yaml:"-"`
 
 	// Hardfork Configuration Overrides
-	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
-	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
-	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
-	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
-
-	RegolithTime *uint64 `yaml:"regolith_time"` // defaults to 0
+	CanyonTime   *uint64 `yaml:"canyon_time,omitempty"`
+	DeltaTime    *uint64 `yaml:"delta_time,omitempty"`
+	EcotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
+	FjordTime    *uint64 `yaml:"fjord_time,omitempty"`
+	RegolithTime *uint64 `yaml:"regolith_time"`
 }
 
 // replaceMissingOverridesWithDefaults overwrites each unspecified hardfork activation time override
@@ -84,6 +83,9 @@ func (c *ChainConfig) replaceMissingOverridesWithDefaults(s Superchain) {
 	}
 	if c.FjordTime == nil {
 		c.FjordTime = s.Config.fjordTime
+	}
+	if c.RegolithTime == nil {
+		c.RegolithTime = s.Config.regolithTime
 	}
 
 }
@@ -468,10 +470,11 @@ type SuperchainConfig struct {
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration
-	canyonTime  *uint64 `yaml:"canyon_time,omitempty"`
-	deltaTime   *uint64 `yaml:"delta_time,omitempty"`
-	ecotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
-	fjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+	canyonTime   *uint64 `yaml:"canyon_time,omitempty"`
+	deltaTime    *uint64 `yaml:"delta_time,omitempty"`
+	ecotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
+	fjordTime    *uint64 `yaml:"fjord_time,omitempty"`
+	regolithTime *uint64 `yaml:"regolith_time,omitempty"`
 }
 
 type Superchain struct {
