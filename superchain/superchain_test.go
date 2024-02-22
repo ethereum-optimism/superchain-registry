@@ -368,8 +368,8 @@ func TestAevoForkTimestamps(t *testing.T) {
 	aevoGenesisL2Time := uint64(1679193011)
 	aevoBlockTime := uint64(10)
 	config := Superchains["mainnet"]
-	t.Run("canyon", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.canyonTime))
-	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.ecotoneTime))
+	t.Run("canyon", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.hardForkDefaults.canyonTime))
+	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.hardForkDefaults.ecotoneTime))
 }
 
 func testStandardTimestampOnBlockBoundary(t *testing.T, ts func(*ChainConfig) *uint64) {
