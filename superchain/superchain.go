@@ -77,19 +77,19 @@ type ChainConfig struct {
 func (c *ChainConfig) replaceMissingOverridesWithDefaults(s Superchain) {
 
 	if c.CanyonTime == nil {
-		c.CanyonTime = s.Config.canyonTime
+		c.CanyonTime = s.Config.hardForkDefaults.canyonTime
 	}
 	if c.DeltaTime == nil {
-		c.DeltaTime = s.Config.deltaTime
+		c.DeltaTime = s.Config.hardForkDefaults.deltaTime
 	}
 	if c.EcotoneTime == nil {
-		c.EcotoneTime = s.Config.ecotoneTime
+		c.EcotoneTime = s.Config.hardForkDefaults.ecotoneTime
 	}
 	if c.FjordTime == nil {
-		c.FjordTime = s.Config.fjordTime
+		c.FjordTime = s.Config.hardForkDefaults.fjordTime
 	}
 	if c.RegolithTime == nil {
-		c.RegolithTime = s.Config.regolithTime
+		c.RegolithTime = s.Config.hardForkDefaults.regolithTime
 	}
 
 }
@@ -499,7 +499,7 @@ type SuperchainConfig struct {
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration. These values may be overridden by individual chains.
-	hardForkConfigurationPrivate `yaml:",inline"`
+	hardForkDefaults hardForkConfigurationPrivate `yaml:",inline"`
 }
 
 type Superchain struct {
