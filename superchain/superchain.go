@@ -498,7 +498,7 @@ type SuperchainConfig struct {
 	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
-	// Hardfork Configuration. These values may be overriden by individual chains.
+	// Hardfork Configuration. These values may be overridden by individual chains.
 	hardForkConfigurationPrivate `yaml:",inline"`
 }
 
