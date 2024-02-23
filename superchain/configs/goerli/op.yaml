@@ -15,3 +15,5 @@ genesis:
     hash: "0x0f783549ea4313b784eadd9b8e8a69913b368b7366363ea814d7707ac505175f"
     number: 4061224
   l2_time: 1673550516
+
+regolith_time: 1679079600 # March 17, 2023 @ 7:00:00 pm UTC
