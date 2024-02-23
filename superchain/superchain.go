@@ -512,7 +512,6 @@ func (s *SuperchainConfig) UnmarshalYAML(unmarshal func(interface{}) error) erro
 	return nil
 }
 
-// TODO need to wrie a YAML unmarshaler for SuperchainConfig which handles the private fields properly
 
 type Superchain struct {
 	Config SuperchainConfig
