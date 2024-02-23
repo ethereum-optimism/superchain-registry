@@ -512,7 +512,6 @@ func (s *SuperchainConfig) UnmarshalYAML(unmarshal func(interface{}) error) erro
 	return nil
 }
 
-
 type Superchain struct {
 	Config SuperchainConfig
 
