@@ -71,35 +71,8 @@ type ChainConfig struct {
 	HardForkConfiguration `yaml:",inline"`
 }
 
-// replaceMissingOverridesWithDefaults overwrites each unspecified hardfork activation time override
-// with the superchain default.
-func (c *ChainConfig) replaceMissingOverridesWithDefaults(s Superchain) {
-	dVal := reflect.ValueOf(c)
-	sVal := reflect.ValueOf(&s.Config.hardForkDefaults)
-
-	hfcVal := reflect.ValueOf(HardForkConfiguration{})
-	for i := 0; i < hfcVal.NumField(); i++ {
-		hardForkName := hfcVal.Type().Field(i).Name
-		overrideValue := dVal.Elem().FieldByName(hardForkName)
-
-		if overrideValue.Interface().(*uint64) == nil {
-			defaultValue := sVal.Elem().FieldByName(hardForkName)
-			overrideValue.Set(defaultValue)
-		}
-	}
-
-	// This achieves:
-	//
-	// if c.RegolithTime == nil {
-	// 	c.RegolithTime = s.Config.hardForkDefaults.RegolithTime
-	// }
-
-	// if c.CanyonTime == nil {
-	// 	c.CanyonTime = s.Config.hardForkDefaults.CanyonTime
-	// }
-	//
-	// ...etc for each field in HardForkConfiguration
-
+func (c *ChainConfig) hydrateDefaultHardforkTimestamps(s SuperchainConfig) {
+	c.HardForkConfiguration = s.hardForkDefaults
 }
 
 // AddressList represents the set of network specific contracts for a given network.
@@ -599,12 +572,13 @@ func init() {
 				panic(fmt.Errorf("failed to read superchain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
 			var chainConfig ChainConfig
+
+			chainConfig.hydrateDefaultHardforkTimestamps(superchainEntry.Config)
+
 			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
 			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
-
-			chainConfig.replaceMissingOverridesWithDefaults(superchainEntry)
 
 			jsonName := chainConfig.Chain + ".json"
 			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
