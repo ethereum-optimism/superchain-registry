@@ -42,6 +42,22 @@ type ChainGenesis struct {
 	ExtraData *HexBytes `yaml:"extra_data,omitempty"`
 }
 
+type HardForkConfiguration struct {
+	RegolithTime *uint64 `yaml:"regolith_time,omitempty"`
+	CanyonTime   *uint64 `yaml:"canyon_time,omitempty"`
+	DeltaTime    *uint64 `yaml:"delta_time,omitempty"`
+	EcotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
+	FjordTime    *uint64 `yaml:"fjord_time,omitempty"`
+}
+
+type hardForkConfigurationPrivate struct {
+	regolithTime *uint64 `yaml:"regolith_time,omitempty"`
+	canyonTime   *uint64 `yaml:"canyon_time,omitempty"`
+	deltaTime    *uint64 `yaml:"delta_time,omitempty"`
+	ecotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
+	fjordTime    *uint64 `yaml:"fjord_time,omitempty"`
+}
+
 type ChainConfig struct {
 	Name         string `yaml:"name"`
 	ChainID      uint64 `yaml:"chain_id"`
@@ -59,6 +75,31 @@ type ChainConfig struct {
 	// Chain is a simple string to identify the chain, within its superchain context.
 	// This matches the resource filename, it is not encoded in the config file itself.
 	Chain string `yaml:"-"`
+
+	// Hardfork Configuration Overrides
+	HardForkConfiguration `yaml:",inline"`
+}
+
+// replaceMissingOverridesWithDefaults overwrites each unspecified hardfork activation time override
+// with the superchain default.
+func (c *ChainConfig) replaceMissingOverridesWithDefaults(s Superchain) {
+
+	if c.CanyonTime == nil {
+		c.CanyonTime = s.Config.canyonTime
+	}
+	if c.DeltaTime == nil {
+		c.DeltaTime = s.Config.deltaTime
+	}
+	if c.EcotoneTime == nil {
+		c.EcotoneTime = s.Config.ecotoneTime
+	}
+	if c.FjordTime == nil {
+		c.FjordTime = s.Config.fjordTime
+	}
+	if c.RegolithTime == nil {
+		c.RegolithTime = s.Config.regolithTime
+	}
+
 }
 
 // AddressList represents the set of network specific contracts for a given network.
@@ -440,12 +481,42 @@ type SuperchainConfig struct {
 	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
-	// Hardfork Configuration
-	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
-	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
-	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
-	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+	// Hardfork Configuration. These values may be overridden by individual chains.
+	hardForkConfigurationPrivate `yaml:",inline"`
 }
+
+// custom unmarshal function to allow yaml to be unmarshalled into unexported fields
+func (s *SuperchainConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	temp := struct {
+		Name string           `yaml:"name"`
+		L1   SuperchainL1Info `yaml:"l1"`
+
+		ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
+		SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
+
+		HardForkConfiguration `yaml:",inline"`
+	}{}
+
+	err := unmarshal(&temp)
+	if err != nil {
+		return err
+
+	}
+
+	s.Name = temp.Name
+	s.L1 = temp.L1
+	s.ProtocolVersionsAddr = temp.ProtocolVersionsAddr
+	s.SuperchainConfigAddr = temp.SuperchainConfigAddr
+	s.canyonTime = temp.CanyonTime
+	s.deltaTime = temp.DeltaTime
+	s.ecotoneTime = temp.EcotoneTime
+	s.fjordTime = temp.FjordTime
+	s.regolithTime = temp.RegolithTime
+
+	return nil
+}
+
+// TODO need to wrie a YAML unmarshaler for SuperchainConfig which handles the private fields properly
 
 type Superchain struct {
 	Config SuperchainConfig
@@ -458,8 +529,8 @@ type Superchain struct {
 }
 
 // IsEcotone returns true if the EcotoneTime for this chain in the past.
-func (s *Superchain) IsEcotone() bool {
-	if et := s.Config.EcotoneTime; et != nil {
+func (c *ChainConfig) IsEcotone() bool {
+	if et := c.EcotoneTime; et != nil {
 		return int64(*et) < time.Now().Unix()
 	}
 	return false
@@ -538,6 +609,8 @@ func init() {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
 			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
+
+			chainConfig.replaceMissingOverridesWithDefaults(superchainEntry)
 
 			jsonName := chainConfig.Chain + ".json"
 			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
