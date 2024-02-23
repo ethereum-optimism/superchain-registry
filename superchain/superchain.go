@@ -49,15 +49,6 @@ type HardForkConfiguration struct {
 	EcotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
 	FjordTime    *uint64 `yaml:"fjord_time,omitempty"`
 }
-
-type hardForkConfigurationPrivate struct {
-	regolithTime *uint64 `yaml:"regolith_time,omitempty"`
-	canyonTime   *uint64 `yaml:"canyon_time,omitempty"`
-	deltaTime    *uint64 `yaml:"delta_time,omitempty"`
-	ecotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
-	fjordTime    *uint64 `yaml:"fjord_time,omitempty"`
-}
-
 type ChainConfig struct {
 	Name         string `yaml:"name"`
 	ChainID      uint64 `yaml:"chain_id"`
@@ -85,19 +76,19 @@ type ChainConfig struct {
 func (c *ChainConfig) replaceMissingOverridesWithDefaults(s Superchain) {
 
 	if c.CanyonTime == nil {
-		c.CanyonTime = s.Config.canyonTime
+		c.CanyonTime = s.Config.hardForkDefaults.CanyonTime
 	}
 	if c.DeltaTime == nil {
-		c.DeltaTime = s.Config.deltaTime
+		c.DeltaTime = s.Config.hardForkDefaults.DeltaTime
 	}
 	if c.EcotoneTime == nil {
-		c.EcotoneTime = s.Config.ecotoneTime
+		c.EcotoneTime = s.Config.hardForkDefaults.EcotoneTime
 	}
 	if c.FjordTime == nil {
-		c.FjordTime = s.Config.fjordTime
+		c.FjordTime = s.Config.hardForkDefaults.FjordTime
 	}
 	if c.RegolithTime == nil {
-		c.RegolithTime = s.Config.regolithTime
+		c.RegolithTime = s.Config.hardForkDefaults.RegolithTime
 	}
 
 }
@@ -482,7 +473,7 @@ type SuperchainConfig struct {
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration. These values may be overridden by individual chains.
-	hardForkConfigurationPrivate `yaml:",inline"`
+	hardForkDefaults HardForkConfiguration `yaml:",inline"`
 }
 
 // custom unmarshal function to allow yaml to be unmarshalled into unexported fields
@@ -494,7 +485,7 @@ func (s *SuperchainConfig) UnmarshalYAML(unmarshal func(interface{}) error) erro
 		ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
 		SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
-		HardForkConfiguration `yaml:",inline"`
+		HardForks HardForkConfiguration `yaml:",inline"`
 	}{}
 
 	err := unmarshal(&temp)
@@ -507,11 +498,7 @@ func (s *SuperchainConfig) UnmarshalYAML(unmarshal func(interface{}) error) erro
 	s.L1 = temp.L1
 	s.ProtocolVersionsAddr = temp.ProtocolVersionsAddr
 	s.SuperchainConfigAddr = temp.SuperchainConfigAddr
-	s.canyonTime = temp.CanyonTime
-	s.deltaTime = temp.DeltaTime
-	s.ecotoneTime = temp.EcotoneTime
-	s.fjordTime = temp.FjordTime
-	s.regolithTime = temp.RegolithTime
+	s.hardForkDefaults = temp.HardForks
 
 	return nil
 }
