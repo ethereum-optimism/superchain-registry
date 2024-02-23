@@ -368,8 +368,8 @@ func TestAevoForkTimestamps(t *testing.T) {
 	aevoGenesisL2Time := uint64(1679193011)
 	aevoBlockTime := uint64(10)
 	config := Superchains["mainnet"]
-	t.Run("canyon", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.hardForkDefaults.canyonTime))
-	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.hardForkDefaults.ecotoneTime))
+	t.Run("canyon", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.canyonTime))
+	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.ecotoneTime))
 }
 
 func testStandardTimestampOnBlockBoundary(t *testing.T, ts func(*ChainConfig) *uint64) {
@@ -400,4 +400,39 @@ func TestHardforkActivationTimeOverrides(t *testing.T) {
 	require.Equal(t, uint64(1679079600), *(OPChains[420].RegolithTime), "regolith time not overidden properly for chain 420")
 	require.Equal(t, uint64(0), *(OPChains[84532].RegolithTime), "regolith time not read properly for chain 84532")
 	require.Equal(t, uint64(1706634000), *(OPChains[11155421].EcotoneTime), "regolith time not read properly for chain 11155421")
+}
+
+func TestSuperchainConfigUnmarshaling(t *testing.T) {
+	rawYAML := `
+name: Mickey Mouse
+l1:
+  chain_id: 314
+  public_rpc: https://disney.com
+  explorer: https://disneyscan.io
+
+protocol_versions_addr: "0x252CbE9517F731C618961D890D534183822dcC8d"
+superchain_config_addr: "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
+
+regolith_time: 0 
+canyon_time: 1
+delta_time: 2
+ecotone_time: 3
+`
+
+	s := SuperchainConfig{}
+	err := yaml.Unmarshal([]byte(rawYAML), &s)
+	require.NoError(t, err)
+
+	require.Equal(t, "Mickey Mouse", s.Name)
+	require.Equal(t, SuperchainL1Info{
+		ChainID:   314,
+		PublicRPC: "https://disney.com",
+		Explorer:  "https://disneyscan.io",
+	}, s.L1)
+	require.Equal(t, "0x252cbe9517f731c618961d890d534183822dcc8d", s.ProtocolVersionsAddr.String())
+	require.Equal(t, "0x02d91cf852423640d93920be0cadcec0e7a00fa7", s.SuperchainConfigAddr.String())
+	require.Equal(t, uint64(0), *s.regolithTime)
+	require.Equal(t, uint64(1), *s.canyonTime)
+	require.Equal(t, uint64(2), *s.deltaTime)
+	require.Equal(t, uint64(3), *s.ecotoneTime)
 }

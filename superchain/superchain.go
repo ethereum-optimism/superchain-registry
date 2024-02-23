@@ -50,6 +50,14 @@ type HardForkConfiguration struct {
 	FjordTime    *uint64 `yaml:"fjord_time,omitempty"`
 }
 
+type hardForkConfigurationPrivate struct {
+	regolithTime *uint64 `yaml:"regolith_time,omitempty"`
+	canyonTime   *uint64 `yaml:"canyon_time,omitempty"`
+	deltaTime    *uint64 `yaml:"delta_time,omitempty"`
+	ecotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
+	fjordTime    *uint64 `yaml:"fjord_time,omitempty"`
+}
+
 type ChainConfig struct {
 	Name         string `yaml:"name"`
 	ChainID      uint64 `yaml:"chain_id"`
@@ -466,14 +474,6 @@ type SuperchainL1Info struct {
 	Explorer  string `yaml:"explorer"`
 }
 
-type hardForkConfigurationPrivate struct {
-	canyonTime   *uint64 `yaml:"canyon_time,omitempty"`
-	deltaTime    *uint64 `yaml:"delta_time,omitempty"`
-	ecotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
-	fjordTime    *uint64 `yaml:"fjord_time,omitempty"`
-	regolithTime *uint64 `yaml:"regolith_time,omitempty"`
-}
-
 type SuperchainConfig struct {
 	Name string           `yaml:"name"`
 	L1   SuperchainL1Info `yaml:"l1"`
@@ -487,7 +487,6 @@ type SuperchainConfig struct {
 
 // custom unmarshal function to allow yaml to be unmarshalled into unexported fields
 func (s *SuperchainConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
-
 	temp := struct {
 		Name string           `yaml:"name"`
 		L1   SuperchainL1Info `yaml:"l1"`
