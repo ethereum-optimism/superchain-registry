@@ -74,22 +74,31 @@ type ChainConfig struct {
 // replaceMissingOverridesWithDefaults overwrites each unspecified hardfork activation time override
 // with the superchain default.
 func (c *ChainConfig) replaceMissingOverridesWithDefaults(s Superchain) {
+	dVal := reflect.ValueOf(c)
+	sVal := reflect.ValueOf(&s.Config.hardForkDefaults)
 
-	if c.CanyonTime == nil {
-		c.CanyonTime = s.Config.hardForkDefaults.CanyonTime
+	hfcVal := reflect.ValueOf(HardForkConfiguration{})
+	for i := 0; i < hfcVal.NumField(); i++ {
+		hardForkName := hfcVal.Type().Field(i).Name
+		overrideValue := dVal.Elem().FieldByName(hardForkName)
+
+		if overrideValue.Interface().(*uint64) == nil {
+			defaultValue := sVal.Elem().FieldByName(hardForkName)
+			overrideValue.Set(defaultValue)
+		}
 	}
-	if c.DeltaTime == nil {
-		c.DeltaTime = s.Config.hardForkDefaults.DeltaTime
-	}
-	if c.EcotoneTime == nil {
-		c.EcotoneTime = s.Config.hardForkDefaults.EcotoneTime
-	}
-	if c.FjordTime == nil {
-		c.FjordTime = s.Config.hardForkDefaults.FjordTime
-	}
-	if c.RegolithTime == nil {
-		c.RegolithTime = s.Config.hardForkDefaults.RegolithTime
-	}
+
+	// This achieves:
+	//
+	// if c.RegolithTime == nil {
+	// 	c.RegolithTime = s.Config.hardForkDefaults.RegolithTime
+	// }
+
+	// if c.CanyonTime == nil {
+	// 	c.CanyonTime = s.Config.hardForkDefaults.CanyonTime
+	// }
+	//
+	// ...etc for each field in HardForkConfiguration
 
 }
 
