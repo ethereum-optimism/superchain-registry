@@ -77,19 +77,19 @@ type ChainConfig struct {
 func (c *ChainConfig) replaceMissingOverridesWithDefaults(s Superchain) {
 
 	if c.CanyonTime == nil {
-		c.CanyonTime = s.Config.hardForkDefaults.canyonTime
+		c.CanyonTime = s.Config.canyonTime
 	}
 	if c.DeltaTime == nil {
-		c.DeltaTime = s.Config.hardForkDefaults.deltaTime
+		c.DeltaTime = s.Config.deltaTime
 	}
 	if c.EcotoneTime == nil {
-		c.EcotoneTime = s.Config.hardForkDefaults.ecotoneTime
+		c.EcotoneTime = s.Config.ecotoneTime
 	}
 	if c.FjordTime == nil {
-		c.FjordTime = s.Config.hardForkDefaults.fjordTime
+		c.FjordTime = s.Config.fjordTime
 	}
 	if c.RegolithTime == nil {
-		c.RegolithTime = s.Config.hardForkDefaults.regolithTime
+		c.RegolithTime = s.Config.regolithTime
 	}
 
 }
@@ -474,23 +474,6 @@ type hardForkConfigurationPrivate struct {
 	regolithTime *uint64 `yaml:"regolith_time,omitempty"`
 }
 
-func (h *hardForkConfigurationPrivate) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	temp := HardForkConfiguration{}
-
-	err := unmarshal(&temp)
-	if err != nil {
-		return err
-	}
-
-	h.canyonTime = temp.CanyonTime
-	h.deltaTime = temp.DeltaTime
-	h.ecotoneTime = temp.EcotoneTime
-	h.fjordTime = temp.FjordTime
-	h.regolithTime = temp.RegolithTime
-
-	return nil
-}
-
 type SuperchainConfig struct {
 	Name string           `yaml:"name"`
 	L1   SuperchainL1Info `yaml:"l1"`
@@ -499,8 +482,42 @@ type SuperchainConfig struct {
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration. These values may be overridden by individual chains.
-	hardForkDefaults hardForkConfigurationPrivate `yaml:",inline"`
+	hardForkConfigurationPrivate `yaml:",inline"`
 }
+
+// custom unmarshal function to allow yaml to be unmarshalled into unexported fields
+func (s *SuperchainConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
+
+	temp := struct {
+		Name string           `yaml:"name"`
+		L1   SuperchainL1Info `yaml:"l1"`
+
+		ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
+		SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
+
+		HardForkConfiguration `yaml:",inline"`
+	}{}
+
+	err := unmarshal(&temp)
+	if err != nil {
+		return err
+
+	}
+
+	s.Name = temp.Name
+	s.L1 = temp.L1
+	s.ProtocolVersionsAddr = temp.ProtocolVersionsAddr
+	s.SuperchainConfigAddr = temp.SuperchainConfigAddr
+	s.canyonTime = temp.CanyonTime
+	s.deltaTime = temp.DeltaTime
+	s.ecotoneTime = temp.EcotoneTime
+	s.fjordTime = temp.FjordTime
+	s.regolithTime = temp.RegolithTime
+
+	return nil
+}
+
+// TODO need to wrie a YAML unmarshaler for SuperchainConfig which handles the private fields properly
 
 type Superchain struct {
 	Config SuperchainConfig
