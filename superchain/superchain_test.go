@@ -439,6 +439,53 @@ fjord_time:
 	require.Nil(t, s.hardForkDefaults.FjordTime)
 }
 
+func TestChainConfigUnmarshaling(t *testing.T) {
+
+	// Set a ChainConfig to unmarshal into
+	// which already has a default value set
+	c := ChainConfig{
+		HardForkConfiguration: HardForkConfiguration{
+			CanyonTime: uint64Ptr(uint64(44)), // default value
+		},
+	}
+
+	t.Run("override: unmarshal with an override", func(t *testing.T) {
+		rawYAML := `
+regolith_time: 1679079600 # Fri 17 Mar 2023 19:00:00 UTC
+canyon_time: 98`
+
+		err := yaml.Unmarshal([]byte(rawYAML), &c)
+		require.NoError(t, err)
+
+		require.Equal(t, uint64Ptr(uint64(1679079600)), c.RegolithTime)
+		require.Equal(t, uint64Ptr(uint64(98)), c.CanyonTime)
+
+	})
+
+	t.Run("override: unmarshal with a key and no value", func(t *testing.T) {
+		rawYAML := `
+regolith_time: 1679079600 # Fri 17 Mar 2023 19:00:00 UTC
+canyon_time:`
+
+		err := yaml.Unmarshal([]byte(rawYAML), &c)
+		require.NoError(t, err)
+
+		require.Equal(t, uint64Ptr(uint64(1679079600)), c.RegolithTime)
+		require.Equal(t, uint64Ptr(uint64(44)), c.CanyonTime)
+
+	})
+
+	t.Run("override: unmarshal with no key and no value", func(t *testing.T) {
+		rawYAML := `regolith_time: 1679079600 # Fri 17 Mar 2023 19:00:00 UTC`
+
+		err := yaml.Unmarshal([]byte(rawYAML), &c)
+		require.NoError(t, err)
+
+		require.Equal(t, uint64Ptr(uint64(1679079600)), c.RegolithTime)
+		require.Equal(t, uint64Ptr(uint64(44)), c.CanyonTime)
+	})
+}
+
 func uint64Ptr(i uint64) *uint64 {
 	return &i
 }
