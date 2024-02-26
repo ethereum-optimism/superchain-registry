@@ -84,7 +84,7 @@ The config is the main configuration source, with genesis data, and address of o
 
 ```bash
 cat > $SUPERCHAIN_REPO/superchain/configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.yaml << EOF
-name: OP Labs devnet 0
+name: $CHAIN_NAME
 chain_id: $(jq -j .l2_chain_id $ROLLUP_CONFIG)
 public_rpc: ""
 sequencer_rpc: ""
@@ -119,10 +119,10 @@ and thus not configured per chain.
 mkdir -p $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET
 cat > $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET/$CHAIN_NAME.json << EOF
 {
-  "AddressManager": "$(jq -j .address $DEPLOYMENTS_DIR/Lib_AddressManager.json)",
-  "L1CrossDomainMessengerProxy": "$(jq -j .address $DEPLOYMENTS_DIR/Proxy__OVM_L1CrossDomainMessenger.json)",
+  "AddressManager": "$(jq -j .address $DEPLOYMENTS_DIR/AddressManager.json)",
+  "L1CrossDomainMessengerProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1CrossDomainMessengerProxy.json)",
   "L1ERC721BridgeProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1ERC721BridgeProxy.json)",
-  "L1StandardBridgeProxy": "$(jq -j .address $DEPLOYMENTS_DIR/Proxy__OVM_L1StandardBridge.json)",
+  "L1StandardBridgeProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1StandardBridgeProxy.json)",
   "L2OutputOracleProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L2OutputOracleProxy.json)",
   "OptimismMintableERC20FactoryProxy": "$(jq -j .address $DEPLOYMENTS_DIR/OptimismMintableERC20FactoryProxy.json)",
   "OptimismPortalProxy": "$(jq -j .address $DEPLOYMENTS_DIR/OptimismPortalProxy.json)",
