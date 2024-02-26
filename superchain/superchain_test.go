@@ -397,9 +397,9 @@ func testNetworkUpgradeTimestampOffset(l2GenesisTime uint64, blockTime uint64, u
 }
 
 func TestHardforkActivationTimeOverrides(t *testing.T) {
-	require.Equal(t, uint64(1679079600), *(OPChains[420].RegolithTime), "regolith time not overidden properly for chain 420")
-	require.Equal(t, uint64(0), *(OPChains[84532].RegolithTime), "regolith time not read properly for chain 84532")
-	require.Equal(t, uint64(1706634000), *(OPChains[11155421].EcotoneTime), "regolith time not read properly for chain 11155421")
+	require.Equal(t, uint64Ptr(uint64(1679079600)), OPChains[420].RegolithTime, "regolith time not overidden properly for chain 420")
+	require.Equal(t, uint64Ptr(uint64(0)), OPChains[84532].RegolithTime, "regolith time not read properly for chain 84532")
+	require.Equal(t, uint64Ptr(uint64(1706634000)), OPChains[11155421].EcotoneTime, "regolith time not read properly for chain 11155421")
 }
 
 func TestSuperchainConfigUnmarshaling(t *testing.T) {
@@ -431,8 +431,12 @@ ecotone_time: 3
 	}, s.L1)
 	require.Equal(t, "0x252cbe9517f731c618961d890d534183822dcc8d", s.ProtocolVersionsAddr.String())
 	require.Equal(t, "0x02d91cf852423640d93920be0cadcec0e7a00fa7", s.SuperchainConfigAddr.String())
-	require.Equal(t, uint64(0), *(s.hardForkDefaults.RegolithTime))
-	require.Equal(t, uint64(1), *(s.hardForkDefaults.CanyonTime))
-	require.Equal(t, uint64(2), *(s.hardForkDefaults.DeltaTime))
-	require.Equal(t, uint64(3), *(s.hardForkDefaults.EcotoneTime))
+	require.Equal(t, uint64Ptr(uint64(0)), s.hardForkDefaults.RegolithTime)
+	require.Equal(t, uint64Ptr(uint64(1)), s.hardForkDefaults.CanyonTime)
+	require.Equal(t, uint64Ptr(uint64(2)), s.hardForkDefaults.DeltaTime)
+	require.Equal(t, uint64Ptr(uint64(3)), s.hardForkDefaults.EcotoneTime)
+}
+
+func uint64Ptr(i uint64) *uint64 {
+	return &i
 }
