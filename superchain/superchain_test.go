@@ -417,6 +417,7 @@ regolith_time: 0
 canyon_time: 1
 delta_time: 2
 ecotone_time: 3
+fjord_time: 
 `
 
 	s := SuperchainConfig{}
@@ -435,6 +436,7 @@ ecotone_time: 3
 	require.Equal(t, uint64Ptr(uint64(1)), s.hardForkDefaults.CanyonTime)
 	require.Equal(t, uint64Ptr(uint64(2)), s.hardForkDefaults.DeltaTime)
 	require.Equal(t, uint64Ptr(uint64(3)), s.hardForkDefaults.EcotoneTime)
+	require.Nil(t, s.hardForkDefaults.FjordTime)
 }
 
 func uint64Ptr(i uint64) *uint64 {
