@@ -6,7 +6,7 @@ l1:
 
 protocol_versions_addr: "0x0C24F5098774aA366827D667494e9F889f7cFc08"
 
-regolith_time: 0 # genesis, overriden by individual chains
-canyon_time: 1699981200 # Tue Nov 14 17:00:00 UTC 2023
-delta_time: 1703116800  # Thu Dec 21 00:00:00 UTC 2023
-ecotone_time: 1707238800 # Tue Feb 6 17:00:00 UTC 2024
+regolith_time: 0         # Thu  1 Jan 1970 00:00:00 UTC genesis, overriden by individual chains
+canyon_time: 1699981200  # Tue 14 Nov 2023 17:00:00 UTC
+delta_time: 1703116800   # Thu 21 Dec 2023 00:00:00 UTC
+ecotone_time: 1707238800 # Tue  6 Feb 2024 17:00:00 UTC

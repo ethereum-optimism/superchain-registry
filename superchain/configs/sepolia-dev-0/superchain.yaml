@@ -7,7 +7,8 @@ l1:
 protocol_versions_addr: "0x252CbE9517F731C618961D890D534183822dcC8d"
 superchain_config_addr: "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
 
-regolith_time: 0 # genesis
-canyon_time: 1698436800  # Fri Oct 27 20:00:00 UTC 2023
-delta_time: 1706555000   # Mon Jan 29 19:03:20 UTC 2024
-ecotone_time: 1706634000 # Tue Jan 30 17:00:00 UTC 2024
+regolith_time: 0         # Thu  1 Jan 1970 00:00:00 UTC (genesis)
+canyon_time: 1698436800  # Fri 27 Oct 2023 20:00:00 UTC
+delta_time: 1706555000   # Mon 29 Jan 2024 19:03:20 UTC
+ecotone_time: 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
+

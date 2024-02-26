@@ -13,6 +13,6 @@ genesis:
   l2:
     hash: "0x742e03d9c8fe4dfd96f8e2d53d3815ec5537cbe3d88ad28cbb75c17ff2672867"
     number: 0
-  l2_time: 1677973680
+  l2_time: 1677973680 # Sat  4 Mar 2023 23:48:00 UTC
 
 regolith_time: 1677984480 # March 5, 2023 @ 2:48:00 am UTC
