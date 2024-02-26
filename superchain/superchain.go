@@ -49,6 +49,7 @@ type HardForkConfiguration struct {
 	EcotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
 	FjordTime    *uint64 `yaml:"fjord_time,omitempty"`
 }
+
 type ChainConfig struct {
 	Name         string `yaml:"name"`
 	ChainID      uint64 `yaml:"chain_id"`
