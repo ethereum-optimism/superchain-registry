@@ -4,13 +4,13 @@ import (
 	"math/big"
 )
 
-var uint128Max, ok = big.NewInt(0).SetString("ffffffffffffffffffffffffffffffff", 16)
-
-func init() {
+var uint128Max = func() *big.Int {
+	r, ok := new(big.Int).SetString("ffffffffffffffffffffffffffffffff", 16)
 	if !ok {
 		panic("cannot construct uint128Max")
 	}
-}
+	return r
+}()
 
 type ResourceConfig struct {
 	MaxResourceLimit            uint32
