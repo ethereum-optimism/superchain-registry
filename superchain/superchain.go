@@ -466,17 +466,11 @@ func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
 		HardForks         *HardForkConfiguration `yaml:",inline"`
 	}{
 		SuperchainConfig: s,
-		HardForks:        &HardForkConfiguration{},
+		HardForks:        &s.hardForkDefaults,
 	}
 
-	err := yaml.Unmarshal(data, temp)
-	if err != nil {
-		return err
-	}
+	return yaml.Unmarshal(data, temp)
 
-	s.hardForkDefaults = *(temp.HardForks)
-
-	return nil
 }
 
 type Superchain struct {
