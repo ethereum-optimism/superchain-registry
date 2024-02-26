@@ -420,7 +420,7 @@ ecotone_time: 3
 `
 
 	s := SuperchainConfig{}
-	err := yaml.Unmarshal([]byte(rawYAML), &s)
+	err := unMarshalSuperchainConfig([]byte(rawYAML), &s)
 	require.NoError(t, err)
 
 	require.Equal(t, "Mickey Mouse", s.Name)
@@ -431,8 +431,8 @@ ecotone_time: 3
 	}, s.L1)
 	require.Equal(t, "0x252cbe9517f731c618961d890d534183822dcc8d", s.ProtocolVersionsAddr.String())
 	require.Equal(t, "0x02d91cf852423640d93920be0cadcec0e7a00fa7", s.SuperchainConfigAddr.String())
-	require.Equal(t, uint64(0), *s.hardForkDefaults.RegolithTime)
-	require.Equal(t, uint64(1), *s.hardForkDefaults.CanyonTime)
-	require.Equal(t, uint64(2), *s.hardForkDefaults.DeltaTime)
-	require.Equal(t, uint64(3), *s.hardForkDefaults.EcotoneTime)
+	require.Equal(t, uint64(0), *(s.hardForkDefaults.RegolithTime))
+	require.Equal(t, uint64(1), *(s.hardForkDefaults.CanyonTime))
+	require.Equal(t, uint64(2), *(s.hardForkDefaults.DeltaTime))
+	require.Equal(t, uint64(3), *(s.hardForkDefaults.EcotoneTime))
 }

@@ -456,32 +456,25 @@ type SuperchainConfig struct {
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration. These values may be overridden by individual chains.
-	hardForkDefaults HardForkConfiguration `yaml:",inline"`
+	hardForkDefaults HardForkConfiguration
 }
 
 // custom unmarshal function to allow yaml to be unmarshalled into unexported fields
-func (s *SuperchainConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
 	temp := struct {
-		Name string           `yaml:"name"`
-		L1   SuperchainL1Info `yaml:"l1"`
-
-		ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
-		SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
-
-		HardForks HardForkConfiguration `yaml:",inline"`
-	}{}
-
-	err := unmarshal(&temp)
-	if err != nil {
-		return err
-
+		*SuperchainConfig `yaml:",inline"`
+		HardForks         *HardForkConfiguration `yaml:",inline"`
+	}{
+		SuperchainConfig: s,
+		HardForks:        &HardForkConfiguration{},
 	}
 
-	s.Name = temp.Name
-	s.L1 = temp.L1
-	s.ProtocolVersionsAddr = temp.ProtocolVersionsAddr
-	s.SuperchainConfigAddr = temp.SuperchainConfigAddr
-	s.hardForkDefaults = temp.HardForks
+	err := yaml.Unmarshal(data, temp)
+	if err != nil {
+		return err
+	}
+
+	s.hardForkDefaults = *(temp.HardForks)
 
 	return nil
 }
@@ -553,7 +546,7 @@ func init() {
 			panic(fmt.Errorf("failed to read superchain config: %w", err))
 		}
 		var superchainEntry Superchain
-		if err := yaml.Unmarshal(superchainConfigData, &superchainEntry.Config); err != nil {
+		if err := unMarshalSuperchainConfig(superchainConfigData, &superchainEntry.Config); err != nil {
 			panic(fmt.Errorf("failed to decode superchain config: %w", err))
 		}
 		superchainEntry.Superchain = s.Name()
