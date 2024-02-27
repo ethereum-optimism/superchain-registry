@@ -439,7 +439,7 @@ fjord_time:
 	require.Nil(t, s.hardForkDefaults.FjordTime)
 }
 
-func TestHardForkOverridesAndDefaults(*testing.T) {
+func TestHardForkOverridesAndDefaults(t *testing.T) {
 
 	defaultCanyonTime := uint64(3)
 
