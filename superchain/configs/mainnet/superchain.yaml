@@ -6,7 +6,6 @@ l1:
 
 protocol_versions_addr: "0x8062AbC286f5e7D9428a0Ccb9AbD71e50d93b935"
 
-regolith_time: 0         # Thu  1 Jan 1970 00:00:00 UTC
 canyon_time: 1704992401  # Thu 11 Jan 2024 17:00:01 UTC
 delta_time: 1708560000   # Thu 22 Feb 2024 00:00:00 UTC
 ecotone_time: 1710374401 # Thu 14 Mar 2024 00:00:01 UTC

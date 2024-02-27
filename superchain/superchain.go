@@ -43,11 +43,10 @@ type ChainGenesis struct {
 }
 
 type HardForkConfiguration struct {
-	RegolithTime *uint64 `yaml:"regolith_time,omitempty"`
-	CanyonTime   *uint64 `yaml:"canyon_time,omitempty"`
-	DeltaTime    *uint64 `yaml:"delta_time,omitempty"`
-	EcotoneTime  *uint64 `yaml:"ecotone_time,omitempty"`
-	FjordTime    *uint64 `yaml:"fjord_time,omitempty"`
+	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
+	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
+	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
+	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
 }
 
 type ChainConfig struct {
@@ -89,10 +88,6 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 	}
 
 	// This achieves:
-	//
-	// if c.RegolithTime == nil {
-	// 	c.RegolithTime = s.Config.hardForkDefaults.RegolithTime
-	// }
 
 	// if c.CanyonTime == nil {
 	// 	c.CanyonTime = s.Config.hardForkDefaults.CanyonTime

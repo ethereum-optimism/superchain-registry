@@ -396,12 +396,6 @@ func testNetworkUpgradeTimestampOffset(l2GenesisTime uint64, blockTime uint64, u
 	}
 }
 
-func TestHardforkActivationTimeOverrides(t *testing.T) {
-	require.Equal(t, uint64Ptr(uint64(1679079600)), OPChains[420].RegolithTime, "regolith time not overidden properly for chain 420")
-	require.Equal(t, uint64Ptr(uint64(0)), OPChains[84532].RegolithTime, "regolith time not read properly for chain 84532")
-	require.Equal(t, uint64Ptr(uint64(1706634000)), OPChains[11155421].EcotoneTime, "regolith time not read properly for chain 11155421")
-}
-
 func TestSuperchainConfigUnmarshaling(t *testing.T) {
 	rawYAML := `
 name: Mickey Mouse
@@ -413,7 +407,6 @@ l1:
 protocol_versions_addr: "0x252CbE9517F731C618961D890D534183822dcC8d"
 superchain_config_addr: "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
 
-regolith_time: 0 
 canyon_time: 1
 delta_time: 2
 ecotone_time: 3
@@ -432,7 +425,6 @@ fjord_time:
 	}, s.L1)
 	require.Equal(t, "0x252cbe9517f731c618961d890d534183822dcc8d", s.ProtocolVersionsAddr.String())
 	require.Equal(t, "0x02d91cf852423640d93920be0cadcec0e7a00fa7", s.SuperchainConfigAddr.String())
-	require.Equal(t, uint64Ptr(uint64(0)), s.hardForkDefaults.RegolithTime)
 	require.Equal(t, uint64Ptr(uint64(1)), s.hardForkDefaults.CanyonTime)
 	require.Equal(t, uint64Ptr(uint64(2)), s.hardForkDefaults.DeltaTime)
 	require.Equal(t, uint64Ptr(uint64(3)), s.hardForkDefaults.EcotoneTime)
@@ -451,39 +443,31 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 		}}
 
 	t.Run("override: unmarshal with an override", func(t *testing.T) {
-		rawYAML := `
-regolith_time: 7
-canyon_time: 8`
+		rawYAML := `canyon_time: 8`
 
 		c := ChainConfig{}
 		err := yaml.Unmarshal([]byte(rawYAML), &c)
 		c.setNilHardforkTimestampsToDefault(&s)
 
 		require.NoError(t, err)
-
-		require.Equal(t, uint64Ptr(uint64(7)), c.RegolithTime)
 		require.Equal(t, uint64Ptr(uint64(8)), c.CanyonTime)
 
 	})
 
 	t.Run("override: unmarshal with a key and no value", func(t *testing.T) {
-		rawYAML := `
-regolith_time: 2
-canyon_time:`
+		rawYAML := `canyon_time:`
 
 		c := ChainConfig{}
 		err := yaml.Unmarshal([]byte(rawYAML), &c)
 		c.setNilHardforkTimestampsToDefault(&s)
 
 		require.NoError(t, err)
-
-		require.Equal(t, uint64Ptr(uint64(2)), c.RegolithTime)
 		require.Equal(t, &defaultCanyonTime, c.CanyonTime)
 
 	})
 
 	t.Run("override: unmarshal with no key and no value", func(t *testing.T) {
-		rawYAML := `regolith_time: 1679079600 # Fri 17 Mar 2023 19:00:00 UTC`
+		rawYAML := ``
 
 		c := ChainConfig{}
 		err := yaml.Unmarshal([]byte(rawYAML), &c)
@@ -491,7 +475,6 @@ canyon_time:`
 
 		require.NoError(t, err)
 
-		require.Equal(t, uint64Ptr(uint64(1679079600)), c.RegolithTime)
 		require.Equal(t, &defaultCanyonTime, c.CanyonTime)
 	})
 }
