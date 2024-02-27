@@ -81,7 +81,7 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 	for i := 0; i < hfcVal.NumField(); i++ {
 		hardForkName := hfcVal.Type().Field(i).Name
 		overrideValue := cVal.FieldByName(hardForkName)
-		if overrideValue.Interface().(*uint64) == nil {
+		if overrideValue.IsNil() {
 			defaultValue := sVal.FieldByName(hardForkName)
 			overrideValue.Set(defaultValue)
 		}
