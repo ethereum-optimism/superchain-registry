@@ -74,21 +74,19 @@ type ChainConfig struct {
 // setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
 // with the superchain default.
 func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
-	cVal := reflect.ValueOf(c).Elem()
+	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
 	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
 
-	hfcVal := reflect.ValueOf(HardForkConfiguration{})
-	for i := 0; i < hfcVal.NumField(); i++ {
-		hardForkName := hfcVal.Type().Field(i).Name
-		overrideValue := cVal.FieldByName(hardForkName)
+	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
+		overrideValue := cVal.Field(i)
 		if overrideValue.IsNil() {
-			defaultValue := sVal.FieldByName(hardForkName)
+			defaultValue := sVal.Field(i)
 			overrideValue.Set(defaultValue)
 		}
 	}
 
 	// This achieves:
-
+	//
 	// if c.CanyonTime == nil {
 	// 	c.CanyonTime = s.Config.hardForkDefaults.CanyonTime
 	// }
