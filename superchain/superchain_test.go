@@ -481,6 +481,32 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 
 }
 
+func TestHardForkOverridesAndDefaults2(t *testing.T) {
+
+	defaultSuperchainConfig := SuperchainConfig{
+		hardForkDefaults: HardForkConfiguration{
+			CanyonTime: uint64Ptr(0),
+			DeltaTime:  uint64Ptr(1),
+		}}
+
+	c := ChainConfig{}
+
+	rawYAML := `
+ecotone_time: 2
+fjord_time: 3
+`
+
+	err := yaml.Unmarshal([]byte(rawYAML), &c)
+	require.NoError(t, err)
+
+	c.setNilHardforkTimestampsToDefault(&defaultSuperchainConfig)
+
+	require.Equal(t, uint64Ptr(uint64(0)), c.CanyonTime)
+	require.Equal(t, uint64Ptr(uint64(1)), c.DeltaTime)
+	require.Equal(t, uint64Ptr(uint64(2)), c.EcotoneTime)
+	require.Equal(t, uint64Ptr(uint64(3)), c.FjordTime)
+}
+
 func uint64Ptr(i uint64) *uint64 {
 	return &i
 }
