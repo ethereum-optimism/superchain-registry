@@ -4,11 +4,11 @@ go 1.21
 
 replace github.com/ethereum-optimism/superchain-registry/superchain => ../superchain
 
-replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101308.2-rc.1.0.20240222161420-b2b2a2ce17d5
+replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101308.3-0.20240227111709-dee62ab5ca66
 
 require (
 	github.com/ethereum-optimism/optimism v1.5.0
-	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240222161320-b5d807fec4e4
+	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240227110823-11c73f54ad9b
 	github.com/ethereum/go-ethereum v1.13.11
 	github.com/stretchr/testify v1.8.4
 )
