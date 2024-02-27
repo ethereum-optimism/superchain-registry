@@ -492,7 +492,7 @@ canyon_time:`
 		require.NoError(t, err)
 
 		require.Equal(t, uint64Ptr(uint64(1679079600)), c.RegolithTime)
-		require.Equal(t, defaultCanyonTime, c.CanyonTime)
+		require.Equal(t, &defaultCanyonTime, c.CanyonTime)
 	})
 }
 
