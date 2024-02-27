@@ -439,50 +439,60 @@ fjord_time:
 	require.Nil(t, s.hardForkDefaults.FjordTime)
 }
 
-func TestChainConfigUnmarshaling(t *testing.T) {
+func TestHardForkOverridesAndDefaults(*testing.T) {
+
+	defaultCanyonTime := uint64(3)
 
 	// Set a ChainConfig to unmarshal into
 	// which already has a default value set
-	c := ChainConfig{
-		HardForkConfiguration: HardForkConfiguration{
-			CanyonTime: uint64Ptr(uint64(44)), // default value
-		},
-	}
+	s := SuperchainConfig{
+		hardForkDefaults: HardForkConfiguration{
+			CanyonTime: &defaultCanyonTime,
+		}}
 
 	t.Run("override: unmarshal with an override", func(t *testing.T) {
 		rawYAML := `
-regolith_time: 1679079600 # Fri 17 Mar 2023 19:00:00 UTC
-canyon_time: 98`
+regolith_time: 7
+canyon_time: 8`
 
+		c := ChainConfig{}
 		err := yaml.Unmarshal([]byte(rawYAML), &c)
+		c.setNilHardforkTimestampsToDefault(&s)
+
 		require.NoError(t, err)
 
-		require.Equal(t, uint64Ptr(uint64(1679079600)), c.RegolithTime)
-		require.Equal(t, uint64Ptr(uint64(98)), c.CanyonTime)
+		require.Equal(t, uint64Ptr(uint64(7)), c.RegolithTime)
+		require.Equal(t, uint64Ptr(uint64(8)), c.CanyonTime)
 
 	})
 
 	t.Run("override: unmarshal with a key and no value", func(t *testing.T) {
 		rawYAML := `
-regolith_time: 1679079600 # Fri 17 Mar 2023 19:00:00 UTC
+regolith_time: 2
 canyon_time:`
 
+		c := ChainConfig{}
 		err := yaml.Unmarshal([]byte(rawYAML), &c)
+		c.setNilHardforkTimestampsToDefault(&s)
+
 		require.NoError(t, err)
 
-		require.Equal(t, uint64Ptr(uint64(1679079600)), c.RegolithTime)
-		require.Equal(t, uint64Ptr(uint64(44)), c.CanyonTime)
+		require.Equal(t, uint64Ptr(uint64(2)), c.RegolithTime)
+		require.Equal(t, &defaultCanyonTime, c.CanyonTime)
 
 	})
 
 	t.Run("override: unmarshal with no key and no value", func(t *testing.T) {
 		rawYAML := `regolith_time: 1679079600 # Fri 17 Mar 2023 19:00:00 UTC`
 
+		c := ChainConfig{}
 		err := yaml.Unmarshal([]byte(rawYAML), &c)
+		c.setNilHardforkTimestampsToDefault(&s)
+
 		require.NoError(t, err)
 
 		require.Equal(t, uint64Ptr(uint64(1679079600)), c.RegolithTime)
-		require.Equal(t, uint64Ptr(uint64(44)), c.CanyonTime)
+		require.Equal(t, defaultCanyonTime, c.CanyonTime)
 	})
 }
 
