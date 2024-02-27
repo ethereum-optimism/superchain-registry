@@ -447,11 +447,11 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 
 		c := ChainConfig{}
 		err := yaml.Unmarshal([]byte(rawYAML), &c)
+		require.NoError(t, err)
+
 		c.setNilHardforkTimestampsToDefault(&s)
 
-		require.NoError(t, err)
 		require.Equal(t, uint64Ptr(uint64(8)), c.CanyonTime)
-
 	})
 
 	t.Run("override: unmarshal with a key and no value", func(t *testing.T) {
@@ -459,11 +459,11 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 
 		c := ChainConfig{}
 		err := yaml.Unmarshal([]byte(rawYAML), &c)
+		require.NoError(t, err)
+
 		c.setNilHardforkTimestampsToDefault(&s)
 
-		require.NoError(t, err)
 		require.Equal(t, &defaultCanyonTime, c.CanyonTime)
-
 	})
 
 	t.Run("override: unmarshal with no key and no value", func(t *testing.T) {
@@ -471,9 +471,9 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 
 		c := ChainConfig{}
 		err := yaml.Unmarshal([]byte(rawYAML), &c)
-		c.setNilHardforkTimestampsToDefault(&s)
-
 		require.NoError(t, err)
+
+		c.setNilHardforkTimestampsToDefault(&s)
 
 		require.Equal(t, &defaultCanyonTime, c.CanyonTime)
 	})
