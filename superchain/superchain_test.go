@@ -434,49 +434,51 @@ fjord_time:
 func TestHardForkOverridesAndDefaults(t *testing.T) {
 
 	defaultCanyonTime := uint64(3)
-
-	// Set a ChainConfig to unmarshal into
-	// which already has a default value set
-	s := SuperchainConfig{
+	defaultSuperchainConfig := SuperchainConfig{
 		hardForkDefaults: HardForkConfiguration{
 			CanyonTime: &defaultCanyonTime,
 		}}
+	nilDefaultSuperchainConfig := SuperchainConfig{
+		hardForkDefaults: HardForkConfiguration{
+			CanyonTime: nil,
+		}}
 
-	t.Run("override: unmarshal with an override", func(t *testing.T) {
-		rawYAML := `canyon_time: 8`
+	overridenCanyonTime := uint64Ptr(uint64(8))
+	override := []byte(`canyon_time: 8`)
+	nilOverride := []byte(`canyon_time:`)
+	nilOverride2 := []byte(``)
 
+	type testCase struct {
+		name               string
+		scConfig           SuperchainConfig
+		rawYAML            []byte
+		expectedCanyonTime *uint64
+	}
+
+	testCases := []testCase{
+		{"default + override = override", defaultSuperchainConfig, override, overridenCanyonTime},
+		{"default + nil override = default", defaultSuperchainConfig, nilOverride, &defaultCanyonTime},
+		{"default + no override = default", defaultSuperchainConfig, nilOverride2, &defaultCanyonTime},
+		{"nil default + override = override", nilDefaultSuperchainConfig, override, overridenCanyonTime},
+		{"nil default + nil override = nil", nilDefaultSuperchainConfig, nilOverride, nil},
+		{"nil default + no override = nil", nilDefaultSuperchainConfig, nilOverride2, nil},
+	}
+
+	executeTestCase := func(t *testing.T, tt testCase) {
 		c := ChainConfig{}
-		err := yaml.Unmarshal([]byte(rawYAML), &c)
+
+		err := yaml.Unmarshal([]byte(tt.rawYAML), &c)
 		require.NoError(t, err)
 
-		c.setNilHardforkTimestampsToDefault(&s)
+		c.setNilHardforkTimestampsToDefault(&tt.scConfig)
 
-		require.Equal(t, uint64Ptr(uint64(8)), c.CanyonTime)
-	})
+		require.Equal(t, tt.expectedCanyonTime, c.CanyonTime)
+	}
 
-	t.Run("override: unmarshal with a key and no value", func(t *testing.T) {
-		rawYAML := `canyon_time:`
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) { executeTestCase(t, tt) })
+	}
 
-		c := ChainConfig{}
-		err := yaml.Unmarshal([]byte(rawYAML), &c)
-		require.NoError(t, err)
-
-		c.setNilHardforkTimestampsToDefault(&s)
-
-		require.Equal(t, &defaultCanyonTime, c.CanyonTime)
-	})
-
-	t.Run("override: unmarshal with no key and no value", func(t *testing.T) {
-		rawYAML := ``
-
-		c := ChainConfig{}
-		err := yaml.Unmarshal([]byte(rawYAML), &c)
-		require.NoError(t, err)
-
-		c.setNilHardforkTimestampsToDefault(&s)
-
-		require.Equal(t, &defaultCanyonTime, c.CanyonTime)
-	})
 }
 
 func uint64Ptr(i uint64) *uint64 {
