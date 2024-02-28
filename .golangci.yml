@@ -4,7 +4,7 @@ run:
 linters:
   # also see https://golangci-lint.run/usage/linters/#enabled-by-default
   enable:
-    - goimports
+    - gofumpt
     - bodyclose
     - asciicheck
     - misspell
