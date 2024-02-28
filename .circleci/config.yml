@@ -24,7 +24,7 @@ jobs:
       tag: '1.21'
     steps:
       - checkout
-      - run:  golangci-lint run superchain validation
+      - run:  golangci-lint run superchain/... validation/...
   golang-modules-tidy:
     executor:
       name: go/default  # is based on cimg/go

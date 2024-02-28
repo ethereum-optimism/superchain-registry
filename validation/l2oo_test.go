@@ -18,7 +18,6 @@ import (
 )
 
 func TestL2OOParams(t *testing.T) {
-
 	isExcluded := map[uint64]bool{
 		10:           true, // mainnet/op                      (old version of L2OutputOracle, no submissionInterval method)
 		291:          true, // mainnet/orderly                 (old version of L2OutputOracle, no submissionInterval method)
@@ -42,7 +41,6 @@ func TestL2OOParams(t *testing.T) {
 
 	incorrectMsg := func(name string, want, got *big.Int) string {
 		return fmt.Sprintf("Incorrect %s, wanted %d got %d", name, want, got)
-
 	}
 
 	requireEqualParams := func(t *testing.T, desired, actual L2OOParams) {
@@ -90,7 +88,6 @@ func TestL2OOParams(t *testing.T) {
 		requireEqualParams(t, desiredParams, actualParams)
 
 		t.Logf("L2OutputOracle config params acceptable")
-
 	}
 
 	for chainID, chain := range OPChains {
