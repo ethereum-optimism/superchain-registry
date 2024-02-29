@@ -1,0 +1,17 @@
+name: Pontem
+chain_id: 8866
+public_rpc: https://mainnet.lumio.io
+sequencer_rpc: https://mainnet.lumio.io
+explorer: https://explorer.lumio.io
+
+system_config_addr: "0xFb252d6199AEfeE6938a1c57213AAd96ecD2650c"
+batch_inbox_addr: "0xA12Cf34001e553dc254D131105364351f5174d75"
+
+genesis:
+  l1:
+    hash: "0xbe51a75131cf63e18596329bd4f8b805ce8dd6a0b17787d5da10f563616f1f1e"
+    number: 19314558
+  l2:
+    hash: "0x01711dc53a82967a34f4b38f7dff3ae8fa760882bb1e2ace50bb01e9ff420a9b"
+    number: 0
+  l2_time: 1708984631
