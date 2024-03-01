@@ -1,0 +1,17 @@
+name: Ancient8 Sepolia
+chain_id: 28122024
+public_rpc: https://rpcv2-testnet.ancient8.gg
+sequencer_rpc: https://rpcv2-testnet.ancient8.gg
+explorer: https://scanv2-testnet.ancient8.gg
+
+system_config_addr: "0x809bcce0ef6dd63bffda67f91da4dd1f570a0d9c"
+batch_inbox_addr: "0x248894108c9e5c64b195f0482aff4415021b002e"
+
+genesis:
+  l1:
+    hash: "0x2baeac342fd030217eba5b615d700f6d6c046b7aaf3865cac2708875bbc27040"
+    number: 4972904
+  l2:
+    hash: "0xbeb09b2ec2a3b639108a1be81f422f36407b510cddb17a6d83e0b0f47a5ac58a"
+    number: 0
+  l2_time: 1703757084

@@ -1,0 +1,17 @@
+name: Ancient8
+chain_id: 888888888
+public_rpc: https://rpc.ancient8.gg
+sequencer_rpc: https://rpc.ancient8.gg
+explorer: https://scan.ancient8.gg
+
+system_config_addr: "0x0b4cfc49acc656ce6d03cb0794860da92be3e8ec"
+batch_inbox_addr: "0xd5df46c580fd2fbdaee751dc535e14295c0336f3"
+
+genesis:
+  l1:
+    hash: "0x62bd64efb28026c83587b5ed0a472debecd1b19b52bafe81e982d06c72c895e1"
+    number: 19070566
+  l2:
+    hash: "0x4f3304f45e3fe981deeef86e49ab6b73e9e991cb32de63f0389cf8225f357767"
+    number: 0
+  l2_time: 1706027387
