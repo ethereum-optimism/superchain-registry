@@ -131,8 +131,7 @@ workflows:
                 - main
   pr-checks:
     unless:
-      condition:
-        - equal: [ main, << pipeline.git.branch >> ]
+        equal: [ main, << pipeline.git.branch >> ]
     jobs:
       - golang-lint
       - golang-modules-tidy
