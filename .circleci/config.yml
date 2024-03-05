@@ -129,7 +129,10 @@ workflows:
             branches:
               only:
                 - main
-  main:
+  pr-checks:
+    unless:
+      condition:
+        - equal: [ main, << pipeline.git.branch >> ]
     jobs:
       - golang-lint
       - golang-modules-tidy
@@ -137,3 +140,5 @@ workflows:
       - check-codegen
       - check-forge-fmt
       - check-security-configs
+
+
