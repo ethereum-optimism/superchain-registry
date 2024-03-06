@@ -42,6 +42,13 @@ type ChainGenesis struct {
 	ExtraData *HexBytes `yaml:"extra_data,omitempty"`
 }
 
+type HardForkConfiguration struct {
+	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
+	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
+	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
+	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+}
+
 type ChainConfig struct {
 	Name         string `yaml:"name"`
 	ChainID      uint64 `yaml:"chain_id"`
@@ -59,6 +66,32 @@ type ChainConfig struct {
 	// Chain is a simple string to identify the chain, within its superchain context.
 	// This matches the resource filename, it is not encoded in the config file itself.
 	Chain string `yaml:"-"`
+
+	// Hardfork Configuration Overrides
+	HardForkConfiguration `yaml:",inline"`
+}
+
+// setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
+// with the superchain default.
+func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
+	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
+	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
+
+	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
+		overrideValue := cVal.Field(i)
+		if overrideValue.IsNil() {
+			defaultValue := sVal.Field(i)
+			overrideValue.Set(defaultValue)
+		}
+	}
+
+	// This achieves:
+	//
+	// if c.CanyonTime == nil {
+	// 	c.CanyonTime = s.Config.hardForkDefaults.CanyonTime
+	// }
+	//
+	// ...etc for each field in HardForkConfiguration
 }
 
 // AddressList represents the set of network specific contracts for a given network.
@@ -440,11 +473,22 @@ type SuperchainConfig struct {
 	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
-	// Hardfork Configuration
-	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
-	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
-	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
-	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+	// Hardfork Configuration. These values may be overridden by individual chains.
+	hardForkDefaults HardForkConfiguration
+}
+
+// custom unmarshal function to allow yaml to be unmarshalled into unexported fields
+func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
+	temp := struct {
+		*SuperchainConfig `yaml:",inline"`
+		HardForks         *HardForkConfiguration `yaml:",inline"`
+	}{
+		SuperchainConfig: s,
+		HardForks:        &s.hardForkDefaults,
+	}
+
+	return yaml.Unmarshal(data, temp)
+
 }
 
 type Superchain struct {
@@ -458,8 +502,8 @@ type Superchain struct {
 }
 
 // IsEcotone returns true if the EcotoneTime for this chain in the past.
-func (s *Superchain) IsEcotone() bool {
-	if et := s.Config.EcotoneTime; et != nil {
+func (c *ChainConfig) IsEcotone() bool {
+	if et := c.EcotoneTime; et != nil {
 		return int64(*et) < time.Now().Unix()
 	}
 	return false
@@ -514,7 +558,7 @@ func init() {
 			panic(fmt.Errorf("failed to read superchain config: %w", err))
 		}
 		var superchainEntry Superchain
-		if err := yaml.Unmarshal(superchainConfigData, &superchainEntry.Config); err != nil {
+		if err := unMarshalSuperchainConfig(superchainConfigData, &superchainEntry.Config); err != nil {
 			panic(fmt.Errorf("failed to decode superchain config: %w", err))
 		}
 		superchainEntry.Superchain = s.Name()
@@ -534,10 +578,13 @@ func init() {
 				panic(fmt.Errorf("failed to read superchain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
 			var chainConfig ChainConfig
+
 			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
 			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
+
+			(&chainConfig).setNilHardforkTimestampsToDefault(&superchainEntry.Config)
 
 			jsonName := chainConfig.Chain + ".json"
 			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))

@@ -87,7 +87,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		if Superchains[chain.Superchain].IsEcotone() {
+		if chain.IsEcotone() {
 			checkEcotoneResourceConfig(t, chain, client)
 		} else {
 			checkPreEcotoneResourceConfig(t, chain, client)
