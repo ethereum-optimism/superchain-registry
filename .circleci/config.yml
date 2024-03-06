@@ -34,14 +34,14 @@ jobs:
       - run:
           name: tidy superchain module
           command: go mod tidy
-          working_directory: superchain 
+          working_directory: superchain
       - run:
           name: tidy validation module
           command: go mod tidy
           working_directory: validation
       - run:
           name: check git tree is clean
-          command: git diff --exit-code 
+          command: git diff --exit-code
   golang-test:
     executor:
       name: go/default  # is based on cimg/go
@@ -123,21 +123,19 @@ workflows:
           context:
             - slack
     triggers:
-      - schedule: 
+      - schedule:
           cron: "0 * * * *"
           filters:
             branches:
               only:
                 - main
-  main:
+  pr-checks:
     jobs:
       - golang-lint
       - golang-modules-tidy
-      - golang-test:
-          context:
-            - slack
+      - golang-test
       - check-codegen
       - check-forge-fmt
-      - check-security-configs:
-          context:
-            - slack
+      - check-security-configs
+
+
