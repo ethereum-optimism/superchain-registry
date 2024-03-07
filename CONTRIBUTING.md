@@ -7,7 +7,7 @@ See [Superchain Upgrades] OP-Stack specifications.
 ## Adding a superchain target
 
 A new Superchain Target can be added by creating a new superchain config directory,
-with a `superchain.yaml` config file.
+with a `superchain.yaml` config file. Here's an example:
 
 ```bash
 cd superchain-registry
@@ -152,7 +152,7 @@ jq -r .genesis.system_config $ROLLUP_CONFIG > $SUPERCHAIN_REPO/superchain/extra/
 The `extra/genesis` directory hosts compressed `genesis.json` definitions that pull in the bytecode by hash
 
 The genesis largely consists of contracts common with other chains:
-all contract bytecode is deduplicates and hosted in the `extra/bytecodes` directory.
+all contract bytecode is deduplicated and hosted in the `extra/bytecodes` directory.
 
 The format is a gzipped JSON `genesis.json` file, with either:
 - a `alloc` attribute, structured like a standard `genesis.json`,
