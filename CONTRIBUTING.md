@@ -7,7 +7,7 @@ See [Superchain Upgrades] OP-Stack specifications.
 ## Adding a superchain target
 
 A new Superchain Target can be added by creating a new superchain config directory,
-with a `superchain.yaml` config file.
+with a `superchain.yaml` config file. Here's an example:
 
 ```bash
 cd superchain-registry
