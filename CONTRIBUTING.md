@@ -29,7 +29,7 @@ EOF
 Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.
 
 ### Approved contract versions
-Each superchain target should have a `semver.yaml` file in the same directory declaring the approved contract semantic versions for that superchain, e.g: 
+Each superchain target should have a `semver.yaml` file in the same directory declaring the approved contract semantic versions for that superchain, e.g:
 ```yaml
 l1_cross_domain_messenger: 1.4.0
 l1_erc721_bridge: 1.0.0
@@ -41,7 +41,7 @@ system_config: 1.3.0
 
 # superchain-wide contracts
 protocol_versions: 1.0.0
-superchain_config: 
+superchain_config:
 ```
 
 ### `implementations`
@@ -168,4 +168,18 @@ go run ./op-chain-ops/cmd/registry-data \
   --l2-genesis=$GENESIS_CONFIG \
   --bytecodes-dir=$SUPERCHAIN_REPO/superchain/extra/bytecodes \
   --output=$SUPERCHAIN_REPO/superchain/extra/genesis/$SUPERCHAIN_TARGET/$CHAIN_NAME.json.gz
+```
+
+## Setting up your editor for formatting and linting
+If you use VSCode, you can place the following in a `settings.json` file in the gitignored `.vscode` directory:
+
+```json
+{
+    "go.formatTool": "gofumpt",
+    "go.lintTool": "golangci-lint",
+    "go.lintOnSave": "workspace",
+    "gopls": {
+        "formatting.gofumpt": true,
+    },
+}
 ```

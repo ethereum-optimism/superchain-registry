@@ -488,7 +488,6 @@ func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
 	}
 
 	return yaml.Unmarshal(data, temp)
-
 }
 
 type Superchain struct {
@@ -529,7 +528,6 @@ func isConfigFile(c fs.DirEntry) bool {
 		strings.HasSuffix(c.Name(), ".yaml") &&
 		c.Name() != "superchain.yaml" &&
 		c.Name() != "semver.yaml")
-
 }
 
 func init() {

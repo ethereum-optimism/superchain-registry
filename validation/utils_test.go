@@ -22,7 +22,6 @@ var isWithinBounds = func(actual uint32, bounds [2]uint32) bool {
 		panic("bounds are in wrong order")
 	}
 	return (actual >= bounds[0] && actual <= bounds[1])
-
 }
 
 func TestAreCloseInts(t *testing.T) {

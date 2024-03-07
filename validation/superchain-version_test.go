@@ -21,9 +21,7 @@ var isSemverAcceptable = func(desired, actual string) bool {
 }
 
 func TestSuperchainWideContractVersions(t *testing.T) {
-
 	checkSuperchainTargetSatisfiesSemver := func(t *testing.T, superchain *Superchain) {
-
 		rpcEndpoint := superchain.Config.L1.PublicRPC
 		require.NotEmpty(t, rpcEndpoint)
 
@@ -53,7 +51,6 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 	for superchainName, superchain := range Superchains {
 		t.Run(superchainName, func(t *testing.T) { checkSuperchainTargetSatisfiesSemver(t, superchain) })
 	}
-
 }
 
 func TestContractVersions(t *testing.T) {

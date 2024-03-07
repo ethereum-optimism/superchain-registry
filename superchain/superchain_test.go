@@ -38,6 +38,7 @@ func TestVersionFor(t *testing.T) {
 	_, err = cl.VersionFor("Garbage")
 	require.Error(t, err)
 }
+
 func TestChainIds(t *testing.T) {
 	chainIDs := map[uint64]bool{}
 
@@ -159,7 +160,6 @@ func TestContractVersionsCheck(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-
 }
 
 // TestContractVersionsResolve will test that the high lever interface used works.
@@ -432,16 +432,17 @@ fjord_time:
 }
 
 func TestHardForkOverridesAndDefaults(t *testing.T) {
-
 	defaultCanyonTime := uint64(3)
 	defaultSuperchainConfig := SuperchainConfig{
 		hardForkDefaults: HardForkConfiguration{
 			CanyonTime: &defaultCanyonTime,
-		}}
+		},
+	}
 	nilDefaultSuperchainConfig := SuperchainConfig{
 		hardForkDefaults: HardForkConfiguration{
 			CanyonTime: nil,
-		}}
+		},
+	}
 
 	overridenCanyonTime := uint64Ptr(uint64(8))
 	override := []byte(`canyon_time: 8`)
@@ -478,16 +479,15 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) { executeTestCase(t, tt) })
 	}
-
 }
 
 func TestHardForkOverridesAndDefaults2(t *testing.T) {
-
 	defaultSuperchainConfig := SuperchainConfig{
 		hardForkDefaults: HardForkConfiguration{
 			CanyonTime: uint64Ptr(0),
 			DeltaTime:  uint64Ptr(1),
-		}}
+		},
+	}
 
 	c := ChainConfig{}
 
