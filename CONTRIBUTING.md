@@ -173,7 +173,7 @@ go run ./op-chain-ops/cmd/registry-data \
 ## Setting up your editor for formatting and linting
 If you use VSCode, you can place the following in a `settings.json` file in the gitignored `.vscode` directory:
 
-```
+```json
 {
     "go.formatTool": "gofumpt",
     "go.lintTool": "golangci-lint",
