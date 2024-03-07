@@ -1,8 +1,0 @@
-{
-    "go.formatTool": "gofumpt",
-    "go.lintTool": "golangci-lint",
-    "go.lintOnSave": "workspace",
-    "gopls": {
-        "formatting.gofumpt": true,
-    },
-}
