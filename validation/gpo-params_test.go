@@ -20,6 +20,7 @@ import (
 func TestGasPriceOracleParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		291:       true, // mainnet/orderly                 (incorrect scalar parameter)
+		420:       true, // goerli/op                       (no public endpoint)
 		888:       true, // goerli-dev-0/op-labs-chaosnet-0 (no public endpoint)
 		957:       true, // mainnet/lyra                    (incorrect scalar parameter)
 		997:       true, // goerli-dev-0/op-labs-devnet-0   (no public endpoint)
