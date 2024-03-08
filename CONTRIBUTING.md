@@ -66,18 +66,7 @@ EOF
 
 To contribute a full OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local monorepo folder.
 
-First, export the following variables (please replace with appropriate values):
-```shell
-export MONOREPO_DIR=../optimism
-export SUPERCHAIN_TARGET=mainnet
-export CHAIN_NAME=awesomechain
-export DEPLOYMENTS_DIR=${MONOREPO_DIR}/packages/contracts-bedrock/deployments/getting-started
-export ROLLUP_CONFIG=${MONOREPO_DIR}/op-node/rollup.json
-export GENESIS_CONFIG=${MONOREPO_DIR}/op-node/genesis.json
-export PUBLIC_RPC="http://awe.some.rpc"
-export SEQUENCER_RPC="http://awe.some.seq.rpc"
-export EXPLORER="https://awesomescan.org"
-```
+First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 
 ### Run script
 Then, run

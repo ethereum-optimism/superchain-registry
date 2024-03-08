@@ -1,5 +1,17 @@
 set -e
 
+# Get the absolute path of the current script, including following symlinks
+SCRIPT_PATH=$(readlink -f "$0" || realpath "$0")
+# Get the directory of the current script
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+# Get the parent directory of the script's directory
+PARENT_DIR=$(dirname "$SCRIPT_DIR")
+
+SUPERCHAIN_REPO=${PARENT_DIR}
+
+
+# load and echo env vars
+source ${SUPERCHAIN_REPO}/.env
 echo "Adding chain to superchain-registry..."
 echo "Chain Name                      ${CHAIN_NAME}"
 echo "Superchain target:              ${SUPERCHAIN_TARGET}"
@@ -11,15 +23,6 @@ echo "Public RPC endpoint:            ${PUBLIC_RPC}"
 echo "Sequencer RPC endpoint:         ${SEQUENCER_RPC}"
 echo "Block Explorer:                 ${EXPLORER}"
 
-
-# Get the absolute path of the current script, including following symlinks
-SCRIPT_PATH=$(readlink -f "$0" || realpath "$0")
-# Get the directory of the current script
-SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
-# Get the parent directory of the script's directory
-PARENT_DIR=$(dirname "$SCRIPT_DIR")
-
-SUPERCHAIN_REPO=${PARENT_DIR}
 
 # add chain config
 cat > $SUPERCHAIN_REPO/superchain/configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.yaml << EOF
