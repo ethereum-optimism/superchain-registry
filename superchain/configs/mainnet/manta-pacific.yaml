@@ -1,0 +1,16 @@
+name: manta-pacific
+chain_id: 169
+public_rpc: "https://pacific-rpc.manta.network/http"
+sequencer_rpc: "https://pacific-rpc.manta.network/http"
+explorer: "https://pacific-explorer.manta.network/"
+
+batch_inbox_addr: "0xaeba8e2307a22b6824a9a7a39f8b016c357cd1fe"
+
+genesis:
+  l1:
+    hash: "0x33d4fd43c91d410bf27cf46d013000a2f010037756c49fc2f9e83c673f69f3f1"
+    number: 18095650
+  l2:
+    hash: "0x710b33d206fc550549c39801e9c1ca80d85399bf6e0881987e40e706c2f2f453"
+    number: 0
+  l2_time: 1694223959
