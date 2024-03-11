@@ -7,7 +7,7 @@ See [Superchain Upgrades] OP-Stack specifications.
 ## Adding a superchain target
 
 A new Superchain Target can be added by creating a new superchain config directory,
-with a `superchain.yaml` config file.
+with a `superchain.yaml` config file. Here's an example:
 
 ```bash
 cd superchain-registry
@@ -29,7 +29,7 @@ EOF
 Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.
 
 ### Approved contract versions
-Each superchain target should have a `semver.yaml` file in the same directory declaring the approved contract semantic versions for that superchain, e.g: 
+Each superchain target should have a `semver.yaml` file in the same directory declaring the approved contract semantic versions for that superchain, e.g:
 ```yaml
 l1_cross_domain_messenger: 1.4.0
 l1_erc721_bridge: 1.0.0
@@ -41,6 +41,7 @@ system_config: 1.3.0
 
 # superchain-wide contracts
 protocol_versions: 1.0.0
+superchain_config:
 ```
 
 ### `implementations`
@@ -83,13 +84,12 @@ The config is the main configuration source, with genesis data, and address of o
 
 ```bash
 cat > $SUPERCHAIN_REPO/superchain/configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.yaml << EOF
-name: OP Labs devnet 0
+name: $CHAIN_NAME
 chain_id: $(jq -j .l2_chain_id $ROLLUP_CONFIG)
 public_rpc: ""
 sequencer_rpc: ""
 explorer: ""
 
-system_config_addr: "$(jq -j .l1_system_config_address $ROLLUP_CONFIG)"
 batch_inbox_addr: "$(jq -j .batch_inbox_address $ROLLUP_CONFIG)"
 
 genesis:
@@ -119,14 +119,14 @@ and thus not configured per chain.
 mkdir -p $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET
 cat > $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET/$CHAIN_NAME.json << EOF
 {
-  "AddressManager": "$(jq -j .address $DEPLOYMENTS_DIR/Lib_AddressManager.json)",
-  "L1CrossDomainMessengerProxy": "$(jq -j .address $DEPLOYMENTS_DIR/Proxy__OVM_L1CrossDomainMessenger.json)",
+  "AddressManager": "$(jq -j .address $DEPLOYMENTS_DIR/AddressManager.json)",
+  "L1CrossDomainMessengerProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1CrossDomainMessengerProxy.json)",
   "L1ERC721BridgeProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1ERC721BridgeProxy.json)",
-  "L1StandardBridgeProxy": "$(jq -j .address $DEPLOYMENTS_DIR/Proxy__OVM_L1StandardBridge.json)",
+  "L1StandardBridgeProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1StandardBridgeProxy.json)",
   "L2OutputOracleProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L2OutputOracleProxy.json)",
   "OptimismMintableERC20FactoryProxy": "$(jq -j .address $DEPLOYMENTS_DIR/OptimismMintableERC20FactoryProxy.json)",
   "OptimismPortalProxy": "$(jq -j .address $DEPLOYMENTS_DIR/OptimismPortalProxy.json)",
-  "SytemConfigProxy": "$(jq -j .address $DEPLOYMENTS_DIR/SystemConfigProxy.json)",
+  "SystemConfigProxy": "$(jq -j .address $DEPLOYMENTS_DIR/SystemConfigProxy.json)",
   "ProxyAdmin": "$(jq -j .address $DEPLOYMENTS_DIR/ProxyAdmin.json)"
 }
 EOF
@@ -152,7 +152,7 @@ jq -r .genesis.system_config $ROLLUP_CONFIG > $SUPERCHAIN_REPO/superchain/extra/
 The `extra/genesis` directory hosts compressed `genesis.json` definitions that pull in the bytecode by hash
 
 The genesis largely consists of contracts common with other chains:
-all contract bytecode is deduplicates and hosted in the `extra/bytecodes` directory.
+all contract bytecode is deduplicated and hosted in the `extra/bytecodes` directory.
 
 The format is a gzipped JSON `genesis.json` file, with either:
 - a `alloc` attribute, structured like a standard `genesis.json`,
@@ -168,4 +168,18 @@ go run ./op-chain-ops/cmd/registry-data \
   --l2-genesis=$GENESIS_CONFIG \
   --bytecodes-dir=$SUPERCHAIN_REPO/superchain/extra/bytecodes \
   --output=$SUPERCHAIN_REPO/superchain/extra/genesis/$SUPERCHAIN_TARGET/$CHAIN_NAME.json.gz
+```
+
+## Setting up your editor for formatting and linting
+If you use VSCode, you can place the following in a `settings.json` file in the gitignored `.vscode` directory:
+
+```json
+{
+    "go.formatTool": "gofumpt",
+    "go.lintTool": "golangci-lint",
+    "go.lintOnSave": "workspace",
+    "gopls": {
+        "formatting.gofumpt": true,
+    },
+}
 ```

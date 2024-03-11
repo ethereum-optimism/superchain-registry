@@ -4,13 +4,13 @@ import (
 	"math/big"
 )
 
-var uint128Max, ok = big.NewInt(0).SetString("ffffffffffffffffffffffffffffffff", 16)
-
-func init() {
+var uint128Max = func() *big.Int {
+	r, ok := new(big.Int).SetString("ffffffffffffffffffffffffffffffff", 16)
 	if !ok {
 		panic("cannot construct uint128Max")
 	}
-}
+	return r
+}()
 
 type ResourceConfig struct {
 	MaxResourceLimit            uint32
@@ -44,28 +44,14 @@ var OPMainnetL2OOParams = L2OOParams{
 	FinalizationPeriodSeconds: big.NewInt(12),
 }
 
-// OPGoerliL2OOParams describes the L2OutputOracle parameters from OP Goerli
-var OPGoerliL2OOParams = L2OOParams{
-	SubmissionInterval:        big.NewInt(120),
-	L2BlockTime:               big.NewInt(2),
-	FinalizationPeriodSeconds: big.NewInt(12),
-}
-
-// OPGoerliDev0L2OOParams describes the L2OutputOracle parameters from OP Goerli
-var OPGoerliDev0L2OOParams = L2OOParams{
-	SubmissionInterval:        big.NewInt(120),
-	L2BlockTime:               big.NewInt(2),
-	FinalizationPeriodSeconds: big.NewInt(12),
-}
-
-// OPSepoliaL2OOParams describes the L2OutputOracle parameters from OP Goerli
+// OPSepoliaL2OOParams describes the L2OutputOracle parameters from OP Sepolia
 var OPSepoliaL2OOParams = L2OOParams{
 	SubmissionInterval:        big.NewInt(120),
 	L2BlockTime:               big.NewInt(2),
 	FinalizationPeriodSeconds: big.NewInt(12),
 }
 
-// OPSepoliaDev0L2OOParams describes the L2OutputOracle parameters from OP Goerli
+// OPSepoliaDev0L2OOParams describes the L2OutputOracle parameters from OP Sepolia
 var OPSepoliaDev0L2OOParams = L2OOParams{
 	SubmissionInterval:        big.NewInt(120),
 	L2BlockTime:               big.NewInt(2),
@@ -107,8 +93,8 @@ type EcotoneGasPriceOracleParamsWithBounds struct {
 }
 
 type UpgradeFilter struct {
-	PreEcotone PreEcotoneGasPriceOracleParamsWithBounds
-	Ecotone    EcotoneGasPriceOracleParamsWithBounds
+	PreEcotone *PreEcotoneGasPriceOracleParamsWithBounds
+	Ecotone    *EcotoneGasPriceOracleParamsWithBounds
 }
 
 func makeBigIntAndBounds(value int64, bounds [2]int64) BigIntAndBounds {
@@ -117,26 +103,19 @@ func makeBigIntAndBounds(value int64, bounds [2]int64) BigIntAndBounds {
 
 var GasPriceOracleParams = map[string]UpgradeFilter{
 	"mainnet": {
-		PreEcotone: PreEcotoneGasPriceOracleParamsWithBounds{
+		PreEcotone: &PreEcotoneGasPriceOracleParamsWithBounds{
 			Decimals: makeBigIntAndBounds(6, [2]int64{6, 6}),
 			Overhead: makeBigIntAndBounds(188, [2]int64{188, 188}),
 			Scalar:   makeBigIntAndBounds(684_000, [2]int64{684_000, 684_000}),
 		},
 	},
 	"sepolia": {
-		PreEcotone: PreEcotoneGasPriceOracleParamsWithBounds{
+		PreEcotone: &PreEcotoneGasPriceOracleParamsWithBounds{
 			Decimals: makeBigIntAndBounds(6, [2]int64{6, 6}),
 			Overhead: makeBigIntAndBounds(188, [2]int64{188, 2_100}),
 			Scalar:   makeBigIntAndBounds(684_000, [2]int64{684_000, 1_000_000}),
 		},
-	},
-	"goerli": {
-		PreEcotone: PreEcotoneGasPriceOracleParamsWithBounds{
-			Decimals: makeBigIntAndBounds(6, [2]int64{6, 6}),
-			Overhead: makeBigIntAndBounds(2_100, [2]int64{2_100, 2_100}),
-			Scalar:   makeBigIntAndBounds(100_000, [2]int64{100_000, 100_000}),
-		},
-		Ecotone: EcotoneGasPriceOracleParamsWithBounds{
+		Ecotone: &EcotoneGasPriceOracleParamsWithBounds{
 			Decimals:          makeBigIntAndBounds(6, [2]int64{6, 6}),
 			BlobBaseFeeScalar: Uint32AndBounds{862_000, [2]uint32{862_000, 862_000}},
 			BaseFeeScalar:     Uint32AndBounds{7600, [2]uint32{7600, 7600}},

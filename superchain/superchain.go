@@ -42,6 +42,13 @@ type ChainGenesis struct {
 	ExtraData *HexBytes `yaml:"extra_data,omitempty"`
 }
 
+type HardForkConfiguration struct {
+	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
+	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
+	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
+	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+}
+
 type ChainConfig struct {
 	Name         string `yaml:"name"`
 	ChainID      uint64 `yaml:"chain_id"`
@@ -49,8 +56,7 @@ type ChainConfig struct {
 	SequencerRPC string `yaml:"sequencer_rpc"`
 	Explorer     string `yaml:"explorer"`
 
-	SystemConfigAddr Address `yaml:"system_config_addr"`
-	BatchInboxAddr   Address `yaml:"batch_inbox_addr"`
+	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
 	Genesis ChainGenesis `yaml:"genesis"`
 
@@ -60,6 +66,32 @@ type ChainConfig struct {
 	// Chain is a simple string to identify the chain, within its superchain context.
 	// This matches the resource filename, it is not encoded in the config file itself.
 	Chain string `yaml:"-"`
+
+	// Hardfork Configuration Overrides
+	HardForkConfiguration `yaml:",inline"`
+}
+
+// setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
+// with the superchain default.
+func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
+	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
+	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
+
+	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
+		overrideValue := cVal.Field(i)
+		if overrideValue.IsNil() {
+			defaultValue := sVal.Field(i)
+			overrideValue.Set(defaultValue)
+		}
+	}
+
+	// This achieves:
+	//
+	// if c.CanyonTime == nil {
+	// 	c.CanyonTime = s.Config.hardForkDefaults.CanyonTime
+	// }
+	//
+	// ...etc for each field in HardForkConfiguration
 }
 
 // AddressList represents the set of network specific contracts for a given network.
@@ -235,6 +267,7 @@ type ContractVersions struct {
 	SystemConfig                 string `yaml:"system_config"`
 	// Superchain-wide contracts:
 	ProtocolVersions string `yaml:"protocol_versions"`
+	SuperchainConfig string `yaml:"superchain_config,omitempty"`
 }
 
 // VersionFor returns the version for the supplied contract name, if it exits
@@ -258,6 +291,8 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 		version = c.SystemConfig
 	case "ProtocolVersions":
 		version = c.ProtocolVersions
+	case "SuperchainConfig":
+		version = c.SuperchainConfig
 	default:
 		return "", errors.New("no such contract name")
 	}
@@ -268,8 +303,8 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 }
 
 // Check will sanity check the validity of the semantic version strings
-// in the ContractVersions struct.
-func (c ContractVersions) Check() error {
+// in the ContractVersions struct. If allowEmptyVersions is true, empty version errors will be ignored.
+func (c ContractVersions) Check(allowEmptyVersions bool) error {
 	val := reflect.ValueOf(c)
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
@@ -278,6 +313,9 @@ func (c ContractVersions) Check() error {
 			return fmt.Errorf("invalid type for field %s", val.Type().Field(i).Name)
 		}
 		if str == "" {
+			if allowEmptyVersions {
+				continue // we allow empty strings and rely on tests to assert (or except) a nonempty version
+			}
 			return fmt.Errorf("empty version for field %s", val.Type().Field(i).Name)
 		}
 		str = canonicalizeSemver(str)
@@ -435,11 +473,21 @@ type SuperchainConfig struct {
 	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
-	// Hardfork Configuration
-	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
-	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
-	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
-	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+	// Hardfork Configuration. These values may be overridden by individual chains.
+	hardForkDefaults HardForkConfiguration
+}
+
+// custom unmarshal function to allow yaml to be unmarshalled into unexported fields
+func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
+	temp := struct {
+		*SuperchainConfig `yaml:",inline"`
+		HardForks         *HardForkConfiguration `yaml:",inline"`
+	}{
+		SuperchainConfig: s,
+		HardForks:        &s.hardForkDefaults,
+	}
+
+	return yaml.Unmarshal(data, temp)
 }
 
 type Superchain struct {
@@ -453,8 +501,8 @@ type Superchain struct {
 }
 
 // IsEcotone returns true if the EcotoneTime for this chain in the past.
-func (s *Superchain) IsEcotone() bool {
-	if et := s.Config.EcotoneTime; et != nil {
+func (c *ChainConfig) IsEcotone() bool {
+	if et := c.EcotoneTime; et != nil {
 		return int64(*et) < time.Now().Unix()
 	}
 	return false
@@ -480,101 +528,6 @@ func isConfigFile(c fs.DirEntry) bool {
 		strings.HasSuffix(c.Name(), ".yaml") &&
 		c.Name() != "superchain.yaml" &&
 		c.Name() != "semver.yaml")
-
-}
-
-func init() {
-	var err error
-	SuperchainSemver = make(map[string]ContractVersions)
-
-	superchainTargets, err := superchainFS.ReadDir("configs")
-	if err != nil {
-		panic(fmt.Errorf("failed to read superchain dir: %w", err))
-	}
-	// iterate over superchain-target entries
-	for _, s := range superchainTargets {
-
-		if !s.IsDir() {
-			continue // ignore files, e.g. a readme
-		}
-
-		SuperchainSemver[s.Name()], err = newContractVersions(s.Name())
-		if err != nil {
-			panic(fmt.Errorf("failed to read semver.yaml: %w", err))
-		}
-
-		// Load superchain-target config
-		superchainConfigData, err := superchainFS.ReadFile(path.Join("configs", s.Name(), "superchain.yaml"))
-		if err != nil {
-			panic(fmt.Errorf("failed to read superchain config: %w", err))
-		}
-		var superchainEntry Superchain
-		if err := yaml.Unmarshal(superchainConfigData, &superchainEntry.Config); err != nil {
-			panic(fmt.Errorf("failed to decode superchain config: %w", err))
-		}
-		superchainEntry.Superchain = s.Name()
-
-		// iterate over the chains of this superchain-target
-		chainEntries, err := superchainFS.ReadDir(path.Join("configs", s.Name()))
-		if err != nil {
-			panic(fmt.Errorf("failed to read superchain dir: %w", err))
-		}
-		for _, c := range chainEntries {
-			if !isConfigFile(c) {
-				continue
-			}
-			// load chain config
-			chainConfigData, err := superchainFS.ReadFile(path.Join("configs", s.Name(), c.Name()))
-			if err != nil {
-				panic(fmt.Errorf("failed to read superchain config %s/%s: %w", s.Name(), c.Name(), err))
-			}
-			var chainConfig ChainConfig
-			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
-				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
-			}
-			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
-
-			jsonName := chainConfig.Chain + ".json"
-			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
-			if err != nil {
-				panic(fmt.Errorf("failed to read addresses data of chain %s/%s: %w", s.Name(), jsonName, err))
-			}
-			var addrs AddressList
-			if err := json.Unmarshal(addressesData, &addrs); err != nil {
-				panic(fmt.Errorf("failed to decode addresses %s/%s: %w", s.Name(), jsonName, err))
-			}
-
-			genesisSysCfgData, err := extraFS.ReadFile(path.Join("extra", "genesis-system-configs", s.Name(), jsonName))
-			if err != nil {
-				panic(fmt.Errorf("failed to read genesis system config data of chain %s/%s: %w", s.Name(), jsonName, err))
-			}
-			var genesisSysCfg GenesisSystemConfig
-			if err := json.Unmarshal(genesisSysCfgData, &genesisSysCfg); err != nil {
-				panic(fmt.Errorf("failed to decode genesis system config %s/%s: %w", s.Name(), jsonName, err))
-			}
-
-			chainConfig.Superchain = s.Name()
-			if other, ok := OPChains[chainConfig.ChainID]; ok {
-				panic(fmt.Errorf("found chain config %q in superchain target %q with chain ID %d "+
-					"conflicts with chain %q in superchain %q and chain ID %d",
-					chainConfig.Name, chainConfig.Superchain, chainConfig.ChainID,
-					other.Name, other.Superchain, other.ChainID))
-			}
-			superchainEntry.ChainIDs = append(superchainEntry.ChainIDs, chainConfig.ChainID)
-			OPChains[chainConfig.ChainID] = &chainConfig
-			Addresses[chainConfig.ChainID] = &addrs
-			GenesisSystemConfigs[chainConfig.ChainID] = &genesisSysCfg
-		}
-
-		Superchains[superchainEntry.Superchain] = &superchainEntry
-
-		implementations, err := newContractImplementations(s.Name())
-		if err != nil {
-			panic(fmt.Errorf("failed to read implementations of superchain target %s: %w", s.Name(), err))
-		}
-
-		Implementations[superchainEntry.Config.L1.ChainID] = implementations
-	}
 }
 
 // newContractVersions will read the contract versions from semver.yaml
@@ -587,9 +540,6 @@ func newContractVersions(superchain string) (ContractVersions, error) {
 	}
 	if err := yaml.Unmarshal(semvers, &versions); err != nil {
 		return versions, fmt.Errorf("failed to unmarshal semver.yaml: %w", err)
-	}
-	if err := versions.Check(); err != nil {
-		return versions, fmt.Errorf("semver.yaml is invalid: %w", err)
 	}
 	return versions, nil
 }

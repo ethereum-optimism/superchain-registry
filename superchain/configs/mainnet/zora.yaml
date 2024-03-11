@@ -14,5 +14,5 @@ genesis:
   l2:
     hash: "0x47555a45a1af8d4728ca337a1e48375a83919b1ea16591e070a07388b7364e29"
     number: 0
-  l2_time: 1686693839
+  l2_time: 1686693839 # Tue 13 Jun 2023 22:03:59 UTC
 

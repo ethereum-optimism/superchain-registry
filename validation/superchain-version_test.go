@@ -21,7 +21,6 @@ var isSemverAcceptable = func(desired, actual string) bool {
 }
 
 func TestSuperchainWideContractVersions(t *testing.T) {
-
 	checkSuperchainTargetSatisfiesSemver := func(t *testing.T, superchain *Superchain) {
 		rpcEndpoint := superchain.Config.L1.PublicRPC
 		require.NotEmpty(t, rpcEndpoint)
@@ -32,31 +31,38 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 		desiredSemver, err := SuperchainSemver[superchain.Superchain].VersionFor("ProtocolVersions")
 		require.NoError(t, err)
 		checkSemverForContract(t, "ProtocolVersions", superchain.Config.ProtocolVersionsAddr, client, desiredSemver)
+
+		isExcludedFromSuperchainConfigCheck := map[string]bool{
+			"Mainnet": true, // no version specified
+		}
+
+		if isExcludedFromSuperchainConfigCheck[superchain.Config.Name] {
+			t.Logf("%s excluded from SuperChainConfig version check", superchain.Config.Name)
+			return
+		}
+
+		desiredSemver, err = SuperchainSemver[superchain.Superchain].VersionFor("SuperchainConfig")
+		require.NoError(t, err)
+		checkSemverForContract(t, "SuperchainConfig", superchain.Config.SuperchainConfigAddr, client, desiredSemver)
 	}
 
 	for superchainName, superchain := range Superchains {
 		t.Run(superchainName, func(t *testing.T) { checkSuperchainTargetSatisfiesSemver(t, superchain) })
 	}
-
 }
 
 func TestContractVersions(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		291:          true,
-		424:          true,
-		888:          true,
-		957:          true,
-		997:          true,
-		8453:         true,
-		34443:        true,
-		58008:        true,
-		84531:        true,
-		84532:        true,
-		7777777:      true,
-		11155421:     true, // sepolia-dev-0/oplabs-devnet-0
-		11763071:     true,
-		999999999:    true,
-		129831238013: true,
+		291:       true, // mainnet/orderly
+		424:       true, // mainnet/pgn
+		957:       true, // mainnet/lyra
+		8453:      true, // mainnet/base
+		34443:     true, // mainnet/mode
+		58008:     true, // sepolia/pgn
+		84532:     true, // sepolia/base
+		7777777:   true, // mainnet/zora
+		11155421:  true, // sepolia-dev-0/oplabs-devnet-0
+		999999999: true, // sepolia/zoras
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
