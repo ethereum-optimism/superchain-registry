@@ -33,9 +33,7 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 		checkSemverForContract(t, "ProtocolVersions", superchain.Config.ProtocolVersionsAddr, client, desiredSemver)
 
 		isExcludedFromSuperchainConfigCheck := map[string]bool{
-			"Goerli":       true, // no version specified
-			"Goerli Dev 0": true, // no version specified
-			"Mainnet":      true, // no version specified
+			"Mainnet": true, // no version specified
 		}
 
 		if isExcludedFromSuperchainConfigCheck[superchain.Config.Name] {
@@ -55,20 +53,16 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 
 func TestContractVersions(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		291:          true, // mainnet/orderly
-		424:          true, // mainnet/pgn
-		888:          true, // goerli-dev-0/op-labs-chaosnet-0
-		957:          true, // mainnet/lyra
-		8453:         true, // mainnet/base
-		34443:        true, // mainnet/mode
-		58008:        true, // sepolia/pgn
-		84531:        true, // goerli/base
-		84532:        true, // sepolia/base
-		7777777:      true, // mainnet/zora
-		11155421:     true, // sepolia-dev-0/oplabs-devnet-0
-		11763071:     true, // goerli-dev-0/base-devnet-0
-		999999999:    true, // sepolia/zoras
-		129831238013: true, // goerli-dev-0/conduit-devnet-0
+		291:       true, // mainnet/orderly
+		424:       true, // mainnet/pgn
+		957:       true, // mainnet/lyra
+		8453:      true, // mainnet/base
+		34443:     true, // mainnet/mode
+		58008:     true, // sepolia/pgn
+		84532:     true, // sepolia/base
+		7777777:   true, // mainnet/zora
+		11155421:  true, // sepolia-dev-0/oplabs-devnet-0
+		999999999: true, // sepolia/zoras
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
