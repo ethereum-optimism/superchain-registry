@@ -2,7 +2,7 @@
 
 See [Superchain Upgrades] OP-Stack specifications.
 
-[Superchain Upgrades]: https://github.com/ethereum-optimism/optimism/blob/develop/specs/superchain-upgrades.md
+[Superchain Upgrades]: https://specs.optimism.io/protocol/superchain-upgrades.html
 
 ## Adding a superchain target
 
