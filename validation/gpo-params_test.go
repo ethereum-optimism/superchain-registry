@@ -20,19 +20,12 @@ import (
 func TestGasPriceOracleParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		291:       true, // mainnet/orderly                 (incorrect scalar parameter)
-		420:       true, // goerli/op                       (no public endpoint)
-		888:       true, // goerli-dev-0/op-labs-chaosnet-0 (no public endpoint)
 		957:       true, // mainnet/lyra                    (incorrect scalar parameter)
-		997:       true, // goerli-dev-0/op-labs-devnet-0   (no public endpoint)
 		58008:     true, // sepolia/pgn                     (blobBaseFeeScalar out of bounds)
-		84531:     true, // goerli/base                     (network sunset)
 		84532:     true, // sepolia/base                    (blobBaseFeeScalar out of bounds)
 		11155421:  true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
-		11763071:  true, // goerli-dev-0/base-devnet-0      (no public endpoint)
 		11763072:  true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
 		999999999: true, // sepolia/zora                    (blobBaseFeeScalar out of bounds)
-
-		129831238013: true, // goerli-dev-0/conduit-devnet-0   (no ground truth)
 	}
 
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr

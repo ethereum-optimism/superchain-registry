@@ -164,7 +164,7 @@ func TestContractVersionsCheck(t *testing.T) {
 
 // TestContractVersionsResolve will test that the high lever interface used works.
 func TestContractVersionsResolve(t *testing.T) {
-	impls, err := newContractImplementations("goerli")
+	impls, err := newContractImplementations("sepolia")
 	if err != nil {
 		t.Fatalf("failed to load contract implementations: %v", err)
 	}
@@ -410,7 +410,7 @@ superchain_config_addr: "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
 canyon_time: 1
 delta_time: 2
 ecotone_time: 3
-fjord_time: 
+fjord_time:
 `
 
 	s := SuperchainConfig{}

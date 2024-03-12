@@ -19,20 +19,16 @@ import (
 
 func TestL2OOParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		10:           true, // mainnet/op                      (old version of L2OutputOracle, no submissionInterval method)
-		291:          true, // mainnet/orderly                 (old version of L2OutputOracle, no submissionInterval method)
-		424:          true, // mainnet/pgn                     (old version of L2OutputOracle, no submissionInterval method)
-		957:          true, // mainnet/lyra                    (old version of L2OutputOracle, no submissionInterval method)
-		997:          true, // goerli-dev-0/op-labs-devnet-0   (old version of L2OutputOracle, no submissionInterval method)
-		8453:         true, // mainnet/base                    (old version of L2OutputOracle, no submissionInterval method)
-		34443:        true, // mainnet/mode                    (old version of L2OutputOracle, no submissionInterval method)
-		58008:        true, // sepolia/pgn                     (old version of L2OutputOracle, no submissionInterval method)
-		84531:        true, // goerli/base                     (old version of L2OutputOracle, no submissionInterval method)
-		7777777:      true, // mainnet/zora                    (old version of L2OutputOracle, no submissionInterval method)
-		11155421:     true, // sepolia-dev-0/oplabs-devnet-0   (old version of L2OutputOracle, no submissionInterval method)
-		11763071:     true, // goerli-dev-0/base-devnet-0      (old version of L2OutputOracle, no submissionInterval method)
-		999999999:    true, // sepolia/zora                    (old version of L2OutputOracle, no submissionInterval method)
-		129831238013: true, // goerli-dev-0/conduit-devnet-0   (old version of L2OutputOracle, no submissionInterval method)
+		10:        true, // mainnet/op                      (old version of L2OutputOracle, no submissionInterval method)
+		291:       true, // mainnet/orderly                 (old version of L2OutputOracle, no submissionInterval method)
+		424:       true, // mainnet/pgn                     (old version of L2OutputOracle, no submissionInterval method)
+		957:       true, // mainnet/lyra                    (old version of L2OutputOracle, no submissionInterval method)
+		8453:      true, // mainnet/base                    (old version of L2OutputOracle, no submissionInterval method)
+		34443:     true, // mainnet/mode                    (old version of L2OutputOracle, no submissionInterval method)
+		58008:     true, // sepolia/pgn                     (old version of L2OutputOracle, no submissionInterval method)
+		7777777:   true, // mainnet/zora                    (old version of L2OutputOracle, no submissionInterval method)
+		11155421:  true, // sepolia-dev-0/oplabs-devnet-0   (old version of L2OutputOracle, no submissionInterval method)
+		999999999: true, // sepolia/zora                    (old version of L2OutputOracle, no submissionInterval method)
 	}
 
 	checkEquality := func(a, b *big.Int) func() bool {
@@ -70,12 +66,8 @@ func TestL2OOParams(t *testing.T) {
 		switch chain.Superchain {
 		case "mainnet":
 			desiredParams = OPMainnetL2OOParams
-		case "goerli":
-			desiredParams = OPGoerliL2OOParams
 		case "sepolia":
 			desiredParams = OPSepoliaL2OOParams
-		case "goerli-dev-0":
-			desiredParams = OPGoerliDev0L2OOParams
 		case "sepolia-dev-0":
 			desiredParams = OPSepoliaDev0L2OOParams
 		default:
