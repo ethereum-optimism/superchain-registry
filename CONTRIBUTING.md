@@ -62,94 +62,25 @@ EOF
 
 ## Adding a chain
 
-### Prerequisites
+### Set env vars
 
-To contribute a full OP-Stack chain configuration, the following data is required:
-contracts deployment, rollup config, L2 genesis.
+To contribute a full OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local monorepo folder.
 
-For example:
-```bash
-cd optimism
-export SUPERCHAIN_REPO=../superchain-registry
-export SUPERCHAIN_TARGET=goerli-dev-0
-export CHAIN_NAME=op-labs-devnet-0
-export DEPLOYMENTS_DIR=./packages/contracts-bedrock/deployments/internal-devnet
-export ROLLUP_CONFIG=./internal_devnet_rollup.json
-export GENESIS_CONFIG=./internal_devnet_genesis.json
+First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
+
+### Run script
+Then, run
+
+```shell
+sh scripts/add-chain.sh
 ```
 
-### `configs`
-
-The config is the main configuration source, with genesis data, and address of onchain system configuration:
-
-```bash
-cat > $SUPERCHAIN_REPO/superchain/configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.yaml << EOF
-name: $CHAIN_NAME
-chain_id: $(jq -j .l2_chain_id $ROLLUP_CONFIG)
-public_rpc: ""
-sequencer_rpc: ""
-explorer: ""
-
-batch_inbox_addr: "$(jq -j .batch_inbox_address $ROLLUP_CONFIG)"
-
-genesis:
-  l1:
-    hash: "$(jq -j .genesis.l1.hash $ROLLUP_CONFIG)"
-    number: $(jq -j .genesis.l1.number $ROLLUP_CONFIG)
-  l2:
-    hash: "$(jq -j .genesis.l2.hash $ROLLUP_CONFIG)"
-    number: $(jq -j .genesis.l2.number $ROLLUP_CONFIG)
-  l2_time: $(jq -j .genesis.l2_time $ROLLUP_CONFIG)
-EOF
-```
-
-### Extras
-
-Extra configuration is made available for node-operator UX, but not a hard requirement.
-
-#### `extra/addresses`
-
-Addresses of L1 contracts.
-
-Note that all L2 addresses are statically known addresses defined in the OP-Stack specification,
-and thus not configured per chain.
-
-```bash
-# create extra addresses data
-mkdir -p $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET
-cat > $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET/$CHAIN_NAME.json << EOF
-{
-  "AddressManager": "$(jq -j .address $DEPLOYMENTS_DIR/AddressManager.json)",
-  "L1CrossDomainMessengerProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1CrossDomainMessengerProxy.json)",
-  "L1ERC721BridgeProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1ERC721BridgeProxy.json)",
-  "L1StandardBridgeProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1StandardBridgeProxy.json)",
-  "L2OutputOracleProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L2OutputOracleProxy.json)",
-  "OptimismMintableERC20FactoryProxy": "$(jq -j .address $DEPLOYMENTS_DIR/OptimismMintableERC20FactoryProxy.json)",
-  "OptimismPortalProxy": "$(jq -j .address $DEPLOYMENTS_DIR/OptimismPortalProxy.json)",
-  "SystemConfigProxy": "$(jq -j .address $DEPLOYMENTS_DIR/SystemConfigProxy.json)",
-  "ProxyAdmin": "$(jq -j .address $DEPLOYMENTS_DIR/ProxyAdmin.json)"
-}
-EOF
-```
-
-#### `extra/genesis-system-configs`
-
-Genesis system config data is provided but may be optional for chains deployed with future OP-Stack protocol versions.
-
-Newer versions of the `SystemConfig` contract persist the L1 starting block in the contract storage,
-and a node can load the initial system-config values from L1
-by inspecting the `SystemConfig` receipts of this given L1 block.
-
-```bash
-# create genesis-system-config data
-# (this is deprecated, users should load this from L1, when available via SystemConfig).
-mkdir -p $SUPERCHAIN_REPO/superchain/extra/genesis-system-configs/$SUPERCHAIN_TARGET
-jq -r .genesis.system_config $ROLLUP_CONFIG > $SUPERCHAIN_REPO/superchain/extra/genesis-system-configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.json
-```
-
-#### `extra/genesis`
-
-The `extra/genesis` directory hosts compressed `genesis.json` definitions that pull in the bytecode by hash
+### Understand output
+The tool will write the following data:
+- The main configuration source, with genesis data, and address of onchain system configuration.
+- Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.)
+- Genesis system config data
+- Compressed `genesis.json` definitions (in the `extra/genesis` directory) which pull in the bytecode by hash
 
 The genesis largely consists of contracts common with other chains:
 all contract bytecode is deduplicated and hosted in the `extra/bytecodes` directory.
@@ -161,14 +92,6 @@ The format is a gzipped JSON `genesis.json` file, with either:
 - a `stateHash` attribute: to omit a large state (e.g. for networks with a re-genesis or migration history).
   Nodes can load the genesis block header, and state-sync to complete the node initialization.
 
-```bash
-# create extra genesis data
-mkdir -p $SUPERCHAIN_REPO/superchain/extra/genesis/$SUPERCHAIN_TARGET
-go run ./op-chain-ops/cmd/registry-data \
-  --l2-genesis=$GENESIS_CONFIG \
-  --bytecodes-dir=$SUPERCHAIN_REPO/superchain/extra/bytecodes \
-  --output=$SUPERCHAIN_REPO/superchain/extra/genesis/$SUPERCHAIN_TARGET/$CHAIN_NAME.json.gz
-```
 
 ## Setting up your editor for formatting and linting
 If you use VSCode, you can place the following in a `settings.json` file in the gitignored `.vscode` directory:
