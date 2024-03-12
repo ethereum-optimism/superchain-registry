@@ -4,61 +4,7 @@ See [Superchain Upgrades] OP-Stack specifications.
 
 [Superchain Upgrades]: https://specs.optimism.io/protocol/superchain-upgrades.html
 
-## Adding a superchain target
 
-A new Superchain Target can be added by creating a new superchain config directory,
-with a `superchain.yaml` config file. Here's an example:
-
-```bash
-cd superchain-registry
-
-export SUPERCHAIN_TARGET=goerli-dev-0
-mkdir superchain/configs/$SUPERCHAIN_TARGET
-
-cat > superchain/configs/$SUPERCHAIN_TARGET/superchain.yaml << EOF
-name: Goerli Dev 0
-l1:
-  chain_id: 5
-  public_rpc: https://ethereum-goerli-rpc.allthatnode.com
-  explorer: https://goerli.etherscan.io
-
-protocol_versions_addr: null # todo
-superchain_config_addr: null # todo
-EOF
-```
-Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.
-
-### Approved contract versions
-Each superchain target should have a `semver.yaml` file in the same directory declaring the approved contract semantic versions for that superchain, e.g:
-```yaml
-l1_cross_domain_messenger: 1.4.0
-l1_erc721_bridge: 1.0.0
-l1_standard_bridge: 1.1.0
-l2_output_oracle: 1.3.0
-optimism_mintable_erc20_factory: 1.1.0
-optimism_portal: 1.6.0
-system_config: 1.3.0
-
-# superchain-wide contracts
-protocol_versions: 1.0.0
-superchain_config:
-```
-
-### `implementations`
-
-Per superchain a set of canonical implementation deployments, per semver version, is tracked.
-As default, an empty collection of deployments can be set:
-```bash
-cat > superchain/implementations/networks/$SUPERCHAIN_TARGET.yaml << EOF
-l1_cross_domain_messenger:
-l1_erc721_bridge:
-l1_standard_bridge:
-l2_output_oracle:
-optimism_mintable_erc20_factory:
-optimism_portal:
-system_config:
-EOF
-```
 
 ## Adding a chain
 
@@ -116,6 +62,65 @@ sh scripts/add-frontier-chain.sh
 #### Understand output
 The tool will write the following data:
 - Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.)
+
+## Adding a superchain target
+
+> **Note**
+> This is an infrequent operation and unecessary if you are just looking to add a chain to an existing superchain.
+
+A new Superchain Target can be added by creating a new superchain config directory,
+with a `superchain.yaml` config file. Here's an example:
+
+```bash
+cd superchain-registry
+
+export SUPERCHAIN_TARGET=goerli-dev-0
+mkdir superchain/configs/$SUPERCHAIN_TARGET
+
+cat > superchain/configs/$SUPERCHAIN_TARGET/superchain.yaml << EOF
+name: Goerli Dev 0
+l1:
+  chain_id: 5
+  public_rpc: https://ethereum-goerli-rpc.allthatnode.com
+  explorer: https://goerli.etherscan.io
+
+protocol_versions_addr: null # todo
+superchain_config_addr: null # todo
+EOF
+```
+Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.
+
+### Approved contract versions
+Each superchain target should have a `semver.yaml` file in the same directory declaring the approved contract semantic versions for that superchain, e.g:
+```yaml
+l1_cross_domain_messenger: 1.4.0
+l1_erc721_bridge: 1.0.0
+l1_standard_bridge: 1.1.0
+l2_output_oracle: 1.3.0
+optimism_mintable_erc20_factory: 1.1.0
+optimism_portal: 1.6.0
+system_config: 1.3.0
+
+# superchain-wide contracts
+protocol_versions: 1.0.0
+superchain_config:
+```
+
+### `implementations`
+
+Per superchain a set of canonical implementation deployments, per semver version, is tracked.
+As default, an empty collection of deployments can be set:
+```bash
+cat > superchain/implementations/networks/$SUPERCHAIN_TARGET.yaml << EOF
+l1_cross_domain_messenger:
+l1_erc721_bridge:
+l1_standard_bridge:
+l2_output_oracle:
+optimism_mintable_erc20_factory:
+optimism_portal:
+system_config:
+EOF
+```
 
 ## Setting up your editor for formatting and linting
 If you use VSCode, you can place the following in a `settings.json` file in the gitignored `.vscode` directory:
