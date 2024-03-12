@@ -60,11 +60,11 @@ system_config:
 EOF
 ```
 
-## Adding a chain
+## Adding a standard chain
 
 ### Set env vars
 
-To contribute a full OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local monorepo folder.
+To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local monorepo folder.
 
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 
@@ -72,7 +72,7 @@ First, make a copy of `.env.example` named `.env`, and alter the variables to ap
 Then, run
 
 ```shell
-sh scripts/add-chain.sh
+sh scripts/add-standard-chain.sh
 ```
 
 ### Understand output
@@ -106,3 +106,25 @@ If you use VSCode, you can place the following in a `settings.json` file in the 
     },
 }
 ```
+
+## Adding a frontier chain
+
+### Set env vars
+
+Frontier chains are chains with customizations beyond the standard OP
+Stack configuration. To contribute a frontier OP-Stack chain
+configuration, we provide a tool to scrape this information from your
+local monorepo folder.
+
+First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
+
+### Run script
+Then, run
+
+```shell
+sh scripts/add-frontier-chain.sh
+```
+
+### Understand output
+The tool will write the following data:
+- Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.)
