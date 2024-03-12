@@ -60,7 +60,9 @@ system_config:
 EOF
 ```
 
-## Adding a standard chain
+## Adding a chain
+
+### Adding a standard chain
 
 ### Set env vars
 
@@ -107,7 +109,7 @@ If you use VSCode, you can place the following in a `settings.json` file in the 
 }
 ```
 
-## Adding a frontier chain
+### Adding a frontier chain
 
 ### Set env vars
 
