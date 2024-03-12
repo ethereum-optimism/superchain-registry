@@ -80,7 +80,7 @@ The tool will write the following data:
 - The main configuration source, with genesis data, and address of onchain system configuration.
 - Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.)
 - Genesis system config data
-- Compressed `genesis.json` definitions (in the extra/genesis directory) which pull in the bytecode by hash
+- Compressed `genesis.json` definitions (in the `extra/genesis` directory) which pull in the bytecode by hash
 
 The genesis largely consists of contracts common with other chains:
 all contract bytecode is deduplicated and hosted in the `extra/bytecodes` directory.
