@@ -23,6 +23,8 @@ echo "Public RPC endpoint:            ${PUBLIC_RPC}"
 echo "Sequencer RPC endpoint:         ${SEQUENCER_RPC}"
 echo "Block Explorer:                 ${EXPLORER}"
 
+[ -d "$SUPERCHAIN_REPO/superchain/configs/$SUPERCHAIN_TARGET" ] || { echo "Superchain target directory not found. Please follow instructions to "adding a superchain target" in CONTRIBUTING.md"; exit 1; }
+
 
 # add chain config
 cat > $SUPERCHAIN_REPO/superchain/configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.yaml << EOF
