@@ -10,20 +10,20 @@ See [Superchain Upgrades] OP-Stack specifications.
 
 ### Adding a standard chain
 
-#### Set env vars
+#### 1. Set env vars
 
 To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local monorepo folder.
 
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 
-#### Run script
+#### 2. Run script
 Then, run
 
 ```shell
 sh scripts/add-standard-chain.sh
 ```
 
-#### Understand output
+#### 3. Understand output
 The tool will write the following data:
 - The main configuration source, with genesis data, and address of onchain system configuration.
 - Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.)
@@ -40,10 +40,13 @@ The format is a gzipped JSON `genesis.json` file, with either:
 - a `stateHash` attribute: to omit a large state (e.g. for networks with a re-genesis or migration history).
   Nodes can load the genesis block header, and state-sync to complete the node initialization.
 
+#### 4. Raise your Pull Request
+  Automated checks will run, and your PR will be reviewed in due course.
+
 
 ### Adding a frontier chain
 
-#### Set env vars
+#### 1. Set env vars
 
 Frontier chains are chains with customizations beyond the standard OP
 Stack configuration. To contribute a frontier OP-Stack chain
@@ -52,16 +55,19 @@ local monorepo folder.
 
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 
-#### Run script
+#### 2. Run script
 Then, run
 
 ```shell
 sh scripts/add-frontier-chain.sh
 ```
 
-#### Understand output
+#### 3. Understand output
 The tool will write the following data:
 - Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.)
+
+#### 4. Raise your Pull Request
+  Automated checks will run, and your PR will be reviewed in due course.
 
 ## Adding a superchain target
 
