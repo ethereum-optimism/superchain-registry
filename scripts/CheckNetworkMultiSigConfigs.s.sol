@@ -114,7 +114,9 @@ contract CheckNetworkMultiSigConfigs is Script {
 
         if (networkThreshold != multiSigConfig.threshold) {
             hasErrors = true;
-            console2.log(unicode"❌ Error: %s != %s.%s", multiSigConfig.threshold, multiSigConfig.multiSigAddress, signature);
+            console2.log(
+                unicode"❌ Error: %s != %s.%s", multiSigConfig.threshold, multiSigConfig.multiSigAddress, signature
+            );
             console2.log("Actual threshold: %s", networkThreshold);
         }
         return networkThreshold;
