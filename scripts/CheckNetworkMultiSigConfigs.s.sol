@@ -48,7 +48,7 @@ contract CheckNetworkMultiSigConfigs is Script {
     }
 
     function runOnDir(string memory jsonDir) public {
-        string memory multiSigsFile = vm.readFile(string.concat(jsonDir, "/multiSigs.json"));
+        string memory multiSigsFile = vm.readFile(string.concat(jsonDir, "/multi-sig/multiSigs.json"));
         hasErrors = false;
 
         MultiSigConfig memory securityCouncilConfig = getMultiSigConfig(multiSigsFile, ".SecurityCouncil");
@@ -66,7 +66,7 @@ contract CheckNetworkMultiSigConfigs is Script {
 
     function getMultiSigConfig(string memory jsonData, string memory jsonProperty)
         internal
-        view
+        pure
         returns (MultiSigConfig memory)
     {
         // TODO: Fix: This reverted when trying to marshell the signers address array? Decoding manually for now.
