@@ -61,7 +61,9 @@ contract CheckSecurityConfigs is Script {
         hasErrors = false;
         for (uint256 i = 0; i < addressesJsonEntries.length; i++) {
             require(bytes(addressesJsonEntries[i].errorMessage).length == 0, addressesJsonEntries[i].errorMessage);
-            runOnSingleFile(addressesJsonEntries[i].path, isMainnet);
+            string memory targetPath = addressesJsonEntries[i].path;
+            if (vm.isDir(targetPath)) continue;
+            runOnSingleFile(targetPath, isMainnet);
         }
         require(!hasErrors, "Errors occurred: See logs above for more info");
     }
