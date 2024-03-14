@@ -4,6 +4,7 @@ pragma solidity 0.8.15;
 import {console2} from "forge-std/console2.sol";
 import {Script} from "forge-std/Script.sol";
 import {VmSafe} from "forge-std/Vm.sol";
+import {StdChains} from "forge-std/StdChains.sol";
 
 /**
  * @title CheckSecurityConfigs
@@ -38,21 +39,8 @@ contract CheckSecurityConfigs is Script {
      * @notice The entrypoint function.
      */
     function run() public {
-        string memory network;
-        if (block.chainid == 1) {
-            network = "mainnet";
-        } else if (block.chainid == 11155111) {
-            network = "sepolia";
-        } else if (block.chainid == 5) {
-            network = "goerli";
-        } else {
-            revert(
-                string.concat(
-                    "Unsupported chain ID: ", vm.toString(block.chainid), ". Please call runOnDir(string) directly."
-                )
-            );
-        }
-        string memory jsonDir = string.concat("superchain/extra/addresses/", network);
+        Chain memory network = getChain(block.chainid);
+        string memory jsonDir = string.concat("superchain/extra/addresses/", network.name);
         runOnDir(jsonDir, block.chainid == 1);
     }
 
