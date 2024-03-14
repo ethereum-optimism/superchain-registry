@@ -39,7 +39,7 @@ contract CheckSecurityConfigs is Script {
      */
     function run() public {
         Chain memory network = getChain(block.chainid);
-        string memory jsonDir = string.concat("superchain/extra/addresses/", network.name);
+        string memory jsonDir = string.concat("superchain/extra/addresses/", network.chainAlias);
         runOnDir(jsonDir, block.chainid == 1);
     }
 
