@@ -113,7 +113,7 @@ jobs:
             forge build
             forge script CheckNetworkMultiSigConfigs \
               --fork-url="https://ci-mainnet-l1.optimism.io" --compute-units-per-second=320
-      - notify-failures-on-main          
+      - notify-failures-on-main    
 
 workflows:
   hourly:
