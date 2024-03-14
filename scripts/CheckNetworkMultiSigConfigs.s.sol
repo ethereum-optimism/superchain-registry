@@ -33,7 +33,7 @@ contract CheckNetworkMultiSigConfigs is Script {
     }
 
     function runOnDir(string memory jsonDir) public {
-        string memory multiSigsFile = vm.readFile(string.concat(jsonDir, "/multi-sig/multiSigs.json"));
+        string memory multiSigsFile = vm.readFile(string.concat(jsonDir, "/multi-sigs/multi-sigs.json"));
         hasErrors = false;
 
         MultiSigConfig memory securityCouncilConfig = getMultiSigConfig(multiSigsFile, ".SecurityCouncil");
