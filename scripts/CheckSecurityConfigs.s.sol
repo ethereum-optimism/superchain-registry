@@ -4,7 +4,6 @@ pragma solidity 0.8.15;
 import {console2} from "forge-std/console2.sol";
 import {Script} from "forge-std/Script.sol";
 import {VmSafe} from "forge-std/Vm.sol";
-import {StdChains} from "forge-std/StdChains.sol";
 
 /**
  * @title CheckSecurityConfigs
