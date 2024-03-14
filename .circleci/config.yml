@@ -101,7 +101,19 @@ jobs:
       - run:
           name: check security configs
           command: sh ./scripts/check-security-configs.sh
-      - notify-failures-on-main    
+  check-multi-sig-configs:
+    circleci_ip_ranges: true
+    docker:
+      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.40.0
+    steps:
+      - checkout
+      - run:
+          name: check multi-sig configs
+          command: |
+            forge build
+            forge script CheckNetworkMultiSigConfigs \
+              --fork-url="https://ci-mainnet-l1.optimism.io" --compute-units-per-second=320
+      - notify-failures-on-main          
 
 workflows:
   hourly:
