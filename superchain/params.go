@@ -110,7 +110,7 @@ var GasPriceOracleParams = map[string]UpgradeFilter{
 		},
 		Ecotone: &EcotoneGasPriceOracleParamsWithBounds{
 			Decimals:          makeBigIntAndBounds(6, [2]int64{6, 6}),
-			BlobBaseFeeScalar: Uint32AndBounds{862_000, [2]uint32{500_000, 862_000}},
+			BlobBaseFeeScalar: Uint32AndBounds{862_000, [2]uint32{500_000, 1_000_000}},
 			BaseFeeScalar:     Uint32AndBounds{7600, [2]uint32{970, 7600}},
 		},
 	},
