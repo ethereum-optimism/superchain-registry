@@ -104,8 +104,8 @@ var GasPriceOracleParams = map[string]UpgradeFilter{
 		},
 		Ecotone: &EcotoneGasPriceOracleBounds{
 			Decimals:          makeBigIntBounds([2]int64{6, 6}),
-			BlobBaseFeeScalar: [2]uint32{500_000, 1_000_000},
-			BaseFeeScalar:     [2]uint32{0, 1e6},
+			BlobBaseFeeScalar: [2]uint32{0, 1e7},
+			BaseFeeScalar:     [2]uint32{0, 1e7},
 		},
 	},
 	"sepolia": {
@@ -116,8 +116,8 @@ var GasPriceOracleParams = map[string]UpgradeFilter{
 		},
 		Ecotone: &EcotoneGasPriceOracleBounds{
 			Decimals:          makeBigIntBounds([2]int64{6, 6}),
-			BlobBaseFeeScalar: [2]uint32{862_000, 862_000},
-			BaseFeeScalar:     [2]uint32{7600, 7600},
+			BlobBaseFeeScalar: [2]uint32{0, 1e7},
+			BaseFeeScalar:     [2]uint32{0, 1e7},
 		},
 	},
 }
