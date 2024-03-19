@@ -8,7 +8,7 @@ const path = require('path')
  */
 const chainids = () => {
   const result = {}
-  const folder = path.resolve(__dirname, '../superchain/configs')
+  const folder = path.resolve(__dirname, '../superchain/standard/configs')
   const subfolders = fs.readdirSync(folder, { withFileTypes: true })
   for (const subfolder of subfolders) {
     if (!subfolder.isDirectory()) {
@@ -46,9 +46,9 @@ const chainids = () => {
  */
 const addresses = () => {
   const result = {}
-  const chainpath = path.resolve(__dirname, '../superchain/configs/chainids.json')
+  const chainpath = path.resolve(__dirname, '../superchain/standard/configs/chainids.json')
   const chainids = JSON.parse(fs.readFileSync(chainpath, 'utf8'))
-  const folder = path.resolve(__dirname, '../superchain/extra/addresses')
+  const folder = path.resolve(__dirname, '../superchain/standard/extra/addresses')
   const subfolders = fs.readdirSync(folder, { withFileTypes: true })
   for (const subfolder of subfolders) {
     if (!subfolder.isDirectory()) {
@@ -66,7 +66,7 @@ const addresses = () => {
       const filename = filepath.replace('.json', '')
       const chain = path.relative(folder, filename).replace(path.sep, '/')
       const content = fs.readFileSync(filepath, 'utf8')
-      
+
       if (chainids[chain]) {
         result[chainids[chain]] = JSON.parse(content)
       }
