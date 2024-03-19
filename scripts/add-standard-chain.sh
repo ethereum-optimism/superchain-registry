@@ -25,7 +25,7 @@ echo "Block Explorer:                 ${EXPLORER}"
 
 
 # add chain config
-cat > $SUPERCHAIN_REPO/superchain/configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.yaml << EOF
+cat > $SUPERCHAIN_REPO/superchain/standard/configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.yaml << EOF
 name: $CHAIN_NAME
 chain_id: $(jq -j .l2_chain_id $ROLLUP_CONFIG)
 public_rpc: $PUBLIC_RPC
@@ -46,8 +46,8 @@ EOF
 
 
 # add extra addresses data
-mkdir -p $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET
-cat > $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET/$CHAIN_NAME.json << EOF
+mkdir -p $SUPERCHAIN_REPO/superchain/standard/extra/addresses/$SUPERCHAIN_TARGET
+cat > $SUPERCHAIN_REPO/superchain/standard/extra/addresses/$SUPERCHAIN_TARGET/$CHAIN_NAME.json << EOF
 {
   "AddressManager": "$(jq -j .address $DEPLOYMENTS_DIR/AddressManager.json)",
   "L1CrossDomainMessengerProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1CrossDomainMessengerProxy.json)",
@@ -64,14 +64,14 @@ EOF
 
 # create genesis-system-config data
 # (this is deprecated, users should load this from L1, when available via SystemConfig).
-mkdir -p $SUPERCHAIN_REPO/superchain/extra/genesis-system-configs/$SUPERCHAIN_TARGET
-jq -r .genesis.system_config $ROLLUP_CONFIG > $SUPERCHAIN_REPO/superchain/extra/genesis-system-configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.json
+mkdir -p $SUPERCHAIN_REPO/superchain/standard/extra/genesis-system-configs/$SUPERCHAIN_TARGET
+jq -r .genesis.system_config $ROLLUP_CONFIG > $SUPERCHAIN_REPO/superchain/standard/extra/genesis-system-configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.json
 
 
 # create extra genesis data
-mkdir -p $SUPERCHAIN_REPO/superchain/extra/genesis/$SUPERCHAIN_TARGET
+mkdir -p $SUPERCHAIN_REPO/superchain/standard/extra/genesis/$SUPERCHAIN_TARGET
 cd $MONOREPO_DIR
 go run ./op-chain-ops/cmd/registry-data \
   --l2-genesis=$GENESIS_CONFIG \
-  --bytecodes-dir=$SUPERCHAIN_REPO/superchain/extra/bytecodes \
-  --output=$SUPERCHAIN_REPO/superchain/extra/genesis/$SUPERCHAIN_TARGET/$CHAIN_NAME.json.gz
+  --bytecodes-dir=$SUPERCHAIN_REPO/superchain/standard/extra/bytecodes \
+  --output=$SUPERCHAIN_REPO/superchain/standard/extra/genesis/$SUPERCHAIN_TARGET/$CHAIN_NAME.json.gz

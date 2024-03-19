@@ -17,8 +17,8 @@ echo "Superchain target:              ${SUPERCHAIN_TARGET}"
 echo "With deployments directory:     ${DEPLOYMENTS_DIR}"
 
 # add extra addresses data
-mkdir -p $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET
-cat > $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET/$CHAIN_NAME.json << EOF
+mkdir -p $SUPERCHAIN_REPO/superchain/frontier/extra/addresses/$SUPERCHAIN_TARGET
+cat > $SUPERCHAIN_REPO/superchain/frontier/extra/addresses/$SUPERCHAIN_TARGET/$CHAIN_NAME.json << EOF
 {
   "AddressManager": "$(jq -j .address $DEPLOYMENTS_DIR/AddressManager.json)",
   "L1CrossDomainMessengerProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1CrossDomainMessengerProxy.json)",
