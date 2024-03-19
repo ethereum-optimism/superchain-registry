@@ -180,7 +180,12 @@
     "OptimismMintableERC20FactoryProxy": "0xe2A596B5cb0134b60FC0396c9cA82867F5b35073",
     "OptimismPortalProxy": "0x41c1778dFa39484eceF49592B2Ddd368Fce57c11",
     "ProxyAdmin": "0x54dB876ecF291e4366bD60d3C53271333c5d98a6",
-    "SystemConfigProxy": "0x41e80C44d0C2Db47BA454B7FB500EAC200Cb646f"
+    "SystemConfigProxy": "0x41e80C44d0C2Db47BA454B7FB500EAC200Cb646f",
+    "ProxyAdminOwner": "0xA18a2abeE5243c1A20fCEa2A282f17aFF796DfC6",
+    "SystemConfigOwner": "0xA18a2abeE5243c1A20fCEa2A282f17aFF796DfC6",
+    "Guardian": "0xA18a2abeE5243c1A20fCEa2A282f17aFF796DfC6",
+    "Challenger": "0xA18a2abeE5243c1A20fCEa2A282f17aFF796DfC6"
+    
   },
   "7777777": {
     "AddressManager": "0xEF8115F2733fb2033a7c756402Fc1deaa56550Ef",
