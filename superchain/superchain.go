@@ -24,11 +24,14 @@ var standardConfigsPath = path.Join("standard", "configs")
 
 //go:embed standard/extra/addresses standard/extra/bytecodes standard/extra/genesis standard/extra/genesis-system-configs
 var extraFS embed.FS
-var standardExtraPath = path.Join("standard", "extra")
-var standardExtraAddressesPath = path.Join(standardExtraPath, "addresses")
-var standardExtraBytecodesPath = path.Join(standardExtraPath, "bytecodes")
-var standardExtraGenesisPath = path.Join(standardExtraPath, "genesis")
-var standardExtraGenesisSystemConfigsPath = path.Join(standardExtraPath, "genesis-system-configs")
+
+var (
+	standardExtraPath                     = path.Join("standard", "extra")
+	standardExtraAddressesPath            = path.Join(standardExtraPath, "addresses")
+	standardExtraBytecodesPath            = path.Join(standardExtraPath, "bytecodes")
+	standardExtraGenesisPath              = path.Join(standardExtraPath, "genesis")
+	standardExtraGenesisSystemConfigsPath = path.Join(standardExtraPath, "genesis-system-configs")
+)
 
 //go:embed standard/implementations
 var implementationsFS embed.FS
