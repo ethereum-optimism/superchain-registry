@@ -18,16 +18,23 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//go:embed configs
+//go:embed standard/configs
 var superchainFS embed.FS
+var standardConfigsPath = path.Join("standard", "configs")
 
-//go:embed extra/addresses extra/bytecodes extra/genesis extra/genesis-system-configs
+//go:embed standard/extra/addresses standard/extra/bytecodes standard/extra/genesis standard/extra/genesis-system-configs
 var extraFS embed.FS
+var standardExtraPath = path.Join("standard", "extra")
+var standardExtraAddressesPath = path.Join(standardExtraPath, "addresses")
+var standardExtraBytecodesPath = path.Join(standardExtraPath, "bytecodes")
+var standardExtraGenesisPath = path.Join(standardExtraPath, "genesis")
+var standardExtraGenesisSystemConfigsPath = path.Join(standardExtraPath, "genesis-system-configs")
 
-//go:embed implementations
+//go:embed standard/implementations
 var implementationsFS embed.FS
+var standardImplementationsPath = path.Join("standard", "implementations")
 
-//go:embed configs/**/semver.yaml
+//go:embed standard/configs/**/semver.yaml
 var semverFS embed.FS
 
 type BlockID struct {
@@ -333,7 +340,7 @@ func (c ContractVersions) Check(allowEmptyVersions bool) error {
 // be on every network.
 func newContractImplementations(network string) (ContractImplementations, error) {
 	var globals ContractImplementations
-	globalData, err := implementationsFS.ReadFile(path.Join("implementations", "implementations.yaml"))
+	globalData, err := implementationsFS.ReadFile(path.Join(standardImplementationsPath, "implementations.yaml"))
 	if err != nil {
 		return globals, fmt.Errorf("failed to read implementations: %w", err)
 	}
@@ -345,7 +352,7 @@ func newContractImplementations(network string) (ContractImplementations, error)
 		return globals, nil
 	}
 
-	filepath := path.Join("implementations", "networks", network+".yaml")
+	filepath := path.Join(standardImplementationsPath, "networks", network+".yaml")
 	var impls ContractImplementations
 	data, err := implementationsFS.ReadFile(filepath)
 	if err != nil {
@@ -534,7 +541,7 @@ func isConfigFile(c fs.DirEntry) bool {
 // and check to make sure that it is valid.
 func newContractVersions(superchain string) (ContractVersions, error) {
 	var versions ContractVersions
-	semvers, err := semverFS.ReadFile(path.Join("configs", superchain, "semver.yaml"))
+	semvers, err := semverFS.ReadFile(path.Join(standardConfigsPath, superchain, "semver.yaml"))
 	if err != nil {
 		return versions, fmt.Errorf("failed to read semver.yaml: %w", err)
 	}
@@ -549,7 +556,7 @@ func LoadGenesis(chainID uint64) (*Genesis, error) {
 	if !ok {
 		return nil, fmt.Errorf("unknown chain %d", chainID)
 	}
-	f, err := extraFS.Open(path.Join("extra", "genesis", ch.Superchain, ch.Chain+".json.gz"))
+	f, err := extraFS.Open(path.Join(standardExtraGenesisPath, ch.Superchain, ch.Chain+".json.gz"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open chain genesis definition of %d: %w", chainID, err)
 	}
@@ -567,7 +574,7 @@ func LoadGenesis(chainID uint64) (*Genesis, error) {
 }
 
 func LoadContractBytecode(codeHash Hash) ([]byte, error) {
-	f, err := extraFS.Open(path.Join("extra", "bytecodes", codeHash.String()+".bin.gz"))
+	f, err := extraFS.Open(path.Join(standardExtraBytecodesPath, codeHash.String()+".bin.gz"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open bytecode %s: %w", codeHash, err)
 	}

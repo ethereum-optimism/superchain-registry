@@ -13,7 +13,7 @@ func init() {
 	var err error
 	SuperchainSemver = make(map[string]ContractVersions)
 
-	superchainTargets, err := superchainFS.ReadDir("configs")
+	superchainTargets, err := superchainFS.ReadDir("standard/configs")
 	if err != nil {
 		panic(fmt.Errorf("failed to read superchain dir: %w", err))
 	}
@@ -30,7 +30,7 @@ func init() {
 		}
 
 		// Load superchain-target config
-		superchainConfigData, err := superchainFS.ReadFile(path.Join("configs", s.Name(), "superchain.yaml"))
+		superchainConfigData, err := superchainFS.ReadFile(path.Join(standardConfigsPath, s.Name(), "superchain.yaml"))
 		if err != nil {
 			panic(fmt.Errorf("failed to read superchain config: %w", err))
 		}
@@ -41,7 +41,7 @@ func init() {
 		superchainEntry.Superchain = s.Name()
 
 		// iterate over the chains of this superchain-target
-		chainEntries, err := superchainFS.ReadDir(path.Join("configs", s.Name()))
+		chainEntries, err := superchainFS.ReadDir(path.Join(standardConfigsPath, s.Name()))
 		if err != nil {
 			panic(fmt.Errorf("failed to read superchain dir: %w", err))
 		}
@@ -50,7 +50,7 @@ func init() {
 				continue
 			}
 			// load chain config
-			chainConfigData, err := superchainFS.ReadFile(path.Join("configs", s.Name(), c.Name()))
+			chainConfigData, err := superchainFS.ReadFile(path.Join(standardConfigsPath, s.Name(), c.Name()))
 			if err != nil {
 				panic(fmt.Errorf("failed to read superchain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
@@ -64,7 +64,7 @@ func init() {
 			(&chainConfig).setNilHardforkTimestampsToDefault(&superchainEntry.Config)
 
 			jsonName := chainConfig.Chain + ".json"
-			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
+			addressesData, err := extraFS.ReadFile(path.Join(standardExtraAddressesPath, s.Name(), jsonName))
 			if err != nil {
 				panic(fmt.Errorf("failed to read addresses data of chain %s/%s: %w", s.Name(), jsonName, err))
 			}
@@ -73,7 +73,7 @@ func init() {
 				panic(fmt.Errorf("failed to decode addresses %s/%s: %w", s.Name(), jsonName, err))
 			}
 
-			genesisSysCfgData, err := extraFS.ReadFile(path.Join("extra", "genesis-system-configs", s.Name(), jsonName))
+			genesisSysCfgData, err := extraFS.ReadFile(path.Join(standardExtraGenesisSystemConfigsPath, s.Name(), jsonName))
 			if err != nil {
 				panic(fmt.Errorf("failed to read genesis system config data of chain %s/%s: %w", s.Name(), jsonName, err))
 			}

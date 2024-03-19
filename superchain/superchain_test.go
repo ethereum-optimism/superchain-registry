@@ -49,18 +49,18 @@ func TestChainIds(t *testing.T) {
 		chainIDs[chainId] = true
 	}
 
-	targets, err := superchainFS.ReadDir("configs")
+	targets, err := superchainFS.ReadDir(standardConfigsPath)
 	require.NoError(t, err)
 
 	for _, target := range targets {
 		if target.IsDir() {
-			entries, err := superchainFS.ReadDir(path.Join("configs", target.Name()))
+			entries, err := superchainFS.ReadDir(path.Join(standardConfigsPath, target.Name()))
 			require.NoError(t, err)
 			for _, entry := range entries {
 				if !isConfigFile(entry) {
 					continue
 				}
-				configBytes, err := superchainFS.ReadFile(path.Join("configs", target.Name(), entry.Name()))
+				configBytes, err := superchainFS.ReadFile(path.Join(standardConfigsPath, target.Name(), entry.Name()))
 				require.NoError(t, err)
 				var chainConfig ChainConfig
 
@@ -325,7 +325,7 @@ func TestAddressSet(t *testing.T) {
 // TestContractBytecodes verifies that all bytecodes can be loaded successfully,
 // and hash to the code-hash in the name.
 func TestContractBytecodes(t *testing.T) {
-	entries, err := extraFS.ReadDir(path.Join("extra", "bytecodes"))
+	entries, err := extraFS.ReadDir(path.Join(standardExtraBytecodesPath))
 	if err != nil {
 		t.Fatalf("failed to open bytecodes dir: %v", err)
 	}
