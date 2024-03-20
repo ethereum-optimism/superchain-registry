@@ -26,3 +26,6 @@ docs/
 
 # Go workspaces checksum file
 go.work.sum
+
+# editor specific config
+.vscode

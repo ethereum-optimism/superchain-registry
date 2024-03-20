@@ -38,7 +38,6 @@ func TestResourceConfig(t *testing.T) {
 		require.Equal(t, bindings.ResourceMeteringResourceConfig(OPMainnetResourceConfig), actualResourceConfig, "resource config unacceptable")
 
 		t.Logf("resource metering acceptable")
-
 	}
 
 	for chainID, chain := range OPChains {

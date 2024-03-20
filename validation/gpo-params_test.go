@@ -20,24 +20,18 @@ import (
 func TestGasPriceOracleParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		291:       true, // mainnet/orderly                 (incorrect scalar parameter)
-		888:       true, // goerli-dev-0/op-labs-chaosnet-0 (no public endpoint)
+		424:       true, // mainnet/pgn                     (blobBaseFeeScalar out of bounds)
 		957:       true, // mainnet/lyra                    (incorrect scalar parameter)
-		997:       true, // goerli-dev-0/op-labs-devnet-0   (no public endpoint)
 		58008:     true, // sepolia/pgn                     (blobBaseFeeScalar out of bounds)
-		84531:     true, // goerli/base                     (network sunset)
 		84532:     true, // sepolia/base                    (blobBaseFeeScalar out of bounds)
 		11155421:  true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
-		11763071:  true, // goerli-dev-0/base-devnet-0      (no public endpoint)
 		11763072:  true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
 		999999999: true, // sepolia/zora                    (blobBaseFeeScalar out of bounds)
-
-		129831238013: true, // goerli-dev-0/conduit-devnet-0   (no ground truth)
 	}
 
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-
 		desiredParamsOuter, ok := GasPriceOracleParams[chain.Superchain]
 
 		if !ok {
@@ -56,11 +50,9 @@ func TestGasPriceOracleParams(t *testing.T) {
 			"scalar parameter %d out of bounds %d", actualParams.Scalar, desiredParams.Scalar.Bounds)
 
 		t.Logf("gas price oracle params are acceptable")
-
 	}
 
 	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-
 		desiredParamsOuter, ok := GasPriceOracleParams[chain.Superchain]
 
 		if !ok {
@@ -83,7 +75,6 @@ func TestGasPriceOracleParams(t *testing.T) {
 			"baseFeeScalar parameter %d out of bounds %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar.Bounds)
 
 		t.Logf("gas price oracle params are acceptable")
-
 	}
 
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
