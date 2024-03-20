@@ -85,6 +85,9 @@ contract CheckSecurityConfigs is Script {
     }
 
     function chainUpgradedToFPAC(string memory addressesJsonPath) internal pure returns (bool) {
+        // TODO Handle FPAC chains more comprehensively
+        // https://github.com/ethereum-optimism/security-pod/issues/85
+        // Only testnet chains may be added as an exception here.
         return keccak256(
             abi.encodePacked(
                 sliceString(addressesJsonPath, bytes(addressesJsonPath).length - 15, bytes(addressesJsonPath).length)
