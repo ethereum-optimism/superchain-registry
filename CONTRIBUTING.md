@@ -74,7 +74,7 @@ First, make a copy of `.env.example` named `.env`, and alter the variables to ap
 Then, run
 
 ```shell
-sh scripts/add-standard-chain.sh
+sh scripts/add-chain.sh standard
 ```
 
 #### Understand output
@@ -110,7 +110,7 @@ First, make a copy of `.env.example` named `.env`, and alter the variables to ap
 Then, run
 
 ```shell
-sh scripts/add-frontier-chain.sh
+sh scripts/add-chain.sh frontier
 ```
 
 #### Understand output
