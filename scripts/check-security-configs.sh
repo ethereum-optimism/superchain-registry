@@ -12,7 +12,6 @@ else
 fi
 
 
-forge build
 # Note: If RPC is being rate-limited, consider reducing
 # --compute-units-per-second or using --fork-retries and
 # --fork-retry-backoff to stay under the limit.
