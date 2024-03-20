@@ -53,20 +53,20 @@ contract CheckSecurityConfigs is Script {
             );
         }
         string memory jsonDir = string.concat("superchain/extra/addresses/", network);
-        runOnDir(jsonDir);
+        runOnDir(jsonDir, block.chainid == 1);
     }
 
-    function runOnDir(string memory jsonDir) public {
+    function runOnDir(string memory jsonDir, bool isMainnet) public {
         VmSafe.DirEntry[] memory addressesJsonEntries = vm.readDir(jsonDir);
         hasErrors = false;
         for (uint256 i = 0; i < addressesJsonEntries.length; i++) {
             require(bytes(addressesJsonEntries[i].errorMessage).length == 0, addressesJsonEntries[i].errorMessage);
-            runOnSingleFile(addressesJsonEntries[i].path);
+            runOnSingleFile(addressesJsonEntries[i].path, isMainnet);
         }
         require(!hasErrors, "Errors occurred: See logs above for more info");
     }
 
-    function runOnSingleFile(string memory addressesJsonPath) internal {
+    function runOnSingleFile(string memory addressesJsonPath, bool isMainnet) internal {
         console2.log("Checking %s", addressesJsonPath);
 
         bool upgradedToFPAC = chainUpgradedToFPAC(addressesJsonPath);
@@ -76,7 +76,7 @@ contract CheckSecurityConfigs is Script {
         checkL1CrossDomainMessengerProxy(addresses);
         checkL1ERC721BridgeProxy(addresses);
         checkL1StandardBridgeProxy(addresses);
-        checkL2OutputOracleProxy(addresses, upgradedToFPAC);
+        checkL2OutputOracleProxy(addresses, isMainnet, upgradedToFPAC);
         checkOptimismMintableERC20FactoryProxy(addresses);
         checkOptimismPortalProxy(addresses, upgradedToFPAC);
         checkProxyAdmin(addresses);
@@ -134,16 +134,18 @@ contract CheckSecurityConfigs is Script {
         checkAddressIsExpected(addresses.L1CrossDomainMessengerProxy, addresses.L1StandardBridgeProxy, "messenger()");
     }
 
-    function checkL2OutputOracleProxy(ProtocolAddresses memory addresses, bool upgradedToFPAC) internal {
+    function checkL2OutputOracleProxy(ProtocolAddresses memory addresses, bool isMainnet, bool upgradedToFPAC)
+        internal
+    {
         if (upgradedToFPAC) {
             // This check is skipped for chains which upgraded to FPAC
-            console2.log("Skipping L2OutputOracleProxy check");
+            console2.log("Skipping L2OutputOracleProxy check for FPAC enabled chain");
             return;
         }
         console2.log("Checking L2OutputOracleProxy %s", addresses.L2OutputOracleProxy);
         isAdminOf(addresses.ProxyAdmin, addresses.L2OutputOracleProxy);
         checkAddressIsExpected(addresses.Challenger, addresses.L2OutputOracleProxy, "CHALLENGER()");
-        if (block.chainid == 1) {
+        if (isMainnet) {
             // Reusing the logic in checkAddressIsExpected below for simplicity.
             checkAddressIsExpected(address(7 days), addresses.L2OutputOracleProxy, "FINALIZATION_PERIOD_SECONDS()");
         }
