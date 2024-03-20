@@ -56,6 +56,8 @@ type ChainConfig struct {
 	SequencerRPC string `yaml:"sequencer_rpc"`
 	Explorer     string `yaml:"explorer"`
 
+	Type string `yaml:"type"`
+
 	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
 	Genesis ChainGenesis `yaml:"genesis"`

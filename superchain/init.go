@@ -59,6 +59,12 @@ func init() {
 			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
+
+			// For now we will only include chains declared as standard
+			if chainConfig.Type != "standard" {
+				continue
+			}
+
 			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
 
 			(&chainConfig).setNilHardforkTimestampsToDefault(&superchainEntry.Config)
