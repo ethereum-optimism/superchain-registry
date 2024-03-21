@@ -101,6 +101,7 @@ jobs:
       - run:
           name: check security configs
           command: SECURITY_CONFIGS=true sh ./scripts/check-security-configs.sh
+      - notify-failures-on-main   
   check-multi-sig-configs:
     circleci_ip_ranges: true
     docker:
