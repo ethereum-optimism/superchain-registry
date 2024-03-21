@@ -12,8 +12,6 @@ See [Superchain Upgrades] OP-Stack specifications.
 
 To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local monorepo folder.
 
-
-
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 
 ### 2. Run script
@@ -36,7 +34,6 @@ configuration, you can use the same tool put pass "frontier" as an argument:
 sh scripts/add-chain.sh frontier
 ```
 
-
 ### 3. Understand output
 The tool will write the following data:
 - The main configuration source, with genesis data, and address of onchain system configuration.
@@ -55,8 +52,7 @@ The format is a gzipped JSON `genesis.json` file, with either:
   Nodes can load the genesis block header, and state-sync to complete the node initialization.
 
 ### 4. Raise your Pull Request
-  Automated checks will run, and your PR will be reviewed in due course.
-
+Automated checks will run, and your PR will be reviewed in due course.
 
 ## Adding a superchain target
 
@@ -102,7 +98,6 @@ superchain_config:
 ```
 
 ### `implementations`
-
 Per superchain a set of canonical implementation deployments, per semver version, is tracked.
 As default, an empty collection of deployments can be set:
 ```bash
@@ -116,7 +111,6 @@ optimism_portal:
 system_config:
 EOF
 ```
-
 
 ## Setting up your editor for formatting and linting
 If you use VSCode, you can place the following in a `settings.json` file in the gitignored `.vscode` directory:
