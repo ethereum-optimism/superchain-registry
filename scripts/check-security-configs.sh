@@ -16,7 +16,13 @@ forge build
 # Note: If RPC is being rate-limited, consider reducing
 # --compute-units-per-second or using --fork-retries and
 # --fork-retry-backoff to stay under the limit.
-forge script CheckSecurityConfigs \
-   --fork-url=$MAINNET_RPC_URL --compute-units-per-second=$COMPUTE_UNITS_PER_SECOND
-forge script CheckSecurityConfigs \
-   --fork-url=$SEPOLIA_RPC_URL --compute-units-per-second=$COMPUTE_UNITS_PER_SECOND
+if [ "$SECURITY_CONFIGS" = "true" ]; then
+ EXEC_SCRIPT="CheckSecurityConfigs"
+ forge script $EXEC_SCRIPT --fork-url=$SEPOLIA_RPC_URL --compute-units-per-second=$COMPUTE_UNITS_PER_SECOND
+fi
+
+if [ "$MULTISIG_CONFIGS" = "true" ]; then
+  EXEC_SCRIPT="CheckNetworkMultiSigConfigs"
+fi
+
+forge script $EXEC_SCRIPT --fork-url=$MAINNET_RPC_URL --compute-units-per-second=$COMPUTE_UNITS_PER_SECOND

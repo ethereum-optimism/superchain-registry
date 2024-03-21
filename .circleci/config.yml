@@ -100,7 +100,7 @@ jobs:
       - checkout
       - run:
           name: check security configs
-          command: sh ./scripts/check-security-configs.sh
+          command: SECURITY_CONFIGS=true sh ./scripts/check-security-configs.sh
   check-multi-sig-configs:
     circleci_ip_ranges: true
     docker:
@@ -109,10 +109,7 @@ jobs:
       - checkout
       - run:
           name: check multi-sig configs
-          command: |
-            forge build
-            forge script CheckNetworkMultiSigConfigs \
-              --fork-url="https://ci-mainnet-l1.optimism.io" --compute-units-per-second=320
+          command: MULTISIG_CONFIGS=true sh ./scripts/check-security-configs.sh
       - notify-failures-on-main    
 
 workflows:
