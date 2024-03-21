@@ -49,6 +49,11 @@ type HardForkConfiguration struct {
 	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
 }
 
+type ChainType string
+
+const standard ChainType = "standard"
+const frontier ChainType = "frontier"
+
 type ChainConfig struct {
 	Name         string `yaml:"name"`
 	ChainID      uint64 `yaml:"chain_id"`
@@ -56,7 +61,7 @@ type ChainConfig struct {
 	SequencerRPC string `yaml:"sequencer_rpc"`
 	Explorer     string `yaml:"explorer"`
 
-	Type string `yaml:"type"`
+	Type ChainType `yaml:"type"`
 
 	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
@@ -512,7 +517,9 @@ func (c *ChainConfig) IsEcotone() bool {
 
 var Superchains = map[string]*Superchain{}
 
-var OPChains = map[uint64]*ChainConfig{}
+var OPChains = map[uint64]*ChainConfig{}       // All Chains
+var StandardChains = map[uint64]*ChainConfig{} // Standard Chains
+var FrontierChains = map[uint64]*ChainConfig{} // Frontier Chains
 
 var Addresses = map[uint64]*AddressList{}
 
