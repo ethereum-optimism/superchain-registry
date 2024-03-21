@@ -51,8 +51,10 @@ type HardForkConfiguration struct {
 
 type ChainType string
 
-const standard ChainType = "standard"
-const frontier ChainType = "frontier"
+const (
+	standard ChainType = "standard"
+	frontier ChainType = "frontier"
+)
 
 type ChainConfig struct {
 	Name         string `yaml:"name"`
@@ -517,9 +519,11 @@ func (c *ChainConfig) IsEcotone() bool {
 
 var Superchains = map[string]*Superchain{}
 
-var OPChains = map[uint64]*ChainConfig{}       // All Chains
-var StandardChains = map[uint64]*ChainConfig{} // Standard Chains
-var FrontierChains = map[uint64]*ChainConfig{} // Frontier Chains
+var (
+	OPChains       = map[uint64]*ChainConfig{} // All Chains
+	StandardChains = map[uint64]*ChainConfig{} // Standard Chains
+	FrontierChains = map[uint64]*ChainConfig{} // Frontier Chains
+)
 
 var Addresses = map[uint64]*AddressList{}
 
