@@ -4,7 +4,64 @@ See [Superchain Upgrades] OP-Stack specifications.
 
 [Superchain Upgrades]: https://specs.optimism.io/protocol/superchain-upgrades.html
 
+
+
+## Adding a chain
+
+### 1. Set env vars
+
+To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local monorepo folder.
+
+
+
+First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
+
+### 2. Run script
+#### Standard chains
+If your chain meets the definition of a **standard** chain, you can run
+
+
+```shell
+sh scripts/add-chain.sh standard
+```
+
+#### Frontier chains
+
+Frontier chains are chains with customizations beyond the standard OP
+Stack configuration. To contribute a frontier OP-Stack chain
+configuration, you can use the same tool put pass "frontier" as an argument:
+
+
+```shell
+sh scripts/add-chain.sh frontier
+```
+
+
+### 3. Understand output
+The tool will write the following data:
+- The main configuration source, with genesis data, and address of onchain system configuration.
+- Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.)
+- Genesis system config data
+- Compressed `genesis.json` definitions (in the `extra/genesis` directory) which pull in the bytecode by hash
+
+The genesis largely consists of contracts common with other chains:
+all contract bytecode is deduplicated and hosted in the `extra/bytecodes` directory.
+
+The format is a gzipped JSON `genesis.json` file, with either:
+- a `alloc` attribute, structured like a standard `genesis.json`,
+  but with `codeHash` (bytes32, `keccak256` hash of contract code) attribute per account,
+  instead of the `code` attribute seen in standard Ethereum genesis definitions.
+- a `stateHash` attribute: to omit a large state (e.g. for networks with a re-genesis or migration history).
+  Nodes can load the genesis block header, and state-sync to complete the node initialization.
+
+### 4. Raise your Pull Request
+  Automated checks will run, and your PR will be reviewed in due course.
+
+
 ## Adding a superchain target
+
+> **Note**
+> This is an infrequent operation and unecessary if you are just looking to add a chain to an existing superchain.
 
 A new Superchain Target can be added by creating a new superchain config directory,
 with a `superchain.yaml` config file. Here's an example:
@@ -60,62 +117,6 @@ system_config:
 EOF
 ```
 
-## Adding a chain
-
-### Adding a standard chain
-
-#### Set env vars
-
-To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local monorepo folder.
-
-First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
-
-#### Run script
-Then, run
-
-```shell
-sh scripts/add-chain.sh standard
-```
-
-#### Understand output
-The tool will write the following data:
-- The main configuration source, with genesis data, and address of onchain system configuration.
-- Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.)
-- Genesis system config data
-- Compressed `genesis.json` definitions (in the `extra/genesis` directory) which pull in the bytecode by hash
-
-The genesis largely consists of contracts common with other chains:
-all contract bytecode is deduplicated and hosted in the `extra/bytecodes` directory.
-
-The format is a gzipped JSON `genesis.json` file, with either:
-- a `alloc` attribute, structured like a standard `genesis.json`,
-  but with `codeHash` (bytes32, `keccak256` hash of contract code) attribute per account,
-  instead of the `code` attribute seen in standard Ethereum genesis definitions.
-- a `stateHash` attribute: to omit a large state (e.g. for networks with a re-genesis or migration history).
-  Nodes can load the genesis block header, and state-sync to complete the node initialization.
-
-
-### Adding a frontier chain
-
-#### Set env vars
-
-Frontier chains are chains with customizations beyond the standard OP
-Stack configuration. To contribute a frontier OP-Stack chain
-configuration, we provide a tool to scrape this information from your
-local monorepo folder.
-
-First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
-
-#### Run script
-Then, run
-
-```shell
-sh scripts/add-chain.sh frontier
-```
-
-#### Understand output
-The tool will write the following data:
-- Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.)
 
 ## Setting up your editor for formatting and linting
 If you use VSCode, you can place the following in a `settings.json` file in the gitignored `.vscode` directory:
