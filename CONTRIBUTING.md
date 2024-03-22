@@ -10,13 +10,13 @@ See [Superchain Upgrades] OP-Stack specifications.
 
 ### 1. Set env vars
 
-To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local monorepo folder.
+To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
 
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 
 ### 2. Run script
 #### Standard chains
-If your chain meets the definition of a **standard** chain, you can run
+If your chain meets the definition of a **standard** chain, you can run:
 
 
 ```shell
@@ -27,7 +27,7 @@ sh scripts/add-chain.sh standard
 
 Frontier chains are chains with customizations beyond the standard OP
 Stack configuration. To contribute a frontier OP-Stack chain
-configuration, you can use the same tool put pass "frontier" as an argument:
+configuration, you can run:
 
 
 ```shell
