@@ -10,7 +10,6 @@ echo -e "\nSearching current directory for Superchain dependencies...\n"
 directory="../../"
 file_count=0
 
-# find "$directory" -type f -name "*.go" -exec grep -l "github.com/ethereum-optimism/superchain-registry/superchain" {} \; | while IFS= read -r file; do
 find "$directory" -type d -name "superchain-registry" -prune -o -type f -name "*.go" -exec grep -l "github.com/ethereum-optimism/superchain-registry/superchain" {} \; | while IFS= read -r file; do
     echo "File: $file"
     file_count=$(expr $file_count + 1)
