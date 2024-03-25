@@ -1,0 +1,16 @@
+name: blaineup
+chain_id: 42069
+public_rpc: http://awe.some.rpc
+sequencer_rpc: http://awe.some.seq.rpc
+explorer: https://awesomescan.org
+
+batch_inbox_addr: "0xff00000000000000000000000000000000042069"
+
+genesis:
+  l1:
+    hash: "0xbf8c2691038c3bac147d4fda7d1c4f16f8a27de28743aa1309e5fbc369bc2217"
+    number: 5424053
+  l2:
+    hash: "0x5746de1aa18a7b68a7df895b67d6324c7c2b5fedf42a055a955edcaf0012f570"
+    number: 0
+  l2_time: 1709673312
