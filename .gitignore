@@ -29,3 +29,5 @@ go.work.sum
 
 # editor specific config
 .vscode
+
+superchain/extra/genesis/mainnet/blaineup.json
