@@ -100,7 +100,17 @@ jobs:
       - checkout
       - run:
           name: check security configs
-          command: sh ./scripts/check-security-configs.sh
+          command: SECURITY_CONFIGS=true sh ./scripts/check-security-configs.sh
+      - notify-failures-on-main   
+  check-multi-sig-configs:
+    circleci_ip_ranges: true
+    docker:
+      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.40.0
+    steps:
+      - checkout
+      - run:
+          name: check multi-sig configs
+          command: MULTISIG_CONFIGS=true sh ./scripts/check-security-configs.sh
       - notify-failures-on-main    
 
 workflows:
@@ -127,5 +137,6 @@ workflows:
       - check-codegen
       - check-forge-fmt
       - check-security-configs
+      - check-multi-sig-configs
 
 

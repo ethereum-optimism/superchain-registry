@@ -38,21 +38,8 @@ contract CheckSecurityConfigs is Script {
      * @notice The entrypoint function.
      */
     function run() public {
-        string memory network;
-        if (block.chainid == 1) {
-            network = "mainnet";
-        } else if (block.chainid == 11155111) {
-            network = "sepolia";
-        } else if (block.chainid == 5) {
-            network = "goerli";
-        } else {
-            revert(
-                string.concat(
-                    "Unsupported chain ID: ", vm.toString(block.chainid), ". Please call runOnDir(string) directly."
-                )
-            );
-        }
-        string memory jsonDir = string.concat("superchain/extra/addresses/", network);
+        Chain memory network = getChain(block.chainid);
+        string memory jsonDir = string.concat("superchain/extra/addresses/", network.chainAlias);
         runOnDir(jsonDir, block.chainid == 1);
     }
 
@@ -61,7 +48,9 @@ contract CheckSecurityConfigs is Script {
         hasErrors = false;
         for (uint256 i = 0; i < addressesJsonEntries.length; i++) {
             require(bytes(addressesJsonEntries[i].errorMessage).length == 0, addressesJsonEntries[i].errorMessage);
-            runOnSingleFile(addressesJsonEntries[i].path, isMainnet);
+            string memory targetPath = addressesJsonEntries[i].path;
+            if (vm.isDir(targetPath)) continue;
+            runOnSingleFile(targetPath, isMainnet);
         }
         require(!hasErrors, "Errors occurred: See logs above for more info");
     }
