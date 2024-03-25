@@ -48,9 +48,7 @@ contract CheckSecurityConfigs is Script {
         } else {
             revert(
                 string.concat(
-                    "Unsupported chain ID: ",
-                    vm.toString(block.chainid),
-                    ". Please call runOnDir(string,bool) directly."
+                    "Unsupported chain ID: ", vm.toString(block.chainid), ". Please call runOnDir(string) directly."
                 )
             );
         }
@@ -70,17 +68,45 @@ contract CheckSecurityConfigs is Script {
 
     function runOnSingleFile(string memory addressesJsonPath, bool isMainnet) internal {
         console2.log("Checking %s", addressesJsonPath);
+
+        bool upgradedToFPAC = chainUpgradedToFPAC(addressesJsonPath);
+
         ProtocolAddresses memory addresses = getAddresses(addressesJsonPath);
         checkAddressManager(addresses);
         checkL1CrossDomainMessengerProxy(addresses);
         checkL1ERC721BridgeProxy(addresses);
         checkL1StandardBridgeProxy(addresses);
-        checkL2OutputOracleProxy(addresses, isMainnet);
+        checkL2OutputOracleProxy(addresses, isMainnet, upgradedToFPAC);
         checkOptimismMintableERC20FactoryProxy(addresses);
-        checkOptimismPortalProxy(addresses);
+        checkOptimismPortalProxy(addresses, upgradedToFPAC);
         checkProxyAdmin(addresses);
         checkSystemConfigProxy(addresses);
         // TODO Check the integrity of the implementations: https://github.com/ethereum-optimism/superchain-registry/issues/33
+    }
+
+    function chainUpgradedToFPAC(string memory addressesJsonPath) internal pure returns (bool) {
+        // TODO Handle FPAC chains more comprehensively
+        // https://github.com/ethereum-optimism/security-pod/issues/85
+        // Only testnet chains may be added as an exception here.
+        return keccak256(
+            abi.encodePacked(
+                sliceString(addressesJsonPath, bytes(addressesJsonPath).length - 15, bytes(addressesJsonPath).length)
+            )
+        ) == keccak256(abi.encodePacked("sepolia/op.json"));
+    }
+
+    // Function to slice a string and return the result
+    function sliceString(string memory str, uint256 begin, uint256 end) public pure returns (string memory) {
+        require(begin < end, "Begin index must be less than end index");
+        bytes memory strBytes = bytes(str);
+        require(end <= strBytes.length, "End index out of bounds");
+
+        bytes memory result = new bytes(end - begin);
+        for (uint256 i = begin; i < end; i++) {
+            result[i - begin] = strBytes[i];
+        }
+
+        return string(result);
     }
 
     function checkAddressManager(ProtocolAddresses memory addresses) internal {
@@ -111,7 +137,14 @@ contract CheckSecurityConfigs is Script {
         checkAddressIsExpected(addresses.L1CrossDomainMessengerProxy, addresses.L1StandardBridgeProxy, "messenger()");
     }
 
-    function checkL2OutputOracleProxy(ProtocolAddresses memory addresses, bool isMainnet) internal {
+    function checkL2OutputOracleProxy(ProtocolAddresses memory addresses, bool isMainnet, bool upgradedToFPAC)
+        internal
+    {
+        if (upgradedToFPAC) {
+            // This check is skipped for chains which upgraded to FPAC
+            console2.log("Skipping L2OutputOracleProxy check for FPAC enabled chain");
+            return;
+        }
         console2.log("Checking L2OutputOracleProxy %s", addresses.L2OutputOracleProxy);
         isAdminOf(addresses.ProxyAdmin, addresses.L2OutputOracleProxy);
         checkAddressIsExpected(addresses.Challenger, addresses.L2OutputOracleProxy, "CHALLENGER()");
@@ -127,11 +160,13 @@ contract CheckSecurityConfigs is Script {
         checkAddressIsExpected(addresses.L1StandardBridgeProxy, addresses.OptimismMintableERC20FactoryProxy, "BRIDGE()");
     }
 
-    function checkOptimismPortalProxy(ProtocolAddresses memory addresses) internal {
+    function checkOptimismPortalProxy(ProtocolAddresses memory addresses, bool upgradedToFPAC) internal {
         console2.log("Checking OptimismPortalProxy %s", addresses.OptimismPortalProxy);
         isAdminOf(addresses.ProxyAdmin, addresses.OptimismPortalProxy);
         checkAddressIsExpected(addresses.Guardian, addresses.OptimismPortalProxy, "GUARDIAN()");
-        checkAddressIsExpected(addresses.L2OutputOracleProxy, addresses.OptimismPortalProxy, "L2_ORACLE()");
+        if (!upgradedToFPAC) {
+            checkAddressIsExpected(addresses.L2OutputOracleProxy, addresses.OptimismPortalProxy, "L2_ORACLE()");
+        }
         checkAddressIsExpected(addresses.SystemConfigProxy, addresses.OptimismPortalProxy, "SYSTEM_CONFIG()");
     }
 
