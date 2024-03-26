@@ -61,6 +61,8 @@ the following privilege grants and role designations:
       L2 senders.
    4. Trusted oracles. For example, `OptimismPortalProxy` specifies
       the L2 oracle they trust with the L2 state root information.
+      1. After the FPAC upgrade, the `OptimismPortalProxy` specifies the `DisputeGameFactory` they trust rather
+      than the legacy `L2OutputOracle` contract.
    5. Trusted system config. For example, `OptimismPortalProxy`
       specifies the system config they trust to get resource config
       from. TODO(issues/37): add checks for the `ResourceMetering`
@@ -97,6 +99,7 @@ graph TD
   OptimismPortalProxy -- "GUARDIAN()" --> GuardianMultisig
   OptimismPortalProxy -- "L2_ORACLE()" --> L2OutputOracleProxy
   OptimismPortalProxy -- "SYSTEM_CONFIG()" --> SystemConfigProxy
+  OptimismPortalProxy -- "disputeGameFactory()" --> DisputeGameFactoryProxy
 
   L2OutputOracleProxy -- "admin()" --> ProxyAdmin
   L2OutputOracleProxy -- "CHALLENGER()" --> ChallengerMultisig
@@ -104,6 +107,13 @@ graph TD
   SystemConfigProxy -- "admin()" --> ProxyAdmin
   SystemConfigProxy -- "owner()" --> SystemConfigOwnerMultisig
 
+  DisputeGameFactoryProxy -- "admin()" --> ProxyAdmin
+  DisputeGameFactoryProxy -- "owner()" --> ProxyAdminOwner
+
+  AnchorStateRegistryProxy -- "admin()" --> ProxyAdmin
+
+  DelayedWETHProxy -- "admin()" --> ProxyAdmin
+  DelayedWETHProxy -- "owner()" --> ProxyAdminOwner
 ```
 
 ## License
