@@ -1,6 +1,8 @@
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 /**
  * Generates the chainids.json file that sits at the root of the
  * superchain/configs folder. Useful to have a combined JSON file for all of
@@ -66,7 +68,7 @@ const addresses = () => {
       const filename = filepath.replace('.json', '')
       const chain = path.relative(folder, filename).replace(path.sep, '/')
       const content = fs.readFileSync(filepath, 'utf8')
-      
+
       if (chainids[chain]) {
         result[chainids[chain]] = JSON.parse(content)
       }
