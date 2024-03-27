@@ -49,11 +49,11 @@ type HardForkConfiguration struct {
 	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
 }
 
-type ChainType string
+type SuperchainLevel uint
 
 const (
-	standard ChainType = "standard"
-	frontier ChainType = "frontier"
+	standard SuperchainLevel = 2
+	frontier SuperchainLevel = 1
 )
 
 type ChainConfig struct {
@@ -63,7 +63,7 @@ type ChainConfig struct {
 	SequencerRPC string `yaml:"sequencer_rpc"`
 	Explorer     string `yaml:"explorer"`
 
-	Type ChainType `yaml:"type"`
+	Type SuperchainLevel `yaml:"superchain_level"`
 
 	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
