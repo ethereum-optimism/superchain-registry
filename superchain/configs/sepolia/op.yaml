@@ -15,3 +15,5 @@ genesis:
     hash: "0x102de6ffb001480cc9b8b548fd05c34cd4f46ae4aa91759393db90ea0409887d"
     number: 0
   l2_time: 1691802540 # Sat 12 Aug 2023 01:09:00 UTC
+
+ecotone_time: 1708534800
