@@ -52,8 +52,8 @@ type HardForkConfiguration struct {
 type SuperchainLevel uint
 
 const (
-	standard SuperchainLevel = 2
-	frontier SuperchainLevel = 1
+	Standard SuperchainLevel = 2
+	Frontier SuperchainLevel = 1
 )
 
 type ChainConfig struct {
@@ -519,9 +519,7 @@ func (c *ChainConfig) IsEcotone() bool {
 
 var Superchains = map[string]*Superchain{}
 
-var (
-	OPChains = map[uint64]*ChainConfig{}
-)
+var OPChains = map[uint64]*ChainConfig{}
 
 var Addresses = map[uint64]*AddressList{}
 
