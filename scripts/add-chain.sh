@@ -1,13 +1,30 @@
 set -e
 
+show_usage() {
+  echo "Usage: $0 <chain_type> [-h|--help]"
+  echo "  chain_type: The type of chain to add. Must be 'standard' or 'frontier'."
+  echo "  -h, --help: Show this usage information."
+}
+
+if [[ $# -eq 0 || $1 == "-h" || $1 == "--help" ]]; then
+  show_usage
+  exit 0
+fi
+
 TYPE=$1
 
 case $TYPE in
-    "standard"|"frontier")
+    "standard")
         echo "Adding $TYPE chain to superchain-registry..."
+        SUPERCHAIN_LEVEL=2
+        ;;
+    "frontier")
+        echo "Adding $TYPE chain to superchain-registry..."
+        SUPERCHAIN_LEVEL=1
         ;;
     *)
         echo "Invalid chain type $TYPE"
+        show_usage
         exit 1
         ;;
 esac
@@ -46,7 +63,7 @@ public_rpc: $PUBLIC_RPC
 sequencer_rpc: $SEQUENCER_RPC
 explorer: $EXPLORER
 
-type: $TYPE
+superchain_level: $SUPERCHAIN_LEVEL
 
 batch_inbox_addr: "$(jq -j .batch_inbox_address $ROLLUP_CONFIG)"
 
