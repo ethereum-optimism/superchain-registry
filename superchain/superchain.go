@@ -520,9 +520,7 @@ func (c *ChainConfig) IsEcotone() bool {
 var Superchains = map[string]*Superchain{}
 
 var (
-	OPChains       = map[uint64]*ChainConfig{} // All Chains
-	StandardChains = map[uint64]*ChainConfig{} // Standard Chains
-	FrontierChains = map[uint64]*ChainConfig{} // Frontier Chains
+	OPChains = map[uint64]*ChainConfig{}
 )
 
 var Addresses = map[uint64]*AddressList{}
