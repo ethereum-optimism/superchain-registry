@@ -59,7 +59,6 @@ func init() {
 			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
-
 			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
 
 			(&chainConfig).setNilHardforkTimestampsToDefault(&superchainEntry.Config)
@@ -91,18 +90,7 @@ func init() {
 					other.Name, other.Superchain, other.ChainID))
 			}
 			superchainEntry.ChainIDs = append(superchainEntry.ChainIDs, chainConfig.ChainID)
-
-			switch chainConfig.Type {
-			case standard:
-				StandardChains[chainConfig.ChainID] = &chainConfig
-			case frontier:
-				FrontierChains[chainConfig.ChainID] = &chainConfig
-			default:
-				panic(fmt.Errorf("unknown chain type %s", chainConfig.Type))
-			}
-
-			OPChains[chainConfig.ChainID] = &chainConfig // This mapping hosts all chains
-
+			OPChains[chainConfig.ChainID] = &chainConfig
 			Addresses[chainConfig.ChainID] = &addrs
 			GenesisSystemConfigs[chainConfig.ChainID] = &genesisSysCfg
 		}
