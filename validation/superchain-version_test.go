@@ -60,6 +60,7 @@ func TestContractVersions(t *testing.T) {
 		34443:     true, // mainnet/mode
 		58008:     true, // sepolia/pgn
 		84532:     true, // sepolia/base
+		90001:     true, // sepolia/race, due to https://github.com/ethereum-optimism/superchain-registry/issues/147
 		7777777:   true, // mainnet/zora
 		11155421:  true, // sepolia-dev-0/oplabs-devnet-0
 		999999999: true, // sepolia/zoras
