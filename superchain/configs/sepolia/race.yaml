@@ -1,0 +1,17 @@
+name: RACE Testnet
+chain_id: 90001
+public_rpc: "https://racetestnet.io"
+sequencer_rpc: "https://racetestnet.io/sequencer"
+explorer: "https://testnet.racescan.io"
+
+system_config_addr: "0x41e80C44d0C2Db47BA454B7FB500EAC200Cb646f"
+batch_inbox_addr: "0xff00000000000000000000000000000000042069"
+
+genesis:
+  l1:
+    hash: "0xe7d512a4c2329b2405e8ffdbb7efa3367c27a330d67f26d627bb0cf2cefbbe27"
+    number: 4774986
+  l2:
+    hash: "0xcf8f96642bc3daad7236b8ba8612e473b3fd6f9dce6cf634ba28a880c99ae6ab"
+    number: 0
+  l2_time: 1701073248 
