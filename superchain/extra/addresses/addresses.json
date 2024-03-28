@@ -136,6 +136,7 @@
   },
   "11155420": {
     "AddressManager": "0x9bFE9c5609311DF1c011c47642253B78a4f33F4B",
+    "DisputeGameFactoryProxy": "0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1",
     "L1CrossDomainMessengerProxy": "0x58Cc85b8D04EA49cC6DBd3CbFFd00B4B8D6cb3ef",
     "L1ERC721BridgeProxy": "0xd83e03D576d23C9AEab8cC44Fa98d058D2176D1f",
     "L1StandardBridgeProxy": "0xFBb0621E0B23b5478B630BD55a5f21f67730B0F1",
