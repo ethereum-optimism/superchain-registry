@@ -1,0 +1,16 @@
+name: boba
+chain_id: 28882
+public_rpc: https://sepolia.boba.network
+sequencer_rpc: https://sepolia.boba.network
+explorer: https://bobascan.com
+
+batch_inbox_addr: "0xfff0000000000000000000000000000000028882"
+
+genesis:
+  l1:
+    hash: "0x632d8caedbfd573e09c1b49134bd5147147e0904e0f04eba15c662be0258f517"
+    number: 5109513
+  l2:
+    hash: "0x097654c4c932c97808933b42179388f7bbcefaed3bd93fdf69157e19f1deea0e"
+    number: 511
+  l2_time: 1705600788
