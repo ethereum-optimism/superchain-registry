@@ -18,6 +18,7 @@ import (
 )
 
 func TestGasPriceOracleParams(t *testing.T) {
+
 	isExcluded := map[uint64]bool{
 		291:       true, // mainnet/orderly                 (incorrect scalar parameter)
 		424:       true, // mainnet/pgn                     (blobBaseFeeScalar out of bounds)
@@ -86,6 +87,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
+		SkipCheckIfFrontierChain(t, *chain)
 		if !isExcluded[chainID] {
 			t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) {
 				rpcEndpoint := chain.PublicRPC

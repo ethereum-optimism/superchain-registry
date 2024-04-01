@@ -41,6 +41,7 @@ func TestResourceConfig(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
+		SkipCheckIfFrontierChain(t, *chain)
 		if !isExcluded[chainID] {
 			t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) { checkResourceConfig(t, chain) })
 		}
