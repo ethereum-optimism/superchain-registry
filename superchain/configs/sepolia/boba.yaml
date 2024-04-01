@@ -1,0 +1,22 @@
+name: boba
+chain_id: 28882
+public_rpc: https://sepolia.boba.network
+sequencer_rpc: https://sepolia.boba.network
+explorer: https://testnet.bobascan.com
+
+system_config_addr: "0xfdc9bce032cef55a71b4fde9b9a2198ad1551965"
+batch_inbox_addr: "0xfff0000000000000000000000000000000028882"
+
+genesis:
+  l1:
+    hash: "0x632d8caedbfd573e09c1b49134bd5147147e0904e0f04eba15c662be0258f517"
+    number: 5109513
+  l2:
+    hash: "0x097654c4c932c97808933b42179388f7bbcefaed3bd93fdf69157e19f1deea0e"
+    number: 511
+  l2_time: 1705600788
+
+canyon_time: 1705600788 # Thu Jan 18 2024 17:59:48 UTC 2024
+regolith_time: 1705600788 # Thu Jan 18 2024 17:59:48 UTC 2024
+delta_time: 1709078400 # Wed Feb 28 2024 00:00:00 UTC 2024
+ecotone_time: 1709078400 # Wed Feb 28 2024 00:00:00 UTC 2024
