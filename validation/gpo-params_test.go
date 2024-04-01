@@ -18,7 +18,6 @@ import (
 )
 
 func TestGasPriceOracleParams(t *testing.T) {
-
 	isExcluded := map[uint64]bool{
 		291:       true, // mainnet/orderly                 (incorrect scalar parameter)
 		424:       true, // mainnet/pgn                     (blobBaseFeeScalar out of bounds)
