@@ -83,6 +83,7 @@ func TestL2OOParams(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
+		SkipCheckIfFrontierChain(t, *chain)
 		if !isExcluded[chainID] {
 			t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) { checkL2OOParams(t, chain) })
 		}

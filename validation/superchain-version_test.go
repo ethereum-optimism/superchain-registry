@@ -97,6 +97,7 @@ func TestContractVersions(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
+		SkipCheckIfFrontierChain(t, *chain)
 		if isExcluded[chainID] {
 			t.Logf("chain %d: EXCLUDED from contract version validation", chainID)
 		} else {

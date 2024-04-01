@@ -1,5 +1,34 @@
 set -e
 
+show_usage() {
+  echo "Usage: $0 <chain_type> [-h|--help]"
+  echo "  chain_type: The type of chain to add. Must be 'standard' or 'frontier'."
+  echo "  -h, --help: Show this usage information."
+}
+
+if [[ $# -eq 0 || $1 == "-h" || $1 == "--help" ]]; then
+  show_usage
+  exit 0
+fi
+
+TYPE=$1
+
+case $TYPE in
+    "standard")
+        echo "Adding $TYPE chain to superchain-registry..."
+        SUPERCHAIN_LEVEL=2
+        ;;
+    "frontier")
+        echo "Adding $TYPE chain to superchain-registry..."
+        SUPERCHAIN_LEVEL=1
+        ;;
+    *)
+        echo "Invalid chain type $TYPE"
+        show_usage
+        exit 1
+        ;;
+esac
+
 # Get the absolute path of the current script, including following symlinks
 SCRIPT_PATH=$(readlink -f "$0" || realpath "$0")
 # Get the directory of the current script
@@ -12,7 +41,7 @@ SUPERCHAIN_REPO=${PARENT_DIR}
 
 # load and echo env vars
 source ${SUPERCHAIN_REPO}/.env
-echo "Adding chain to superchain-registry..."
+
 echo "Chain Name                      ${CHAIN_NAME}"
 echo "Superchain target:              ${SUPERCHAIN_TARGET}"
 echo "Reading from monrepo directory: ${MONOREPO_DIR}"
@@ -33,6 +62,8 @@ chain_id: $(jq -j .l2_chain_id $ROLLUP_CONFIG)
 public_rpc: $PUBLIC_RPC
 sequencer_rpc: $SEQUENCER_RPC
 explorer: $EXPLORER
+
+superchain_level: $SUPERCHAIN_LEVEL
 
 batch_inbox_addr: "$(jq -j .batch_inbox_address $ROLLUP_CONFIG)"
 
