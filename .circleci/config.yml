@@ -101,6 +101,7 @@ jobs:
       - run:
           name: check security configs
           command: sh ./scripts/check-security-configs.sh
+      - notify-failures-on-main    
 
 workflows:
   hourly:
