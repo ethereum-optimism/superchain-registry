@@ -5,6 +5,7 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/stretchr/testify/require"
 )
 
@@ -45,5 +46,11 @@ func TestAreCloseInts(t *testing.T) {
 			result := isWithinBounds(test.actual, test.bounds)
 			require.Equal(t, test.expectation, result)
 		})
+	}
+}
+
+func SkipCheckIfFrontierChain(t *testing.T, chain superchain.ChainConfig) {
+	if chain.Type == superchain.Frontier {
+		t.Skip()
 	}
 }

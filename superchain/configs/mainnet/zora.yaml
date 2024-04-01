@@ -4,6 +4,8 @@ public_rpc: https://rpc.zora.energy
 sequencer_rpc: https://rpc.zora.energy
 explorer: https://explorer.zora.energy
 
+superchain_level: 2
+
 system_config_addr: "0xA3cAB0126d5F504B071b81a3e8A2BBBF17930d86"
 batch_inbox_addr: "0x6F54Ca6F6EdE96662024Ffd61BFd18f3f4e34DFf"
 
