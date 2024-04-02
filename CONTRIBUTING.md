@@ -56,7 +56,7 @@ Run the following command to run the registry's validation checks, for only the 
 
 ```
 cd validation
-go test ./... -v -focus=true -chain-id=<your-chain-id-here>
+go test ./... -v -focus-chain-id=<your-chain-id-here>
 ```
 
 

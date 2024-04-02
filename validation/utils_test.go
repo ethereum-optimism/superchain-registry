@@ -56,7 +56,7 @@ func SkipCheckIfFrontierChain(t *testing.T, chain superchain.ChainConfig) {
 }
 
 func SkipCheckIfBlurred(t *testing.T, chain superchain.ChainConfig) {
-	if focus && focussedChainId != chain.ChainID {
+	if focussedChainId != nil && *focussedChainId != chain.ChainID {
 		t.Skip("Skipping check (focussed on another chain)")
 	}
 }
