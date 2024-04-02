@@ -20,12 +20,8 @@ import (
 
 func TestL2OOParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		291:       true, // mainnet/orderly                 (old version of L2OutputOracle, no submissionInterval method)
-		424:       true, // mainnet/pgn                     (old version of L2OutputOracle, no submissionInterval method)
-		957:       true, // mainnet/lyra                    (old version of L2OutputOracle, no submissionInterval method)
 		8453:      true, // mainnet/base                    (old version of L2OutputOracle, no submissionInterval method)
 		34443:     true, // mainnet/mode                    (old version of L2OutputOracle, no submissionInterval method)
-		58008:     true, // sepolia/pgn                     (old version of L2OutputOracle, no submissionInterval method)
 		7777777:   true, // mainnet/zora                    (old version of L2OutputOracle, no submissionInterval method)
 		11155421:  true, // sepolia-dev-0/oplabs-devnet-0   (old version of L2OutputOracle, no submissionInterval method)
 		999999999: true, // sepolia/zora                    (old version of L2OutputOracle, no submissionInterval method)
@@ -76,6 +72,8 @@ func TestL2OOParams(t *testing.T) {
 
 		version, err := getVersion(context.Background(), common.Address(contractAddress), client)
 		require.NoError(t, err)
+
+		t.Log(version)
 
 		var actualParams L2OOParams
 		if version == "1.3.0" || version == "1.3.1" {
