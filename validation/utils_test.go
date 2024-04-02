@@ -51,6 +51,12 @@ func TestAreCloseInts(t *testing.T) {
 
 func SkipCheckIfFrontierChain(t *testing.T, chain superchain.ChainConfig) {
 	if chain.Type == superchain.Frontier {
-		t.Skip()
+		t.Skip("Skipping check (Frontier chain)")
+	}
+}
+
+func SkipCheckIfBlurred(t *testing.T, chain superchain.ChainConfig) {
+	if focus && focussedChainId != chain.ChainID {
+		t.Skip("Skipping check (focussed on another chain)")
 	}
 }
