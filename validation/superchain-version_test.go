@@ -53,17 +53,13 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 
 func TestContractVersions(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		291:       true, // mainnet/orderly
-		424:       true, // mainnet/pgn
-		957:       true, // mainnet/lyra
 		8453:      true, // mainnet/base
 		34443:     true, // mainnet/mode
-		58008:     true, // sepolia/pgn
 		84532:     true, // sepolia/base
 		90001:     true, // sepolia/race, due to https://github.com/ethereum-optimism/superchain-registry/issues/147
 		7777777:   true, // mainnet/zora
 		11155421:  true, // sepolia-dev-0/oplabs-devnet-0
-		999999999: true, // sepolia/zoras
+		999999999: true, // sepolia/zora
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
@@ -97,11 +93,13 @@ func TestContractVersions(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
-		SkipCheckIfFrontierChain(t, *chain)
 		if isExcluded[chainID] {
 			t.Logf("chain %d: EXCLUDED from contract version validation", chainID)
 		} else {
-			t.Run(chain.Name, func(t *testing.T) { checkOPChainSatisfiesSemver(t, chain) })
+			t.Run(chain.Name, func(t *testing.T) {
+				SkipCheckIfFrontierChain(t, *chain)
+				checkOPChainSatisfiesSemver(t, chain)
+			})
 		}
 	}
 }
