@@ -52,7 +52,7 @@ The format is a gzipped JSON `genesis.json` file, with either:
   Nodes can load the genesis block header, and state-sync to complete the node initialization.
 
 ### 4. Run tests locally
-Run the following command to run our validation checks, only on the chain you added:
+Run the following command to run the registry's validation checks, for only the chain you added:
 
 ```
 cd validation
