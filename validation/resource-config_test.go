@@ -38,6 +38,7 @@ func TestResourceConfig(t *testing.T) {
 
 	for chainID, chain := range OPChains {
 		t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) {
+			SkipCheckIfBlurred(t, *chain)
 			SkipCheckIfFrontierChain(t, *chain)
 			checkResourceConfig(t, chain)
 		})

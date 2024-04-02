@@ -42,6 +42,7 @@ func TestGenesisHash(t *testing.T) {
 			t.Logf("chain %d: EXCLUDED from Genesis block hash validation", chainID)
 		} else {
 			t.Run(chain.Name, func(t *testing.T) {
+				SkipCheckIfBlurred(t, *chain)
 				SkipCheckIfFrontierChain(t, *chain)
 				testGenesisHashOfChain(t, chainID)
 			})

@@ -97,6 +97,7 @@ func TestContractVersions(t *testing.T) {
 			t.Logf("chain %d: EXCLUDED from contract version validation", chainID)
 		} else {
 			t.Run(chain.Name, func(t *testing.T) {
+				SkipCheckIfBlurred(t, *chain)
 				SkipCheckIfFrontierChain(t, *chain)
 				checkOPChainSatisfiesSemver(t, chain)
 			})

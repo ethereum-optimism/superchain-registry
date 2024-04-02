@@ -6,8 +6,10 @@ import (
 	"testing"
 )
 
-var focussedChainId uint64
-var focus bool
+var (
+	focussedChainId uint64
+	focus           bool
+)
 
 func init() {
 	flag.Uint64Var(&focussedChainId, "chain-id", 1, "ChainId to focus tests on")
