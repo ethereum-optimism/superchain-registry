@@ -20,7 +20,6 @@ import (
 
 func TestL2OOParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		10:        true, // mainnet/op                      (old version of L2OutputOracle, no submissionInterval method)
 		291:       true, // mainnet/orderly                 (old version of L2OutputOracle, no submissionInterval method)
 		424:       true, // mainnet/pgn                     (old version of L2OutputOracle, no submissionInterval method)
 		957:       true, // mainnet/lyra                    (old version of L2OutputOracle, no submissionInterval method)

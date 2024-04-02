@@ -39,9 +39,9 @@ type L2OOParams struct {
 
 // OPMainnetL2OOParams describes the L2OutputOracle parameters from OP Mainnet
 var OPMainnetL2OOParams = L2OOParams{
-	SubmissionInterval:        big.NewInt(120),
+	SubmissionInterval:        big.NewInt(1800),
 	L2BlockTime:               big.NewInt(2),
-	FinalizationPeriodSeconds: big.NewInt(12),
+	FinalizationPeriodSeconds: big.NewInt(604800),
 }
 
 // OPSepoliaL2OOParams describes the L2OutputOracle parameters from OP Sepolia
