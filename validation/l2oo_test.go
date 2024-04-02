@@ -134,7 +134,7 @@ func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, clie
 func getl2OOParamsWithRetriesLegacy(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (L2OOParams, error) {
 	callOpts := &bind.CallOpts{Context: ctx}
 	const maxAttempts = 3
-	l2OO, err := legacy.NewL2OutputOracle(l2OOAddr, client)
+	l2OO, err := legacy.NewL2OutputOracleCaller(l2OOAddr, client)
 	if err != nil {
 		return L2OOParams{}, err
 	}
