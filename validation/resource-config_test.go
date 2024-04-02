@@ -17,10 +17,6 @@ import (
 )
 
 func TestResourceConfig(t *testing.T) {
-	isExcluded := map[uint64]bool{
-		997: true, // OP_Labs_devnet_0 (uses old SystemConfigProxy with no resourceConfig() getter )
-	}
-
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig) {
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
@@ -41,10 +37,10 @@ func TestResourceConfig(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
-		SkipCheckIfFrontierChain(t, *chain)
-		if !isExcluded[chainID] {
-			t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) { checkResourceConfig(t, chain) })
-		}
+		t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) {
+			SkipCheckIfFrontierChain(t, *chain)
+			checkResourceConfig(t, chain)
+		})
 	}
 }
 
