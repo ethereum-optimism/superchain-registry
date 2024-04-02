@@ -20,11 +20,7 @@ import (
 
 func TestL2OOParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		8453:      true, // mainnet/base                    (old version of L2OutputOracle, no submissionInterval method)
-		34443:     true, // mainnet/mode                    (old version of L2OutputOracle, no submissionInterval method)
-		7777777:   true, // mainnet/zora                    (old version of L2OutputOracle, no submissionInterval method)
-		11155421:  true, // sepolia-dev-0/oplabs-devnet-0   (old version of L2OutputOracle, no submissionInterval method)
-		999999999: true, // sepolia/zora                    (old version of L2OutputOracle, no submissionInterval method)
+		999999999: true, // sepolia/zora    Incorrect submissionInterval, wanted 120 got 180
 	}
 
 	checkEquality := func(a, b *big.Int) func() bool {
