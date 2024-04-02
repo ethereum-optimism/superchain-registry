@@ -4,6 +4,7 @@ import (
 	"flag"
 	"os"
 	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -18,8 +19,14 @@ func init() {
 
 func TestMain(m *testing.M) {
 	flag.Parse()
+	var fcid uint64
+	var err error
 	if rawFocussedChainId != "" {
-		fcid, err := strconv.ParseUint(rawFocussedChainId, 10, 64)
+		if strings.HasPrefix(rawFocussedChainId, "0x") {
+			fcid, err = strconv.ParseUint(strings.TrimPrefix(rawFocussedChainId, "0x"), 16, 64)
+		} else {
+			fcid, err = strconv.ParseUint(rawFocussedChainId, 10, 64)
+		}
 		if err != nil {
 			panic(err)
 		}

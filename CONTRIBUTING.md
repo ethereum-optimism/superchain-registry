@@ -58,7 +58,7 @@ Run the following command to run the registry's validation checks, for only the 
 cd validation
 go test ./... -v -focus-chain-id=<your-chain-id-here>
 ```
-
+The chain id may either be decimal, or hex encoded (in which case it must have a "0x" prefix).
 
 ### 5. Raise your Pull Request
 Automated checks will run, and your PR will be reviewed in due course.
