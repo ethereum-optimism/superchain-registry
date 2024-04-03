@@ -47,7 +47,7 @@ func TestChainsAreGloballyUnique(t *testing.T) {
 	for _, chain := range OPChains {
 		if globalChainIds[uint(chain.ChainID)] != nil {
 			globalChainName := globalChainIds[uint(chain.ChainID)].Name
-			assert.Equal(t, chain.Name, globalChainName, "Local chain name does not match name from chainid.network")
+			assert.Equal(t, globalChainName, chain.Name, "Local chain name does not match name from chainid.network")
 		}
 
 		assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
