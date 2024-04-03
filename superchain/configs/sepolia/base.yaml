@@ -1,4 +1,4 @@
-name: Base Sepolia
+name: Base Sepolia Testnet
 chain_id: 84532
 public_rpc: https://sepolia.base.org
 sequencer_rpc: https://sepolia-sequencer.base.org

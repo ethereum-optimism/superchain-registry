@@ -1,4 +1,4 @@
-name: Zora Sepolia
+name: Zora Sepolia Testnet
 chain_id: 999999999
 public_rpc: "https://sepolia.rpc.zora.energy"
 sequencer_rpc: "https://sepolia.rpc.zora.energy"
