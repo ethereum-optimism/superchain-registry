@@ -1,4 +1,5 @@
 name: Sepolia PGN (Public Goods Network)
+short_name: sepPGN
 chain_id: 58008
 public_rpc: https://sepolia.publicgoods.network
 sequencer_rpc: https://sepolia.publicgoods.network
