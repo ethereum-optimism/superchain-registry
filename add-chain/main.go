@@ -16,7 +16,7 @@ import (
 var app = &cli.App{
 	Name:     "add-chain",
 	Usage:    "Add a new chain to the superchain-registry",
-	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, DeploymentsDirFlag, TestFlag, StandardChainCandidateFlag},
+	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, ChainShortNameFlag, RollupConfigFlag, DeploymentsDirFlag, TestFlag, StandardChainCandidateFlag},
 	Action:   entrypoint,
 	Commands: []*cli.Command{&PromoteToStandardCmd},
 }
@@ -32,6 +32,12 @@ var (
 		Name:     "chain-name",
 		Value:    "",
 		Usage:    "Custom name of the chain",
+		Required: false,
+	}
+	ChainShortNameFlag = &cli.StringFlag{
+		Name:     "chain-short-name",
+		Value:    "",
+		Usage:    "Custom short name of the chain",
 		Required: false,
 	}
 	RollupConfigFlag = &cli.StringFlag{
@@ -112,10 +118,14 @@ func entrypoint(ctx *cli.Context) error {
 	superchainTarget := viper.GetString("SUPERCHAIN_TARGET")
 
 	chainName := viper.GetString("CHAIN_NAME")
+	chainShortName := viper.GetString("CHAIN_SHORT_NAME")
 
 	// Allow cli flags to override env vars
 	if ctx.IsSet("chain-name") {
 		chainName = ctx.String("chain-name")
+	}
+	if ctx.IsSet("chain-short-name") {
+		chainShortName = ctx.String("chain-short-name")
 	}
 	rollupConfigPath := viper.GetString("ROLLUP_CONFIG")
 	if ctx.IsSet("rollup-config") {
@@ -127,6 +137,7 @@ func entrypoint(ctx *cli.Context) error {
 	}
 
 	fmt.Printf("Chain Name:                     %s\n", chainName)
+	fmt.Printf("Chain Short Name:               %s\n", chainShortName)
 	fmt.Printf("Superchain target:              %s\n", superchainTarget)
 	fmt.Printf("Superchain-registry repo dir:   %s\n", superchainRepoPath)
 	fmt.Printf("With deployments directory:     %s\n", deploymentsDir)
@@ -142,7 +153,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md")
 	}
 
-	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate)
+	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, chainShortName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
