@@ -8,25 +8,69 @@ import (
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestGloballyUniqueChainId(t *testing.T) {
-	globalChainIds, err := getGlobalChainIds()
+type uniqueProperties struct {
+	Name      string
+	ShortName string
+}
+
+type chainIDSet map[uint64]bool
+
+func (s chainIDSet) AddIfUnique(id uint64) error {
+	if s[id] {
+		return fmt.Errorf("Chain with ID %d is duplicated", id)
+	}
+	s[id] = true
+	return nil
+}
+
+type chainNameSet map[string]bool
+
+func (s chainNameSet) AddIfUnique(name string) error {
+	if s[name] {
+		return fmt.Errorf("Chain with name %s is duplicated", name)
+	}
+	s[name] = true
+	return nil
+}
+
+// type chainShortNameSet map[string]bool
+
+// func (s chainShortNameSet) AddIfUnique(name string) error {
+// 	if s[name] {
+// 		return fmt.Errorf("Chain with short name %s is duplicated", name)
+// 	}
+// 	s[name] = true
+// 	return nil
+// }
+
+func TestChainsAreGloballyUnique(t *testing.T) {
+	globalChainIds, err := getGlobalChains()
 	if err != nil {
 		t.Fatal(err)
 	}
+	localChainIds := make(chainIDSet)
+	localChainNames := make(chainNameSet)
+	// localChainShortNames := make(ChainNameSet)
 
 	for _, chain := range OPChains {
-		if globalChainIds[uint(chain.ChainID)] != "" &&
-			globalChainIds[uint(chain.ChainID)] != chain.Name {
-			t.Errorf("Chain %s with ID %d exists in global chain list with name %s",
-				chain.Name, chain.ChainID, globalChainIds[uint(chain.ChainID)])
+		if globalChainIds[uint(chain.ChainID)] != nil {
+			globalChainName := globalChainIds[uint(chain.ChainID)].Name
+			// globalShortName := globalChainIds[uint(chain.ChainID)].ShortName
+			assert.Equal(t, chain.Name, globalChainName, "Local chain name does not match name from chainid.network")
+			// require.Equal(t,chain.ShortName globalShortName, "Local short chain name does not match name from chainid.network" ) // TODO
 		}
+
+		assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
+		assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
+		// assert.NoError(t,localChainShortNames.AddIfUnique(chain.ShortName)) // TODO
 	}
 
 }
 
-func getGlobalChainIds() (map[uint]string, error) {
+func getGlobalChains() (map[uint]*uniqueProperties, error) {
 	chainListUrl := "https://chainid.network/chains_mini.json"
 
 	client := http.Client{}
@@ -53,8 +97,9 @@ func getGlobalChainIds() (map[uint]string, error) {
 	}
 
 	type entry struct {
-		ChainId uint   `json:"chainId"`
-		Name    string `json:"name"`
+		ChainId   uint   `json:"chainId"`
+		Name      string `json:"name"`
+		ShortName string `json:"shortName"`
 	}
 
 	globalChains := make([]entry, 1000)
@@ -64,13 +109,13 @@ func getGlobalChainIds() (map[uint]string, error) {
 		return nil, err
 	}
 
-	globalChainIds := make(map[uint]string)
+	globalChainIds := make(map[uint]*uniqueProperties)
 	for _, chain := range globalChains {
-		if globalChainIds[chain.ChainId] != "" {
+		if globalChainIds[chain.ChainId] != nil {
 			return nil, fmt.Errorf("Chains listed at %s have duplicate chain Id %d",
 				chainListUrl, chain.ChainId)
 		}
-		globalChainIds[chain.ChainId] = chain.Name
+		globalChainIds[chain.ChainId] = &uniqueProperties{chain.Name, chain.ShortName}
 	}
 	return globalChainIds, nil
 }
