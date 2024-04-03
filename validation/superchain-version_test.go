@@ -97,14 +97,13 @@ func TestContractVersions(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
-		if isExcluded[chainID] {
-			t.Logf("chain %d: EXCLUDED from contract version validation", chainID)
-		} else {
-			t.Run(chain.Name, func(t *testing.T) {
-				SkipCheckIfFrontierChain(t, *chain)
-				checkOPChainSatisfiesSemver(t, chain)
-			})
-		}
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if isExcluded[chainID] {
+				t.Skipf("chain %d: EXCLUDED from contract version validation", chainID)
+			}
+			SkipCheckIfFrontierChain(t, *chain)
+			checkOPChainSatisfiesSemver(t, chain)
+		})
 	}
 }
 

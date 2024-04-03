@@ -36,8 +36,8 @@ func TestResourceConfig(t *testing.T) {
 		t.Logf("resource metering acceptable")
 	}
 
-	for chainID, chain := range OPChains {
-		t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) {
+	for _, chain := range OPChains {
+		t.Run(perChainTestName(chain), func(t *testing.T) {
 			SkipCheckIfFrontierChain(t, *chain)
 			checkResourceConfig(t, chain)
 		})

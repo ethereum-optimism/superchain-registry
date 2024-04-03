@@ -81,7 +81,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 
 	for chainID, chain := range OPChains {
 		if !isExcluded[chainID] {
-			t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) {
+			t.Run(perChainTestName(chain), func(t *testing.T) {
 				SkipCheckIfFrontierChain(t, *chain)
 				rpcEndpoint := chain.PublicRPC
 				require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
