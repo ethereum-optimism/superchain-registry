@@ -54,6 +54,7 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 func TestContractVersions(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		919:       true, // sepolia/mode   L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
+		1740:      true, // sepolia/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		1750:      true, // mainnet/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		8453:      true, // mainnet/base
 		8866:      true, // mainnet/pontem L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
