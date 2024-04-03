@@ -37,7 +37,7 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 		}
 
 		if isExcludedFromSuperchainConfigCheck[superchain.Config.Name] {
-			t.Logf("%s excluded from SuperChainConfig version check", superchain.Config.Name)
+			t.Skipf("%s excluded from SuperChainConfig version check", superchain.Config.Name)
 			return
 		}
 
@@ -113,8 +113,6 @@ func checkSemverForContract(t *testing.T, contractName string, contractAddress *
 
 	require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
 		"%s.version=%s (UNACCEPTABLE desired version %s)", contractName, actualSemver, desiredSemver)
-
-	t.Logf("%s.version=%s (acceptable compared to %s)", contractName, actualSemver, desiredSemver)
 }
 
 // getVersion will get the version of a contract at a given address, if it exposes a version() method.

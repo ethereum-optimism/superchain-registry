@@ -42,8 +42,6 @@ func TestGasPriceOracleParams(t *testing.T) {
 			"overhead parameter %d out of bounds %d", actualParams.Overhead, desiredParams.Overhead)
 		require.True(t, isBigIntWithinBounds(actualParams.Scalar, desiredParams.Scalar),
 			"scalar parameter %d out of bounds %d", actualParams.Scalar, desiredParams.Scalar)
-
-		t.Logf("gas price oracle params are acceptable")
 	}
 
 	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
@@ -67,8 +65,6 @@ func TestGasPriceOracleParams(t *testing.T) {
 			"blobBaseFeeScalar %d out of bounds %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar)
 		require.True(t, isWithinBounds(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar),
 			"baseFeeScalar parameter %d out of bounds %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar)
-
-		t.Logf("gas price oracle params are acceptable")
 	}
 
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {

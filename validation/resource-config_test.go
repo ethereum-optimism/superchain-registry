@@ -32,8 +32,6 @@ func TestResourceConfig(t *testing.T) {
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
 		require.Equal(t, bindings.ResourceMeteringResourceConfig(OPMainnetResourceConfig), actualResourceConfig, "resource config unacceptable")
-
-		t.Logf("resource metering acceptable")
 	}
 
 	for _, chain := range OPChains {

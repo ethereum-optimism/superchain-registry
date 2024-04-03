@@ -30,7 +30,6 @@ func testGenesisHashOfChain(t *testing.T, chainID uint64) {
 	computedGenesisHash := computedGenesis.ToBlock().Hash()
 
 	require.Equal(t, common.Hash(declaredGenesisHash), computedGenesisHash, "chain %d: Genesis block hash must match computed value", chainID)
-	t.Logf("chain %d: Genesis block hash passed validation", chainID)
 }
 
 func TestGenesisHash(t *testing.T) {
