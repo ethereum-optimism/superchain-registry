@@ -119,5 +119,4 @@ func TestChainsAreGloballyUnique(t *testing.T) {
 		assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
 		assert.NoError(t, localChainShortNames.AddIfUnique(chain.ShortName))
 	}
-
 }
