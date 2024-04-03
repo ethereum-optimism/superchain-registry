@@ -1,4 +1,5 @@
 name: OP Mainnet
+short_name: oeth
 chain_id: 10
 public_rpc: https://mainnet.optimism.io
 sequencer_rpc: https://mainnet-sequencer.optimism.io

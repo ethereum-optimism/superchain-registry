@@ -36,15 +36,15 @@ func (s chainNameSet) AddIfUnique(name string) error {
 	return nil
 }
 
-// type chainShortNameSet map[string]bool
+type chainShortNameSet map[string]bool
 
-// func (s chainShortNameSet) AddIfUnique(name string) error {
-// 	if s[name] {
-// 		return fmt.Errorf("Chain with short name %s is duplicated", name)
-// 	}
-// 	s[name] = true
-// 	return nil
-// }
+func (s chainShortNameSet) AddIfUnique(name string) error {
+	if s[name] {
+		return fmt.Errorf("Chain with short name %s is duplicated", name)
+	}
+	s[name] = true
+	return nil
+}
 
 func TestChainsAreGloballyUnique(t *testing.T) {
 	globalChainIds, err := getGlobalChains()
@@ -53,19 +53,19 @@ func TestChainsAreGloballyUnique(t *testing.T) {
 	}
 	localChainIds := make(chainIDSet)
 	localChainNames := make(chainNameSet)
-	// localChainShortNames := make(ChainNameSet)
+	localChainShortNames := make(chainShortNameSet)
 
 	for _, chain := range OPChains {
 		if globalChainIds[uint(chain.ChainID)] != nil {
 			globalChainName := globalChainIds[uint(chain.ChainID)].Name
-			// globalShortName := globalChainIds[uint(chain.ChainID)].ShortName
-			assert.Equal(t, globalChainName, chain.Name, "Local chain name does not match name from chainid.network")
-			// require.Equal(t,chain.ShortName globalShortName, "Local short chain name does not match name from chainid.network" ) // TODO
+			globalShortName := globalChainIds[uint(chain.ChainID)].ShortName
+			assert.Equal(t, globalChainName, chain.Name, "Local chain name for %d does not match name from chainid.network", chain.ChainID)
+			assert.Equal(t, chain.ShortName, globalShortName, "Local short chain name for %d does not match name from chainid.network", chain.ChainID)
 		}
 
 		assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
 		assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
-		// assert.NoError(t,localChainShortNames.AddIfUnique(chain.ShortName)) // TODO
+		assert.NoError(t, localChainShortNames.AddIfUnique(chain.ShortName)) // TODO
 	}
 
 }

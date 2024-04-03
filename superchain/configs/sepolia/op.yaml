@@ -1,4 +1,5 @@
 name: OP Sepolia Testnet
+short_name: opsep
 chain_id: 11155420
 public_rpc: "https://sepolia.optimism.io"
 sequencer_rpc: "https://sepolia-sequencer.optimism.io"
