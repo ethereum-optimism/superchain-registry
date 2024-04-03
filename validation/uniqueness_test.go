@@ -46,30 +46,6 @@ func (s chainShortNameSet) AddIfUnique(name string) error {
 	return nil
 }
 
-func TestChainsAreGloballyUnique(t *testing.T) {
-	globalChainIds, err := getGlobalChains()
-	if err != nil {
-		t.Fatal(err)
-	}
-	localChainIds := make(chainIDSet)
-	localChainNames := make(chainNameSet)
-	localChainShortNames := make(chainShortNameSet)
-
-	for _, chain := range OPChains {
-		if globalChainIds[uint(chain.ChainID)] != nil {
-			globalChainName := globalChainIds[uint(chain.ChainID)].Name
-			globalShortName := globalChainIds[uint(chain.ChainID)].ShortName
-			assert.Equal(t, globalChainName, chain.Name, "Local chain name for %d does not match name from chainid.network", chain.ChainID)
-			assert.Equal(t, chain.ShortName, globalShortName, "Local short chain name for %d does not match name from chainid.network", chain.ChainID)
-		}
-
-		assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
-		assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
-		assert.NoError(t, localChainShortNames.AddIfUnique(chain.ShortName))
-	}
-
-}
-
 func getGlobalChains() (map[uint]*uniqueProperties, error) {
 	chainListUrl := "https://chainid.network/chains_mini.json"
 
@@ -118,4 +94,30 @@ func getGlobalChains() (map[uint]*uniqueProperties, error) {
 		globalChainIds[chain.ChainId] = &uniqueProperties{chain.Name, chain.ShortName}
 	}
 	return globalChainIds, nil
+}
+
+func TestChainsAreGloballyUnique(t *testing.T) {
+	globalChainIds, err := getGlobalChains()
+	if err != nil {
+		t.Fatal(err)
+	}
+	localChainIds := make(chainIDSet)
+	localChainNames := make(chainNameSet)
+	localChainShortNames := make(chainShortNameSet)
+
+	for _, chain := range OPChains {
+		if globalChainIds[uint(chain.ChainID)] != nil {
+			globalChainName := globalChainIds[uint(chain.ChainID)].Name
+			globalShortName := globalChainIds[uint(chain.ChainID)].ShortName
+			assert.Equal(t, globalChainName, chain.Name,
+				"Local chain name for %d does not match name from chainid.network", chain.ChainID)
+			assert.Equal(t, chain.ShortName, globalShortName,
+				"Local short chain name for %d does not match name from chainid.network", chain.ChainID)
+		}
+
+		assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
+		assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
+		assert.NoError(t, localChainShortNames.AddIfUnique(chain.ShortName))
+	}
+
 }
