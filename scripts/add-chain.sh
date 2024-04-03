@@ -43,6 +43,7 @@ SUPERCHAIN_REPO=${PARENT_DIR}
 source ${SUPERCHAIN_REPO}/.env
 
 echo "Chain Name                      ${CHAIN_NAME}"
+echo "Chain Short Name                ${CHAIN_SHORT_NAME}"
 echo "Superchain target:              ${SUPERCHAIN_TARGET}"
 echo "Reading from monrepo directory: ${MONOREPO_DIR}"
 echo "With deployments directory:     ${DEPLOYMENTS_DIR}"
@@ -58,6 +59,7 @@ echo "Block Explorer:                 ${EXPLORER}"
 # add chain config
 cat > $SUPERCHAIN_REPO/superchain/configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.yaml << EOF
 name: $CHAIN_NAME
+short_name: $CHAIN_SHORT_NAME
 chain_id: $(jq -j .l2_chain_id $ROLLUP_CONFIG)
 public_rpc: $PUBLIC_RPC
 sequencer_rpc: $SEQUENCER_RPC
