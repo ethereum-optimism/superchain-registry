@@ -51,7 +51,20 @@ The format is a gzipped JSON `genesis.json` file, with either:
 - a `stateHash` attribute: to omit a large state (e.g. for networks with a re-genesis or migration history).
   Nodes can load the genesis block header, and state-sync to complete the node initialization.
 
-### 4. Raise your Pull Request
+### 4. Run tests locally
+Run the following command to run the registry's validation checks, for only the chain you added (replace the chain name or ID accordingly):
+```
+go test -run=/OP-Sepolia
+```
+or
+```
+go test -run=/11155420
+```
+You can even focus on a particular test and chain combination:
+```
+go test -run=TestGasPriceOracleParams/11155420
+```
+### 5. Raise your Pull Request
 Automated checks will run, and your PR will be reviewed in due course.
 
 ## Adding a superchain target

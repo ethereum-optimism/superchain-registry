@@ -30,7 +30,6 @@ func testGenesisHashOfChain(t *testing.T, chainID uint64) {
 	computedGenesisHash := computedGenesis.ToBlock().Hash()
 
 	require.Equal(t, common.Hash(declaredGenesisHash), computedGenesisHash, "chain %d: Genesis block hash must match computed value", chainID)
-	t.Logf("chain %d: Genesis block hash passed validation", chainID)
 }
 
 func TestGenesisHash(t *testing.T) {
@@ -38,13 +37,12 @@ func TestGenesisHash(t *testing.T) {
 		10: true, // OP Mainnet, requires override (see https://github.com/ethereum-optimism/op-geth/blob/daade41d463b4ff332c6ed955603e47dcd25528b/core/superchain.go#L83-L94)
 	}
 	for chainID, chain := range OPChains {
-		if isExcluded[chain.ChainID] {
-			t.Logf("chain %d: EXCLUDED from Genesis block hash validation", chainID)
-		} else {
-			t.Run(chain.Name, func(t *testing.T) {
-				SkipCheckIfFrontierChain(t, *chain)
-				testGenesisHashOfChain(t, chainID)
-			})
-		}
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if isExcluded[chain.ChainID] {
+				t.Skipf("chain %d: EXCLUDED from Genesis block hash validation", chainID)
+			}
+			SkipCheckIfFrontierChain(t, *chain)
+			testGenesisHashOfChain(t, chainID)
+		})
 	}
 }
