@@ -78,17 +78,16 @@ func TestL2OOParams(t *testing.T) {
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
 
 		requireEqualParams(t, desiredParams, actualParams)
-
-		t.Logf("L2OutputOracle config params acceptable")
 	}
 
 	for chainID, chain := range OPChains {
-		if !isExcluded[chainID] {
-			t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) {
-				SkipCheckIfFrontierChain(t, *chain)
-				checkL2OOParams(t, chain)
-			})
-		}
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if isExcluded[chainID] {
+				t.Skip()
+			}
+			SkipCheckIfFrontierChain(t, *chain)
+			checkL2OOParams(t, chain)
+		})
 	}
 }
 

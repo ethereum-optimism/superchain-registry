@@ -37,7 +37,7 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 		}
 
 		if isExcludedFromSuperchainConfigCheck[superchain.Config.Name] {
-			t.Logf("%s excluded from SuperChainConfig version check", superchain.Config.Name)
+			t.Skipf("%s excluded from SuperChainConfig version check", superchain.Config.Name)
 			return
 		}
 
@@ -97,14 +97,13 @@ func TestContractVersions(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
-		if isExcluded[chainID] {
-			t.Logf("chain %d: EXCLUDED from contract version validation", chainID)
-		} else {
-			t.Run(chain.Name, func(t *testing.T) {
-				SkipCheckIfFrontierChain(t, *chain)
-				checkOPChainSatisfiesSemver(t, chain)
-			})
-		}
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if isExcluded[chainID] {
+				t.Skipf("chain %d: EXCLUDED from contract version validation", chainID)
+			}
+			SkipCheckIfFrontierChain(t, *chain)
+			checkOPChainSatisfiesSemver(t, chain)
+		})
 	}
 }
 
@@ -114,8 +113,6 @@ func checkSemverForContract(t *testing.T, contractName string, contractAddress *
 
 	require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
 		"%s.version=%s (UNACCEPTABLE desired version %s)", contractName, actualSemver, desiredSemver)
-
-	t.Logf("%s.version=%s (acceptable compared to %s)", contractName, actualSemver, desiredSemver)
 }
 
 // getVersion will get the version of a contract at a given address, if it exposes a version() method.
