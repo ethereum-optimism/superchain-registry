@@ -1,15 +1,25 @@
-# default code-owner
+# Default code-owner
 * @ethereum-optimism/security-reviewers
 
+# Code and script ownership
+
+## Go
 *.go @ethereum-optimism/go-reviewers
 /go.work @ethereum-optimism/go-reviewers
 /.golangci.yml @ethereum-optimism/go-reviewers
 /validation @ethereum-optimism/go-reviewers
 /superchain @ethereum-optimism/go-reviewers
-/superchain/extra/addresses @ethereum-optimism/security-reviewers
 
+## JS&TS
 *.js @roninjin10
 package.json @roninjin10
 
-/scripts/CheckSecurityConfigs.s.sol @ethereum-optimism/security-reviewers
+## Solidity
+*.sol @ethereum-optimism/security-reviewers
+
+# Superchain configuration ownership
+/superchain/configs @sbvegan @zak @mattie
+/superchain/extra @sbvegan @zak @mattie
+/superchain/implementations @ethereum-optimism/security-reviewers
+
 
