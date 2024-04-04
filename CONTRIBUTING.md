@@ -64,8 +64,13 @@ You can even focus on a particular test and chain combination:
 ```
 go test -run=TestGasPriceOracleParams/11155420
 ```
-### 5. Raise your Pull Request
-Automated checks will run, and your PR will be reviewed in due course.
+
+### 5. Open Your Pull Request
+When opening a PR:
+- Open it from a non-protected branch in your fork (e.g. avoid the `main` branch). This allows maintainers to push to your branch if needed, which streamlines the review and merge process.
+- Open one PR per chain you would like to add. This ensures the merge of one chain is not blocked by unexpected issues.
+
+Once the PR is opened, the same automated checks from Step 4 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
 
 ## Adding a superchain target
 
