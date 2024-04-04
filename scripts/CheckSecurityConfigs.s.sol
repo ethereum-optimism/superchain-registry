@@ -4,6 +4,7 @@ pragma solidity 0.8.15;
 import {console2} from "forge-std/console2.sol";
 import {Script} from "forge-std/Script.sol";
 import {VmSafe} from "forge-std/Vm.sol";
+import {LibString} from "solady/utils/LibString.sol";
 
 /**
  * @title CheckSecurityConfigs
@@ -14,6 +15,8 @@ import {VmSafe} from "forge-std/Vm.sol";
  *             --rpc-url $MAINNET_RPC_URL
  */
 contract CheckSecurityConfigs is Script {
+    using LibString for string;
+
     struct ProtocolAddresses {
         // Protocol contracts
         address AddressManager;
@@ -88,25 +91,7 @@ contract CheckSecurityConfigs is Script {
         // TODO Handle FPAC chains more comprehensively
         // https://github.com/ethereum-optimism/security-pod/issues/85
         // Only testnet chains may be added as an exception here.
-        return keccak256(
-            abi.encodePacked(
-                sliceString(addressesJsonPath, bytes(addressesJsonPath).length - 18, bytes(addressesJsonPath).length)
-            )
-        ) == keccak256(abi.encodePacked("sepolia/opsep.json"));
-    }
-
-    // Function to slice a string and return the result
-    function sliceString(string memory str, uint256 begin, uint256 end) public pure returns (string memory) {
-        require(begin < end, "Begin index must be less than end index");
-        bytes memory strBytes = bytes(str);
-        require(end <= strBytes.length, "End index out of bounds");
-
-        bytes memory result = new bytes(end - begin);
-        for (uint256 i = begin; i < end; i++) {
-            result[i - begin] = strBytes[i];
-        }
-
-        return string(result);
+        return addressesJsonPath.endsWith("sepolia/opsep.json");
     }
 
     function checkAddressManager(ProtocolAddresses memory addresses) internal {
