@@ -8,6 +8,9 @@ See [Superchain Upgrades] OP-Stack specifications.
 
 ## Adding a chain
 
+### 0. Install dependencies
+You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed.
+
 ### 1. Set env vars
 
 To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
