@@ -64,8 +64,11 @@ You can even focus on a particular test and chain combination:
 ```
 go test -run=TestGasPriceOracleParams/11155420
 ```
+
 ### 5. Raise your Pull Request
+Please raise a PR from a non-protected branch in your fork (e.g. avoid the `main` branch).
 Automated checks will run, and your PR will be reviewed in due course.
+Please raise a separate PR for each chain you would like to add.
 
 ## Adding a superchain target
 
