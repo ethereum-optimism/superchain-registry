@@ -57,7 +57,7 @@ echo "Block Explorer:                 ${EXPLORER}"
 
 
 # add chain config
-cat > $SUPERCHAIN_REPO/superchain/configs/$SUPERCHAIN_TARGET/$CHAIN_NAME.yaml << EOF
+cat > $SUPERCHAIN_REPO/superchain/configs/$SUPERCHAIN_TARGET/$CHAIN_SHORT_NAME.yaml << EOF
 name: $CHAIN_NAME
 short_name: $CHAIN_SHORT_NAME
 chain_id: $(jq -j .l2_chain_id $ROLLUP_CONFIG)
