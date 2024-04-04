@@ -9,7 +9,7 @@ See [Superchain Upgrades] OP-Stack specifications.
 ## Adding a chain
 
 ### 0. Install dependencies
-You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed.
+You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed, as well as Go.
 
 ### 1. Set env vars
 
