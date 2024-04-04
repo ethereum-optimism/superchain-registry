@@ -10,10 +10,6 @@
 /validation @ethereum-optimism/go-reviewers
 /superchain @ethereum-optimism/go-reviewers
 
-## JS&TS
-*.js @roninjin10
-package.json @roninjin10
-
 ## Solidity
 *.sol @ethereum-optimism/security-reviewers
 
