@@ -90,9 +90,9 @@ contract CheckSecurityConfigs is Script {
         // Only testnet chains may be added as an exception here.
         return keccak256(
             abi.encodePacked(
-                sliceString(addressesJsonPath, bytes(addressesJsonPath).length - 15, bytes(addressesJsonPath).length)
+                sliceString(addressesJsonPath, bytes(addressesJsonPath).length - 18, bytes(addressesJsonPath).length)
             )
-        ) == keccak256(abi.encodePacked("sepolia/op.json"));
+        ) == keccak256(abi.encodePacked("sepolia/opsep.json"));
     }
 
     // Function to slice a string and return the result
