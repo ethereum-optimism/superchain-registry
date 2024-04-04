@@ -60,13 +60,13 @@ func init() {
 			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
-			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
 
 			(&chainConfig).setNilHardforkTimestampsToDefaultOrZero(&superchainEntry.Config)
 
 			MustBeValidSuperchainLevel(chainConfig)
 
-			jsonName := chainConfig.Chain + ".json"
+			jsonName := strings.TrimSuffix(c.Name(), ".yaml") + ".json"
+
 			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
 			if err != nil {
 				panic(fmt.Errorf("failed to read addresses data of chain %s/%s: %w", s.Name(), jsonName, err))
