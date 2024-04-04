@@ -18,8 +18,8 @@ package.json @roninjin10
 *.sol @ethereum-optimism/security-reviewers
 
 # Superchain configuration ownership
-/superchain/configs @sbvegan @zak @mattie
-/superchain/extra @sbvegan @zak @mattie
+/superchain/configs @sbvegan @ZakAyesh @OPMattie
+/superchain/extra @sbvegan @ZakAyesh @OPMattie
 /superchain/implementations @ethereum-optimism/security-reviewers
 
 
