@@ -74,7 +74,7 @@ contract CheckSecurityConfigs is Script {
     function runOnSingleFile(string memory addressesJsonPath, bool isMainnet) internal {
         console2.log("Checking %s", addressesJsonPath);
 
-        (ProtocolAddresses memory addresses, bool upgradedToFPAC) = getAddresses(addressesJsonPath);
+        (ProtocolAddresses memory addresses, bool upgradedToFPAC) = getAddressesAndFpacStatus(addressesJsonPath);
         checkAddressManager(addresses);
         checkL1CrossDomainMessengerProxy(addresses);
         checkL1ERC721BridgeProxy(addresses);
@@ -241,7 +241,11 @@ contract CheckSecurityConfigs is Script {
         return abi.decode(addrBytes, (address));
     }
 
-    function getAddresses(string memory addressesJsonPath) internal view returns (ProtocolAddresses memory, bool) {
+    function getAddressesAndFpacStatus(string memory addressesJsonPath)
+        internal
+        view
+        returns (ProtocolAddresses memory, bool)
+    {
         string memory addressesJson = vm.readFile(addressesJsonPath);
         ProtocolAddresses memory addresses = ProtocolAddresses({
             AddressManager: vm.parseJsonAddress(addressesJson, ".AddressManager"),

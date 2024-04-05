@@ -70,8 +70,12 @@ the following privilege grants and role designations:
 3. Optimism privileged operational roles:
    1. Guardians. This is the role that can pause withdraws in the
       Optimism protocol.
-   2. Challengers. This is the role that can delete
-      `L2OutputOracleProxy`'s output roots in the Optimism protocol
+      1. After the FPAC upgrade, the `Guardian` can also blacklist dispute games and change the respected game type
+         in the `OptimismPortal`.
+   2. Challengers. This is the role that can delete `L2OutputOracleProxy`'s output roots in the Optimism protocol
+      1. After the FPAC upgrade, the `CHALLENGER` is a permissionless role in the `FaultDisputeGame`. However,
+         in the `PermissionedDisputeGame`, the `CHALLENGER` role is the only party allowed to dispute output proposals
+         created by the `PROPOSER` role.
 
 As a result, here is a visualization of all the relationships the
 `CheckSecurityConfigs.s.sol` script checks:
