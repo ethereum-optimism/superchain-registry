@@ -119,6 +119,21 @@
     "Guardian": "0xA9FF930151130fd19DA1F03E5077AFB7C78F8503",
     "Challenger": "0xDa3037Ff70Ac92CD867c683BD807e5A484857405"
   },
+  "90001": {
+    "AddressManager": "0xcA8eC24b738495B0ba662b5D7A4B9125aD7b9887",
+    "L1CrossDomainMessengerProxy": "0x6E4f15b01Da1b8452183ED0670a7e887D94206dd",
+    "L1ERC721BridgeProxy": "0x42ABFD98DF10E07Ed8127632Cf5393c08a1a2c16",
+    "L1StandardBridgeProxy": "0x0283D4401180b51487f3cDeFa7e149C143fAa5A6",
+    "L2OutputOracleProxy": "0x1a690d9e98552863cAabd2aE4db16CE167f160fd",
+    "OptimismMintableERC20FactoryProxy": "0x692FFA8Ec05811713944c0038E15DC1D3E2ADf2A",
+    "OptimismPortalProxy": "0x2020D6a3b31285A3a38fAfE52b5b9839Ba1341F2",
+    "SystemConfigProxy": "0x0f504208f557cebF3CbccD39Fff78a4e5Aec82d5",
+    "ProxyAdmin": "0xE7dA797Fa3CEcA0B6347b7313c160DcEF802EBB6",
+    "ProxyAdminOwner": "0xefBc88FF64EFF2E7FDb677b03A8CB51322bf2433",
+    "SystemConfigOwner": "0xA18a2abeE5243c1A20fCEa2A282f17aFF796DfC6",
+    "Guardian": "0xA18a2abeE5243c1A20fCEa2A282f17aFF796DfC6",
+    "Challenger": "0xA18a2abeE5243c1A20fCEa2A282f17aFF796DfC6"
+  },
   "7777777": {
     "AddressManager": "0xEF8115F2733fb2033a7c756402Fc1deaa56550Ef",
     "L1CrossDomainMessengerProxy": "0xdC40a14d9abd6F410226f1E6de71aE03441ca506",
