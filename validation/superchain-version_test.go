@@ -37,7 +37,7 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 		}
 
 		if isExcludedFromSuperchainConfigCheck[superchain.Config.Name] {
-			t.Logf("%s excluded from SuperChainConfig version check", superchain.Config.Name)
+			t.Skipf("%s excluded from SuperChainConfig version check", superchain.Config.Name)
 			return
 		}
 
@@ -53,17 +53,17 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 
 func TestContractVersions(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		291:       true, // mainnet/orderly
-		424:       true, // mainnet/pgn
-		957:       true, // mainnet/lyra
+		919:       true, // sepolia/mode   L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
+		1740:      true, // sepolia/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
+		1750:      true, // mainnet/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		8453:      true, // mainnet/base
+		8866:      true, // mainnet/pontem L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		34443:     true, // mainnet/mode
-		58008:     true, // sepolia/pgn
 		84532:     true, // sepolia/base
 		90001:     true, // sepolia/race, due to https://github.com/ethereum-optimism/superchain-registry/issues/147
 		7777777:   true, // mainnet/zora
 		11155421:  true, // sepolia-dev-0/oplabs-devnet-0
-		999999999: true, // sepolia/zoras
+		999999999: true, // sepolia/zora
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
@@ -97,12 +97,13 @@ func TestContractVersions(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
-		SkipCheckIfFrontierChain(t, *chain)
-		if isExcluded[chainID] {
-			t.Logf("chain %d: EXCLUDED from contract version validation", chainID)
-		} else {
-			t.Run(chain.Name, func(t *testing.T) { checkOPChainSatisfiesSemver(t, chain) })
-		}
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if isExcluded[chainID] {
+				t.Skipf("chain %d: EXCLUDED from contract version validation", chainID)
+			}
+			SkipCheckIfFrontierChain(t, *chain)
+			checkOPChainSatisfiesSemver(t, chain)
+		})
 	}
 }
 
@@ -112,8 +113,6 @@ func checkSemverForContract(t *testing.T, contractName string, contractAddress *
 
 	require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
 		"%s.version=%s (UNACCEPTABLE desired version %s)", contractName, actualSemver, desiredSemver)
-
-	t.Logf("%s.version=%s (acceptable compared to %s)", contractName, actualSemver, desiredSemver)
 }
 
 // getVersion will get the version of a contract at a given address, if it exposes a version() method.

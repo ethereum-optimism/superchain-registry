@@ -19,14 +19,8 @@ import (
 
 func TestGasPriceOracleParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		291:       true, // mainnet/orderly                 (incorrect scalar parameter)
-		424:       true, // mainnet/pgn                     (blobBaseFeeScalar out of bounds)
-		957:       true, // mainnet/lyra                    (incorrect scalar parameter)
-		58008:     true, // sepolia/pgn                     (blobBaseFeeScalar out of bounds)
-		84532:     true, // sepolia/base                    (blobBaseFeeScalar out of bounds)
-		11155421:  true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
-		11763072:  true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
-		999999999: true, // sepolia/zora                    (blobBaseFeeScalar out of bounds)
+		11155421: true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
+		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
 	}
 
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
@@ -48,8 +42,6 @@ func TestGasPriceOracleParams(t *testing.T) {
 			"overhead parameter %d out of bounds %d", actualParams.Overhead, desiredParams.Overhead)
 		require.True(t, isBigIntWithinBounds(actualParams.Scalar, desiredParams.Scalar),
 			"scalar parameter %d out of bounds %d", actualParams.Scalar, desiredParams.Scalar)
-
-		t.Logf("gas price oracle params are acceptable")
 	}
 
 	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
@@ -73,8 +65,6 @@ func TestGasPriceOracleParams(t *testing.T) {
 			"blobBaseFeeScalar %d out of bounds %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar)
 		require.True(t, isWithinBounds(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar),
 			"baseFeeScalar parameter %d out of bounds %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar)
-
-		t.Logf("gas price oracle params are acceptable")
 	}
 
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
@@ -86,9 +76,9 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
-		SkipCheckIfFrontierChain(t, *chain)
 		if !isExcluded[chainID] {
-			t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) {
+			t.Run(perChainTestName(chain), func(t *testing.T) {
+				SkipCheckIfFrontierChain(t, *chain)
 				rpcEndpoint := chain.PublicRPC
 				require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
 				client, err := ethclient.Dial(rpcEndpoint)

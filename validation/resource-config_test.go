@@ -17,10 +17,6 @@ import (
 )
 
 func TestResourceConfig(t *testing.T) {
-	isExcluded := map[uint64]bool{
-		997: true, // OP_Labs_devnet_0 (uses old SystemConfigProxy with no resourceConfig() getter )
-	}
-
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig) {
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
@@ -36,15 +32,13 @@ func TestResourceConfig(t *testing.T) {
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
 		require.Equal(t, bindings.ResourceMeteringResourceConfig(OPMainnetResourceConfig), actualResourceConfig, "resource config unacceptable")
-
-		t.Logf("resource metering acceptable")
 	}
 
-	for chainID, chain := range OPChains {
-		SkipCheckIfFrontierChain(t, *chain)
-		if !isExcluded[chainID] {
-			t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) { checkResourceConfig(t, chain) })
-		}
+	for _, chain := range OPChains {
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			SkipCheckIfFrontierChain(t, *chain)
+			checkResourceConfig(t, chain)
+		})
 	}
 }
 

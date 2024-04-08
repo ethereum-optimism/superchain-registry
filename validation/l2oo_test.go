@@ -8,6 +8,7 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	legacy "github.com/ethereum-optimism/superchain-registry/validation/internal/legacy"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
@@ -19,16 +20,7 @@ import (
 
 func TestL2OOParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		10:        true, // mainnet/op                      (old version of L2OutputOracle, no submissionInterval method)
-		291:       true, // mainnet/orderly                 (old version of L2OutputOracle, no submissionInterval method)
-		424:       true, // mainnet/pgn                     (old version of L2OutputOracle, no submissionInterval method)
-		957:       true, // mainnet/lyra                    (old version of L2OutputOracle, no submissionInterval method)
-		8453:      true, // mainnet/base                    (old version of L2OutputOracle, no submissionInterval method)
-		34443:     true, // mainnet/mode                    (old version of L2OutputOracle, no submissionInterval method)
-		58008:     true, // sepolia/pgn                     (old version of L2OutputOracle, no submissionInterval method)
-		7777777:   true, // mainnet/zora                    (old version of L2OutputOracle, no submissionInterval method)
-		11155421:  true, // sepolia-dev-0/oplabs-devnet-0   (old version of L2OutputOracle, no submissionInterval method)
-		999999999: true, // sepolia/zora                    (old version of L2OutputOracle, no submissionInterval method)
+		999999999: true, // sepolia/zora    Incorrect submissionInterval, wanted 120 got 180
 	}
 
 	checkEquality := func(a, b *big.Int) func() bool {
@@ -74,19 +66,28 @@ func TestL2OOParams(t *testing.T) {
 			t.Fatalf("superchain not recognized: %s", chain.Superchain)
 		}
 
-		actualParams, err := getl2OOParamsWithRetries(context.Background(), common.Address(contractAddress), client)
+		version, err := getVersion(context.Background(), common.Address(contractAddress), client)
+		require.NoError(t, err)
+
+		var actualParams L2OOParams
+		if version == "1.3.0" || version == "1.3.1" {
+			actualParams, err = getl2OOParamsWithRetriesLegacy(context.Background(), common.Address(contractAddress), client)
+		} else {
+			actualParams, err = getl2OOParamsWithRetries(context.Background(), common.Address(contractAddress), client)
+		}
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
 
 		requireEqualParams(t, desiredParams, actualParams)
-
-		t.Logf("L2OutputOracle config params acceptable")
 	}
 
 	for chainID, chain := range OPChains {
-		SkipCheckIfFrontierChain(t, *chain)
-		if !isExcluded[chainID] {
-			t.Run(chain.Name+fmt.Sprintf(" (%d)", chainID), func(t *testing.T) { checkL2OOParams(t, chain) })
-		}
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if isExcluded[chainID] {
+				t.Skip()
+			}
+			SkipCheckIfFrontierChain(t, *chain)
+			checkL2OOParams(t, chain)
+		})
 	}
 }
 
@@ -119,6 +120,43 @@ func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, clie
 	params.FinalizationPeriodSeconds, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
 		func() (*big.Int, error) {
 			return l2OO.FinalizationPeriodSeconds(callOpts)
+		})
+	if err != nil {
+		return L2OOParams{}, fmt.Errorf("could not get finalizationPeriodSeconds: %w", err)
+	}
+
+	return params, nil
+}
+
+// getResourceMeteringwill gets each of the parameters from the L2OutputOracle at l2OOAddr,
+// retrying up to 10 times with exponential backoff.
+func getl2OOParamsWithRetriesLegacy(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (L2OOParams, error) {
+	callOpts := &bind.CallOpts{Context: ctx}
+	const maxAttempts = 3
+	l2OO, err := legacy.NewL2OutputOracleCaller(l2OOAddr, client)
+	if err != nil {
+		return L2OOParams{}, err
+	}
+
+	params := L2OOParams{}
+
+	params.SubmissionInterval, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
+		func() (*big.Int, error) {
+			return l2OO.SUBMISSIONINTERVAL(callOpts)
+		})
+	if err != nil {
+		return L2OOParams{}, fmt.Errorf("could not get submissionInterval: %w", err)
+	}
+	params.L2BlockTime, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
+		func() (*big.Int, error) {
+			return l2OO.L2BLOCKTIME(callOpts)
+		})
+	if err != nil {
+		return L2OOParams{}, fmt.Errorf("could not get l2Blocktime: %w", err)
+	}
+	params.FinalizationPeriodSeconds, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
+		func() (*big.Int, error) {
+			return l2OO.FINALIZATIONPERIODSECONDS(callOpts)
 		})
 	if err != nil {
 		return L2OOParams{}, fmt.Errorf("could not get finalizationPeriodSeconds: %w", err)

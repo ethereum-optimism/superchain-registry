@@ -37,6 +37,9 @@ sh scripts/add-chain.sh frontier
 ### 3. Understand output
 The tool will write the following data:
 - The main configuration source, with genesis data, and address of onchain system configuration.
+> **Note**
+> Hardfork override times will be included. For standard chains, you must have all hardforks activated (see the neighbouring superchain.yaml file). It is not possible to override a superchain-wide hardfork time with `nil`.
+
 - Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.)
 - Genesis system config data
 - Compressed `genesis.json` definitions (in the `extra/genesis` directory) which pull in the bytecode by hash
@@ -51,8 +54,26 @@ The format is a gzipped JSON `genesis.json` file, with either:
 - a `stateHash` attribute: to omit a large state (e.g. for networks with a re-genesis or migration history).
   Nodes can load the genesis block header, and state-sync to complete the node initialization.
 
-### 4. Raise your Pull Request
-Automated checks will run, and your PR will be reviewed in due course.
+### 4. Run tests locally
+Run the following command to run the registry's validation checks, for only the chain you added (replace the chain name or ID accordingly):
+```
+go test -run=/OP-Sepolia
+```
+or
+```
+go test -run=/11155420
+```
+You can even focus on a particular test and chain combination:
+```
+go test -run=TestGasPriceOracleParams/11155420
+```
+
+### 5. Open Your Pull Request
+When opening a PR:
+- Open it from a non-protected branch in your fork (e.g. avoid the `main` branch). This allows maintainers to push to your branch if needed, which streamlines the review and merge process.
+- Open one PR per chain you would like to add. This ensures the merge of one chain is not blocked by unexpected issues.
+
+Once the PR is opened, the same automated checks from Step 4 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
 
 ## Adding a superchain target
 
