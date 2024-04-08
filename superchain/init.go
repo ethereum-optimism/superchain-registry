@@ -110,7 +110,7 @@ func init() {
 }
 
 func checkSuperChainLevel(chainConfig ChainConfig) {
-	if chainConfig.Type != Frontier && chainConfig.Type != Standard {
-		panic(fmt.Sprintf("invalid or unspecified superchain level %d", chainConfig.Type))
+	if chainConfig.SuperchainLevel != Frontier && chainConfig.SuperchainLevel != Standard {
+		panic(fmt.Sprintf("invalid or unspecified superchain level %d", chainConfig.SuperchainLevel))
 	}
 }
