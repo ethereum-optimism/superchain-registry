@@ -63,7 +63,7 @@ func init() {
 
 			(&chainConfig).setNilHardforkTimestampsToDefault(&superchainEntry.Config)
 
-			checkSuperchainLevel(chainConfig)
+			MustBeValidSuperchainLevel(chainConfig)
 
 			jsonName := chainConfig.Chain + ".json"
 			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
@@ -109,7 +109,7 @@ func init() {
 	}
 }
 
-func checkSuperchainLevel(chainConfig ChainConfig) {
+func MustBeValidSuperchainLevel(chainConfig ChainConfig) {
 	if chainConfig.SuperchainLevel != Frontier && chainConfig.SuperchainLevel != Standard {
 		panic(fmt.Sprintf("invalid or unspecified superchain level %d", chainConfig.SuperchainLevel))
 	}
