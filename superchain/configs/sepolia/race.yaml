@@ -10,9 +10,14 @@ batch_inbox_addr: "0xff00000000000000000000000000000000042069"
 
 genesis:
   l1:
-    hash: "0x4adb153f934e816f659868e215e5b28c2759920cb1dc26f261c17a22cab36506"
-    number: 5628480
+    hash: "0xbcf6dc31e37c1c4efd36329afe6d63404bcb6032570fadf1219d2a5b67ce072f"
+    number: 5660225
   l2:
-    hash: "0x2373168d2b1bcffa9f5eb9d7b0452323d128aea633103fbc4ba5906ec866d5d1"
+    hash: "0xb5c02b0c75564b0716d7179564e319a0f8255b0bf9a3f32f3d181a0d53239ec5"
     number: 0
-  l2_time: 1712246880
+  l2_time: 1712653536
+
+canyon_time: 0
+delta_time: 0
+ecotone_time: 0
+
