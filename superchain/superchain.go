@@ -63,7 +63,7 @@ type ChainConfig struct {
 	SequencerRPC string `yaml:"sequencer_rpc"`
 	Explorer     string `yaml:"explorer"`
 
-	Type SuperchainLevel `yaml:"superchain_level"`
+	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
 
 	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 

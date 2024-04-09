@@ -75,6 +75,11 @@ genesis:
     hash: "$(jq -j .genesis.l2.hash $ROLLUP_CONFIG)"
     number: $(jq -j .genesis.l2.number $ROLLUP_CONFIG)
   l2_time: $(jq -j .genesis.l2_time $ROLLUP_CONFIG)
+
+canyon_time: $(jq -j .canyon_time $ROLLUP_CONFIG)
+delta_time: $(jq -j .delta_time $ROLLUP_CONFIG)
+ecotone_time: $(jq -j .ecotone_time $ROLLUP_CONFIG)
+
 EOF
 
 
