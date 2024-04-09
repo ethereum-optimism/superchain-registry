@@ -58,6 +58,7 @@ func TestContractVersions(t *testing.T) {
 		1750:      true, // mainnet/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		8453:      true, // mainnet/base
 		8866:      true, // mainnet/pontem L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
+		28882:     true, // sepolia/boba
 		34443:     true, // mainnet/mode
 		84532:     true, // sepolia/base
 		90001:     true, // sepolia/race, due to https://github.com/ethereum-optimism/superchain-registry/issues/147
