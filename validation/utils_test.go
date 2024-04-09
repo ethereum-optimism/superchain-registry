@@ -55,7 +55,7 @@ func TestAreCloseInts(t *testing.T) {
 }
 
 func SkipCheckIfFrontierChain(t *testing.T, chain superchain.ChainConfig) {
-	if chain.Type == superchain.Frontier {
+	if chain.SuperchainLevel == superchain.Frontier {
 		t.Skip()
 	}
 }
