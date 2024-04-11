@@ -24,18 +24,18 @@ func TestAddressFor(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestVersionFor(t *testing.T) {
+func TestVersionsFor(t *testing.T) {
 	cl := ContractVersions{
-		L1CrossDomainMessenger: "1.9.9",
-		OptimismPortal:         "",
+		L1CrossDomainMessenger: []string{"1.9.9"},
+		OptimismPortal:         []string{},
 	}
 	want := "1.9.9"
-	got, err := cl.VersionFor("L1CrossDomainMessenger")
+	got, err := cl.VersionsFor("L1CrossDomainMessenger")
 	require.NoError(t, err)
 	require.Equal(t, want, got)
-	_, err = cl.VersionFor("OptimismPortal")
+	_, err = cl.VersionsFor("OptimismPortal")
 	require.Error(t, err)
-	_, err = cl.VersionFor("Garbage")
+	_, err = cl.VersionsFor("Garbage")
 	require.Error(t, err)
 }
 
@@ -159,73 +159,6 @@ func TestContractVersionsCheck(t *testing.T) {
 		if err := versions.Check(true); err != nil {
 			t.Fatal(err)
 		}
-	}
-}
-
-// TestContractVersionsResolve will test that the high lever interface used works.
-func TestContractVersionsResolve(t *testing.T) {
-	impls, err := newContractImplementations("sepolia")
-	if err != nil {
-		t.Fatalf("failed to load contract implementations: %v", err)
-	}
-
-	if impls.L1CrossDomainMessenger.Get("1.6.0") == (Address{}) {
-		t.Fatal("wrong L1CrossDomainMessenger address")
-	}
-	if impls.L1ERC721Bridge.Get("1.3.0") == (Address{}) {
-		t.Fatal("wrong L1ERC721Bridge address")
-	}
-	if impls.L1StandardBridge.Get("1.3.0") == (Address{}) {
-		t.Fatal("wrong L1StandardBridge address")
-	}
-	if impls.L2OutputOracle.Get("1.5.0") == (Address{}) {
-		t.Fatal("wrong L2OutputOracle address")
-	}
-	if impls.OptimismMintableERC20Factory.Get("1.4.0") == (Address{}) {
-		t.Fatal("wrong OptimismMintableERC20 address")
-	}
-	if impls.OptimismPortal.Get("1.9.0") == (Address{}) {
-		t.Fatal("wrong OptimismPortal address")
-	}
-	if impls.SystemConfig.Get("1.7.0") == (Address{}) {
-		t.Fatal("wrong SystemConfig address")
-	}
-
-	versions := ContractVersions{
-		L1CrossDomainMessenger:       "1.6.0",
-		L1ERC721Bridge:               "1.3.0",
-		L1StandardBridge:             "1.3.0",
-		L2OutputOracle:               "1.5.0",
-		OptimismMintableERC20Factory: "1.4.0",
-		OptimismPortal:               "1.9.0",
-		SystemConfig:                 "1.7.0",
-	}
-
-	list, err := impls.Resolve(versions)
-	if err != nil {
-		t.Fatalf("unable to resolve: %s", err)
-	}
-
-	if list.L1CrossDomainMessenger.Version != "v1.6.0" {
-		t.Fatalf("wrong L1CrossDomainMessenger version: %s", list.L1CrossDomainMessenger.Version)
-	}
-	if list.L1ERC721Bridge.Version != "v1.3.0" {
-		t.Fatalf("wrong L1ERC721Bridge version: %s", list.L1ERC721Bridge.Version)
-	}
-	if list.L1StandardBridge.Version != "v1.3.0" {
-		t.Fatalf("wrong L1StandardBridge version: %s", list.L1StandardBridge.Version)
-	}
-	if list.L2OutputOracle.Version != "v1.5.0" {
-		t.Fatalf("wrong L2OutputOracle version: %s", list.L2OutputOracle.Version)
-	}
-	if list.OptimismMintableERC20Factory.Version != "v1.4.0" {
-		t.Fatalf("wrong OptimismMintableERC20Factory version: %s", list.OptimismMintableERC20Factory.Version)
-	}
-	if list.OptimismPortal.Version != "v1.9.0" {
-		t.Fatalf("wrong OptimismPortal version: %s", list.OptimismPortal.Version)
-	}
-	if list.SystemConfig.Version != "v1.7.0" {
-		t.Fatalf("wrong SystemConfig version: %s", list.SystemConfig.Version)
 	}
 }
 

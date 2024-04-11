@@ -16,8 +16,13 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-var isSemverAcceptable = func(desired, actual string) bool {
-	return desired == actual
+var isSemverAcceptable = func(desired []string, actual string) bool {
+	for _, entry := range desired {
+		if entry == actual {
+			return true
+		}
+	}
+	return false
 }
 
 func TestSuperchainWideContractVersions(t *testing.T) {
@@ -28,7 +33,7 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 		client, err := ethclient.Dial(rpcEndpoint)
 		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-		desiredSemver, err := SuperchainSemver[superchain.Superchain].VersionFor("ProtocolVersions")
+		desiredSemver, err := SuperchainSemver[superchain.Superchain].VersionsFor("ProtocolVersions")
 		require.NoError(t, err)
 		checkSemverForContract(t, "ProtocolVersions", superchain.Config.ProtocolVersionsAddr, client, desiredSemver)
 
@@ -41,7 +46,7 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 			return
 		}
 
-		desiredSemver, err = SuperchainSemver[superchain.Superchain].VersionFor("SuperchainConfig")
+		desiredSemver, err = SuperchainSemver[superchain.Superchain].VersionsFor("SuperchainConfig")
 		require.NoError(t, err)
 		checkSemverForContract(t, "SuperchainConfig", superchain.Config.SuperchainConfigAddr, client, desiredSemver)
 	}
@@ -85,7 +90,7 @@ func TestContractVersions(t *testing.T) {
 		}
 
 		for _, contractName := range contractNames {
-			desiredSemver, err := SuperchainSemver[chain.Superchain].VersionFor(contractName)
+			desiredSemver, err := SuperchainSemver[chain.Superchain].VersionsFor(contractName)
 			require.NoError(t, err)
 			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
 			proxyContractName := contractName + "Proxy"
@@ -107,7 +112,7 @@ func TestContractVersions(t *testing.T) {
 	}
 }
 
-func checkSemverForContract(t *testing.T, contractName string, contractAddress *Address, client *ethclient.Client, desiredSemver string) {
+func checkSemverForContract(t *testing.T, contractName string, contractAddress *Address, client *ethclient.Client, desiredSemver []string) {
 	actualSemver, err := getVersionWithRetries(context.Background(), common.Address(*contractAddress), client)
 	require.NoError(t, err, "Could not get version for %s", contractName)
 

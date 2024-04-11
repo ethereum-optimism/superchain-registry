@@ -205,35 +205,6 @@ func (a AddressSet) Versions() []string {
 	return keys
 }
 
-// Resolve will return a set of addresses that resolve a given
-// semantic version set.
-func (c ContractImplementations) Resolve(versions ContractVersions) (ImplementationList, error) {
-	var implementations ImplementationList
-	var err error
-	if implementations.L1CrossDomainMessenger, err = resolve(c.L1CrossDomainMessenger, versions.L1CrossDomainMessenger); err != nil {
-		return implementations, fmt.Errorf("L1CrossDomainMessenger: %w", err)
-	}
-	if implementations.L1ERC721Bridge, err = resolve(c.L1ERC721Bridge, versions.L1ERC721Bridge); err != nil {
-		return implementations, fmt.Errorf("L1ERC721Bridge: %w", err)
-	}
-	if implementations.L1StandardBridge, err = resolve(c.L1StandardBridge, versions.L1StandardBridge); err != nil {
-		return implementations, fmt.Errorf("L1StandardBridge: %w", err)
-	}
-	if implementations.L2OutputOracle, err = resolve(c.L2OutputOracle, versions.L2OutputOracle); err != nil {
-		return implementations, fmt.Errorf("L2OutputOracle: %w", err)
-	}
-	if implementations.OptimismMintableERC20Factory, err = resolve(c.OptimismMintableERC20Factory, versions.OptimismMintableERC20Factory); err != nil {
-		return implementations, fmt.Errorf("OptimismMintableERC20Factory: %w", err)
-	}
-	if implementations.OptimismPortal, err = resolve(c.OptimismPortal, versions.OptimismPortal); err != nil {
-		return implementations, fmt.Errorf("OptimismPortal: %w", err)
-	}
-	if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
-		return implementations, fmt.Errorf("SystemConfig: %w", err)
-	}
-	return implementations, nil
-}
-
 // resolve returns a VersionedContract that matches the passed in semver version
 // given a set of addresses.
 func resolve(set AddressSet, version string) (VersionedContract, error) {
@@ -267,48 +238,48 @@ func resolve(set AddressSet, version string) (VersionedContract, error) {
 // in the superchain. This currently only supports L1 contracts but could
 // represent L2 predeploys in the future.
 type ContractVersions struct {
-	L1CrossDomainMessenger       string `yaml:"l1_cross_domain_messenger"`
-	L1ERC721Bridge               string `yaml:"l1_erc721_bridge"`
-	L1StandardBridge             string `yaml:"l1_standard_bridge"`
-	L2OutputOracle               string `yaml:"l2_output_oracle"`
-	OptimismMintableERC20Factory string `yaml:"optimism_mintable_erc20_factory"`
-	OptimismPortal               string `yaml:"optimism_portal"`
-	SystemConfig                 string `yaml:"system_config"`
+	L1CrossDomainMessenger       []string `yaml:"l1_cross_domain_messenger"`
+	L1ERC721Bridge               []string `yaml:"l1_erc721_bridge"`
+	L1StandardBridge             []string `yaml:"l1_standard_bridge"`
+	L2OutputOracle               []string `yaml:"l2_output_oracle"`
+	OptimismMintableERC20Factory []string `yaml:"optimism_mintable_erc20_factory"`
+	OptimismPortal               []string `yaml:"optimism_portal"`
+	SystemConfig                 []string `yaml:"system_config"`
 	// Superchain-wide contracts:
-	ProtocolVersions string `yaml:"protocol_versions"`
-	SuperchainConfig string `yaml:"superchain_config,omitempty"`
+	ProtocolVersions []string `yaml:"protocol_versions"`
+	SuperchainConfig []string `yaml:"superchain_config,omitempty"`
 }
 
 // VersionFor returns the version for the supplied contract name, if it exits
 // (and an error otherwise). Useful for slicing into the struct using a string.
-func (c ContractVersions) VersionFor(contractName string) (string, error) {
-	var version string
+func (c ContractVersions) VersionsFor(contractName string) ([]string, error) {
+	var versions []string
 	switch contractName {
 	case "L1CrossDomainMessenger":
-		version = c.L1CrossDomainMessenger
+		versions = c.L1CrossDomainMessenger
 	case "L1ERC721Bridge":
-		version = c.L1ERC721Bridge
+		versions = c.L1ERC721Bridge
 	case "L1StandardBridge":
-		version = c.L1StandardBridge
+		versions = c.L1StandardBridge
 	case "L2OutputOracle":
-		version = c.L2OutputOracle
+		versions = c.L2OutputOracle
 	case "OptimismMintableERC20Factory":
-		version = c.OptimismMintableERC20Factory
+		versions = c.OptimismMintableERC20Factory
 	case "OptimismPortal":
-		version = c.OptimismPortal
+		versions = c.OptimismPortal
 	case "SystemConfig":
-		version = c.SystemConfig
+		versions = c.SystemConfig
 	case "ProtocolVersions":
-		version = c.ProtocolVersions
+		versions = c.ProtocolVersions
 	case "SuperchainConfig":
-		version = c.SuperchainConfig
+		versions = c.SuperchainConfig
 	default:
-		return "", errors.New("no such contract name")
+		return nil, errors.New("no such contract name")
 	}
-	if version == "" {
-		return "", errors.New("no version specified")
+	if versions == nil {
+		return nil, errors.New("no version specified")
 	}
-	return version, nil
+	return versions, nil
 }
 
 // Check will sanity check the validity of the semantic version strings
