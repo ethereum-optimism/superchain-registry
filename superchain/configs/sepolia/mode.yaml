@@ -6,6 +6,8 @@ explorer: https://sepolia.explorer.mode.network
 
 batch_inbox_addr: "0xcddae6148da1e003c230e4527f9baedc8a204e7e"
 
+superchain_level: 2
+
 genesis:
   l1:
     hash: "0x4370cafe528a1b8f2aaffc578094731daf69ff82fd9edc30d2d842d3763f3410"

@@ -6,6 +6,8 @@ explorer: https://testnet.explorer.metall2.com
 
 batch_inbox_addr: "0x24567b64a86a4c966655fba6502a93dfb701e316"
 
+superchain_level: 2
+
 genesis:
   l1:
     hash: "0x6a10927c70985f75898c48235b620acb2a48e9c777a40022f9dbad1b0c96a9c1"
