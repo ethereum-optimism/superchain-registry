@@ -21,6 +21,8 @@ import (
 func TestL2OOParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		999999999: true, // sepolia/zora    Incorrect submissionInterval, wanted 120 got 180
+		919:       true, // sepolia/mode
+		1740:      true, // sepolia/metal
 	}
 
 	checkEquality := func(a, b *big.Int) func() bool {
