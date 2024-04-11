@@ -19,6 +19,14 @@ func init() {
 	}
 	// iterate over superchain-target entries
 	for _, s := range superchainTargets {
+		// TODO Hackily skip sepolia devnet for now. This is because we populate `Implementations` and
+		// other maps based on chain ID, but the Sepolia and Sepolia devnet target have the same chain
+		// ID, meaning the Sepolia devnet data overwrites the Sepolia data. The actual fix is to key off
+		// the target name but this is a big change.
+		fmt.Printf("s.Name(): %v\n", s.Name())
+		if s.Name() == "sepolia-dev-0" {
+			continue
+		}
 
 		if !s.IsDir() {
 			continue // ignore files, e.g. a readme
