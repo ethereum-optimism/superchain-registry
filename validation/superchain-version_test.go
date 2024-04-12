@@ -65,6 +65,7 @@ func TestContractVersions(t *testing.T) {
 		7777777:   true, // mainnet/zora
 		11155421:  true, // sepolia-dev-0/oplabs-devnet-0
 		999999999: true, // sepolia/zora
+		11763072:  true, // sepolia-dev-0/base-devnet-0    TODO Temporary hack, see https://github.com/ethereum-optimism/superchain-registry/pull/172 to learn more.
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
