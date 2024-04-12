@@ -7,6 +7,7 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
@@ -111,7 +112,7 @@ func checkSemverForContract(t *testing.T, contractName string, contractAddress *
 	actualSemver, err := getVersionWithRetries(context.Background(), common.Address(*contractAddress), client)
 	require.NoError(t, err, "Could not get version for %s", contractName)
 
-	require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
+	assert.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
 		"%s.version=%s (UNACCEPTABLE desired version %s)", contractName, actualSemver, desiredSemver)
 }
 
