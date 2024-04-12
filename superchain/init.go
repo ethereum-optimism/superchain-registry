@@ -19,14 +19,6 @@ func init() {
 	}
 	// iterate over superchain-target entries
 	for _, s := range superchainTargets {
-		// TODO Hackily skip sepolia devnet for now. This is because we populate `Implementations` and
-		// other maps based on chain ID, but the Sepolia and Sepolia devnet target have the same L1 chain
-		// ID, meaning the Sepolia devnet data overwrites the Sepolia data. The actual fix is to key off
-		// the target name instead of L1 chain ID, but that is a big change.
-		if s.Name() == "sepolia-dev-0" {
-			continue
-		}
-
 		if !s.IsDir() {
 			continue // ignore files, e.g. a readme
 		}
@@ -103,6 +95,14 @@ func init() {
 			Addresses[chainConfig.ChainID] = &addrs
 			GenesisSystemConfigs[chainConfig.ChainID] = &genesisSysCfg
 
+		}
+
+		// TODO Hackily skip sepolia devnet for now. This is because we populate `Implementations` based
+		// on L1 chain ID, but the Sepolia and Sepolia devnet target have the same L1 chain ID, meaning
+		// the Sepolia devnet data overwrites the Sepolia data. The actual fix is to key off the target
+		// name but this is a bigger change.
+		if s.Name() == "sepolia-dev-0" {
+			continue
 		}
 
 		Superchains[superchainEntry.Superchain] = &superchainEntry
