@@ -83,19 +83,56 @@ ecotone_time: $(jq -j .ecotone_time $ROLLUP_CONFIG)
 EOF
 
 
-# add extra addresses data
+# infer appropriate L1_RPC_URL
+case $SUPERCHAIN_TARGET in
+    "mainnet")
+        L1_RPC_URL="https://ethereum-mainnet-rpc.allthatnode.com"
+        ;;
+    "sepolia")
+        L1_RPC_URL="https://ethereum-sepolia-rpc.allthatnode.com"
+        ;;
+    *)
+        echo "Unsupported Superchain Target $SUPERCHAIN_TARGET"
+        exit 1
+        ;;
+esac
+
+# scrape addresses from static deployment artifacts
+AddressManager=$(jq -j .address $DEPLOYMENTS_DIR/AddressManager.json)
+L1CrossDomainMessengerProxy=$(jq -j .address $DEPLOYMENTS_DIR/L1CrossDomainMessengerProxy.json)
+L1ERC721BridgeProxy=$(jq -j .address $DEPLOYMENTS_DIR/L1ERC721BridgeProxy.json)
+L1StandardBridgeProxy=$(jq -j .address $DEPLOYMENTS_DIR/L1StandardBridgeProxy.json)
+L2OutputOracleProxy=$(jq -j .address $DEPLOYMENTS_DIR/L2OutputOracleProxy.json)
+OptimismMintableERC20FactoryProxy=$(jq -j .address $DEPLOYMENTS_DIR/OptimismMintableERC20FactoryProxy.json)
+SystemConfigProxy=$(jq -j .address $DEPLOYMENTS_DIR/SystemConfigProxy.json)
+OptimismPortalProxy=$(jq -j .address $DEPLOYMENTS_DIR/OptimismPortalProxy.json)
+SystemConfigProxy=$(jq -j .address $DEPLOYMENTS_DIR/SystemConfigProxy.json)
+
+# scrape remaining address live from the chain
+SuperchainConfig=$(cast call $OptimismPortalProxy "superchainConfig()(address)" -r $L1_RPC_URL) || "" # first command could fail if bedrock
+Guardian=$(cast call $SuperchainConfig "guardian()(address)" -r $L1_RPC_URL) || $(cast call $OptimismPortalProxy "GUARDIAN()(address)" -r $L1_RPC_URL) # first command could fail if bedrock
+Challenger=$(cast call $L2OutputOracleProxy "challenger()(address)" -r $L1_RPC_URL) # first command could fail if FPAC: TODO figure out how to get this role if FPAC
+ProxyAdmin=$(jq -j .address $DEPLOYMENTS_DIR/ProxyAdmin.json)
+ProxyAdminOwner=$(cast call $ProxyAdmin "owner()(address)" -r $L1_RPC_URL)
+SystemConfigOwner=$(cast call $SystemConfigProxy "owner()(address)" -r $L1_RPC_URL)
+
+# add extra addresses data to registry
 mkdir -p $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET
 cat > $SUPERCHAIN_REPO/superchain/extra/addresses/$SUPERCHAIN_TARGET/$CHAIN_NAME.json << EOF
 {
-  "AddressManager": "$(jq -j .address $DEPLOYMENTS_DIR/AddressManager.json)",
-  "L1CrossDomainMessengerProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1CrossDomainMessengerProxy.json)",
-  "L1ERC721BridgeProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1ERC721BridgeProxy.json)",
-  "L1StandardBridgeProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L1StandardBridgeProxy.json)",
-  "L2OutputOracleProxy": "$(jq -j .address $DEPLOYMENTS_DIR/L2OutputOracleProxy.json)",
-  "OptimismMintableERC20FactoryProxy": "$(jq -j .address $DEPLOYMENTS_DIR/OptimismMintableERC20FactoryProxy.json)",
-  "OptimismPortalProxy": "$(jq -j .address $DEPLOYMENTS_DIR/OptimismPortalProxy.json)",
-  "SystemConfigProxy": "$(jq -j .address $DEPLOYMENTS_DIR/SystemConfigProxy.json)",
-  "ProxyAdmin": "$(jq -j .address $DEPLOYMENTS_DIR/ProxyAdmin.json)"
+  "AddressManager": "$AddressManager",
+  "L1CrossDomainMessengerProxy": "$L1CrossDomainMessengerProxy",
+  "L1ERC721BridgeProxy": "$L1ERC721BridgeProxy",
+  "L1StandardBridgeProxy": "$L1StandardBridgeProxy",
+  "L2OutputOracleProxy": "$L2OutputOracleProxy",
+  "OptimismMintableERC20FactoryProxy": "$OptimismMintableERC20FactoryProxy",
+  "OptimismPortalProxy": "$OptimismPortalProxy",
+  "SystemConfigProxy": "$SystemConfigProxy",
+  "ProxyAdmin": "$ProxyAdmin",
+  "ProxyAdminOwner": "$ProxyAdminOwner",
+  "SystemConfigOwner": "$SystemConfigOwner",
+  "Guardian": "$Guardian",
+  "Challenger": "$Challenger"
 }
 EOF
 
