@@ -34,7 +34,8 @@ func testGenesisHashOfChain(t *testing.T, chainID uint64) {
 
 func TestGenesisHash(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		10: true, // OP Mainnet, requires override (see https://github.com/ethereum-optimism/op-geth/blob/daade41d463b4ff332c6ed955603e47dcd25528b/core/superchain.go#L83-L94)
+		10:   true, // OP Mainnet, requires override (see https://github.com/ethereum-optimism/op-geth/blob/daade41d463b4ff332c6ed955603e47dcd25528b/core/superchain.go#L83-L94)
+		1740: true, // sepolia/metal
 	}
 	for chainID, chain := range OPChains {
 		t.Run(perChainTestName(chain), func(t *testing.T) {
