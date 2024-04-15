@@ -23,6 +23,10 @@ func TestL2OOParams(t *testing.T) {
 		999999999: true, // sepolia/zora    Incorrect submissionInterval, wanted 120 got 180
 		11763072:  true, // sepolia-dev-0/base-devnet-0    TODO Temporary hack, see https://github.com/ethereum-optimism/superchain-registry/pull/172 to learn more.
 		11155421:  true, // sepolia-dev-0/oplabs-devnet-0    TODO Temporary hack, see https://github.com/ethereum-optimism/superchain-registry/pull/172 to learn more.
+		1740:      true, // sepolia/metal Incorrect submissionInterval
+		1750:      true, // mainnet/metal Incorrect submissionInterval
+		919:       true, // sepolia/mode Incorrect submissionInterval
+		8866:      true, // mainnet/superlumio Incorrect submissionInterval
 	}
 
 	checkEquality := func(a, b *big.Int) func() bool {
