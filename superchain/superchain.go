@@ -499,6 +499,10 @@ func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
 	return yaml.Unmarshal(data, temp)
 }
 
+// Superchain represents a set of OP Chains which must all upgrade together.
+// We currently have three Superchains: mainnet, which includes OP Mainnet;
+// sepolia, which includes OP Sepolia; and sepolia-dev-0, which is our development
+// Sepolia environment.
 type Superchain struct {
 	Config SuperchainConfig
 
