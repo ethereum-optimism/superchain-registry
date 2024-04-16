@@ -3,7 +3,6 @@ package validation
 import (
 	"context"
 	"fmt"
-	"math/big"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
@@ -36,19 +35,8 @@ func TestResourceConfig(t *testing.T) {
 
 		actualResourceConfig, err := getResourceConfigWithRetries(context.Background(), common.Address(contractAddress), client)
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
-		mbf, ok := big.NewInt(0).SetString(StandardConfig.ResourceConfig.MaximumBaseFee, 16)
-		if !ok {
-			t.Fatal("could not parse")
-		}
 
-		require.Equal(t, bindings.ResourceMeteringResourceConfig{
-			MaximumBaseFee:              mbf,
-			ElasticityMultiplier:        StandardConfig.ResourceConfig.ElasticityMultiplier,
-			BaseFeeMaxChangeDenominator: StandardConfig.ResourceConfig.BaseFeeMaxChangeDenominator,
-			MinimumBaseFee:              StandardConfig.ResourceConfig.MinimumBaseFee,
-			SystemTxMaxGas:              StandardConfig.ResourceConfig.SystemTxMaxGas,
-			MaxResourceLimit:            StandardConfig.ResourceConfig.MaxResourceLimit,
-		}, actualResourceConfig, "resource config unacceptable")
+		require.Equal(t, bindings.ResourceMeteringResourceConfig(StandardConfig.ResourceConfig), actualResourceConfig, "resource config unacceptable")
 	}
 
 	for _, chain := range OPChains {
