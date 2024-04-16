@@ -2,12 +2,12 @@ package validation
 
 import (
 	"context"
-	"log"
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestChainIdRPC(t *testing.T) {
@@ -28,11 +28,8 @@ func TestChainIdRPC(t *testing.T) {
 
 			// Fetch the chain ID
 			chainID, err := client.NetworkID(context.Background())
-			if err != nil {
-				log.Fatalf("Failed to fetch the chain ID: %v", err)
-			}
-
-			assert.Equal(t, declaredChainID, chainID.Uint64(), "Declared a chainId of %s, but RPC returned ID %s", declaredChainID, chainID.Uint64())
+			require.NoError(t, err, "Failed to fetch the chain ID")
+			require.Equal(t, declaredChainID, chainID.Uint64(), "Declared a chainId of %s, but RPC returned ID %s", declaredChainID, chainID.Uint64())
 		})
 	}
 }
