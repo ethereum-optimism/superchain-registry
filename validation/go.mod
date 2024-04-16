@@ -7,6 +7,7 @@ replace github.com/ethereum-optimism/superchain-registry/superchain => ../superc
 replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101308.3-rc.1
 
 require (
+	github.com/BurntSushi/toml v1.3.2
 	github.com/ethereum-optimism/optimism v1.7.1-0.20240306112011-eac79900756b
 	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240306093353-c557df8e6f41
 	github.com/ethereum/go-ethereum v1.13.11
@@ -14,7 +15,6 @@ require (
 )
 
 require (
-	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/DataDog/zstd v1.5.2 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/VictoriaMetrics/fastcache v1.12.1 // indirect
