@@ -33,7 +33,6 @@ func TestChainIdRPC(t *testing.T) {
 			}
 
 			assert.Equal(t, declaredChainID, chainID.Uint64(), "Declared a chainId of %s, but RPC returned ID %s", declaredChainID, chainID.Uint64())
-
 		})
 	}
 }
