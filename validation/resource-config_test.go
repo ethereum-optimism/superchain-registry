@@ -50,7 +50,7 @@ func TestResourceConfig(t *testing.T) {
 	}
 }
 
-// getResourceMeteringwill get the resoureConfig stored in the contract at systemConfigAddr.
+// getResourceConfig will get the resoureConfig stored in the contract at systemConfigAddr.
 func getResourceConfig(ctx context.Context, systemConfigAddr common.Address, client *ethclient.Client) (bindings.ResourceMeteringResourceConfig, error) {
 	systemConfig, err := bindings.NewSystemConfig(systemConfigAddr, client)
 	if err != nil {
