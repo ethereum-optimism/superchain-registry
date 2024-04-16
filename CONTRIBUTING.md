@@ -39,7 +39,7 @@ sh scripts/add-chain.sh frontier
 
 ### 3. Understand output
 The tool will write the following data:
-- The main configuration source, with genesis data, and address of onchain system configuration. These are written to `superchain/configs/superchain_target/chain_short_name.yaml`. 
+- The main configuration source, with genesis data, and address of onchain system configuration. These are written to `superchain/configs/superchain_target/chain_short_name.yaml`.
 > **Note**
 > Hardfork override times will be included. For standard chains, you must have all hardforks activated (see the neighbouring superchain.yaml file). It is not possible to override a superchain-wide hardfork time with `nil`.
 
@@ -79,12 +79,20 @@ When opening a PR:
 Once the PR is opened, the same automated checks from Step 4 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
 
 ## Adding a superchain target
+A superchain target defines a set of layer 2 chains which share a `SuperchainConfig` contract deployment on layer 1. It is usually named after the layer 1 chain, possibly with an extra identifier to distinguish devnets.
+
+
+> **Note**
+> Example: `sepolia` and `sepolia-dev-0` are distinct superchain targets, although they are on the same layer 1 chain.
+
+
+A new Superchain Target can be added by creating a new superchain config directory,
+with a `superchain.yaml` config file.
 
 > **Note**
 > This is an infrequent operation and unecessary if you are just looking to add a chain to an existing superchain.
 
-A new Superchain Target can be added by creating a new superchain config directory,
-with a `superchain.yaml` config file. Here's an example:
+Here's an example:
 
 ```bash
 cd superchain-registry
