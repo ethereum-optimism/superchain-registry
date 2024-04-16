@@ -4,14 +4,6 @@ import (
 	"math/big"
 )
 
-var uint128Max = func() *big.Int {
-	r, ok := new(big.Int).SetString("ffffffffffffffffffffffffffffffff", 16)
-	if !ok {
-		panic("cannot construct uint128Max")
-	}
-	return r
-}()
-
 type L2OOParams struct {
 	SubmissionInterval        *big.Int // Interval in blocks at which checkpoints must be submitted.
 	L2BlockTime               *big.Int // The time per L2 block, in seconds.
