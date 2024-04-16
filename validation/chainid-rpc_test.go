@@ -6,7 +6,6 @@ import (
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -23,7 +22,7 @@ func TestChainIdRPC(t *testing.T) {
 			}
 			// Create an ethclient connection to the specified RPC URL
 			client, err := ethclient.Dial(chain.PublicRPC)
-			assert.NoErrorf(t, err, "Failed to connect to the Ethereum client at RPC url", chain.PublicRPC)
+			require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
 			defer client.Close()
 
 			// Fetch the chain ID
