@@ -1,0 +1,8 @@
+# Standard Chain Config Parameters
+[resource_config]
+# maximum_base_fee = "ffffffffffffffffffffffffffffffff"
+max_resource_limit = 20000000
+elasticity_multiplier = 10
+base_fee_max_change_denominator = 8
+minimum_base_fee = 1000000000
+system_tx_max_gas = 1000000

@@ -12,25 +12,6 @@ var uint128Max = func() *big.Int {
 	return r
 }()
 
-type ResourceConfig struct {
-	MaxResourceLimit            uint32
-	ElasticityMultiplier        uint8
-	BaseFeeMaxChangeDenominator uint8
-	MinimumBaseFee              uint32
-	SystemTxMaxGas              uint32
-	MaximumBaseFee              *big.Int
-}
-
-// OPMainnetResourceConfig describes the resource metering configuration from OP Mainnet
-var OPMainnetResourceConfig = ResourceConfig{
-	MaxResourceLimit:            20000000,
-	ElasticityMultiplier:        10,
-	BaseFeeMaxChangeDenominator: 8,
-	MinimumBaseFee:              1000000000,
-	SystemTxMaxGas:              1000000,
-	MaximumBaseFee:              uint128Max,
-}
-
 type L2OOParams struct {
 	SubmissionInterval        *big.Int // Interval in blocks at which checkpoints must be submitted.
 	L2BlockTime               *big.Int // The time per L2 block, in seconds.
