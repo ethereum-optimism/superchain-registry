@@ -1,6 +1,5 @@
 # Standard Chain Config Parameters
 [resource_config]
-
 max_resource_limit = 20000000
 elasticity_multiplier = 10
 base_fee_max_change_denominator = 8
