@@ -2,8 +2,10 @@ package validation
 
 import "math/big"
 
-var StandardConfigMainnet StandardConfigTy
-var StandardConfigSepolia StandardConfigTy
+var (
+	StandardConfigMainnet StandardConfigTy
+	StandardConfigSepolia StandardConfigTy
+)
 
 type ResourceConfig struct {
 	MaxResourceLimit            uint32   `toml:"max_resource_limit"`
@@ -27,12 +29,14 @@ type GasPriceOracleBounds struct {
 
 type BigIntBounds = [2]*big.Int
 
-type Uint32Bounds = [2]uint32
-type PreEcotoneGasPriceOracleBounds struct {
-	Decimals BigIntBounds `toml:"decimals"`
-	Overhead BigIntBounds `toml:"overhead"`
-	Scalar   BigIntBounds `toml:"scalar"`
-}
+type (
+	Uint32Bounds                   = [2]uint32
+	PreEcotoneGasPriceOracleBounds struct {
+		Decimals BigIntBounds `toml:"decimals"`
+		Overhead BigIntBounds `toml:"overhead"`
+		Scalar   BigIntBounds `toml:"scalar"`
+	}
+)
 
 type EcotoneGasPriceOracleBounds struct {
 	Decimals          BigIntBounds `toml:"decimals"`
