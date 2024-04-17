@@ -2,7 +2,6 @@ package validation
 
 import (
 	"embed"
-	"fmt"
 	"io/fs"
 
 	"github.com/BurntSushi/toml"
@@ -21,9 +20,6 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(StandardConfigMainnet)
-
 }
 
 func decodeTOMLFileIntoConfig(filename string, config *StandardConfigTy) error {
