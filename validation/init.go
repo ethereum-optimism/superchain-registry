@@ -7,7 +7,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-//go:embed standard-config-mainnet.toml standard-config-sepolia.toml
+//go:embed standard-config-mainnet.toml standard-config-sepolia.toml standard-config-sepolia-dev-0.toml
 var standardConfigFile embed.FS
 
 func init() {
@@ -20,8 +20,15 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
 	StandardConfig["sepolia"] = new(StandardConfigTy)
 	err = decodeTOMLFileIntoConfig("standard-config-sepolia.toml", StandardConfig["sepolia"])
+	if err != nil {
+		panic(err)
+	}
+
+	StandardConfig["sepolia-dev-0"] = new(StandardConfigTy)
+	err = decodeTOMLFileIntoConfig("standard-config-sepolia-dev-0.toml", StandardConfig["sepolia-dev-0"])
 	if err != nil {
 		panic(err)
 	}
