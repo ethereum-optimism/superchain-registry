@@ -20,7 +20,28 @@ type L2OOParams struct {
 	FinalizationPeriodSeconds *big.Int `toml:"finalization_period_seconds"` // The minimum time (in seconds) that must elapse before a withdrawal can be finalized.
 }
 
+type GasPriceOracleBounds struct {
+	PreEcotone PreEcotoneGasPriceOracleBounds `toml:"pre-ecotone"`
+	Ecotone    EcotoneGasPriceOracleBounds    `toml:"ecotone"`
+}
+
+type BigIntBounds = [2]*big.Int
+
+type Uint32Bounds = [2]uint32
+type PreEcotoneGasPriceOracleBounds struct {
+	Decimals BigIntBounds `toml:"decimals"`
+	Overhead BigIntBounds `toml:"overhead"`
+	Scalar   BigIntBounds `toml:"scalar"`
+}
+
+type EcotoneGasPriceOracleBounds struct {
+	Decimals          BigIntBounds `toml:"decimals"`
+	BlobBaseFeeScalar Uint32Bounds `toml:"blob_base_fee_scalar"`
+	BaseFeeScalar     Uint32Bounds `toml:"base_fee_scalar"`
+}
+
 type StandardConfigTy struct {
-	ResourceConfig ResourceConfig `toml:"resource_config"`
-	L2OOParams     L2OOParams     `toml:"l2_output_oracle"`
+	ResourceConfig ResourceConfig       `toml:"resource_config"`
+	L2OOParams     L2OOParams           `toml:"l2_output_oracle"`
+	GPOParams      GasPriceOracleBounds `toml:"gas_price_oracle"`
 }
