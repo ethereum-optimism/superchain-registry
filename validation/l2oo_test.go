@@ -61,11 +61,11 @@ func TestL2OOParams(t *testing.T) {
 		var desiredParams L2OOParams
 		switch chain.Superchain {
 		case "mainnet":
-			desiredParams = OPMainnetL2OOParams
+			desiredParams = StandardConfigMainnet.L2OOParams
 		case "sepolia":
-			desiredParams = OPSepoliaL2OOParams
+			desiredParams = StandardConfigSepolia.L2OOParams
 		case "sepolia-dev-0":
-			desiredParams = OPSepoliaDev0L2OOParams
+			desiredParams = StandardConfigSepolia.L2OOParams
 		default:
 			t.Fatalf("superchain not recognized: %s", chain.Superchain)
 		}

@@ -2,7 +2,6 @@ package validation
 
 import (
 	"embed"
-	"fmt"
 	"io/fs"
 	"math/big"
 
@@ -18,22 +17,39 @@ type ResourceConfig struct {
 	MaximumBaseFee              *big.Int `toml:"maximum_base_fee"`
 }
 
-type StandardConfigTy struct {
-	ResourceConfig ResourceConfig `toml:"resource_config"`
+type L2OOParams struct {
+	SubmissionInterval        *big.Int `toml:"submission_interval"`         // Interval in blocks at which checkpoints must be submitted.
+	L2BlockTime               *big.Int `toml:"l2_block_time"`               // The time per L2 block, in seconds.
+	FinalizationPeriodSeconds *big.Int `toml:"finalization_period_seconds"` // The minimum time (in seconds) that must elapse before a withdrawal can be finalized.
 }
 
-//go:embed standard-config.toml
+type StandardConfigTy struct {
+	ResourceConfig ResourceConfig `toml:"resource_config"`
+	L2OOParams     L2OOParams     `toml:"l2_output_oracle"`
+}
+
+//go:embed standard-config-mainnet.toml standard-config-sepolia.toml
 var standardConfigFile embed.FS
-var StandardConfig StandardConfigTy
+var StandardConfigMainnet StandardConfigTy
+var StandardConfigSepolia StandardConfigTy
 
 func init() {
-	data, err := fs.ReadFile(standardConfigFile, "standard-config.toml")
+	var err error
+	err = decodeTOMLFileIntoConfig("standard-config-mainnet.toml", &StandardConfigMainnet)
 	if err != nil {
-		panic(fmt.Errorf("error reading embedded file: %w", err))
+		panic(err)
+	}
+	err = decodeTOMLFileIntoConfig("standard-config-sepolia.toml", &StandardConfigSepolia)
+	if err != nil {
+		panic(err)
 	}
 
-	err = toml.Unmarshal(data, &StandardConfig)
+}
+
+func decodeTOMLFileIntoConfig(filename string, config *StandardConfigTy) error {
+	data, err := fs.ReadFile(standardConfigFile, filename)
 	if err != nil {
-		panic(fmt.Errorf("error parsing embedded file: %w", err))
+		return err
 	}
+	return toml.Unmarshal(data, config)
 }
