@@ -11,7 +11,6 @@ import (
 var standardConfigFile embed.FS
 
 func init() {
-
 	StandardConfig = make(map[string]*StandardConfigTy)
 
 	StandardConfig["mainnet"] = new(StandardConfigTy)
