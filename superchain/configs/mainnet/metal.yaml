@@ -1,0 +1,18 @@
+name: Metal
+chain_id: 1750
+public_rpc: https://rpc.metall2.com
+sequencer_rpc: https://rpc.metall2.com
+explorer: https://explorer.metall2.com
+
+superchain_level: 2
+
+batch_inbox_addr: "0xc83f7d9f2d4a76e81145849381aba02602373723"
+
+genesis:
+  l1:
+    hash: "0x2493565ce8472656b7c22377c8d4d8ef5d17f78392c799ca5f2429b01e2c159c"
+    number: 19527340
+  l2:
+    hash: "0xd31c12ffff2d563897ad9a041c0d26790d635911bdbbfa589347fa955f75281e"
+    number: 0
+  l2_time: 1711563515

@@ -8,6 +8,9 @@ See [Superchain Upgrades] OP-Stack specifications.
 
 ## Adding a chain
 
+### 0. Install dependencies
+You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed, as well as Go.
+
 ### 1. Set env vars
 
 To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
@@ -36,11 +39,11 @@ sh scripts/add-chain.sh frontier
 
 ### 3. Understand output
 The tool will write the following data:
-- The main configuration source, with genesis data, and address of onchain system configuration.
+- The main configuration source, with genesis data, and address of onchain system configuration. These are written to `superchain/configs/superchain_target/chain_short_name.yaml`.
 > **Note**
 > Hardfork override times will be included. For standard chains, you must have all hardforks activated (see the neighbouring superchain.yaml file). It is not possible to override a superchain-wide hardfork time with `nil`.
 
-- Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.)
+- Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.) These are written to `extra/addresses/superchain_target/chain_short_name.json`.
 - Genesis system config data
 - Compressed `genesis.json` definitions (in the `extra/genesis` directory) which pull in the bytecode by hash
 
@@ -76,12 +79,20 @@ When opening a PR:
 Once the PR is opened, the same automated checks from Step 4 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
 
 ## Adding a superchain target
+A superchain target defines a set of layer 2 chains which share a `SuperchainConfig` and `ProtocolVersions` contract deployment on layer 1. It is usually named after the layer 1 chain, possibly with an extra identifier to distinguish devnets.
+
+
+> **Note**
+> Example: `sepolia` and `sepolia-dev-0` are distinct superchain targets, although they are on the same layer 1 chain.
+
+
+A new Superchain Target can be added by creating a new superchain config directory,
+with a `superchain.yaml` config file.
 
 > **Note**
 > This is an infrequent operation and unecessary if you are just looking to add a chain to an existing superchain.
 
-A new Superchain Target can be added by creating a new superchain config directory,
-with a `superchain.yaml` config file. Here's an example:
+Here's an example:
 
 ```bash
 cd superchain-registry

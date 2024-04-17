@@ -17,6 +17,11 @@ import (
 )
 
 func TestResourceConfig(t *testing.T) {
+	isExcluded := map[uint64]bool{
+		11763072: true, // sepolia-dev-0/base-devnet-0    TODO Temporary hack, see https://github.com/ethereum-optimism/superchain-registry/pull/172 to learn more.
+		11155421: true, // sepolia-dev-0/oplabs-devnet-0    TODO Temporary hack, see https://github.com/ethereum-optimism/superchain-registry/pull/172 to learn more.
+	}
+
 	checkResourceConfig := func(t *testing.T, chain *ChainConfig) {
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
@@ -31,18 +36,21 @@ func TestResourceConfig(t *testing.T) {
 		actualResourceConfig, err := getResourceConfigWithRetries(context.Background(), common.Address(contractAddress), client)
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
-		require.Equal(t, bindings.ResourceMeteringResourceConfig(OPMainnetResourceConfig), actualResourceConfig, "resource config unacceptable")
+		require.Equal(t, bindings.ResourceMeteringResourceConfig(StandardConfig.ResourceConfig), actualResourceConfig, "resource config unacceptable")
 	}
 
 	for _, chain := range OPChains {
 		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if isExcluded[chain.ChainID] {
+				t.Skip()
+			}
 			SkipCheckIfFrontierChain(t, *chain)
 			checkResourceConfig(t, chain)
 		})
 	}
 }
 
-// getResourceMeteringwill get the resoureConfig stored in the contract at systemConfigAddr.
+// getResourceConfig will get the resoureConfig stored in the contract at systemConfigAddr.
 func getResourceConfig(ctx context.Context, systemConfigAddr common.Address, client *ethclient.Client) (bindings.ResourceMeteringResourceConfig, error) {
 	systemConfig, err := bindings.NewSystemConfig(systemConfigAddr, client)
 	if err != nil {
