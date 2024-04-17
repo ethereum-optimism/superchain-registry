@@ -31,7 +31,9 @@ func TestResourceConfig(t *testing.T) {
 		actualResourceConfig, err := getResourceConfigWithRetries(context.Background(), common.Address(contractAddress), client)
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
-		require.Equal(t, bindings.ResourceMeteringResourceConfig(StandardConfigMainnet.ResourceConfig), actualResourceConfig, "resource config unacceptable")
+		desiredParams := StandardConfig[chain.Superchain].ResourceConfig
+
+		require.Equal(t, bindings.ResourceMeteringResourceConfig(desiredParams), actualResourceConfig, "resource config unacceptable")
 	}
 
 	for _, chain := range OPChains {

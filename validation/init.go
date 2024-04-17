@@ -11,12 +11,17 @@ import (
 var standardConfigFile embed.FS
 
 func init() {
+
+	StandardConfig = make(map[string]*StandardConfigTy)
+
+	StandardConfig["mainnet"] = new(StandardConfigTy)
 	var err error
-	err = decodeTOMLFileIntoConfig("standard-config-mainnet.toml", &StandardConfigMainnet)
+	err = decodeTOMLFileIntoConfig("standard-config-mainnet.toml", StandardConfig["mainnet"])
 	if err != nil {
 		panic(err)
 	}
-	err = decodeTOMLFileIntoConfig("standard-config-sepolia.toml", &StandardConfigSepolia)
+	StandardConfig["sepolia"] = new(StandardConfigTy)
+	err = decodeTOMLFileIntoConfig("standard-config-sepolia.toml", StandardConfig["sepolia"])
 	if err != nil {
 		panic(err)
 	}

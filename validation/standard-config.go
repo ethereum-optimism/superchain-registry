@@ -2,10 +2,8 @@ package validation
 
 import "math/big"
 
-var (
-	StandardConfigMainnet StandardConfigTy
-	StandardConfigSepolia StandardConfigTy
-)
+// StandardConfig is keyed by superchain target, e.g. "mainnet" or "sepolia" or "sepolia-dev-0"
+var StandardConfig map[string]*StandardConfigTy
 
 type ResourceConfig struct {
 	MaxResourceLimit            uint32   `toml:"max_resource_limit"`

@@ -58,17 +58,7 @@ func TestL2OOParams(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("L2OutputOracleProxy")
 		require.NoError(t, err)
 
-		var desiredParams L2OOParams
-		switch chain.Superchain {
-		case "mainnet":
-			desiredParams = StandardConfigMainnet.L2OOParams
-		case "sepolia":
-			desiredParams = StandardConfigSepolia.L2OOParams
-		case "sepolia-dev-0":
-			desiredParams = StandardConfigSepolia.L2OOParams
-		default:
-			t.Fatalf("superchain not recognized: %s", chain.Superchain)
-		}
+		desiredParams := StandardConfig[chain.Superchain].L2OOParams
 
 		version, err := getVersion(context.Background(), common.Address(contractAddress), client)
 		require.NoError(t, err)

@@ -26,16 +26,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		var desiredParams PreEcotoneGasPriceOracleBounds
-
-		switch chain.Superchain {
-		case "mainnet":
-			desiredParams = StandardConfigMainnet.GPOParams.PreEcotone
-		case "sepolia":
-			desiredParams = StandardConfigSepolia.GPOParams.PreEcotone
-		default:
-			panic(fmt.Sprintf("this test does not yet support superchain %s", chain.Superchain))
-		}
+		desiredParams := StandardConfig[chain.Superchain].GPOParams.PreEcotone
 
 		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
@@ -49,16 +40,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 
 	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		var desiredParams EcotoneGasPriceOracleBounds
-
-		switch chain.Superchain {
-		case "mainnet":
-			desiredParams = StandardConfigMainnet.GPOParams.Ecotone
-		case "sepolia":
-			desiredParams = StandardConfigSepolia.GPOParams.Ecotone
-		default:
-			panic(fmt.Sprintf("this test does not yet support superchain %s", chain.Superchain))
-		}
+		desiredParams := StandardConfig[chain.Superchain].GPOParams.Ecotone
 
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
