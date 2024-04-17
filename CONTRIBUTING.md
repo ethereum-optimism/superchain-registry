@@ -79,7 +79,7 @@ When opening a PR:
 Once the PR is opened, the same automated checks from Step 4 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
 
 ## Adding a superchain target
-A superchain target defines a set of layer 2 chains which share a `SuperchainConfig` contract deployment on layer 1. It is usually named after the layer 1 chain, possibly with an extra identifier to distinguish devnets.
+A superchain target defines a set of layer 2 chains which share a `SuperchainConfig` and `ProtocolVersions` contract deployment on layer 1. It is usually named after the layer 1 chain, possibly with an extra identifier to distinguish devnets.
 
 
 > **Note**
