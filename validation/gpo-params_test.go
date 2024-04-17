@@ -80,16 +80,17 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
-		if !isExcluded[chainID] {
-			t.Run(perChainTestName(chain), func(t *testing.T) {
-				SkipCheckIfFrontierChain(t, *chain)
-				rpcEndpoint := chain.PublicRPC
-				require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
-				client, err := ethclient.Dial(rpcEndpoint)
-				require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-				checkResourceConfig(t, chain, client)
-			})
-		}
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if isExcluded[chainID] {
+				t.Skip()
+			}
+			SkipCheckIfFrontierChain(t, *chain)
+			rpcEndpoint := chain.PublicRPC
+			require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
+			client, err := ethclient.Dial(rpcEndpoint)
+			require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+			checkResourceConfig(t, chain, client)
+		})
 	}
 }
 
