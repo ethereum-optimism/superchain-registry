@@ -14,7 +14,6 @@ import (
 
 	oplog "github.com/ethereum-optimism/optimism/op-service/log"
 	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/mattn/go-isatty"
 	"github.com/urfave/cli/v2"
 
@@ -153,28 +152,28 @@ func entrypoint(ctx *cli.Context) error {
 		// 	fmt.Println("no error")
 		// }
 
-		type ResourceConfig struct {
-			maxResourceLimitRow            uint32
-			elasticityMultiplierRow        uint32
-			baseFeeMaxChangeDenominatorRow uint32
-			minimumBaseFeeRow              uint32
-			systemTxMaxGasRow              uint32
-			maximumBaseFeeRow              uint32
-		}
-		var data ResourceConfig
-		result, _ := makeEthCallRequest(rpcURL, "0x229047fed2591dbec1eF1118d64F7aF3dB9EB290", "0xcc731b02")
-		fmt.Println(result)
-		value, _ := result["result"].(string)
-		if strings.HasPrefix(value, "0x") || strings.HasPrefix(value, "0X") {
-			value = value[2:]
-		}
-		fmt.Println("RLP Data in Hex:", value) // Debugging line
-		err := rlp.Decode(bytes.NewReader(unhex(value)), &data)
-		if err != nil {
-			fmt.Printf("Error: %v\n", err)
-		} else {
-			fmt.Printf("Decoded value: %#v\n", data)
-		}
+		// type ResourceConfig struct {
+		// 	maxResourceLimitRow            uint32
+		// 	elasticityMultiplierRow        uint32
+		// 	baseFeeMaxChangeDenominatorRow uint32
+		// 	minimumBaseFeeRow              uint32
+		// 	systemTxMaxGasRow              uint32
+		// 	maximumBaseFeeRow              uint32
+		// }
+		// var data ResourceConfig
+		// result, _ := makeEthCallRequest(rpcURL, "0x229047fed2591dbec1eF1118d64F7aF3dB9EB290", "0xcc731b02")
+		// fmt.Println(result)
+		// value, _ := result["result"].(string)
+		// if strings.HasPrefix(value, "0x") || strings.HasPrefix(value, "0X") {
+		// 	value = value[2:]
+		// }
+		// fmt.Println("RLP Data in Hex:", value) // Debugging line
+		// err := rlp.Decode(bytes.NewReader(unhex(value)), &data)
+		// if err != nil {
+		// 	fmt.Printf("Error: %v\n", err)
+		// } else {
+		// 	fmt.Printf("Decoded value: %#v\n", data)
+		// }
 	}
 	rows = append(rows, chainIdRow)
 	rows = append(rows, batchInboxAddressRow)
@@ -259,9 +258,6 @@ func getOnChainInteger(rpcURL string, address string, signature string) (string,
 
 	bigIntValue := new(big.Int)
 	bigIntValue.SetString(value, 16)
-	if err != nil {
-		return "0", fmt.Errorf("failed to parse value as an integer: %w", err)
-	}
 
 	return bigIntValue.String(), nil
 }
