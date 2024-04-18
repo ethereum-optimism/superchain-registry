@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,6 +14,7 @@ import (
 
 	oplog "github.com/ethereum-optimism/optimism/op-service/log"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/mattn/go-isatty"
 	"github.com/urfave/cli/v2"
 
@@ -95,6 +97,14 @@ func entrypoint(ctx *cli.Context) error {
 	genesisStateRow := []string{"\033[1mGenesis State\033[0m"}
 	l2BlockTimeRow := []string{"\033[1mL2 Block Time\033[0m"}
 
+	resourceConfigRow := []string{"\033[1mResource Config\033[0m"}
+	maxResourceLimitRow := []string{"\033[1mMax Resource Limit\033[0m"}
+	elasticityMultiplierRow := []string{"\033[1mElasticity Multiplier\033[0m"}
+	baseFeeMaxChangeDenominatorRow := []string{"\033[1mBase Fee Max Change Denominator\033[0m"}
+	minimumBaseFeeRow := []string{"\033[1mMinimum Base Fee\033[0m"}
+	systemTxMaxGasRow := []string{"\033[1mSystem Tx Max Gas Row\033[0m"}
+	maximumBaseFeeRow := []string{"\033[1mMaximum Base Fee Row\033[0m"}
+
 	for _, chain := range chains {
 		fmt.Printf("\nFetching for %s...\n", chain)
 		genesisUrl := fmt.Sprintf("%s/%s/%s.yaml", genesisPath, network, chain)
@@ -109,18 +119,62 @@ func entrypoint(ctx *cli.Context) error {
 		batchInboxAddressRow = append(batchInboxAddressRow, genesisConfig.BatchInboxAddr)
 		explorerUrlRow = append(explorerUrlRow, fmt.Sprintf("\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\", genesisConfig.Explorer, genesisConfig.Explorer))
 
-		challengePeriod, _ := getEitherOnChainInteger(rpcURL, l1AddressesConfig.L2OutputOracleProxy, "0xce5db8d6", "0xf4daa291")
+		challengePeriod, _ := getOnChainIntegerFallback(rpcURL, l1AddressesConfig.L2OutputOracleProxy, "0xce5db8d6", "0xf4daa291")
 		challengePeriodRow = append(challengePeriodRow, challengePeriod)
 
 		feeScalar, _ := getFeeScalar(rpcURL, l1AddressesConfig.SystemConfigProxy)
 		feeScalarRow = append(feeScalarRow, "Fixed: "+feeScalar.FixedData+" Dynamic: "+feeScalar.DynamicData)
 
-		gasLimitRow = append(gasLimitRow, "TODO")
+		gasLimit, _ := getGasLimit(rpcURL, l1AddressesConfig.SystemConfigProxy)
+		gasLimitRow = append(gasLimitRow, gasLimit)
 
 		genesisStateRow = append(genesisStateRow, genesisConfig.Genesis.L2.Hash)
 
-		l2BlockTime, _ := getEitherOnChainInteger(rpcURL, l1AddressesConfig.L2OutputOracleProxy, "0x93991af3", "0x002134cc")
+		l2BlockTime, _ := getOnChainIntegerFallback(rpcURL, l1AddressesConfig.L2OutputOracleProxy, "0x93991af3", "0x002134cc")
 		l2BlockTimeRow = append(l2BlockTimeRow, l2BlockTime+" seconds")
+
+		// "resourceConfig()((uint32,uint8,uint8,uint32,uint32,uint128))"
+
+		// rows = append(rows, maxResourceLimitRow)
+		// rows = append(rows, elasticityMultiplierRow)
+		// rows = append(rows, baseFeeMaxChangeDenominatorRow)
+		// rows = append(rows, minimumBaseFeeRow)
+		// rows = append(rows, systemTxMaxGasRow)
+		// rows = append(rows, maximumBaseFeeRow)
+
+		// type testDecoder struct{ called bool }
+		// var s struct {
+		// 	T1 testDecoder
+		// 	T2 *testDecoder
+		// 	T3 **testDecoder
+		// }
+		// if err := rlp.Decode(bytes.NewReader(unhex("C3010203")), &s); err != nil {
+		// 	fmt.Println(s)
+		// 	fmt.Println("no error")
+		// }
+
+		type ResourceConfig struct {
+			maxResourceLimitRow            uint32
+			elasticityMultiplierRow        uint32
+			baseFeeMaxChangeDenominatorRow uint32
+			minimumBaseFeeRow              uint32
+			systemTxMaxGasRow              uint32
+			maximumBaseFeeRow              uint32
+		}
+		var data ResourceConfig
+		result, _ := makeEthCallRequest(rpcURL, "0x229047fed2591dbec1eF1118d64F7aF3dB9EB290", "0xcc731b02")
+		fmt.Println(result)
+		value, _ := result["result"].(string)
+		if strings.HasPrefix(value, "0x") || strings.HasPrefix(value, "0X") {
+			value = value[2:]
+		}
+		fmt.Println("RLP Data in Hex:", value) // Debugging line
+		err := rlp.Decode(bytes.NewReader(unhex(value)), &data)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+		} else {
+			fmt.Printf("Decoded value: %#v\n", data)
+		}
 	}
 	rows = append(rows, chainIdRow)
 	rows = append(rows, batchInboxAddressRow)
@@ -130,6 +184,14 @@ func entrypoint(ctx *cli.Context) error {
 	rows = append(rows, gasLimitRow)
 	rows = append(rows, genesisStateRow)
 	rows = append(rows, l2BlockTimeRow)
+
+	rows = append(rows, resourceConfigRow)
+	rows = append(rows, maxResourceLimitRow)
+	rows = append(rows, elasticityMultiplierRow)
+	rows = append(rows, baseFeeMaxChangeDenominatorRow)
+	rows = append(rows, minimumBaseFeeRow)
+	rows = append(rows, systemTxMaxGasRow)
+	rows = append(rows, maximumBaseFeeRow)
 	if caption != "" {
 		fmt.Fprintf(tw, "\n\n%s:\n\n", caption)
 	}
@@ -139,6 +201,19 @@ func entrypoint(ctx *cli.Context) error {
 	}
 	tw.Flush()
 	return nil
+}
+
+func unhex(str string) []byte {
+	b, err := hex.DecodeString(strings.ReplaceAll(str, " ", ""))
+	if err != nil {
+		panic(fmt.Sprintf("invalid hex string: %q", str))
+	}
+	return b
+}
+
+func getGasLimit(rpcURL string, systemConfigProxy string) (string, error) {
+	gasLimit, err := getOnChainInteger(rpcURL, systemConfigProxy, "0xf68016b7") // gasLimit()
+	return gasLimit, err
 }
 
 func getFeeScalar(rpcURL string, systemConfigProxy string) (FeeScalar, error) {
@@ -153,33 +228,19 @@ func getFeeScalar(rpcURL string, systemConfigProxy string) (FeeScalar, error) {
 	}, nil
 }
 
-func getEitherOnChainInteger(rpcURL string, l2OutputOracleProxy string, functionSigOne string, functionSigTwo string) (string, error) {
+func getOnChainIntegerFallback(rpcURL string, l2OutputOracleProxy string, funcSig string, fallbackFuncSig string) (string, error) {
 	var value string
 	var err error
 
-	value, err = getOnChainInteger(rpcURL, l2OutputOracleProxy, functionSigOne)
+	value, err = getOnChainInteger(rpcURL, l2OutputOracleProxy, funcSig)
 	if value == "0" || err != nil {
-		value, err = getOnChainInteger(rpcURL, l2OutputOracleProxy, functionSigTwo)
+		value, err = getOnChainInteger(rpcURL, l2OutputOracleProxy, fallbackFuncSig)
 		if err != nil {
 			return "", fmt.Errorf("there was an error fetching the on-chain integer: %w", err)
 		}
 	}
 	return value, nil
 }
-
-// func getChallengePeriod(rpcURL string, l2OutputOracleProxy string) (string, error) {
-// 	var challengePeriod string
-// 	var err error
-
-// 	challengePeriod, err = getOnChainInteger(rpcURL, l2OutputOracleProxy, "0xce5db8d6") // finalizationPeriodSeconds()
-// 	if challengePeriod == "0" || err != nil {
-// 		challengePeriod, err = getOnChainInteger(rpcURL, l2OutputOracleProxy, "0xf4daa291") // FINALIZATION_PERIOD_SECONDS()
-// 		if err != nil {
-// 			return "", fmt.Errorf("there was an error fetching the challenge period: %w", err)
-// 		}
-// 	}
-// 	return challengePeriod, nil
-// }
 
 func getOnChainInteger(rpcURL string, address string, signature string) (string, error) {
 	result, err := makeEthCallRequest(rpcURL, address, signature)
@@ -197,7 +258,7 @@ func getOnChainInteger(rpcURL string, address string, signature string) (string,
 	}
 
 	bigIntValue := new(big.Int)
-	bigIntValue.SetString(value, 16) // 16 is the base for hexadecimal
+	bigIntValue.SetString(value, 16)
 	if err != nil {
 		return "0", fmt.Errorf("failed to parse value as an integer: %w", err)
 	}
@@ -252,18 +313,18 @@ type L1AddressesConfig struct {
 func loadConfig(url string, unmarshalFunc func([]byte, interface{}) error, config interface{}) interface{} {
 	resp, err := http.Get(url)
 	if err != nil {
-		//log.Fatalf("HTTP GET request failed: %v", err)
+		log.Crit("HTTP GET request failed: %v", err)
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		//log.Fatalf("Reading response body failed: %v", err)
+		log.Crit("Reading response body failed: %v", err)
 	}
 
 	err = unmarshalFunc(body, config)
 	if err != nil {
-		//log.Fatalf("Error parsing file (skipping): %s", url)
+		log.Crit("Error parsing file (skipping): %s", url)
 	}
 	return config
 }
