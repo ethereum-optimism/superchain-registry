@@ -2,38 +2,41 @@ package validation
 
 import (
 	"embed"
-	"fmt"
 	"io/fs"
-	"math/big"
 
 	"github.com/BurntSushi/toml"
 )
 
-type ResourceConfig struct {
-	MaxResourceLimit            uint32   `toml:"max_resource_limit"`
-	ElasticityMultiplier        uint8    `toml:"elasticity_multiplier"`
-	BaseFeeMaxChangeDenominator uint8    `toml:"base_fee_max_change_denominator"`
-	MinimumBaseFee              uint32   `toml:"minimum_base_fee"`
-	SystemTxMaxGas              uint32   `toml:"system_tx_max_gas"`
-	MaximumBaseFee              *big.Int `toml:"maximum_base_fee"`
-}
-
-type StandardConfigTy struct {
-	ResourceConfig ResourceConfig `toml:"resource_config"`
-}
-
-//go:embed standard-config.toml
+//go:embed standard-config-mainnet.toml standard-config-sepolia.toml standard-config-sepolia-dev-0.toml
 var standardConfigFile embed.FS
-var StandardConfig StandardConfigTy
 
 func init() {
-	data, err := fs.ReadFile(standardConfigFile, "standard-config.toml")
+	StandardConfig = make(map[string]*StandardConfigTy)
+
+	StandardConfig["mainnet"] = new(StandardConfigTy)
+	var err error
+	err = decodeTOMLFileIntoConfig("standard-config-mainnet.toml", StandardConfig["mainnet"])
 	if err != nil {
-		panic(fmt.Errorf("error reading embedded file: %w", err))
+		panic(err)
 	}
 
-	err = toml.Unmarshal(data, &StandardConfig)
+	StandardConfig["sepolia"] = new(StandardConfigTy)
+	err = decodeTOMLFileIntoConfig("standard-config-sepolia.toml", StandardConfig["sepolia"])
 	if err != nil {
-		panic(fmt.Errorf("error parsing embedded file: %w", err))
+		panic(err)
 	}
+
+	StandardConfig["sepolia-dev-0"] = new(StandardConfigTy)
+	err = decodeTOMLFileIntoConfig("standard-config-sepolia-dev-0.toml", StandardConfig["sepolia-dev-0"])
+	if err != nil {
+		panic(err)
+	}
+}
+
+func decodeTOMLFileIntoConfig(filename string, config *StandardConfigTy) error {
+	data, err := fs.ReadFile(standardConfigFile, filename)
+	if err != nil {
+		return err
+	}
+	return toml.Unmarshal(data, config)
 }
