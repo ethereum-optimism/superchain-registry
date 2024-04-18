@@ -525,9 +525,8 @@ var Addresses = map[uint64]*AddressList{}
 
 var GenesisSystemConfigs = map[uint64]*GenesisSystemConfig{}
 
-// Implementations represents a global mapping of contract implementations
-// to chain by chain id.
-var Implementations = map[uint64]ContractImplementations{}
+// Implementations maps superchain name to contract implementations
+var Implementations = map[string]ContractImplementations{}
 
 // SuperchainSemver maps superchain name to a contract name : approved semver version structure.
 var SuperchainSemver map[string]ContractVersions
