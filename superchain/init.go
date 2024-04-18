@@ -105,7 +105,7 @@ func init() {
 			panic(fmt.Errorf("failed to read implementations of superchain target %s: %w", s.Name(), err))
 		}
 
-		Implementations[superchainEntry.Config.L1.ChainID] = implementations
+		Implementations[s.Name()] = implementations
 	}
 }
 
