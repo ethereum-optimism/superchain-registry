@@ -26,12 +26,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		desiredParamsOuter, ok := GasPriceOracleParams[chain.Superchain]
-
-		if !ok {
-			t.Fatalf("superchain not recognized: %s", chain.Superchain)
-		}
-		desiredParams := desiredParamsOuter.PreEcotone
+		desiredParams := StandardConfig[chain.Superchain].GPOParams.PreEcotone
 
 		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
@@ -45,16 +40,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 
 	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		desiredParamsOuter, ok := GasPriceOracleParams[chain.Superchain]
-
-		if !ok {
-			t.Fatalf("superchain not recognized: %s", chain.Superchain)
-		}
-		desiredParams := desiredParamsOuter.Ecotone
-
-		if desiredParams == nil {
-			t.Fatal("no desiredParams.Ecotone set to compare Ecotone chain to")
-		}
+		desiredParams := StandardConfig[chain.Superchain].GPOParams.Ecotone
 
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
@@ -76,17 +62,30 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
-		if !isExcluded[chainID] {
-			t.Run(perChainTestName(chain), func(t *testing.T) {
-				SkipCheckIfFrontierChain(t, *chain)
-				rpcEndpoint := chain.PublicRPC
-				require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
-				client, err := ethclient.Dial(rpcEndpoint)
-				require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-				checkResourceConfig(t, chain, client)
-			})
-		}
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if isExcluded[chainID] {
+				t.Skip()
+			}
+			SkipCheckIfFrontierChain(t, *chain)
+			rpcEndpoint := chain.PublicRPC
+			require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
+			client, err := ethclient.Dial(rpcEndpoint)
+			require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+			checkResourceConfig(t, chain, client)
+		})
 	}
+}
+
+type PreEcotoneGasPriceOracleParams struct {
+	Decimals *big.Int
+	Overhead *big.Int
+	Scalar   *big.Int
+}
+
+type EcotoneGasPriceOracleParams struct {
+	Decimals          *big.Int
+	BlobBaseFeeScalar uint32
+	BaseFeeScalar     uint32
 }
 
 // getPreEcotoneGasPriceOracleParams gets the params by calling getters on the contract at addr. Will retry up to 3 times for each getter.
