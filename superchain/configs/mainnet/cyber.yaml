@@ -1,0 +1,23 @@
+name: cyber
+chain_id: 7560
+public_rpc: https://cyber.alt.technology/
+sequencer_rpc: https://cyber.alt.technology/
+explorer: https://cyber-explorer.alt.technology/
+
+superchain_level: 2
+
+batch_inbox_addr: "0xff00000000000000000000000000000000001d88"
+
+genesis:
+  l1:
+    hash: "0x8fa2a34b37420b863aa33da7661a8929af8bd7a436b9e612c727eb5e63da3879"
+    number: 19681125
+  l2:
+    hash: "0x0bbf36c47db3b42b40b2e6cadc183612337d1ac8602eb9e57071ae0043e70fc7"
+    number: 0
+  l2_time: 1713428567
+
+canyon_time: 0
+delta_time: 0
+ecotone_time: 0
+
