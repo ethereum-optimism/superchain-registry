@@ -2,13 +2,13 @@ package main
 
 import (
 	"bytes"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
 	"math/big"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"text/tabwriter"
 
@@ -46,41 +46,13 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Crit("error op-upgrade", "err", err)
 	}
-
-	// address := "0x229047fed2591dbec1eF1118d64F7aF3dB9EB290"
-	// functionSignature := "resourceConfig()((uint32,uint8,uint8,uint32,uint32,uint128))"
-
-	// cmd := exec.Command("cast", "call", address, functionSignature, "--rpc-url", *rpcURL)
-	// output, err := cmd.Output()
-
-	// if err != nil {
-	// 	fmt.Printf("Error executing command: %v\n", err)
-	// 	return
-	// }
-
-	// fmt.Println(string(output))
-
-	// var superchainConfig SuperchainConfig
-	// superchainConfig.getConf()
-	// fmt.Println(superchainConfig.Name)
-
-	// // url := "https://eth-mainnet.g.alchemy.com/v2/6eCsAcYZmnnoS-FV6PCfqmObgK0prq-u"
-	// to := "0x6481ff79597fe4f77e1063f615ec5bdaddeffd4b"
-	// calldata := "0xcc731b02" // cast calldata "resourceConfig()" -> 0xcc731b02
-
-	// result, err := makeEthCallRequest(*rpcURL, to, calldata)
-	// if err != nil {
-	// 	log.Fatalf("Error making RPC request: %v", err)
-	// }
-
-	// fmt.Printf("Result: %+v\n", result)
 }
 
 func entrypoint(ctx *cli.Context) error {
 	rpcURL := ctx.String("l1-rpc-url")
 	network := ctx.String("network")
 
-	chains := []string{"base", "mode", "op", "zora"}
+	chains := []string{"base", "metal", "mode", "op", "zora"}
 	genesisPath := "https://raw.githubusercontent.com/ethereum-optimism/superchain-registry/main/superchain/configs"             // Can't I just read locally?
 	l1AddressesPath := "https://raw.githubusercontent.com/ethereum-optimism/superchain-registry/main/superchain/extra/addresses" // Can't I just read locally?
 
@@ -96,7 +68,7 @@ func entrypoint(ctx *cli.Context) error {
 	genesisStateRow := []string{"\033[1mGenesis State\033[0m"}
 	l2BlockTimeRow := []string{"\033[1mL2 Block Time\033[0m"}
 
-	resourceConfigRow := []string{"\033[1mResource Config\033[0m"}
+	// resourceConfigRow := []string{"\033[1mResource Config\033[0m"}
 	maxResourceLimitRow := []string{"\033[1mMax Resource Limit\033[0m"}
 	elasticityMultiplierRow := []string{"\033[1mElasticity Multiplier\033[0m"}
 	baseFeeMaxChangeDenominatorRow := []string{"\033[1mBase Fee Max Change Denominator\033[0m"}
@@ -132,48 +104,13 @@ func entrypoint(ctx *cli.Context) error {
 		l2BlockTime, _ := getOnChainIntegerFallback(rpcURL, l1AddressesConfig.L2OutputOracleProxy, "0x93991af3", "0x002134cc")
 		l2BlockTimeRow = append(l2BlockTimeRow, l2BlockTime+" seconds")
 
-		// "resourceConfig()((uint32,uint8,uint8,uint32,uint32,uint128))"
-
-		// rows = append(rows, maxResourceLimitRow)
-		// rows = append(rows, elasticityMultiplierRow)
-		// rows = append(rows, baseFeeMaxChangeDenominatorRow)
-		// rows = append(rows, minimumBaseFeeRow)
-		// rows = append(rows, systemTxMaxGasRow)
-		// rows = append(rows, maximumBaseFeeRow)
-
-		// type testDecoder struct{ called bool }
-		// var s struct {
-		// 	T1 testDecoder
-		// 	T2 *testDecoder
-		// 	T3 **testDecoder
-		// }
-		// if err := rlp.Decode(bytes.NewReader(unhex("C3010203")), &s); err != nil {
-		// 	fmt.Println(s)
-		// 	fmt.Println("no error")
-		// }
-
-		// type ResourceConfig struct {
-		// 	maxResourceLimitRow            uint32
-		// 	elasticityMultiplierRow        uint32
-		// 	baseFeeMaxChangeDenominatorRow uint32
-		// 	minimumBaseFeeRow              uint32
-		// 	systemTxMaxGasRow              uint32
-		// 	maximumBaseFeeRow              uint32
-		// }
-		// var data ResourceConfig
-		// result, _ := makeEthCallRequest(rpcURL, "0x229047fed2591dbec1eF1118d64F7aF3dB9EB290", "0xcc731b02")
-		// fmt.Println(result)
-		// value, _ := result["result"].(string)
-		// if strings.HasPrefix(value, "0x") || strings.HasPrefix(value, "0X") {
-		// 	value = value[2:]
-		// }
-		// fmt.Println("RLP Data in Hex:", value) // Debugging line
-		// err := rlp.Decode(bytes.NewReader(unhex(value)), &data)
-		// if err != nil {
-		// 	fmt.Printf("Error: %v\n", err)
-		// } else {
-		// 	fmt.Printf("Decoded value: %#v\n", data)
-		// }
+		resourceConfig, _ := getResourceConfig(rpcURL, l1AddressesConfig.SystemConfigProxy)
+		maxResourceLimitRow = append(maxResourceLimitRow, resourceConfig.maxResourceLimit)
+		elasticityMultiplierRow = append(elasticityMultiplierRow, resourceConfig.elasticityMultiplier)
+		baseFeeMaxChangeDenominatorRow = append(baseFeeMaxChangeDenominatorRow, resourceConfig.baseFeeMaxChangeDenominator)
+		minimumBaseFeeRow = append(minimumBaseFeeRow, resourceConfig.minimumBaseFee)
+		systemTxMaxGasRow = append(systemTxMaxGasRow, resourceConfig.systemTxMaxGas)
+		maximumBaseFeeRow = append(maximumBaseFeeRow, resourceConfig.maximumBaseFee)
 	}
 	rows = append(rows, chainIdRow)
 	rows = append(rows, batchInboxAddressRow)
@@ -184,10 +121,10 @@ func entrypoint(ctx *cli.Context) error {
 	rows = append(rows, genesisStateRow)
 	rows = append(rows, l2BlockTimeRow)
 
-	rows = append(rows, resourceConfigRow)
-	rows = append(rows, maxResourceLimitRow)
+	// rows = append(rows, resourceConfigRow)
 	rows = append(rows, elasticityMultiplierRow)
 	rows = append(rows, baseFeeMaxChangeDenominatorRow)
+	rows = append(rows, maxResourceLimitRow)
 	rows = append(rows, minimumBaseFeeRow)
 	rows = append(rows, systemTxMaxGasRow)
 	rows = append(rows, maximumBaseFeeRow)
@@ -202,12 +139,25 @@ func entrypoint(ctx *cli.Context) error {
 	return nil
 }
 
-func unhex(str string) []byte {
-	b, err := hex.DecodeString(strings.ReplaceAll(str, " ", ""))
+func getResourceConfig(rpcUrl string, systemConfigProxy string) (ResourceConfig, error) {
+	functionSignature := "resourceConfig()((uint32,uint8,uint8,uint32,uint32,uint128))"
+
+	cmd := exec.Command("cast", "call", systemConfigProxy, functionSignature, "--rpc-url", rpcUrl)
+	output, err := cmd.Output()
+
 	if err != nil {
-		panic(fmt.Sprintf("invalid hex string: %q", str))
+		fmt.Printf("Error executing command: %v\n", err)
 	}
-	return b
+
+	input := string(output)
+	input = strings.ReplaceAll(input, "(", "")
+	input = strings.ReplaceAll(input, ")", "")
+	values := strings.Split(input, ",")
+	return ResourceConfig{maxResourceLimit: trimAllSpace(values[0]), elasticityMultiplier: trimAllSpace(values[1]), baseFeeMaxChangeDenominator: trimAllSpace(values[2]), minimumBaseFee: trimAllSpace(values[3]), systemTxMaxGas: trimAllSpace(values[4]), maximumBaseFee: trimAllSpace(values[5])}, err
+}
+
+func trimAllSpace(s string) string {
+	return strings.Join(strings.Fields(s), "")
 }
 
 func getGasLimit(rpcURL string, systemConfigProxy string) (string, error) {
@@ -260,6 +210,15 @@ func getOnChainInteger(rpcURL string, address string, signature string) (string,
 	bigIntValue.SetString(value, 16)
 
 	return bigIntValue.String(), nil
+}
+
+type ResourceConfig struct {
+	maxResourceLimit            string
+	elasticityMultiplier        string
+	baseFeeMaxChangeDenominator string
+	minimumBaseFee              string
+	systemTxMaxGas              string
+	maximumBaseFee              string
 }
 
 type FeeScalar struct {
