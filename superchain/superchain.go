@@ -449,17 +449,19 @@ type GenesisAccount struct {
 
 type Genesis struct {
 	// Block properties
-	Nonce      uint64  `json:"nonce"`
-	Timestamp  uint64  `json:"timestamp"`
-	ExtraData  []byte  `json:"extraData"`
-	GasLimit   uint64  `json:"gasLimit"`
-	Difficulty *HexBig `json:"difficulty"`
-	Mixhash    Hash    `json:"mixHash"`
-	Coinbase   Address `json:"coinbase"`
-	Number     uint64  `json:"number"`
-	GasUsed    uint64  `json:"gasUsed"`
-	ParentHash Hash    `json:"parentHash"`
-	BaseFee    *HexBig `json:"baseFeePerGas"`
+	Nonce         uint64  `json:"nonce"`
+	Timestamp     uint64  `json:"timestamp"`
+	ExtraData     []byte  `json:"extraData"`
+	GasLimit      uint64  `json:"gasLimit"`
+	Difficulty    *HexBig `json:"difficulty"`
+	Mixhash       Hash    `json:"mixHash"`
+	Coinbase      Address `json:"coinbase"`
+	Number        uint64  `json:"number"`
+	GasUsed       uint64  `json:"gasUsed"`
+	ParentHash    Hash    `json:"parentHash"`
+	BaseFee       *HexBig `json:"baseFeePerGas"`
+	ExcessBlobGas *uint64 `json:"excessBlobGas"` // EIP-4844
+	BlobGasUsed   *uint64 `json:"blobGasUsed"`   // EIP-4844
 	// State data
 	Alloc map[Address]GenesisAccount `json:"alloc"`
 	// StateHash substitutes for a full embedded state allocation,

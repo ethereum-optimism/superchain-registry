@@ -15,6 +15,9 @@ You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](http
 
 To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
 
+> [!NOTE]
+> The standard configuration requirements are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
+
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 
 ### 2. Run script
