@@ -97,16 +97,29 @@ case $SUPERCHAIN_TARGET in
         ;;
 esac
 
-# scrape addresses from static deployment artifacts
-AddressManager=$(jq -j .address $DEPLOYMENTS_DIR/AddressManager.json)
-L1CrossDomainMessengerProxy=$(jq -j .address $DEPLOYMENTS_DIR/L1CrossDomainMessengerProxy.json)
-L1ERC721BridgeProxy=$(jq -j .address $DEPLOYMENTS_DIR/L1ERC721BridgeProxy.json)
-L1StandardBridgeProxy=$(jq -j .address $DEPLOYMENTS_DIR/L1StandardBridgeProxy.json)
-L2OutputOracleProxy=$(jq -j .address $DEPLOYMENTS_DIR/L2OutputOracleProxy.json)
-OptimismMintableERC20FactoryProxy=$(jq -j .address $DEPLOYMENTS_DIR/OptimismMintableERC20FactoryProxy.json)
-SystemConfigProxy=$(jq -j .address $DEPLOYMENTS_DIR/SystemConfigProxy.json)
-OptimismPortalProxy=$(jq -j .address $DEPLOYMENTS_DIR/OptimismPortalProxy.json)
-SystemConfigProxy=$(jq -j .address $DEPLOYMENTS_DIR/SystemConfigProxy.json)
+# scrape addresses from static deployment artifact
+if [ -e $DEPLOYMENTS_DIR/.deploy ]
+then
+  AddressManager=$(jq -j .AddressManager $DEPLOYMENTS_DIR/.deploy)
+  L1CrossDomainMessengerProxy=$(jq -j .L1CrossDomainMessengerProxy $DEPLOYMENTS_DIR/.deploy)
+  L1ERC721BridgeProxy=$(jq -j .L1ERC721BridgeProxy $DEPLOYMENTS_DIR/.deploy)
+  L1StandardBridgeProxy=$(jq -j .L1StandardBridgeProxy $DEPLOYMENTS_DIR/.deploy)
+  L2OutputOracleProxy=$(jq -j .L2OutputOracleProxy $DEPLOYMENTS_DIR/.deploy)
+  OptimismMintableERC20FactoryProxy=$(jq -j .OptimismMintableERC20FactoryProxy $DEPLOYMENTS_DIR/.deploy)
+  SystemConfigProxy=$(jq -j .SystemConfigProxy $DEPLOYMENTS_DIR/.deploy)
+  OptimismPortalProxy=$(jq -j .OptimismPortalProxy $DEPLOYMENTS_DIR/.deploy)
+  SystemConfigProxy=$(jq -j .SystemConfigProxy $DEPLOYMENTS_DIR/.deploy)
+else # use legacy deployment artifact schema
+  AddressManager=$(jq -j .address $DEPLOYMENTS_DIR/AddressManager.json)
+  L1CrossDomainMessengerProxy=$(jq -j .address $DEPLOYMENTS_DIR/L1CrossDomainMessengerProxy.json)
+  L1ERC721BridgeProxy=$(jq -j .address $DEPLOYMENTS_DIR/L1ERC721BridgeProxy.json)
+  L1StandardBridgeProxy=$(jq -j .address $DEPLOYMENTS_DIR/L1StandardBridgeProxy.json)
+  L2OutputOracleProxy=$(jq -j .address $DEPLOYMENTS_DIR/L2OutputOracleProxy.json)
+  OptimismMintableERC20FactoryProxy=$(jq -j .address $DEPLOYMENTS_DIR/OptimismMintableERC20FactoryProxy.json)
+  SystemConfigProxy=$(jq -j .address $DEPLOYMENTS_DIR/SystemConfigProxy.json)
+  OptimismPortalProxy=$(jq -j .address $DEPLOYMENTS_DIR/OptimismPortalProxy.json)
+  SystemConfigProxy=$(jq -j .address $DEPLOYMENTS_DIR/SystemConfigProxy.json)
+fi
 
 # scrape remaining address live from the chain
 SuperchainConfig=$(cast call $OptimismPortalProxy "superchainConfig()(address)" -r $L1_RPC_URL) || "" # first command could fail if bedrock
