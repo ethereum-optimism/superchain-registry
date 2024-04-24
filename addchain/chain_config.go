@@ -65,18 +65,18 @@ func constructRollupConfig(filePath, chainName, publicRPC, sequencerRPC string, 
 func writeChainConfig(inputFilepath, targetDirectory, chainName, publicRPC, sequencerRPC string, superchainLevel int, superchainRepoPath string, superchainTarget string) error {
 	rollupConfig, err := constructRollupConfig(inputFilepath, chainName, publicRPC, sequencerRPC, superchainLevel)
 	if err != nil {
-		return fmt.Errorf("Failed to construct rollup config: %w", err)
+		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
 
 	yamlData, err := yaml.Marshal(rollupConfig)
 	if err != nil {
-		return fmt.Errorf("Failed to marshal yaml: %w", err)
+		return fmt.Errorf("failed to marshal yaml: %w", err)
 	}
 
 	filename := filepath.Join(targetDirectory, chainName+".yaml")
 	err = os.WriteFile(filename, yamlData, 0644)
 	if err != nil {
-		return fmt.Errorf("Failed to write yaml file: %w", err)
+		return fmt.Errorf("failed to write yaml file: %w", err)
 	}
 
 	// create genesis-system-config data

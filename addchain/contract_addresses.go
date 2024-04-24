@@ -45,7 +45,7 @@ func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string
 	if err != nil || address == "" || address == "0x" {
 		address, err = executeCommand("cast", []string{"call", contractAddresses[OptimismPortalProxy], "GUARDIAN()(address)", "-r", l1RpcUrl})
 		if err != nil || address == "" || address == "0x" {
-			return fmt.Errorf("Could not retrieve address for Guardian")
+			return fmt.Errorf("could not retrieve address for Guardian")
 		}
 		contractAddresses[Guardian] = address
 	} else {
@@ -55,7 +55,7 @@ func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string
 	// Challenger
 	address, err = executeCommand("cast", []string{"call", contractAddresses[L2OutputOracleProxy], "challenger()(address)", "-r", l1RpcUrl})
 	if err != nil || address == "" || address == "0x" {
-		return fmt.Errorf("Could not retrieve address for Guardian")
+		return fmt.Errorf("could not retrieve address for Guardian")
 	} else {
 		contractAddresses[Challenger] = address
 	}
@@ -63,7 +63,7 @@ func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string
 	// ProxyAdminOwner
 	address, err = executeCommand("cast", []string{"call", contractAddresses[ProxyAdmin], "owner()(address)", "-r", l1RpcUrl})
 	if err != nil || address == "" || address == "0x" {
-		return fmt.Errorf("Could not retrieve address for ProxyAdminOwner")
+		return fmt.Errorf("could not retrieve address for ProxyAdminOwner")
 	} else {
 		contractAddresses[ProxyAdminOwner] = address
 	}
@@ -71,7 +71,7 @@ func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string
 	// SystemConfigOwner
 	address, err = executeCommand("cast", []string{"call", contractAddresses[SystemConfigProxy], "owner()(address)", "-r", l1RpcUrl})
 	if err != nil || address == "" || address == "0x" {
-		return fmt.Errorf("Could not retrieve address for ProxyAdminOwner")
+		return fmt.Errorf("could not retrieve address for ProxyAdminOwner")
 	} else {
 		contractAddresses[SystemConfigOwner] = address
 	}

@@ -21,7 +21,7 @@ func inferRpcUrl(superchainTarget string) (string, error) {
 	case "sepolia":
 		return "https://ethereum-sepolia-rpc.allthatnode.com", nil
 	}
-	return "", fmt.Errorf("Unsupported Superchain Target %s\n", superchainTarget)
+	return "", fmt.Errorf("unsupported Superchain Target %s", superchainTarget)
 }
 
 func getSuperchainLevel(chainType string) (int, error) {
@@ -34,5 +34,5 @@ func getSuperchainLevel(chainType string) (int, error) {
 		return 1, nil
 	}
 
-	return 0, fmt.Errorf("Invalid chain type: %s", chainType)
+	return 0, fmt.Errorf("invalid chain type: %s", chainType)
 }
