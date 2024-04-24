@@ -16,13 +16,19 @@ var (
 		Usage:    "Type of chain (either standard or frontier)",
 		Required: true,
 	}
+	TestFlag = &cli.BoolFlag{
+		Name:     "test",
+		Value:    false,
+		Usage:    "Indicates if go tests are being run",
+		Required: false,
+	}
 )
 
 func main() {
 	app := &cli.App{
 		Name:   "add-chain",
 		Usage:  "Add a new chain to the superchain-registry",
-		Flags:  []cli.Flag{ChainTypeFlag},
+		Flags:  []cli.Flag{ChainTypeFlag, TestFlag},
 		Action: entrypoint,
 	}
 
@@ -38,6 +44,7 @@ func main() {
 
 func entrypoint(ctx *cli.Context) error {
 	chainType := ctx.String(ChainTypeFlag.Name)
+	runningTests := ctx.Bool(TestFlag.Name)
 
 	superchainLevel, err := getSuperchainLevel(chainType)
 	if err != nil {
@@ -45,15 +52,20 @@ func entrypoint(ctx *cli.Context) error {
 	}
 
 	// Get the current script's directory
+	envFilename := ".env"
 	superchainRepoPath, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("error getting current directory: %w", err)
 	}
+	if runningTests {
+		envFilename = ".env.test"
+		superchainRepoPath = filepath.Join(superchainRepoPath, "testdata")
+	}
 
 	// Load environment variables
-	viper.SetConfigName(".env")             // name of config file (without extension)
-	viper.SetConfigType("env")              // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath(superchainRepoPath) // path to look for the config file in
+	viper.SetConfigName(envFilename) // name of config file (without extension)
+	viper.SetConfigType("env")       // REQUIRED if the config file does not have the extension in the name
+	viper.AddConfigPath(".")         // path to look for the config file in
 	if err := viper.ReadInConfig(); err != nil {
 		return fmt.Errorf("error reading config file: %w", err)
 	}
@@ -113,9 +125,5 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to write contract addresses to JSON file: %w", err)
 	}
 
-	err = createExtraGenesisData(superchainRepoPath, superchainTarget, monorepoDir, genesisConfig, chainName)
-	if err != nil {
-		return fmt.Errorf("failed to create extra genesis data: %w", err)
-	}
 	return nil
 }
