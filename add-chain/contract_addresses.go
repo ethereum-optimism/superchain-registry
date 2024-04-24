@@ -100,8 +100,20 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		ProxyAdmin,
 	}
 
+	deployFilePath := filepath.Join(deploymentsDir, ".deploy")
+	_, err := os.Stat(deployFilePath)
+	deployFileExists := true
+	if err != nil {
+		deployFileExists = false
+	}
+
 	for _, name := range contractsFromJSON {
-		path := filepath.Join(deploymentsDir, name+".json")
+		var path string
+		if deployFileExists {
+			path = deployFilePath
+		} else {
+			path = filepath.Join(deploymentsDir, name+".json")
+		}
 		file, err := os.ReadFile(path)
 		if err != nil {
 			return fmt.Errorf("failed to read file: %v", err)
@@ -112,6 +124,7 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		}
 		contractAddresses[name] = data.Address
 	}
+
 	fmt.Printf("Contract addresses read from deployments directory: %s\n", deploymentsDir)
 
 	return nil
