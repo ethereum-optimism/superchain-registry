@@ -27,10 +27,10 @@ func inferRpcUrl(superchainTarget string) (string, error) {
 func getSuperchainLevel(chainType string) (int, error) {
 	switch chainType {
 	case "standard":
-		fmt.Println("Adding standard chain to superchain-registry...")
+		fmt.Printf("Adding standard chain to superchain-registry...\n\n")
 		return 2, nil
 	case "frontier":
-		fmt.Println("Adding frontier chain to superchain-registry...")
+		fmt.Printf("Adding frontier chain to superchain-registry...\n\n")
 		return 1, nil
 	}
 

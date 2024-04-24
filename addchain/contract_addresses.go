@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type AddressData struct {
@@ -34,6 +35,7 @@ var (
 func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string) error {
 	// SuperchainConfig
 	address, err := executeCommand("cast", []string{"call", contractAddresses[OptimismPortalProxy], "superchainConfig()(address)", "-r", l1RpcUrl})
+	address = strings.Join(strings.Fields(address), "") // remove whitespace
 	if err != nil || address == "" || address == "0x" {
 		contractAddresses[SuperchainConfig] = ""
 	} else {
@@ -42,8 +44,10 @@ func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string
 
 	// Guardian
 	address, err = executeCommand("cast", []string{"call", contractAddresses[SuperchainConfig], "guardian()(address)", "-r", l1RpcUrl})
+	address = strings.Join(strings.Fields(address), "") // remove whitespace
 	if err != nil || address == "" || address == "0x" {
 		address, err = executeCommand("cast", []string{"call", contractAddresses[OptimismPortalProxy], "GUARDIAN()(address)", "-r", l1RpcUrl})
+		address = strings.Join(strings.Fields(address), "") // remove whitespace
 		if err != nil || address == "" || address == "0x" {
 			return fmt.Errorf("could not retrieve address for Guardian")
 		}
@@ -54,6 +58,7 @@ func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string
 
 	// Challenger
 	address, err = executeCommand("cast", []string{"call", contractAddresses[L2OutputOracleProxy], "challenger()(address)", "-r", l1RpcUrl})
+	address = strings.Join(strings.Fields(address), "") // remove whitespace
 	if err != nil || address == "" || address == "0x" {
 		return fmt.Errorf("could not retrieve address for Guardian")
 	} else {
@@ -62,6 +67,7 @@ func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string
 
 	// ProxyAdminOwner
 	address, err = executeCommand("cast", []string{"call", contractAddresses[ProxyAdmin], "owner()(address)", "-r", l1RpcUrl})
+	address = strings.Join(strings.Fields(address), "") // remove whitespace
 	if err != nil || address == "" || address == "0x" {
 		return fmt.Errorf("could not retrieve address for ProxyAdminOwner")
 	} else {
@@ -70,11 +76,13 @@ func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string
 
 	// SystemConfigOwner
 	address, err = executeCommand("cast", []string{"call", contractAddresses[SystemConfigProxy], "owner()(address)", "-r", l1RpcUrl})
+	address = strings.Join(strings.Fields(address), "") // remove whitespace
 	if err != nil || address == "" || address == "0x" {
 		return fmt.Errorf("could not retrieve address for ProxyAdminOwner")
 	} else {
 		contractAddresses[SystemConfigOwner] = address
 	}
+	fmt.Printf("Contract addresses read from on-chain contracts\n")
 
 	return nil
 }
@@ -104,6 +112,7 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		}
 		contractAddresses[name] = data.Address
 	}
+	fmt.Printf("Contract addresses read from deployments directory: %s\n", deploymentsDir)
 
 	return nil
 }
@@ -131,6 +140,7 @@ func writeAddressesToJSON(contractsAddresses map[string]string, superchainRepoPa
 	if _, err := file.Write(jsonData); err != nil {
 		return fmt.Errorf("failed to write json to file: %w", err)
 	}
+	fmt.Printf("Contract addresses written to: %s\n", filePath)
 
 	return nil
 }

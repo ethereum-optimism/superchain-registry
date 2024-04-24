@@ -11,23 +11,23 @@ import (
 
 type RollupConfig struct {
 	Name            string      `yaml:"name"`
-	L2ChainID       string      `json:"l2_chain_id" yaml:"chain_id"`
+	L2ChainID       uint64      `json:"l2_chain_id" yaml:"chain_id"`
 	PublicRPC       string      `yaml:"public_rpc"`
 	SequencerRPC    string      `yaml:"sequencer_rpc"`
 	Explorer        string      `yaml:"explorer"`
 	SuperchainLevel int         `yaml:"superchain_level"`
 	BatchInboxAddr  string      `json:"batch_inbox_address" yaml:"batch_inbox_addr"`
 	Genesis         GenesisData `json:"genesis" yaml:"genesis"`
-	CanyonTime      int         `json:"canyon_time" yaml:"canyon_time"`
-	DeltaTime       int         `json:"delta_time" yaml:"delta_time"`
-	EcotoneTime     int         `json:"ecotone_time" yaml:"ecotone_time"`
+	CanyonTime      *int        `json:"canyon_time,omitempty" yaml:"canyon_time"`
+	DeltaTime       *int        `json:"delta_time,omitempty" yaml:"delta_time"`
+	EcotoneTime     *int        `json:"ecotone_time,omitempty" yaml:"ecotone_time"`
 }
 
 type GenesisData struct {
 	L1           GenesisLayer `json:"l1" yaml:"l1"`
 	L2           GenesisLayer `json:"l2" yaml:"l2"`
 	L2Time       int          `json:"l2_time" yaml:"l2_time"`
-	SystemConfig SystemConfig `json:"system_config"`
+	SystemConfig SystemConfig `json:"system_config" yaml:"system_config,omitempty"`
 }
 
 type SystemConfig struct {
@@ -44,7 +44,8 @@ type GenesisLayer struct {
 	Number int    `json:"number" yaml:"number"`
 }
 
-func constructRollupConfig(filePath, chainName, publicRPC, sequencerRPC string, superchainLevel int) (RollupConfig, error) {
+func constructRollupConfig(filePath, chainName, publicRPC, sequencerRPC, explorer string, superchainLevel int) (RollupConfig, error) {
+	fmt.Printf("Attempting to read from %s\n", filePath)
 	file, err := os.ReadFile(filePath)
 	if err != nil {
 		return RollupConfig{}, fmt.Errorf("error reading file: %v", err)
@@ -58,25 +59,26 @@ func constructRollupConfig(filePath, chainName, publicRPC, sequencerRPC string, 
 	config.PublicRPC = publicRPC
 	config.SequencerRPC = sequencerRPC
 	config.SuperchainLevel = superchainLevel
+	config.Explorer = explorer
 
+	fmt.Printf("Rollup config successfully constructed\n")
 	return config, nil
 }
 
-func writeChainConfig(inputFilepath, targetDirectory, chainName, publicRPC, sequencerRPC string, superchainLevel int, superchainRepoPath string, superchainTarget string) error {
-	rollupConfig, err := constructRollupConfig(inputFilepath, chainName, publicRPC, sequencerRPC, superchainLevel)
+func writeChainConfig(
+	inputFilepath string,
+	targetDirectory string,
+	chainName string,
+	publicRPC string,
+	sequencerRPC string,
+	explorer string,
+	superchainLevel int,
+	superchainRepoPath string,
+	superchainTarget string,
+) error {
+	rollupConfig, err := constructRollupConfig(inputFilepath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
-	}
-
-	yamlData, err := yaml.Marshal(rollupConfig)
-	if err != nil {
-		return fmt.Errorf("failed to marshal yaml: %w", err)
-	}
-
-	filename := filepath.Join(targetDirectory, chainName+".yaml")
-	err = os.WriteFile(filename, yamlData, 0644)
-	if err != nil {
-		return fmt.Errorf("failed to write yaml file: %w", err)
 	}
 
 	// create genesis-system-config data
@@ -98,6 +100,20 @@ func writeChainConfig(inputFilepath, targetDirectory, chainName, publicRPC, sequ
 	if err := os.WriteFile(filePath, systemConfigJSON, 0644); err != nil {
 		return fmt.Errorf("failed to write genesis system config json: %w", err)
 	}
+	fmt.Printf("Genesis system config written to: %s\n", filePath)
+
+	rollupConfig.Genesis.SystemConfig = SystemConfig{} // remove SystemConfig so its omitted from yaml
+	yamlData, err := yaml.Marshal(rollupConfig)
+	if err != nil {
+		return fmt.Errorf("failed to marshal yaml: %w", err)
+	}
+
+	filename := filepath.Join(targetDirectory)
+	err = os.WriteFile(filename, yamlData, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write yaml file: %w", err)
+	}
+	fmt.Printf("Rollup config written to: %s\n", filename)
 
 	return nil
 }
