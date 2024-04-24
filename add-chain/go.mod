@@ -1,4 +1,4 @@
-module github.com/ethereum-optimism/superchain-registry/addchain
+module github.com/ethereum-optimism/superchain-registry/add-chain
 
 go 1.21.9
 

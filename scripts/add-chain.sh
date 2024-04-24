@@ -2,7 +2,7 @@ set -e
 
 TYPE=$1
 
-go run ./addchain -chain-type=$TYPE
+go run ./add-chain -chain-type=$TYPE
 
 # create extra genesis data
 
