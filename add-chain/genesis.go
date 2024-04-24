@@ -27,6 +27,7 @@ func createExtraGenesisData(superchainRepoPath, superchainTarget, monorepoDir, g
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to run registry-data command: %w", err)
 	}
+	fmt.Println("Ran go program: <monorepo>/op-chain-ops/cmd/registry-data")
 
 	return nil
 }
