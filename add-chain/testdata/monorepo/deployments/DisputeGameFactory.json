@@ -1,0 +1,734 @@
+{
+  "abi": [
+    {
+      "type": "constructor",
+      "inputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "create",
+      "inputs": [
+        {
+          "name": "_gameType",
+          "type": "uint8",
+          "internalType": "GameType"
+        },
+        {
+          "name": "_rootClaim",
+          "type": "bytes32",
+          "internalType": "Claim"
+        },
+        {
+          "name": "_extraData",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "proxy_",
+          "type": "address",
+          "internalType": "contract IDisputeGame"
+        }
+      ],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "gameAtIndex",
+      "inputs": [
+        {
+          "name": "_index",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "gameType_",
+          "type": "uint8",
+          "internalType": "GameType"
+        },
+        {
+          "name": "timestamp_",
+          "type": "uint64",
+          "internalType": "Timestamp"
+        },
+        {
+          "name": "proxy_",
+          "type": "address",
+          "internalType": "contract IDisputeGame"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "gameCount",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "gameCount_",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "gameImpls",
+      "inputs": [
+        {
+          "name": "",
+          "type": "uint8",
+          "internalType": "GameType"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "contract IDisputeGame"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "games",
+      "inputs": [
+        {
+          "name": "_gameType",
+          "type": "uint8",
+          "internalType": "GameType"
+        },
+        {
+          "name": "_rootClaim",
+          "type": "bytes32",
+          "internalType": "Claim"
+        },
+        {
+          "name": "_extraData",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "proxy_",
+          "type": "address",
+          "internalType": "contract IDisputeGame"
+        },
+        {
+          "name": "timestamp_",
+          "type": "uint64",
+          "internalType": "Timestamp"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getGameUUID",
+      "inputs": [
+        {
+          "name": "_gameType",
+          "type": "uint8",
+          "internalType": "GameType"
+        },
+        {
+          "name": "_rootClaim",
+          "type": "bytes32",
+          "internalType": "Claim"
+        },
+        {
+          "name": "_extraData",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "uuid_",
+          "type": "bytes32",
+          "internalType": "Hash"
+        }
+      ],
+      "stateMutability": "pure"
+    },
+    {
+      "type": "function",
+      "name": "initBonds",
+      "inputs": [
+        {
+          "name": "",
+          "type": "uint8",
+          "internalType": "GameType"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "initialize",
+      "inputs": [
+        {
+          "name": "_owner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "renounceOwnership",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setImplementation",
+      "inputs": [
+        {
+          "name": "_gameType",
+          "type": "uint8",
+          "internalType": "GameType"
+        },
+        {
+          "name": "_impl",
+          "type": "address",
+          "internalType": "contract IDisputeGame"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setInitBond",
+      "inputs": [
+        {
+          "name": "_gameType",
+          "type": "uint8",
+          "internalType": "GameType"
+        },
+        {
+          "name": "_initBond",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [
+        {
+          "name": "newOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "version",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "event",
+      "name": "DisputeGameCreated",
+      "inputs": [
+        {
+          "name": "disputeProxy",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "gameType",
+          "type": "uint8",
+          "indexed": true,
+          "internalType": "GameType"
+        },
+        {
+          "name": "rootClaim",
+          "type": "bytes32",
+          "indexed": true,
+          "internalType": "Claim"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "ImplementationSet",
+      "inputs": [
+        {
+          "name": "impl",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "gameType",
+          "type": "uint8",
+          "indexed": true,
+          "internalType": "GameType"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "InitBondUpdated",
+      "inputs": [
+        {
+          "name": "gameType",
+          "type": "uint8",
+          "indexed": true,
+          "internalType": "GameType"
+        },
+        {
+          "name": "newBond",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Initialized",
+      "inputs": [
+        {
+          "name": "version",
+          "type": "uint8",
+          "indexed": false,
+          "internalType": "uint8"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        {
+          "name": "previousOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "error",
+      "name": "GameAlreadyExists",
+      "inputs": [
+        {
+          "name": "uuid",
+          "type": "bytes32",
+          "internalType": "Hash"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "InsufficientBond",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "NoImplementation",
+      "inputs": [
+        {
+          "name": "gameType",
+          "type": "uint8",
+          "internalType": "GameType"
+        }
+      ]
+    }
+  ],
+  "address": "0x6fDa3Bf9F64057Ee74a4C8617A4B6945504d64DA",
+  "args": [],
+  "bytecode": "0x60806040523480156200001157600080fd5b506200001e600062000024565b62000292565b600054610100900460ff1615808015620000455750600054600160ff909116105b8062000075575062000062306200016260201b62000a3c1760201c565b15801562000075575060005460ff166001145b620000de5760405162461bcd60e51b815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201526d191e481a5b9a5d1a585b1a5e995960921b60648201526084015b60405180910390fd5b6000805460ff19166001179055801562000102576000805461ff0019166101001790555b6200010c62000171565b6200011782620001d9565b80156200015e576000805461ff0019169055604051600181527f7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb38474024989060200160405180910390a15b5050565b6001600160a01b03163b151590565b600054610100900460ff16620001cd5760405162461bcd60e51b815260206004820152602b6024820152600080516020620012ff83398151915260448201526a6e697469616c697a696e6760a81b6064820152608401620000d5565b620001d76200022b565b565b603380546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b600054610100900460ff16620002875760405162461bcd60e51b815260206004820152602b6024820152600080516020620012ff83398151915260448201526a6e697469616c697a696e6760a81b6064820152608401620000d5565b620001d733620001d9565b61105d80620002a26000396000f3fe6080604052600436106100dd5760003560e01c8063bb8aa1fc1161007f578063c4d66de811610059578063c4d66de8146102ed578063dfa162d31461030d578063ed8bc95d14610350578063f2fde38b1461037d57600080fd5b8063bb8aa1fc1461021a578063c018126b14610278578063c49d52711461029857600080fd5b80634d1975b4116100bb5780634d1975b41461016f57806354fd4d5014610184578063715018a6146101da5780638da5cb5b146101ef57600080fd5b806326daafbe146100e25780633142e55e1461011557806345583b7a1461014d575b600080fd5b3480156100ee57600080fd5b506101026100fd366004610dd4565b61039d565b6040519081526020015b60405180910390f35b610128610123366004610dd4565b6103d6565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200161010c565b34801561015957600080fd5b5061016d610168366004610e7d565b610650565b005b34801561017b57600080fd5b50606854610102565b34801561019057600080fd5b506101cd6040518060400160405280600581526020017f302e302e3800000000000000000000000000000000000000000000000000000081525081565b60405161010c9190610eb4565b3480156101e657600080fd5b5061016d6106d7565b3480156101fb57600080fd5b5060335473ffffffffffffffffffffffffffffffffffffffff16610128565b34801561022657600080fd5b5061023a610235366004610f27565b6106eb565b6040805160ff909416845267ffffffffffffffff909216602084015273ffffffffffffffffffffffffffffffffffffffff169082015260600161010c565b34801561028457600080fd5b5061016d610293366004610f40565b61074d565b3480156102a457600080fd5b506102b86102b3366004610dd4565b610796565b6040805173ffffffffffffffffffffffffffffffffffffffff909316835267ffffffffffffffff90911660208301520161010c565b3480156102f957600080fd5b5061016d610308366004610f6a565b6107e9565b34801561031957600080fd5b50610128610328366004610f8e565b60656020526000908152604090205473ffffffffffffffffffffffffffffffffffffffff1681565b34801561035c57600080fd5b5061010261036b366004610f8e565b60666020526000908152604090205481565b34801561038957600080fd5b5061016d610398366004610f6a565b610985565b6000848484846040516020016103b69493929190610fa9565b604051602081830303815290604052805190602001209050949350505050565b60ff841660009081526065602052604081205473ffffffffffffffffffffffffffffffffffffffff1680610440576040517f44265d6f00000000000000000000000000000000000000000000000000000000815260ff871660048201526024015b60405180910390fd5b60ff861660009081526066602052604090205434101561048c576040517fe92c469f00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6104ef8585856040516020016104a493929190611007565b604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe081840301815291905273ffffffffffffffffffffffffffffffffffffffff831690610a58565b91508173ffffffffffffffffffffffffffffffffffffffff16638129fc1c346040518263ffffffff1660e01b81526004016000604051808303818588803b15801561053957600080fd5b505af115801561054d573d6000803e3d6000fd5b505050505060006105608787878761039d565b600081815260676020526040902054909150156105ac576040517f014f6fe500000000000000000000000000000000000000000000000000000000815260048101829052602401610437565b60004260b81b60f889901b178417600083815260676020526040808220839055606880546001810182559083527fa2153420d844928b4421650203c77babc8b33d7f2e7b450e2966db0c220977530183905551919250889160ff8b169173ffffffffffffffffffffffffffffffffffffffff8816917ffad0599ff449d8d9685eadecca8cb9e00924c5fd8367c1c09469824939e1ffec9190a4505050949350505050565b610658610b8c565b60ff821660008181526065602052604080822080547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff8616908117909155905190917f623713f72f6e427a8044bb8b3bd6834357cf285decbaa21bcc73c1d0632c4d8491a35050565b6106df610b8c565b6106e96000610c0d565b565b60008060006107406068858154811061070657610706611021565b906000526020600020015460f881901c9167ffffffffffffffff60b883901c169173ffffffffffffffffffffffffffffffffffffffff1690565b9196909550909350915050565b610755610b8c565b60ff8216600081815260666020526040808220849055518392917f3d3603f30a8e965cf76ec29fb1f0563457ec8a7114c12180c60e7be8384201f191a35050565b60008060006107a78787878761039d565b60009081526067602052604090205473ffffffffffffffffffffffffffffffffffffffff81169860b89190911c67ffffffffffffffff16975095505050505050565b600054610100900460ff16158080156108095750600054600160ff909116105b806108235750303b158015610823575060005460ff166001145b6108af576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201527f647920696e697469616c697a65640000000000000000000000000000000000006064820152608401610437565b600080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00166001179055801561090d57600080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00ff166101001790555b610915610c84565b61091e82610c0d565b801561098157600080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00ff169055604051600181527f7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb38474024989060200160405180910390a15b5050565b61098d610b8c565b73ffffffffffffffffffffffffffffffffffffffff8116610a30576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608401610437565b610a3981610c0d565b50565b73ffffffffffffffffffffffffffffffffffffffff163b151590565b60006002825101603f8101600a81036040518360581b8260e81b177f6100003d81600a3d39f3363d3d373d3d3d3d610000806035363936013d7300001781528660601b601e8201527f5af43d3d93803e603357fd5bf300000000000000000000000000000000000000603282015285519150603f8101602087015b60208410610b1057805182527fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe09093019260209182019101610ad3565b517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff602085900360031b1b16815260f085901b9083015282816000f0945084610b7d577febfef1880000000000000000000000000000000000000000000000000000000060005260206000fd5b90910160405250909392505050565b60335473ffffffffffffffffffffffffffffffffffffffff1633146106e9576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152606401610437565b6033805473ffffffffffffffffffffffffffffffffffffffff8381167fffffffffffffffffffffffff0000000000000000000000000000000000000000831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b600054610100900460ff16610d1b576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602b60248201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960448201527f6e697469616c697a696e670000000000000000000000000000000000000000006064820152608401610437565b6106e9600054610100900460ff16610db5576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602b60248201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960448201527f6e697469616c697a696e670000000000000000000000000000000000000000006064820152608401610437565b6106e933610c0d565b803560ff81168114610dcf57600080fd5b919050565b60008060008060608587031215610dea57600080fd5b610df385610dbe565b935060208501359250604085013567ffffffffffffffff80821115610e1757600080fd5b818701915087601f830112610e2b57600080fd5b813581811115610e3a57600080fd5b886020828501011115610e4c57600080fd5b95989497505060200194505050565b73ffffffffffffffffffffffffffffffffffffffff81168114610a3957600080fd5b60008060408385031215610e9057600080fd5b610e9983610dbe565b91506020830135610ea981610e5b565b809150509250929050565b600060208083528351808285015260005b81811015610ee157858101830151858201604001528201610ec5565b81811115610ef3576000604083870101525b50601f017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe016929092016040019392505050565b600060208284031215610f3957600080fd5b5035919050565b60008060408385031215610f5357600080fd5b610f5c83610dbe565b946020939093013593505050565b600060208284031215610f7c57600080fd5b8135610f8781610e5b565b9392505050565b600060208284031215610fa057600080fd5b610f8782610dbe565b60ff8516815283602082015260606040820152816060820152818360808301376000818301608090810191909152601f9092017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe01601019392505050565b838152818360208301376000910160200190815292915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fdfea164736f6c634300080f000a496e697469616c697a61626c653a20636f6e7472616374206973206e6f742069",
+  "deployedBytecode": "0x6080604052600436106100dd5760003560e01c8063bb8aa1fc1161007f578063c4d66de811610059578063c4d66de8146102ed578063dfa162d31461030d578063ed8bc95d14610350578063f2fde38b1461037d57600080fd5b8063bb8aa1fc1461021a578063c018126b14610278578063c49d52711461029857600080fd5b80634d1975b4116100bb5780634d1975b41461016f57806354fd4d5014610184578063715018a6146101da5780638da5cb5b146101ef57600080fd5b806326daafbe146100e25780633142e55e1461011557806345583b7a1461014d575b600080fd5b3480156100ee57600080fd5b506101026100fd366004610dd4565b61039d565b6040519081526020015b60405180910390f35b610128610123366004610dd4565b6103d6565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200161010c565b34801561015957600080fd5b5061016d610168366004610e7d565b610650565b005b34801561017b57600080fd5b50606854610102565b34801561019057600080fd5b506101cd6040518060400160405280600581526020017f302e302e3800000000000000000000000000000000000000000000000000000081525081565b60405161010c9190610eb4565b3480156101e657600080fd5b5061016d6106d7565b3480156101fb57600080fd5b5060335473ffffffffffffffffffffffffffffffffffffffff16610128565b34801561022657600080fd5b5061023a610235366004610f27565b6106eb565b6040805160ff909416845267ffffffffffffffff909216602084015273ffffffffffffffffffffffffffffffffffffffff169082015260600161010c565b34801561028457600080fd5b5061016d610293366004610f40565b61074d565b3480156102a457600080fd5b506102b86102b3366004610dd4565b610796565b6040805173ffffffffffffffffffffffffffffffffffffffff909316835267ffffffffffffffff90911660208301520161010c565b3480156102f957600080fd5b5061016d610308366004610f6a565b6107e9565b34801561031957600080fd5b50610128610328366004610f8e565b60656020526000908152604090205473ffffffffffffffffffffffffffffffffffffffff1681565b34801561035c57600080fd5b5061010261036b366004610f8e565b60666020526000908152604090205481565b34801561038957600080fd5b5061016d610398366004610f6a565b610985565b6000848484846040516020016103b69493929190610fa9565b604051602081830303815290604052805190602001209050949350505050565b60ff841660009081526065602052604081205473ffffffffffffffffffffffffffffffffffffffff1680610440576040517f44265d6f00000000000000000000000000000000000000000000000000000000815260ff871660048201526024015b60405180910390fd5b60ff861660009081526066602052604090205434101561048c576040517fe92c469f00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6104ef8585856040516020016104a493929190611007565b604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe081840301815291905273ffffffffffffffffffffffffffffffffffffffff831690610a58565b91508173ffffffffffffffffffffffffffffffffffffffff16638129fc1c346040518263ffffffff1660e01b81526004016000604051808303818588803b15801561053957600080fd5b505af115801561054d573d6000803e3d6000fd5b505050505060006105608787878761039d565b600081815260676020526040902054909150156105ac576040517f014f6fe500000000000000000000000000000000000000000000000000000000815260048101829052602401610437565b60004260b81b60f889901b178417600083815260676020526040808220839055606880546001810182559083527fa2153420d844928b4421650203c77babc8b33d7f2e7b450e2966db0c220977530183905551919250889160ff8b169173ffffffffffffffffffffffffffffffffffffffff8816917ffad0599ff449d8d9685eadecca8cb9e00924c5fd8367c1c09469824939e1ffec9190a4505050949350505050565b610658610b8c565b60ff821660008181526065602052604080822080547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff8616908117909155905190917f623713f72f6e427a8044bb8b3bd6834357cf285decbaa21bcc73c1d0632c4d8491a35050565b6106df610b8c565b6106e96000610c0d565b565b60008060006107406068858154811061070657610706611021565b906000526020600020015460f881901c9167ffffffffffffffff60b883901c169173ffffffffffffffffffffffffffffffffffffffff1690565b9196909550909350915050565b610755610b8c565b60ff8216600081815260666020526040808220849055518392917f3d3603f30a8e965cf76ec29fb1f0563457ec8a7114c12180c60e7be8384201f191a35050565b60008060006107a78787878761039d565b60009081526067602052604090205473ffffffffffffffffffffffffffffffffffffffff81169860b89190911c67ffffffffffffffff16975095505050505050565b600054610100900460ff16158080156108095750600054600160ff909116105b806108235750303b158015610823575060005460ff166001145b6108af576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201527f647920696e697469616c697a65640000000000000000000000000000000000006064820152608401610437565b600080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00166001179055801561090d57600080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00ff166101001790555b610915610c84565b61091e82610c0d565b801561098157600080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00ff169055604051600181527f7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb38474024989060200160405180910390a15b5050565b61098d610b8c565b73ffffffffffffffffffffffffffffffffffffffff8116610a30576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f64647265737300000000000000000000000000000000000000000000000000006064820152608401610437565b610a3981610c0d565b50565b73ffffffffffffffffffffffffffffffffffffffff163b151590565b60006002825101603f8101600a81036040518360581b8260e81b177f6100003d81600a3d39f3363d3d373d3d3d3d610000806035363936013d7300001781528660601b601e8201527f5af43d3d93803e603357fd5bf300000000000000000000000000000000000000603282015285519150603f8101602087015b60208410610b1057805182527fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe09093019260209182019101610ad3565b517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff602085900360031b1b16815260f085901b9083015282816000f0945084610b7d577febfef1880000000000000000000000000000000000000000000000000000000060005260206000fd5b90910160405250909392505050565b60335473ffffffffffffffffffffffffffffffffffffffff1633146106e9576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152606401610437565b6033805473ffffffffffffffffffffffffffffffffffffffff8381167fffffffffffffffffffffffff0000000000000000000000000000000000000000831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b600054610100900460ff16610d1b576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602b60248201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960448201527f6e697469616c697a696e670000000000000000000000000000000000000000006064820152608401610437565b6106e9600054610100900460ff16610db5576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602b60248201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960448201527f6e697469616c697a696e670000000000000000000000000000000000000000006064820152608401610437565b6106e933610c0d565b803560ff81168114610dcf57600080fd5b919050565b60008060008060608587031215610dea57600080fd5b610df385610dbe565b935060208501359250604085013567ffffffffffffffff80821115610e1757600080fd5b818701915087601f830112610e2b57600080fd5b813581811115610e3a57600080fd5b886020828501011115610e4c57600080fd5b95989497505060200194505050565b73ffffffffffffffffffffffffffffffffffffffff81168114610a3957600080fd5b60008060408385031215610e9057600080fd5b610e9983610dbe565b91506020830135610ea981610e5b565b809150509250929050565b600060208083528351808285015260005b81811015610ee157858101830151858201604001528201610ec5565b81811115610ef3576000604083870101525b50601f017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe016929092016040019392505050565b600060208284031215610f3957600080fd5b5035919050565b60008060408385031215610f5357600080fd5b610f5c83610dbe565b946020939093013593505050565b600060208284031215610f7c57600080fd5b8135610f8781610e5b565b9392505050565b600060208284031215610fa057600080fd5b610f8782610dbe565b60ff8516815283602082015260606040820152816060820152818360808301376000818301608090810191909152601f9092017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe01601019392505050565b838152818360208301376000910160200190815292915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fdfea164736f6c634300080f000a",
+  "devdoc": {
+    "version": 1,
+    "kind": "dev",
+    "methods": {
+      "create(uint8,bytes32,bytes)": {
+        "params": {
+          "_extraData": "Any extra data that should be provided to the created dispute game.",
+          "_gameType": "The type of the DisputeGame - used to decide the proxy implementation.",
+          "_rootClaim": "The root claim of the DisputeGame."
+        },
+        "returns": {
+          "proxy_": "The address of the created DisputeGame proxy."
+        }
+      },
+      "gameAtIndex(uint256)": {
+        "params": {
+          "_index": "The index of the dispute game."
+        },
+        "returns": {
+          "gameType_": "The type of the DisputeGame - used to decide the proxy implementation.",
+          "proxy_": "The clone of the `DisputeGame` created with the given parameters.         Returns `address(0)` if nonexistent.",
+          "timestamp_": "The timestamp of the creation of the dispute game."
+        }
+      },
+      "gameCount()": {
+        "returns": {
+          "gameCount_": "The total number of dispute games created by this factory."
+        }
+      },
+      "games(uint8,bytes32,bytes)": {
+        "details": "`++` equates to concatenation.",
+        "params": {
+          "_extraData": "Any extra data that should be provided to the created dispute game.",
+          "_gameType": "The type of the DisputeGame - used to decide the proxy implementation",
+          "_rootClaim": "The root claim of the DisputeGame."
+        },
+        "returns": {
+          "proxy_": "The clone of the `DisputeGame` created with the given parameters.         Returns `address(0)` if nonexistent.",
+          "timestamp_": "The timestamp of the creation of the dispute game."
+        }
+      },
+      "getGameUUID(uint8,bytes32,bytes)": {
+        "details": "Hashes the concatenation of `gameType . rootClaim . extraData`      without expanding memory.",
+        "params": {
+          "_extraData": "Any extra data that should be provided to the created dispute game.",
+          "_gameType": "The type of the DisputeGame.",
+          "_rootClaim": "The root claim of the DisputeGame."
+        },
+        "returns": {
+          "uuid_": "The unique identifier for the given dispute game parameters."
+        }
+      },
+      "initialize(address)": {
+        "params": {
+          "_owner": "The owner of the contract."
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "setImplementation(uint8,address)": {
+        "details": "May only be called by the `owner`.",
+        "params": {
+          "_gameType": "The type of the DisputeGame.",
+          "_impl": "The implementation contract for the given `GameType`."
+        }
+      },
+      "setInitBond(uint8,uint256)": {
+        "details": "May only be called by the `owner`.",
+        "params": {
+          "_gameType": "The type of the DisputeGame.",
+          "_initBond": "The bond (in wei) for initializing a game type."
+        }
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "errors": {
+      "GameAlreadyExists(bytes32)": [
+        {
+          "params": {
+            "uuid": "The UUID of the dispute game that already exists."
+          }
+        }
+      ],
+      "NoImplementation(uint8)": [
+        {
+          "params": {
+            "gameType": "The unsupported game type."
+          }
+        }
+      ]
+    },
+    "title": "DisputeGameFactory"
+  },
+  "metadata": "{\"compiler\":{\"version\":\"0.8.15+commit.e14f2714\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"Hash\",\"name\":\"uuid\",\"type\":\"bytes32\"}],\"type\":\"error\",\"name\":\"GameAlreadyExists\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"InsufficientBond\"},{\"inputs\":[{\"internalType\":\"GameType\",\"name\":\"gameType\",\"type\":\"uint8\"}],\"type\":\"error\",\"name\":\"NoImplementation\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"disputeProxy\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"GameType\",\"name\":\"gameType\",\"type\":\"uint8\",\"indexed\":true},{\"internalType\":\"Claim\",\"name\":\"rootClaim\",\"type\":\"bytes32\",\"indexed\":true}],\"type\":\"event\",\"name\":\"DisputeGameCreated\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"impl\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"GameType\",\"name\":\"gameType\",\"type\":\"uint8\",\"indexed\":true}],\"type\":\"event\",\"name\":\"ImplementationSet\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"GameType\",\"name\":\"gameType\",\"type\":\"uint8\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"newBond\",\"type\":\"uint256\",\"indexed\":true}],\"type\":\"event\",\"name\":\"InitBondUpdated\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\",\"indexed\":false}],\"type\":\"event\",\"name\":\"Initialized\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true}],\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"GameType\",\"name\":\"_gameType\",\"type\":\"uint8\"},{\"internalType\":\"Claim\",\"name\":\"_rootClaim\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"_extraData\",\"type\":\"bytes\"}],\"stateMutability\":\"payable\",\"type\":\"function\",\"name\":\"create\",\"outputs\":[{\"internalType\":\"contract IDisputeGame\",\"name\":\"proxy_\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"gameAtIndex\",\"outputs\":[{\"internalType\":\"GameType\",\"name\":\"gameType_\",\"type\":\"uint8\"},{\"internalType\":\"Timestamp\",\"name\":\"timestamp_\",\"type\":\"uint64\"},{\"internalType\":\"contract IDisputeGame\",\"name\":\"proxy_\",\"type\":\"address\"}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"gameCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"gameCount_\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"GameType\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"gameImpls\",\"outputs\":[{\"internalType\":\"contract IDisputeGame\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"GameType\",\"name\":\"_gameType\",\"type\":\"uint8\"},{\"internalType\":\"Claim\",\"name\":\"_rootClaim\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"_extraData\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"games\",\"outputs\":[{\"internalType\":\"contract IDisputeGame\",\"name\":\"proxy_\",\"type\":\"address\"},{\"internalType\":\"Timestamp\",\"name\":\"timestamp_\",\"type\":\"uint64\"}]},{\"inputs\":[{\"internalType\":\"GameType\",\"name\":\"_gameType\",\"type\":\"uint8\"},{\"internalType\":\"Claim\",\"name\":\"_rootClaim\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"_extraData\",\"type\":\"bytes\"}],\"stateMutability\":\"pure\",\"type\":\"function\",\"name\":\"getGameUUID\",\"outputs\":[{\"internalType\":\"Hash\",\"name\":\"uuid_\",\"type\":\"bytes32\"}]},{\"inputs\":[{\"internalType\":\"GameType\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"initBonds\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"initialize\"},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"renounceOwnership\"},{\"inputs\":[{\"internalType\":\"GameType\",\"name\":\"_gameType\",\"type\":\"uint8\"},{\"internalType\":\"contract IDisputeGame\",\"name\":\"_impl\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setImplementation\"},{\"inputs\":[{\"internalType\":\"GameType\",\"name\":\"_gameType\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"_initBond\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setInitBond\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"transferOwnership\"},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"version\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}]}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"create(uint8,bytes32,bytes)\":{\"params\":{\"_extraData\":\"Any extra data that should be provided to the created dispute game.\",\"_gameType\":\"The type of the DisputeGame - used to decide the proxy implementation.\",\"_rootClaim\":\"The root claim of the DisputeGame.\"},\"returns\":{\"proxy_\":\"The address of the created DisputeGame proxy.\"}},\"gameAtIndex(uint256)\":{\"params\":{\"_index\":\"The index of the dispute game.\"},\"returns\":{\"gameType_\":\"The type of the DisputeGame - used to decide the proxy implementation.\",\"proxy_\":\"The clone of the `DisputeGame` created with the given parameters.         Returns `address(0)` if nonexistent.\",\"timestamp_\":\"The timestamp of the creation of the dispute game.\"}},\"gameCount()\":{\"returns\":{\"gameCount_\":\"The total number of dispute games created by this factory.\"}},\"games(uint8,bytes32,bytes)\":{\"details\":\"`++` equates to concatenation.\",\"params\":{\"_extraData\":\"Any extra data that should be provided to the created dispute game.\",\"_gameType\":\"The type of the DisputeGame - used to decide the proxy implementation\",\"_rootClaim\":\"The root claim of the DisputeGame.\"},\"returns\":{\"proxy_\":\"The clone of the `DisputeGame` created with the given parameters.         Returns `address(0)` if nonexistent.\",\"timestamp_\":\"The timestamp of the creation of the dispute game.\"}},\"getGameUUID(uint8,bytes32,bytes)\":{\"details\":\"Hashes the concatenation of `gameType . rootClaim . extraData`      without expanding memory.\",\"params\":{\"_extraData\":\"Any extra data that should be provided to the created dispute game.\",\"_gameType\":\"The type of the DisputeGame.\",\"_rootClaim\":\"The root claim of the DisputeGame.\"},\"returns\":{\"uuid_\":\"The unique identifier for the given dispute game parameters.\"}},\"initialize(address)\":{\"params\":{\"_owner\":\"The owner of the contract.\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"setImplementation(uint8,address)\":{\"details\":\"May only be called by the `owner`.\",\"params\":{\"_gameType\":\"The type of the DisputeGame.\",\"_impl\":\"The implementation contract for the given `GameType`.\"}},\"setInitBond(uint8,uint256)\":{\"details\":\"May only be called by the `owner`.\",\"params\":{\"_gameType\":\"The type of the DisputeGame.\",\"_initBond\":\"The bond (in wei) for initializing a game type.\"}},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"constructor\":{\"notice\":\"constructs a new DisputeGameFactory contract.\"},\"create(uint8,bytes32,bytes)\":{\"notice\":\"Creates a new DisputeGame proxy contract.\"},\"gameAtIndex(uint256)\":{\"notice\":\"`gameAtIndex` returns the dispute game contract address and its creation timestamp          at the given index. Each created dispute game increments the underlying index.\"},\"gameCount()\":{\"notice\":\"The total number of dispute games created by this factory.\"},\"gameImpls(uint8)\":{\"notice\":\"`gameImpls` is a mapping that maps `GameType`s to their respective         `IDisputeGame` implementations.\"},\"games(uint8,bytes32,bytes)\":{\"notice\":\"`games` queries an internal mapping that maps the hash of         `gameType ++ rootClaim ++ extraData` to the deployed `DisputeGame` clone.\"},\"getGameUUID(uint8,bytes32,bytes)\":{\"notice\":\"Returns a unique identifier for the given dispute game parameters.\"},\"initBonds(uint8)\":{\"notice\":\"Returns the required bonds for initializing a dispute game of the given type.\"},\"initialize(address)\":{\"notice\":\"Initializes the contract.\"},\"setImplementation(uint8,address)\":{\"notice\":\"Sets the implementation contract for a specific `GameType`.\"},\"setInitBond(uint8,uint256)\":{\"notice\":\"Sets the bond (in wei) for initializing a game type.\"},\"version()\":{\"notice\":\"Semantic version.\"}},\"version\":1}},\"settings\":{\"remappings\":[\"@cwia/=lib/clones-with-immutable-args/src/\",\"@lib-keccak/=lib/lib-keccak/contracts/lib/\",\"@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/\",\"@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/\",\"@rari-capital/solmate/=lib/solmate/\",\"@solady-test/=lib/lib-keccak/lib/solady/test/\",\"@solady/=lib/lib-keccak/lib/solady/src/\",\"clones-with-immutable-args/=lib/clones-with-immutable-args/src/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"kontrol-cheatcodes/=lib/kontrol-cheatcodes/src/\",\"lib-keccak/=lib/lib-keccak/contracts/\",\"openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/\",\"openzeppelin-contracts/=lib/openzeppelin-contracts/\",\"safe-contracts/=lib/safe-contracts/contracts/\",\"solady/=lib/solady/src/\",\"solmate/=lib/solmate/src/\"],\"optimizer\":{\"enabled\":true,\"runs\":999999},\"metadata\":{\"bytecodeHash\":\"none\"},\"compilationTarget\":{\"src/dispute/DisputeGameFactory.sol\":\"DisputeGameFactory\"},\"evmVersion\":\"london\",\"libraries\":{}},\"sources\":{\"lib/clones-with-immutable-args/src/ClonesWithImmutableArgs.sol\":{\"keccak256\":\"0x220db41bfceb0146f86e9be87d3d954fd1d52eadcb3bbfc5cd89e5543a46fd1e\",\"urls\":[\"bzz-raw://19155470db05e2e67a8c14f21cc903bb4833d8e5d248c2183073320c8a595705\",\"dweb:/ipfs/QmTchpXE8MMH1XcYxaZvx64UiVzBatbWy7Sw5HFhVJJjxi\"],\"license\":\"BSD\"},\"lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol\":{\"keccak256\":\"0x247c62047745915c0af6b955470a72d1696ebad4352d7d3011aef1a2463cd888\",\"urls\":[\"bzz-raw://d7fc8396619de513c96b6e00301b88dd790e83542aab918425633a5f7297a15a\",\"dweb:/ipfs/QmXbP4kiZyp7guuS7xe8KaybnwkRPGrBc2Kbi3vhcTfpxb\"],\"license\":\"MIT\"},\"lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol\":{\"keccak256\":\"0x0203dcadc5737d9ef2c211d6fa15d18ebc3b30dfa51903b64870b01a062b0b4e\",\"urls\":[\"bzz-raw://6eb2fd1e9894dbe778f4b8131adecebe570689e63cf892f4e21257bfe1252497\",\"dweb:/ipfs/QmXgUGNfZvrn6N2miv3nooSs7Jm34A41qz94fu2GtDFcx8\"],\"license\":\"MIT\"},\"lib/openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol\":{\"keccak256\":\"0x611aa3f23e59cfdd1863c536776407b3e33d695152a266fa7cfb34440a29a8a3\",\"urls\":[\"bzz-raw://9b4b2110b7f2b3eb32951bc08046fa90feccffa594e1176cb91cdfb0e94726b4\",\"dweb:/ipfs/QmSxLwYjicf9zWFuieRc8WQwE4FisA1Um5jp1iSa731TGt\"],\"license\":\"MIT\"},\"lib/openzeppelin-contracts-upgradeable/contracts/utils/ContextUpgradeable.sol\":{\"keccak256\":\"0x963ea7f0b48b032eef72fe3a7582edf78408d6f834115b9feadd673a4d5bd149\",\"urls\":[\"bzz-raw://d6520943ea55fdf5f0bafb39ed909f64de17051bc954ff3e88c9e5621412c79c\",\"dweb:/ipfs/QmWZ4rAKTQbNG2HxGs46AcTXShsVytKeLs7CUCdCSv5N7a\"],\"license\":\"MIT\"},\"src/dispute/DisputeGameFactory.sol\":{\"keccak256\":\"0xed31c5c0c9f4050aaf9fba24719f207a3b2f7a754a9aff9ba2bd5a92e63d45dd\",\"urls\":[\"bzz-raw://b2a25ab5f23e02f09f0941b6081fc6af1167d4c00ed8ffeaf7a0a33a533a5aba\",\"dweb:/ipfs/QmY3CGEcJVeCAPPxvx5wMszmeGeUaRfuxjK1vaXFCEfPao\"],\"license\":\"MIT\"},\"src/dispute/interfaces/IDisputeGame.sol\":{\"keccak256\":\"0xf6da41687510f614e2eff09d9ce8f9772fc1d631d0ca084c7d4b2fda992903a8\",\"urls\":[\"bzz-raw://a04591dc37a4f54001f8fc5a6b5be8e89be0aeab6ddca874680123da149ddc96\",\"dweb:/ipfs/QmfDnSkAUwAQ2QBgRh666LPVuufbUiEV7komRgnyFGp3Wr\"],\"license\":\"MIT\"},\"src/dispute/interfaces/IDisputeGameFactory.sol\":{\"keccak256\":\"0xff22bc70cd0d0a0fcfc6ecfecc5f87b36058b95fd32884b07891b6c650f9c58d\",\"urls\":[\"bzz-raw://b37d510b197e3f0c30448a27efdee16177d92d0e482bfa105752b1084b30ec7b\",\"dweb:/ipfs/QmPySVMajSr8a2MekXg7EcdLVHcmb6H1CRZXXeoNVkBvAq\"],\"license\":\"MIT\"},\"src/dispute/interfaces/IInitializable.sol\":{\"keccak256\":\"0x30eca13613b0654e8beb1756cc952163abc9c6c92fe4b1baccd20eb73b17ca4f\",\"urls\":[\"bzz-raw://4fca9e9815265c4457e9dde03476b190d300829aab42a779e2c0eb4a88eff3e7\",\"dweb:/ipfs/QmRdq93iUVtE5EGy1KxnWa8v3UjH48cgnekpg5sx33B9he\"],\"license\":\"MIT\"},\"src/dispute/lib/LibGameId.sol\":{\"keccak256\":\"0xa61b8562def4834607b733240e8eb4f924a75250df45852c9af1aea628f6b58d\",\"urls\":[\"bzz-raw://2853075b45f634db083ea5f495f0cb9c28eb2401e2c18fd5fb7bce2500ed78ad\",\"dweb:/ipfs/QmaJpEg5z6tZ3niZY6N3f8AZ89FRnUVZJHNUDs66sq97j6\"],\"license\":\"MIT\"},\"src/dispute/lib/LibHashing.sol\":{\"keccak256\":\"0x5a072cd028094eee55acb84ed8d08d7422b1fb46658b7e043e916781530a383b\",\"urls\":[\"bzz-raw://b67e54f1318f1fd67b28b16c6861a56e27217c26a12aaea5c446e2ec53143920\",\"dweb:/ipfs/QmVLSTP3PwXzRkR3A4qV9fjZhca9v8J1EnEYuVGUsSirAq\"],\"license\":\"MIT\"},\"src/dispute/lib/LibPosition.sol\":{\"keccak256\":\"0xc8fd1bbe97ae761ff39bfd10361b2031a343f6481499c26f5e1daa4faa0d45f5\",\"urls\":[\"bzz-raw://8031967861412c15cc5c236fafe8d4361026054b7ee5220278ea7d0ca5e0aea7\",\"dweb:/ipfs/QmXRVZkkxFw8ZLU9Exa8JQqfLK5VUntEtxdGCcPyiN4L1Q\"],\"license\":\"MIT\"},\"src/dispute/lib/LibUDT.sol\":{\"keccak256\":\"0x42cd5a022686434153142b10871ff07e7ed27d32c28d5285f5d2cc6b7de1510c\",\"urls\":[\"bzz-raw://06e460b40977e0668dd27fcc4dd5496e24561e5e9c64cf812e077e2d5db60ffa\",\"dweb:/ipfs/QmTrbrc7ykFhLmtEdKWq9sANRbuDMvjqthUNxtEkW3vTGg\"],\"license\":\"MIT\"},\"src/libraries/DisputeErrors.sol\":{\"keccak256\":\"0x8e8be49421a00de964e1de84ac705709ddc1edf3cd02a5acb6c29f4984a3d780\",\"urls\":[\"bzz-raw://0276278752fc662727697315467a63ee6db1c81f9fdc3c549e2bcc60447890b9\",\"dweb:/ipfs/QmWLnedbgy6Y5LAaPYYRZn8xneMjRhw63iaaR4KQz7Zmts\"],\"license\":\"MIT\"},\"src/libraries/DisputeTypes.sol\":{\"keccak256\":\"0x7663f34cff78539ff1c37e044b5311092234646baf8320a062cdd90a85d9d02c\",\"urls\":[\"bzz-raw://9f5cb2e1a4f69d848006e03670c23a6b1c6fe0d86c5544d6d34fa22eeae88e28\",\"dweb:/ipfs/QmWZGbiq56cyYuX9VnWgkNfjhmYk3WdpnwXGYpMv2MU5ku\"],\"license\":\"MIT\"},\"src/universal/ISemver.sol\":{\"keccak256\":\"0xba34562a8026f59886d2e07d1d58d90b9691d00e0788c6263cef6c22740cab44\",\"urls\":[\"bzz-raw://0826f998632f83c103c3085bf2e872db79a69022b6d2e0444c83a64ca5283c2a\",\"dweb:/ipfs/QmcJ7PNqkAfKqbjFGRordtAg1v9DvcBSKvdTkVvciLyvQR\"],\"license\":\"MIT\"}},\"version\":1}",
+  "numDeployments": 1,
+  "receipt": "",
+  "solcInputHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 45313,
+        "contract": "src/dispute/DisputeGameFactory.sol:DisputeGameFactory",
+        "label": "_initialized",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_uint8"
+      },
+      {
+        "astId": 45316,
+        "contract": "src/dispute/DisputeGameFactory.sol:DisputeGameFactory",
+        "label": "_initializing",
+        "offset": 1,
+        "slot": "0",
+        "type": "t_bool"
+      },
+      {
+        "astId": 45741,
+        "contract": "src/dispute/DisputeGameFactory.sol:DisputeGameFactory",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_array(t_uint256)50_storage"
+      },
+      {
+        "astId": 45185,
+        "contract": "src/dispute/DisputeGameFactory.sol:DisputeGameFactory",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "51",
+        "type": "t_address"
+      },
+      {
+        "astId": 45305,
+        "contract": "src/dispute/DisputeGameFactory.sol:DisputeGameFactory",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "52",
+        "type": "t_array(t_uint256)49_storage"
+      },
+      {
+        "astId": 83237,
+        "contract": "src/dispute/DisputeGameFactory.sol:DisputeGameFactory",
+        "label": "gameImpls",
+        "offset": 0,
+        "slot": "101",
+        "type": "t_mapping(t_userDefinedValueType(GameType)87857,t_contract(IDisputeGame)85540)"
+      },
+      {
+        "astId": 83243,
+        "contract": "src/dispute/DisputeGameFactory.sol:DisputeGameFactory",
+        "label": "initBonds",
+        "offset": 0,
+        "slot": "102",
+        "type": "t_mapping(t_userDefinedValueType(GameType)87857,t_uint256)"
+      },
+      {
+        "astId": 83250,
+        "contract": "src/dispute/DisputeGameFactory.sol:DisputeGameFactory",
+        "label": "_disputeGames",
+        "offset": 0,
+        "slot": "103",
+        "type": "t_mapping(t_userDefinedValueType(Hash)87839,t_userDefinedValueType(GameId)87851)"
+      },
+      {
+        "astId": 83255,
+        "contract": "src/dispute/DisputeGameFactory.sol:DisputeGameFactory",
+        "label": "_disputeGameList",
+        "offset": 0,
+        "slot": "104",
+        "type": "t_array(t_userDefinedValueType(GameId)87851)dyn_storage"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_uint256)49_storage": {
+        "encoding": "inplace",
+        "label": "uint256[49]",
+        "numberOfBytes": "1568",
+        "base": "t_uint256"
+      },
+      "t_array(t_uint256)50_storage": {
+        "encoding": "inplace",
+        "label": "uint256[50]",
+        "numberOfBytes": "1600",
+        "base": "t_uint256"
+      },
+      "t_array(t_userDefinedValueType(GameId)87851)dyn_storage": {
+        "encoding": "dynamic_array",
+        "label": "GameId[]",
+        "numberOfBytes": "32",
+        "base": "t_userDefinedValueType(GameId)87851"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(IDisputeGame)85540": {
+        "encoding": "inplace",
+        "label": "contract IDisputeGame",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_userDefinedValueType(GameType)87857,t_contract(IDisputeGame)85540)": {
+        "encoding": "mapping",
+        "key": "t_userDefinedValueType(GameType)87857",
+        "label": "mapping(GameType => contract IDisputeGame)",
+        "numberOfBytes": "32",
+        "value": "t_contract(IDisputeGame)85540"
+      },
+      "t_mapping(t_userDefinedValueType(GameType)87857,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_userDefinedValueType(GameType)87857",
+        "label": "mapping(GameType => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_mapping(t_userDefinedValueType(Hash)87839,t_userDefinedValueType(GameId)87851)": {
+        "encoding": "mapping",
+        "key": "t_userDefinedValueType(Hash)87839",
+        "label": "mapping(Hash => GameId)",
+        "numberOfBytes": "32",
+        "value": "t_userDefinedValueType(GameId)87851"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      },
+      "t_uint8": {
+        "encoding": "inplace",
+        "label": "uint8",
+        "numberOfBytes": "1"
+      },
+      "t_userDefinedValueType(GameId)87851": {
+        "encoding": "inplace",
+        "label": "GameId",
+        "numberOfBytes": "32"
+      },
+      "t_userDefinedValueType(GameType)87857": {
+        "encoding": "inplace",
+        "label": "GameType",
+        "numberOfBytes": "1"
+      },
+      "t_userDefinedValueType(Hash)87839": {
+        "encoding": "inplace",
+        "label": "Hash",
+        "numberOfBytes": "32"
+      }
+    }
+  },
+  "transactionHash": "0x8cbcfaa50e36671537f8707fc52059fd8346d985b3c8389b7fca9f627612431a",
+  "userdoc": {
+    "version": 1,
+    "kind": "user",
+    "methods": {
+      "constructor": {
+        "notice": "constructs a new DisputeGameFactory contract."
+      },
+      "create(uint8,bytes32,bytes)": {
+        "notice": "Creates a new DisputeGame proxy contract."
+      },
+      "gameAtIndex(uint256)": {
+        "notice": "`gameAtIndex` returns the dispute game contract address and its creation timestamp          at the given index. Each created dispute game increments the underlying index."
+      },
+      "gameCount()": {
+        "notice": "The total number of dispute games created by this factory."
+      },
+      "gameImpls(uint8)": {
+        "notice": "`gameImpls` is a mapping that maps `GameType`s to their respective         `IDisputeGame` implementations."
+      },
+      "games(uint8,bytes32,bytes)": {
+        "notice": "`games` queries an internal mapping that maps the hash of         `gameType ++ rootClaim ++ extraData` to the deployed `DisputeGame` clone."
+      },
+      "getGameUUID(uint8,bytes32,bytes)": {
+        "notice": "Returns a unique identifier for the given dispute game parameters."
+      },
+      "initBonds(uint8)": {
+        "notice": "Returns the required bonds for initializing a dispute game of the given type."
+      },
+      "initialize(address)": {
+        "notice": "Initializes the contract."
+      },
+      "setImplementation(uint8,address)": {
+        "notice": "Sets the implementation contract for a specific `GameType`."
+      },
+      "setInitBond(uint8,uint256)": {
+        "notice": "Sets the bond (in wei) for initializing a game type."
+      },
+      "version()": {
+        "notice": "Semantic version."
+      }
+    },
+    "events": {
+      "DisputeGameCreated(address,uint8,bytes32)": {
+        "notice": "Emitted when a new dispute game is created"
+      },
+      "ImplementationSet(address,uint8)": {
+        "notice": "Emitted when a new game implementation added to the factory"
+      },
+      "InitBondUpdated(uint8,uint256)": {
+        "notice": "Emitted when a game type's initialization bond is updated"
+      }
+    },
+    "errors": {
+      "GameAlreadyExists(bytes32)": [
+        {
+          "notice": "Thrown when a dispute game that already exists is attempted to be created."
+        }
+      ],
+      "InsufficientBond()": [
+        {
+          "notice": "Thrown when a supplied bond is too low to cover the cost of the interaction."
+        }
+      ],
+      "NoImplementation(uint8)": [
+        {
+          "notice": "Thrown when a dispute game is attempted to be created with an unsupported game type."
+        }
+      ]
+    },
+    "notice": "A factory contract for creating `IDisputeGame` contracts. All created dispute games         are stored in both a mapping and an append only array. The timestamp of the creation         time of the dispute game is packed tightly into the storage slot with the address of         the dispute game. This is to make offchain discoverability of playable dispute games         easier."
+  }
+}
