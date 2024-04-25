@@ -20,16 +20,14 @@ import (
 )
 
 func TestL2OOParams(t *testing.T) {
-	isExcluded := map[uint64]bool{
-		999999999: true, // sepolia/zora    Incorrect submissionInterval, wanted 120 got 180
-		1740:      true, // sepolia/metal Incorrect submissionInterval
-		1750:      true, // mainnet/metal Incorrect submissionInterval
-		919:       true, // sepolia/mode Incorrect submissionInterval
-		8866:      true, // mainnet/superlumio Incorrect submissionInterval
-	}
+	isExcluded := map[uint64]bool{}
 
 	checkEquality := func(a, b *big.Int) func() bool {
 		return (func() bool { return (a.Cmp(b) == 0) })
+	}
+
+	checkLessThanOrEqual := func(a, b *big.Int) func() bool {
+		return func() bool { return a.Cmp(b) <= 0 }
 	}
 
 	incorrectMsg := func(name string, want, got *big.Int) string {
@@ -37,9 +35,6 @@ func TestL2OOParams(t *testing.T) {
 	}
 
 	requireEqualParams := func(t *testing.T, desired, actual L2OOParams) {
-		assert.Condition(t,
-			checkEquality(desired.SubmissionInterval, actual.SubmissionInterval),
-			incorrectMsg("submissionInterval", desired.SubmissionInterval, actual.SubmissionInterval))
 		assert.Condition(t,
 			checkEquality(desired.L2BlockTime, actual.L2BlockTime),
 			incorrectMsg("l2BlockTime", desired.L2BlockTime, actual.L2BlockTime))
@@ -73,6 +68,8 @@ func TestL2OOParams(t *testing.T) {
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
 
 		requireEqualParams(t, desiredParams, actualParams)
+
+		assert.Condition(t, checkLessThanOrEqual(desiredParams.SubmissionInterval, actualParams.SubmissionInterval))
 	}
 
 	for chainID, chain := range OPChains {

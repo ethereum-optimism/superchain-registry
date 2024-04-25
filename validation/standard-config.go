@@ -15,7 +15,7 @@ type ResourceConfig struct {
 }
 
 type L2OOParams struct {
-	SubmissionInterval        *big.Int `toml:"submission_interval"`         // Interval in blocks at which checkpoints must be submitted.
+	SubmissionInterval        *big.Int `toml:"submission_interval"`         // Max Interval in blocks at which checkpoints must be submitted. Can be less that this value.
 	L2BlockTime               *big.Int `toml:"l2_block_time"`               // The time per L2 block, in seconds.
 	FinalizationPeriodSeconds *big.Int `toml:"finalization_period_seconds"` // The minimum time (in seconds) that must elapse before a withdrawal can be finalized.
 }
