@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	legacy "github.com/ethereum-optimism/superchain-registry/validation/internal/legacy"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
@@ -36,13 +37,13 @@ func TestL2OOParams(t *testing.T) {
 	}
 
 	requireEqualParams := func(t *testing.T, desired, actual L2OOParams) {
-		require.Condition(t,
+		assert.Condition(t,
 			checkEquality(desired.SubmissionInterval, actual.SubmissionInterval),
 			incorrectMsg("submissionInterval", desired.SubmissionInterval, actual.SubmissionInterval))
-		require.Condition(t,
+		assert.Condition(t,
 			checkEquality(desired.L2BlockTime, actual.L2BlockTime),
 			incorrectMsg("l2BlockTime", desired.L2BlockTime, actual.L2BlockTime))
-		require.Condition(t,
+		assert.Condition(t,
 			checkEquality(desired.FinalizationPeriodSeconds, actual.FinalizationPeriodSeconds),
 			incorrectMsg("finalizationPeriodSeconds", desired.FinalizationPeriodSeconds, actual.FinalizationPeriodSeconds))
 	}
