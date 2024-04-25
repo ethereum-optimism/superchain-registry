@@ -29,15 +29,13 @@ func TestL2OOParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		999999999: true, // sepolia/zora    Incorrect submissionInterval, wanted 120 got 180
 		1740:      true, // sepolia/metal Incorrect submissionInterval
-		1750:      true, // mainnet/metal Incorrect submissionInterval
 		919:       true, // sepolia/mode Incorrect submissionInterval
-		8866:      true, // mainnet/superlumio Incorrect submissionInterval
 	}
 
 	assertInBounds := func(t *testing.T, name string, got *big.Int, want [2]*big.Int) {
 		assert.True(t,
 			isBigIntWithinBounds(got, want),
-			fmt.Sprintf("Incorrect %s, %d is not within bounds %d", name, want, got))
+			fmt.Sprintf("Incorrect %s, %d is not within bounds %d", name, got, want))
 	}
 
 	checkL2OOParams := func(t *testing.T, chain *ChainConfig) {
@@ -65,8 +63,8 @@ func TestL2OOParams(t *testing.T) {
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
 
 		assertInBounds(t, "submissionInterval", actualParams.SubmissionInterval, desiredParams.SubmissionInterval)
-		assertInBounds(t, "submissionInterval", actualParams.L2BlockTime, desiredParams.L2BlockTime)
-		assertInBounds(t, "submissionInterval", actualParams.FinalizationPeriodSeconds, desiredParams.FinalizationPeriodSeconds)
+		assertInBounds(t, "l2BlockTime", actualParams.L2BlockTime, desiredParams.L2BlockTime)
+		assertInBounds(t, "finalizationPeriodSeconds", actualParams.FinalizationPeriodSeconds, desiredParams.FinalizationPeriodSeconds)
 	}
 
 	for chainID, chain := range OPChains {
