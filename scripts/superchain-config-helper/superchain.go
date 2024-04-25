@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 	"text/tabwriter"
 
@@ -68,7 +69,6 @@ func entrypoint(ctx *cli.Context) error {
 	genesisStateRow := []string{"\033[1mGenesis State\033[0m"}
 	l2BlockTimeRow := []string{"\033[1mL2 Block Time\033[0m"}
 
-	// resourceConfigRow := []string{"\033[1mResource Config\033[0m"}
 	maxResourceLimitRow := []string{"\033[1mMax Resource Limit\033[0m"}
 	elasticityMultiplierRow := []string{"\033[1mElasticity Multiplier\033[0m"}
 	baseFeeMaxChangeDenominatorRow := []string{"\033[1mBase Fee Max Change Denominator\033[0m"}
@@ -121,7 +121,6 @@ func entrypoint(ctx *cli.Context) error {
 	rows = append(rows, genesisStateRow)
 	rows = append(rows, l2BlockTimeRow)
 
-	// rows = append(rows, resourceConfigRow)
 	rows = append(rows, elasticityMultiplierRow)
 	rows = append(rows, baseFeeMaxChangeDenominatorRow)
 	rows = append(rows, maxResourceLimitRow)
@@ -153,7 +152,16 @@ func getResourceConfig(rpcUrl string, systemConfigProxy string) (ResourceConfig,
 	input = strings.ReplaceAll(input, "(", "")
 	input = strings.ReplaceAll(input, ")", "")
 	values := strings.Split(input, ",")
-	return ResourceConfig{maxResourceLimit: trimAllSpace(values[0]), elasticityMultiplier: trimAllSpace(values[1]), baseFeeMaxChangeDenominator: trimAllSpace(values[2]), minimumBaseFee: trimAllSpace(values[3]), systemTxMaxGas: trimAllSpace(values[4]), maximumBaseFee: trimAllSpace(values[5])}, err
+	re := regexp.MustCompile(`\[.*?\]`)
+	nonDigits := regexp.MustCompile(`\D`)
+
+	return ResourceConfig{
+		maxResourceLimit:            trimAllSpace(nonDigits.ReplaceAllString(re.ReplaceAllString((values[0]), ""), "")),
+		elasticityMultiplier:        trimAllSpace(values[1]),
+		baseFeeMaxChangeDenominator: trimAllSpace(values[2]),
+		minimumBaseFee:              trimAllSpace(nonDigits.ReplaceAllString(re.ReplaceAllString(values[3], ""), "")),
+		systemTxMaxGas:              trimAllSpace(nonDigits.ReplaceAllString(re.ReplaceAllString(values[4], ""), "")),
+		maximumBaseFee:              trimAllSpace(nonDigits.ReplaceAllString(re.ReplaceAllString(values[5], ""), ""))}, err
 }
 
 func trimAllSpace(s string) string {
