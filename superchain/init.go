@@ -63,6 +63,8 @@ func init() {
 
 			(&chainConfig).setNilHardforkTimestampsToDefault(&superchainEntry.Config)
 
+			MustBeValidSuperchainLevel(chainConfig)
+
 			jsonName := chainConfig.Chain + ".json"
 			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
 			if err != nil {
@@ -93,6 +95,7 @@ func init() {
 			OPChains[chainConfig.ChainID] = &chainConfig
 			Addresses[chainConfig.ChainID] = &addrs
 			GenesisSystemConfigs[chainConfig.ChainID] = &genesisSysCfg
+
 		}
 
 		Superchains[superchainEntry.Superchain] = &superchainEntry
@@ -102,6 +105,12 @@ func init() {
 			panic(fmt.Errorf("failed to read implementations of superchain target %s: %w", s.Name(), err))
 		}
 
-		Implementations[superchainEntry.Config.L1.ChainID] = implementations
+		Implementations[s.Name()] = implementations
+	}
+}
+
+func MustBeValidSuperchainLevel(chainConfig ChainConfig) {
+	if chainConfig.SuperchainLevel != Frontier && chainConfig.SuperchainLevel != Standard {
+		panic(fmt.Sprintf("invalid or unspecified superchain level %d", chainConfig.SuperchainLevel))
 	}
 }

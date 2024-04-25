@@ -31,7 +31,9 @@ func TestResourceConfig(t *testing.T) {
 		actualResourceConfig, err := getResourceConfigWithRetries(context.Background(), common.Address(contractAddress), client)
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
-		require.Equal(t, bindings.ResourceMeteringResourceConfig(OPMainnetResourceConfig), actualResourceConfig, "resource config unacceptable")
+		desiredParams := StandardConfig[chain.Superchain].ResourceConfig
+
+		require.Equal(t, bindings.ResourceMeteringResourceConfig(desiredParams), actualResourceConfig, "resource config unacceptable")
 	}
 
 	for _, chain := range OPChains {
@@ -42,7 +44,7 @@ func TestResourceConfig(t *testing.T) {
 	}
 }
 
-// getResourceMeteringwill get the resoureConfig stored in the contract at systemConfigAddr.
+// getResourceConfig will get the resoureConfig stored in the contract at systemConfigAddr.
 func getResourceConfig(ctx context.Context, systemConfigAddr common.Address, client *ethclient.Client) (bindings.ResourceMeteringResourceConfig, error) {
 	systemConfig, err := bindings.NewSystemConfig(systemConfigAddr, client)
 	if err != nil {

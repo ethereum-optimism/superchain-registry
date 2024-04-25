@@ -7,6 +7,7 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
@@ -57,7 +58,7 @@ func TestContractVersions(t *testing.T) {
 		1740:      true, // sepolia/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		1750:      true, // mainnet/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		8453:      true, // mainnet/base
-		8866:      true, // mainnet/pontem L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
+		8866:      true, // mainnet/superlumio L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		34443:     true, // mainnet/mode
 		84532:     true, // sepolia/base
 		90001:     true, // sepolia/race, due to https://github.com/ethereum-optimism/superchain-registry/issues/147
@@ -111,7 +112,7 @@ func checkSemverForContract(t *testing.T, contractName string, contractAddress *
 	actualSemver, err := getVersionWithRetries(context.Background(), common.Address(*contractAddress), client)
 	require.NoError(t, err, "Could not get version for %s", contractName)
 
-	require.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
+	assert.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
 		"%s.version=%s (UNACCEPTABLE desired version %s)", contractName, actualSemver, desiredSemver)
 }
 
