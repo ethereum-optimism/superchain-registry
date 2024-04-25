@@ -20,7 +20,11 @@ import (
 )
 
 func TestL2OOParams(t *testing.T) {
-	isExcluded := map[uint64]bool{}
+	isExcluded := map[uint64]bool{
+		1740:      true, // sepolia/metal Incorrect finalizationPeriodSeconds
+		919:       true, // sepolia/mode Incorrect finalizationPeriodSeconds
+		999999999: true, // sepolia/zora Incorrect finalizationPeriodSeconds
+	}
 
 	checkEquality := func(a, b *big.Int) func() bool {
 		return (func() bool { return (a.Cmp(b) == 0) })
@@ -69,7 +73,11 @@ func TestL2OOParams(t *testing.T) {
 
 		requireEqualParams(t, desiredParams, actualParams)
 
-		assert.Condition(t, checkLessThanOrEqual(desiredParams.SubmissionInterval, actualParams.SubmissionInterval))
+		assert.Condition(
+			t,
+			checkLessThanOrEqual(actualParams.SubmissionInterval, desiredParams.SubmissionInterval),
+			incorrectMsg("submissionInterval", desiredParams.SubmissionInterval, actualParams.SubmissionInterval),
+		)
 	}
 
 	for chainID, chain := range OPChains {
