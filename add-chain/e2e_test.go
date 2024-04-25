@@ -50,7 +50,7 @@ func TestCLIApp(t *testing.T) {
 }
 
 func compareJsonFiles(dirPath string) (bool, error) {
-	expectedBytes, err := os.ReadFile(dirPath + "test.json")
+	expectedBytes, err := os.ReadFile(dirPath + "expected.json")
 	if err != nil {
 		return false, err
 	}
@@ -74,7 +74,7 @@ func compareJsonFiles(dirPath string) (bool, error) {
 }
 
 func checkConfigYaml() (bool, error) {
-	expectedBytes, err := os.ReadFile("./testdata/superchain/configs/sepolia/test.yaml")
+	expectedBytes, err := os.ReadFile("./testdata/superchain/configs/sepolia/expected.yaml")
 	if err != nil {
 		return false, err
 	}
