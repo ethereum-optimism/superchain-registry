@@ -121,6 +121,8 @@ type AddressList struct {
 func (a AddressList) AddressFor(contractName string) (Address, error) {
 	var address Address
 	switch contractName {
+	case "AddressManager":
+		address = a.AddressManager
 	case "ProxyAdmin":
 		address = a.ProxyAdmin
 	case "L1CrossDomainMessengerProxy":

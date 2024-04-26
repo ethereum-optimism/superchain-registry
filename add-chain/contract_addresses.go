@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
 type AddressData struct {
@@ -102,31 +104,43 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 
 	deployFilePath := filepath.Join(deploymentsDir, ".deploy")
 	_, err := os.Stat(deployFilePath)
-	deployFileExists := true
-	if err != nil {
-		deployFileExists = false
-	}
 
-	for _, name := range contractsFromJSON {
-		var path string
-		if deployFileExists {
-			path = deployFilePath
-		} else {
-			path = filepath.Join(deploymentsDir, name+".json")
+	if err != nil {
+		// Use legacy deployment artifact schema
+		for _, name := range contractsFromJSON {
+			path := filepath.Join(deploymentsDir, name+".json")
+			file, err := os.ReadFile(path)
+			if err != nil {
+				return fmt.Errorf("failed to read file: %v", err)
+			}
+			var data AddressData
+			if err = json.Unmarshal(file, &data); err != nil {
+				return fmt.Errorf("failed to unmarshal json: %v", err)
+			}
+			contractAddresses[name] = data.Address
+			fmt.Printf("%s : %s\n", name, data.Address)
 		}
-		file, err := os.ReadFile(path)
+	} else {
+		var addressList superchain.AddressList
+		rawData, err := os.ReadFile(deployFilePath)
 		if err != nil {
 			return fmt.Errorf("failed to read file: %v", err)
 		}
-		var data AddressData
-		if err = json.Unmarshal(file, &data); err != nil {
+
+		if err = json.Unmarshal(rawData, &addressList); err != nil {
 			return fmt.Errorf("failed to unmarshal json: %v", err)
 		}
-		contractAddresses[name] = data.Address
+
+		for _, name := range contractsFromJSON {
+			address, err := addressList.AddressFor(name)
+			if err != nil {
+				return fmt.Errorf("failed to retrieve %s address from list: %v", name, err)
+			}
+			contractAddresses[name] = address.String()
+		}
 	}
 
 	fmt.Printf("Contract addresses read from deployments directory: %s\n", deploymentsDir)
-
 	return nil
 }
 
