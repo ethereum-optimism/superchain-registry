@@ -45,7 +45,7 @@ func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string
 	// Guardian
 	address, err = castCall(contractAddresses[SuperchainConfig], "guardian()(address)", l1RpcUrl)
 	if err != nil {
-		address, err = castCall(contractAddresses[OptimismPortalProxy], "GUARDIAN()(address)", l1RpcUrl)
+		address, err = castCall(contractAddresses[OptimismPortalProxy], "guardian()(address)", l1RpcUrl)
 		if err != nil {
 			return fmt.Errorf("could not retrieve address for Guardian")
 		}
