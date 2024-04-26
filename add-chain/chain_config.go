@@ -82,11 +82,10 @@ func writeChainConfig(
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
 
-	// create genesis-system-config data
+	// Create genesis-system-config data
 	// (this is deprecated, users should load this from L1, when available via SystemConfig)
 	dirPath := filepath.Join(superchainRepoPath, "superchain", "extra", "genesis-system-configs", superchainTarget)
 
-	// Ensure the directory exists
 	if err := os.MkdirAll(dirPath, 0755); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
@@ -103,19 +102,37 @@ func writeChainConfig(
 	}
 	fmt.Printf("Genesis system config written to: %s\n", filePath)
 
+	// Write the rollup config to a yaml file
+	filename := filepath.Join(targetDirectory)
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
 	rollupConfig.Genesis.SystemConfig = SystemConfig{} // remove SystemConfig so its omitted from yaml
 	yamlData, err := yaml.Marshal(rollupConfig)
 	if err != nil {
 		return fmt.Errorf("failed to marshal yaml: %w", err)
 	}
 
-	filename := filepath.Join(targetDirectory)
-	err = os.WriteFile(filename, yamlData, 0644)
-	if err != nil {
+	// Unmarshal bytes into a yaml.Node for custom manipulation
+	var rootNode yaml.Node
+	if err = yaml.Unmarshal(yamlData, &rootNode); err != nil {
+		return err
+	}
+
+	enhanceYAML(&rootNode)
+
+	encoder := yaml.NewEncoder(file)
+	defer encoder.Close()
+
+	encoder.SetIndent(2)
+	if err := encoder.Encode(&rootNode); err != nil {
 		return fmt.Errorf("failed to write yaml file: %w", err)
 	}
-	fmt.Printf("Rollup config written to: %s\n", filename)
 
+	fmt.Printf("Rollup config written to: %s\n", filename)
 	return nil
 }
 
@@ -131,4 +148,27 @@ func getL1RpcUrl(superchainTarget string) (string, error) {
 
 	fmt.Printf("Setting L1 public rpc endpoint to %s\n", superChain.Config.L1.PublicRPC)
 	return superChain.Config.L1.PublicRPC, nil
+}
+
+func enhanceYAML(node *yaml.Node) {
+	if node.Kind == yaml.DocumentNode && len(node.Content) > 0 {
+		node = node.Content[0] // Dive into the document node
+	}
+
+	var lastKey string
+	for i := 0; i < len(node.Content)-1; i += 2 {
+		currentNode := node.Content[i]
+
+		// Add blank line AFTER these keys
+		if lastKey == "explorer" || lastKey == "superchain_level" || lastKey == "genesis" {
+			currentNode.HeadComment = "\n"
+		}
+
+		// Add blank line BEFORE these keys
+		if currentNode.Value == "genesis" {
+			currentNode.HeadComment = "\n"
+		}
+
+		lastKey = currentNode.Value
+	}
 }
