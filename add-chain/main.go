@@ -52,20 +52,22 @@ func entrypoint(ctx *cli.Context) error {
 	}
 
 	// Get the current script's directory
-	envFilename := ".env"
 	superchainRepoPath, err := os.Getwd()
+	envFilename := ".env"
+	envPath := "."
 	if err != nil {
 		return fmt.Errorf("error getting current directory: %w", err)
 	}
 	if runningTests {
 		envFilename = ".env.test"
+		envPath = "./testdata"
 		superchainRepoPath = filepath.Join(superchainRepoPath, "testdata")
 	}
 
 	// Load environment variables
 	viper.SetConfigName(envFilename) // name of config file (without extension)
 	viper.SetConfigType("env")       // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath(".")         // path to look for the config file in
+	viper.AddConfigPath(envPath)     // path to look for the config file in
 	if err := viper.ReadInConfig(); err != nil {
 		return fmt.Errorf("error reading config file: %w", err)
 	}

@@ -118,7 +118,6 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 				return fmt.Errorf("failed to unmarshal json: %v", err)
 			}
 			contractAddresses[name] = data.Address
-			fmt.Printf("%s : %s\n", name, data.Address)
 		}
 	} else {
 		var addressList superchain.AddressList
