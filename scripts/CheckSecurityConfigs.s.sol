@@ -168,13 +168,23 @@ contract CheckSecurityConfigs is Script {
     }
 
     function checkOptimismPortalProxy(ProtocolAddresses memory addresses, bool upgradedToFPAC) internal {
+        // Legacy immutable `SCREAMING_SNAKE_CASE` function signatures were deprecated in FPAC.
+        string[] memory fnSigs = new string[](2);
+        if (upgradedToFPAC) {
+            fnSigs[0] = "guardian()";
+            fnSigs[1] = "systemConfig()";
+        } else {
+            fnSigs[0] = "GUARDIAN()";
+            fnSigs[1] = "SYSTEM_CONFIG()";
+        }
+
         console2.log("Checking OptimismPortalProxy %s", addresses.OptimismPortalProxy);
         isAdminOf(addresses.ProxyAdmin, addresses.OptimismPortalProxy);
-        checkAddressIsExpected(addresses.Guardian, addresses.OptimismPortalProxy, "GUARDIAN()");
+        checkAddressIsExpected(addresses.Guardian, addresses.OptimismPortalProxy, fnSigs[0]);
         if (!upgradedToFPAC) {
             checkAddressIsExpected(addresses.L2OutputOracleProxy, addresses.OptimismPortalProxy, "L2_ORACLE()");
         }
-        checkAddressIsExpected(addresses.SystemConfigProxy, addresses.OptimismPortalProxy, "SYSTEM_CONFIG()");
+        checkAddressIsExpected(addresses.SystemConfigProxy, addresses.OptimismPortalProxy, fnSigs[1]);
     }
 
     function checkSystemConfigProxy(ProtocolAddresses memory addresses) internal {
