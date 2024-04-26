@@ -1,6 +1,6 @@
 module github.com/ethereum-optimism/superchain-registry/add-chain
 
-go 1.21.9
+go 1.21
 
 require (
 	github.com/spf13/viper v1.18.2
