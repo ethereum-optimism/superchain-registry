@@ -1,13 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"os"
 	"reflect"
 	"testing"
 
 	"github.com/urfave/cli/v2"
-	"gopkg.in/yaml.v2"
 )
 
 func TestCLIApp(t *testing.T) {
@@ -79,20 +79,10 @@ func checkConfigYaml() (bool, error) {
 		return false, err
 	}
 
-	var expectYaml RollupConfig
-	if err := yaml.Unmarshal(expectedBytes, &expectYaml); err != nil {
-		return false, err
-	}
-
 	testBytes, err := os.ReadFile("./testdata/superchain/configs/sepolia/awesomechain.yaml")
 	if err != nil {
 		return false, err
 	}
 
-	var testYaml RollupConfig
-	if err := yaml.Unmarshal(testBytes, &testYaml); err != nil {
-		return false, err
-	}
-
-	return reflect.DeepEqual(expectYaml, testYaml), nil
+	return bytes.Equal(expectedBytes, testBytes), nil
 }
