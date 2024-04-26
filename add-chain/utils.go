@@ -14,16 +14,6 @@ func executeCommand(command string, args []string) (string, error) {
 	return out.String(), err
 }
 
-func inferRpcUrl(superchainTarget string) (string, error) {
-	switch superchainTarget {
-	case "mainnet":
-		return "https://ethereum-mainnet-rpc.allthatnode.com", nil
-	case "sepolia":
-		return "https://ethereum-sepolia-rpc.allthatnode.com", nil
-	}
-	return "", fmt.Errorf("unsupported Superchain Target %s", superchainTarget)
-}
-
 func getSuperchainLevel(chainType string) (int, error) {
 	switch chainType {
 	case "standard":

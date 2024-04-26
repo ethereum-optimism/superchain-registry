@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"gopkg.in/yaml.v3"
 )
 
@@ -18,9 +19,9 @@ type RollupConfig struct {
 	SuperchainLevel int         `yaml:"superchain_level"`
 	BatchInboxAddr  string      `json:"batch_inbox_address" yaml:"batch_inbox_addr"`
 	Genesis         GenesisData `json:"genesis" yaml:"genesis"`
-	CanyonTime      *int        `json:"canyon_time,omitempty" yaml:"canyon_time"`
-	DeltaTime       *int        `json:"delta_time,omitempty" yaml:"delta_time"`
-	EcotoneTime     *int        `json:"ecotone_time,omitempty" yaml:"ecotone_time"`
+	CanyonTime      *int        `json:"canyon_time,omitempty" yaml:"canyon_time,omitempty"`
+	DeltaTime       *int        `json:"delta_time,omitempty" yaml:"delta_time,omitempty"`
+	EcotoneTime     *int        `json:"ecotone_time,omitempty" yaml:"ecotone_time,omitempty"`
 }
 
 type GenesisData struct {
@@ -116,4 +117,18 @@ func writeChainConfig(
 	fmt.Printf("Rollup config written to: %s\n", filename)
 
 	return nil
+}
+
+func getL1RpcUrl(superchainTarget string) (string, error) {
+	superChain, ok := superchain.Superchains[superchainTarget]
+	if !ok {
+		return "", fmt.Errorf("unknown superchain target provided: %s", superchainTarget)
+	}
+
+	if superChain.Config.L1.PublicRPC == "" {
+		return "", fmt.Errorf("missing L1 public rpc endpoint in superchain config")
+	}
+
+	fmt.Printf("Setting L1 public rpc endpoint to %s\n", superChain.Config.L1.PublicRPC)
+	return superChain.Config.L1.PublicRPC, nil
 }

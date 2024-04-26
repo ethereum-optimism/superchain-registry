@@ -110,9 +110,9 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to read addresses from JSON files: %w", err)
 	}
 
-	l1RpcUrl, err := inferRpcUrl(superchainTarget)
+	l1RpcUrl, err := getL1RpcUrl(superchainTarget)
 	if err != nil {
-		return fmt.Errorf("failed to infer rpc url: %w", err)
+		return fmt.Errorf("failed to retrieve L1 rpc url: %w", err)
 	}
 
 	err = readAddressesFromChain(contractAddresses, l1RpcUrl)
