@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
@@ -36,56 +35,45 @@ var (
 
 func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string) error {
 	// SuperchainConfig
-	address, err := executeCommand("cast", []string{"call", contractAddresses[OptimismPortalProxy], "superchainConfig()(address)", "-r", l1RpcUrl})
-	address = strings.Join(strings.Fields(address), "") // remove whitespace
-	if err != nil || address == "" || address == "0x" {
+	address, err := castCall(contractAddresses[OptimismPortalProxy], "superchainConfig()(address)", l1RpcUrl)
+	if err != nil {
 		contractAddresses[SuperchainConfig] = ""
 	} else {
 		contractAddresses[SuperchainConfig] = address
 	}
 
 	// Guardian
-	address, err = executeCommand("cast", []string{"call", contractAddresses[SuperchainConfig], "guardian()(address)", "-r", l1RpcUrl})
-	address = strings.Join(strings.Fields(address), "") // remove whitespace
-	if err != nil || address == "" || address == "0x" {
-		address, err = executeCommand("cast", []string{"call", contractAddresses[OptimismPortalProxy], "GUARDIAN()(address)", "-r", l1RpcUrl})
-		address = strings.Join(strings.Fields(address), "") // remove whitespace
-		if err != nil || address == "" || address == "0x" {
+	address, err = castCall(contractAddresses[SuperchainConfig], "guardian()(address)", l1RpcUrl)
+	if err != nil {
+		address, err = castCall(contractAddresses[OptimismPortalProxy], "GUARDIAN()(address)", l1RpcUrl)
+		if err != nil {
 			return fmt.Errorf("could not retrieve address for Guardian")
 		}
-		contractAddresses[Guardian] = address
-	} else {
-		contractAddresses[Guardian] = address
 	}
+	contractAddresses[Guardian] = address
 
 	// Challenger
-	address, err = executeCommand("cast", []string{"call", contractAddresses[L2OutputOracleProxy], "challenger()(address)", "-r", l1RpcUrl})
-	address = strings.Join(strings.Fields(address), "") // remove whitespace
-	if err != nil || address == "" || address == "0x" {
+	address, err = castCall(contractAddresses[L2OutputOracleProxy], "challenger()(address)", l1RpcUrl)
+	if err != nil {
 		return fmt.Errorf("could not retrieve address for Guardian")
-	} else {
-		contractAddresses[Challenger] = address
 	}
+	contractAddresses[Challenger] = address
 
 	// ProxyAdminOwner
-	address, err = executeCommand("cast", []string{"call", contractAddresses[ProxyAdmin], "owner()(address)", "-r", l1RpcUrl})
-	address = strings.Join(strings.Fields(address), "") // remove whitespace
-	if err != nil || address == "" || address == "0x" {
+	address, err = castCall(contractAddresses[ProxyAdmin], "owner()(address)", l1RpcUrl)
+	if err != nil {
 		return fmt.Errorf("could not retrieve address for ProxyAdminOwner")
-	} else {
-		contractAddresses[ProxyAdminOwner] = address
 	}
+	contractAddresses[ProxyAdminOwner] = address
 
 	// SystemConfigOwner
-	address, err = executeCommand("cast", []string{"call", contractAddresses[SystemConfigProxy], "owner()(address)", "-r", l1RpcUrl})
-	address = strings.Join(strings.Fields(address), "") // remove whitespace
-	if err != nil || address == "" || address == "0x" {
+	address, err = castCall(contractAddresses[SystemConfigProxy], "owner()(address)", l1RpcUrl)
+	if err != nil {
 		return fmt.Errorf("could not retrieve address for ProxyAdminOwner")
-	} else {
-		contractAddresses[SystemConfigOwner] = address
 	}
-	fmt.Printf("Contract addresses read from on-chain contracts\n")
+	contractAddresses[SystemConfigOwner] = address
 
+	fmt.Printf("Contract addresses read from on-chain contracts\n")
 	return nil
 }
 
