@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"gopkg.in/yaml.v3"
@@ -122,7 +126,11 @@ func writeChainConfig(
 		return err
 	}
 
-	enhanceYAML(&rootNode)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err = enhanceYAML(ctx, &rootNode); err != nil {
+		return err
+	}
 
 	encoder := yaml.NewEncoder(file)
 	defer encoder.Close()
@@ -150,25 +158,49 @@ func getL1RpcUrl(superchainTarget string) (string, error) {
 	return superChain.Config.L1.PublicRPC, nil
 }
 
-func enhanceYAML(node *yaml.Node) {
+func enhanceYAML(ctx context.Context, node *yaml.Node) error {
+	// Check if context is done before processing
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("context error: %w", err)
+	}
+
 	if node.Kind == yaml.DocumentNode && len(node.Content) > 0 {
 		node = node.Content[0] // Dive into the document node
 	}
 
 	var lastKey string
 	for i := 0; i < len(node.Content)-1; i += 2 {
-		currentNode := node.Content[i]
+		keyNode := node.Content[i]
+		valNode := node.Content[i+1]
 
 		// Add blank line AFTER these keys
 		if lastKey == "explorer" || lastKey == "superchain_level" || lastKey == "genesis" {
-			currentNode.HeadComment = "\n"
+			keyNode.HeadComment = "\n"
 		}
 
 		// Add blank line BEFORE these keys
-		if currentNode.Value == "genesis" {
-			currentNode.HeadComment = "\n"
+		if keyNode.Value == "genesis" {
+			keyNode.HeadComment = "\n"
 		}
 
-		lastKey = currentNode.Value
+		// Recursive call to check nested fields for "_time" suffix
+		if valNode.Kind == yaml.MappingNode {
+			if err := enhanceYAML(ctx, valNode); err != nil {
+				return err
+			}
+		}
+
+		// Add human readable timestamp in comment
+		if strings.HasSuffix(keyNode.Value, "_time") {
+			t, err := strconv.ParseInt(valNode.Value, 10, 64)
+			if err != nil {
+				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)
+			}
+			timestamp := time.Unix(t, 0)
+			keyNode.LineComment = timestamp.Format("Mon 2 Jan 2006 15:04:05 UTC")
+		}
+
+		lastKey = keyNode.Value
 	}
+	return nil
 }

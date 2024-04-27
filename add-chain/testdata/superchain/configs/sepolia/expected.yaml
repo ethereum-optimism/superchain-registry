@@ -15,6 +15,6 @@ genesis:
   l2:
     hash: 0x0ceefff2113580e4d665c324661e4982a824025bf97285cf09a52715b6f89083
     number: 0
-  l2_time: 1713792864
+  l2_time: 1713792864 # Mon 22 Apr 2024 09:34:24 UTC
 
-canyon_time: 0
+canyon_time: 0 # Wed 31 Dec 1969 19:00:00 UTC
