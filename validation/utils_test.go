@@ -10,7 +10,7 @@ import (
 )
 
 // perChainTestName ensures test can easily be filtered by chain name or chain id using the -run=regex testflag.
-func perChainTestName(chain *superchain.ChainConfig) string {
+func perChainTestName(chain *superchain.RollupConfig) string {
 	return chain.Name + fmt.Sprintf(" (%d)", chain.ChainID)
 }
 
@@ -54,7 +54,7 @@ func TestAreCloseInts(t *testing.T) {
 	}
 }
 
-func SkipCheckIfFrontierChain(t *testing.T, chain superchain.ChainConfig) {
+func SkipCheckIfFrontierChain(t *testing.T, chain superchain.RollupConfig) {
 	if chain.SuperchainLevel == superchain.Frontier {
 		t.Skip()
 	}

@@ -62,7 +62,7 @@ func TestChainIds(t *testing.T) {
 				}
 				configBytes, err := superchainFS.ReadFile(path.Join("configs", target.Name(), entry.Name()))
 				require.NoError(t, err)
-				var chainConfig ChainConfig
+				var chainConfig RollupConfig
 
 				require.NoError(t, yaml.Unmarshal(configBytes, &chainConfig))
 
@@ -353,13 +353,13 @@ func TestContractBytecodes(t *testing.T) {
 // TestCanyonTimestampOnBlockBoundary asserts that Canyon will activate on a block's timestamp.
 // This is critical because the create2Deployer only activates on a block's timestamp.
 func TestCanyonTimestampOnBlockBoundary(t *testing.T) {
-	testStandardTimestampOnBlockBoundary(t, func(c *ChainConfig) *uint64 { return c.CanyonTime })
+	testStandardTimestampOnBlockBoundary(t, func(c *RollupConfig) *uint64 { return c.CanyonTime })
 }
 
 // TestEcotoneTimestampOnBlockBoundary asserts that Ecotone will activate on a block's timestamp.
 // This is critical because the L2 upgrade transactions only activates on a block's timestamp.
 func TestEcotoneTimestampOnBlockBoundary(t *testing.T) {
-	testStandardTimestampOnBlockBoundary(t, func(c *ChainConfig) *uint64 { return c.EcotoneTime })
+	testStandardTimestampOnBlockBoundary(t, func(c *RollupConfig) *uint64 { return c.EcotoneTime })
 }
 
 // TestAevoForkTimestamps ensures that network upgades that occur on a block boundary
@@ -372,7 +372,7 @@ func TestAevoForkTimestamps(t *testing.T) {
 	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.HardForkDefaults.EcotoneTime))
 }
 
-func testStandardTimestampOnBlockBoundary(t *testing.T, ts func(*ChainConfig) *uint64) {
+func testStandardTimestampOnBlockBoundary(t *testing.T, ts func(*RollupConfig) *uint64) {
 	for _, superchainConfig := range Superchains {
 		for _, id := range superchainConfig.ChainIDs {
 			chainCfg := OPChains[id]
@@ -466,7 +466,7 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 	}
 
 	executeTestCase := func(t *testing.T, tt testCase) {
-		c := ChainConfig{}
+		c := RollupConfig{}
 
 		err := yaml.Unmarshal([]byte(tt.rawYAML), &c)
 		require.NoError(t, err)
@@ -489,7 +489,7 @@ func TestHardForkOverridesAndDefaults2(t *testing.T) {
 		},
 	}
 
-	c := ChainConfig{}
+	c := RollupConfig{}
 
 	rawYAML := `
 ecotone_time: 2

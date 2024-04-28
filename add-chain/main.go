@@ -76,7 +76,7 @@ func entrypoint(ctx *cli.Context) error {
 	superchainTarget := viper.GetString("SUPERCHAIN_TARGET")
 	monorepoDir := viper.GetString("MONOREPO_DIR")
 	deploymentsDir := viper.GetString("DEPLOYMENTS_DIR")
-	rollupConfig := viper.GetString("ROLLUP_CONFIG")
+	rollupConfigPath := viper.GetString("ROLLUP_CONFIG")
 	publicRPC := viper.GetString("PUBLIC_RPC")
 	sequencerRPC := viper.GetString("SEQUENCER_RPC")
 	explorer := viper.GetString("EXPLORER")
@@ -86,7 +86,7 @@ func entrypoint(ctx *cli.Context) error {
 	fmt.Printf("Superchain-registry repo dir:   %s\n", superchainRepoPath)
 	fmt.Printf("Reading from monrepo directory: %s\n", monorepoDir)
 	fmt.Printf("With deployments directory:     %s\n", deploymentsDir)
-	fmt.Printf("Rollup config:                  %s\n", rollupConfig)
+	fmt.Printf("Rollup config filepath:         %s\n", rollupConfigPath)
 	fmt.Printf("Public RPC endpoint:            %s\n", publicRPC)
 	fmt.Printf("Sequencer RPC endpoint:         %s\n", sequencerRPC)
 	fmt.Printf("Block Explorer:                 %s\n", explorer)
@@ -98,8 +98,13 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md")
 	}
 
+	rollupConfig, err := constructRollupConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel)
+	if err != nil {
+		return fmt.Errorf("failed to construct rollup config: %w", err)
+	}
+
 	targetFilePath := filepath.Join(targetDir, chainName+".yaml")
-	err = writeChainConfig(rollupConfig, targetFilePath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, superchainRepoPath, superchainTarget)
+	err = writeChainConfig(rollupConfig, targetFilePath, superchainRepoPath, superchainTarget)
 	if err != nil {
 		return fmt.Errorf("error generating chain config .yaml file: %w", err)
 	}

@@ -26,7 +26,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
-	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
+	checkPreEcotoneResourceConfig := func(t *testing.T, chain *RollupConfig, client *ethclient.Client) {
 		desiredParams := StandardConfig[chain.Superchain].GPOParams.PreEcotone
 
 		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
@@ -40,7 +40,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 			"scalar parameter %d out of bounds %d", actualParams.Scalar, desiredParams.Scalar)
 	}
 
-	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
+	checkEcotoneResourceConfig := func(t *testing.T, chain *RollupConfig, client *ethclient.Client) {
 		desiredParams := StandardConfig[chain.Superchain].GPOParams.Ecotone
 
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
@@ -54,7 +54,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 			"baseFeeScalar parameter %d out of bounds %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar)
 	}
 
-	checkResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
+	checkResourceConfig := func(t *testing.T, chain *RollupConfig, client *ethclient.Client) {
 		if chain.IsEcotone() {
 			checkEcotoneResourceConfig(t, chain, client)
 		} else {

@@ -2,6 +2,7 @@ package superchain
 
 import (
 	"compress/gzip"
+	"context"
 	"embed"
 	"encoding/json"
 	"errors"
@@ -10,6 +11,7 @@ import (
 	"io/fs"
 	"path"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
@@ -77,7 +79,7 @@ const (
 	Frontier SuperchainLevel = 1
 )
 
-type ChainConfig struct {
+type RollupConfig struct {
 	Name         string `yaml:"name"`
 	ChainID      uint64 `json:"l2_chain_id" yaml:"chain_id"`
 	PublicRPC    string `yaml:"public_rpc"`
@@ -103,7 +105,7 @@ type ChainConfig struct {
 
 // SetDefaultHardforkTimestampsToNil sets each hardfork timestamp to nil (to remove the override)
 // if the timestamp matches the superchain default
-func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
+func (c *RollupConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
 	sVal := reflect.ValueOf(&s.HardForkDefaults).Elem()
 
@@ -118,7 +120,7 @@ func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
 
 // setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
 // with the superchain default.
-func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
+func (c *RollupConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
 	sVal := reflect.ValueOf(&s.HardForkDefaults).Elem()
 
@@ -137,6 +139,53 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 	// }
 	//
 	// ...etc for each field in HardForkConfiguration
+}
+
+func (c *RollupConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
+	// Check if context is done before processing
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("context error: %w", err)
+	}
+
+	if node.Kind == yaml.DocumentNode && len(node.Content) > 0 {
+		node = node.Content[0] // Dive into the document node
+	}
+
+	var lastKey string
+	for i := 0; i < len(node.Content)-1; i += 2 {
+		keyNode := node.Content[i]
+		valNode := node.Content[i+1]
+
+		// Add blank line AFTER these keys
+		if lastKey == "explorer" || lastKey == "superchain_level" || lastKey == "genesis" {
+			keyNode.HeadComment = "\n"
+		}
+
+		// Add blank line BEFORE these keys
+		if keyNode.Value == "genesis" {
+			keyNode.HeadComment = "\n"
+		}
+
+		// Recursive call to check nested fields for "_time" suffix
+		if valNode.Kind == yaml.MappingNode {
+			if err := c.EnhanceYAML(ctx, valNode); err != nil {
+				return err
+			}
+		}
+
+		// Add human readable timestamp in comment
+		if strings.HasSuffix(keyNode.Value, "_time") {
+			t, err := strconv.ParseInt(valNode.Value, 10, 64)
+			if err != nil {
+				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)
+			}
+			timestamp := time.Unix(t, 0)
+			keyNode.LineComment = timestamp.Format("Mon 2 Jan 2006 15:04:05 UTC")
+		}
+
+		lastKey = keyNode.Value
+	}
+	return nil
 }
 
 // AddressList represents the set of network specific contracts for a given network.
@@ -550,7 +599,7 @@ type Superchain struct {
 }
 
 // IsEcotone returns true if the EcotoneTime for this chain in the past.
-func (c *ChainConfig) IsEcotone() bool {
+func (c *RollupConfig) IsEcotone() bool {
 	if et := c.EcotoneTime; et != nil {
 		return int64(*et) < time.Now().Unix()
 	}
@@ -559,7 +608,7 @@ func (c *ChainConfig) IsEcotone() bool {
 
 var Superchains = map[string]*Superchain{}
 
-var OPChains = map[uint64]*ChainConfig{}
+var OPChains = map[uint64]*RollupConfig{}
 
 var Addresses = map[uint64]*AddressList{}
 

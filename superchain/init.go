@@ -54,7 +54,7 @@ func init() {
 			if err != nil {
 				panic(fmt.Errorf("failed to read superchain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
-			var chainConfig ChainConfig
+			var chainConfig RollupConfig
 
 			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
@@ -109,7 +109,7 @@ func init() {
 	}
 }
 
-func MustBeValidSuperchainLevel(chainConfig ChainConfig) {
+func MustBeValidSuperchainLevel(chainConfig RollupConfig) {
 	if chainConfig.SuperchainLevel != Frontier && chainConfig.SuperchainLevel != Standard {
 		panic(fmt.Sprintf("invalid or unspecified superchain level %d", chainConfig.SuperchainLevel))
 	}

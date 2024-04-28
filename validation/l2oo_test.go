@@ -48,7 +48,7 @@ func TestL2OOParams(t *testing.T) {
 			incorrectMsg("finalizationPeriodSeconds", desired.FinalizationPeriodSeconds, actual.FinalizationPeriodSeconds))
 	}
 
-	checkL2OOParams := func(t *testing.T, chain *ChainConfig) {
+	checkL2OOParams := func(t *testing.T, chain *RollupConfig) {
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
 		require.NotEmpty(t, rpcEndpoint)

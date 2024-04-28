@@ -17,7 +17,7 @@ import (
 )
 
 func TestResourceConfig(t *testing.T) {
-	checkResourceConfig := func(t *testing.T, chain *ChainConfig) {
+	checkResourceConfig := func(t *testing.T, chain *RollupConfig) {
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
 		require.NotEmpty(t, rpcEndpoint)

@@ -6,23 +6,21 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"gopkg.in/yaml.v3"
 )
 
-func constructRollupConfig(filePath, chainName, publicRPC, sequencerRPC, explorer string, superchainLevel superchain.SuperchainLevel) (superchain.ChainConfig, error) {
-	fmt.Printf("Attempting to read from %s\n", filePath)
-	file, err := os.ReadFile(filePath)
+func constructRollupConfig(inputFilePath, chainName, publicRPC, sequencerRPC, explorer string, superchainLevel superchain.SuperchainLevel) (superchain.RollupConfig, error) {
+	fmt.Printf("Attempting to read from %s\n", inputFilePath)
+	file, err := os.ReadFile(inputFilePath)
 	if err != nil {
-		return superchain.ChainConfig{}, fmt.Errorf("error reading file: %v", err)
+		return superchain.RollupConfig{}, fmt.Errorf("error reading file: %v", err)
 	}
-	var config superchain.ChainConfig
+	var config superchain.RollupConfig
 	if err = json.Unmarshal(file, &config); err != nil {
-		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %v", err)
+		return superchain.RollupConfig{}, fmt.Errorf("error unmarshaling json: %v", err)
 	}
 
 	config.Name = chainName
@@ -36,21 +34,11 @@ func constructRollupConfig(filePath, chainName, publicRPC, sequencerRPC, explore
 }
 
 func writeChainConfig(
-	inputFilepath string,
+	rollupConfig superchain.RollupConfig,
 	targetDirectory string,
-	chainName string,
-	publicRPC string,
-	sequencerRPC string,
-	explorer string,
-	superchainLevel superchain.SuperchainLevel,
 	superchainRepoPath string,
 	superchainTarget string,
 ) error {
-	rollupConfig, err := constructRollupConfig(inputFilepath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel)
-	if err != nil {
-		return fmt.Errorf("failed to construct rollup config: %w", err)
-	}
-
 	// Create genesis-system-config data
 	// (this is deprecated, users should load this from L1, when available via SystemConfig)
 	dirPath := filepath.Join(superchainRepoPath, "superchain", "extra", "genesis-system-configs", superchainTarget)
@@ -65,19 +53,11 @@ func writeChainConfig(
 	}
 
 	// Write the genesis system config JSON to a new file
-	filePath := filepath.Join(dirPath, chainName+".json")
+	filePath := filepath.Join(dirPath, rollupConfig.Name+".json")
 	if err := os.WriteFile(filePath, systemConfigJSON, 0644); err != nil {
 		return fmt.Errorf("failed to write genesis system config json: %w", err)
 	}
 	fmt.Printf("Genesis system config written to: %s\n", filePath)
-
-	// Write the rollup config to a yaml file
-	filename := filepath.Join(targetDirectory)
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
 
 	rollupConfig.Genesis.SystemConfig = superchain.SystemConfig{} // remove SystemConfig so its omitted from yaml
 
@@ -98,9 +78,17 @@ func writeChainConfig(
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err = enhanceYAML(ctx, &rootNode); err != nil {
+	if err = rollupConfig.EnhanceYAML(ctx, &rootNode); err != nil {
 		return err
 	}
+
+	// Write the rollup config to a yaml file
+	filename := filepath.Join(targetDirectory)
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
 
 	encoder := yaml.NewEncoder(file)
 	defer encoder.Close()
@@ -126,51 +114,4 @@ func getL1RpcUrl(superchainTarget string) (string, error) {
 
 	fmt.Printf("Setting L1 public rpc endpoint to %s\n", superChain.Config.L1.PublicRPC)
 	return superChain.Config.L1.PublicRPC, nil
-}
-
-func enhanceYAML(ctx context.Context, node *yaml.Node) error {
-	// Check if context is done before processing
-	if err := ctx.Err(); err != nil {
-		return fmt.Errorf("context error: %w", err)
-	}
-
-	if node.Kind == yaml.DocumentNode && len(node.Content) > 0 {
-		node = node.Content[0] // Dive into the document node
-	}
-
-	var lastKey string
-	for i := 0; i < len(node.Content)-1; i += 2 {
-		keyNode := node.Content[i]
-		valNode := node.Content[i+1]
-
-		// Add blank line AFTER these keys
-		if lastKey == "explorer" || lastKey == "superchain_level" || lastKey == "genesis" {
-			keyNode.HeadComment = "\n"
-		}
-
-		// Add blank line BEFORE these keys
-		if keyNode.Value == "genesis" {
-			keyNode.HeadComment = "\n"
-		}
-
-		// Recursive call to check nested fields for "_time" suffix
-		if valNode.Kind == yaml.MappingNode {
-			if err := enhanceYAML(ctx, valNode); err != nil {
-				return err
-			}
-		}
-
-		// Add human readable timestamp in comment
-		if strings.HasSuffix(keyNode.Value, "_time") {
-			t, err := strconv.ParseInt(valNode.Value, 10, 64)
-			if err != nil {
-				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)
-			}
-			timestamp := time.Unix(t, 0)
-			keyNode.LineComment = timestamp.Format("Mon 2 Jan 2006 15:04:05 UTC")
-		}
-
-		lastKey = keyNode.Value
-	}
-	return nil
 }

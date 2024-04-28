@@ -67,7 +67,7 @@ func TestContractVersions(t *testing.T) {
 		999999999: true, // sepolia/zora
 	}
 
-	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
+	checkOPChainSatisfiesSemver := func(t *testing.T, chain *RollupConfig) {
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
 		require.NotEmpty(t, rpcEndpoint)
