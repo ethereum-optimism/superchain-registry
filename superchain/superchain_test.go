@@ -368,8 +368,8 @@ func TestAevoForkTimestamps(t *testing.T) {
 	aevoGenesisL2Time := uint64(1679193011)
 	aevoBlockTime := uint64(10)
 	config := Superchains["mainnet"]
-	t.Run("canyon", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.hardForkDefaults.CanyonTime))
-	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.hardForkDefaults.EcotoneTime))
+	t.Run("canyon", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.HardForkDefaults.CanyonTime))
+	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.HardForkDefaults.EcotoneTime))
 }
 
 func testStandardTimestampOnBlockBoundary(t *testing.T, ts func(*ChainConfig) *uint64) {
@@ -425,21 +425,21 @@ fjord_time:
 	}, s.L1)
 	require.Equal(t, "0x252cbe9517f731c618961d890d534183822dcc8d", s.ProtocolVersionsAddr.String())
 	require.Equal(t, "0x02d91cf852423640d93920be0cadcec0e7a00fa7", s.SuperchainConfigAddr.String())
-	require.Equal(t, uint64Ptr(uint64(1)), s.hardForkDefaults.CanyonTime)
-	require.Equal(t, uint64Ptr(uint64(2)), s.hardForkDefaults.DeltaTime)
-	require.Equal(t, uint64Ptr(uint64(3)), s.hardForkDefaults.EcotoneTime)
-	require.Nil(t, s.hardForkDefaults.FjordTime)
+	require.Equal(t, uint64Ptr(uint64(1)), s.HardForkDefaults.CanyonTime)
+	require.Equal(t, uint64Ptr(uint64(2)), s.HardForkDefaults.DeltaTime)
+	require.Equal(t, uint64Ptr(uint64(3)), s.HardForkDefaults.EcotoneTime)
+	require.Nil(t, s.HardForkDefaults.FjordTime)
 }
 
 func TestHardForkOverridesAndDefaults(t *testing.T) {
 	defaultCanyonTime := uint64(3)
 	defaultSuperchainConfig := SuperchainConfig{
-		hardForkDefaults: HardForkConfiguration{
+		HardForkDefaults: HardForkConfiguration{
 			CanyonTime: &defaultCanyonTime,
 		},
 	}
 	nilDefaultSuperchainConfig := SuperchainConfig{
-		hardForkDefaults: HardForkConfiguration{
+		HardForkDefaults: HardForkConfiguration{
 			CanyonTime: nil,
 		},
 	}
@@ -483,7 +483,7 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 
 func TestHardForkOverridesAndDefaults2(t *testing.T) {
 	defaultSuperchainConfig := SuperchainConfig{
-		hardForkDefaults: HardForkConfiguration{
+		HardForkDefaults: HardForkConfiguration{
 			CanyonTime: uint64Ptr(0),
 			DeltaTime:  uint64Ptr(1),
 		},

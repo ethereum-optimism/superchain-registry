@@ -14,50 +14,15 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type RollupConfig struct {
-	Name            string      `yaml:"name"`
-	L2ChainID       uint64      `json:"l2_chain_id" yaml:"chain_id"`
-	PublicRPC       string      `yaml:"public_rpc"`
-	SequencerRPC    string      `yaml:"sequencer_rpc"`
-	Explorer        string      `yaml:"explorer"`
-	SuperchainLevel int         `yaml:"superchain_level"`
-	BatchInboxAddr  string      `json:"batch_inbox_address" yaml:"batch_inbox_addr"`
-	Genesis         GenesisData `json:"genesis" yaml:"genesis"`
-	CanyonTime      *int        `json:"canyon_time,omitempty" yaml:"canyon_time,omitempty"`
-	DeltaTime       *int        `json:"delta_time,omitempty" yaml:"delta_time,omitempty"`
-	EcotoneTime     *int        `json:"ecotone_time,omitempty" yaml:"ecotone_time,omitempty"`
-}
-
-type GenesisData struct {
-	L1           GenesisLayer `json:"l1" yaml:"l1"`
-	L2           GenesisLayer `json:"l2" yaml:"l2"`
-	L2Time       int          `json:"l2_time" yaml:"l2_time"`
-	SystemConfig SystemConfig `json:"system_config" yaml:"system_config,omitempty"`
-}
-
-type SystemConfig struct {
-	BatcherAddr       string `json:"batcherAddr"`
-	Overhead          string `json:"overhead"`
-	Scalar            string `json:"scalar"`
-	GasLimit          uint64 `json:"gasLimit"`
-	BaseFeeScalar     uint64 `json:"baseFeeScalar"`
-	BlobBaseFeeScalar uint64 `json:"blobBaseFeeScalar"`
-}
-
-type GenesisLayer struct {
-	Hash   string `json:"hash" yaml:"hash"`
-	Number int    `json:"number" yaml:"number"`
-}
-
-func constructRollupConfig(filePath, chainName, publicRPC, sequencerRPC, explorer string, superchainLevel int) (RollupConfig, error) {
+func constructRollupConfig(filePath, chainName, publicRPC, sequencerRPC, explorer string, superchainLevel superchain.SuperchainLevel) (superchain.ChainConfig, error) {
 	fmt.Printf("Attempting to read from %s\n", filePath)
 	file, err := os.ReadFile(filePath)
 	if err != nil {
-		return RollupConfig{}, fmt.Errorf("error reading file: %v", err)
+		return superchain.ChainConfig{}, fmt.Errorf("error reading file: %v", err)
 	}
-	var config RollupConfig
+	var config superchain.ChainConfig
 	if err = json.Unmarshal(file, &config); err != nil {
-		return RollupConfig{}, fmt.Errorf("error unmarshaling json: %v", err)
+		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %v", err)
 	}
 
 	config.Name = chainName
@@ -77,7 +42,7 @@ func writeChainConfig(
 	publicRPC string,
 	sequencerRPC string,
 	explorer string,
-	superchainLevel int,
+	superchainLevel superchain.SuperchainLevel,
 	superchainRepoPath string,
 	superchainTarget string,
 ) error {
@@ -114,7 +79,12 @@ func writeChainConfig(
 	}
 	defer file.Close()
 
-	rollupConfig.Genesis.SystemConfig = SystemConfig{} // remove SystemConfig so its omitted from yaml
+	rollupConfig.Genesis.SystemConfig = superchain.SystemConfig{} // remove SystemConfig so its omitted from yaml
+
+	// Remove hardfork timestamp override fields if they match superchain defaults
+	defaults := superchain.Superchains[superchainTarget]
+	rollupConfig.SetDefaultHardforkTimestampsToNil(&defaults.Config)
+
 	yamlData, err := yaml.Marshal(rollupConfig)
 	if err != nil {
 		return fmt.Errorf("failed to marshal yaml: %w", err)

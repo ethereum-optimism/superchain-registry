@@ -36,17 +36,38 @@ type BlockID struct {
 }
 
 type ChainGenesis struct {
-	L1        BlockID   `yaml:"l1"`
-	L2        BlockID   `yaml:"l2"`
-	L2Time    uint64    `yaml:"l2_time"`
-	ExtraData *HexBytes `yaml:"extra_data,omitempty"`
+	L1           BlockID      `yaml:"l1"`
+	L2           BlockID      `yaml:"l2"`
+	L2Time       uint64       `json:"l2_time" yaml:"l2_time"`
+	ExtraData    *HexBytes    `yaml:"extra_data,omitempty"`
+	SystemConfig SystemConfig `json:"system_config" yaml:"system_config,omitempty"`
+}
+
+type SystemConfig struct {
+	BatcherAddr       string `json:"batcherAddr"`
+	Overhead          string `json:"overhead"`
+	Scalar            string `json:"scalar"`
+	GasLimit          uint64 `json:"gasLimit"`
+	BaseFeeScalar     uint64 `json:"baseFeeScalar"`
+	BlobBaseFeeScalar uint64 `json:"blobBaseFeeScalar"`
+}
+
+type GenesisData struct {
+	L1     GenesisLayer `json:"l1" yaml:"l1"`
+	L2     GenesisLayer `json:"l2" yaml:"l2"`
+	L2Time int          `json:"l2_time" yaml:"l2_time"`
+}
+
+type GenesisLayer struct {
+	Hash   string `json:"hash" yaml:"hash"`
+	Number int    `json:"number" yaml:"number"`
 }
 
 type HardForkConfiguration struct {
-	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
-	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
-	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
-	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+	CanyonTime  *uint64 `json:"canyon_time,omitempty" yaml:"canyon_time,omitempty"`
+	DeltaTime   *uint64 `json:"delta_time,omitempty" yaml:"delta_time,omitempty"`
+	EcotoneTime *uint64 `json:"ecotone_time,omitempty" yaml:"ecotone_time,omitempty"`
+	FjordTime   *uint64 `json:"fjord_time,omitempty" yaml:"fjord_time,omitempty"`
 }
 
 type SuperchainLevel uint
@@ -58,16 +79,16 @@ const (
 
 type ChainConfig struct {
 	Name         string `yaml:"name"`
-	ChainID      uint64 `yaml:"chain_id"`
+	ChainID      uint64 `json:"l2_chain_id" yaml:"chain_id"`
 	PublicRPC    string `yaml:"public_rpc"`
 	SequencerRPC string `yaml:"sequencer_rpc"`
 	Explorer     string `yaml:"explorer"`
 
 	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
 
-	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
+	BatchInboxAddr Address `json:"batch_inbox_address" yaml:"batch_inbox_addr"`
 
-	Genesis ChainGenesis `yaml:"genesis"`
+	Genesis ChainGenesis `json:"genesis" yaml:"genesis"`
 
 	// Superchain is a simple string to identify the superchain.
 	// This is implied by directory structure, and not encoded in the config file itself.
@@ -80,11 +101,26 @@ type ChainConfig struct {
 	HardForkConfiguration `yaml:",inline"`
 }
 
+// SetDefaultHardforkTimestampsToNil sets each hardfork timestamp to nil (to remove the override)
+// if the timestamp matches the superchain default
+func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
+	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
+	sVal := reflect.ValueOf(&s.HardForkDefaults).Elem()
+
+	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
+		overrideValue := cVal.Field(i)
+		defaultValue := sVal.Field(i)
+		if reflect.DeepEqual(overrideValue.Interface(), defaultValue.Interface()) {
+			overrideValue.Set(reflect.Zero(overrideValue.Type()))
+		}
+	}
+}
+
 // setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
 // with the superchain default.
 func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
-	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
+	sVal := reflect.ValueOf(&s.HardForkDefaults).Elem()
 
 	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
 		overrideValue := cVal.Field(i)
@@ -487,7 +523,7 @@ type SuperchainConfig struct {
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration. These values may be overridden by individual chains.
-	hardForkDefaults HardForkConfiguration
+	HardForkDefaults HardForkConfiguration
 }
 
 // custom unmarshal function to allow yaml to be unmarshalled into unexported fields
@@ -497,7 +533,7 @@ func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
 		HardForks         *HardForkConfiguration `yaml:",inline"`
 	}{
 		SuperchainConfig: s,
-		HardForks:        &s.hardForkDefaults,
+		HardForks:        &s.HardForkDefaults,
 	}
 
 	return yaml.Unmarshal(data, temp)

@@ -26,6 +26,7 @@
   "l2_chain_id": 42069,
   "regolith_time": 0,
   "canyon_time": 0,
+  "delta_time": 1703203200,
   "batch_inbox_address": "0xff00000000000000000000000000000000042069",
   "deposit_contract_address": "0x6c84ae91901ce8a4897187c33a0094a6e790f34d",
   "l1_system_config_address": "0x8787d3382f60d4e072b4276bbda065959195db33",
