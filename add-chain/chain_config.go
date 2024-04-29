@@ -12,6 +12,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// constructRollupConfig creates and populates a RollupConfig struct by reading from an input file and
+// explictly setting some additional fields to input argument values
 func constructRollupConfig(inputFilePath, chainName, publicRPC, sequencerRPC, explorer string, superchainLevel superchain.SuperchainLevel) (superchain.RollupConfig, error) {
 	fmt.Printf("Attempting to read from %s\n", inputFilePath)
 	file, err := os.ReadFile(inputFilePath)
@@ -33,6 +35,8 @@ func constructRollupConfig(inputFilePath, chainName, publicRPC, sequencerRPC, ex
 	return config, nil
 }
 
+// writeChainConfig accepts a rollupConfig, formats it, and writes some output files based on the given
+// target directories
 func writeChainConfig(
 	rollupConfig superchain.RollupConfig,
 	targetDirectory string,

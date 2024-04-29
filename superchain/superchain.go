@@ -141,6 +141,8 @@ func (c *RollupConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 	// ...etc for each field in HardForkConfiguration
 }
 
+// EnhanceYAML creates a customized yaml string from a RollupConfig. After completion,
+// the *yaml.Node pointer can be used with a yaml encoder to write the custom format to file
 func (c *RollupConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 	// Check if context is done before processing
 	if err := ctx.Err(); err != nil {
