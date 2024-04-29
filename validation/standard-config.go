@@ -15,9 +15,9 @@ type ResourceConfig struct {
 }
 
 type L2OOParamsBounds struct {
-	SubmissionInterval        BigIntBounds `toml:"submission_interval"`         // Interval in blocks at which checkpoints must be submitted.
-	L2BlockTime               BigIntBounds `toml:"l2_block_time"`               // The time per L2 block, in seconds.
-	FinalizationPeriodSeconds BigIntBounds `toml:"finalization_period_seconds"` // The minimum time (in seconds) that must elapse before a withdrawal can be finalized.
+	SubmissionInterval     BigIntBounds `toml:"submission_interval"`      // Interval in blocks at which checkpoints must be submitted.
+	L2BlockTime            BigIntBounds `toml:"l2_block_time"`            // The time per L2 block, in seconds.
+	ChallengePeriodSeconds BigIntBounds `toml:"challenge_period_seconds"` // Length of time for which an output root can be removed, and for which it is not considered finalized.
 }
 
 type GasPriceOracleBounds struct {

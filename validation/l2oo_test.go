@@ -64,7 +64,7 @@ func TestL2OOParams(t *testing.T) {
 
 		assertInBounds(t, "submissionInterval", actualParams.SubmissionInterval, desiredParams.SubmissionInterval)
 		assertInBounds(t, "l2BlockTime", actualParams.L2BlockTime, desiredParams.L2BlockTime)
-		assertInBounds(t, "finalizationPeriodSeconds", actualParams.FinalizationPeriodSeconds, desiredParams.FinalizationPeriodSeconds)
+		assertInBounds(t, "challengePeriodSeconds", actualParams.FinalizationPeriodSeconds, desiredParams.ChallengePeriodSeconds)
 	}
 
 	for chainID, chain := range OPChains {
