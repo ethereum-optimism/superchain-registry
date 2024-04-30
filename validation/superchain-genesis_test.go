@@ -82,5 +82,4 @@ func TestGenesisHashAgainstRPC(t *testing.T) {
 			checkOPChainHashAgainstRPC(t, chain)
 		})
 	}
-
 }
