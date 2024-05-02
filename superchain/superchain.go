@@ -79,7 +79,7 @@ const (
 	Frontier SuperchainLevel = 1
 )
 
-type RollupConfig struct {
+type ChainConfig struct {
 	Name         string `yaml:"name"`
 	ChainID      uint64 `json:"l2_chain_id" yaml:"chain_id"`
 	PublicRPC    string `yaml:"public_rpc"`
@@ -105,9 +105,9 @@ type RollupConfig struct {
 
 // SetDefaultHardforkTimestampsToNil sets each hardfork timestamp to nil (to remove the override)
 // if the timestamp matches the superchain default
-func (c *RollupConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
+func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
-	sVal := reflect.ValueOf(&s.HardForkDefaults).Elem()
+	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
 
 	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
 		overrideValue := cVal.Field(i)
@@ -120,9 +120,9 @@ func (c *RollupConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
 
 // setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
 // with the superchain default.
-func (c *RollupConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
+func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
-	sVal := reflect.ValueOf(&s.HardForkDefaults).Elem()
+	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
 
 	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
 		overrideValue := cVal.Field(i)
@@ -143,7 +143,7 @@ func (c *RollupConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 
 // EnhanceYAML creates a customized yaml string from a RollupConfig. After completion,
 // the *yaml.Node pointer can be used with a yaml encoder to write the custom format to file
-func (c *RollupConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
+func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 	// Check if context is done before processing
 	if err := ctx.Err(); err != nil {
 		return fmt.Errorf("context error: %w", err)
@@ -574,7 +574,7 @@ type SuperchainConfig struct {
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration. These values may be overridden by individual chains.
-	HardForkDefaults HardForkConfiguration
+	hardForkDefaults HardForkConfiguration
 }
 
 // custom unmarshal function to allow yaml to be unmarshalled into unexported fields
@@ -584,7 +584,7 @@ func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
 		HardForks         *HardForkConfiguration `yaml:",inline"`
 	}{
 		SuperchainConfig: s,
-		HardForks:        &s.HardForkDefaults,
+		HardForks:        &s.hardForkDefaults,
 	}
 
 	return yaml.Unmarshal(data, temp)
@@ -601,7 +601,7 @@ type Superchain struct {
 }
 
 // IsEcotone returns true if the EcotoneTime for this chain in the past.
-func (c *RollupConfig) IsEcotone() bool {
+func (c *ChainConfig) IsEcotone() bool {
 	if et := c.EcotoneTime; et != nil {
 		return int64(*et) < time.Now().Unix()
 	}
@@ -610,7 +610,7 @@ func (c *RollupConfig) IsEcotone() bool {
 
 var Superchains = map[string]*Superchain{}
 
-var OPChains = map[uint64]*RollupConfig{}
+var OPChains = map[uint64]*ChainConfig{}
 
 var Addresses = map[uint64]*AddressList{}
 

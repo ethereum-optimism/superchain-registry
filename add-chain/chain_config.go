@@ -12,17 +12,17 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// constructRollupConfig creates and populates a RollupConfig struct by reading from an input file and
-// explictly setting some additional fields to input argument values
-func constructRollupConfig(inputFilePath, chainName, publicRPC, sequencerRPC, explorer string, superchainLevel superchain.SuperchainLevel) (superchain.RollupConfig, error) {
+// constructRollupConfig creates and populates a ChainConfig struct by reading from an input file and
+// explicitly setting some additional fields to input argument values
+func constructRollupConfig(inputFilePath, chainName, publicRPC, sequencerRPC, explorer string, superchainLevel superchain.SuperchainLevel) (superchain.ChainConfig, error) {
 	fmt.Printf("Attempting to read from %s\n", inputFilePath)
 	file, err := os.ReadFile(inputFilePath)
 	if err != nil {
-		return superchain.RollupConfig{}, fmt.Errorf("error reading file: %v", err)
+		return superchain.ChainConfig{}, fmt.Errorf("error reading file: %v", err)
 	}
-	var config superchain.RollupConfig
+	var config superchain.ChainConfig
 	if err = json.Unmarshal(file, &config); err != nil {
-		return superchain.RollupConfig{}, fmt.Errorf("error unmarshaling json: %v", err)
+		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %v", err)
 	}
 
 	config.Name = chainName
@@ -38,7 +38,7 @@ func constructRollupConfig(inputFilePath, chainName, publicRPC, sequencerRPC, ex
 // writeChainConfig accepts a rollupConfig, formats it, and writes some output files based on the given
 // target directories
 func writeChainConfig(
-	rollupConfig superchain.RollupConfig,
+	rollupConfig superchain.ChainConfig,
 	targetDirectory string,
 	superchainRepoPath string,
 	superchainTarget string,

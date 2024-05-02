@@ -62,7 +62,7 @@ func TestChainIds(t *testing.T) {
 				}
 				configBytes, err := superchainFS.ReadFile(path.Join("configs", target.Name(), entry.Name()))
 				require.NoError(t, err)
-				var chainConfig RollupConfig
+				var chainConfig ChainConfig
 
 				require.NoError(t, yaml.Unmarshal(configBytes, &chainConfig))
 
@@ -353,13 +353,13 @@ func TestContractBytecodes(t *testing.T) {
 // TestCanyonTimestampOnBlockBoundary asserts that Canyon will activate on a block's timestamp.
 // This is critical because the create2Deployer only activates on a block's timestamp.
 func TestCanyonTimestampOnBlockBoundary(t *testing.T) {
-	testStandardTimestampOnBlockBoundary(t, func(c *RollupConfig) *uint64 { return c.CanyonTime })
+	testStandardTimestampOnBlockBoundary(t, func(c *ChainConfig) *uint64 { return c.CanyonTime })
 }
 
 // TestEcotoneTimestampOnBlockBoundary asserts that Ecotone will activate on a block's timestamp.
 // This is critical because the L2 upgrade transactions only activates on a block's timestamp.
 func TestEcotoneTimestampOnBlockBoundary(t *testing.T) {
-	testStandardTimestampOnBlockBoundary(t, func(c *RollupConfig) *uint64 { return c.EcotoneTime })
+	testStandardTimestampOnBlockBoundary(t, func(c *ChainConfig) *uint64 { return c.EcotoneTime })
 }
 
 // TestAevoForkTimestamps ensures that network upgades that occur on a block boundary
@@ -368,11 +368,11 @@ func TestAevoForkTimestamps(t *testing.T) {
 	aevoGenesisL2Time := uint64(1679193011)
 	aevoBlockTime := uint64(10)
 	config := Superchains["mainnet"]
-	t.Run("canyon", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.HardForkDefaults.CanyonTime))
-	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.HardForkDefaults.EcotoneTime))
+	t.Run("canyon", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.hardForkDefaults.CanyonTime))
+	t.Run("ecotone", testNetworkUpgradeTimestampOffset(aevoGenesisL2Time, aevoBlockTime, config.Config.hardForkDefaults.EcotoneTime))
 }
 
-func testStandardTimestampOnBlockBoundary(t *testing.T, ts func(*RollupConfig) *uint64) {
+func testStandardTimestampOnBlockBoundary(t *testing.T, ts func(*ChainConfig) *uint64) {
 	for _, superchainConfig := range Superchains {
 		for _, id := range superchainConfig.ChainIDs {
 			chainCfg := OPChains[id]
@@ -425,21 +425,21 @@ fjord_time:
 	}, s.L1)
 	require.Equal(t, "0x252cbe9517f731c618961d890d534183822dcc8d", s.ProtocolVersionsAddr.String())
 	require.Equal(t, "0x02d91cf852423640d93920be0cadcec0e7a00fa7", s.SuperchainConfigAddr.String())
-	require.Equal(t, uint64Ptr(uint64(1)), s.HardForkDefaults.CanyonTime)
-	require.Equal(t, uint64Ptr(uint64(2)), s.HardForkDefaults.DeltaTime)
-	require.Equal(t, uint64Ptr(uint64(3)), s.HardForkDefaults.EcotoneTime)
-	require.Nil(t, s.HardForkDefaults.FjordTime)
+	require.Equal(t, uint64Ptr(uint64(1)), s.hardForkDefaults.CanyonTime)
+	require.Equal(t, uint64Ptr(uint64(2)), s.hardForkDefaults.DeltaTime)
+	require.Equal(t, uint64Ptr(uint64(3)), s.hardForkDefaults.EcotoneTime)
+	require.Nil(t, s.hardForkDefaults.FjordTime)
 }
 
 func TestHardForkOverridesAndDefaults(t *testing.T) {
 	defaultCanyonTime := uint64(3)
 	defaultSuperchainConfig := SuperchainConfig{
-		HardForkDefaults: HardForkConfiguration{
+		hardForkDefaults: HardForkConfiguration{
 			CanyonTime: &defaultCanyonTime,
 		},
 	}
 	nilDefaultSuperchainConfig := SuperchainConfig{
-		HardForkDefaults: HardForkConfiguration{
+		hardForkDefaults: HardForkConfiguration{
 			CanyonTime: nil,
 		},
 	}
@@ -466,7 +466,7 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 	}
 
 	executeTestCase := func(t *testing.T, tt testCase) {
-		c := RollupConfig{}
+		c := ChainConfig{}
 
 		err := yaml.Unmarshal([]byte(tt.rawYAML), &c)
 		require.NoError(t, err)
@@ -483,13 +483,13 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 
 func TestHardForkOverridesAndDefaults2(t *testing.T) {
 	defaultSuperchainConfig := SuperchainConfig{
-		HardForkDefaults: HardForkConfiguration{
+		hardForkDefaults: HardForkConfiguration{
 			CanyonTime: uint64Ptr(0),
 			DeltaTime:  uint64Ptr(1),
 		},
 	}
 
-	c := RollupConfig{}
+	c := ChainConfig{}
 
 	rawYAML := `
 ecotone_time: 2

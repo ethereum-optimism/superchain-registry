@@ -24,7 +24,7 @@ jobs:
       tag: '1.21'
     steps:
       - checkout
-      - run:  golangci-lint run superchain/... validation/...
+      - run:  golangci-lint run superchain/... validation/... add-chain/...
   golang-modules-tidy:
     executor:
       name: go/default  # is based on cimg/go
@@ -39,6 +39,10 @@ jobs:
           name: tidy validation module
           command: go mod tidy
           working_directory: validation
+      - run:
+          name: tidy add-chain module
+          command: go mod tidy
+          working_directory: add-chain
       - run:
           name: check git tree is clean
           command: git diff --exit-code
@@ -56,6 +60,10 @@ jobs:
           name: run validation module tests
           command: go test ./... -v
           working_directory: validation
+      - run:
+          name: run add-chain module tests
+          command: go test ./... -v
+          working_directory: add-chain
       - notify-failures-on-main
   publish-bot:
     environment:
@@ -101,7 +109,7 @@ jobs:
       - run:
           name: check security configs
           command: sh ./scripts/check-security-configs.sh
-      - notify-failures-on-main    
+      - notify-failures-on-main
 
 workflows:
   hourly:
