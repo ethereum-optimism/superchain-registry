@@ -50,16 +50,18 @@ jobs:
     executor:
       name: go/default  # is based on cimg/go
       tag: '1.21'
+      shell: /bin/bash -eo pipefail
     steps:
       - checkout
       - run:
           # need foundry to execute 'cast call' within add-chain script
           name: Install foundry
-          shell: /bin/bash -eo pipefail
           command: |
+            echo "SHELL=$SHELL"
             # Set up directory structure
             mkdir -p $HOME/.foundry/bin
-            export PATH="$HOME/.foundry/bin:$PATH"
+            echo 'export PATH="$HOME/.foundry/bin:$PATH"' >> $BASH_ENV
+            source $BASH_ENV
 
             # Download foundryup and make it executable
             curl -sSL "https://raw.githubusercontent.com/foundry-rs/foundry/master/foundryup/foundryup" -o $HOME/.foundry/bin/foundryup

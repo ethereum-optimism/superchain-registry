@@ -22,9 +22,7 @@ func TestCLIApp(t *testing.T) {
 
 	args := []string{"add-chain", "-chain-type", "standard", "-test", "true"}
 	err := app.Run(args)
-	if err != nil {
-		t.Errorf("add-chain app failed: %v", err)
-	}
+	require.NoError(t, err, "add-chain app failed")
 
 	checkConfigYaml(t)
 	compareJsonFiles(t, "./testdata/superchain/extra/addresses/sepolia/")
