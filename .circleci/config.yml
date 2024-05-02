@@ -53,6 +53,21 @@ jobs:
     steps:
       - checkout
       - run:
+          # need foundry to execute 'cast call' within add-chain script
+          name: Install foundry
+          shell: /bin/bash -eo pipefail
+          command: |
+            # Set up directory structure
+            mkdir -p $HOME/.foundry/bin
+            export PATH="$HOME/.foundry/bin:$PATH"
+
+            # Download foundryup and make it executable
+            curl -sSL "https://raw.githubusercontent.com/foundry-rs/foundry/master/foundryup/foundryup" -o $HOME/.foundry/bin/foundryup
+            chmod +x $HOME/.foundry/bin/foundryup
+
+            $HOME/.foundry/bin/foundryup
+            forge --version
+      - run:
           name: run superchain module tests
           command: go test ./... -v
           working_directory: superchain
