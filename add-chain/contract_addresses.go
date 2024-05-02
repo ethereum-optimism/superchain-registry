@@ -78,7 +78,7 @@ func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string
 }
 
 func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir string) error {
-	var contractsFromJSON = []string{
+	contractsFromJSON := []string{
 		AddressManager,
 		L1CrossDomainMessengerProxy,
 		L1ERC721BridgeProxy,
@@ -99,11 +99,11 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 			path := filepath.Join(deploymentsDir, name+".json")
 			file, err := os.ReadFile(path)
 			if err != nil {
-				return fmt.Errorf("failed to read file: %v", err)
+				return fmt.Errorf("failed to read file: %w", err)
 			}
 			var data AddressData
 			if err = json.Unmarshal(file, &data); err != nil {
-				return fmt.Errorf("failed to unmarshal json: %v", err)
+				return fmt.Errorf("failed to unmarshal json: %w", err)
 			}
 			contractAddresses[name] = data.Address
 		}
@@ -111,17 +111,17 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		var addressList superchain.AddressList
 		rawData, err := os.ReadFile(deployFilePath)
 		if err != nil {
-			return fmt.Errorf("failed to read file: %v", err)
+			return fmt.Errorf("failed to read file: %w", err)
 		}
 
 		if err = json.Unmarshal(rawData, &addressList); err != nil {
-			return fmt.Errorf("failed to unmarshal json: %v", err)
+			return fmt.Errorf("failed to unmarshal json: %w", err)
 		}
 
 		for _, name := range contractsFromJSON {
 			address, err := addressList.AddressFor(name)
 			if err != nil {
-				return fmt.Errorf("failed to retrieve %s address from list: %v", name, err)
+				return fmt.Errorf("failed to retrieve %s address from list: %w", name, err)
 			}
 			contractAddresses[name] = address.String()
 		}
@@ -133,7 +133,7 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 
 func writeAddressesToJSON(contractsAddresses map[string]string, superchainRepoPath, target, chainName string) error {
 	dirPath := filepath.Join(superchainRepoPath, "superchain", "extra", "addresses", target)
-	if err := os.MkdirAll(dirPath, 0755); err != nil {
+	if err := os.MkdirAll(dirPath, 0o755); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 

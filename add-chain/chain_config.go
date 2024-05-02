@@ -18,11 +18,11 @@ func constructRollupConfig(inputFilePath, chainName, publicRPC, sequencerRPC, ex
 	fmt.Printf("Attempting to read from %s\n", inputFilePath)
 	file, err := os.ReadFile(inputFilePath)
 	if err != nil {
-		return superchain.ChainConfig{}, fmt.Errorf("error reading file: %v", err)
+		return superchain.ChainConfig{}, fmt.Errorf("error reading file: %w", err)
 	}
 	var config superchain.ChainConfig
 	if err = json.Unmarshal(file, &config); err != nil {
-		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %v", err)
+		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %w", err)
 	}
 
 	config.Name = chainName
@@ -47,7 +47,7 @@ func writeChainConfig(
 	// (this is deprecated, users should load this from L1, when available via SystemConfig)
 	dirPath := filepath.Join(superchainRepoPath, "superchain", "extra", "genesis-system-configs", superchainTarget)
 
-	if err := os.MkdirAll(dirPath, 0755); err != nil {
+	if err := os.MkdirAll(dirPath, 0o755); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
@@ -58,7 +58,7 @@ func writeChainConfig(
 
 	// Write the genesis system config JSON to a new file
 	filePath := filepath.Join(dirPath, rollupConfig.Name+".json")
-	if err := os.WriteFile(filePath, systemConfigJSON, 0644); err != nil {
+	if err := os.WriteFile(filePath, systemConfigJSON, 0o644); err != nil {
 		return fmt.Errorf("failed to write genesis system config json: %w", err)
 	}
 	fmt.Printf("Genesis system config written to: %s\n", filePath)
