@@ -68,7 +68,6 @@ func TestContractVersions(t *testing.T) {
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
-
 		isFaultProofChain := map[uint64]bool{
 			11155420: true, // TODO don't hardcode this https://github.com/ethereum-optimism/superchain-registry/issues/219
 		}
