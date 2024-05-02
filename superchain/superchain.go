@@ -181,7 +181,7 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 			if err != nil {
 				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)
 			}
-			timestamp := time.Unix(t, 0)
+			timestamp := time.Unix(t, 0).UTC()
 			keyNode.LineComment = timestamp.Format("Mon 2 Jan 2006 15:04:05 UTC")
 		}
 

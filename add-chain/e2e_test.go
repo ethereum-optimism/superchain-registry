@@ -7,7 +7,9 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
+	"gopkg.in/yaml.v3"
 )
 
 func TestCLIApp(t *testing.T) {
@@ -24,65 +26,39 @@ func TestCLIApp(t *testing.T) {
 		t.Errorf("add-chain app failed: %v", err)
 	}
 
-	yamlEqual, err := checkConfigYaml()
-	if err != nil {
-		t.Errorf("failed to read yaml config files: %v", err)
-	}
-	if !yamlEqual {
-		t.Error("test config yaml file does not match expected file")
-	}
-
-	jsonEqual, err := compareJsonFiles("./testdata/superchain/extra/addresses/sepolia/")
-	if err != nil {
-		t.Errorf("failed to read json address files: %v", err)
-	}
-	if !jsonEqual {
-		t.Error("test json address file does not match expected file")
-	}
-
-	jsonEqual, err = compareJsonFiles("./testdata/superchain/extra/genesis-system-configs/sepolia/")
-	if err != nil {
-		t.Errorf("failed to read json genesis files: %v", err)
-	}
-	if !jsonEqual {
-		t.Error("test json genesis file does not match expected file")
-	}
+	checkConfigYaml(t)
+	compareJsonFiles(t, "./testdata/superchain/extra/addresses/sepolia/")
+	compareJsonFiles(t, "./testdata/superchain/extra/genesis-system-configs/sepolia/")
 }
 
-func compareJsonFiles(dirPath string) (bool, error) {
+func compareJsonFiles(t *testing.T, dirPath string) {
 	expectedBytes, err := os.ReadFile(dirPath + "expected.json")
-	if err != nil {
-		return false, err
-	}
+	require.NoError(t, err, "failed to read expected.json file from "+dirPath)
 
 	var expectJSON map[string]interface{}
-	if err := json.Unmarshal(expectedBytes, &expectJSON); err != nil {
-		return false, err
-	}
+	err = json.Unmarshal(expectedBytes, &expectJSON)
+	require.NoError(t, err, "failed to unmarshal expected.json file from "+dirPath)
 
 	testBytes, err := os.ReadFile(dirPath + "awesomechain.json")
-	if err != nil {
-		return false, err
-	}
+	require.NoError(t, err, "failed to read awesomechain.json file from "+dirPath)
 
 	var testJSON map[string]interface{}
-	if err := json.Unmarshal(testBytes, &testJSON); err != nil {
-		return false, err
-	}
+	err = json.Unmarshal(testBytes, &testJSON)
+	require.NoError(t, err, "failed to read awesomechain.json file from "+dirPath)
 
-	return reflect.DeepEqual(expectJSON, testJSON), nil
+	require.True(t, reflect.DeepEqual(expectJSON, testJSON), "awesomechain.json contents do not meet expectation:\n %s", string(testBytes))
 }
 
-func checkConfigYaml() (bool, error) {
+func checkConfigYaml(t *testing.T) {
 	expectedBytes, err := os.ReadFile("./testdata/superchain/configs/sepolia/expected.yaml")
-	if err != nil {
-		return false, err
-	}
+	require.NoError(t, err, "failed to read expected.yaml config file: %w", err)
+
+	var expectedYaml map[string]interface{}
+	err = yaml.Unmarshal(expectedBytes, &expectedYaml)
+	require.NoError(t, err, "failed to unmarshal expected.yaml config file: %w", err)
 
 	testBytes, err := os.ReadFile("./testdata/superchain/configs/sepolia/awesomechain.yaml")
-	if err != nil {
-		return false, err
-	}
+	require.NoError(t, err, "failed to read awesomechain.yaml config file: %w", err)
 
-	return bytes.Equal(expectedBytes, testBytes), nil
+	require.True(t, bytes.Equal(expectedBytes, testBytes), "awesomechain.yaml contents do not meet expectation:\n %s", string(testBytes))
 }
