@@ -2,6 +2,7 @@ package superchain
 
 import (
 	"compress/gzip"
+	"context"
 	"embed"
 	"encoding/json"
 	"errors"
@@ -10,6 +11,7 @@ import (
 	"io/fs"
 	"path"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
@@ -36,17 +38,38 @@ type BlockID struct {
 }
 
 type ChainGenesis struct {
-	L1        BlockID   `yaml:"l1"`
-	L2        BlockID   `yaml:"l2"`
-	L2Time    uint64    `yaml:"l2_time"`
-	ExtraData *HexBytes `yaml:"extra_data,omitempty"`
+	L1           BlockID      `yaml:"l1"`
+	L2           BlockID      `yaml:"l2"`
+	L2Time       uint64       `json:"l2_time" yaml:"l2_time"`
+	ExtraData    *HexBytes    `yaml:"extra_data,omitempty"`
+	SystemConfig SystemConfig `json:"system_config" yaml:"system_config,omitempty"`
+}
+
+type SystemConfig struct {
+	BatcherAddr       string `json:"batcherAddr"`
+	Overhead          string `json:"overhead"`
+	Scalar            string `json:"scalar"`
+	GasLimit          uint64 `json:"gasLimit"`
+	BaseFeeScalar     uint64 `json:"baseFeeScalar"`
+	BlobBaseFeeScalar uint64 `json:"blobBaseFeeScalar"`
+}
+
+type GenesisData struct {
+	L1     GenesisLayer `json:"l1" yaml:"l1"`
+	L2     GenesisLayer `json:"l2" yaml:"l2"`
+	L2Time int          `json:"l2_time" yaml:"l2_time"`
+}
+
+type GenesisLayer struct {
+	Hash   string `json:"hash" yaml:"hash"`
+	Number int    `json:"number" yaml:"number"`
 }
 
 type HardForkConfiguration struct {
-	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
-	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
-	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
-	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+	CanyonTime  *uint64 `json:"canyon_time,omitempty" yaml:"canyon_time,omitempty"`
+	DeltaTime   *uint64 `json:"delta_time,omitempty" yaml:"delta_time,omitempty"`
+	EcotoneTime *uint64 `json:"ecotone_time,omitempty" yaml:"ecotone_time,omitempty"`
+	FjordTime   *uint64 `json:"fjord_time,omitempty" yaml:"fjord_time,omitempty"`
 }
 
 type SuperchainLevel uint
@@ -58,16 +81,16 @@ const (
 
 type ChainConfig struct {
 	Name         string `yaml:"name"`
-	ChainID      uint64 `yaml:"chain_id"`
+	ChainID      uint64 `json:"l2_chain_id" yaml:"chain_id"`
 	PublicRPC    string `yaml:"public_rpc"`
 	SequencerRPC string `yaml:"sequencer_rpc"`
 	Explorer     string `yaml:"explorer"`
 
 	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
 
-	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
+	BatchInboxAddr Address `json:"batch_inbox_address" yaml:"batch_inbox_addr"`
 
-	Genesis ChainGenesis `yaml:"genesis"`
+	Genesis ChainGenesis `json:"genesis" yaml:"genesis"`
 
 	// Superchain is a simple string to identify the superchain.
 	// This is implied by directory structure, and not encoded in the config file itself.
@@ -78,6 +101,21 @@ type ChainConfig struct {
 
 	// Hardfork Configuration Overrides
 	HardForkConfiguration `yaml:",inline"`
+}
+
+// SetDefaultHardforkTimestampsToNil sets each hardfork timestamp to nil (to remove the override)
+// if the timestamp matches the superchain default
+func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
+	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
+	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
+
+	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
+		overrideValue := cVal.Field(i)
+		defaultValue := sVal.Field(i)
+		if reflect.DeepEqual(overrideValue.Interface(), defaultValue.Interface()) {
+			overrideValue.Set(reflect.Zero(overrideValue.Type()))
+		}
+	}
 }
 
 // setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
@@ -103,6 +141,55 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 	// ...etc for each field in HardForkConfiguration
 }
 
+// EnhanceYAML creates a customized yaml string from a RollupConfig. After completion,
+// the *yaml.Node pointer can be used with a yaml encoder to write the custom format to file
+func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
+	// Check if context is done before processing
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("context error: %w", err)
+	}
+
+	if node.Kind == yaml.DocumentNode && len(node.Content) > 0 {
+		node = node.Content[0] // Dive into the document node
+	}
+
+	var lastKey string
+	for i := 0; i < len(node.Content)-1; i += 2 {
+		keyNode := node.Content[i]
+		valNode := node.Content[i+1]
+
+		// Add blank line AFTER these keys
+		if lastKey == "explorer" || lastKey == "superchain_level" || lastKey == "genesis" {
+			keyNode.HeadComment = "\n"
+		}
+
+		// Add blank line BEFORE these keys
+		if keyNode.Value == "genesis" {
+			keyNode.HeadComment = "\n"
+		}
+
+		// Recursive call to check nested fields for "_time" suffix
+		if valNode.Kind == yaml.MappingNode {
+			if err := c.EnhanceYAML(ctx, valNode); err != nil {
+				return err
+			}
+		}
+
+		// Add human readable timestamp in comment
+		if strings.HasSuffix(keyNode.Value, "_time") {
+			t, err := strconv.ParseInt(valNode.Value, 10, 64)
+			if err != nil {
+				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)
+			}
+			timestamp := time.Unix(t, 0).UTC()
+			keyNode.LineComment = timestamp.Format("Mon 2 Jan 2006 15:04:05 UTC")
+		}
+
+		lastKey = keyNode.Value
+	}
+	return nil
+}
+
 // AddressList represents the set of network specific contracts for a given network.
 type AddressList struct {
 	AddressManager                    Address `json:"AddressManager"`
@@ -121,6 +208,8 @@ type AddressList struct {
 func (a AddressList) AddressFor(contractName string) (Address, error) {
 	var address Address
 	switch contractName {
+	case "AddressManager":
+		address = a.AddressManager
 	case "ProxyAdmin":
 		address = a.ProxyAdmin
 	case "L1CrossDomainMessengerProxy":
