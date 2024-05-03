@@ -1,6 +1,7 @@
-go 1.21
+go 1.21.9
 
 use (
-    ./superchain
-    ./validation
+	./add-chain
+	./superchain
+	./validation
 )
