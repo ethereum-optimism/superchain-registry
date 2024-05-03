@@ -19,33 +19,23 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+type L2OOParams struct {
+	SubmissionInterval        *big.Int
+	L2BlockTime               *big.Int
+	FinalizationPeriodSeconds *big.Int
+}
+
 func TestL2OOParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		999999999: true, // sepolia/zora    Incorrect submissionInterval, wanted 120 got 180
-		1740:      true, // sepolia/metal Incorrect submissionInterval
-		1750:      true, // mainnet/metal Incorrect submissionInterval
-		919:       true, // sepolia/mode Incorrect submissionInterval
-		8866:      true, // mainnet/superlumio Incorrect submissionInterval
+		999999999: true, // sepolia/zora  Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
+		1740:      true, // sepolia/metal Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
+		919:       true, // sepolia/mode  Incorrect finalizationPeriodSeconds, 180 is not within bounds [12 12]
 	}
 
-	checkEquality := func(a, b *big.Int) func() bool {
-		return (func() bool { return (a.Cmp(b) == 0) })
-	}
-
-	incorrectMsg := func(name string, want, got *big.Int) string {
-		return fmt.Sprintf("Incorrect %s, wanted %d got %d", name, want, got)
-	}
-
-	requireEqualParams := func(t *testing.T, desired, actual L2OOParams) {
-		assert.Condition(t,
-			checkEquality(desired.SubmissionInterval, actual.SubmissionInterval),
-			incorrectMsg("submissionInterval", desired.SubmissionInterval, actual.SubmissionInterval))
-		assert.Condition(t,
-			checkEquality(desired.L2BlockTime, actual.L2BlockTime),
-			incorrectMsg("l2BlockTime", desired.L2BlockTime, actual.L2BlockTime))
-		assert.Condition(t,
-			checkEquality(desired.FinalizationPeriodSeconds, actual.FinalizationPeriodSeconds),
-			incorrectMsg("finalizationPeriodSeconds", desired.FinalizationPeriodSeconds, actual.FinalizationPeriodSeconds))
+	assertInBounds := func(t *testing.T, name string, got *big.Int, want [2]*big.Int) {
+		assert.True(t,
+			isBigIntWithinBounds(got, want),
+			fmt.Sprintf("Incorrect %s, %d is not within bounds %d", name, got, want))
 	}
 
 	checkL2OOParams := func(t *testing.T, chain *ChainConfig) {
@@ -72,7 +62,9 @@ func TestL2OOParams(t *testing.T) {
 		}
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
 
-		requireEqualParams(t, desiredParams, actualParams)
+		assertInBounds(t, "submissionInterval", actualParams.SubmissionInterval, desiredParams.SubmissionInterval)
+		assertInBounds(t, "l2BlockTime", actualParams.L2BlockTime, desiredParams.L2BlockTime)
+		assertInBounds(t, "challengePeriodSeconds", actualParams.FinalizationPeriodSeconds, desiredParams.ChallengePeriodSeconds)
 	}
 
 	for chainID, chain := range OPChains {
