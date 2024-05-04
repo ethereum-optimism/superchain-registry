@@ -10,6 +10,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-bindings/predeploys"
 	"github.com/ethereum-optimism/optimism/op-service/retry"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -26,44 +27,30 @@ func TestGasPriceOracleParams(t *testing.T) {
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		desiredParamsOuter, ok := GasPriceOracleParams[chain.Superchain]
-
-		if !ok {
-			t.Fatalf("superchain not recognized: %s", chain.Superchain)
-		}
-		desiredParams := desiredParamsOuter.PreEcotone
+		desiredParams := StandardConfig[chain.Superchain].GPOParams.PreEcotone
 
 		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		require.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals),
+		assert.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals),
 			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals)
-		require.True(t, isBigIntWithinBounds(actualParams.Overhead, desiredParams.Overhead),
+		assert.True(t, isBigIntWithinBounds(actualParams.Overhead, desiredParams.Overhead),
 			"overhead parameter %d out of bounds %d", actualParams.Overhead, desiredParams.Overhead)
-		require.True(t, isBigIntWithinBounds(actualParams.Scalar, desiredParams.Scalar),
+		assert.True(t, isBigIntWithinBounds(actualParams.Scalar, desiredParams.Scalar),
 			"scalar parameter %d out of bounds %d", actualParams.Scalar, desiredParams.Scalar)
 	}
 
 	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		desiredParamsOuter, ok := GasPriceOracleParams[chain.Superchain]
-
-		if !ok {
-			t.Fatalf("superchain not recognized: %s", chain.Superchain)
-		}
-		desiredParams := desiredParamsOuter.Ecotone
-
-		if desiredParams == nil {
-			t.Fatal("no desiredParams.Ecotone set to compare Ecotone chain to")
-		}
+		desiredParams := StandardConfig[chain.Superchain].GPOParams.Ecotone
 
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		require.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals),
+		assert.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals),
 			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals)
-		require.True(t, isWithinBounds(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar),
+		assert.True(t, isWithinBounds(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar),
 			"blobBaseFeeScalar %d out of bounds %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar)
-		require.True(t, isWithinBounds(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar),
+		assert.True(t, isWithinBounds(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar),
 			"baseFeeScalar parameter %d out of bounds %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar)
 	}
 
@@ -76,17 +63,30 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
-		if !isExcluded[chainID] {
-			t.Run(perChainTestName(chain), func(t *testing.T) {
-				SkipCheckIfFrontierChain(t, *chain)
-				rpcEndpoint := chain.PublicRPC
-				require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
-				client, err := ethclient.Dial(rpcEndpoint)
-				require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-				checkResourceConfig(t, chain, client)
-			})
-		}
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if isExcluded[chainID] {
+				t.Skip()
+			}
+			SkipCheckIfFrontierChain(t, *chain)
+			rpcEndpoint := chain.PublicRPC
+			require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
+			client, err := ethclient.Dial(rpcEndpoint)
+			require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+			checkResourceConfig(t, chain, client)
+		})
 	}
+}
+
+type PreEcotoneGasPriceOracleParams struct {
+	Decimals *big.Int
+	Overhead *big.Int
+	Scalar   *big.Int
+}
+
+type EcotoneGasPriceOracleParams struct {
+	Decimals          *big.Int
+	BlobBaseFeeScalar uint32
+	BaseFeeScalar     uint32
 }
 
 // getPreEcotoneGasPriceOracleParams gets the params by calling getters on the contract at addr. Will retry up to 3 times for each getter.

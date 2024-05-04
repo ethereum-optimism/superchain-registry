@@ -15,6 +15,9 @@ You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](http
 
 To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
 
+> [!NOTE]
+> The standard configuration requirements are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
+
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 
 ### 2. Run script
@@ -58,7 +61,10 @@ The format is a gzipped JSON `genesis.json` file, with either:
   Nodes can load the genesis block header, and state-sync to complete the node initialization.
 
 ### 4. Run tests locally
-Run the following command to run the registry's validation checks, for only the chain you added (replace the chain name or ID accordingly):
+There are currently two sets of validation checks:
+
+#### Go validation checks
+Run the following command from the `validation` folder to run the Go validation checks, for only the chain you added (replace the chain name or ID accordingly):
 ```
 go test -run=/OP-Sepolia
 ```
@@ -70,6 +76,14 @@ You can even focus on a particular test and chain combination:
 ```
 go test -run=TestGasPriceOracleParams/11155420
 ```
+Omit the `-run=` flag to run checks for all chains.
+
+#### Solidity validation checks
+Run 
+```shell
+sh ./scripts/check-security-configs.sh
+```
+from the repository root to run checks for all chains. 
 
 ### 5. Open Your Pull Request
 When opening a PR:

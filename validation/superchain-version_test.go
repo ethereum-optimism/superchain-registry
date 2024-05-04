@@ -58,17 +58,20 @@ func TestContractVersions(t *testing.T) {
 		1740:      true, // sepolia/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		1750:      true, // mainnet/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		8453:      true, // mainnet/base
-		8866:      true, // mainnet/pontem L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
+		8866:      true, // mainnet/superlumio L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		34443:     true, // mainnet/mode
 		84532:     true, // sepolia/base
 		90001:     true, // sepolia/race, due to https://github.com/ethereum-optimism/superchain-registry/issues/147
 		7777777:   true, // mainnet/zora
 		11155421:  true, // sepolia-dev-0/oplabs-devnet-0
 		999999999: true, // sepolia/zora
-		11763072:  true, // sepolia-dev-0/base-devnet-0    TODO Temporary hack, see https://github.com/ethereum-optimism/superchain-registry/pull/172 to learn more.
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
+		isFaultProofChain := map[uint64]bool{
+			11155420: true, // TODO don't hardcode this https://github.com/ethereum-optimism/superchain-registry/issues/219
+		}
+
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
 		require.NotEmpty(t, rpcEndpoint)
@@ -87,6 +90,11 @@ func TestContractVersions(t *testing.T) {
 		}
 
 		for _, contractName := range contractNames {
+			if isFaultProofChain[chain.ChainID] && contractName == "L2OutputOracle" {
+				// Fault Proof chains do not have this contract
+				// https://github.com/ethereum-optimism/superchain-registry/issues/219
+				continue
+			}
 			desiredSemver, err := SuperchainSemver[chain.Superchain].VersionFor(contractName)
 			require.NoError(t, err)
 			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract

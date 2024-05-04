@@ -85,17 +85,13 @@ func TestConfigs(t *testing.T) {
 			t.Errorf("chain %d has bad id", id)
 		}
 	}
-	// TODO Subtracting 2 is a temporary hack, see
-	// https://github.com/ethereum-optimism/superchain-registry/pull/172 to learn more.
-	if len(OPChains)-2 != n {
+	if len(OPChains) != n {
 		t.Errorf("number of chains %d does not match chains in superchains %d", len(OPChains), n)
 	}
 	if len(OPChains) < 5 {
 		t.Errorf("only got %d op chains, has everything loaded?", len(OPChains))
 	}
-	// TODO Using 2 instead of 3 is a temporary hack, see
-	// https://github.com/ethereum-optimism/superchain-registry/pull/172 to learn more.
-	if len(Superchains) < 2 {
+	if len(Superchains) < 3 {
 		t.Errorf("only got %d superchains, has everything loaded?", len(Superchains))
 	}
 	// All chains require extra addresses data until the L1 SystemConfig can support address mappings.
