@@ -61,6 +61,8 @@ the following privilege grants and role designations:
       L2 senders.
    4. Trusted oracles. For example, `OptimismPortalProxy` specifies
       the L2 oracle they trust with the L2 state root information.
+      1. After the FPAC upgrade, the `OptimismPortalProxy` specifies the `DisputeGameFactory` they trust rather
+      than the legacy `L2OutputOracle` contract.
    5. Trusted system config. For example, `OptimismPortalProxy`
       specifies the system config they trust to get resource config
       from. TODO(issues/37): add checks for the `ResourceMetering`
@@ -68,8 +70,12 @@ the following privilege grants and role designations:
 3. Optimism privileged operational roles:
    1. Guardians. This is the role that can pause withdraws in the
       Optimism protocol.
-   2. Challengers. This is the role that can delete
-      `L2OutputOracleProxy`'s output roots in the Optimism protocol
+      1. After the FPAC upgrade, the `Guardian` can also blacklist dispute games and change the respected game type
+         in the `OptimismPortal`.
+   2. Challengers. This is the role that can delete `L2OutputOracleProxy`'s output roots in the Optimism protocol
+      1. After the FPAC upgrade, the `CHALLENGER` is a permissionless role in the `FaultDisputeGame`. However,
+         in the `PermissionedDisputeGame`, the `CHALLENGER` role is the only party allowed to dispute output proposals
+         created by the `PROPOSER` role.
 
 As a result, here is a visualization of all the relationships the
 `CheckSecurityConfigs.s.sol` script checks:
@@ -97,6 +103,7 @@ graph TD
   OptimismPortalProxy -- "GUARDIAN()" --> GuardianMultisig
   OptimismPortalProxy -- "L2_ORACLE()" --> L2OutputOracleProxy
   OptimismPortalProxy -- "SYSTEM_CONFIG()" --> SystemConfigProxy
+  OptimismPortalProxy -- "disputeGameFactory()" --> DisputeGameFactoryProxy
 
   L2OutputOracleProxy -- "admin()" --> ProxyAdmin
   L2OutputOracleProxy -- "CHALLENGER()" --> ChallengerMultisig
@@ -104,6 +111,13 @@ graph TD
   SystemConfigProxy -- "admin()" --> ProxyAdmin
   SystemConfigProxy -- "owner()" --> SystemConfigOwnerMultisig
 
+  DisputeGameFactoryProxy -- "admin()" --> ProxyAdmin
+  DisputeGameFactoryProxy -- "owner()" --> ProxyAdminOwner
+
+  AnchorStateRegistryProxy -- "admin()" --> ProxyAdmin
+
+  DelayedWETHProxy -- "admin()" --> ProxyAdmin
+  DelayedWETHProxy -- "owner()" --> ProxyAdminOwner
 ```
 
 ## License
