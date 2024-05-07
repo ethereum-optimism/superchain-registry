@@ -16,6 +16,18 @@ var (
 		Usage:    "Type of chain (either standard or frontier)",
 		Required: true,
 	}
+	ChainNameFlag = &cli.StringFlag{
+		Name:     "chain-name",
+		Value:    "",
+		Usage:    "Custom name of the chain",
+		Required: false,
+	}
+	RollupConfigFlag = &cli.StringFlag{
+		Name:     "rollup-config",
+		Value:    "",
+		Usage:    "Filepath to rollup.json input file",
+		Required: false,
+	}
 	TestFlag = &cli.BoolFlag{
 		Name:     "test",
 		Value:    false,
@@ -28,7 +40,7 @@ func main() {
 	app := &cli.App{
 		Name:   "add-chain",
 		Usage:  "Add a new chain to the superchain-registry",
-		Flags:  []cli.Flag{ChainTypeFlag, TestFlag},
+		Flags:  []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag},
 		Action: entrypoint,
 	}
 
@@ -72,19 +84,25 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("error reading config file: %w", err)
 	}
 
-	chainName := viper.GetString("CHAIN_NAME")
-	superchainTarget := viper.GetString("SUPERCHAIN_TARGET")
-	monorepoDir := viper.GetString("MONOREPO_DIR")
-	deploymentsDir := viper.GetString("DEPLOYMENTS_DIR")
-	rollupConfigPath := viper.GetString("ROLLUP_CONFIG")
 	publicRPC := viper.GetString("PUBLIC_RPC")
 	sequencerRPC := viper.GetString("SEQUENCER_RPC")
 	explorer := viper.GetString("EXPLORER")
+	superchainTarget := viper.GetString("SUPERCHAIN_TARGET")
+	deploymentsDir := viper.GetString("DEPLOYMENTS_DIR")
+	chainName := viper.GetString("CHAIN_NAME")
+
+	// Allow cli flags to override env vars
+	if ctx.IsSet("chain-name") {
+		chainName = ctx.String("chain-name")
+	}
+	rollupConfigPath := viper.GetString("ROLLUP_CONFIG")
+	if ctx.IsSet("rollup-config") {
+		rollupConfigPath = ctx.String("rollup-config")
+	}
 
 	fmt.Printf("Chain Name:                     %s\n", chainName)
 	fmt.Printf("Superchain target:              %s\n", superchainTarget)
 	fmt.Printf("Superchain-registry repo dir:   %s\n", superchainRepoPath)
-	fmt.Printf("Reading from monrepo directory: %s\n", monorepoDir)
 	fmt.Printf("With deployments directory:     %s\n", deploymentsDir)
 	fmt.Printf("Rollup config filepath:         %s\n", rollupConfigPath)
 	fmt.Printf("Public RPC endpoint:            %s\n", publicRPC)
@@ -110,6 +128,9 @@ func entrypoint(ctx *cli.Context) error {
 	}
 
 	contractAddresses := make(map[string]string)
+	if rollupConfig.Plasma.DAChallengeAddress != nil {
+		contractAddresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
+	}
 	err = readAddressesFromJSON(contractAddresses, deploymentsDir)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from JSON files: %w", err)

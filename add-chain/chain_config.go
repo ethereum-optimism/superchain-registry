@@ -31,6 +31,11 @@ func constructRollupConfig(inputFilePath, chainName, publicRPC, sequencerRPC, ex
 	config.SuperchainLevel = superchainLevel
 	config.Explorer = explorer
 
+	err = config.CheckPlasma()
+	if err != nil {
+		return superchain.ChainConfig{}, fmt.Errorf("error validating plasma mode: %w", err)
+	}
+
 	fmt.Printf("Rollup config successfully constructed\n")
 	return config, nil
 }
