@@ -3,6 +3,7 @@ package superchain
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"path"
 	"strings"
 
@@ -96,6 +97,22 @@ func init() {
 			Addresses[chainConfig.ChainID] = &addrs
 			GenesisSystemConfigs[chainConfig.ChainID] = &genesisSysCfg
 
+		}
+
+		ciMainnetRPC := os.Getenv("CIRCLE_CI_MAINNET_RPC")
+		ciSepoliaRPC := os.Getenv("CIRCLE_CI_SEPOLIA_RPC")
+
+		switch superchainEntry.Superchain {
+		case "mainnet":
+			if ciMainnetRPC != "" {
+				fmt.Println("Using env var for mainnet rpc")
+				superchainEntry.Config.L1.PublicRPC = ciMainnetRPC
+			}
+		case "sepolia", "sepolia-dev-0":
+			if ciSepoliaRPC != "" {
+				fmt.Println("Using env var for sepolia rpc")
+				superchainEntry.Config.L1.PublicRPC = ciSepoliaRPC
+			}
 		}
 
 		Superchains[superchainEntry.Superchain] = &superchainEntry
