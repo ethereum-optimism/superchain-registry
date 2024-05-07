@@ -99,8 +99,50 @@ type ChainConfig struct {
 	// This matches the resource filename, it is not encoded in the config file itself.
 	Chain string `yaml:"-"`
 
+	// UsePlasma is activated when the chain is in plasma mode.
+	UsePlasma    *bool        `json:"use_plasma,omitempty" yaml:"use_plasma,omitempty"`
+	Plasma       PlasmaConfig `json:"plasma,omitempty" yaml:"plasma,omitempty"`
+	PlasmaConfig `yaml:",inline"`
+
 	// Hardfork Configuration Overrides
 	HardForkConfiguration `yaml:",inline"`
+}
+
+type PlasmaConfig struct {
+	DAChallengeAddress *Address `json:"da_challenge_contract_address,omitempty" yaml:"da_challenge_contract_address,omitempty"`
+	// DA challenge window value set on the DAC contract. Used in plasma mode
+	// to compute when a commitment can no longer be challenged.
+	DAChallengeWindow *uint64 `json:"da_challenge_window,omitempty" yaml:"da_challenge_window,omitempty"`
+	// DA resolve window value set on the DAC contract. Used in plasma mode
+	// to compute when a challenge expires and trigger a reorg if needed.
+	DAResolveWindow *uint64 `json:"da_resolve_window,omitempty" yaml:"da_resolve_window,omitempty"`
+}
+
+func (c *ChainConfig) CheckPlasma() error {
+	if c.UsePlasma != nil && *c.UsePlasma {
+		if c.DAChallengeAddress == nil {
+			return fmt.Errorf("missing required field: da_challenge_contract_address")
+		}
+		if c.DAChallengeWindow == nil {
+			return fmt.Errorf("missing required field: da_challenge_window")
+		}
+		if c.DAResolveWindow == nil {
+			return fmt.Errorf("missing required field: da_resolve_window")
+		}
+
+		c.Plasma = PlasmaConfig{
+			DAChallengeAddress: c.DAChallengeAddress,
+			DAChallengeWindow:  c.DAChallengeWindow,
+			DAResolveWindow:    c.DAResolveWindow,
+		}
+		// Remove fields since they have now been nested inside "plasma" struct
+		c.UsePlasma = nil
+		c.DAChallengeAddress = nil
+		c.DAChallengeWindow = nil
+		c.DAResolveWindow = nil
+	}
+
+	return nil
 }
 
 // SetDefaultHardforkTimestampsToNil sets each hardfork timestamp to nil (to remove the override)
