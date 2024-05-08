@@ -31,8 +31,8 @@
   "deposit_contract_address": "0x6c84ae91901ce8a4897187c33a0094a6e790f34d",
   "l1_system_config_address": "0x8787d3382f60d4e072b4276bbda065959195db33",
   "protocol_versions_address": "0x0000000000000000000000000000000000000000",
-	"use_plasma": true,
+  "use_plasma": true,
   "da_challenge_window": 5555555,
-	"da_resolve_window": 7777777,
+  "da_resolve_window": 7777777,
   "da_challenge_contract_address": "0x3333333333333333333300000000000000000000"
 }
