@@ -1,0 +1,23 @@
+name: Op-Seal-0
+chain_id: 6619
+public_rpc: https://rpc-seal-rollup-base-rgf4y72ymx.t.conduit.xyz
+sequencer_rpc: null
+explorer: https://explorerl2new-seal-rollup-base-rgf4y72ymx.t.conduit.xyz
+
+superchain_level: 2 # 1?
+
+system_config_addr: 0xe01AA5c653C56FDA3299756bBf3505DC47774476
+batch_inbox_addr: 0x6437cB4F91ce43c70c2303d5673A659C6D62E9BF
+
+genesis:
+  l1:
+    hash: 0x0f9ebf6fd51e23f2c60e6ed0a2e8ea62cdf3804e2b24f62420104d8eb54df08c
+    number: 5851659
+  l2:
+    hash: 0x8651dd859765554ab0fd846b4f16e235e25c86c83cacff5862b43b0cdc9ad45d
+    number: 0
+  l2_time: 1715039268
+
+canyon_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
+delta_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
+ecotone_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
