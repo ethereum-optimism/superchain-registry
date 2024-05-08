@@ -18,7 +18,6 @@ genesis:
   l2_time: 1713792864 # Mon 22 Apr 2024 13:34:24 UTC
 
 plasma:
-  da_challenge_contract_address: 0x3333333333333333333300000000000000000000
   da_challenge_window: 5555555
   da_resolve_window: 7777777
 canyon_time: 0 # Thu 1 Jan 1970 00:00:00 UTC

@@ -120,6 +120,11 @@ func entrypoint(ctx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
+	contractAddresses := make(map[string]string)
+	if rollupConfig.Plasma.DAChallengeAddress != nil {
+		// Store this address before it gets removed from rollupConfig
+		contractAddresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
+	}
 
 	targetFilePath := filepath.Join(targetDir, chainName+".yaml")
 	err = writeChainConfig(rollupConfig, targetFilePath, superchainRepoPath, superchainTarget)
@@ -127,10 +132,6 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("error generating chain config .yaml file: %w", err)
 	}
 
-	contractAddresses := make(map[string]string)
-	if rollupConfig.Plasma.DAChallengeAddress != nil {
-		contractAddresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
-	}
 	err = readAddressesFromJSON(contractAddresses, deploymentsDir)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from JSON files: %w", err)

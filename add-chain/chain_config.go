@@ -68,7 +68,9 @@ func writeChainConfig(
 	}
 	fmt.Printf("Genesis system config written to: %s\n", filePath)
 
-	rollupConfig.Genesis.SystemConfig = superchain.SystemConfig{} // remove SystemConfig so its omitted from yaml
+	// Omit these fields from the yaml file
+	rollupConfig.Genesis.SystemConfig = superchain.SystemConfig{}
+	rollupConfig.Plasma.DAChallengeAddress = nil
 
 	// Remove hardfork timestamp override fields if they match superchain defaults
 	defaults := superchain.Superchains[superchainTarget]
