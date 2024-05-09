@@ -193,6 +193,7 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 // AddressList represents the set of network specific contracts for a given network.
 type AddressList struct {
 	AddressManager                    Address `json:"AddressManager"`
+	DisputeGameFactory                Address `json:"DisputeGameFactory"`
 	L1CrossDomainMessengerProxy       Address `json:"L1CrossDomainMessengerProxy"`
 	L1ERC721BridgeProxy               Address `json:"L1ERC721BridgeProxy"`
 	L1StandardBridgeProxy             Address `json:"L1StandardBridgeProxy"`
@@ -210,6 +211,8 @@ func (a AddressList) AddressFor(contractName string) (Address, error) {
 	switch contractName {
 	case "AddressManager":
 		address = a.AddressManager
+	case "DisputeGameFactory":
+		address = a.DisputeGameFactory
 	case "ProxyAdmin":
 		address = a.ProxyAdmin
 	case "L1CrossDomainMessengerProxy":
@@ -238,6 +241,7 @@ func (a AddressList) AddressFor(contractName string) (Address, error) {
 // ImplementationList represents the set of implementation contracts to be used together
 // for a network.
 type ImplementationList struct {
+	DisputeGameFactory           VersionedContract `json:"DisputeGameFactory"`
 	L1CrossDomainMessenger       VersionedContract `json:"L1CrossDomainMessenger"`
 	L1ERC721Bridge               VersionedContract `json:"L1ERC721Bridge"`
 	L1StandardBridge             VersionedContract `json:"L1StandardBridge"`
@@ -251,6 +255,7 @@ type ImplementationList struct {
 // The key in the map represents the semantic version of the contract and the value is the
 // address that the contract is deployed to.
 type ContractImplementations struct {
+	DisputeGameFactory           AddressSet `yaml:"dispute_game_factory"`
 	L1CrossDomainMessenger       AddressSet `yaml:"l1_cross_domain_messenger"`
 	L1ERC721Bridge               AddressSet `yaml:"l1_erc721_bridge"`
 	L1StandardBridge             AddressSet `yaml:"l1_standard_bridge"`
@@ -320,6 +325,9 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 	if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
 		return implementations, fmt.Errorf("SystemConfig: %w", err)
 	}
+	if implementations.DisputeGameFactory, err = resolve(c.DisputeGameFactory, versions.DisputeGameFactory); err != nil {
+		return implementations, fmt.Errorf("DisputeGameFactory: %w", err)
+	}
 	return implementations, nil
 }
 
@@ -363,6 +371,7 @@ type ContractVersions struct {
 	OptimismMintableERC20Factory string `yaml:"optimism_mintable_erc20_factory"`
 	OptimismPortal               string `yaml:"optimism_portal"`
 	SystemConfig                 string `yaml:"system_config"`
+	DisputeGameFactory           string `yaml:"dispute_game_factory"`
 	// Superchain-wide contracts:
 	ProtocolVersions string `yaml:"protocol_versions"`
 	SuperchainConfig string `yaml:"superchain_config,omitempty"`
@@ -373,6 +382,8 @@ type ContractVersions struct {
 func (c ContractVersions) VersionFor(contractName string) (string, error) {
 	var version string
 	switch contractName {
+	case "DisputeGameFactory":
+		version = c.DisputeGameFactory
 	case "L1CrossDomainMessenger":
 		version = c.L1CrossDomainMessenger
 	case "L1ERC721Bridge":
@@ -512,6 +523,7 @@ func (c ContractImplementations) Merge(other ContractImplementations) {
 // Copy will return a shallow copy of the ContractImplementations.
 func (c ContractImplementations) Copy() ContractImplementations {
 	return ContractImplementations{
+		DisputeGameFactory:           maps.Clone(c.DisputeGameFactory),
 		L1CrossDomainMessenger:       maps.Clone(c.L1CrossDomainMessenger),
 		L1ERC721Bridge:               maps.Clone(c.L1ERC721Bridge),
 		L1StandardBridge:             maps.Clone(c.L1StandardBridge),
