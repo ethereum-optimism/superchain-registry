@@ -103,7 +103,7 @@ type ChainConfig struct {
 	HardForkConfiguration `yaml:",inline"`
 
 	// Optional feature
-	Plasma PlasmaConfig `yaml:"plasma,omitempty"`
+	Plasma *PlasmaConfig `yaml:"plasma,omitempty"`
 }
 
 type PlasmaConfig struct {

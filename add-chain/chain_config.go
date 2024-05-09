@@ -21,19 +21,19 @@ type JSONChainConfig struct {
 	superchain.HardForkConfiguration `json:",inline"`
 }
 
-func (c *JSONChainConfig) VerifyPlasma() (superchain.PlasmaConfig, error) {
+func (c *JSONChainConfig) VerifyPlasma() (*superchain.PlasmaConfig, error) {
 	if c.UsePlasma {
 		if c.DAChallengeAddress == nil {
-			return superchain.PlasmaConfig{}, fmt.Errorf("missing required field: da_challenge_contract_address")
+			return nil, fmt.Errorf("missing required field: da_challenge_contract_address")
 		}
 		if c.DAChallengeWindow == nil {
-			return superchain.PlasmaConfig{}, fmt.Errorf("missing required field: da_challenge_window")
+			return nil, fmt.Errorf("missing required field: da_challenge_window")
 		}
 		if c.DAResolveWindow == nil {
-			return superchain.PlasmaConfig{}, fmt.Errorf("missing required field: da_resolve_window")
+			return nil, fmt.Errorf("missing required field: da_resolve_window")
 		}
 
-		plasma := superchain.PlasmaConfig{
+		plasma := &superchain.PlasmaConfig{
 			DAChallengeAddress: c.DAChallengeAddress,
 			DAChallengeWindow:  c.DAChallengeWindow,
 			DAResolveWindow:    c.DAResolveWindow,
@@ -41,12 +41,12 @@ func (c *JSONChainConfig) VerifyPlasma() (superchain.PlasmaConfig, error) {
 
 		return plasma, nil
 	}
-	return superchain.PlasmaConfig{}, nil
+	return nil, nil
 }
 
-// constructRollupConfig creates and populates a ChainConfig struct by reading from an input file and
+// constructChainConfig creates and populates a ChainConfig struct by reading from an input file and
 // explicitly setting some additional fields to input argument values
-func constructRollupConfig(
+func constructChainConfig(
 	inputFilePath,
 	chainName,
 	publicRPC,

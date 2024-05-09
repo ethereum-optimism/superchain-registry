@@ -116,12 +116,12 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md")
 	}
 
-	rollupConfig, err := constructRollupConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel)
+	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
 	contractAddresses := make(map[string]string)
-	if rollupConfig.Plasma.DAChallengeAddress != nil {
+	if rollupConfig.Plasma != nil {
 		// Store this address before it gets removed from rollupConfig
 		contractAddresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
 	}
