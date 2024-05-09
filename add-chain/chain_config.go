@@ -12,32 +12,83 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type JSONChainConfig struct {
+	ChainID                          uint64                  `json:"l2_chain_id"`
+	BatchInboxAddr                   superchain.Address      `json:"batch_inbox_address"`
+	Genesis                          superchain.ChainGenesis `json:"genesis"`
+	UsePlasma                        bool                    `json:"use_plasma"`
+	superchain.PlasmaConfig          `json:",inline"`
+	superchain.HardForkConfiguration `json:",inline"`
+}
+
+func (c *JSONChainConfig) VerifyPlasma() (superchain.PlasmaConfig, error) {
+	if c.UsePlasma {
+		if c.DAChallengeAddress == nil {
+			return superchain.PlasmaConfig{}, fmt.Errorf("missing required field: da_challenge_contract_address")
+		}
+		if c.DAChallengeWindow == nil {
+			return superchain.PlasmaConfig{}, fmt.Errorf("missing required field: da_challenge_window")
+		}
+		if c.DAResolveWindow == nil {
+			return superchain.PlasmaConfig{}, fmt.Errorf("missing required field: da_resolve_window")
+		}
+
+		plasma := superchain.PlasmaConfig{
+			DAChallengeAddress: c.DAChallengeAddress,
+			DAChallengeWindow:  c.DAChallengeWindow,
+			DAResolveWindow:    c.DAResolveWindow,
+		}
+
+		return plasma, nil
+	}
+	return superchain.PlasmaConfig{}, nil
+}
+
 // constructRollupConfig creates and populates a ChainConfig struct by reading from an input file and
 // explicitly setting some additional fields to input argument values
-func constructRollupConfig(inputFilePath, chainName, publicRPC, sequencerRPC, explorer string, superchainLevel superchain.SuperchainLevel) (superchain.ChainConfig, error) {
+func constructRollupConfig(
+	inputFilePath,
+	chainName,
+	publicRPC,
+	sequencerRPC,
+	explorer string,
+	superchainLevel superchain.SuperchainLevel,
+) (superchain.ChainConfig, error) {
 	fmt.Printf("Attempting to read from %s\n", inputFilePath)
 	file, err := os.ReadFile(inputFilePath)
 	if err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error reading file: %w", err)
 	}
-	var config superchain.ChainConfig
-	if err = json.Unmarshal(file, &config); err != nil {
+	var jsonConfig JSONChainConfig
+	if err = json.Unmarshal(file, &jsonConfig); err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %w", err)
 	}
 
-	config.Name = chainName
-	config.PublicRPC = publicRPC
-	config.SequencerRPC = sequencerRPC
-	config.SuperchainLevel = superchainLevel
-	config.Explorer = explorer
-
-	err = config.CheckPlasma()
+	plasma, err := jsonConfig.VerifyPlasma()
 	if err != nil {
-		return superchain.ChainConfig{}, fmt.Errorf("error validating plasma mode: %w", err)
+		return superchain.ChainConfig{}, fmt.Errorf("error with json plasma config: %w", err)
+	}
+
+	chainConfig := superchain.ChainConfig{
+		Name:            chainName,
+		ChainID:         jsonConfig.ChainID,
+		PublicRPC:       publicRPC,
+		SequencerRPC:    sequencerRPC,
+		Explorer:        explorer,
+		BatchInboxAddr:  jsonConfig.BatchInboxAddr,
+		Genesis:         jsonConfig.Genesis,
+		SuperchainLevel: superchainLevel,
+		Plasma:          plasma,
+		HardForkConfiguration: superchain.HardForkConfiguration{
+			CanyonTime:  jsonConfig.CanyonTime,
+			DeltaTime:   jsonConfig.DeltaTime,
+			EcotoneTime: jsonConfig.EcotoneTime,
+			FjordTime:   jsonConfig.FjordTime,
+		},
 	}
 
 	fmt.Printf("Rollup config successfully constructed\n")
-	return config, nil
+	return chainConfig, nil
 }
 
 // writeChainConfig accepts a rollupConfig, formats it, and writes some output files based on the given
@@ -67,10 +118,6 @@ func writeChainConfig(
 		return fmt.Errorf("failed to write genesis system config json: %w", err)
 	}
 	fmt.Printf("Genesis system config written to: %s\n", filePath)
-
-	// Omit these fields from the yaml file
-	rollupConfig.Genesis.SystemConfig = superchain.SystemConfig{}
-	rollupConfig.Plasma.DAChallengeAddress = nil
 
 	// Remove hardfork timestamp override fields if they match superchain defaults
 	defaults := superchain.Superchains[superchainTarget]
