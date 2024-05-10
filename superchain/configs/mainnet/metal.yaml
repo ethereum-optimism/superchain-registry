@@ -16,3 +16,7 @@ genesis:
     hash: "0xd31c12ffff2d563897ad9a041c0d26790d635911bdbbfa589347fa955f75281e"
     number: 0
   l2_time: 1711563515
+
+canyon_time: 1704992401  # Thu 11 Jan 2024 17:00:01 UTC
+delta_time: 1708560000   # Thu 22 Feb 2024 00:00:00 UTC
+ecotone_time: 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
