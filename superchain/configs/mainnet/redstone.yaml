@@ -6,18 +6,17 @@ explorer: https://explorer.redstone.xyz
 
 superchain_level: 1
 
-batch_inbox_addr: "0xff00000000000000000000000000000000000690"
+batch_inbox_addr: 0xff00000000000000000000000000000000000690
 
 genesis:
   l1:
-    hash: "0xb9ec694afdde2e2ed661ed8ec56dace5cf8723801342fa1229e693f2a98af672"
+    hash: 0xb9ec694afdde2e2ed661ed8ec56dace5cf8723801342fa1229e693f2a98af672
     number: 19578374
   l2:
-    hash: "0xa4f55631013577464810893a05b18f07fe483885a6ef93e0060e7128bdf4ca3b"
+    hash: 0xa4f55631013577464810893a05b18f07fe483885a6ef93e0060e7128bdf4ca3b
     number: 0
-  l2_time: 1712185091
+  l2_time: 1712185091 # Wed 3 Apr 2024 22:58:11 UTC
 
-canyon_time: 0
-delta_time: 0
-ecotone_time: 0
-
+canyon_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
+delta_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
+ecotone_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
