@@ -4,5 +4,8 @@ l1:
   public_rpc: https://eth-sepolia.g.alchemy.com/v2/9PqDKhFhwoeNRoRLkSGoZ7Kz6hTdTwv6
   explorer: https://sepolia.etherscan.io
 
-protocol_versions_addr: null # todo
+# todo: `protocol_versions_addr` was just copy-pasted from the sepolia-dev-0 one cause conduit
+# didn't deploy this for us. Worst case we can deploy one ourselves, but putting an address here
+# seemed to pass the CI checks for now
+protocol_versions_addr: "0x252CbE9517F731C618961D890D534183822dcC8d"  
 superchain_config_addr: "0xAF5F519F28D0e0125bd71829aaE7Fb5519D15160" # todo
