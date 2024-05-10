@@ -116,44 +116,6 @@ type PlasmaConfig struct {
 	DAResolveWindow *uint64 `json:"da_resolve_window" yaml:"da_resolve_window"`
 }
 
-// SetDefaultHardforkTimestampsToNil sets each hardfork timestamp to nil (to remove the override)
-// if the timestamp matches the superchain default
-func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
-	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
-	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
-
-	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
-		overrideValue := cVal.Field(i)
-		defaultValue := sVal.Field(i)
-		if reflect.DeepEqual(overrideValue.Interface(), defaultValue.Interface()) {
-			overrideValue.Set(reflect.Zero(overrideValue.Type()))
-		}
-	}
-}
-
-// setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
-// with the superchain default.
-func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
-	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
-	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
-
-	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
-		overrideValue := cVal.Field(i)
-		if overrideValue.IsNil() {
-			defaultValue := sVal.Field(i)
-			overrideValue.Set(defaultValue)
-		}
-	}
-
-	// This achieves:
-	//
-	// if c.CanyonTime == nil {
-	// 	c.CanyonTime = s.Config.hardForkDefaults.CanyonTime
-	// }
-	//
-	// ...etc for each field in HardForkConfiguration
-}
-
 // EnhanceYAML creates a customized yaml string from a RollupConfig. After completion,
 // the *yaml.Node pointer can be used with a yaml encoder to write the custom format to file
 func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
@@ -585,22 +547,6 @@ type SuperchainConfig struct {
 
 	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
 	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
-
-	// Hardfork Configuration. These values may be overridden by individual chains.
-	hardForkDefaults HardForkConfiguration
-}
-
-// custom unmarshal function to allow yaml to be unmarshalled into unexported fields
-func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
-	temp := struct {
-		*SuperchainConfig `yaml:",inline"`
-		HardForks         *HardForkConfiguration `yaml:",inline"`
-	}{
-		SuperchainConfig: s,
-		HardForks:        &s.hardForkDefaults,
-	}
-
-	return yaml.Unmarshal(data, temp)
 }
 
 type Superchain struct {

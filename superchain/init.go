@@ -36,7 +36,7 @@ func init() {
 			panic(fmt.Errorf("failed to read superchain config: %w", err))
 		}
 		var superchainEntry Superchain
-		if err := unMarshalSuperchainConfig(superchainConfigData, &superchainEntry.Config); err != nil {
+		if err := yaml.Unmarshal(superchainConfigData, &superchainEntry.Config); err != nil {
 			panic(fmt.Errorf("failed to decode superchain config: %w", err))
 		}
 		superchainEntry.Superchain = s.Name()
@@ -61,8 +61,6 @@ func init() {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
 			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
-
-			(&chainConfig).setNilHardforkTimestampsToDefault(&superchainEntry.Config)
 
 			MustBeValidSuperchainLevel(chainConfig)
 
