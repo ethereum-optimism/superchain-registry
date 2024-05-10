@@ -5,7 +5,7 @@ l1_erc721_bridge:
 l1_standard_bridge:
   1.1.0: 0x35a5D0D8B98fA4F9c9f7c53c3737E59100A8EF96
 l2_output_oracle:
-  1.3.1: 0x9c5210475f692bd08f27370ee05b48e5ee163b03
+  1.8.0: 0x8917931b6cC4B0f1E44a1da1E135F4aE3AEB82BF
 optimism_mintable_erc20_factory:
   1.1.1: 0x6B4B86e99608D7a35652648f880121FdA580de42
 optimism_portal:

@@ -1,13 +1,12 @@
-name: Op-Seal-0
+name: base-seal-0
 chain_id: 6619
 public_rpc: https://rpc-seal-rollup-base-rgf4y72ymx.t.conduit.xyz
-sequencer_rpc: null
+sequencer_rpc: http://awe.some.seq.rpc
 explorer: https://explorerl2new-seal-rollup-base-rgf4y72ymx.t.conduit.xyz
 
-superchain_level: 2 # 1?
+superchain_level: 2
 
-system_config_addr: 0xe01AA5c653C56FDA3299756bBf3505DC47774476
-batch_inbox_addr: 0x6437cB4F91ce43c70c2303d5673A659C6D62E9BF
+batch_inbox_addr: 0x6437cb4f91ce43c70c2303d5673a659c6d62e9bf
 
 genesis:
   l1:
@@ -16,7 +15,7 @@ genesis:
   l2:
     hash: 0x8651dd859765554ab0fd846b4f16e235e25c86c83cacff5862b43b0cdc9ad45d
     number: 0
-  l2_time: 1715039268
+  l2_time: 1715039268 # Mon 6 May 2024 23:47:48 UTC
 
 canyon_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
 delta_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
