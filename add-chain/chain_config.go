@@ -13,35 +13,26 @@ import (
 )
 
 type JSONChainConfig struct {
-	ChainID                          uint64                  `json:"l2_chain_id"`
-	BatchInboxAddr                   superchain.Address      `json:"batch_inbox_address"`
-	Genesis                          superchain.ChainGenesis `json:"genesis"`
-	UsePlasma                        bool                    `json:"use_plasma"`
-	superchain.PlasmaConfig          `json:",inline"`
+	ChainID                          uint64                   `json:"l2_chain_id"`
+	BatchInboxAddr                   superchain.Address       `json:"batch_inbox_address"`
+	Genesis                          superchain.ChainGenesis  `json:"genesis"`
+	PlasmaConfig                     *superchain.PlasmaConfig `json:"plasma_config,omitempty"`
 	superchain.HardForkConfiguration `json:",inline"`
 }
 
-func (c *JSONChainConfig) VerifyPlasma() (*superchain.PlasmaConfig, error) {
-	if c.UsePlasma {
-		if c.DAChallengeAddress == nil {
-			return nil, fmt.Errorf("missing required field: da_challenge_contract_address")
+func (c *JSONChainConfig) VerifyPlasma() error {
+	if c.PlasmaConfig != nil {
+		if c.PlasmaConfig.DAChallengeAddress == nil {
+			return fmt.Errorf("missing required field: da_challenge_contract_address")
 		}
-		if c.DAChallengeWindow == nil {
-			return nil, fmt.Errorf("missing required field: da_challenge_window")
+		if c.PlasmaConfig.DAChallengeWindow == nil {
+			return fmt.Errorf("missing required field: da_challenge_window")
 		}
-		if c.DAResolveWindow == nil {
-			return nil, fmt.Errorf("missing required field: da_resolve_window")
+		if c.PlasmaConfig.DAResolveWindow == nil {
+			return fmt.Errorf("missing required field: da_resolve_window")
 		}
-
-		plasma := &superchain.PlasmaConfig{
-			DAChallengeAddress: c.DAChallengeAddress,
-			DAChallengeWindow:  c.DAChallengeWindow,
-			DAResolveWindow:    c.DAResolveWindow,
-		}
-
-		return plasma, nil
 	}
-	return nil, nil
+	return nil
 }
 
 // constructChainConfig creates and populates a ChainConfig struct by reading from an input file and
@@ -64,7 +55,7 @@ func constructChainConfig(
 		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %w", err)
 	}
 
-	plasma, err := jsonConfig.VerifyPlasma()
+	err = jsonConfig.VerifyPlasma()
 	if err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error with json plasma config: %w", err)
 	}
@@ -78,7 +69,7 @@ func constructChainConfig(
 		BatchInboxAddr:  jsonConfig.BatchInboxAddr,
 		Genesis:         jsonConfig.Genesis,
 		SuperchainLevel: superchainLevel,
-		Plasma:          plasma,
+		Plasma:          jsonConfig.PlasmaConfig,
 		HardForkConfiguration: superchain.HardForkConfiguration{
 			CanyonTime:  jsonConfig.CanyonTime,
 			DeltaTime:   jsonConfig.DeltaTime,
