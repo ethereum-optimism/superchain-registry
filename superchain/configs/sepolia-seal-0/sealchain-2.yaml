@@ -1,4 +1,4 @@
-name: base-seal-0
+name: sealchain-2
 chain_id: 6619
 public_rpc: https://rpc-seal-rollup-base-rgf4y72ymx.t.conduit.xyz
 sequencer_rpc: http://awe.some.seq.rpc

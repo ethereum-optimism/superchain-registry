@@ -16,6 +16,6 @@
   "sepolia/zora": 999999999,
   "sepolia-dev-0/base-devnet-0": 11763072,
   "sepolia-dev-0/oplabs-devnet-0": 11155421,
-  "sepolia-seal-0/base-seal-0": 6619,
-  "sepolia-seal-0/op-seal-0": 18714
+  "sepolia-seal-0/sealchain-1": 18714,
+  "sepolia-seal-0/sealchain-2": 6619
 }
