@@ -1,4 +1,4 @@
-name: Redstone
+name: redstone
 chain_id: 690
 public_rpc: https://rpc.redstonechain.com
 sequencer_rpc: https://rpc.redstonechain.com
