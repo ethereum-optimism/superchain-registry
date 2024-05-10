@@ -62,7 +62,7 @@ func init() {
 			}
 			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
 
-			(&chainConfig).setNilHardforkTimestampsToDefault(&superchainEntry.Config)
+			// (&chainConfig).setNilHardforkTimestampsToDefault(&superchainEntry.Config)
 
 			MustBeValidSuperchainLevel(chainConfig)
 
