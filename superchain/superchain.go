@@ -42,7 +42,7 @@ type ChainGenesis struct {
 	L2           BlockID      `yaml:"l2"`
 	L2Time       uint64       `json:"l2_time" yaml:"l2_time"`
 	ExtraData    *HexBytes    `yaml:"extra_data,omitempty"`
-	SystemConfig SystemConfig `json:"system_config" yaml:"system_config,omitempty"`
+	SystemConfig SystemConfig `json:"system_config" yaml:"-"`
 }
 
 type SystemConfig struct {
@@ -81,16 +81,16 @@ const (
 
 type ChainConfig struct {
 	Name         string `yaml:"name"`
-	ChainID      uint64 `json:"l2_chain_id" yaml:"chain_id"`
+	ChainID      uint64 `yaml:"chain_id"`
 	PublicRPC    string `yaml:"public_rpc"`
 	SequencerRPC string `yaml:"sequencer_rpc"`
 	Explorer     string `yaml:"explorer"`
 
 	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
 
-	BatchInboxAddr Address `json:"batch_inbox_address" yaml:"batch_inbox_addr"`
+	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
-	Genesis ChainGenesis `json:"genesis" yaml:"genesis"`
+	Genesis ChainGenesis `yaml:"genesis"`
 
 	// Superchain is a simple string to identify the superchain.
 	// This is implied by directory structure, and not encoded in the config file itself.
@@ -101,6 +101,19 @@ type ChainConfig struct {
 
 	// Hardfork Configuration Overrides
 	HardForkConfiguration `yaml:",inline"`
+
+	// Optional feature
+	Plasma *PlasmaConfig `yaml:"plasma,omitempty"`
+}
+
+type PlasmaConfig struct {
+	DAChallengeAddress *Address `json:"da_challenge_contract_address" yaml:"-"`
+	// DA challenge window value set on the DAC contract. Used in plasma mode
+	// to compute when a commitment can no longer be challenged.
+	DAChallengeWindow *uint64 `json:"da_challenge_window" yaml:"da_challenge_window"`
+	// DA resolve window value set on the DAC contract. Used in plasma mode
+	// to compute when a challenge expires and trigger a reorg if needed.
+	DAResolveWindow *uint64 `json:"da_resolve_window" yaml:"da_resolve_window"`
 }
 
 // SetDefaultHardforkTimestampsToNil sets each hardfork timestamp to nil (to remove the override)
@@ -164,7 +177,7 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 		}
 
 		// Add blank line BEFORE these keys
-		if keyNode.Value == "genesis" {
+		if keyNode.Value == "genesis" || keyNode.Value == "plasma" {
 			keyNode.HeadComment = "\n"
 		}
 

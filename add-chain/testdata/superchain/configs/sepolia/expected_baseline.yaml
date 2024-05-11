@@ -1,4 +1,4 @@
-name: awesomechain
+name: awesomechain_baseline
 chain_id: 42069
 public_rpc: http://awe.some.rpc
 sequencer_rpc: http://awe.some.seq.rpc
