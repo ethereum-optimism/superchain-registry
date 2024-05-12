@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -23,11 +24,25 @@ var isBigIntWithinBounds = func(actual *big.Int, bounds [2]*big.Int) bool {
 }
 
 // isWithinBounds returns true if actual is within bounds, where the bounds are [lower bound, upper bound] and are inclusive.
-var isWithinBounds = func(actual uint32, bounds [2]uint32) bool {
+func isWithinBounds[T uint32 | uint64](actual T, bounds [2]T) bool {
 	if bounds[1] < bounds[0] {
 		panic("bounds are in wrong order")
 	}
 	return (actual >= bounds[0] && actual <= bounds[1])
+}
+
+// assertInBounds fails the test (but not immediately) if the passed param is outside of the passed bounds.
+var assertInBounds = func(t *testing.T, name string, got *big.Int, want [2]*big.Int) {
+	assert.True(t,
+		isBigIntWithinBounds(got, want),
+		fmt.Sprintf("Incorrect %s, %d is not within bounds %d", name, got, want))
+}
+
+// assertInBounds fails the test (but not immediately) if the passed param is outside of the passed bounds.
+func assertIntInBounds[T uint32 | uint64](t *testing.T, name string, got T, want [2]T) {
+	assert.True(t,
+		isWithinBounds(got, want),
+		fmt.Sprintf("Incorrect %s, %d is not within bounds %d", name, got, want))
 }
 
 func TestAreCloseInts(t *testing.T) {

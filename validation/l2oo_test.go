@@ -9,7 +9,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	legacy "github.com/ethereum-optimism/superchain-registry/validation/internal/legacy"
-	"github.com/stretchr/testify/assert"
+	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
@@ -35,12 +35,6 @@ func TestL2OOParams(t *testing.T) {
 		18714:     true, // sepolia/sealchain2 1800 is not within bounds [12 12].
 	}
 
-	assertInBounds := func(t *testing.T, name string, got *big.Int, want [2]*big.Int) {
-		assert.True(t,
-			isBigIntWithinBounds(got, want),
-			fmt.Sprintf("Incorrect %s, %d is not within bounds %d", name, got, want))
-	}
-
 	checkL2OOParams := func(t *testing.T, chain *ChainConfig) {
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
@@ -52,7 +46,7 @@ func TestL2OOParams(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("L2OutputOracleProxy")
 		require.NoError(t, err)
 
-		desiredParams := StandardConfig[chain.Superchain].L2OOParams
+		desiredParams := standard.Config[chain.Superchain].L2OOParams
 
 		version, err := getVersion(context.Background(), common.Address(contractAddress), client)
 		require.NoError(t, err)

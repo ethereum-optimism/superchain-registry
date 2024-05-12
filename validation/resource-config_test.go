@@ -7,6 +7,7 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
@@ -31,7 +32,7 @@ func TestResourceConfig(t *testing.T) {
 		actualResourceConfig, err := getResourceConfigWithRetries(context.Background(), common.Address(contractAddress), client)
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
-		desiredParams := StandardConfig[chain.Superchain].ResourceConfig
+		desiredParams := standard.Config[chain.Superchain].ResourceConfig
 
 		require.Equal(t, bindings.ResourceMeteringResourceConfig(desiredParams), actualResourceConfig, "resource config unacceptable")
 	}
