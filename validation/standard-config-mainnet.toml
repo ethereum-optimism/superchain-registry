@@ -21,3 +21,6 @@ scalar = [684_000, 684_000]
 decimals = [6, 6]
 blob_base_fee_scalar = [0, 10_000_000]
 base_fee_scalar = [0, 10_000_000]
+
+[not-yet-covered]
+batcher_inbox_address = "0xff000...000{chainId}" # this is only a convention and can't be checked on chain
