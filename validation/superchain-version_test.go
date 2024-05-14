@@ -65,6 +65,8 @@ func TestContractVersions(t *testing.T) {
 		7777777:   true, // mainnet/zora
 		11155421:  true, // sepolia-dev-0/oplabs-devnet-0
 		999999999: true, // sepolia/zora
+		18714:     true, // sepolia/sealchain-1
+		6619:      true, // sepolia/sealchain-2
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
