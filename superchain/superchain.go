@@ -135,7 +135,7 @@ func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
 }
 
 // setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
-// with the superchain default iff now > SuperchainTime.
+// with the superchain default, if the default is not nil and is after the SuperchainTime
 func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
 	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
