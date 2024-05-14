@@ -3,7 +3,7 @@ package standard
 import "math/big"
 
 // Config is keyed by superchain target, e.g. "mainnet" or "sepolia" or "sepolia-dev-0"
-var Config map[string]*ConfigTy
+var Config map[string]*ConfigType
 
 type ResourceConfig struct {
 	MaxResourceLimit            uint32   `toml:"max_resource_limit"`
@@ -46,7 +46,7 @@ type EcotoneGasPriceOracleBounds struct {
 	BaseFeeScalar     Uint32Bounds `toml:"base_fee_scalar"`
 }
 
-type ConfigTy struct {
+type ConfigType struct {
 	ResourceConfig ResourceConfig       `toml:"resource_config"`
 	L2OOParams     L2OOParamsBounds     `toml:"l2_output_oracle"`
 	GPOParams      GasPriceOracleBounds `toml:"gas_price_oracle"`
