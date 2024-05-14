@@ -448,6 +448,9 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 	override := []byte(`canyon_time: 8`)
 	nilOverride := []byte(`canyon_time:`)
 	nilOverride2 := []byte(``)
+	nilOverride3 := []byte(`superchain_time: 2`)
+	nilOverride4 := []byte(`superchain_time: 0`)
+	nilOverride5 := []byte(`superchain_time: 10`)
 
 	type testCase struct {
 		name               string
@@ -457,12 +460,15 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 	}
 
 	testCases := []testCase{
-		{"default + override = override", defaultSuperchainConfig, override, overridenCanyonTime},
-		{"default + nil override = default", defaultSuperchainConfig, nilOverride, &defaultCanyonTime},
-		{"default + no override = default", defaultSuperchainConfig, nilOverride2, &defaultCanyonTime},
+		{"default + override  (nil superchain_time)= override", defaultSuperchainConfig, override, overridenCanyonTime},
+		{"default + nil override (nil superchain_time) = nil", defaultSuperchainConfig, nilOverride, nil},
+		{"default + no override (nil superchain_time )= nil", defaultSuperchainConfig, nilOverride2, nil},
 		{"nil default + override = override", nilDefaultSuperchainConfig, override, overridenCanyonTime},
 		{"nil default + nil override = nil", nilDefaultSuperchainConfig, nilOverride, nil},
 		{"nil default + no override = nil", nilDefaultSuperchainConfig, nilOverride2, nil},
+		{"default + nil override (default after superchain_time) = nil", defaultSuperchainConfig, nilOverride3, &defaultCanyonTime},
+		{"default + nil override (default after zero superchain_time) = nil", defaultSuperchainConfig, nilOverride4, &defaultCanyonTime},
+		{"default + nil override (default before superchain_time) = nil", defaultSuperchainConfig, nilOverride5, nil},
 	}
 
 	executeTestCase := func(t *testing.T, tt testCase) {
