@@ -100,6 +100,7 @@ type ChainConfig struct {
 	Chain string `yaml:"-"`
 
 	// Hardfork Configuration Overrides
+	SuperchainTime        *uint64 `yaml:"superchain_time"`
 	HardForkConfiguration `yaml:",inline"`
 
 	// Optional feature
@@ -132,16 +133,18 @@ func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
 }
 
 // setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
-// with the superchain default.
+// with the superchain default iff now > SuperchainTime.
 func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
 	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
 
 	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
 		overrideValue := cVal.Field(i)
-		if overrideValue.IsNil() {
-			defaultValue := sVal.Field(i)
-			overrideValue.Set(defaultValue)
+		defaultValue := sVal.Field(i)
+		if overrideValue.IsNil() && !defaultValue.IsNil() {
+			if c.SuperchainTime != nil && reflect.Indirect(defaultValue).Uint() > *c.SuperchainTime {
+				overrideValue.Set(defaultValue) // use default only if hardfork activated after SuperchainTime
+			}
 		}
 	}
 
