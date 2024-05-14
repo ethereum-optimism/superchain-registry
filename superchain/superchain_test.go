@@ -507,8 +507,10 @@ fjord_time: 3
 
 	c.setNilHardforkTimestampsToDefault(&defaultSuperchainConfig)
 
-	require.Equal(t, uint64Ptr(uint64(0)), c.CanyonTime)
-	require.Equal(t, uint64Ptr(uint64(1)), c.DeltaTime)
+	var nil64 *uint64
+
+	require.Equal(t, nil64, c.CanyonTime)
+	require.Equal(t, nil64, c.DeltaTime)
 	require.Equal(t, uint64Ptr(uint64(2)), c.EcotoneTime)
 	require.Equal(t, uint64Ptr(uint64(3)), c.FjordTime)
 }
