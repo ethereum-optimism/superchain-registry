@@ -11,6 +11,6 @@
   "ProxyAdmin": "0x62a991445e7ece8fb2adbf011d843233593d069b",
   "ProxyAdminOwner": "0x0043a34Ee4aee540A2f6Cf3bA2e5aC26E26e15ea",
   "SuperchainConfig": "0xAF5F519F28D0e0125bd71829aaE7Fb5519D15160",
-  "SystemConfigOwner": "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C",
+  "SystemConfigOwner": "0x0043a34Ee4aee540A2f6Cf3bA2e5aC26E26e15ea",
   "SystemConfigProxy": "0x12c013546b23ee559f6f0ba5e0405172f6464ea7"
 }

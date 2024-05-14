@@ -1,7 +1,7 @@
 name: sealchain-2
 chain_id: 6619
 public_rpc: https://rpc-seal-rollup-base-rgf4y72ymx.t.conduit.xyz
-sequencer_rpc: http://awe.some.seq.rpc
+sequencer_rpc: https://rpc.seal-base.securityalliance.dev/sequencer
 explorer: https://explorerl2new-seal-rollup-base-rgf4y72ymx.t.conduit.xyz
 
 superchain_level: 2

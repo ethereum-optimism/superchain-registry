@@ -1,7 +1,7 @@
 name: sealchain-1
 chain_id: 18714
 public_rpc: https://rpc-seal-rollup-op-6hhwuguskm.t.conduit.xyz
-sequencer_rpc: http://awe.some.seq.rpc
+sequencer_rpc: https://rpc.seal-op.securityalliance.dev/sequencer
 explorer: https://explorerl2new-seal-rollup-op-6hhwuguskm.t.conduit.xyz
 
 superchain_level: 2
