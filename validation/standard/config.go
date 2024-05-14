@@ -1,9 +1,9 @@
-package validation
+package standard
 
 import "math/big"
 
-// StandardConfig is keyed by superchain target, e.g. "mainnet" or "sepolia" or "sepolia-dev-0"
-var StandardConfig map[string]*StandardConfigTy
+// Config is keyed by superchain target, e.g. "mainnet" or "sepolia" or "sepolia-dev-0"
+var Config map[string]*ConfigType
 
 type ResourceConfig struct {
 	MaxResourceLimit            uint32   `toml:"max_resource_limit"`
@@ -25,6 +25,10 @@ type GasPriceOracleBounds struct {
 	Ecotone    EcotoneGasPriceOracleBounds    `toml:"ecotone"`
 }
 
+type SystemConfig struct {
+	GasLimit [2]uint64 `toml:"gas_limit"`
+}
+
 type BigIntBounds = [2]*big.Int
 
 type (
@@ -42,8 +46,9 @@ type EcotoneGasPriceOracleBounds struct {
 	BaseFeeScalar     Uint32Bounds `toml:"base_fee_scalar"`
 }
 
-type StandardConfigTy struct {
+type ConfigType struct {
 	ResourceConfig ResourceConfig       `toml:"resource_config"`
 	L2OOParams     L2OOParamsBounds     `toml:"l2_output_oracle"`
 	GPOParams      GasPriceOracleBounds `toml:"gas_price_oracle"`
+	SystemConfig   SystemConfig         `toml:"system_config"`
 }
