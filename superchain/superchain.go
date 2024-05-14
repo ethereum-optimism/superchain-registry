@@ -99,8 +99,10 @@ type ChainConfig struct {
 	// This matches the resource filename, it is not encoded in the config file itself.
 	Chain string `yaml:"-"`
 
+	// If SuperchainTime is set, hardforks times after SuperchainTime
+	// will be inherited from the superchain-wide config.
+	SuperchainTime *uint64 `yaml:"superchain_time"`
 	// Hardfork Configuration Overrides
-	SuperchainTime        *uint64 `yaml:"superchain_time"`
 	HardForkConfiguration `yaml:",inline"`
 
 	// Optional feature
