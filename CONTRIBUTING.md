@@ -44,7 +44,7 @@ sh scripts/add-chain.sh frontier
 The tool will write the following data:
 - The main configuration source, with genesis data, and address of onchain system configuration. These are written to `superchain/configs/superchain_target/chain_short_name.yaml`.
 > **Note**
-> Hardfork override times will be included. For standard chains, you must have all hardforks activated (see the neighbouring superchain.yaml file). It is not possible to override a superchain-wide hardfork time with `nil`.
+> Hardfork override times, where they have been set, will be included. If and when a chain becomes a standard chain, future hardfork activation times will be inherited from superchain-wide values in the neighboring superchain.yaml file.
 
 - Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.) These are written to `extra/addresses/superchain_target/chain_short_name.json`.
 - Genesis system config data
@@ -79,11 +79,11 @@ go test -run=TestGasPriceOracleParams/11155420
 Omit the `-run=` flag to run checks for all chains.
 
 #### Solidity validation checks
-Run 
+Run
 ```shell
 sh ./scripts/check-security-configs.sh
 ```
-from the repository root to run checks for all chains. 
+from the repository root to run checks for all chains.
 
 ### 5. Open Your Pull Request
 When opening a PR:
