@@ -59,9 +59,9 @@ func TestL2OOParams(t *testing.T) {
 		}
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
 
-		assertInBounds(t, "submissionInterval", actualParams.SubmissionInterval, desiredParams.SubmissionInterval)
-		assertInBounds(t, "l2BlockTime", actualParams.L2BlockTime, desiredParams.L2BlockTime)
-		assertInBounds(t, "challengePeriodSeconds", actualParams.FinalizationPeriodSeconds, desiredParams.ChallengePeriodSeconds)
+		assertBigIntInBounds(t, "submissionInterval", actualParams.SubmissionInterval, desiredParams.SubmissionInterval)
+		assertBigIntInBounds(t, "l2BlockTime", actualParams.L2BlockTime, desiredParams.L2BlockTime)
+		assertBigIntInBounds(t, "challengePeriodSeconds", actualParams.FinalizationPeriodSeconds, desiredParams.ChallengePeriodSeconds)
 	}
 
 	for chainID, chain := range OPChains {
