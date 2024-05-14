@@ -18,4 +18,4 @@ genesis:
     number: 0
   l2_time: 1706484048 # Sun 28 Jan 2024 23:20:48 UTC
 
-superchain_time: 0
+superchain_time: 0 # hardfork times inherited from superchain.yaml
