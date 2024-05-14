@@ -142,7 +142,7 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 		overrideValue := cVal.Field(i)
 		defaultValue := sVal.Field(i)
 		if overrideValue.IsNil() && !defaultValue.IsNil() {
-			if c.SuperchainTime != nil && reflect.Indirect(defaultValue).Uint() > *c.SuperchainTime {
+			if c.SuperchainTime != nil && reflect.Indirect(defaultValue).Uint() >= *c.SuperchainTime {
 				overrideValue.Set(defaultValue) // use default only if hardfork activated after SuperchainTime
 			}
 		}
