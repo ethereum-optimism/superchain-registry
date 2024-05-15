@@ -35,6 +35,7 @@ jobs:
       working-directory: validation
       id: run-command
       run: |
+        set +e
         command_output=$(./generate-rollup-config/diff-configs.sh ./generate-rollup-config/output-base ./generate-rollup-config/output-HEAD)
         status=$?
         echo "$command_output"
