@@ -44,7 +44,7 @@ sh scripts/add-chain.sh frontier
 The tool will write the following data:
 - The main configuration source, with genesis data, and address of onchain system configuration. These are written to `superchain/configs/superchain_target/chain_short_name.yaml`.
 > **Note**
-> Hardfork override times, where they have been set, will be included. If and when a chain becomes a standard chain, future hardfork activation times will be inherited from superchain-wide values in the neighboring superchain.yaml file.
+> Hardfork override times, where they have been set, will be included. If and when a chain becomes a standard chain, a superchain_time is set in the chain config. From that time on, future hardfork activation times will be inherited from superchain-wide values in the neighboring superchain.yaml file.
 
 - Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.) These are written to `extra/addresses/superchain_target/chain_short_name.json`.
 - Genesis system config data
