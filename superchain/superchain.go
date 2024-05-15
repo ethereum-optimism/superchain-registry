@@ -87,6 +87,9 @@ type ChainConfig struct {
 	Explorer     string `yaml:"explorer"`
 
 	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
+	// If SuperchainTime is set, hardforks times after SuperchainTime
+	// will be inherited from the superchain-wide config.
+	SuperchainTime *uint64 `yaml:"superchain_time"`
 
 	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
@@ -99,9 +102,6 @@ type ChainConfig struct {
 	// This matches the resource filename, it is not encoded in the config file itself.
 	Chain string `yaml:"-"`
 
-	// If SuperchainTime is set, hardforks times after SuperchainTime
-	// will be inherited from the superchain-wide config.
-	SuperchainTime *uint64 `yaml:"superchain_time"`
 	// Hardfork Configuration Overrides
 	HardForkConfiguration `yaml:",inline"`
 
@@ -178,7 +178,7 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 		valNode := node.Content[i+1]
 
 		// Add blank line AFTER these keys
-		if lastKey == "explorer" || lastKey == "superchain_level" || lastKey == "genesis" {
+		if lastKey == "explorer" || lastKey == "superchain_time" || lastKey == "genesis" {
 			keyNode.HeadComment = "\n"
 		}
 
@@ -194,8 +194,18 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 			}
 		}
 
+		if keyNode.Value == "superchain_time" {
+			if valNode.Value == "" || valNode.Value == "null" {
+				keyNode.LineComment = "Missing hardfork times are NOT yet inherited from superchain.yaml"
+			} else if valNode.Value == "0" {
+				keyNode.LineComment = "Missing hardfork times are inherited from superchain.yaml"
+			} else {
+				keyNode.LineComment = "Missing hardfork times after this time are inherited from superchain.yaml"
+			}
+		}
+
 		// Add human readable timestamp in comment
-		if strings.HasSuffix(keyNode.Value, "_time") {
+		if strings.HasSuffix(keyNode.Value, "_time") && valNode.Value != "" && valNode.Value != "null" {
 			t, err := strconv.ParseInt(valNode.Value, 10, 64)
 			if err != nil {
 				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)
