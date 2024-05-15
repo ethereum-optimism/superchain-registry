@@ -5,6 +5,7 @@ sequencer_rpc: https://rpc.orderly.network
 explorer: https://explorer.orderly.network
 
 superchain_level: 1
+superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
 
 system_config_addr: "0x886b187c3d293b1449a3a0f23ca9e2269e0f2664"
 batch_inbox_addr: "0x08aa34cc843ceebcc88a627f18430294aa9780be"

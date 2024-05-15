@@ -5,7 +5,7 @@ sequencer_rpc: https://mainnet.lumio.io
 explorer: https://explorer.lumio.io
 
 superchain_level: 2
-superchain_time: nil # missing hardfork times are NOT inherited from superchain.yaml
+superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
 
 batch_inbox_addr: "0xa12cf34001e553dc254d131105364351f5174d75"
 
