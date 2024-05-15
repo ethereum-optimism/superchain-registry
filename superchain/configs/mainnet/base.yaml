@@ -5,6 +5,7 @@ sequencer_rpc: https://mainnet-sequencer.base.org
 explorer: https://explorer.base.org
 
 superchain_level: 2
+superchain_time: 0 # missing hardfork times inherited from superchain.yaml
 
 system_config_addr: "0x73a79fab69143498ed3712e519a88a918e1f4072"
 batch_inbox_addr: "0xff00000000000000000000000000000000008453"
@@ -17,5 +18,3 @@ genesis:
     hash: "0xf712aa9241cc24369b143cf6dce85f0902a9731e70d66818a3a5845b296c73dd"
     number: 0
   l2_time: 1686789347 # Thu 15 Jun 2023 00:35:47 UTC
-
-superchain_time: 0 # hardfork times inherited from superchain.yaml

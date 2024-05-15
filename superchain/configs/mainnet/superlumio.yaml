@@ -5,6 +5,7 @@ sequencer_rpc: https://mainnet.lumio.io
 explorer: https://explorer.lumio.io
 
 superchain_level: 2
+superchain_time: nil # missing hardfork times are NOT inherited from superchain.yaml
 
 batch_inbox_addr: "0xa12cf34001e553dc254d131105364351f5174d75"
 
@@ -17,4 +18,6 @@ genesis:
     number: 0
   l2_time: 1708984631
 
-ecotone_time: 1710374401
+canyon_time: 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
+delta_time: 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
+ecotone_time: 1710374401 # Thu 14 Mar 2024 00:00:01 UTC

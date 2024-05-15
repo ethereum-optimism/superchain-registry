@@ -5,6 +5,7 @@ sequencer_rpc: https://rpc.metall2.com
 explorer: https://explorer.metall2.com
 
 superchain_level: 2
+superchain_time: nil # missing hardfork times are NOT inherited from superchain.yaml
 
 batch_inbox_addr: "0xc83f7d9f2d4a76e81145849381aba02602373723"
 

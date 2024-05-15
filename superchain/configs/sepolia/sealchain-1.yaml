@@ -5,6 +5,7 @@ sequencer_rpc: https://rpc.seal-op.securityalliance.dev/sequencer
 explorer: https://explorerl2new-seal-rollup-op-6hhwuguskm.t.conduit.xyz
 
 superchain_level: 2
+superchain_time: 0 # missing hardfork times inherited from superchain.yaml
 
 batch_inbox_addr: 0x4e328b29a9dcf19b5d7bf22d19338fc93b6e3e4f
 system_config_addr: 0x12c013546B23Ee559f6F0BA5E0405172f6464EA7
