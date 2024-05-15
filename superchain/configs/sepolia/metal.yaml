@@ -18,5 +18,5 @@ genesis:
     number: 0
   l2_time: 1708129620
 
-delta_time: 1708385400   # Mon Feb 19 2024 23:30:00
-ecotone_time: 1708534800
+delta_time: 1708385400 # Tue 16 Jan 2024 15:30:00 UTC
+ecotone_time: 1708534800 # Thu 18 Jan 2024 03:00:00 UTC
