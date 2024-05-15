@@ -23,7 +23,7 @@ func main() {
 			panic(err)
 		}
 
-		dirPath := "./generate-rollup-config/output" + "-" + rev
+		dirPath := "./generate-rollup-config/output-" + rev
 
 		// Create the directory if it doesn't exist
 		if _, err := os.Stat(dirPath); os.IsNotExist(err) {
