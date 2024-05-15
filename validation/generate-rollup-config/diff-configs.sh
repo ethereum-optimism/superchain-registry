@@ -29,7 +29,7 @@ for file1 in "$dir1"/*; do
   # Check if the file exists in the second directory
   if [ -e "$file2" ]; then
     output+="Comparing $file1 and $file2\n"
-    diff_output=$(diff "$file1" "$file2")
+    diff_output=$(diff -u "$file1" "$file2")
     diff_status=$?
     if [ $diff_status -eq 1 ]; then
       overall_failure=true
