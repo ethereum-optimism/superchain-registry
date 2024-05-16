@@ -35,6 +35,7 @@ func testGenesisHashOfChain(t *testing.T, chainID uint64) {
 	require.Equal(t, common.Hash(declaredGenesisHash), computedGenesisHash, "chain %d: Genesis block hash must match computed value", chainID)
 }
 
+// This check should apply to ALL chains in the registry, as it protects downstream code (op-geth)
 func TestGenesisHash(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		10: true, // OP Mainnet, requires override (see https://github.com/ethereum-optimism/op-geth/blob/daade41d463b4ff332c6ed955603e47dcd25528b/core/superchain.go#L83-L94)
@@ -44,7 +45,6 @@ func TestGenesisHash(t *testing.T) {
 			if isExcluded[chain.ChainID] {
 				t.Skipf("chain %d: EXCLUDED from Genesis block hash validation", chainID)
 			}
-			SkipCheckIfFrontierChain(t, *chain)
 			testGenesisHashOfChain(t, chainID)
 		})
 	}
