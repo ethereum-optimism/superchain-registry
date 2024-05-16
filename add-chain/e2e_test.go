@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"os"
 	"reflect"
@@ -82,5 +81,5 @@ func checkConfigYaml(t *testing.T, testName, chainName string) {
 	testBytes, err := os.ReadFile("./testdata/superchain/configs/sepolia/" + chainName + ".yaml")
 	require.NoError(t, err, "failed to read awesomechain.yaml config file: %w", err)
 
-	require.True(t, bytes.Equal(expectedBytes, testBytes), "test .yaml contents do not meet expectation:\n %s", string(testBytes))
+	require.Equal(t, string(expectedBytes), string(testBytes), "test .yaml contents do not meet expectation")
 }

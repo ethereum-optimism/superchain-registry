@@ -75,7 +75,7 @@ func TestL2OOParams(t *testing.T) {
 	}
 }
 
-// getResourceMeteringwill gets each of the parameters from the L2OutputOracle at l2OOAddr,
+// getl2OOParamsWithRetries gets each of the parameters from the L2OutputOracle at l2OOAddr,
 // retrying up to 10 times with exponential backoff.
 func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (L2OOParams, error) {
 	callOpts := &bind.CallOpts{Context: ctx}

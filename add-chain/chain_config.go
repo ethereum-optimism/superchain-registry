@@ -69,6 +69,7 @@ func constructChainConfig(
 		BatchInboxAddr:  jsonConfig.BatchInboxAddr,
 		Genesis:         jsonConfig.Genesis,
 		SuperchainLevel: superchainLevel,
+		SuperchainTime:  nil,
 		Plasma:          jsonConfig.PlasmaConfig,
 		HardForkConfiguration: superchain.HardForkConfiguration{
 			CanyonTime:  jsonConfig.CanyonTime,
