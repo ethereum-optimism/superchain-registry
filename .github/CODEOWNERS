@@ -9,13 +9,10 @@
 /.golangci.yml @ethereum-optimism/go-reviewers
 /validation @ethereum-optimism/go-reviewers
 /superchain @ethereum-optimism/go-reviewers
+/add-chain @ethereum-optimism/go-reviewers
 
 ## Solidity
 *.sol @ethereum-optimism/security-reviewers
 
-# Superchain configuration ownership
-/superchain/configs @sbvegan @ZakAyesh @OPMattie
-/superchain/extra @sbvegan @ZakAyesh @OPMattie
-/superchain/implementations @ethereum-optimism/security-reviewers
 
 
