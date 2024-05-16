@@ -161,7 +161,7 @@
     "OptimismMintableERC20FactoryProxy": "0xb25dfdfade0547d7f34e328f094f9ccdc928b695",
     "OptimismPortalProxy": "0xa44a4311f19eaeeae9b413358eac07cbedc2ed38",
     "ProxyAdmin": "0x62a991445e7ece8fb2adbf011d843233593d069b",
-    "ProxyAdminOwner": "0x0043a34Ee4aee540A2f6Cf3bA2e5aC26E26e15ea",
+    "ProxyAdminOwner": "0x1Eb2fFc903729a0F03966B917003800b145F56E2",
     "SuperchainConfig": "0xC2Be75506d5724086DEB7245bd260Cc9753911Be",
     "SystemConfigOwner": "0x0043a34Ee4aee540A2f6Cf3bA2e5aC26E26e15ea",
     "SystemConfigProxy": "0x12c013546b23ee559f6f0ba5e0405172f6464ea7"
