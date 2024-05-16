@@ -5,7 +5,7 @@ sequencer_rpc: https://sepolia.mode.network
 explorer: https://sepolia.explorer.mode.network
 
 superchain_level: 2
-superchain_time: 0 # Missing hardfork times are inherited from superchain.yaml
+superchain_time: 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
 
 batch_inbox_addr: "0xcddae6148da1e003c230e4527f9baedc8a204e7e"
 
