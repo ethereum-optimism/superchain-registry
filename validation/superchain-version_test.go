@@ -3,6 +3,7 @@ package validation
 import (
 	"context"
 	"fmt"
+	"slices"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
@@ -16,6 +17,32 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
+
+var BaseStackContractNames = []string{
+	"L1CrossDomainMessenger",
+	"L1ERC721Bridge",
+	"L1StandardBridge",
+	"OptimismMintableERC20Factory",
+	"OptimismPortal",
+	"SystemConfig",
+}
+
+var FaultProofContractNames = []string{
+	"DisputeGameFactory",
+	"DelayedWETH",
+	"AnchorStateRegistry",
+	"FaultDisputeGame",
+	"PermissionedDisputeGame",
+	"PreimageOracle",
+	"MIPS",
+}
+
+var UnproxiedContractNames = []string{
+	"FaultDisputeGame",
+	"PermissionedDisputeGame",
+	"PreimageOracle",
+	"MIPS",
+}
 
 var isSemverAcceptable = func(desired, actual string) bool {
 	return desired == actual
@@ -82,30 +109,28 @@ func TestContractVersions(t *testing.T) {
 		client, err := ethclient.Dial(rpcEndpoint)
 		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-		contractNames := []string{
-			"L1CrossDomainMessenger",
-			"L1ERC721Bridge",
-			"L1StandardBridge",
-			"L2OutputOracle",
-			"OptimismMintableERC20Factory",
-			"OptimismPortal",
-			"SystemConfig",
+		contractNames := BaseStackContractNames
+		if isFaultProofChain[chain.ChainID] {
+			// The FaultProof contracts are only present in chains that have activated fault proofs
+			contractNames = append(contractNames, FaultProofContractNames...)
+		} else {
+			// The L2OutputOracle contract is only present in chains that have not activated fault proofs
+			contractNames = append(contractNames, "L2OutputOracle")
 		}
 
 		for _, contractName := range contractNames {
-			if isFaultProofChain[chain.ChainID] && contractName == "L2OutputOracle" {
-				// Fault Proof chains do not have this contract
-				// https://github.com/ethereum-optimism/superchain-registry/issues/219
-				continue
-			}
 			desiredSemver, err := SuperchainSemver[chain.Superchain].VersionFor(contractName)
 			require.NoError(t, err)
 			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
-			proxyContractName := contractName + "Proxy"
-			contractAddress, err := Addresses[chain.ChainID].AddressFor(proxyContractName)
-			require.NoErrorf(t, err, "%s/%s.%s.version= UNSPECIFIED", chain.Superchain, chain.Name, proxyContractName)
-			checkSemverForContract(t, proxyContractName, &contractAddress, client, desiredSemver)
-
+			var localizedContractName string
+			if slices.Contains(UnproxiedContractNames, contractName) {
+				localizedContractName = contractName
+			} else {
+				localizedContractName = contractName + "Proxy"
+			}
+			contractAddress, err := Addresses[chain.ChainID].AddressFor(localizedContractName)
+			require.NoErrorf(t, err, "%s/%s.%s.version= UNSPECIFIED", chain.Superchain, chain.Name, localizedContractName)
+			checkSemverForContract(t, localizedContractName, &contractAddress, client, desiredSemver)
 		}
 	}
 
