@@ -20,3 +20,7 @@ dispute_game_factory:
 system_config:
   1.12.0: 0xba2492e52F45651B60B8B38d4Ea5E2390C64Ffb1
   2.2.0: 0xCcdd86d581e40fb5a1C77582247BC493b6c8B169
+anchor_state_registry:
+  1.0.0: 0xaCa73cee920bEC914009D196A1e4EBE5f28b1920
+delayed_weth:
+  1.0.0: 0xC0EC43cd411BdDd1161bb7491C6C8265413D2067
