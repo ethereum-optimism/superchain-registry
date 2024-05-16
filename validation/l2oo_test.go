@@ -9,7 +9,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	legacy "github.com/ethereum-optimism/superchain-registry/validation/internal/legacy"
-	"github.com/stretchr/testify/assert"
+	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
@@ -31,12 +31,8 @@ func TestL2OOParams(t *testing.T) {
 		1740:      true, // sepolia/metal Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
 		919:       true, // sepolia/mode  Incorrect finalizationPeriodSeconds, 180 is not within bounds [12 12]
 		11155420:  true, // sepolia/op No L2OO because this chain uses Fault Proofs https://github.com/ethereum-optimism/superchain-registry/issues/219
-	}
-
-	assertInBounds := func(t *testing.T, name string, got *big.Int, want [2]*big.Int) {
-		assert.True(t,
-			isBigIntWithinBounds(got, want),
-			fmt.Sprintf("Incorrect %s, %d is not within bounds %d", name, got, want))
+		6619:      true, // sepolia/sealchain1 1800 is not within bounds [12 12].
+		18714:     true, // sepolia/sealchain2 1800 is not within bounds [12 12].
 	}
 
 	checkL2OOParams := func(t *testing.T, chain *ChainConfig) {
@@ -50,7 +46,7 @@ func TestL2OOParams(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("L2OutputOracleProxy")
 		require.NoError(t, err)
 
-		desiredParams := StandardConfig[chain.Superchain].L2OOParams
+		desiredParams := standard.Config[chain.Superchain].L2OOParams
 
 		version, err := getVersion(context.Background(), common.Address(contractAddress), client)
 		require.NoError(t, err)
@@ -63,9 +59,9 @@ func TestL2OOParams(t *testing.T) {
 		}
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
 
-		assertInBounds(t, "submissionInterval", actualParams.SubmissionInterval, desiredParams.SubmissionInterval)
-		assertInBounds(t, "l2BlockTime", actualParams.L2BlockTime, desiredParams.L2BlockTime)
-		assertInBounds(t, "challengePeriodSeconds", actualParams.FinalizationPeriodSeconds, desiredParams.ChallengePeriodSeconds)
+		assertBigIntInBounds(t, "submissionInterval", actualParams.SubmissionInterval, desiredParams.SubmissionInterval)
+		assertBigIntInBounds(t, "l2BlockTime", actualParams.L2BlockTime, desiredParams.L2BlockTime)
+		assertBigIntInBounds(t, "challengePeriodSeconds", actualParams.FinalizationPeriodSeconds, desiredParams.ChallengePeriodSeconds)
 	}
 
 	for chainID, chain := range OPChains {
