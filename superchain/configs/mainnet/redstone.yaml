@@ -20,3 +20,7 @@ genesis:
 canyon_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
 delta_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
 ecotone_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
+
+plasma:
+  da_challenge_window: 3600
+  da_resolve_window: 36000
