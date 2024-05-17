@@ -87,6 +87,9 @@ type ChainConfig struct {
 	Explorer     string `yaml:"explorer"`
 
 	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
+	// If SuperchainTime is set, hardforks times after SuperchainTime
+	// will be inherited from the superchain-wide config.
+	SuperchainTime *uint64 `yaml:"superchain_time"`
 
 	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
@@ -132,16 +135,21 @@ func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
 }
 
 // setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
-// with the superchain default.
+// with the superchain default, if the default is not nil and is after the SuperchainTime
 func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
+	if c.SuperchainTime == nil {
+		return
+	}
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
 	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
 
 	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
 		overrideValue := cVal.Field(i)
-		if overrideValue.IsNil() {
-			defaultValue := sVal.Field(i)
-			overrideValue.Set(defaultValue)
+		defaultValue := sVal.Field(i)
+		if overrideValue.IsNil() &&
+			!defaultValue.IsNil() &&
+			reflect.Indirect(defaultValue).Uint() >= *c.SuperchainTime {
+			overrideValue.Set(defaultValue) // use default only if hardfork activated after SuperchainTime
 		}
 	}
 
@@ -172,7 +180,7 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 		valNode := node.Content[i+1]
 
 		// Add blank line AFTER these keys
-		if lastKey == "explorer" || lastKey == "superchain_level" || lastKey == "genesis" {
+		if lastKey == "explorer" || lastKey == "superchain_time" || lastKey == "genesis" {
 			keyNode.HeadComment = "\n"
 		}
 
@@ -188,8 +196,18 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 			}
 		}
 
+		if keyNode.Value == "superchain_time" {
+			if valNode.Value == "" || valNode.Value == "null" {
+				keyNode.LineComment = "Missing hardfork times are NOT yet inherited from superchain.yaml"
+			} else if valNode.Value == "0" {
+				keyNode.LineComment = "Missing hardfork times are inherited from superchain.yaml"
+			} else {
+				keyNode.LineComment = "Missing hardfork times after this time are inherited from superchain.yaml"
+			}
+		}
+
 		// Add human readable timestamp in comment
-		if strings.HasSuffix(keyNode.Value, "_time") {
+		if strings.HasSuffix(keyNode.Value, "_time") && valNode.Value != "" && valNode.Value != "null" {
 			t, err := strconv.ParseInt(valNode.Value, 10, 64)
 			if err != nil {
 				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)

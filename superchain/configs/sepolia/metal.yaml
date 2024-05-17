@@ -5,6 +5,7 @@ sequencer_rpc: https://testnet.rpc.metall2.com
 explorer: https://testnet.explorer.metall2.com
 
 superchain_level: 2
+superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
 
 batch_inbox_addr: "0x24567b64a86a4c966655fba6502a93dfb701e316"
 
@@ -17,4 +18,6 @@ genesis:
     number: 0
   l2_time: 1708129620
 
-delta_time: 1708385400   # Mon Feb 19 2024 23:30:00
+canyon_time: 1708129622 # Sat 17 Feb 2024 00:27:02 UTC
+delta_time: 1708129622 # Sat 17 Feb 2024 00:27:02 UTC
+ecotone_time: 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
