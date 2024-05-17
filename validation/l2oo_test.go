@@ -31,8 +31,6 @@ func TestL2OOParams(t *testing.T) {
 		1740:      true, // sepolia/metal Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
 		919:       true, // sepolia/mode  Incorrect finalizationPeriodSeconds, 180 is not within bounds [12 12]
 		11155420:  true, // sepolia/op No L2OO because this chain uses Fault Proofs https://github.com/ethereum-optimism/superchain-registry/issues/219
-		6619:      true, // sepolia/sealchain1 1800 is not within bounds [12 12].
-		18714:     true, // sepolia/sealchain2 1800 is not within bounds [12 12].
 	}
 
 	checkL2OOParams := func(t *testing.T, chain *ChainConfig) {
