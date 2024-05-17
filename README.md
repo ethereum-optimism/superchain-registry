@@ -1,8 +1,10 @@
 # superchain-registry
 
-> :warning: This repository is a **work in progress**.  At a later date, it will be proposed to, and must be approved by, Optimism Governance.  Until that time, the configuration described here is subject to change.
-> 
-> :no_entry: We're making some changes to this repository and we've paused adding new chains for now. We'll reopen this process once the repository is ready. The Superchain itself, of course, remains open for business.
+> [!WARNING]
+> This repository is a **work in progress**.  At a later date, it will be proposed to, and must be approved by, Optimism Governance.  Until that time, the configuration described here is subject to change.
+
+> [!IMPORTANT] 
+> We're making some changes to this repository and we've paused adding new chains for now. We'll reopen this process once the repository is ready. The Superchain itself, of course, remains open for business.
 
 The Superchain Registry repository hosts Superchain-configuration data in a minimal human-readable form.
 This includes mainnet and testnet Superchain targets, and their respective member chains.
