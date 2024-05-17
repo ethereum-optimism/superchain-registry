@@ -1,173 +1,109 @@
-# Superchain registry contributing guide
+# Superchain Registry Contributing Guide
 
 See [Superchain Upgrades] OP-Stack specifications.
 
 [Superchain Upgrades]: https://specs.optimism.io/protocol/superchain-upgrades.html
 
+## Superchain Go Module
 
-
-## Adding a chain
-
-### 0. Install dependencies
-You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed, as well as Go.
-
-### 1. Set env vars
-
-To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
-
-> [!NOTE]
-> The standard configuration requirements are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
-
-First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
-
-### 2. Run script
-#### Standard chains
-If your chain meets the definition of a **standard** chain, you can run:
-
-
-```shell
-sh scripts/add-chain.sh standard
+Superchain configs can be imported as Go-module:
 ```
-
-#### Frontier chains
-
-Frontier chains are chains with customizations beyond the standard OP
-Stack configuration. To contribute a frontier OP-Stack chain
-configuration, you can run:
-
-
-```shell
-sh scripts/add-chain.sh frontier
+go get github.com/ethereum-optimism/superchain-registry/superchain@latest
 ```
+See [`op-chain-ops`] for config tooling and
+ for smart-contract bindings.
 
-### 3. Understand output
-The tool will write the following data:
-- The main configuration source, with genesis data, and address of onchain system configuration. These are written to `superchain/configs/superchain_target/chain_short_name.yaml`.
-> **Note**
-> Hardfork override times, where they have been set, will be included. If and when a chain becomes a standard chain, a `superchain_time` is set in the chain config. From that time on, future hardfork activation times which are missing from the chain config will be inherited from superchain-wide values in the neighboring `superchain.yaml` file.
-
-- Addresses of L1 contracts. (Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.) These are written to `extra/addresses/superchain_target/chain_short_name.json`.
-- Genesis system config data
-- Compressed `genesis.json` definitions (in the `extra/genesis` directory) which pull in the bytecode by hash
-
-The genesis largely consists of contracts common with other chains:
-all contract bytecode is deduplicated and hosted in the `extra/bytecodes` directory.
-
-The format is a gzipped JSON `genesis.json` file, with either:
-- a `alloc` attribute, structured like a standard `genesis.json`,
-  but with `codeHash` (bytes32, `keccak256` hash of contract code) attribute per account,
-  instead of the `code` attribute seen in standard Ethereum genesis definitions.
-- a `stateHash` attribute: to omit a large state (e.g. for networks with a re-genesis or migration history).
-  Nodes can load the genesis block header, and state-sync to complete the node initialization.
-
-### 4. Run tests locally
-There are currently two sets of validation checks:
-
-#### Go validation checks
-Run the following command from the `validation` folder to run the Go validation checks, for only the chain you added (replace the chain name or ID accordingly):
-```
-go test -run=/OP-Sepolia
-```
-or
-```
-go test -run=/11155420
-```
-You can even focus on a particular test and chain combination:
-```
-go test -run=TestGasPriceOracleParams/11155420
-```
-Omit the `-run=` flag to run checks for all chains.
-
-#### Solidity validation checks
-Run
-```shell
-sh ./scripts/check-security-configs.sh
-```
-from the repository root to run checks for all chains.
-
-### 5. Open Your Pull Request
-When opening a PR:
-- Open it from a non-protected branch in your fork (e.g. avoid the `main` branch). This allows maintainers to push to your branch if needed, which streamlines the review and merge process.
-- Open one PR per chain you would like to add. This ensures the merge of one chain is not blocked by unexpected issues.
-
-Once the PR is opened, the same automated checks from Step 4 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
-
-## Adding a superchain target
-A superchain target defines a set of layer 2 chains which share a `SuperchainConfig` and `ProtocolVersions` contract deployment on layer 1. It is usually named after the layer 1 chain, possibly with an extra identifier to distinguish devnets.
+[`op-chain-ops`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-chain-ops
+[`op-bindings`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-bindings
 
 
-> **Note**
-> Example: `sepolia` and `sepolia-dev-0` are distinct superchain targets, although they are on the same layer 1 chain.
+## Validation Go Module
+A second module exists in this repo whose purpose is to validate the config exported by the `superchain` module. It is a separate module to avoid import cycles and polluting downstream dependencies with things like `go-ethereum` (which is used in the validation tests). The modules are tracked by a top level `go.work` file. The associated `go.work.sum` file is gitignored and not important to typical workflows, which should mirror those of the [CI configuration](.circleci/config.yml).
 
+## CheckSecurityConfigs
 
-A new Superchain Target can be added by creating a new superchain config directory,
-with a `superchain.yaml` config file.
+The `CheckSecurityConfigs.s.sol` script is used in CI to perform
+security checks of OP Chains registered in the `superchain`
+directory. At high level, it performs checks to ensure privileges are
+properly granted to the right addresses. More specifically, it checks
+the following privilege grants and role designations:
 
-> **Note**
-> This is an infrequent operation and unecessary if you are just looking to add a chain to an existing superchain.
+1. Generic privileges:
+   1. Proxy admins. For example, `L1ERC721BridgeProxy` and
+      `OptimismMintableERC20FactoryProxy` specify the proxy admin
+      addresses who can change their implementations.
+   2. Address managers. For example, `ProxyAdmin` specifies the
+      address manager it trusts to look up certain addresses by name.
+   3. Contract owners. For example, many `Ownable` contracts use this
+      role to specify the message senders allowed to make privileged
+      calls.
+2. Optimism privileged cross-contract calls:
+   1. Trusted messengers. For example, `L1ERC721BridgeProxy` and
+      `L1StandardBridgeProxy` specify the cross domain messenger
+      address they trust with cross domain message sender information.
+   2. Trusted bridges. For example,
+      `OptimismMintableERC20FactoryProxy` specifies the L1 standard
+      bridge it trusts to mint and burn tokens.
+   3. Trusted portal. For example, `L1CrossDomainMessengerProxy`
+      specifies the portal it trusts to deposit transactions and get
+      L2 senders.
+   4. Trusted oracles. For example, `OptimismPortalProxy` specifies
+      the L2 oracle they trust with the L2 state root information.
+      1. After the FPAC upgrade, the `OptimismPortalProxy` specifies the `DisputeGameFactory` they trust rather
+      than the legacy `L2OutputOracle` contract.
+   5. Trusted system config. For example, `OptimismPortalProxy`
+      specifies the system config they trust to get resource config
+      from. TODO(issues/37): add checks for the `ResourceMetering`
+      contract.
+3. Optimism privileged operational roles:
+   1. Guardians. This is the role that can pause withdraws in the
+      Optimism protocol.
+      1. After the FPAC upgrade, the `Guardian` can also blacklist dispute games and change the respected game type
+         in the `OptimismPortal`.
+   2. Challengers. This is the role that can delete `L2OutputOracleProxy`'s output roots in the Optimism protocol
+      1. After the FPAC upgrade, the `CHALLENGER` is a permissionless role in the `FaultDisputeGame`. However,
+         in the `PermissionedDisputeGame`, the `CHALLENGER` role is the only party allowed to dispute output proposals
+         created by the `PROPOSER` role.
 
-Here's an example:
+As a result, here is a visualization of all the relationships the
+`CheckSecurityConfigs.s.sol` script checks:
 
-```bash
-cd superchain-registry
+``` mermaid
+graph TD
+  L1ERC721BridgeProxy -- "admin()" --> ProxyAdmin
+  L1ERC721BridgeProxy -- "messenger()" --> L1CrossDomainMessengerProxy
 
-export SUPERCHAIN_TARGET=goerli-dev-0
-mkdir superchain/configs/$SUPERCHAIN_TARGET
+  OptimismMintableERC20FactoryProxy -- "admin()" --> ProxyAdmin
+  OptimismMintableERC20FactoryProxy -- "BRIDGE()" --> L1StandardBridgeProxy
 
-cat > superchain/configs/$SUPERCHAIN_TARGET/superchain.yaml << EOF
-name: Goerli Dev 0
-l1:
-  chain_id: 5
-  public_rpc: https://ethereum-goerli-rpc.allthatnode.com
-  explorer: https://goerli.etherscan.io
+  ProxyAdmin -- "addressManager()" --> AddressManager
+  ProxyAdmin -- "owner()" --> ProxyOwnerMultisig
 
-protocol_versions_addr: null # todo
-superchain_config_addr: null # todo
-EOF
-```
-Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.
+  L1CrossDomainMessengerProxy -- "PORTAL()" --> OptimismPortalProxy
+  L1CrossDomainMessengerProxy -- "addressManager[address(this)]" --> AddressManager
 
-### Approved contract versions
-Each superchain target should have a `semver.yaml` file in the same directory declaring the approved contract semantic versions for that superchain, e.g:
-```yaml
-l1_cross_domain_messenger: 1.4.0
-l1_erc721_bridge: 1.0.0
-l1_standard_bridge: 1.1.0
-l2_output_oracle: 1.3.0
-optimism_mintable_erc20_factory: 1.1.0
-optimism_portal: 1.6.0
-system_config: 1.3.0
+  L1StandardBridgeProxy -- "getOwner()" -->  ProxyAdmin
+  L1StandardBridgeProxy -- "messenger()" --> L1CrossDomainMessengerProxy
 
-# superchain-wide contracts
-protocol_versions: 1.0.0
-superchain_config:
-```
+  AddressManager -- "owner()" -->  ProxyAdmin
 
-### `implementations`
-Per superchain a set of canonical implementation deployments, per semver version, is tracked.
-As default, an empty collection of deployments can be set:
-```bash
-cat > superchain/implementations/networks/$SUPERCHAIN_TARGET.yaml << EOF
-l1_cross_domain_messenger:
-l1_erc721_bridge:
-l1_standard_bridge:
-l2_output_oracle:
-optimism_mintable_erc20_factory:
-optimism_portal:
-system_config:
-EOF
-```
+  OptimismPortalProxy -- "admin()" --> ProxyAdmin
+  OptimismPortalProxy -- "GUARDIAN()" --> GuardianMultisig
+  OptimismPortalProxy -- "L2_ORACLE()" --> L2OutputOracleProxy
+  OptimismPortalProxy -- "SYSTEM_CONFIG()" --> SystemConfigProxy
+  OptimismPortalProxy -- "disputeGameFactory()" --> DisputeGameFactoryProxy
 
-## Setting up your editor for formatting and linting
-If you use VSCode, you can place the following in a `settings.json` file in the gitignored `.vscode` directory:
+  L2OutputOracleProxy -- "admin()" --> ProxyAdmin
+  L2OutputOracleProxy -- "CHALLENGER()" --> ChallengerMultisig
 
-```json
-{
-    "go.formatTool": "gofumpt",
-    "go.lintTool": "golangci-lint",
-    "go.lintOnSave": "workspace",
-    "gopls": {
-        "formatting.gofumpt": true,
-    },
-}
+  SystemConfigProxy -- "admin()" --> ProxyAdmin
+  SystemConfigProxy -- "owner()" --> SystemConfigOwnerMultisig
+
+  DisputeGameFactoryProxy -- "admin()" --> ProxyAdmin
+  DisputeGameFactoryProxy -- "owner()" --> ProxyAdminOwner
+
+  AnchorStateRegistryProxy -- "admin()" --> ProxyAdmin
+
+  DelayedWETHProxy -- "admin()" --> ProxyAdmin
+  DelayedWETHProxy -- "owner()" --> ProxyAdminOwner
 ```
