@@ -28,20 +28,20 @@ var BaseStackContractNames = []string{
 }
 
 var FaultProofContractNames = []string{
-	"DisputeGameFactory",
-	"DelayedWETH",
 	"AnchorStateRegistry",
+	"DelayedWETH",
+	"DisputeGameFactory",
 	"FaultDisputeGame",
+	"MIPS",
 	"PermissionedDisputeGame",
 	"PreimageOracle",
-	"MIPS",
 }
 
 var UnproxiedContractNames = []string{
 	"FaultDisputeGame",
+	"MIPS",
 	"PermissionedDisputeGame",
 	"PreimageOracle",
-	"MIPS",
 }
 
 var isSemverAcceptable = func(desired, actual string) bool {
