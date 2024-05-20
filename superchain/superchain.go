@@ -388,7 +388,8 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 	}
 	// If the L2OutputOracle is not specified, we can assume that the L2OutputOracle is not used, and fault proofs are
 	// activated.
-	if implementations.L2OutputOracle, err = resolve(c.L2OutputOracle, versions.L2OutputOracle); err != nil {
+	useFaultProofs := versions.L2OutputOracle == ""
+	if useFaultProofs {
 		if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
 			return implementations, fmt.Errorf("SystemConfig: %w", err)
 		}
@@ -412,6 +413,10 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 		}
 		if implementations.PreimageOracle, err = resolve(c.PreimageOracle, versions.PreimageOracle); err != nil {
 			return implementations, fmt.Errorf("PreimageOracle: %w", err)
+		}
+	} else {
+		if implementations.L2OutputOracle, err = resolve(c.L2OutputOracle, versions.L2OutputOracle); err != nil {
+			return implementations, fmt.Errorf("L2OutputOracle: %w", err)
 		}
 	}
 	return implementations, nil
