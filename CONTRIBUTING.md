@@ -201,6 +201,6 @@ It is meant to be used when building transactions that upgrade the implementatio
 
 
 ## Links
-See [Superchain Upgrades] OP-Stack specifications.
+See [Superchain Upgrades] OP Stack specifications.
 
 [Superchain Upgrades]: https://specs.optimism.io/protocol/superchain-upgrades.html
