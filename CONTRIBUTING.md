@@ -61,7 +61,7 @@ system_config: 1.3.0
 protocol_versions: 1.0.0
 superchain_config: 1.1.0
 ```
-See the `semver.yaml` files in existing superchain targets for the latest set of contracts to specify.
+It is meant to be used when building transactions that upgrade the implementations set in the proxies. See the `semver.yaml` files in existing superchain targets for the latest set of contracts to specify.
 
 ### `implementations`
 Per superchain a set of canonical implementation deployments, per semver version, is tracked.
@@ -195,9 +195,6 @@ If you use VSCode, you can place the following in a `settings.json` file in the 
     },
 }
 ```
-The `semver.yaml` files each represent the semantic versioning lockfile for the all of the smart contracts in that superchain.
-It is meant to be used when building transactions that upgrade the implementations set in the proxies.
-
 
 
 ## Links
