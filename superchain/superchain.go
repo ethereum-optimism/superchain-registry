@@ -420,9 +420,13 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 // resolve returns a VersionedContract that matches the passed in semver version
 // given a set of addresses.
 func resolve(set AddressSet, version string) (VersionedContract, error) {
-	version = canonicalizeSemver(version)
-
 	var out VersionedContract
+
+	version = canonicalizeSemver(version)
+	if !semver.IsValid(version) {
+		return out, fmt.Errorf("invalid semver: '%s'", version)
+	}
+
 	keys := set.Versions()
 	if len(keys) == 0 {
 		return out, fmt.Errorf("no implementations found")
