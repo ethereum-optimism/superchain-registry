@@ -85,7 +85,7 @@ Per chain and supechain-wide configs and extra data are embedded into the `super
 ```
 go get github.com/ethereum-optimism/superchain-registry/superchain@latest
 ```
-The configs are consumed by downstream OPStack software, i.e. `op-geth` and `op-node`.
+The configs are consumed by downstream OP Stack software, i.e. `op-geth` and `op-node`.
 
 
 ## `validation` Go Module
