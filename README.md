@@ -3,7 +3,7 @@
 > [!WARNING]
 > This repository is a **work in progress**.  At a later date, it will be proposed to, and must be approved by, Optimism Governance.  Until that time, the configuration described here is subject to change.
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > We're making some changes to this repository and we've paused adding new chains for now. We'll reopen this process once the repository is ready. The Superchain itself, of course, remains open for business.
 
 The Superchain Registry repository hosts Superchain-configuration data in a minimal human-readable form.
@@ -15,12 +15,11 @@ The superchain configs are made available in minimal form, to embed in OP-Stack 
 Full deployment artifacts and genesis-states can be derived from the minimal form
 using the reference [`op-chain-ops`] tooling.
 
-The `semver.yaml` files each represent the semantic versioning lockfile for the all of the smart contracts in that superchain.
-It is meant to be used when building transactions that upgrade the implementations set in the proxies.
+[`op-chain-ops`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-chain-ops
 
 ## Adding a Chain
 
-The following are the steps you need to take to add a chain to the 
+The following are the steps you need to take to add a chain to the registry:
 
 ### 0. Install dependencies
 You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed, as well as Go.
@@ -28,9 +27,6 @@ You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](http
 ### 1. Set env vars
 
 To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
-
-> [!NOTE]
-> The standard configuration requirements are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
 
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 
@@ -92,6 +88,10 @@ go test -run=TestGasPriceOracleParams/11155420
 ```
 Omit the `-run=` flag to run checks for all chains.
 
+> [!NOTE]
+> Your chain will be checked against the standard configuration requirements. These  are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
+
+
 #### Solidity validation checks
 Run
 ```shell
@@ -105,86 +105,6 @@ When opening a PR:
 - Open one PR per chain you would like to add. This ensures the merge of one chain is not blocked by unexpected issues.
 
 Once the PR is opened, the same automated checks from Step 4 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
-
-## Adding a superchain target
-A superchain target defines a set of layer 2 chains which share a `SuperchainConfig` and `ProtocolVersions` contract deployment on layer 1. It is usually named after the layer 1 chain, possibly with an extra identifier to distinguish devnets.
-
-
-> **Note**
-> Example: `sepolia` and `sepolia-dev-0` are distinct superchain targets, although they are on the same layer 1 chain.
-
-
-A new Superchain Target can be added by creating a new superchain config directory,
-with a `superchain.yaml` config file.
-
-> **Note**
-> This is an infrequent operation and unecessary if you are just looking to add a chain to an existing superchain.
-
-Here's an example:
-
-```bash
-cd superchain-registry
-
-export SUPERCHAIN_TARGET=goerli-dev-0
-mkdir superchain/configs/$SUPERCHAIN_TARGET
-
-cat > superchain/configs/$SUPERCHAIN_TARGET/superchain.yaml << EOF
-name: Goerli Dev 0
-l1:
-  chain_id: 5
-  public_rpc: https://ethereum-goerli-rpc.allthatnode.com
-  explorer: https://goerli.etherscan.io
-
-protocol_versions_addr: null # todo
-superchain_config_addr: null # todo
-EOF
-```
-Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.
-
-### Approved contract versions
-Each superchain target should have a `semver.yaml` file in the same directory declaring the approved contract semantic versions for that superchain, e.g:
-```yaml
-l1_cross_domain_messenger: 1.4.0
-l1_erc721_bridge: 1.0.0
-l1_standard_bridge: 1.1.0
-l2_output_oracle: 1.3.0
-optimism_mintable_erc20_factory: 1.1.0
-optimism_portal: 1.6.0
-system_config: 1.3.0
-
-# superchain-wide contracts
-protocol_versions: 1.0.0
-superchain_config:
-```
-
-### `implementations`
-Per superchain a set of canonical implementation deployments, per semver version, is tracked.
-As default, an empty collection of deployments can be set:
-```bash
-cat > superchain/implementations/networks/$SUPERCHAIN_TARGET.yaml << EOF
-l1_cross_domain_messenger:
-l1_erc721_bridge:
-l1_standard_bridge:
-l2_output_oracle:
-optimism_mintable_erc20_factory:
-optimism_portal:
-system_config:
-EOF
-```
-
-## Setting up your editor for formatting and linting
-If you use VSCode, you can place the following in a `settings.json` file in the gitignored `.vscode` directory:
-
-```json
-{
-    "go.formatTool": "gofumpt",
-    "go.lintTool": "golangci-lint",
-    "go.lintOnSave": "workspace",
-    "gopls": {
-        "formatting.gofumpt": true,
-    },
-}
-```
 
 ## License
 
