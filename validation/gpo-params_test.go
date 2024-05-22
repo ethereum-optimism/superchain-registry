@@ -10,6 +10,8 @@ import (
 	"github.com/ethereum-optimism/optimism/op-bindings/predeploys"
 	"github.com/ethereum-optimism/optimism/op-service/retry"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/standard"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -26,30 +28,30 @@ func TestGasPriceOracleParams(t *testing.T) {
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		desiredParams := StandardConfig[chain.Superchain].GPOParams.PreEcotone
+		desiredParams := standard.Config[chain.Superchain].GPOParams.PreEcotone
 
 		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		require.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals),
+		assert.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals),
 			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals)
-		require.True(t, isBigIntWithinBounds(actualParams.Overhead, desiredParams.Overhead),
+		assert.True(t, isBigIntWithinBounds(actualParams.Overhead, desiredParams.Overhead),
 			"overhead parameter %d out of bounds %d", actualParams.Overhead, desiredParams.Overhead)
-		require.True(t, isBigIntWithinBounds(actualParams.Scalar, desiredParams.Scalar),
+		assert.True(t, isBigIntWithinBounds(actualParams.Scalar, desiredParams.Scalar),
 			"scalar parameter %d out of bounds %d", actualParams.Scalar, desiredParams.Scalar)
 	}
 
 	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		desiredParams := StandardConfig[chain.Superchain].GPOParams.Ecotone
+		desiredParams := standard.Config[chain.Superchain].GPOParams.Ecotone
 
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
 
-		require.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals),
+		assert.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals),
 			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals)
-		require.True(t, isWithinBounds(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar),
+		assert.True(t, isIntWithinBounds(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar),
 			"blobBaseFeeScalar %d out of bounds %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar)
-		require.True(t, isWithinBounds(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar),
+		assert.True(t, isIntWithinBounds(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar),
 			"baseFeeScalar parameter %d out of bounds %d", actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar)
 	}
 

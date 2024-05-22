@@ -1,0 +1,21 @@
+name: awesomechain_baseline
+chain_id: 42069
+public_rpc: http://awe.some.rpc
+sequencer_rpc: http://awe.some.seq.rpc
+explorer: https://awesomescan.org
+
+superchain_level: 2
+superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
+
+batch_inbox_addr: 0xff00000000000000000000000000000000042069
+
+genesis:
+  l1:
+    hash: 0x1fc104fe244042459314bc1d51a230320c64a3d47cd06b7998aa3f57b9b0fc79
+    number: 5753349
+  l2:
+    hash: 0x0ceefff2113580e4d665c324661e4982a824025bf97285cf09a52715b6f89083
+    number: 0
+  l2_time: 1713792864 # Mon 22 Apr 2024 13:34:24 UTC
+
+canyon_time: 0 # Thu 1 Jan 1970 00:00:00 UTC

@@ -2,6 +2,7 @@ package superchain
 
 import (
 	"compress/gzip"
+	"context"
 	"embed"
 	"encoding/json"
 	"errors"
@@ -10,6 +11,7 @@ import (
 	"io/fs"
 	"path"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
@@ -36,17 +38,38 @@ type BlockID struct {
 }
 
 type ChainGenesis struct {
-	L1        BlockID   `yaml:"l1"`
-	L2        BlockID   `yaml:"l2"`
-	L2Time    uint64    `yaml:"l2_time"`
-	ExtraData *HexBytes `yaml:"extra_data,omitempty"`
+	L1           BlockID      `yaml:"l1"`
+	L2           BlockID      `yaml:"l2"`
+	L2Time       uint64       `json:"l2_time" yaml:"l2_time"`
+	ExtraData    *HexBytes    `yaml:"extra_data,omitempty"`
+	SystemConfig SystemConfig `json:"system_config" yaml:"-"`
+}
+
+type SystemConfig struct {
+	BatcherAddr       string `json:"batcherAddr"`
+	Overhead          string `json:"overhead"`
+	Scalar            string `json:"scalar"`
+	GasLimit          uint64 `json:"gasLimit"`
+	BaseFeeScalar     uint64 `json:"baseFeeScalar"`
+	BlobBaseFeeScalar uint64 `json:"blobBaseFeeScalar"`
+}
+
+type GenesisData struct {
+	L1     GenesisLayer `json:"l1" yaml:"l1"`
+	L2     GenesisLayer `json:"l2" yaml:"l2"`
+	L2Time int          `json:"l2_time" yaml:"l2_time"`
+}
+
+type GenesisLayer struct {
+	Hash   string `json:"hash" yaml:"hash"`
+	Number int    `json:"number" yaml:"number"`
 }
 
 type HardForkConfiguration struct {
-	CanyonTime  *uint64 `yaml:"canyon_time,omitempty"`
-	DeltaTime   *uint64 `yaml:"delta_time,omitempty"`
-	EcotoneTime *uint64 `yaml:"ecotone_time,omitempty"`
-	FjordTime   *uint64 `yaml:"fjord_time,omitempty"`
+	CanyonTime  *uint64 `json:"canyon_time,omitempty" yaml:"canyon_time,omitempty"`
+	DeltaTime   *uint64 `json:"delta_time,omitempty" yaml:"delta_time,omitempty"`
+	EcotoneTime *uint64 `json:"ecotone_time,omitempty" yaml:"ecotone_time,omitempty"`
+	FjordTime   *uint64 `json:"fjord_time,omitempty" yaml:"fjord_time,omitempty"`
 }
 
 type SuperchainLevel uint
@@ -64,6 +87,9 @@ type ChainConfig struct {
 	Explorer     string `yaml:"explorer"`
 
 	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
+	// If SuperchainTime is set, hardforks times after SuperchainTime
+	// will be inherited from the superchain-wide config.
+	SuperchainTime *uint64 `yaml:"superchain_time"`
 
 	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
@@ -78,19 +104,52 @@ type ChainConfig struct {
 
 	// Hardfork Configuration Overrides
 	HardForkConfiguration `yaml:",inline"`
+
+	// Optional feature
+	Plasma *PlasmaConfig `yaml:"plasma,omitempty"`
 }
 
-// setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
-// with the superchain default.
-func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
+type PlasmaConfig struct {
+	DAChallengeAddress *Address `json:"da_challenge_contract_address" yaml:"-"`
+	// DA challenge window value set on the DAC contract. Used in plasma mode
+	// to compute when a commitment can no longer be challenged.
+	DAChallengeWindow *uint64 `json:"da_challenge_window" yaml:"da_challenge_window"`
+	// DA resolve window value set on the DAC contract. Used in plasma mode
+	// to compute when a challenge expires and trigger a reorg if needed.
+	DAResolveWindow *uint64 `json:"da_resolve_window" yaml:"da_resolve_window"`
+}
+
+// SetDefaultHardforkTimestampsToNil sets each hardfork timestamp to nil (to remove the override)
+// if the timestamp matches the superchain default
+func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
 	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
 
 	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
 		overrideValue := cVal.Field(i)
-		if overrideValue.IsNil() {
-			defaultValue := sVal.Field(i)
-			overrideValue.Set(defaultValue)
+		defaultValue := sVal.Field(i)
+		if reflect.DeepEqual(overrideValue.Interface(), defaultValue.Interface()) {
+			overrideValue.Set(reflect.Zero(overrideValue.Type()))
+		}
+	}
+}
+
+// setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
+// with the superchain default, if the default is not nil and is after the SuperchainTime
+func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
+	if c.SuperchainTime == nil {
+		return
+	}
+	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
+	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
+
+	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
+		overrideValue := cVal.Field(i)
+		defaultValue := sVal.Field(i)
+		if overrideValue.IsNil() &&
+			!defaultValue.IsNil() &&
+			reflect.Indirect(defaultValue).Uint() >= *c.SuperchainTime {
+			overrideValue.Set(defaultValue) // use default only if hardfork activated after SuperchainTime
 		}
 	}
 
@@ -101,6 +160,65 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
 	// }
 	//
 	// ...etc for each field in HardForkConfiguration
+}
+
+// EnhanceYAML creates a customized yaml string from a RollupConfig. After completion,
+// the *yaml.Node pointer can be used with a yaml encoder to write the custom format to file
+func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
+	// Check if context is done before processing
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("context error: %w", err)
+	}
+
+	if node.Kind == yaml.DocumentNode && len(node.Content) > 0 {
+		node = node.Content[0] // Dive into the document node
+	}
+
+	var lastKey string
+	for i := 0; i < len(node.Content)-1; i += 2 {
+		keyNode := node.Content[i]
+		valNode := node.Content[i+1]
+
+		// Add blank line AFTER these keys
+		if lastKey == "explorer" || lastKey == "superchain_time" || lastKey == "genesis" {
+			keyNode.HeadComment = "\n"
+		}
+
+		// Add blank line BEFORE these keys
+		if keyNode.Value == "genesis" || keyNode.Value == "plasma" {
+			keyNode.HeadComment = "\n"
+		}
+
+		// Recursive call to check nested fields for "_time" suffix
+		if valNode.Kind == yaml.MappingNode {
+			if err := c.EnhanceYAML(ctx, valNode); err != nil {
+				return err
+			}
+		}
+
+		if keyNode.Value == "superchain_time" {
+			if valNode.Value == "" || valNode.Value == "null" {
+				keyNode.LineComment = "Missing hardfork times are NOT yet inherited from superchain.yaml"
+			} else if valNode.Value == "0" {
+				keyNode.LineComment = "Missing hardfork times are inherited from superchain.yaml"
+			} else {
+				keyNode.LineComment = "Missing hardfork times after this time are inherited from superchain.yaml"
+			}
+		}
+
+		// Add human readable timestamp in comment
+		if strings.HasSuffix(keyNode.Value, "_time") && valNode.Value != "" && valNode.Value != "null" {
+			t, err := strconv.ParseInt(valNode.Value, 10, 64)
+			if err != nil {
+				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)
+			}
+			timestamp := time.Unix(t, 0).UTC()
+			keyNode.LineComment = timestamp.Format("Mon 2 Jan 2006 15:04:05 UTC")
+		}
+
+		lastKey = keyNode.Value
+	}
+	return nil
 }
 
 // AddressList represents the set of network specific contracts for a given network.
@@ -121,6 +239,8 @@ type AddressList struct {
 func (a AddressList) AddressFor(contractName string) (Address, error) {
 	var address Address
 	switch contractName {
+	case "AddressManager":
+		address = a.AddressManager
 	case "ProxyAdmin":
 		address = a.ProxyAdmin
 	case "L1CrossDomainMessengerProxy":
@@ -449,17 +569,19 @@ type GenesisAccount struct {
 
 type Genesis struct {
 	// Block properties
-	Nonce      uint64  `json:"nonce"`
-	Timestamp  uint64  `json:"timestamp"`
-	ExtraData  []byte  `json:"extraData"`
-	GasLimit   uint64  `json:"gasLimit"`
-	Difficulty *HexBig `json:"difficulty"`
-	Mixhash    Hash    `json:"mixHash"`
-	Coinbase   Address `json:"coinbase"`
-	Number     uint64  `json:"number"`
-	GasUsed    uint64  `json:"gasUsed"`
-	ParentHash Hash    `json:"parentHash"`
-	BaseFee    *HexBig `json:"baseFeePerGas"`
+	Nonce         uint64  `json:"nonce"`
+	Timestamp     uint64  `json:"timestamp"`
+	ExtraData     []byte  `json:"extraData"`
+	GasLimit      uint64  `json:"gasLimit"`
+	Difficulty    *HexBig `json:"difficulty"`
+	Mixhash       Hash    `json:"mixHash"`
+	Coinbase      Address `json:"coinbase"`
+	Number        uint64  `json:"number"`
+	GasUsed       uint64  `json:"gasUsed"`
+	ParentHash    Hash    `json:"parentHash"`
+	BaseFee       *HexBig `json:"baseFeePerGas"`
+	ExcessBlobGas *uint64 `json:"excessBlobGas"` // EIP-4844
+	BlobGasUsed   *uint64 `json:"blobGasUsed"`   // EIP-4844
 	// State data
 	Alloc map[Address]GenesisAccount `json:"alloc"`
 	// StateHash substitutes for a full embedded state allocation,

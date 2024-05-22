@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	legacy "github.com/ethereum-optimism/superchain-registry/validation/internal/legacy"
+	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
@@ -18,33 +19,18 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+type L2OOParams struct {
+	SubmissionInterval        *big.Int
+	L2BlockTime               *big.Int
+	FinalizationPeriodSeconds *big.Int
+}
+
 func TestL2OOParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		999999999: true, // sepolia/zora    Incorrect submissionInterval, wanted 120 got 180
-		1740:      true, // sepolia/metal Incorrect submissionInterval
-		1750:      true, // mainnet/metal Incorrect submissionInterval
-		919:       true, // sepolia/mode Incorrect submissionInterval
-		8866:      true, // mainnet/superlumio Incorrect submissionInterval
-	}
-
-	checkEquality := func(a, b *big.Int) func() bool {
-		return (func() bool { return (a.Cmp(b) == 0) })
-	}
-
-	incorrectMsg := func(name string, want, got *big.Int) string {
-		return fmt.Sprintf("Incorrect %s, wanted %d got %d", name, want, got)
-	}
-
-	requireEqualParams := func(t *testing.T, desired, actual L2OOParams) {
-		require.Condition(t,
-			checkEquality(desired.SubmissionInterval, actual.SubmissionInterval),
-			incorrectMsg("submissionInterval", desired.SubmissionInterval, actual.SubmissionInterval))
-		require.Condition(t,
-			checkEquality(desired.L2BlockTime, actual.L2BlockTime),
-			incorrectMsg("l2BlockTime", desired.L2BlockTime, actual.L2BlockTime))
-		require.Condition(t,
-			checkEquality(desired.FinalizationPeriodSeconds, actual.FinalizationPeriodSeconds),
-			incorrectMsg("finalizationPeriodSeconds", desired.FinalizationPeriodSeconds, actual.FinalizationPeriodSeconds))
+		999999999: true, // sepolia/zora  Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
+		1740:      true, // sepolia/metal Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
+		919:       true, // sepolia/mode  Incorrect finalizationPeriodSeconds, 180 is not within bounds [12 12]
+		11155420:  true, // sepolia/op No L2OO because this chain uses Fault Proofs https://github.com/ethereum-optimism/superchain-registry/issues/219
 	}
 
 	checkL2OOParams := func(t *testing.T, chain *ChainConfig) {
@@ -58,7 +44,7 @@ func TestL2OOParams(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("L2OutputOracleProxy")
 		require.NoError(t, err)
 
-		desiredParams := StandardConfig[chain.Superchain].L2OOParams
+		desiredParams := standard.Config[chain.Superchain].L2OOParams
 
 		version, err := getVersion(context.Background(), common.Address(contractAddress), client)
 		require.NoError(t, err)
@@ -71,7 +57,9 @@ func TestL2OOParams(t *testing.T) {
 		}
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
 
-		requireEqualParams(t, desiredParams, actualParams)
+		assertBigIntInBounds(t, "submissionInterval", actualParams.SubmissionInterval, desiredParams.SubmissionInterval)
+		assertBigIntInBounds(t, "l2BlockTime", actualParams.L2BlockTime, desiredParams.L2BlockTime)
+		assertBigIntInBounds(t, "challengePeriodSeconds", actualParams.FinalizationPeriodSeconds, desiredParams.ChallengePeriodSeconds)
 	}
 
 	for chainID, chain := range OPChains {
@@ -85,7 +73,7 @@ func TestL2OOParams(t *testing.T) {
 	}
 }
 
-// getResourceMeteringwill gets each of the parameters from the L2OutputOracle at l2OOAddr,
+// getl2OOParamsWithRetries gets each of the parameters from the L2OutputOracle at l2OOAddr,
 // retrying up to 10 times with exponential backoff.
 func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (L2OOParams, error) {
 	callOpts := &bind.CallOpts{Context: ctx}

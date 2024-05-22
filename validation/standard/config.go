@@ -1,9 +1,9 @@
-package validation
+package standard
 
 import "math/big"
 
-// StandardConfig is keyed by superchain target, e.g. "mainnet" or "sepolia" or "sepolia-dev-0"
-var StandardConfig map[string]*StandardConfigTy
+// Config is keyed by superchain target, e.g. "mainnet" or "sepolia" or "sepolia-dev-0"
+var Config map[string]*ConfigType
 
 type ResourceConfig struct {
 	MaxResourceLimit            uint32   `toml:"max_resource_limit"`
@@ -14,15 +14,19 @@ type ResourceConfig struct {
 	MaximumBaseFee              *big.Int `toml:"maximum_base_fee"`
 }
 
-type L2OOParams struct {
-	SubmissionInterval        *big.Int `toml:"submission_interval"`         // Interval in blocks at which checkpoints must be submitted.
-	L2BlockTime               *big.Int `toml:"l2_block_time"`               // The time per L2 block, in seconds.
-	FinalizationPeriodSeconds *big.Int `toml:"finalization_period_seconds"` // The minimum time (in seconds) that must elapse before a withdrawal can be finalized.
+type L2OOParamsBounds struct {
+	SubmissionInterval     BigIntBounds `toml:"submission_interval"`      // Interval in blocks at which checkpoints must be submitted.
+	L2BlockTime            BigIntBounds `toml:"l2_block_time"`            // The time per L2 block, in seconds.
+	ChallengePeriodSeconds BigIntBounds `toml:"challenge_period_seconds"` // Length of time for which an output root can be removed, and for which it is not considered finalized.
 }
 
 type GasPriceOracleBounds struct {
 	PreEcotone PreEcotoneGasPriceOracleBounds `toml:"pre-ecotone"`
 	Ecotone    EcotoneGasPriceOracleBounds    `toml:"ecotone"`
+}
+
+type SystemConfig struct {
+	GasLimit [2]uint64 `toml:"gas_limit"`
 }
 
 type BigIntBounds = [2]*big.Int
@@ -42,8 +46,9 @@ type EcotoneGasPriceOracleBounds struct {
 	BaseFeeScalar     Uint32Bounds `toml:"base_fee_scalar"`
 }
 
-type StandardConfigTy struct {
+type ConfigType struct {
 	ResourceConfig ResourceConfig       `toml:"resource_config"`
-	L2OOParams     L2OOParams           `toml:"l2_output_oracle"`
+	L2OOParams     L2OOParamsBounds     `toml:"l2_output_oracle"`
 	GPOParams      GasPriceOracleBounds `toml:"gas_price_oracle"`
+	SystemConfig   SystemConfig         `toml:"system_config"`
 }
