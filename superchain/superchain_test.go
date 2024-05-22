@@ -239,7 +239,7 @@ func TestContractVersionsResolve(t *testing.T) {
 	require.Equalf(t, VersionedContract{}, list.PreimageOracle, "PreimageOracle erroneously configured with L2OutputOracle")
 }
 
-// TestContractVersionsResolve will test that the high level interface used works.
+// TestContractVersionsResolveFaultProofContracts will test that resolve works with fault proof contracts.
 func TestContractVersionsResolveFaultProofContracts(t *testing.T) {
 	impls, err := newContractImplementations("sepolia")
 	if err != nil {
