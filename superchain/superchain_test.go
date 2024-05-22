@@ -335,73 +335,198 @@ func TestContractVersionsResolveFaultProofContracts(t *testing.T) {
 	require.Equalf(t, VersionedContract{}, list.L2OutputOracle, "L2OutputOracle erroneously configured with fault proof contracts")
 }
 
-// TestResolve ensures that the low level resolve function works on semantic
-// versioning correctly. It will return the highest version that matches the
-// given semver string.
+// TestResolve ensures that resolve finds implementations that exactly match the requested version
 func TestResolve(t *testing.T) {
 	cases := []struct {
 		name    string
 		set     AddressSet
 		version string
-		expect  string
+		expect  VersionedContract
 	}{
 		{
-			name: "exact",
+			name: "match singleton option",
 			set: AddressSet{
-				"v1.0.0": HexToAddress("0x123"),
+				"v0.0.1": HexToAddress("0x01"),
+			},
+			version: "v0.0.1",
+			expect: VersionedContract{
+				Version: "v0.0.1",
+				Address: HexToAddress("0x01"),
+			},
+		},
+		{
+			name: "match first address",
+			set: AddressSet{
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v1.0.1": HexToAddress("0x03"),
+			},
+			version: "v0.0.1",
+			expect: VersionedContract{
+				Version: "v0.0.1",
+				Address: HexToAddress("0x01"),
+			},
+		},
+		{
+			name: "match last address",
+			set: AddressSet{
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v1.0.1": HexToAddress("0x03"),
+			},
+			version: "v1.0.1",
+			expect: VersionedContract{
+				Version: "v1.0.1",
+				Address: HexToAddress("0x02"),
+			},
+		},
+		{
+			name: "match middle address",
+			set: AddressSet{
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v1.0.1": HexToAddress("0x03"),
 			},
 			version: "v1.0.0",
-			expect:  "v1.0.0",
+			expect: VersionedContract{
+				Version: "v1.0.0",
+				Address: HexToAddress("0x02"),
+			},
 		},
 		{
-			name: "largest-minor",
+			name: "match first address (missing prefix)",
 			set: AddressSet{
-				"v1.2.0": HexToAddress("0x123"),
-				"v1.1.0": HexToAddress("0x234"),
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v1.0.1": HexToAddress("0x03"),
 			},
-			version: "^1.0.0",
-			expect:  "v1.2.0",
+			version: "0.0.1",
+			expect: VersionedContract{
+				Version: "v0.0.1",
+				Address: HexToAddress("0x01"),
+			},
 		},
 		{
-			name: "largest-patch",
+			name: "match last address (missing prefix)",
 			set: AddressSet{
-				"v1.0.2": HexToAddress("0x123"),
-				"v1.0.1": HexToAddress("0x234"),
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v2.0.1": HexToAddress("0x03"),
 			},
-			version: "^1.0.0",
-			expect:  "v1.0.2",
+			version: "2.0.1",
+			expect: VersionedContract{
+				Version: "v2.0.1",
+				Address: HexToAddress("0x03"),
+			},
 		},
 		{
-			name: "x-patch",
+			name: "match middle address (missing prefix)",
 			set: AddressSet{
-				"v3.0.5": HexToAddress("0x123"),
-				"v3.0.2": HexToAddress("0x234"),
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v2.0.1": HexToAddress("0x03"),
 			},
-			version: "v3.0.x",
-			expect:  "v3.0.5",
-		},
-		{
-			name: "x-minor",
-			set: AddressSet{
-				"v2.5.1": HexToAddress("0x456"),
-				"v2.5.0": HexToAddress("0x123"),
-				"v2.2.2": HexToAddress("0x234"),
+			version: "1.0.0",
+			expect: VersionedContract{
+				Version: "v1.0.0",
+				Address: HexToAddress("0x02"),
 			},
-			version: "v2.x",
-			expect:  "v2.5.1",
 		},
 	}
 
 	for _, test := range cases {
-		t.Skip("TODO - validate the behavior we want to support here and fix the implementation")
 		t.Run(test.name, func(t *testing.T) {
 			resolved, err := resolve(test.set, test.version)
 			if err != nil {
 				t.Fatal(err)
 			}
-			if resolved.Version != test.expect {
+			if resolved != test.expect {
 				t.Fatalf("wrong version: %s", resolved.Version)
 			}
+		})
+	}
+}
+
+// TestResolveWithError ensures that resolve errors appropriately
+func TestResolveWithError(t *testing.T) {
+	cases := []struct {
+		name        string
+		set         AddressSet
+		version     string
+		expectError string
+	}{
+		{
+			name: "Empty version supplied",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "",
+			expectError: ErrEmptyVersion.Error(),
+		},
+		{
+			name: "Semver with operator prefix",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "^0.0.1",
+			expectError: "invalid semver",
+		},
+		{
+			name: "Semver with operator and 'v' prefix",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "~v0.0.1",
+			expectError: "invalid semver",
+		},
+		{
+			name: "Semver with wildcard",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "2.0.x",
+			expectError: "invalid semver",
+		},
+		{
+			name: "Semver with wildcard and version",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "v2.0.x",
+			expectError: "invalid semver",
+		},
+		{
+			name: "No exact match",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "2.0.0",
+			expectError: "cannot resolve semver",
+		},
+		{
+			name:        "No implementations available",
+			set:         AddressSet{},
+			version:     "2.0.0",
+			expectError: "no implementations found",
+		},
+	}
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
+			resolved, err := resolve(test.set, test.version)
+			require.ErrorContains(t, err, test.expectError)
+			require.Equal(t, VersionedContract{}, resolved)
 		})
 	}
 }

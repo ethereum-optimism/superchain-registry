@@ -20,6 +20,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var ErrEmptyVersion = errors.New("empty version")
+
 //go:embed configs
 var superchainFS embed.FS
 
@@ -386,10 +388,9 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 	if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
 		return implementations, fmt.Errorf("SystemConfig: %w", err)
 	}
-	// If the L2OutputOracle is not specified, we can assume that the L2OutputOracle is not used, and fault proofs are
-	// activated.
-	useFaultProofs := versions.L2OutputOracle == ""
-	if useFaultProofs {
+	// If the L2OutputOracle is not specified (versions.L2OutputOracle is empty), we can assume that the L2OutputOracle
+	// is not used, and fault proofs are activated.
+	if implementations.L2OutputOracle, err = resolve(c.L2OutputOracle, versions.L2OutputOracle); errors.Is(err, ErrEmptyVersion) {
 		if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
 			return implementations, fmt.Errorf("SystemConfig: %w", err)
 		}
@@ -414,10 +415,8 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 		if implementations.PreimageOracle, err = resolve(c.PreimageOracle, versions.PreimageOracle); err != nil {
 			return implementations, fmt.Errorf("PreimageOracle: %w", err)
 		}
-	} else {
-		if implementations.L2OutputOracle, err = resolve(c.L2OutputOracle, versions.L2OutputOracle); err != nil {
-			return implementations, fmt.Errorf("L2OutputOracle: %w", err)
-		}
+	} else if err != nil {
+		return implementations, fmt.Errorf("L2OutputOracle: %w", err)
 	}
 	return implementations, nil
 }
@@ -426,6 +425,10 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 // given a set of addresses.
 func resolve(set AddressSet, version string) (VersionedContract, error) {
 	var out VersionedContract
+
+	if version == "" {
+		return out, ErrEmptyVersion
+	}
 
 	version = canonicalizeSemver(version)
 	if !semver.IsValid(version) {
@@ -439,14 +442,12 @@ func resolve(set AddressSet, version string) (VersionedContract, error) {
 
 	for _, k := range keys {
 		res := semver.Compare(k, version)
-		if res >= 0 {
+		if res == 0 {
 			out = VersionedContract{
 				Version: k,
 				Address: set.Get(k),
 			}
-			if res == 0 {
-				break
-			}
+			break
 		}
 	}
 	if out == (VersionedContract{}) {
