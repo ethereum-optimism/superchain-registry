@@ -1,0 +1,23 @@
+name: lambda-mainnet
+chain_id: 56026
+public_rpc: https://nrpc.lambda.im
+sequencer_rpc: https://sequencer.lambda.im
+explorer: https://scan.lambda.im
+
+superchain_level: 2
+superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
+
+batch_inbox_addr: 0xff00000000000000000000000000000000056026
+
+genesis:
+  l1:
+    hash: 0x7f33ed8ba37e33fbaa95e0c44ac6139973fc737663e186be02ea89d7a0bff89c
+    number: 19674259
+  l2:
+    hash: 0xb3ce56ecf0a7f92849db2819e3fc229a048e469a2dd7a136ac2fc9d3559cec25
+    number: 0
+  l2_time: 1713345623 # Wed 17 Apr 2024 09:20:23 UTC
+
+canyon_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
+delta_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
+ecotone_time: 0 # Thu 1 Jan 1970 00:00:00 UTC

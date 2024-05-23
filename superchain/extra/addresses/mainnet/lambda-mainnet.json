@@ -1,0 +1,16 @@
+{
+  "AddressManager": "0x624808dc4a34b79b90c3c085942d2100f09a0376",
+  "Challenger": "0x864A02Ca4a40616f8995709D1B26CDe588709043",
+  "Guardian": "0xD5FDcf4ab4b682ab8D4a99fBE1b6Bd08dC83Ea40",
+  "L1CrossDomainMessengerProxy": "0x78b5818884929d7a930edadd03a0fcd9dd068eb7",
+  "L1ERC721BridgeProxy": "0x8334f9a70294556101527bfb9bdedef7eb382d94",
+  "L1StandardBridgeProxy": "0xeebd256da18d0bf20c3ceb785a0946d41a7f408f",
+  "L2OutputOracleProxy": "0x2297eb8dc91f532c91c57b3fb33c06b782e9594a",
+  "OptimismMintableERC20FactoryProxy": "0x5c3d1b1334b6939e6d042bf5e15249cf86a875a4",
+  "OptimismPortalProxy": "0x7288e508f56c1b4b52d2e4fd3688a711c7ce0054",
+  "ProxyAdmin": "0x04d59cb8f8b2bacb8ce6912c284d10e263a0eb9f",
+  "ProxyAdminOwner": "0x0b489aC3516F692159E4E5cc0C4a17B11fD6a501",
+  "SuperchainConfig": "0x01Cf2c778E56360dCd5e1396373c0Aa6ae794E2c",
+  "SystemConfigOwner": "0xD5FDcf4ab4b682ab8D4a99fBE1b6Bd08dC83Ea40",
+  "SystemConfigProxy": "0xae809d42f861a6381b0dfcf7216556e95362a7a8"
+}
