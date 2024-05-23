@@ -162,7 +162,7 @@ func TestContractVersionsCheck(t *testing.T) {
 	}
 }
 
-// TestContractVersionsResolve will test that the high lever interface used works.
+// TestContractVersionsResolve will test that the high level interface used works.
 func TestContractVersionsResolve(t *testing.T) {
 	impls, err := newContractImplementations("sepolia")
 	if err != nil {
@@ -227,62 +227,210 @@ func TestContractVersionsResolve(t *testing.T) {
 	if list.SystemConfig.Version != "v1.7.0" {
 		t.Fatalf("wrong SystemConfig version: %s", list.SystemConfig.Version)
 	}
+
+	// Check that fault proof contracts were not populated
+	// The fault proof contracts should be skipped when L2OutputOracle is configured
+	require.Equalf(t, VersionedContract{}, list.AnchorStateRegistry, "AnchorStateRegistry erroneously configured with L2OutputOracle")
+	require.Equalf(t, VersionedContract{}, list.DelayedWETH, "DelayedWETH erroneously configured with L2OutputOracle")
+	require.Equalf(t, VersionedContract{}, list.DisputeGameFactory, "DisputeGameFactory erroneously configured with L2OutputOracle")
+	require.Equalf(t, VersionedContract{}, list.FaultDisputeGame, "FaultDisputeGame erroneously configured with L2OutputOracle")
+	require.Equalf(t, VersionedContract{}, list.MIPS, "MIPS erroneously configured with L2OutputOracle")
+	require.Equalf(t, VersionedContract{}, list.PermissionedDisputeGame, "PermissionedDisputeGame erroneously configured with L2OutputOracle")
+	require.Equalf(t, VersionedContract{}, list.PreimageOracle, "PreimageOracle erroneously configured with L2OutputOracle")
 }
 
-// TestResolve ensures that the low level resolve function works on semantic
-// versioning correctly. It will return the highest version that matches the
-// given semver string.
+// TestContractVersionsResolveFaultProofContracts will test that resolve works with fault proof contracts.
+func TestContractVersionsResolveFaultProofContracts(t *testing.T) {
+	impls, err := newContractImplementations("sepolia")
+	if err != nil {
+		t.Fatalf("failed to load contract implementations: %v", err)
+	}
+
+	if impls.L1CrossDomainMessenger.Get("1.6.0") == (Address{}) {
+		t.Fatal("wrong L1CrossDomainMessenger address")
+	}
+	if impls.L1ERC721Bridge.Get("1.3.0") == (Address{}) {
+		t.Fatal("wrong L1ERC721Bridge address")
+	}
+	if impls.L1StandardBridge.Get("1.3.0") == (Address{}) {
+		t.Fatal("wrong L1StandardBridge address")
+	}
+	if impls.L2OutputOracle.Get("1.5.0") == (Address{}) {
+		t.Fatal("wrong L2OutputOracle address")
+	}
+	if impls.OptimismMintableERC20Factory.Get("1.4.0") == (Address{}) {
+		t.Fatal("wrong OptimismMintableERC20 address")
+	}
+	if impls.OptimismPortal.Get("1.9.0") == (Address{}) {
+		t.Fatal("wrong OptimismPortal address")
+	}
+	if impls.SystemConfig.Get("1.7.0") == (Address{}) {
+		t.Fatal("wrong SystemConfig address")
+	}
+
+	// Configure fault proofs contracts, with no L2OutputOracle
+	versions := ContractVersions{
+		L1CrossDomainMessenger:       "1.6.0",
+		L1ERC721Bridge:               "1.3.0",
+		L1StandardBridge:             "1.3.0",
+		OptimismMintableERC20Factory: "1.4.0",
+		OptimismPortal:               "1.9.0",
+		SystemConfig:                 "1.7.0",
+		AnchorStateRegistry:          "1.0.0",
+		DelayedWETH:                  "1.0.0",
+		DisputeGameFactory:           "1.0.0",
+		FaultDisputeGame:             "1.2.0",
+		MIPS:                         "1.0.1",
+		PermissionedDisputeGame:      "1.2.0",
+		PreimageOracle:               "1.0.0",
+	}
+
+	list, err := impls.Resolve(versions)
+	if err != nil {
+		t.Fatalf("unable to resolve: %s", err)
+	}
+
+	if list.L1CrossDomainMessenger.Version != "v1.6.0" {
+		t.Fatalf("wrong L1CrossDomainMessenger version: %s", list.L1CrossDomainMessenger.Version)
+	}
+	if list.L1ERC721Bridge.Version != "v1.3.0" {
+		t.Fatalf("wrong L1ERC721Bridge version: %s", list.L1ERC721Bridge.Version)
+	}
+	if list.L1StandardBridge.Version != "v1.3.0" {
+		t.Fatalf("wrong L1StandardBridge version: %s", list.L1StandardBridge.Version)
+	}
+	if list.OptimismMintableERC20Factory.Version != "v1.4.0" {
+		t.Fatalf("wrong OptimismMintableERC20Factory version: %s", list.OptimismMintableERC20Factory.Version)
+	}
+	if list.OptimismPortal.Version != "v1.9.0" {
+		t.Fatalf("wrong OptimismPortal version: %s", list.OptimismPortal.Version)
+	}
+	if list.SystemConfig.Version != "v1.7.0" {
+		t.Fatalf("wrong SystemConfig version: %s", list.SystemConfig.Version)
+	}
+	// Check fault proof contracts
+	if list.AnchorStateRegistry.Version != "v1.0.0" {
+		t.Fatalf("wrong AnchorStateRegistry version: %s", list.AnchorStateRegistry.Version)
+	}
+	if list.DelayedWETH.Version != "v1.0.0" {
+		t.Fatalf("wrong DelayedWETH version: %s", list.DelayedWETH.Version)
+	}
+	if list.DisputeGameFactory.Version != "v1.0.0" {
+		t.Fatalf("wrong DisputeGameFactory version: %s", list.DisputeGameFactory.Version)
+	}
+	if list.FaultDisputeGame.Version != "v1.2.0" {
+		t.Fatalf("wrong FaultDisputeGame version: %s", list.FaultDisputeGame.Version)
+	}
+	if list.MIPS.Version != "v1.0.1" {
+		t.Fatalf("wrong MIPS version: %s", list.MIPS.Version)
+	}
+	if list.PermissionedDisputeGame.Version != "v1.2.0" {
+		t.Fatalf("wrong PermissionedDisputeGame version: %s", list.PermissionedDisputeGame.Version)
+	}
+	if list.PreimageOracle.Version != "v1.0.0" {
+		t.Fatalf("wrong PreimageOracle version: %s", list.PreimageOracle.Version)
+	}
+
+	// Check output oracle was not populated
+	require.Equalf(t, VersionedContract{}, list.L2OutputOracle, "L2OutputOracle erroneously configured with fault proof contracts")
+}
+
+// TestResolve ensures that resolve finds implementations that exactly match the requested version
 func TestResolve(t *testing.T) {
 	cases := []struct {
 		name    string
 		set     AddressSet
 		version string
-		expect  string
+		expect  VersionedContract
 	}{
 		{
-			name: "exact",
+			name: "match singleton option",
 			set: AddressSet{
-				"v1.0.0": HexToAddress("0x123"),
+				"v0.0.1": HexToAddress("0x01"),
+			},
+			version: "v0.0.1",
+			expect: VersionedContract{
+				Version: "v0.0.1",
+				Address: HexToAddress("0x01"),
+			},
+		},
+		{
+			name: "match first address",
+			set: AddressSet{
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v1.0.1": HexToAddress("0x03"),
+			},
+			version: "v0.0.1",
+			expect: VersionedContract{
+				Version: "v0.0.1",
+				Address: HexToAddress("0x01"),
+			},
+		},
+		{
+			name: "match last address",
+			set: AddressSet{
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v1.0.1": HexToAddress("0x03"),
+			},
+			version: "v1.0.1",
+			expect: VersionedContract{
+				Version: "v1.0.1",
+				Address: HexToAddress("0x02"),
+			},
+		},
+		{
+			name: "match middle address",
+			set: AddressSet{
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v1.0.1": HexToAddress("0x03"),
 			},
 			version: "v1.0.0",
-			expect:  "v1.0.0",
+			expect: VersionedContract{
+				Version: "v1.0.0",
+				Address: HexToAddress("0x02"),
+			},
 		},
 		{
-			name: "largest-minor",
+			name: "match first address (missing prefix)",
 			set: AddressSet{
-				"v1.2.0": HexToAddress("0x123"),
-				"v1.1.0": HexToAddress("0x234"),
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v1.0.1": HexToAddress("0x03"),
 			},
-			version: "^1.0.0",
-			expect:  "v1.2.0",
+			version: "0.0.1",
+			expect: VersionedContract{
+				Version: "v0.0.1",
+				Address: HexToAddress("0x01"),
+			},
 		},
 		{
-			name: "largest-patch",
+			name: "match last address (missing prefix)",
 			set: AddressSet{
-				"v1.0.2": HexToAddress("0x123"),
-				"v1.0.1": HexToAddress("0x234"),
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v2.0.1": HexToAddress("0x03"),
 			},
-			version: "^1.0.0",
-			expect:  "v1.0.2",
+			version: "2.0.1",
+			expect: VersionedContract{
+				Version: "v2.0.1",
+				Address: HexToAddress("0x03"),
+			},
 		},
 		{
-			name: "x-patch",
+			name: "match middle address (missing prefix)",
 			set: AddressSet{
-				"v3.0.5": HexToAddress("0x123"),
-				"v3.0.2": HexToAddress("0x234"),
+				"v0.0.1": HexToAddress("0x01"),
+				"v1.0.0": HexToAddress("0x02"),
+				"v2.0.1": HexToAddress("0x03"),
 			},
-			version: "v3.0.x",
-			expect:  "v3.0.5",
-		},
-		{
-			name: "x-minor",
-			set: AddressSet{
-				"v2.5.1": HexToAddress("0x456"),
-				"v2.5.0": HexToAddress("0x123"),
-				"v2.2.2": HexToAddress("0x234"),
+			version: "1.0.0",
+			expect: VersionedContract{
+				Version: "v1.0.0",
+				Address: HexToAddress("0x02"),
 			},
-			version: "v2.x",
-			expect:  "v2.5.1",
 		},
 	}
 
@@ -292,9 +440,93 @@ func TestResolve(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if resolved.Version != test.expect {
+			if resolved != test.expect {
 				t.Fatalf("wrong version: %s", resolved.Version)
 			}
+		})
+	}
+}
+
+// TestResolveWithError ensures that resolve errors appropriately
+func TestResolveWithError(t *testing.T) {
+	cases := []struct {
+		name        string
+		set         AddressSet
+		version     string
+		expectError string
+	}{
+		{
+			name: "Empty version supplied",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "",
+			expectError: ErrEmptyVersion.Error(),
+		},
+		{
+			name: "Semver with operator prefix",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "^0.0.1",
+			expectError: "invalid semver",
+		},
+		{
+			name: "Semver with operator and 'v' prefix",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "~v0.0.1",
+			expectError: "invalid semver",
+		},
+		{
+			name: "Semver with wildcard",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "2.0.x",
+			expectError: "invalid semver",
+		},
+		{
+			name: "Semver with wildcard and version",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "v2.0.x",
+			expectError: "invalid semver",
+		},
+		{
+			name: "No exact match",
+			set: AddressSet{
+				"v0.0.1":  HexToAddress("0x01"),
+				"v2.0.1":  HexToAddress("0x02"),
+				"v99.0.1": HexToAddress("0x03"),
+			},
+			version:     "2.0.0",
+			expectError: "cannot resolve semver",
+		},
+		{
+			name:        "No implementations available",
+			set:         AddressSet{},
+			version:     "2.0.0",
+			expectError: "no implementations found",
+		},
+	}
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
+			resolved, err := resolve(test.set, test.version)
+			require.ErrorContains(t, err, test.expectError)
+			require.Equal(t, VersionedContract{}, resolved)
 		})
 	}
 }
