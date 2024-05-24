@@ -20,6 +20,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var ErrEmptyVersion = errors.New("empty version")
+
 //go:embed configs
 var superchainFS embed.FS
 
@@ -232,6 +234,14 @@ type AddressList struct {
 	OptimismPortalProxy               Address `json:"OptimismPortalProxy"`
 	SystemConfigProxy                 Address `json:"SystemConfigProxy"`
 	ProxyAdmin                        Address `json:"ProxyAdmin"`
+	// Fault Proof contracts:
+	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty"`
+	DelayedWETHProxy         Address `json:"DelayedWETHProxy,omitempty"`
+	DisputeGameFactoryProxy  Address `json:"DisputeGameFactoryProxy,omitempty"`
+	FaultDisputeGame         Address `json:"FaultDisputeGame,omitempty"`
+	MIPS                     Address `json:"MIPS,omitempty"`
+	PermissionedDisputeGame  Address `json:"PermissionedDisputeGame,omitempty"`
+	PreimageOracle           Address `json:"PreimageOracle,omitempty"`
 }
 
 // AddressFor returns a nonzero address for the supplied contract name, if it has been specified
@@ -257,6 +267,20 @@ func (a AddressList) AddressFor(contractName string) (Address, error) {
 		address = a.OptimismPortalProxy
 	case "SystemConfigProxy":
 		address = a.SystemConfigProxy
+	case "AnchorStateRegistryProxy":
+		address = a.AnchorStateRegistryProxy
+	case "DelayedWETHProxy":
+		address = a.DelayedWETHProxy
+	case "DisputeGameFactoryProxy":
+		address = a.DisputeGameFactoryProxy
+	case "FaultDisputeGame":
+		address = a.FaultDisputeGame
+	case "MIPS":
+		address = a.MIPS
+	case "PermissionedDisputeGame":
+		address = a.PermissionedDisputeGame
+	case "PreimageOracle":
+		address = a.PreimageOracle
 	default:
 		return address, errors.New("no such contract name")
 	}
@@ -272,10 +296,18 @@ type ImplementationList struct {
 	L1CrossDomainMessenger       VersionedContract `json:"L1CrossDomainMessenger"`
 	L1ERC721Bridge               VersionedContract `json:"L1ERC721Bridge"`
 	L1StandardBridge             VersionedContract `json:"L1StandardBridge"`
-	L2OutputOracle               VersionedContract `json:"L2OutputOracle"`
+	L2OutputOracle               VersionedContract `json:"L2OutputOracle,omitempty"`
 	OptimismMintableERC20Factory VersionedContract `json:"OptimismMintableERC20Factory"`
 	OptimismPortal               VersionedContract `json:"OptimismPortal"`
 	SystemConfig                 VersionedContract `json:"SystemConfig"`
+	// Fault Proof contracts:
+	AnchorStateRegistry     VersionedContract `json:"AnchorStateRegistry,omitempty"`
+	DelayedWETH             VersionedContract `json:"DelayedWETH,omitempty"`
+	DisputeGameFactory      VersionedContract `json:"DisputeGameFactory,omitempty"`
+	FaultDisputeGame        VersionedContract `json:"FaultDisputeGame,omitempty"`
+	MIPS                    VersionedContract `json:"MIPS,omitempty"`
+	PermissionedDisputeGame VersionedContract `json:"PermissionedDisputeGame,omitempty"`
+	PreimageOracle          VersionedContract `json:"PreimageOracle,omitempty"`
 }
 
 // ContractImplementations represent a set of contract implementations on a given network.
@@ -285,10 +317,18 @@ type ContractImplementations struct {
 	L1CrossDomainMessenger       AddressSet `yaml:"l1_cross_domain_messenger"`
 	L1ERC721Bridge               AddressSet `yaml:"l1_erc721_bridge"`
 	L1StandardBridge             AddressSet `yaml:"l1_standard_bridge"`
-	L2OutputOracle               AddressSet `yaml:"l2_output_oracle"`
+	L2OutputOracle               AddressSet `yaml:"l2_output_oracle,omitempty"`
 	OptimismMintableERC20Factory AddressSet `yaml:"optimism_mintable_erc20_factory"`
 	OptimismPortal               AddressSet `yaml:"optimism_portal"`
 	SystemConfig                 AddressSet `yaml:"system_config"`
+	// Fault Proof contracts:
+	AnchorStateRegistry     AddressSet `yaml:"anchor_state_registry,omitempty"`
+	DelayedWETH             AddressSet `yaml:"delayed_weth,omitempty"`
+	DisputeGameFactory      AddressSet `yaml:"dispute_game_factory,omitempty"`
+	FaultDisputeGame        AddressSet `yaml:"fault_dispute_game,omitempty"`
+	MIPS                    AddressSet `yaml:"mips,omitempty"`
+	PermissionedDisputeGame AddressSet `yaml:"permissioned_dispute_game,omitempty"`
+	PreimageOracle          AddressSet `yaml:"preimage_oracle,omitempty"`
 }
 
 // AddressSet represents a set of addresses for a given
@@ -339,9 +379,6 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 	if implementations.L1StandardBridge, err = resolve(c.L1StandardBridge, versions.L1StandardBridge); err != nil {
 		return implementations, fmt.Errorf("L1StandardBridge: %w", err)
 	}
-	if implementations.L2OutputOracle, err = resolve(c.L2OutputOracle, versions.L2OutputOracle); err != nil {
-		return implementations, fmt.Errorf("L2OutputOracle: %w", err)
-	}
 	if implementations.OptimismMintableERC20Factory, err = resolve(c.OptimismMintableERC20Factory, versions.OptimismMintableERC20Factory); err != nil {
 		return implementations, fmt.Errorf("OptimismMintableERC20Factory: %w", err)
 	}
@@ -351,15 +388,53 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 	if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
 		return implementations, fmt.Errorf("SystemConfig: %w", err)
 	}
+	// If the L2OutputOracle is not specified (versions.L2OutputOracle is empty), we can assume that the L2OutputOracle
+	// is not used, and fault proofs are activated.
+	if implementations.L2OutputOracle, err = resolve(c.L2OutputOracle, versions.L2OutputOracle); errors.Is(err, ErrEmptyVersion) {
+		if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
+			return implementations, fmt.Errorf("SystemConfig: %w", err)
+		}
+		if implementations.AnchorStateRegistry, err = resolve(c.AnchorStateRegistry, versions.AnchorStateRegistry); err != nil {
+			return implementations, fmt.Errorf("AnchorStateRegistry: %w", err)
+		}
+		if implementations.DelayedWETH, err = resolve(c.DelayedWETH, versions.DelayedWETH); err != nil {
+			return implementations, fmt.Errorf("DelayedWETH: %w", err)
+		}
+		if implementations.DisputeGameFactory, err = resolve(c.DisputeGameFactory, versions.DisputeGameFactory); err != nil {
+			return implementations, fmt.Errorf("DisputeGameFactory: %w", err)
+		}
+		if implementations.FaultDisputeGame, err = resolve(c.FaultDisputeGame, versions.FaultDisputeGame); err != nil {
+			return implementations, fmt.Errorf("FaultDisputeGame: %w", err)
+		}
+		if implementations.MIPS, err = resolve(c.MIPS, versions.MIPS); err != nil {
+			return implementations, fmt.Errorf("MIPS: %w", err)
+		}
+		if implementations.PermissionedDisputeGame, err = resolve(c.PermissionedDisputeGame, versions.PermissionedDisputeGame); err != nil {
+			return implementations, fmt.Errorf("PermissionedDisputeGame: %w", err)
+		}
+		if implementations.PreimageOracle, err = resolve(c.PreimageOracle, versions.PreimageOracle); err != nil {
+			return implementations, fmt.Errorf("PreimageOracle: %w", err)
+		}
+	} else if err != nil {
+		return implementations, fmt.Errorf("L2OutputOracle: %w", err)
+	}
 	return implementations, nil
 }
 
 // resolve returns a VersionedContract that matches the passed in semver version
 // given a set of addresses.
 func resolve(set AddressSet, version string) (VersionedContract, error) {
-	version = canonicalizeSemver(version)
-
 	var out VersionedContract
+
+	if version == "" {
+		return out, ErrEmptyVersion
+	}
+
+	version = canonicalizeSemver(version)
+	if !semver.IsValid(version) {
+		return out, fmt.Errorf("invalid semver: '%s'", version)
+	}
+
 	keys := set.Versions()
 	if len(keys) == 0 {
 		return out, fmt.Errorf("no implementations found")
@@ -367,14 +442,12 @@ func resolve(set AddressSet, version string) (VersionedContract, error) {
 
 	for _, k := range keys {
 		res := semver.Compare(k, version)
-		if res >= 0 {
+		if res == 0 {
 			out = VersionedContract{
 				Version: k,
 				Address: set.Get(k),
 			}
-			if res == 0 {
-				break
-			}
+			break
 		}
 	}
 	if out == (VersionedContract{}) {
@@ -390,13 +463,21 @@ type ContractVersions struct {
 	L1CrossDomainMessenger       string `yaml:"l1_cross_domain_messenger"`
 	L1ERC721Bridge               string `yaml:"l1_erc721_bridge"`
 	L1StandardBridge             string `yaml:"l1_standard_bridge"`
-	L2OutputOracle               string `yaml:"l2_output_oracle"`
+	L2OutputOracle               string `yaml:"l2_output_oracle,omitempty"`
 	OptimismMintableERC20Factory string `yaml:"optimism_mintable_erc20_factory"`
 	OptimismPortal               string `yaml:"optimism_portal"`
 	SystemConfig                 string `yaml:"system_config"`
 	// Superchain-wide contracts:
 	ProtocolVersions string `yaml:"protocol_versions"`
 	SuperchainConfig string `yaml:"superchain_config,omitempty"`
+	// Fault Proof contracts:
+	AnchorStateRegistry     string `yaml:"anchor_state_registry,omitempty"`
+	DelayedWETH             string `yaml:"delayed_weth,omitempty"`
+	DisputeGameFactory      string `yaml:"dispute_game_factory,omitempty"`
+	FaultDisputeGame        string `yaml:"fault_dispute_game,omitempty"`
+	MIPS                    string `yaml:"mips,omitempty"`
+	PermissionedDisputeGame string `yaml:"permissioned_dispute_game,omitempty"`
+	PreimageOracle          string `yaml:"preimage_oracle,omitempty"`
 }
 
 // VersionFor returns the version for the supplied contract name, if it exits
@@ -418,6 +499,20 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 		version = c.OptimismPortal
 	case "SystemConfig":
 		version = c.SystemConfig
+	case "AnchorStateRegistry":
+		version = c.AnchorStateRegistry
+	case "DelayedWETH":
+		version = c.DelayedWETH
+	case "DisputeGameFactory":
+		version = c.DisputeGameFactory
+	case "FaultDisputeGame":
+		version = c.FaultDisputeGame
+	case "MIPS":
+		version = c.MIPS
+	case "PermissionedDisputeGame":
+		version = c.PermissionedDisputeGame
+	case "PreimageOracle":
+		version = c.PreimageOracle
 	case "ProtocolVersions":
 		version = c.ProtocolVersions
 	case "SuperchainConfig":
@@ -513,6 +608,27 @@ func setAddressSetsIfNil(impls *ContractImplementations) {
 	if impls.SystemConfig == nil {
 		impls.SystemConfig = make(AddressSet)
 	}
+	if impls.AnchorStateRegistry == nil {
+		impls.AnchorStateRegistry = make(AddressSet)
+	}
+	if impls.DelayedWETH == nil {
+		impls.DelayedWETH = make(AddressSet)
+	}
+	if impls.DisputeGameFactory == nil {
+		impls.DisputeGameFactory = make(AddressSet)
+	}
+	if impls.FaultDisputeGame == nil {
+		impls.FaultDisputeGame = make(AddressSet)
+	}
+	if impls.MIPS == nil {
+		impls.MIPS = make(AddressSet)
+	}
+	if impls.PermissionedDisputeGame == nil {
+		impls.PermissionedDisputeGame = make(AddressSet)
+	}
+	if impls.PreimageOracle == nil {
+		impls.PreimageOracle = make(AddressSet)
+	}
 }
 
 // copySemverMap is a concrete implementation of maps.Copy for map[string]Address.
@@ -538,6 +654,13 @@ func (c ContractImplementations) Merge(other ContractImplementations) {
 	copySemverMap(c.OptimismMintableERC20Factory, other.OptimismMintableERC20Factory)
 	copySemverMap(c.OptimismPortal, other.OptimismPortal)
 	copySemverMap(c.SystemConfig, other.SystemConfig)
+	copySemverMap(c.AnchorStateRegistry, other.AnchorStateRegistry)
+	copySemverMap(c.DelayedWETH, other.DelayedWETH)
+	copySemverMap(c.DisputeGameFactory, other.DisputeGameFactory)
+	copySemverMap(c.FaultDisputeGame, other.FaultDisputeGame)
+	copySemverMap(c.MIPS, other.MIPS)
+	copySemverMap(c.PermissionedDisputeGame, other.PermissionedDisputeGame)
+	copySemverMap(c.PreimageOracle, other.PreimageOracle)
 }
 
 // Copy will return a shallow copy of the ContractImplementations.
@@ -550,6 +673,13 @@ func (c ContractImplementations) Copy() ContractImplementations {
 		OptimismMintableERC20Factory: maps.Clone(c.OptimismMintableERC20Factory),
 		OptimismPortal:               maps.Clone(c.OptimismPortal),
 		SystemConfig:                 maps.Clone(c.SystemConfig),
+		AnchorStateRegistry:          maps.Clone(c.AnchorStateRegistry),
+		DelayedWETH:                  maps.Clone(c.DelayedWETH),
+		DisputeGameFactory:           maps.Clone(c.DisputeGameFactory),
+		FaultDisputeGame:             maps.Clone(c.FaultDisputeGame),
+		MIPS:                         maps.Clone(c.MIPS),
+		PermissionedDisputeGame:      maps.Clone(c.PermissionedDisputeGame),
+		PreimageOracle:               maps.Clone(c.PreimageOracle),
 	}
 }
 
