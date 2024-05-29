@@ -20,6 +20,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var ErrEmptyVersion = errors.New("empty version")
+
 //go:embed configs
 var superchainFS embed.FS
 
@@ -42,7 +44,7 @@ type ChainGenesis struct {
 	L2           BlockID      `yaml:"l2"`
 	L2Time       uint64       `json:"l2_time" yaml:"l2_time"`
 	ExtraData    *HexBytes    `yaml:"extra_data,omitempty"`
-	SystemConfig SystemConfig `json:"system_config" yaml:"system_config,omitempty"`
+	SystemConfig SystemConfig `json:"system_config" yaml:"-"`
 }
 
 type SystemConfig struct {
@@ -81,16 +83,19 @@ const (
 
 type ChainConfig struct {
 	Name         string `yaml:"name"`
-	ChainID      uint64 `json:"l2_chain_id" yaml:"chain_id"`
+	ChainID      uint64 `yaml:"chain_id"`
 	PublicRPC    string `yaml:"public_rpc"`
 	SequencerRPC string `yaml:"sequencer_rpc"`
 	Explorer     string `yaml:"explorer"`
 
 	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
+	// If SuperchainTime is set, hardforks times after SuperchainTime
+	// will be inherited from the superchain-wide config.
+	SuperchainTime *uint64 `yaml:"superchain_time"`
 
-	BatchInboxAddr Address `json:"batch_inbox_address" yaml:"batch_inbox_addr"`
+	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
-	Genesis ChainGenesis `json:"genesis" yaml:"genesis"`
+	Genesis ChainGenesis `yaml:"genesis"`
 
 	// Superchain is a simple string to identify the superchain.
 	// This is implied by directory structure, and not encoded in the config file itself.
@@ -101,6 +106,19 @@ type ChainConfig struct {
 
 	// Hardfork Configuration Overrides
 	HardForkConfiguration `yaml:",inline"`
+
+	// Optional feature
+	Plasma *PlasmaConfig `yaml:"plasma,omitempty"`
+}
+
+type PlasmaConfig struct {
+	DAChallengeAddress *Address `json:"da_challenge_contract_address" yaml:"-"`
+	// DA challenge window value set on the DAC contract. Used in plasma mode
+	// to compute when a commitment can no longer be challenged.
+	DAChallengeWindow *uint64 `json:"da_challenge_window" yaml:"da_challenge_window"`
+	// DA resolve window value set on the DAC contract. Used in plasma mode
+	// to compute when a challenge expires and trigger a reorg if needed.
+	DAResolveWindow *uint64 `json:"da_resolve_window" yaml:"da_resolve_window"`
 }
 
 // SetDefaultHardforkTimestampsToNil sets each hardfork timestamp to nil (to remove the override)
@@ -119,16 +137,21 @@ func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
 }
 
 // setNilHardforkTimestampsToDefault overwrites each unspecified hardfork activation time override
-// with the superchain default.
+// with the superchain default, if the default is not nil and is after the SuperchainTime
 func (c *ChainConfig) setNilHardforkTimestampsToDefault(s *SuperchainConfig) {
+	if c.SuperchainTime == nil {
+		return
+	}
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
 	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
 
 	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
 		overrideValue := cVal.Field(i)
-		if overrideValue.IsNil() {
-			defaultValue := sVal.Field(i)
-			overrideValue.Set(defaultValue)
+		defaultValue := sVal.Field(i)
+		if overrideValue.IsNil() &&
+			!defaultValue.IsNil() &&
+			reflect.Indirect(defaultValue).Uint() >= *c.SuperchainTime {
+			overrideValue.Set(defaultValue) // use default only if hardfork activated after SuperchainTime
 		}
 	}
 
@@ -159,12 +182,12 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 		valNode := node.Content[i+1]
 
 		// Add blank line AFTER these keys
-		if lastKey == "explorer" || lastKey == "superchain_level" || lastKey == "genesis" {
+		if lastKey == "explorer" || lastKey == "superchain_time" || lastKey == "genesis" {
 			keyNode.HeadComment = "\n"
 		}
 
 		// Add blank line BEFORE these keys
-		if keyNode.Value == "genesis" {
+		if keyNode.Value == "genesis" || keyNode.Value == "plasma" {
 			keyNode.HeadComment = "\n"
 		}
 
@@ -175,8 +198,18 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 			}
 		}
 
+		if keyNode.Value == "superchain_time" {
+			if valNode.Value == "" || valNode.Value == "null" {
+				keyNode.LineComment = "Missing hardfork times are NOT yet inherited from superchain.yaml"
+			} else if valNode.Value == "0" {
+				keyNode.LineComment = "Missing hardfork times are inherited from superchain.yaml"
+			} else {
+				keyNode.LineComment = "Missing hardfork times after this time are inherited from superchain.yaml"
+			}
+		}
+
 		// Add human readable timestamp in comment
-		if strings.HasSuffix(keyNode.Value, "_time") {
+		if strings.HasSuffix(keyNode.Value, "_time") && valNode.Value != "" && valNode.Value != "null" {
 			t, err := strconv.ParseInt(valNode.Value, 10, 64)
 			if err != nil {
 				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)
@@ -201,6 +234,14 @@ type AddressList struct {
 	OptimismPortalProxy               Address `json:"OptimismPortalProxy"`
 	SystemConfigProxy                 Address `json:"SystemConfigProxy"`
 	ProxyAdmin                        Address `json:"ProxyAdmin"`
+	// Fault Proof contracts:
+	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty"`
+	DelayedWETHProxy         Address `json:"DelayedWETHProxy,omitempty"`
+	DisputeGameFactoryProxy  Address `json:"DisputeGameFactoryProxy,omitempty"`
+	FaultDisputeGame         Address `json:"FaultDisputeGame,omitempty"`
+	MIPS                     Address `json:"MIPS,omitempty"`
+	PermissionedDisputeGame  Address `json:"PermissionedDisputeGame,omitempty"`
+	PreimageOracle           Address `json:"PreimageOracle,omitempty"`
 }
 
 // AddressFor returns a nonzero address for the supplied contract name, if it has been specified
@@ -226,6 +267,20 @@ func (a AddressList) AddressFor(contractName string) (Address, error) {
 		address = a.OptimismPortalProxy
 	case "SystemConfigProxy":
 		address = a.SystemConfigProxy
+	case "AnchorStateRegistryProxy":
+		address = a.AnchorStateRegistryProxy
+	case "DelayedWETHProxy":
+		address = a.DelayedWETHProxy
+	case "DisputeGameFactoryProxy":
+		address = a.DisputeGameFactoryProxy
+	case "FaultDisputeGame":
+		address = a.FaultDisputeGame
+	case "MIPS":
+		address = a.MIPS
+	case "PermissionedDisputeGame":
+		address = a.PermissionedDisputeGame
+	case "PreimageOracle":
+		address = a.PreimageOracle
 	default:
 		return address, errors.New("no such contract name")
 	}
@@ -241,10 +296,18 @@ type ImplementationList struct {
 	L1CrossDomainMessenger       VersionedContract `json:"L1CrossDomainMessenger"`
 	L1ERC721Bridge               VersionedContract `json:"L1ERC721Bridge"`
 	L1StandardBridge             VersionedContract `json:"L1StandardBridge"`
-	L2OutputOracle               VersionedContract `json:"L2OutputOracle"`
+	L2OutputOracle               VersionedContract `json:"L2OutputOracle,omitempty"`
 	OptimismMintableERC20Factory VersionedContract `json:"OptimismMintableERC20Factory"`
 	OptimismPortal               VersionedContract `json:"OptimismPortal"`
 	SystemConfig                 VersionedContract `json:"SystemConfig"`
+	// Fault Proof contracts:
+	AnchorStateRegistry     VersionedContract `json:"AnchorStateRegistry,omitempty"`
+	DelayedWETH             VersionedContract `json:"DelayedWETH,omitempty"`
+	DisputeGameFactory      VersionedContract `json:"DisputeGameFactory,omitempty"`
+	FaultDisputeGame        VersionedContract `json:"FaultDisputeGame,omitempty"`
+	MIPS                    VersionedContract `json:"MIPS,omitempty"`
+	PermissionedDisputeGame VersionedContract `json:"PermissionedDisputeGame,omitempty"`
+	PreimageOracle          VersionedContract `json:"PreimageOracle,omitempty"`
 }
 
 // ContractImplementations represent a set of contract implementations on a given network.
@@ -254,10 +317,18 @@ type ContractImplementations struct {
 	L1CrossDomainMessenger       AddressSet `yaml:"l1_cross_domain_messenger"`
 	L1ERC721Bridge               AddressSet `yaml:"l1_erc721_bridge"`
 	L1StandardBridge             AddressSet `yaml:"l1_standard_bridge"`
-	L2OutputOracle               AddressSet `yaml:"l2_output_oracle"`
+	L2OutputOracle               AddressSet `yaml:"l2_output_oracle,omitempty"`
 	OptimismMintableERC20Factory AddressSet `yaml:"optimism_mintable_erc20_factory"`
 	OptimismPortal               AddressSet `yaml:"optimism_portal"`
 	SystemConfig                 AddressSet `yaml:"system_config"`
+	// Fault Proof contracts:
+	AnchorStateRegistry     AddressSet `yaml:"anchor_state_registry,omitempty"`
+	DelayedWETH             AddressSet `yaml:"delayed_weth,omitempty"`
+	DisputeGameFactory      AddressSet `yaml:"dispute_game_factory,omitempty"`
+	FaultDisputeGame        AddressSet `yaml:"fault_dispute_game,omitempty"`
+	MIPS                    AddressSet `yaml:"mips,omitempty"`
+	PermissionedDisputeGame AddressSet `yaml:"permissioned_dispute_game,omitempty"`
+	PreimageOracle          AddressSet `yaml:"preimage_oracle,omitempty"`
 }
 
 // AddressSet represents a set of addresses for a given
@@ -308,9 +379,6 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 	if implementations.L1StandardBridge, err = resolve(c.L1StandardBridge, versions.L1StandardBridge); err != nil {
 		return implementations, fmt.Errorf("L1StandardBridge: %w", err)
 	}
-	if implementations.L2OutputOracle, err = resolve(c.L2OutputOracle, versions.L2OutputOracle); err != nil {
-		return implementations, fmt.Errorf("L2OutputOracle: %w", err)
-	}
 	if implementations.OptimismMintableERC20Factory, err = resolve(c.OptimismMintableERC20Factory, versions.OptimismMintableERC20Factory); err != nil {
 		return implementations, fmt.Errorf("OptimismMintableERC20Factory: %w", err)
 	}
@@ -320,15 +388,53 @@ func (c ContractImplementations) Resolve(versions ContractVersions) (Implementat
 	if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
 		return implementations, fmt.Errorf("SystemConfig: %w", err)
 	}
+	// If the L2OutputOracle is not specified (versions.L2OutputOracle is empty), we can assume that the L2OutputOracle
+	// is not used, and fault proofs are activated.
+	if implementations.L2OutputOracle, err = resolve(c.L2OutputOracle, versions.L2OutputOracle); errors.Is(err, ErrEmptyVersion) {
+		if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
+			return implementations, fmt.Errorf("SystemConfig: %w", err)
+		}
+		if implementations.AnchorStateRegistry, err = resolve(c.AnchorStateRegistry, versions.AnchorStateRegistry); err != nil {
+			return implementations, fmt.Errorf("AnchorStateRegistry: %w", err)
+		}
+		if implementations.DelayedWETH, err = resolve(c.DelayedWETH, versions.DelayedWETH); err != nil {
+			return implementations, fmt.Errorf("DelayedWETH: %w", err)
+		}
+		if implementations.DisputeGameFactory, err = resolve(c.DisputeGameFactory, versions.DisputeGameFactory); err != nil {
+			return implementations, fmt.Errorf("DisputeGameFactory: %w", err)
+		}
+		if implementations.FaultDisputeGame, err = resolve(c.FaultDisputeGame, versions.FaultDisputeGame); err != nil {
+			return implementations, fmt.Errorf("FaultDisputeGame: %w", err)
+		}
+		if implementations.MIPS, err = resolve(c.MIPS, versions.MIPS); err != nil {
+			return implementations, fmt.Errorf("MIPS: %w", err)
+		}
+		if implementations.PermissionedDisputeGame, err = resolve(c.PermissionedDisputeGame, versions.PermissionedDisputeGame); err != nil {
+			return implementations, fmt.Errorf("PermissionedDisputeGame: %w", err)
+		}
+		if implementations.PreimageOracle, err = resolve(c.PreimageOracle, versions.PreimageOracle); err != nil {
+			return implementations, fmt.Errorf("PreimageOracle: %w", err)
+		}
+	} else if err != nil {
+		return implementations, fmt.Errorf("L2OutputOracle: %w", err)
+	}
 	return implementations, nil
 }
 
 // resolve returns a VersionedContract that matches the passed in semver version
 // given a set of addresses.
 func resolve(set AddressSet, version string) (VersionedContract, error) {
-	version = canonicalizeSemver(version)
-
 	var out VersionedContract
+
+	if version == "" {
+		return out, ErrEmptyVersion
+	}
+
+	version = canonicalizeSemver(version)
+	if !semver.IsValid(version) {
+		return out, fmt.Errorf("invalid semver: '%s'", version)
+	}
+
 	keys := set.Versions()
 	if len(keys) == 0 {
 		return out, fmt.Errorf("no implementations found")
@@ -336,14 +442,12 @@ func resolve(set AddressSet, version string) (VersionedContract, error) {
 
 	for _, k := range keys {
 		res := semver.Compare(k, version)
-		if res >= 0 {
+		if res == 0 {
 			out = VersionedContract{
 				Version: k,
 				Address: set.Get(k),
 			}
-			if res == 0 {
-				break
-			}
+			break
 		}
 	}
 	if out == (VersionedContract{}) {
@@ -359,13 +463,21 @@ type ContractVersions struct {
 	L1CrossDomainMessenger       string `yaml:"l1_cross_domain_messenger"`
 	L1ERC721Bridge               string `yaml:"l1_erc721_bridge"`
 	L1StandardBridge             string `yaml:"l1_standard_bridge"`
-	L2OutputOracle               string `yaml:"l2_output_oracle"`
+	L2OutputOracle               string `yaml:"l2_output_oracle,omitempty"`
 	OptimismMintableERC20Factory string `yaml:"optimism_mintable_erc20_factory"`
 	OptimismPortal               string `yaml:"optimism_portal"`
 	SystemConfig                 string `yaml:"system_config"`
 	// Superchain-wide contracts:
 	ProtocolVersions string `yaml:"protocol_versions"`
 	SuperchainConfig string `yaml:"superchain_config,omitempty"`
+	// Fault Proof contracts:
+	AnchorStateRegistry     string `yaml:"anchor_state_registry,omitempty"`
+	DelayedWETH             string `yaml:"delayed_weth,omitempty"`
+	DisputeGameFactory      string `yaml:"dispute_game_factory,omitempty"`
+	FaultDisputeGame        string `yaml:"fault_dispute_game,omitempty"`
+	MIPS                    string `yaml:"mips,omitempty"`
+	PermissionedDisputeGame string `yaml:"permissioned_dispute_game,omitempty"`
+	PreimageOracle          string `yaml:"preimage_oracle,omitempty"`
 }
 
 // VersionFor returns the version for the supplied contract name, if it exits
@@ -387,6 +499,20 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 		version = c.OptimismPortal
 	case "SystemConfig":
 		version = c.SystemConfig
+	case "AnchorStateRegistry":
+		version = c.AnchorStateRegistry
+	case "DelayedWETH":
+		version = c.DelayedWETH
+	case "DisputeGameFactory":
+		version = c.DisputeGameFactory
+	case "FaultDisputeGame":
+		version = c.FaultDisputeGame
+	case "MIPS":
+		version = c.MIPS
+	case "PermissionedDisputeGame":
+		version = c.PermissionedDisputeGame
+	case "PreimageOracle":
+		version = c.PreimageOracle
 	case "ProtocolVersions":
 		version = c.ProtocolVersions
 	case "SuperchainConfig":
@@ -482,6 +608,27 @@ func setAddressSetsIfNil(impls *ContractImplementations) {
 	if impls.SystemConfig == nil {
 		impls.SystemConfig = make(AddressSet)
 	}
+	if impls.AnchorStateRegistry == nil {
+		impls.AnchorStateRegistry = make(AddressSet)
+	}
+	if impls.DelayedWETH == nil {
+		impls.DelayedWETH = make(AddressSet)
+	}
+	if impls.DisputeGameFactory == nil {
+		impls.DisputeGameFactory = make(AddressSet)
+	}
+	if impls.FaultDisputeGame == nil {
+		impls.FaultDisputeGame = make(AddressSet)
+	}
+	if impls.MIPS == nil {
+		impls.MIPS = make(AddressSet)
+	}
+	if impls.PermissionedDisputeGame == nil {
+		impls.PermissionedDisputeGame = make(AddressSet)
+	}
+	if impls.PreimageOracle == nil {
+		impls.PreimageOracle = make(AddressSet)
+	}
 }
 
 // copySemverMap is a concrete implementation of maps.Copy for map[string]Address.
@@ -507,6 +654,13 @@ func (c ContractImplementations) Merge(other ContractImplementations) {
 	copySemverMap(c.OptimismMintableERC20Factory, other.OptimismMintableERC20Factory)
 	copySemverMap(c.OptimismPortal, other.OptimismPortal)
 	copySemverMap(c.SystemConfig, other.SystemConfig)
+	copySemverMap(c.AnchorStateRegistry, other.AnchorStateRegistry)
+	copySemverMap(c.DelayedWETH, other.DelayedWETH)
+	copySemverMap(c.DisputeGameFactory, other.DisputeGameFactory)
+	copySemverMap(c.FaultDisputeGame, other.FaultDisputeGame)
+	copySemverMap(c.MIPS, other.MIPS)
+	copySemverMap(c.PermissionedDisputeGame, other.PermissionedDisputeGame)
+	copySemverMap(c.PreimageOracle, other.PreimageOracle)
 }
 
 // Copy will return a shallow copy of the ContractImplementations.
@@ -519,6 +673,13 @@ func (c ContractImplementations) Copy() ContractImplementations {
 		OptimismMintableERC20Factory: maps.Clone(c.OptimismMintableERC20Factory),
 		OptimismPortal:               maps.Clone(c.OptimismPortal),
 		SystemConfig:                 maps.Clone(c.SystemConfig),
+		AnchorStateRegistry:          maps.Clone(c.AnchorStateRegistry),
+		DelayedWETH:                  maps.Clone(c.DelayedWETH),
+		DisputeGameFactory:           maps.Clone(c.DisputeGameFactory),
+		FaultDisputeGame:             maps.Clone(c.FaultDisputeGame),
+		MIPS:                         maps.Clone(c.MIPS),
+		PermissionedDisputeGame:      maps.Clone(c.PermissionedDisputeGame),
+		PreimageOracle:               maps.Clone(c.PreimageOracle),
 	}
 }
 

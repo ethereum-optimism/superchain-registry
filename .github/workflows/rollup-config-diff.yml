@@ -1,0 +1,39 @@
+name: Rollup Config Diff
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  compute-rollup-config-diff:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Ensure the full history is fetched
+
+    - name: Fetch all branches
+      run: git fetch --all
+
+    - name: Generate configs at HEAD
+      working-directory: validation
+      run: |
+        go run generate-rollup-config/main.go HEAD
+
+    - name: Generate configs on base branch
+      working-directory: validation
+      run: |
+        # Get the base branch revision
+        base_rev=${{ github.event.pull_request.base.sha }}
+        echo "Base branch revision: $base_rev"
+        git checkout $base_rev -- ../superchain
+        go run generate-rollup-config/main.go base
+
+    - name: compute diff
+      working-directory: validation
+      id: run-command
+      run: |
+        ./generate-rollup-config/diff-configs.sh ./generate-rollup-config/output-base ./generate-rollup-config/output-HEAD
+
