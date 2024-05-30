@@ -1,0 +1,23 @@
+name: race
+chain_id: 90001
+public_rpc: https://racetestnet.io
+sequencer_rpc: https://racetestnet.io/sequencer
+explorer: https://testnet.racescan.io
+
+superchain_level: 2
+
+batch_inbox_addr: "0xff00000000000000000000000000000000042069"
+
+genesis:
+  l1:
+    hash: "0xbcf6dc31e37c1c4efd36329afe6d63404bcb6032570fadf1219d2a5b67ce072f"
+    number: 5660225
+  l2:
+    hash: "0xb5c02b0c75564b0716d7179564e319a0f8255b0bf9a3f32f3d181a0d53239ec5"
+    number: 0
+  l2_time: 1712653536
+
+canyon_time: 0
+delta_time: 0
+ecotone_time: 0
+
