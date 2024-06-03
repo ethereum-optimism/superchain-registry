@@ -233,6 +233,7 @@ type AddressList struct {
 	OptimismMintableERC20FactoryProxy Address `json:"OptimismMintableERC20FactoryProxy"`
 	OptimismPortalProxy               Address `json:"OptimismPortalProxy"`
 	SystemConfigProxy                 Address `json:"SystemConfigProxy"`
+	SystemConfigOwner                 Address `json:"SystemConfigOwner"`
 	ProxyAdmin                        Address `json:"ProxyAdmin"`
 	// Fault Proof contracts:
 	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty"`
@@ -281,8 +282,10 @@ func (a AddressList) AddressFor(contractName string) (Address, error) {
 		address = a.PermissionedDisputeGame
 	case "PreimageOracle":
 		address = a.PreimageOracle
+	case "SystemConfigOwner":
+		address = a.SystemConfigOwner
 	default:
-		return address, errors.New("no such contract name")
+		return address, fmt.Errorf("no such contract name %s", contractName)
 	}
 	if address == (Address{}) {
 		return address, errors.New("no address or zero address specified")

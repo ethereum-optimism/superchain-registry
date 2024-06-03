@@ -16,32 +16,40 @@ import (
 
 func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 
-	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC
+	shouldBeOwnedBy := map[string]string{
+		"AddressManager":    "ProxyAdmin",
+		"SystemConfigProxy": "SystemConfigOwner",
+	}
 
+	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
 
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-	addressManagerAddress, err := Addresses[chainID].AddressFor("AddressManager")
-	require.NoError(t, err)
+	for contract, properOwner := range shouldBeOwnedBy {
+		contractAddress, err := Addresses[chainID].AddressFor(contract)
+		require.NoError(t, err)
 
-	proxyAdmin, err := Addresses[chainID].AddressFor("ProxyAdmin")
-	require.NoError(t, err)
+		properOwnerAddress, err := Addresses[chainID].AddressFor(properOwner)
+		require.NoError(t, err)
 
-	owner, err := getOwnerWithRetries(common.Address(addressManagerAddress), client)
-	require.NoError(t, err)
+		owner, err := getOwnerWithRetries(common.Address(contractAddress), client)
+		require.NoError(t, err)
 
-	assert.Equal(t, proxyAdmin, owner, "AddressManager.Owner() = %s, expected %s (ProxyAdmin)", owner, proxyAdmin)
-
+		assert.Equal(t, properOwnerAddress, owner, "%s.Owner() = %s, expected %s (%s)", contract, owner, properOwnerAddress, properOwner)
+	}
 }
 
 func TestSecurityConfigs(t *testing.T) {
-	isExcluded := map[uint64]bool{}
+	isExcluded := map[uint64]bool{
+		11155421: true, // OP_Labs_Sepolia_devnet_0  (no SystemConfigOwner specified)
+		11763072: true, // Base_devnet_0 (no SystemConfigOwner specified)
+	}
 	for chainID, chain := range OPChains {
 		t.Run(perChainTestName(chain), func(t *testing.T) {
 			if isExcluded[chain.ChainID] {
-				t.Skipf("chain %d: EXCLUDED from Genesis block hash validation", chainID)
+				t.Skipf("chain %d: EXCLUDED from Security Config Checks", chainID)
 			}
 			testSecurityConfigOfChain(t, chainID)
 		})
