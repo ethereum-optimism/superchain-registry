@@ -32,6 +32,13 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 		// {"DisputeGameFactoryProxy", "owner", "ProxyAdminOwner"}, // TODO reinstate this but only run the check if the chain is on FPAC or greater
 		// {"DelayedWETHProxy", "owner", "ProxyAdminOwner"},        // TODO reinstate this but only run the check if the chain is on FPAC or greater
 		{"ProxyAdmin", "owner()", "ProxyAdminOwner"},
+		{"L1CrossDomainMessengerProxy", "PORTAL()", "OptimismPortalProxy"},
+		{"L1ERC721BridgeProxy", "admin()", "ProxyAdmin"},
+		{"L1ERC721BridgeProxy", "messenger()", "L1CrossDomainMessengerProxy"},
+		{"L1StandardBridgeProxy", "getOwner()", "ProxyAdmin"},
+		{"L1StandardBridgeProxy", "messenger()", "L1CrossDomainMessengerProxy"},
+		{"OptimismMintableERC20FactoryProxy", "admin()", "ProxyAdmin"},
+		{"OptimismMintableERC20FactoryProxy", "BRIDGE()", "L1StandardBridgeProxy"},
 	}
 
 	for _, r := range contractCallResolutions {
