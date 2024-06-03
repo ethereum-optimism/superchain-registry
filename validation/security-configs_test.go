@@ -16,32 +16,37 @@ import (
 
 func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 
-	shouldBeOwnedBy := map[string]string{
-		"AddressManager":    "ProxyAdmin",
-		"SystemConfigProxy": "SystemConfigOwner",
-		// "DisputeGameFactoryProxy": "ProxyAdminOwner",  // TODO reinstate this but only run the check if the chain is on FPAC or greater
-		// "DelayedWETHProxy": "ProxyAdminOwner", // TODO reinstate this but only run the check if the chain is on FPAC or greater
-		"ProxyAdmin": "ProxyAdminOwner",
-	}
-
 	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
 
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-	for contract, properOwner := range shouldBeOwnedBy {
-		contractAddress, err := Addresses[chainID].AddressFor(contract)
-		require.NoError(t, err)
-
-		properOwnerAddress, err := Addresses[chainID].AddressFor(properOwner)
-		require.NoError(t, err)
-
-		owner, err := getOwnerWithRetries(common.Address(contractAddress), client)
-		require.NoError(t, err)
-
-		assert.Equal(t, properOwnerAddress, owner, "%s.Owner() = %s, expected %s (%s)", contract, owner, properOwnerAddress, properOwner)
+	contractCallResolutions := []struct {
+		name                     string
+		method                   string
+		shouldResolveToAddressOf string
+	}{
+		{"AddressManager", "owner()", "ProxyAdmin"},
+		{"SystemConfigProxy", "owner()", "SystemConfigOwner"},
+		// {"DisputeGameFactoryProxy", "owner", "ProxyAdminOwner"}, // TODO reinstate this but only run the check if the chain is on FPAC or greater
+		// {"DelayedWETHProxy", "owner", "ProxyAdminOwner"},        // TODO reinstate this but only run the check if the chain is on FPAC or greater
+		{"ProxyAdmin", "owner()", "ProxyAdminOwner"},
 	}
+
+	for _, r := range contractCallResolutions {
+		contractAddress, err := Addresses[chainID].AddressFor(r.name)
+		require.NoError(t, err)
+
+		want, err := Addresses[chainID].AddressFor(r.shouldResolveToAddressOf)
+		require.NoError(t, err)
+
+		got, err := getAddressWithRetries(r.method, common.Address(contractAddress), client)
+		require.NoError(t, err)
+
+		assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", r.name, r.method, want, r.shouldResolveToAddressOf)
+	}
+
 }
 
 func TestSecurityConfigs(t *testing.T) {
@@ -59,20 +64,20 @@ func TestSecurityConfigs(t *testing.T) {
 	}
 }
 
-// getOwnerWithRetries is a wrapper for getOwner
+// getAddressWithRetries is a wrapper for getAddress
 // which retries up to 10 times with exponential backoff.
-func getOwnerWithRetries(addr common.Address, client *ethclient.Client) (Address, error) {
+func getAddressWithRetries(method string, addr common.Address, client *ethclient.Client) (Address, error) {
 	const maxAttempts = 10
 	return retry.Do(context.Background(), maxAttempts, retry.Exponential(), func() (Address, error) {
-		return getOwner(addr, client)
+		return getAddress(method, addr, client)
 	})
 }
 
-func getOwner(contractAddress common.Address, client *ethclient.Client) (Address, error) {
+func getAddress(method string, contractAddress common.Address, client *ethclient.Client) (Address, error) {
 
 	callMsg := ethereum.CallMsg{
 		To:   &contractAddress,
-		Data: crypto.Keccak256([]byte("owner()"))[:4],
+		Data: crypto.Keccak256([]byte(method))[:4],
 	}
 
 	// Make the call
