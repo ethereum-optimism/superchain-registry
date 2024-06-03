@@ -2,11 +2,15 @@ package validation
 
 import (
 	"context"
+	"strconv"
+	"strings"
 	"testing"
 
+	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	"github.com/ethereum-optimism/optimism/op-service/retry"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -22,15 +26,15 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-	contractCallResolutions := []struct {
+	type resolution struct {
 		name                     string
 		method                   string
 		shouldResolveToAddressOf string
-	}{
+	}
+
+	contractCallResolutions := []resolution{
 		{"AddressManager", "owner()", "ProxyAdmin"},
 		{"SystemConfigProxy", "owner()", "SystemConfigOwner"},
-		// {"DisputeGameFactoryProxy", "owner", "ProxyAdminOwner"}, // TODO reinstate this but only run the check if the chain is on FPAC or greater
-		// {"DelayedWETHProxy", "owner", "ProxyAdminOwner"},        // TODO reinstate this but only run the check if the chain is on FPAC or greater
 		{"ProxyAdmin", "owner()", "ProxyAdminOwner"},
 		{"L1CrossDomainMessengerProxy", "PORTAL()", "OptimismPortalProxy"},
 		{"L1ERC721BridgeProxy", "admin()", "ProxyAdmin"},
@@ -39,6 +43,43 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 		{"L1StandardBridgeProxy", "messenger()", "L1CrossDomainMessengerProxy"},
 		{"OptimismMintableERC20FactoryProxy", "admin()", "ProxyAdmin"},
 		{"OptimismMintableERC20FactoryProxy", "BRIDGE()", "L1StandardBridgeProxy"},
+		{"OptimismPortalProxy", "admin()", "ProxyAdmin"},
+		{"ProxyAdmin", "owner()", "ProxyAdminOwner"},
+		{"ProxyAdmin", "addressManager()", "AddressManager"},
+		{"SystemConfigProxy", "admin()", "ProxyAdmin"},
+		{"SystemConfigProxy", "owner()", "SystemConfigOwner"},
+	}
+
+	portalProxyAddress, err := Addresses[chainID].AddressFor("OptimismPortalProxy")
+	require.NoError(t, err)
+	portalProxy, err := bindings.NewOptimismPortal(common.Address(portalProxyAddress), client)
+	require.NoError(t, err)
+	version, err := portalProxy.Version(&bind.CallOpts{})
+	require.NoError(t, err)
+	majorVersion, err := strconv.ParseInt(strings.Split(version, ".")[0], 10, 32)
+	require.NoError(t, err)
+
+	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
+	isFPAC := majorVersion >= 3
+
+	if isFPAC {
+		contractCallResolutions = append(contractCallResolutions,
+			resolution{"DisputeGameFactoryProxy", "admin", "ProxyAdmin"},
+			resolution{"AnchorStateRegistryProxy", "owner", "ProxyAdminOwner"},
+			resolution{"DelayedWETHProxy", "admin", "ProxyAdmin"},
+			resolution{"DelayedWETHProxy", "admin", "ProxyAdmin"},
+			resolution{"DelayedWETHProxy", "owner", "ProxyAdminOwner"},
+			resolution{"OptimismPortalProxy", "guardian()", "Guardian"},
+			resolution{"OptimismPortalProxy", "systemConfig()", "SystemConfigProxy"},
+		)
+	} else {
+		contractCallResolutions = append(contractCallResolutions,
+			resolution{"OptimismPortalProxy", "GUARDIAN()", "Guardian"},
+			resolution{"OptimismPortalProxy", "SYSTEM_CONFIG()", "SystemConfigProxy"},
+			resolution{"OptimismPortalProxy", "L2_ORACLE()", "L2OutputOracleProxy"},
+			resolution{"L2OutputOracleProxy", "admin()", "ProxyAdmin"},
+			resolution{"L2OutputOracleProxy", "CHALLENGER()", "Challenger"},
+		)
 	}
 
 	for _, r := range contractCallResolutions {
