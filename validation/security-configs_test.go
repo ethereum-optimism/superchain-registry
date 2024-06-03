@@ -64,11 +64,11 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 
 	if isFPAC {
 		contractCallResolutions = append(contractCallResolutions,
-			resolution{"DisputeGameFactoryProxy", "admin", "ProxyAdmin"},
-			resolution{"AnchorStateRegistryProxy", "owner", "ProxyAdminOwner"},
-			resolution{"DelayedWETHProxy", "admin", "ProxyAdmin"},
-			resolution{"DelayedWETHProxy", "admin", "ProxyAdmin"},
-			resolution{"DelayedWETHProxy", "owner", "ProxyAdminOwner"},
+			resolution{"DisputeGameFactoryProxy", "admin()", "ProxyAdmin"},
+			resolution{"AnchorStateRegistryProxy", "admin()", "ProxyAdminOwner"},
+			resolution{"DelayedWETHProxy", "admin()", "ProxyAdmin"},
+			resolution{"DelayedWETHProxy", "admin()", "ProxyAdmin"},
+			resolution{"DelayedWETHProxy", "owner()", "ProxyAdminOwner"},
 			resolution{"OptimismPortalProxy", "guardian()", "Guardian"},
 			resolution{"OptimismPortalProxy", "systemConfig()", "SystemConfigProxy"},
 		)
@@ -90,7 +90,7 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 		require.NoError(t, err)
 
 		got, err := getAddressWithRetries(r.method, common.Address(contractAddress), client)
-		require.NoError(t, err)
+		require.NoErrorf(t, err, "problem calling %s.%s", contractAddress, r.method)
 
 		assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", r.name, r.method, want, r.shouldResolveToAddressOf)
 	}
@@ -115,7 +115,7 @@ func TestSecurityConfigs(t *testing.T) {
 // getAddressWithRetries is a wrapper for getAddress
 // which retries up to 10 times with exponential backoff.
 func getAddressWithRetries(method string, addr common.Address, client *ethclient.Client) (Address, error) {
-	const maxAttempts = 10
+	const maxAttempts = 1
 	return retry.Do(context.Background(), maxAttempts, retry.Exponential(), func() (Address, error) {
 		return getAddress(method, addr, client)
 	})
