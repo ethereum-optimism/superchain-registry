@@ -236,6 +236,8 @@ type AddressList struct {
 	SystemConfigOwner                 Address `json:"SystemConfigOwner"`
 	ProxyAdmin                        Address `json:"ProxyAdmin"`
 	ProxyAdminOwner                   Address `json:"ProxyAdminOwner"`
+	Guardian                          Address `json:"Guardian"`
+	Challenger                        Address `json:"Challenger"`
 	// Fault Proof contracts:
 	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty"`
 	DelayedWETHProxy         Address `json:"DelayedWETHProxy,omitempty"`
@@ -246,11 +248,11 @@ type AddressList struct {
 	PreimageOracle           Address `json:"PreimageOracle,omitempty"`
 }
 
-// AddressFor returns a nonzero address for the supplied contract name, if it has been specified
+// AddressFor returns a nonzero address for the supplied name, if it has been specified
 // (and an error otherwise). Useful for slicing into the struct using a string.
-func (a AddressList) AddressFor(contractName string) (Address, error) {
+func (a AddressList) AddressFor(name string) (Address, error) {
 	var address Address
-	switch contractName {
+	switch name {
 	case "AddressManager":
 		address = a.AddressManager
 	case "ProxyAdmin":
@@ -287,11 +289,15 @@ func (a AddressList) AddressFor(contractName string) (Address, error) {
 		address = a.SystemConfigOwner
 	case "ProxyAdminOwner":
 		address = a.ProxyAdminOwner
+	case "Guardian":
+		address = a.Guardian
+	case "Challenger":
+		address = a.Challenger
 	default:
-		return address, fmt.Errorf("no such contract name %s", contractName)
+		return address, fmt.Errorf("no such name %s", name)
 	}
 	if address == (Address{}) {
-		return address, fmt.Errorf("no address or zero address specified for  %s", contractName)
+		return address, fmt.Errorf("no address or zero address specified for  %s", name)
 	}
 	return address, nil
 }
