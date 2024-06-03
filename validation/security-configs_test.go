@@ -65,7 +65,7 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 	if isFPAC {
 		contractCallResolutions = append(contractCallResolutions,
 			resolution{"DisputeGameFactoryProxy", "admin()", "ProxyAdmin"},
-			resolution{"AnchorStateRegistryProxy", "admin()", "ProxyAdminOwner"},
+			resolution{"AnchorStateRegistryProxy", "admin()", "ProxyAdmin"},
 			resolution{"DelayedWETHProxy", "admin()", "ProxyAdmin"},
 			resolution{"DelayedWETHProxy", "admin()", "ProxyAdmin"},
 			resolution{"DelayedWETHProxy", "owner()", "ProxyAdminOwner"},
@@ -92,7 +92,7 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 		got, err := getAddressWithRetries(r.method, common.Address(contractAddress), client)
 		require.NoErrorf(t, err, "problem calling %s.%s", contractAddress, r.method)
 
-		assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", r.name, r.method, want, r.shouldResolveToAddressOf)
+		assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", r.name, r.method, got, want, r.shouldResolveToAddressOf)
 	}
 
 }
