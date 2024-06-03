@@ -19,6 +19,9 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 	shouldBeOwnedBy := map[string]string{
 		"AddressManager":    "ProxyAdmin",
 		"SystemConfigProxy": "SystemConfigOwner",
+		// "DisputeGameFactoryProxy": "ProxyAdminOwner",  // TODO reinstate this but only run the check if the chain is on FPAC or greater
+		// "DelayedWETHProxy": "ProxyAdminOwner", // TODO reinstate this but only run the check if the chain is on FPAC or greater
+		"ProxyAdmin": "ProxyAdminOwner",
 	}
 
 	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC

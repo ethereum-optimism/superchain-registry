@@ -235,6 +235,7 @@ type AddressList struct {
 	SystemConfigProxy                 Address `json:"SystemConfigProxy"`
 	SystemConfigOwner                 Address `json:"SystemConfigOwner"`
 	ProxyAdmin                        Address `json:"ProxyAdmin"`
+	ProxyAdminOwner                   Address `json:"ProxyAdminOwner"`
 	// Fault Proof contracts:
 	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty"`
 	DelayedWETHProxy         Address `json:"DelayedWETHProxy,omitempty"`
@@ -284,11 +285,13 @@ func (a AddressList) AddressFor(contractName string) (Address, error) {
 		address = a.PreimageOracle
 	case "SystemConfigOwner":
 		address = a.SystemConfigOwner
+	case "ProxyAdminOwner":
+		address = a.ProxyAdminOwner
 	default:
 		return address, fmt.Errorf("no such contract name %s", contractName)
 	}
 	if address == (Address{}) {
-		return address, errors.New("no address or zero address specified")
+		return address, fmt.Errorf("no address or zero address specified for  %s", contractName)
 	}
 	return address, nil
 }
