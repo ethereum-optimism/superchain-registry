@@ -89,11 +89,23 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 		want, err := Addresses[chainID].AddressFor(r.shouldResolveToAddressOf)
 		require.NoError(t, err)
 
-		got, err := getAddressWithRetries(r.method, common.Address(contractAddress), client)
+		got, err := getAddressWithRetries(r.method, contractAddress, client)
 		require.NoErrorf(t, err, "problem calling %s.%s", contractAddress, r.method)
 
 		assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", r.name, r.method, got, want, r.shouldResolveToAddressOf)
 	}
+
+	// Extra check on mapping value of "L1CrossDomainMessengerProxy"
+	l1cdmp, err := Addresses[chainID].AddressFor("L1CrossDomainMessengerProxy")
+	require.NoError(t, err)
+	actualAddressManagerBytes, err := getMappingValue(l1cdmp, 1, l1cdmp, client)
+	require.NoError(t, err)
+	am, err := Addresses[chainID].AddressFor("AddressManager")
+	require.NoError(t, err)
+	assert.Equal(t,
+		am[:],
+		actualAddressManagerBytes[12:32],
+	)
 
 }
 
@@ -114,17 +126,17 @@ func TestSecurityConfigs(t *testing.T) {
 
 // getAddressWithRetries is a wrapper for getAddress
 // which retries up to 10 times with exponential backoff.
-func getAddressWithRetries(method string, addr common.Address, client *ethclient.Client) (Address, error) {
+func getAddressWithRetries(method string, addr Address, client *ethclient.Client) (Address, error) {
 	const maxAttempts = 1
 	return retry.Do(context.Background(), maxAttempts, retry.Exponential(), func() (Address, error) {
 		return getAddress(method, addr, client)
 	})
 }
 
-func getAddress(method string, contractAddress common.Address, client *ethclient.Client) (Address, error) {
-
+func getAddress(method string, contractAddress Address, client *ethclient.Client) (Address, error) {
+	addr := (common.Address(contractAddress))
 	callMsg := ethereum.CallMsg{
-		To:   &contractAddress,
+		To:   &addr,
 		Data: crypto.Keccak256([]byte(method))[:4],
 	}
 
@@ -135,4 +147,19 @@ func getAddress(method string, contractAddress common.Address, client *ethclient
 	}
 
 	return Address(common.BytesToAddress(result)), nil
+}
+
+func getMappingValue(contractAddress Address, mapSlot uint8, key Address, client *ethclient.Client) ([]byte, error) {
+	preimage := make([]byte, 12, 64)
+	preimage = append(preimage, key[:]...)
+	pad := [31]byte{}
+	preimage = append(preimage, pad[:]...)
+	preimage = append(preimage, mapSlot)
+	storageSlot := crypto.Keccak256Hash(preimage)
+	result, err := client.StorageAt(context.Background(), common.Address(contractAddress), storageSlot, nil)
+	if err != nil {
+		return []byte{}, err
+	}
+	return result, nil
+
 }
