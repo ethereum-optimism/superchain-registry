@@ -19,7 +19,6 @@ import (
 )
 
 func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
-
 	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
 
@@ -106,7 +105,6 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 		am[:],
 		actualAddressManagerBytes[12:32],
 	)
-
 }
 
 func TestSecurityConfigs(t *testing.T) {
@@ -161,5 +159,4 @@ func getMappingValue(contractAddress Address, mapSlot uint8, key Address, client
 		return []byte{}, err
 	}
 	return result, nil
-
 }
