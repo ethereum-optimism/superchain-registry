@@ -94,7 +94,12 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 		assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", r.name, r.method, got, want, r.shouldResolveToAddressOf)
 	}
 
-	// Extra check on mapping value of "L1CrossDomainMessengerProxy"
+	// Perform an extra check on a mapping value of "L1CrossDomainMessengerProxy":
+	// This is because L1CrossDomainMessenger's proxy is a ResolvedDelegateProxy, and
+	// ResolvedDelegateProxy does not expose a getter method to tell us who can update its implementations (i.e. similar to the proxy admin role for a regular proxy).
+	// So to ensure L1CrossDomainMessengerProxy's "proxy admin" is properly set up, we need to peek into L1CrossDomainMessengerProxy(aka ResolvedDelegateProxy)'s storage
+	// slot to get the value of addressManager[address(this)], and ensure it is the expected AddressManager address, and together with the owner check within AddressManager,
+	// we now have assurance that L1CrossDomainMessenger's proxy is properly managed.
 	l1cdmp, err := Addresses[chainID].AddressFor("L1CrossDomainMessengerProxy")
 	require.NoError(t, err)
 	actualAddressManagerBytes, err := getMappingValue(l1cdmp, 1, l1cdmp, client)
