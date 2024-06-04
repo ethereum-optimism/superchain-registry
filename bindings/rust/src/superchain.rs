@@ -3,19 +3,29 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
+/// Map of superchain names to their configurations.
 pub type Superchains = HashMap<String, Superchain>;
+
+/// Map of OPChain IDs to their configurations.
 pub type OPChains = HashMap<u64, ChainConfig>;
+
+/// Map of chain IDs to their address lists.
 pub type Addresses = HashMap<u64, AddressList>;
+
+/// Map of chain IDs to their chain's genesis system configurations.
 pub type GenesisSystemConfigs = HashMap<u64, GenesisSystemConfig>;
+
+/// Map of superchain names to their implementation contract semvers.
 pub type Implementations = HashMap<String, ContractImplementations>;
 
 // TODO: should we use alloy for these?
-pub type Address = String;
-pub type Hash = String;
+pub(crate) type Address = String;
+pub(crate) type Hash = String;
 
+/// A superchain configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Superchain {
-    /// Superchain configuration.
+    /// Superchain configuration file contents.
     pub config: SuperchainConfig,
     /// Chain IDs of chains that are part of this superchain.
     pub chain_ids: Vec<u64>,
@@ -23,45 +33,67 @@ pub struct Superchain {
     pub superchain: String,
 }
 
+/// A superchain configuration file format
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SuperchainConfig {
+    /// Superchain name (e.g. "Mainnet")
     pub name: String,
+    /// Superchain L1 anchor infor
     pub l1: SuperchainL1Info,
-
+    /// Optional addresses for the superchain-wide default protocol versions contract.
     pub protocol_versions_addr: Option<Address>,
+    /// Optional address for the superchain-wide default superchain config contract.
     pub superchain_config_addr: Option<Address>,
-
     /// Hardfork Configuration. These values may be overridden by individual chains.
     #[serde(flatten)]
     pub hardfork_defaults: HardForkConfiguration,
 }
 
+/// Superchain L1 anchor information
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SuperchainL1Info {
+    /// L1 chain ID
     pub chain_id: u64,
+    /// L1 chain public RPC endpoint
     pub public_rpc: String,
+    /// L1 chain explorer RPC endpoint
     pub explorer: String,
 }
 
+/// Level of integration with the superchain.
 #[derive(Debug, Clone, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum SuperchainLevel {
+    /// Frontier chains are chains with customizations beyond the
+    /// standard OP Stack configuration and are considered "advanced".
     Frontier = 1,
+    /// Standard chains don't have any customizations beyond the
+    /// standard OP Stack configuration and are considered "vanilla".
     Standard = 2,
 }
 
+/// A chain configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ChainConfig {
+    /// Chain name (e.g. "Base")
     pub name: String,
+    /// Chain ID
     pub chain_id: u64,
+    /// Chain public RPC endpoint
     pub public_rpc: String,
+    /// Chain sequencer RPC endpoint
     pub sequencer_rpc: String,
+    /// Chain explorer HTTP endpoint
     pub explorer: String,
+    /// Level of integration with the superchain.
     pub superchain_level: SuperchainLevel,
+    /// Time of opt-in to the Superchain.
     /// If superchain_time is set, hardforks times after superchain_time
     /// will be inherited from the superchain-wide config.
     pub superchain_time: Option<u64>,
+    /// Chain-specific batch inbox address
     pub batch_inbox_addr: Address,
+    /// Chain-specific genesis information
     pub genesis: ChainGenesis,
     /// Superchain is a simple string to identify the superchain.
     /// This is implied by directory structure, and not encoded in the config file itself.
@@ -72,8 +104,9 @@ pub struct ChainConfig {
     #[serde(skip)]
     pub chain: String,
     #[serde(flatten)]
+    /// Hardfork Configuration. These values may override the superchain-wide defaults.
     pub hardfork_configuration: HardForkConfiguration,
-    /// Optional feature
+    /// Optional Plasma DA feature
     pub plasma: Option<PlasmaConfig>,
 }
 
@@ -102,51 +135,77 @@ impl ChainConfig {
     }
 }
 
+/// Block identifier.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BlockID {
+    /// Block hash
     pub hash: Hash,
+    /// Block number
     pub number: u64,
 }
 
+/// Chain genesis information.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ChainGenesis {
+    /// L1 genesis block
     pub l1: BlockID,
+    /// L2 genesis block
     pub l2: BlockID,
+    /// Timestamp of the L2 genesis block
     pub l2_time: u64,
+    /// Extra data for the genesis block
     pub extra_data: Option<Vec<u8>>,
+    /// Optional System configuration
     #[serde(flatten)]
     pub system_config: Option<SystemConfig>,
 }
 
+/// System configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SystemConfig {
+    /// Batcher address
     pub batcher_addr: String,
+    /// Fee overhead value
     pub overhead: String,
+    /// Fee scalar value
     pub scalar: String,
+    /// Gas limit value
     pub gas_limit: u64,
+    /// Base fee scalar value
     pub base_fee_scalar: u64,
+    /// Blob base fee scalar value
     pub blob_base_fee_scalar: u64,
 }
 
+/// Plasma configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PlasmaConfig {
+    /// Plasma DA challenge address
     pub da_challenge_address: Option<Address>,
+    /// Plasma DA challenge window time (in seconds)
     pub da_challenge_window: Option<u64>,
+    /// Plasma DA resolution window time (in seconds)
     pub da_resolve_window: Option<u64>,
 }
 
+/// Hardfork configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HardForkConfiguration {
+    /// Canyon hardfork activation time
     pub canyon_time: Option<u64>,
+    /// Delta hardfork activation time
     pub delta_time: Option<u64>,
+    /// Ecotone hardfork activation time
     pub ecotone_time: Option<u64>,
+    /// Fjord hardfork activation time
     pub fjord_time: Option<u64>,
 }
 
 /// The set of network-specific contracts for a given chain.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "PascalCase")]
+#[allow(missing_docs)]
 pub struct AddressList {
     pub address_manager: Address,
     pub l1_cross_domain_messenger_proxy: Address,
@@ -172,12 +231,17 @@ pub struct AddressList {
     pub preimage_oracle: Option<Address>,
 }
 
+/// Genesis system configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GenesisSystemConfig {
+    /// Batcher address
     pub batcher_addr: Address,
+    /// Fee overhead value
     pub overhead: Hash,
+    /// Fee scalar value
     pub scalar: Hash,
+    /// Gas limit value
     pub gas_limit: u64,
 }
 
@@ -186,6 +250,7 @@ pub type AddressSet = HashMap<String, Address>;
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 #[serde(default)]
+#[allow(missing_docs)]
 pub struct ContractImplementations {
     pub l1_cross_domain_messenger: AddressSet,
     pub l1_erc721_bridge: AddressSet,
