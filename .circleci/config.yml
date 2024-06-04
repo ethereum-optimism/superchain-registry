@@ -115,9 +115,6 @@ workflows:
       - golang-test:
           context:
             - slack
-      - check-security-configs:
-          context:
-            - slack
     triggers:
       - schedule:
           cron: "0 * * * *"
