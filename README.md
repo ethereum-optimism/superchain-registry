@@ -71,9 +71,7 @@ The format is a gzipped JSON `genesis.json` file, with either:
   Nodes can load the genesis block header, and state-sync to complete the node initialization.
 
 ### 4. Run tests locally
-There are currently two sets of validation checks:
 
-#### Go validation checks
 Run the following command from the `validation` folder to run the Go validation checks, for only the chain you added (replace the chain name or ID accordingly):
 ```
 go test -run=/OP-Sepolia
@@ -90,14 +88,6 @@ Omit the `-run=` flag to run checks for all chains.
 
 > [!NOTE]
 > Your chain will be checked against the standard configuration requirements. These  are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
-
-
-#### Solidity validation checks
-Run
-```shell
-sh ./scripts/check-security-configs.sh
-```
-from the repository root to run checks for all chains.
 
 ### 5. Open Your Pull Request
 When opening a PR:
