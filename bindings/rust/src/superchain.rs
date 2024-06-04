@@ -1,14 +1,17 @@
-use serde::{Deserialize, Serialize};
-use serde_repr::{Deserialize_repr, Serialize_repr};
 use std::collections::HashMap;
 
-use crate::util::{Address, Hash};
+use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 pub type Superchains = HashMap<String, Superchain>;
 pub type OPChains = HashMap<u64, ChainConfig>;
 pub type Addresses = HashMap<u64, AddressList>;
 pub type GenesisSystemConfigs = HashMap<u64, GenesisSystemConfig>;
 pub type Implementations = HashMap<String, ContractImplementations>;
+
+// TODO: should we use alloy for these?
+pub type Address = String;
+pub type Hash = String;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Superchain {

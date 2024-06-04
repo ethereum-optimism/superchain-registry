@@ -18,9 +18,6 @@ use superchain::{
 /// that contains the superchain configurations for static access.
 mod embed;
 
-/// Module for utility functions and types.
-mod util;
-
 lazy_static! {
     /// Private initializer that runs once to load the superchain configurations.
     static ref _INIT: InitTuple = load_embedded_configs();
