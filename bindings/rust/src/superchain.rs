@@ -165,7 +165,7 @@ pub struct ChainGenesis {
 #[serde(rename_all = "camelCase")]
 pub struct SystemConfig {
     /// Batcher address
-    pub batcher_addr: String,
+    pub batcher_addr: Address,
     /// Fee overhead value
     pub overhead: String,
     /// Fee scalar value
@@ -203,7 +203,7 @@ pub struct HardForkConfiguration {
 }
 
 /// The set of network-specific contracts for a given chain.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 #[allow(missing_docs)]
 pub struct AddressList {

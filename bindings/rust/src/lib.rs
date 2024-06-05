@@ -42,7 +42,10 @@ lazy_static::lazy_static! {
 mod tests {
     use alloy_primitives::{address, b256};
 
-    use crate::{superchain::SuperchainLevel, OPCHAINS, SUPERCHAINS};
+    use crate::{
+        superchain::{AddressList, SuperchainLevel},
+        ADDRESSES, OPCHAINS, SUPERCHAINS,
+    };
 
     #[test]
     fn test_read_superchains() {
@@ -54,14 +57,12 @@ mod tests {
 
     #[test]
     fn test_read_chain_configs() {
-        let superchains = SUPERCHAINS.clone();
-        let mainnet = superchains.get("mainnet").unwrap();
+        let mainnet = SUPERCHAINS.get("mainnet").unwrap();
         assert_eq!(mainnet.config.name, "Mainnet");
         assert_eq!(mainnet.chain_ids.len(), 8);
 
         let base_chain_id = 8453;
-        let opchains = OPCHAINS.clone();
-        let base = opchains.get(&base_chain_id).unwrap();
+        let base = OPCHAINS.get(&base_chain_id).unwrap();
         assert_eq!(base.chain_id, base_chain_id);
         assert_eq!(base.name, "Base");
         assert_eq!(base.superchain, "mainnet");
@@ -95,5 +96,33 @@ mod tests {
         assert_eq!(base.hardfork_configuration.delta_time, None);
         assert_eq!(base.hardfork_configuration.ecotone_time, None);
         assert_eq!(base.hardfork_configuration.fjord_time, None);
+    }
+
+    #[test]
+    fn test_read_chain_addresses() {
+        let addrs = ADDRESSES.get(&8453).unwrap();
+
+        let expected = AddressList {
+            address_manager: address!("8efb6b5c4767b09dc9aa6af4eaa89f749522bae2"),
+            l1_cross_domain_messenger_proxy: address!("866e82a600a1414e583f7f13623f1ac5d58b0afa"),
+            l1_erc721_bridge_proxy: address!("608d94945a64503e642e6370ec598e519a2c1e53"),
+            l1_standard_bridge_proxy: address!("3154cf16ccdb4c6d922629664174b904d80f2c35"),
+            l2_output_oracle_proxy: Some(address!("56315b90c40730925ec5485cf004d835058518a0")),
+            optimism_mintable_erc20_factory_proxy: address!(
+                "05cc379ebd9b30bba19c6fa282ab29218ec61d84"
+            ),
+            optimism_portal_proxy: address!("49048044d57e1c92a77f79988d21fa8faf74e97e"),
+            system_config_proxy: address!("73a79fab69143498ed3712e519a88a918e1f4072"),
+            proxy_admin: address!("0475cbcaebd9ce8afa5025828d5b98dfb67e059e"),
+            anchor_state_registry_proxy: None,
+            delayed_weth_proxy: None,
+            dispute_game_factory_proxy: None,
+            fault_dispute_game: None,
+            mips: None,
+            permissioned_dispute_game: None,
+            preimage_oracle: None,
+        };
+
+        assert_eq!(*addrs, expected);
     }
 }
