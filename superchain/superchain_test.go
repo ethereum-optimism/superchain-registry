@@ -701,6 +701,11 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 	nilOverride3 := []byte(`superchain_time: 2`)
 	nilOverride4 := []byte(`superchain_time: 0`)
 	nilOverride5 := []byte(`superchain_time: 10`)
+	nilOverride6 := []byte(`
+superchain_time: 1
+genesis:
+  l2_time: 4
+`)
 
 	type testCase struct {
 		name               string
@@ -716,9 +721,10 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 		{"nil default + override = override", nilDefaultSuperchainConfig, override, overridenCanyonTime},
 		{"nil default + nil override = nil", nilDefaultSuperchainConfig, nilOverride, nil},
 		{"nil default + no override = nil", nilDefaultSuperchainConfig, nilOverride2, nil},
-		{"default + nil override (default after superchain_time) = nil", defaultSuperchainConfig, nilOverride3, &defaultCanyonTime},
-		{"default + nil override (default after zero superchain_time) = nil", defaultSuperchainConfig, nilOverride4, &defaultCanyonTime},
+		{"default + nil override (default after superchain_time) = default", defaultSuperchainConfig, nilOverride3, &defaultCanyonTime},
+		{"default + nil override (default after zero superchain_time) = default", defaultSuperchainConfig, nilOverride4, &defaultCanyonTime},
 		{"default + nil override (default before superchain_time) = nil", defaultSuperchainConfig, nilOverride5, nil},
+		{"default + nil override (default after zero superchain_time but before genesis) = 0", defaultSuperchainConfig, nilOverride6, uint64Ptr(0)},
 	}
 
 	executeTestCase := func(t *testing.T, tt testCase) {
@@ -727,7 +733,7 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 		err := yaml.Unmarshal([]byte(tt.rawYAML), &c)
 		require.NoError(t, err)
 
-		c.setNilHardforkTimestampsToDefault(&tt.scConfig)
+		c.setNilHardforkTimestampsToDefaultOrZero(&tt.scConfig)
 
 		require.Equal(t, tt.expectedCanyonTime, c.CanyonTime)
 	}
@@ -755,7 +761,7 @@ fjord_time: 3
 	err := yaml.Unmarshal([]byte(rawYAML), &c)
 	require.NoError(t, err)
 
-	c.setNilHardforkTimestampsToDefault(&defaultSuperchainConfig)
+	c.setNilHardforkTimestampsToDefaultOrZero(&defaultSuperchainConfig)
 
 	var nil64 *uint64
 
