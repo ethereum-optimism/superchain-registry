@@ -19,8 +19,8 @@ use superchain_registry::SUPERCHAINS;
 fn main() {
     let superchains = SUPERCHAINS.clone();
 
-    for superchain in superchains.iter() {
-        println!("Loaded Superchain: {}", superchain.name);
+    for (name, superchain) in superchains.iter() {
+        println!("Loaded Superchain: {} with {} chain IDs", name, superchain.chain_ids.len());
     }
 }
 ```
