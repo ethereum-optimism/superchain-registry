@@ -1,8 +1,10 @@
 use alloc::{string::String, vec::Vec};
-use alloy_primitives::{Address, B256};
+use alloy_primitives::{Address, Bytes, B256};
 use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
+
+pub use alloy_genesis::Genesis;
 
 /// Map of superchain names to their configurations.
 pub type Superchains = HashMap<String, Superchain>;
@@ -152,7 +154,7 @@ pub struct ChainGenesis {
     /// Timestamp of the L2 genesis block
     pub l2_time: u64,
     /// Extra data for the genesis block
-    pub extra_data: Option<Vec<u8>>,
+    pub extra_data: Option<Bytes>,
     /// Optional System configuration
     #[serde(flatten)]
     pub system_config: Option<SystemConfig>,
