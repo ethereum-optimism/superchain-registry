@@ -1,5 +1,6 @@
-use std::collections::HashMap;
-
+use alloc::{string::String, vec::Vec};
+use alloy_primitives::{Address, B256};
+use hashbrown::HashMap;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
@@ -18,12 +19,8 @@ pub type GenesisSystemConfigs = HashMap<u64, GenesisSystemConfig>;
 /// Map of superchain names to their implementation contract semvers.
 pub type Implementations = HashMap<String, ContractImplementations>;
 
-// TODO: should we use alloy for these?
-pub(crate) type Address = String;
-pub(crate) type Hash = String;
-
 /// A superchain configuration.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct Superchain {
     /// Superchain configuration file contents.
     pub config: SuperchainConfig,
@@ -34,11 +31,11 @@ pub struct Superchain {
 }
 
 /// A superchain configuration file format
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct SuperchainConfig {
     /// Superchain name (e.g. "Mainnet")
     pub name: String,
-    /// Superchain L1 anchor infor
+    /// Superchain L1 anchor information
     pub l1: SuperchainL1Info,
     /// Optional addresses for the superchain-wide default protocol versions contract.
     pub protocol_versions_addr: Option<Address>,
@@ -50,7 +47,7 @@ pub struct SuperchainConfig {
 }
 
 /// Superchain L1 anchor information
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct SuperchainL1Info {
     /// L1 chain ID
     pub chain_id: u64,
@@ -61,7 +58,7 @@ pub struct SuperchainL1Info {
 }
 
 /// Level of integration with the superchain.
-#[derive(Debug, Clone, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Clone, Default, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum SuperchainLevel {
     /// Frontier chains are chains with customizations beyond the
@@ -69,11 +66,12 @@ pub enum SuperchainLevel {
     Frontier = 1,
     /// Standard chains don't have any customizations beyond the
     /// standard OP Stack configuration and are considered "vanilla".
+    #[default]
     Standard = 2,
 }
 
 /// A chain configuration.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ChainConfig {
     /// Chain name (e.g. "Base")
     pub name: String,
@@ -136,16 +134,16 @@ impl ChainConfig {
 }
 
 /// Block identifier.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct BlockID {
     /// Block hash
-    pub hash: Hash,
+    pub hash: B256,
     /// Block number
     pub number: u64,
 }
 
 /// Chain genesis information.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ChainGenesis {
     /// L1 genesis block
     pub l1: BlockID,
@@ -161,7 +159,7 @@ pub struct ChainGenesis {
 }
 
 /// System configuration.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SystemConfig {
     /// Batcher address
@@ -179,7 +177,7 @@ pub struct SystemConfig {
 }
 
 /// Plasma configuration.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct PlasmaConfig {
     /// Plasma DA challenge address
     pub da_challenge_address: Option<Address>,
@@ -190,7 +188,7 @@ pub struct PlasmaConfig {
 }
 
 /// Hardfork configuration.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct HardForkConfiguration {
     /// Canyon hardfork activation time
     pub canyon_time: Option<u64>,
@@ -232,15 +230,15 @@ pub struct AddressList {
 }
 
 /// Genesis system configuration.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GenesisSystemConfig {
     /// Batcher address
     pub batcher_addr: Address,
     /// Fee overhead value
-    pub overhead: Hash,
+    pub overhead: B256,
     /// Fee scalar value
-    pub scalar: Hash,
+    pub scalar: B256,
     /// Gas limit value
     pub gas_limit: u64,
 }

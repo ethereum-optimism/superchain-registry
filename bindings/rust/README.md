@@ -8,7 +8,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-superchain_registry = "0.1.0"
+superchain-registry = "0.1.0"
 ```
 
 ## Example

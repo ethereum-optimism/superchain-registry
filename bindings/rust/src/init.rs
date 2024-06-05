@@ -1,4 +1,5 @@
-use std::collections::HashMap;
+use alloc::{format, string::ToString, vec::Vec};
+use hashbrown::HashMap;
 
 use crate::{
     embed,
@@ -31,7 +32,7 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
             .get_file(format!("{}/superchain.yaml", target_name))
             .expect("Failed to find superchain.yaml config file")
             .contents();
-        let mut entry_config: SuperchainConfig = serde_yaml::from_slice(target_data)
+        let entry_config: SuperchainConfig = serde_yaml::from_slice(target_data)
             .expect("Failed to deserialize superchain.yaml config file");
 
         let mut chain_ids = Vec::new();
@@ -74,19 +75,19 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
             chain_ids.push(id);
         }
 
-        match target_name {
-            "mainnet" => {
-                if let Ok(ci_mainnet_rpc) = std::env::var("CIRCLE_CI_MAINNET_RPC") {
-                    entry_config.l1.public_rpc = ci_mainnet_rpc;
-                }
-            }
-            "sepolia" | "sepolia-dev-0" => {
-                if let Ok(ci_sepolia_rpc) = std::env::var("CIRCLE_CI_SEPOLIA_RPC") {
-                    entry_config.l1.public_rpc = ci_sepolia_rpc;
-                }
-            }
-            _ => {}
-        }
+        // match target_name {
+        //     "mainnet" => {
+        //         if let Ok(ci_mainnet_rpc) = std::env::var("CIRCLE_CI_MAINNET_RPC") {
+        //             entry_config.l1.public_rpc = ci_mainnet_rpc;
+        //         }
+        //     }
+        //     "sepolia" | "sepolia-dev-0" => {
+        //         if let Ok(ci_sepolia_rpc) = std::env::var("CIRCLE_CI_SEPOLIA_RPC") {
+        //             entry_config.l1.public_rpc = ci_sepolia_rpc;
+        //         }
+        //     }
+        //     _ => {}
+        // }
 
         let impls = new_contract_implementations(target_name);
         implementations.insert(target_name.to_string(), impls);

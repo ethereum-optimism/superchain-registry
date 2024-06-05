@@ -2,8 +2,11 @@
 #![warn(missing_debug_implementations, missing_docs, rustdoc::all)]
 #![deny(unused_must_use, rust_2018_idioms)]
 #![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
+#![no_std]
 
-/// Module holding the superchain configuration definition types.
+extern crate alloc;
+
+/// Module holding the superchain configuration type definitions.
 pub mod superchain;
 use superchain::{Addresses, GenesisSystemConfigs, Implementations, OPChains, Superchains};
 
