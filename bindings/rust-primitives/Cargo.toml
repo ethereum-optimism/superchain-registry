@@ -1,0 +1,21 @@
+[package]
+name = "superchain-primitives"
+description = "Primitive Types for the Superchain Registry"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["OP Contributors"]
+repository = "https://github.com/ethereum-optimism/superchain-registry"
+homepage = "https://github.com/ethereum-optimism/superchain-registry/bindings/rust-primitives"
+
+[dependencies]
+alloy-primitives = { version = "0.7.1", default-features = false }
+alloy-genesis = { git = "https://github.com/alloy-rs/alloy", rev = "e3f2f07", default-features = false }
+serde = { version = "1.0.203", default-features = false, features = ["derive", "alloc"], optional = true }
+serde_repr = { version = "0.1", optional = true }
+hashbrown = { version = "0.14.3", features = ["serde"] }
+
+[features]
+default = ["std", "serde"]
+std = []
+serde = ["dep:serde", "dep:serde_repr"]

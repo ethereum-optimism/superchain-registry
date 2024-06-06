@@ -1,13 +1,12 @@
+//! Initializers for the Superchain Registry.
+
+use crate::embed;
 use alloc::{format, string::ToString, vec::Vec};
 use hashbrown::HashMap;
-
-use crate::{
-    embed,
-    superchain::{
-        is_config_file, AddressList, Addresses, ChainConfig, ContractImplementations,
-        GenesisSystemConfig, GenesisSystemConfigs, Implementations, OPChains, Superchain,
-        SuperchainConfig, Superchains,
-    },
+use superchain_primitives::{
+    is_config_file, AddressList, Addresses, ChainConfig, ContractImplementations,
+    GenesisSystemConfig, GenesisSystemConfigs, Implementations, OPChains, Superchain,
+    SuperchainConfig, Superchains,
 };
 
 pub(crate) type InitTuple = (
