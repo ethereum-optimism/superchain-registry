@@ -145,7 +145,7 @@ func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
 // is after the chain's l2 time, that hardfork activation time is set to zero (meaning "activates at genesis").
 func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfig) {
 	if c.SuperchainTime == nil {
-		// no changes if SuperchainTime is unset
+		// No changes if SuperchainTime is unset
 		return
 	}
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
@@ -154,23 +154,24 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfi
 	var zero uint64 = 0
 	ptrZero := reflect.ValueOf(&zero)
 
+	// Iterate over hardfork timestamps (i.e. CanyontTime, DeltaTime, ...)
 	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
 		overridePtr := cVal.Field(i)
 		if !overridePtr.IsNil() {
-			// no change if override is set
+			// No change if override is set
 			continue
 		}
 
 		defaultPtr := sVal.Field(i)
 		if defaultPtr.IsNil() {
-			// no change if default is unset
+			// No change if default is unset
 			continue
 		}
 
 		defaultValue := reflect.Indirect(defaultPtr).Uint()
 		if defaultValue < *c.SuperchainTime {
+			// No change if hardfork activated before SuperchainTime
 			continue
-			// no change if hardfork activated before SuperchainTime
 		}
 
 		if defaultValue > c.Genesis.L2Time {
@@ -180,18 +181,7 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfi
 			// Use zero if it is equal to or before genesis
 			overridePtr.Set(ptrZero)
 		}
-
 	}
-
-	// This achieves:
-	//
-	// if c.CanyonTime == nil &&
-	//  s.Config.hardForkDefaults.CanyonTime != nil &&
-	//  *s.Config.hardForkDefaults.CanyonTime >= *c.SuperchainTime {
-	// 	c.CanyonTime = s.Config.hardForkDefaults.CanyonTime
-	// }
-	//
-	// ...etc for each field in HardForkConfiguration
 }
 
 // EnhanceYAML creates a customized yaml string from a RollupConfig. After completion,
