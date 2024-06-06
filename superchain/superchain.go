@@ -145,31 +145,40 @@ func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
 // is after the chain's l2 time, that hardfork activation time is set to zero (meaning "activates at genesis").
 func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfig) {
 	if c.SuperchainTime == nil {
+		// no changes if SuperchainTime is unset
 		return
 	}
 	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
 	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
 
+	var zero uint64 = 0
+	ptrZero := reflect.ValueOf(&zero)
+
 	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
-		overrideValue := cVal.Field(i)
-		defaultValue := sVal.Field(i)
-		if overrideValue.IsNil() &&
-			!defaultValue.IsNil() &&
-			reflect.Indirect(defaultValue).Uint() >= *c.SuperchainTime {
-			// use default only if hardfork activated after SuperchainTime
-			if reflect.Indirect(defaultValue).Uint() > c.Genesis.L2Time {
-				overrideValue.Set(defaultValue)
+		overridePtr := cVal.Field(i)
+		defaultPtr := sVal.Field(i)
+		if defaultPtr.IsNil() || !overridePtr.IsNil() {
+			// no change if override is set or default is unset
+			continue
+		}
+		defaultValue := reflect.Indirect(defaultPtr).Uint()
+		if defaultValue >= *c.SuperchainTime {
+			// if hardfork activated after SuperchainTime...
+			if defaultValue > c.Genesis.L2Time {
+				// ...use default value if is after genesis
+				overridePtr.Set(defaultPtr)
 			} else {
-				var zero uint64 = 0
-				ptrValue := reflect.ValueOf(&zero)
-				overrideValue.Set(ptrValue)
+				// ...use zero if it is equal to or before genesis
+				overridePtr.Set(ptrZero)
 			}
 		}
 	}
 
 	// This achieves:
 	//
-	// if c.CanyonTime == nil {
+	// if c.CanyonTime == nil &&
+	//  s.Config.hardForkDefaults.CanyonTime != nil &&
+	//  *s.Config.hardForkDefaults.CanyonTime >= *c.SuperchainTime {
 	// 	c.CanyonTime = s.Config.hardForkDefaults.CanyonTime
 	// }
 	//
