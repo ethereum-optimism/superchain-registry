@@ -156,22 +156,31 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfi
 
 	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
 		overridePtr := cVal.Field(i)
-		defaultPtr := sVal.Field(i)
-		if defaultPtr.IsNil() || !overridePtr.IsNil() {
-			// no change if override is set or default is unset
+		if !overridePtr.IsNil() {
+			// no change if override is set
 			continue
 		}
-		defaultValue := reflect.Indirect(defaultPtr).Uint()
-		if defaultValue >= *c.SuperchainTime {
-			// if hardfork activated after SuperchainTime...
-			if defaultValue > c.Genesis.L2Time {
-				// ...use default value if is after genesis
-				overridePtr.Set(defaultPtr)
-			} else {
-				// ...use zero if it is equal to or before genesis
-				overridePtr.Set(ptrZero)
-			}
+
+		defaultPtr := sVal.Field(i)
+		if defaultPtr.IsNil() {
+			// no change if default is unset
+			continue
 		}
+
+		defaultValue := reflect.Indirect(defaultPtr).Uint()
+		if defaultValue < *c.SuperchainTime {
+			continue
+			// no change if hardfork activated before SuperchainTime
+		}
+
+		if defaultValue > c.Genesis.L2Time {
+			// Use default value if is after genesis
+			overridePtr.Set(defaultPtr)
+		} else {
+			// Use zero if it is equal to or before genesis
+			overridePtr.Set(ptrZero)
+		}
+
 	}
 
 	// This achieves:
