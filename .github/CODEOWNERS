@@ -3,6 +3,11 @@
 
 # Code and script ownership
 
+# Rust
+*.rs @ethereum-optimism/rust-reviewers
+Cargo.toml @ethereum-optimism/rust-reviewers
+/bindings/rust-* @ethereum-optimism/rust-reviewers
+
 ## Go
 *.go @ethereum-optimism/go-reviewers
 /go.work @ethereum-optimism/go-reviewers
@@ -13,6 +18,3 @@
 
 ## Solidity
 *.sol @ethereum-optimism/security-reviewers
-
-
-
