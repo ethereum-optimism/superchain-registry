@@ -11,6 +11,10 @@ Add this to your `Cargo.toml`:
 superchain-registry = "0.1.0"
 ```
 
+## Feature Flags
+
+- `std`: Uses the standard library to pull in environment variables.
+
 ## Example
 
 ```rust
