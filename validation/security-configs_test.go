@@ -130,7 +130,7 @@ func TestSecurityConfigs(t *testing.T) {
 // getAddressWithRetries is a wrapper for getAddress
 // which retries up to 10 times with exponential backoff.
 func getAddressWithRetries(method string, addr Address, client *ethclient.Client) (Address, error) {
-	const maxAttempts = 1
+	const maxAttempts = 10
 	return retry.Do(context.Background(), maxAttempts, retry.Exponential(), func() (Address, error) {
 		return getAddress(method, addr, client)
 	})
