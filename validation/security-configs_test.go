@@ -64,6 +64,7 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 	if isFPAC {
 		contractCallResolutions = append(contractCallResolutions,
 			resolution{"DisputeGameFactoryProxy", "admin()", "ProxyAdmin"},
+			resolution{"DisputeGameFactoryProxy", "owner()", "ProxyAdminOwner"},
 			resolution{"AnchorStateRegistryProxy", "admin()", "ProxyAdmin"},
 			resolution{"DelayedWETHProxy", "admin()", "ProxyAdmin"},
 			resolution{"OptimismPortalProxy", "guardian()", "Guardian"},
