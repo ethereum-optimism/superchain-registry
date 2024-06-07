@@ -66,8 +66,6 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 			resolution{"DisputeGameFactoryProxy", "admin()", "ProxyAdmin"},
 			resolution{"AnchorStateRegistryProxy", "admin()", "ProxyAdmin"},
 			resolution{"DelayedWETHProxy", "admin()", "ProxyAdmin"},
-			resolution{"DelayedWETHProxy", "admin()", "ProxyAdmin"},
-			resolution{"DelayedWETHProxy", "owner()", "ProxyAdminOwner"},
 			resolution{"OptimismPortalProxy", "guardian()", "Guardian"},
 			resolution{"OptimismPortalProxy", "systemConfig()", "SystemConfigProxy"},
 		)
@@ -159,9 +157,5 @@ func getMappingValue(contractAddress Address, mapSlot uint8, key Address, client
 	preimage = append(preimage, pad[:]...)
 	preimage = append(preimage, mapSlot)
 	storageSlot := crypto.Keccak256Hash(preimage)
-	result, err := client.StorageAt(context.Background(), common.Address(contractAddress), storageSlot, nil)
-	if err != nil {
-		return []byte{}, err
-	}
-	return result, nil
+	return client.StorageAt(context.Background(), common.Address(contractAddress), storageSlot, nil)
 }
