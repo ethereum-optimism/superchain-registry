@@ -105,7 +105,7 @@ jobs:
       - checkout
       - run:
           name: Run codegen
-          command: go run superchain/codegen/main.go
+          command: go run superchain/internal/codegen/main.go
       - run:
           name: Check for changes
           command: git diff --exit-code

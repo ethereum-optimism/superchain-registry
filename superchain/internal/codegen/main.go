@@ -68,7 +68,7 @@ func main() {
 	currentDir := filepath.Dir(currentFilePath)
 
 	// Define the file path in the parent directory
-	parentDir := filepath.Join(currentDir, "..")
+	parentDir := filepath.Join(currentDir, "../..")
 
 	allChainsBytes, err := json.MarshalIndent(allChains, "", "  ")
 	if err != nil {
@@ -116,7 +116,7 @@ func addresses() {
 	currentDir := filepath.Dir(currentFilePath)
 
 	// Define the file path in the parent directory
-	path := filepath.Join(currentDir, "../extra/addresses/addresses.json")
+	path := filepath.Join(currentDir, "../../extra/addresses/addresses.json")
 
 	err = os.WriteFile(path, addressListBytes, 0644)
 	if err != nil {
