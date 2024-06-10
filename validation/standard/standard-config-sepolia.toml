@@ -25,7 +25,7 @@ base_fee_scalar = [0, 10_000_000]
 [system_config]
 gas_limit = [1000, 60_000_000]
 
-# Standared Chain Config Roles
+# Standard Chain Config Roles
 [[l1.universal]]
 name = "AddressManager"
 method = "owner()"
