@@ -17,7 +17,7 @@
     "PermissionedDisputeGame": "0xE9daD167EF4DE8812C1abD013Ac9570C616599A0",
     "PreimageOracle": "0xD326E10B8186e90F4E2adc5c13a2d0C137ee8b34",
     "MIPS": "0x0f8EdFbDdD3c0256A80AD8C0F2560B1807873C9c",
-    "Guardian": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
+    "Guardian": "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2",
     "Challenger": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A"
   },
   "291": {
@@ -92,7 +92,7 @@
     "ProxyAdmin": "0x37Ff0ae34dadA1A95A4251d10ef7Caa868c7AC99",
     "ProxyAdminOwner": "0x4a4962275df8c60a80d3a25faec5aa7de116a746",
     "SystemConfigOwner": "0x4a4962275df8c60a80d3a25faec5aa7de116a746",
-    "Guardian": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
+    "Guardian": "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2",
     "Challenger": "0x4a4962275df8c60a80d3a25faec5aa7de116a746"
   },
   "8453": {
@@ -122,7 +122,7 @@
     "L1StandardBridgeProxy": "0x735aDBbE72226BD52e818E7181953f42E3b0FF21",
     "ProxyAdminOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
     "SystemConfigOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
-    "Guardian": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
+    "Guardian": "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2",
     "Challenger": "0x309Fe2536d01867018D120b40e4676723C53A14C"
   },
   "58008": {
@@ -182,7 +182,7 @@
     "SystemConfigProxy": "0xA3cAB0126d5F504B071b81a3e8A2BBBF17930d86",
     "ProxyAdminOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
     "SystemConfigOwner": "0xC72aE5c7cc9a332699305E29F68Be66c73b60542",
-    "Guardian": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
+    "Guardian": "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2",
     "Challenger": "0xcA4571b1ecBeC86Ea2E660d242c1c29FcB55Dc72"
   },
   "11155420": {
