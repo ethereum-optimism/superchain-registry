@@ -19,7 +19,7 @@ type ChainEntry struct {
 	ChainId         uint64 `json:"chainId" toml:"chainId"`
 	PublicRPC       string `json:"public_rpc" toml:"public_rpc"`
 	Explorer        string `json:"explorer" toml:"explorer"`
-	SuperchainLevel uint   `json:"superchain_level" toml:superchain_level"`
+	SuperchainLevel uint   `json:"superchain_level" toml:"superchain_level"`
 }
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 			}
 			chainEntry := ChainEntry{
 				Name:            chain.Name,
-				Identifier:      chain.Superchain, // + chain.shortName, // TODO
+				Identifier:      chain.Identifier(),
 				ChainId:         chain.ChainID,
 				PublicRPC:       chain.PublicRPC,
 				Explorer:        chain.Explorer,
