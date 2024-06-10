@@ -47,7 +47,7 @@ func main() {
 			case Frontier:
 				frontierChains = append(frontierChains, chainEntry)
 			default:
-				panic(fmt.Sprintf("unkown SuperchanLevel %d", chain.SuperchainLevel))
+				panic(fmt.Sprintf("unknown SuperchanLevel %d", chain.SuperchainLevel))
 
 			}
 		}
@@ -74,7 +74,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = os.WriteFile(filepath.Join(parentDir, "chainList.json"), allChainsBytes, 0644)
+	err = os.WriteFile(filepath.Join(parentDir, "chainList.json"), allChainsBytes, 0o644)
 	if err != nil {
 		panic(err)
 	}
@@ -86,7 +86,7 @@ func main() {
 		fmt.Println("Error encoding TOML:", err)
 		return
 	}
-	err = os.WriteFile(filepath.Join(parentDir, "chainList.toml"), buf.Bytes(), 0644)
+	err = os.WriteFile(filepath.Join(parentDir, "chainList.toml"), buf.Bytes(), 0o644)
 	if err != nil {
 		panic(err)
 	}
@@ -118,7 +118,7 @@ func addresses() {
 	// Define the file path in the parent directory
 	path := filepath.Join(currentDir, "../../extra/addresses/addresses.json")
 
-	err = os.WriteFile(path, addressListBytes, 0644)
+	err = os.WriteFile(path, addressListBytes, 0o644)
 	if err != nil {
 		panic(err)
 	}
