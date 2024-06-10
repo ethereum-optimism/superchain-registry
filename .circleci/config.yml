@@ -104,7 +104,7 @@ jobs:
       - checkout
       - run:
           name: Run codegen
-          command: pnpm codegen
+          command: go run superchain/codegen/main.go
       - run:
           name: Check for changes
           command: git diff --exit-code
