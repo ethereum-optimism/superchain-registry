@@ -74,7 +74,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = os.WriteFile(filepath.Join(parentDir, "chainList.json"), allChainsBytes, 0o644)
+	err = os.WriteFile(filepath.Join(parentDir, "/configs/chainList.json"), allChainsBytes, 0o644)
 	if err != nil {
 		panic(err)
 	}
@@ -86,7 +86,7 @@ func main() {
 		fmt.Println("Error encoding TOML:", err)
 		return
 	}
-	err = os.WriteFile(filepath.Join(parentDir, "chainList.toml"), buf.Bytes(), 0o644)
+	err = os.WriteFile(filepath.Join(parentDir, "/configs/chainList.toml"), buf.Bytes(), 0o644)
 	if err != nil {
 		panic(err)
 	}

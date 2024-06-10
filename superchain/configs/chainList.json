@@ -1,69 +1,5 @@
 [
   {
-    "name": "Base",
-    "identifier": "mainnet/base",
-    "chainId": 8453,
-    "public_rpc": "https://mainnet.base.org",
-    "explorer": "https://explorer.base.org",
-    "superchain_level": 2
-  },
-  {
-    "name": "Metal",
-    "identifier": "mainnet/metal",
-    "chainId": 1750,
-    "public_rpc": "https://rpc.metall2.com",
-    "explorer": "https://explorer.metall2.com",
-    "superchain_level": 2
-  },
-  {
-    "name": "Mode",
-    "identifier": "mainnet/mode",
-    "chainId": 34443,
-    "public_rpc": "https://mainnet.mode.network",
-    "explorer": "https://explorer.mode.network",
-    "superchain_level": 2
-  },
-  {
-    "name": "OP-Mainnet",
-    "identifier": "mainnet/op",
-    "chainId": 10,
-    "public_rpc": "https://mainnet.optimism.io",
-    "explorer": "https://explorer.optimism.io",
-    "superchain_level": 2
-  },
-  {
-    "name": "Zora",
-    "identifier": "mainnet/zora",
-    "chainId": 7777777,
-    "public_rpc": "https://rpc.zora.energy",
-    "explorer": "https://explorer.zora.energy",
-    "superchain_level": 2
-  },
-  {
-    "name": "Lyra",
-    "identifier": "mainnet/lyra",
-    "chainId": 957,
-    "public_rpc": "https://rpc.lyra.finance",
-    "explorer": "https://explorer.lyra.finance",
-    "superchain_level": 1
-  },
-  {
-    "name": "Orderly Network",
-    "identifier": "mainnet/orderly",
-    "chainId": 291,
-    "public_rpc": "https://rpc.orderly.network",
-    "explorer": "https://explorer.orderly.network",
-    "superchain_level": 1
-  },
-  {
-    "name": "PGN",
-    "identifier": "mainnet/pgn",
-    "chainId": 424,
-    "public_rpc": "https://rpc.publicgoods.network",
-    "explorer": "https://explorer.publicgoods.network",
-    "superchain_level": 1
-  },
-  {
     "name": "Base Sepolia",
     "identifier": "sepolia/base",
     "chainId": 84532,
@@ -126,5 +62,69 @@
     "public_rpc": "",
     "explorer": "",
     "superchain_level": 2
+  },
+  {
+    "name": "Base",
+    "identifier": "mainnet/base",
+    "chainId": 8453,
+    "public_rpc": "https://mainnet.base.org",
+    "explorer": "https://explorer.base.org",
+    "superchain_level": 2
+  },
+  {
+    "name": "Metal",
+    "identifier": "mainnet/metal",
+    "chainId": 1750,
+    "public_rpc": "https://rpc.metall2.com",
+    "explorer": "https://explorer.metall2.com",
+    "superchain_level": 2
+  },
+  {
+    "name": "Mode",
+    "identifier": "mainnet/mode",
+    "chainId": 34443,
+    "public_rpc": "https://mainnet.mode.network",
+    "explorer": "https://explorer.mode.network",
+    "superchain_level": 2
+  },
+  {
+    "name": "OP-Mainnet",
+    "identifier": "mainnet/op",
+    "chainId": 10,
+    "public_rpc": "https://mainnet.optimism.io",
+    "explorer": "https://explorer.optimism.io",
+    "superchain_level": 2
+  },
+  {
+    "name": "Zora",
+    "identifier": "mainnet/zora",
+    "chainId": 7777777,
+    "public_rpc": "https://rpc.zora.energy",
+    "explorer": "https://explorer.zora.energy",
+    "superchain_level": 2
+  },
+  {
+    "name": "Lyra",
+    "identifier": "mainnet/lyra",
+    "chainId": 957,
+    "public_rpc": "https://rpc.lyra.finance",
+    "explorer": "https://explorer.lyra.finance",
+    "superchain_level": 1
+  },
+  {
+    "name": "Orderly Network",
+    "identifier": "mainnet/orderly",
+    "chainId": 291,
+    "public_rpc": "https://rpc.orderly.network",
+    "explorer": "https://explorer.orderly.network",
+    "superchain_level": 1
+  },
+  {
+    "name": "PGN",
+    "identifier": "mainnet/pgn",
+    "chainId": 424,
+    "public_rpc": "https://rpc.publicgoods.network",
+    "explorer": "https://explorer.publicgoods.network",
+    "superchain_level": 1
   }
 ]
