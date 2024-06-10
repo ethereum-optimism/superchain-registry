@@ -30,129 +30,129 @@ gas_limit = [8_000_000, 200_000_000]
 [[l1.universal]]
 name = "AddressManager"
 method = "owner()"
-resolvesToAddressOf = "ProxyAdmin"
+resolves_to_address_of = "ProxyAdmin"
 
 [[l1.universal]]
 name = "SystemConfigProxy"
 method = "owner()"
-resolvesToAddressOf = "SystemConfigOwner"
+resolves_to_address_of = "SystemConfigOwner"
 
 [[l1.universal]]
 name = "ProxyAdmin"
 method = "owner()"
-resolvesToAddressOf = "ProxyAdminOwner"
+resolves_to_address_of = "ProxyAdminOwner"
 
 [[l1.universal]]
 name = "L1CrossDomainMessengerProxy"
 method = "PORTAL()"
-resolvesToAddressOf = "OptimismPortalProxy"
+resolves_to_address_of = "OptimismPortalProxy"
 
 [[l1.universal]]
 name = "L1ERC721BridgeProxy"
 method = "admin()"
-resolvesToAddressOf = "ProxyAdmin"
+resolves_to_address_of = "ProxyAdmin"
 
 [[l1.universal]]
 name = "L1ERC721BridgeProxy"
 method = "messenger()"
-resolvesToAddressOf = "L1CrossDomainMessengerProxy"
+resolves_to_address_of = "L1CrossDomainMessengerProxy"
 
 [[l1.universal]]
 name = "L1StandardBridgeProxy"
 method = "getOwner()"
-resolvesToAddressOf = "ProxyAdmin"
+resolves_to_address_of = "ProxyAdmin"
 
 [[l1.universal]]
 name = "L1StandardBridgeProxy"
 method = "messenger()"
-resolvesToAddressOf = "L1CrossDomainMessengerProxy"
+resolves_to_address_of = "L1CrossDomainMessengerProxy"
 
 [[l1.universal]]
 name = "OptimismMintableERC20FactoryProxy"
 method = "admin()"
-resolvesToAddressOf = "ProxyAdmin"
+resolves_to_address_of = "ProxyAdmin"
 
 [[l1.universal]]
 name = "OptimismMintableERC20FactoryProxy"
 method = "BRIDGE()"
-resolvesToAddressOf = "L1StandardBridgeProxy"
+resolves_to_address_of = "L1StandardBridgeProxy"
 
 [[l1.universal]]
 name = "OptimismPortalProxy"
 method = "admin()"
-resolvesToAddressOf = "ProxyAdmin"
+resolves_to_address_of = "ProxyAdmin"
 
 [[l1.universal]]
 name = "ProxyAdmin"
 method = "owner()"
-resolvesToAddressOf = "ProxyAdminOwner"
+resolves_to = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
 
 [[l1.universal]]
 name = "ProxyAdmin"
 method = "addressManager()"
-resolvesToAddressOf = "AddressManager"
+resolves_to_address_of = "AddressManager"
 
 [[l1.universal]]
 name = "SystemConfigProxy"
 method = "admin()"
-resolvesToAddressOf = "ProxyAdmin"
+resolves_to_address_of = "ProxyAdmin"
 
 [[l1.universal]]
 name = "SystemConfigProxy"
 method = "owner()"
-resolvesToAddressOf = "SystemConfigOwner"
+resolves_to_address_of = "SystemConfigOwner"
 
 [[l1.nonFPAC]]
 name = "OptimismPortalProxy"
 method = "GUARDIAN()"
-resolvesToAddressOf = "Guardian"
+resolves_to = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
 
 [[l1.nonFPAC]]
 name = "OptimismPortalProxy"
 method = "SYSTEM_CONFIG()"
-resolvesToAddressOf = "SystemConfigProxy"
+resolves_to_address_of = "SystemConfigProxy"
 
 [[l1.nonFPAC]]
 name = "OptimismPortalProxy"
 method = "L2_ORACLE()"
-resolvesToAddressOf = "L2OutputOracleProxy"
+resolves_to_address_of = "L2OutputOracleProxy"
 
 [[l1.nonFPAC]]
 name = "L2OutputOracleProxy"
 method = "admin()"
-resolvesToAddressOf = "ProxyAdmin"
+resolves_to_address_of = "ProxyAdmin"
 
 [[l1.nonFPAC]]
 name = "L2OutputOracleProxy"
-meethod = "CHALLENGER()"
-resolvesToAddressOf = "Challenger"
+method = "CHALLENGER()"
+resolves_to = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
 
 [[l1.FPAC]]
 name = "DisputeGameFactoryProxy"
 method = "admin()"
-resolvesToAddressOf = "ProxyAdmin"
+resolves_to_address_of = "ProxyAdmin"
 
 [[l1.FPAC]]
 name = "DisputeGameFactoryProxy"
 method = "owner()"
-resolvesToAddressOf = "ProxyAdminOwner"
+resolves_to_address_of = "ProxyAdminOwner"
 
 [[l1.FPAC]]
 name = "AnchorStateRegistryProxy"
 method = "admin()"
-resolvesToAddressOf = "ProxyAdmin"
+resolves_to_address_of = "ProxyAdmin"
 
 [[l1.FPAC]]
 name = "DelayedWETHProxy"
 method = "admin()"
-resolvesToAddressOf = "ProxyAdmin"
+resolves_to_address_of = "ProxyAdmin"
 
 [[l1.FPAC]]
 name = "OptimismPortalProxy"
 method = "guardian()"
-resolvesToAddressOf = "Guardian"
+resolves_to = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
 
 [[l1.FPAC]]
 name = "OptimismPortalProxy"
 method = "systemConfig()"
-resolvesToAddressOf = "SystemConfigProxy"
+resolves_to_address_of = "SystemConfigProxy"

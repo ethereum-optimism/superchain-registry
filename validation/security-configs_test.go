@@ -44,11 +44,16 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 		contractAddress, err := Addresses[chainID].AddressFor(r.Name)
 		require.NoError(t, err)
 
-		want, err := Addresses[chainID].AddressFor(r.ResolvesToAddressOf)
-		require.NoError(t, err)
+		var want Address
+		if r.ResolvesTo != nil {
+			want = *r.ResolvesTo
+		} else {
+			want, err = Addresses[chainID].AddressFor(r.ResolvesToAddressOf)
+			require.NoError(t, err)
+		}
 
 		got, err := getAddressWithRetries(r.Method, contractAddress, client)
-		require.NoErrorf(t, err, "problem calling %s.%s", contractAddress, r.Method)
+		require.NoErrorf(t, err, "problem calling %s.%s %s", contractAddress, r.Method, r)
 
 		assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", r.Name, r.Method, got, want, r.ResolvesToAddressOf)
 	}
@@ -81,6 +86,7 @@ func TestSecurityConfigs(t *testing.T) {
 			if isExcluded[chain.ChainID] {
 				t.Skipf("chain %d: EXCLUDED from Security Config Checks", chainID)
 			}
+			SkipCheckIfFrontierChain(t, *chain)
 			testSecurityConfigOfChain(t, chainID)
 		})
 	}

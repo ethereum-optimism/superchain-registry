@@ -1,6 +1,10 @@
 package standard
 
-import "math/big"
+import (
+	"math/big"
+
+	"github.com/ethereum-optimism/superchain-registry/superchain"
+)
 
 // Config is keyed by superchain target, e.g. "mainnet" or "sepolia" or "sepolia-dev-0"
 var Config map[string]*ConfigType
@@ -29,9 +33,10 @@ func (r L1Resolutions) GetResolutions(isFPAC bool) []Resolution {
 }
 
 type Resolution struct {
-	Name                string `toml:"name"`
-	Method              string `toml:"method"`
-	ResolvesToAddressOf string `toml:"resolvesToAddressOf"`
+	Name                string              `toml:"name"`
+	Method              string              `toml:"method"`
+	ResolvesTo          *superchain.Address `toml:"resolves_to"`
+	ResolvesToAddressOf string              `toml:"resolves_to_address_of"`
 }
 
 type L2OOParamsBounds struct {
