@@ -7,7 +7,6 @@ The Superchain Registry repository contains:
   - a [`validation`](#validation-go-module) module
   - an [`add-chain`](#add-chain-go-module) module
   - The modules are tracked by a top level `go.work` file. The associated `go.work.sum` file is gitignored and not important to typical workflows, which should mirror those of the [CI configuration](.circleci/config.yml).
-* a Forge/Solidity script [`CheckSecurityConfigs`](#checksecurityconfigs)
 * Automatically generated summary `chainIds.json` file
 
 
@@ -96,7 +95,7 @@ This module contains the CLI tool for generating `superchain` compliant configs 
 
 ## CheckSecurityConfigs
 
-The `CheckSecurityConfigs.s.sol` script is used in CI to perform
+The `security-configs_test.go` test is used in CI to perform
 security checks of OP Chains registered in the `superchain`
 directory. At high level, it performs checks to ensure privileges are
 properly granted to the right addresses. More specifically, it checks
@@ -139,8 +138,7 @@ the following privilege grants and role designations:
          in the `PermissionedDisputeGame`, the `CHALLENGER` role is the only party allowed to dispute output proposals
          created by the `PROPOSER` role.
 
-As a result, here is a visualization of all the relationships the
-`CheckSecurityConfigs.s.sol` script checks:
+As a result, here is a visualization of all the relationships the script checks:
 
 ``` mermaid
 graph TD
