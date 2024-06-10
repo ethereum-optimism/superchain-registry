@@ -1,5 +1,21 @@
 [
   {
+    "name": "Base devnet 0",
+    "identifier": "sepolia-dev-0/base-devnet-0",
+    "chainId": 11763072,
+    "public_rpc": "",
+    "explorer": "",
+    "superchain_level": 2
+  },
+  {
+    "name": "OP Labs Sepolia devnet 0",
+    "identifier": "sepolia-dev-0/oplabs-devnet-0",
+    "chainId": 11155421,
+    "public_rpc": "",
+    "explorer": "",
+    "superchain_level": 2
+  },
+  {
     "name": "Base",
     "identifier": "mainnet/base",
     "chainId": 8453,
@@ -110,21 +126,5 @@
     "public_rpc": "https://sepolia.publicgoods.network",
     "explorer": "https://explorer.sepolia.publicgoods.network",
     "superchain_level": 1
-  },
-  {
-    "name": "Base devnet 0",
-    "identifier": "sepolia-dev-0/base-devnet-0",
-    "chainId": 11763072,
-    "public_rpc": "",
-    "explorer": "",
-    "superchain_level": 2
-  },
-  {
-    "name": "OP Labs Sepolia devnet 0",
-    "identifier": "sepolia-dev-0/oplabs-devnet-0",
-    "chainId": 11155421,
-    "public_rpc": "",
-    "explorer": "",
-    "superchain_level": 2
   }
 ]

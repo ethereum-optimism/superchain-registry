@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 
 	"github.com/BurntSushi/toml"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
@@ -90,4 +91,36 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Wrote chainList.toml file")
+
+	addresses()
+}
+
+func addresses() {
+	addressList := make(map[string]AddressList)
+	for id := range OPChains {
+		list := Addresses[id]
+		addressList[strconv.Itoa(int(id))] = *list
+	}
+	addressListBytes, err := json.MarshalIndent(addressList, "", " ")
+	if err != nil {
+		panic(err)
+	}
+	// Determine the absolute path of the current file
+	_, currentFilePath, _, ok := runtime.Caller(0)
+	if !ok {
+		fmt.Println("Error: Unable to determine the current file path")
+		os.Exit(1)
+	}
+
+	// Get the directory of the current file
+	currentDir := filepath.Dir(currentFilePath)
+
+	// Define the file path in the parent directory
+	path := filepath.Join(currentDir, "../extra/addresses/addresses.json")
+
+	err = os.WriteFile(path, addressListBytes, 0644)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Wrote addresses.json file")
 }
