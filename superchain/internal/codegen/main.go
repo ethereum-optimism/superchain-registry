@@ -48,7 +48,6 @@ func main() {
 				frontierChains = append(frontierChains, chainEntry)
 			default:
 				panic(fmt.Sprintf("unknown SuperchanLevel %d", chain.SuperchainLevel))
-
 			}
 		}
 		allChains = append(allChains, standardChains...)
