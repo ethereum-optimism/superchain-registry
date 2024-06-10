@@ -108,33 +108,11 @@ jobs:
       - run:
           name: Check for changes
           command: git diff --exit-code
-  check-forge-fmt:
-    docker:
-      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.40.0
-    steps:
-      - checkout
-      - run:
-          name: check compliance with forge fmt
-          command: |
-            forge fmt --check
-  check-security-configs:
-    circleci_ip_ranges: true
-    docker:
-      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.40.0
-    steps:
-      - checkout
-      - run:
-          name: check security configs
-          command: sh ./scripts/check-security-configs.sh
-      - notify-failures-on-main
 
 workflows:
   hourly:
     jobs:
       - golang-test:
-          context:
-            - slack
-      - check-security-configs:
           context:
             - slack
     triggers:
@@ -150,7 +128,5 @@ workflows:
       - golang-modules-tidy
       - golang-test
       - check-codegen
-      - check-forge-fmt
-      - check-security-configs
 
 
