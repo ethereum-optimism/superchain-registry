@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -8,16 +9,17 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/BurntSushi/toml"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
 type ChainEntry struct {
-	Name            string `json:"name"`
-	Identifier      string `json:"identifier"`
-	ChainId         uint64 `json:"chainId"`
-	PublicRPC       string `json:"public_rpc"`
-	Explorer        string `json:"explorer"`
-	SuperchainLevel uint   `json:"superchain_level"`
+	Name            string `json:"name" toml:"name"`
+	Identifier      string `json:"identifier" toml:"identifier"`
+	ChainId         uint64 `json:"chainId" toml:"chainId"`
+	PublicRPC       string `json:"public_rpc" toml:"public_rpc"`
+	Explorer        string `json:"explorer" toml:"explorer"`
+	SuperchainLevel uint   `json:"superchain_level" toml:superchain_level"`
 }
 
 func main() {
@@ -36,7 +38,7 @@ func main() {
 				ChainId:         chain.ChainID,
 				PublicRPC:       chain.PublicRPC,
 				Explorer:        chain.Explorer,
-				SuperchainLevel: int(chain.SuperchainLevel),
+				SuperchainLevel: uint(chain.SuperchainLevel),
 			}
 			switch chain.SuperchainLevel {
 			case Standard:
@@ -50,12 +52,9 @@ func main() {
 		}
 		allChains = append(allChains, standardChains...)
 		allChains = append(allChains, frontierChains...)
+	}
 
-	}
-	allChainsBytes, err := json.MarshalIndent(allChains, "", "  ")
-	if err != nil {
-		panic(err)
-	}
+	fmt.Printf("Found %d chains...\n", len(allChains))
 
 	// Determine the absolute path of the current file
 	_, currentFilePath, _, ok := runtime.Caller(0)
@@ -70,9 +69,25 @@ func main() {
 	// Define the file path in the parent directory
 	parentDir := filepath.Join(currentDir, "..")
 
+	allChainsBytes, err := json.MarshalIndent(allChains, "", "  ")
+	if err != nil {
+		panic(err)
+	}
 	err = os.WriteFile(filepath.Join(parentDir, "chainList.json"), allChainsBytes, 0644)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Wrote chainList.json file")
+
+	var buf bytes.Buffer
+	allChainsForTOML := map[string]([]ChainEntry){"chains": allChains}
+	if err := toml.NewEncoder(&buf).Encode(allChainsForTOML); err != nil {
+		fmt.Println("Error encoding TOML:", err)
+		return
+	}
+	err = os.WriteFile(filepath.Join(parentDir, "chainList.toml"), buf.Bytes(), 0644)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Wrote chainList.toml file")
 }
