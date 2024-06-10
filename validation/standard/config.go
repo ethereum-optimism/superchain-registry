@@ -14,6 +14,26 @@ type ResourceConfig struct {
 	MaximumBaseFee              *big.Int `toml:"maximum_base_fee"`
 }
 
+type L1Resolutions struct {
+	Universal []Resolution `toml:"universal"`
+	NonFPAC   []Resolution `toml:"nonFPAC"`
+	FPAC      []Resolution `toml:"FPAC"`
+}
+
+func (r L1Resolutions) GetResolutions(isFPAC bool) []Resolution {
+	if isFPAC {
+		return append(r.Universal, r.FPAC...)
+	} else {
+		return append(r.Universal, r.NonFPAC...)
+	}
+}
+
+type Resolution struct {
+	Name                string `toml:"name"`
+	Method              string `toml:"method"`
+	ResolvesToAddressOf string `toml:"resolvesToAddressOf"`
+}
+
 type L2OOParamsBounds struct {
 	SubmissionInterval     BigIntBounds `toml:"submission_interval"`      // Interval in blocks at which checkpoints must be submitted.
 	L2BlockTime            BigIntBounds `toml:"l2_block_time"`            // The time per L2 block, in seconds.
@@ -51,4 +71,5 @@ type ConfigType struct {
 	L2OOParams     L2OOParamsBounds     `toml:"l2_output_oracle"`
 	GPOParams      GasPriceOracleBounds `toml:"gas_price_oracle"`
 	SystemConfig   SystemConfig         `toml:"system_config"`
+	L1             L1Resolutions        `toml:"l1"`
 }

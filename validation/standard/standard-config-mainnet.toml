@@ -24,3 +24,135 @@ base_fee_scalar = [0, 10_000_000]
 
 [system_config]
 gas_limit = [8_000_000, 200_000_000]
+
+
+# Standared Chain Config Roles
+[[l1.universal]]
+name = "AddressManager"
+method = "owner()"
+resolvesToAddressOf = "ProxyAdmin"
+
+[[l1.universal]]
+name = "SystemConfigProxy"
+method = "owner()"
+resolvesToAddressOf = "SystemConfigOwner"
+
+[[l1.universal]]
+name = "ProxyAdmin"
+method = "owner()"
+resolvesToAddressOf = "ProxyAdminOwner"
+
+[[l1.universal]]
+name = "L1CrossDomainMessengerProxy"
+method = "PORTAL()"
+resolvesToAddressOf = "OptimismPortalProxy"
+
+[[l1.universal]]
+name = "L1ERC721BridgeProxy"
+method = "admin()"
+resolvesToAddressOf = "ProxyAdmin"
+
+[[l1.universal]]
+name = "L1ERC721BridgeProxy"
+method = "messenger()"
+resolvesToAddressOf = "L1CrossDomainMessengerProxy"
+
+[[l1.universal]]
+name = "L1StandardBridgeProxy"
+method = "getOwner()"
+resolvesToAddressOf = "ProxyAdmin"
+
+[[l1.universal]]
+name = "L1StandardBridgeProxy"
+method = "messenger()"
+resolvesToAddressOf = "L1CrossDomainMessengerProxy"
+
+[[l1.universal]]
+name = "OptimismMintableERC20FactoryProxy"
+method = "admin()"
+resolvesToAddressOf = "ProxyAdmin"
+
+[[l1.universal]]
+name = "OptimismMintableERC20FactoryProxy"
+method = "BRIDGE()"
+resolvesToAddressOf = "L1StandardBridgeProxy"
+
+[[l1.universal]]
+name = "OptimismPortalProxy"
+method = "admin()"
+resolvesToAddressOf = "ProxyAdmin"
+
+[[l1.universal]]
+name = "ProxyAdmin"
+method = "owner()"
+resolvesToAddressOf = "ProxyAdminOwner"
+
+[[l1.universal]]
+name = "ProxyAdmin"
+method = "addressManager()"
+resolvesToAddressOf = "AddressManager"
+
+[[l1.universal]]
+name = "SystemConfigProxy"
+method = "admin()"
+resolvesToAddressOf = "ProxyAdmin"
+
+[[l1.universal]]
+name = "SystemConfigProxy"
+method = "owner()"
+resolvesToAddressOf = "SystemConfigOwner"
+
+[[l1.nonFPAC]]
+name = "OptimismPortalProxy"
+method = "GUARDIAN()"
+resolvesToAddressOf = "Guardian"
+
+[[l1.nonFPAC]]
+name = "OptimismPortalProxy"
+method = "SYSTEM_CONFIG()"
+resolvesToAddressOf = "SystemConfigProxy"
+
+[[l1.nonFPAC]]
+name = "OptimismPortalProxy"
+method = "L2_ORACLE()"
+resolvesToAddressOf = "L2OutputOracleProxy"
+
+[[l1.nonFPAC]]
+name = "L2OutputOracleProxy"
+method = "admin()"
+resolvesToAddressOf = "ProxyAdmin"
+
+[[l1.nonFPAC]]
+name = "L2OutputOracleProxy"
+meethod = "CHALLENGER()"
+resolvesToAddressOf = "Challenger"
+
+[[l1.FPAC]]
+name = "DisputeGameFactoryProxy"
+method = "admin()"
+resolvesToAddressOf = "ProxyAdmin"
+
+[[l1.FPAC]]
+name = "DisputeGameFactoryProxy"
+method = "owner()"
+resolvesToAddressOf = "ProxyAdminOwner"
+
+[[l1.FPAC]]
+name = "AnchorStateRegistryProxy"
+method = "admin()"
+resolvesToAddressOf = "ProxyAdmin"
+
+[[l1.FPAC]]
+name = "DelayedWETHProxy"
+method = "admin()"
+resolvesToAddressOf = "ProxyAdmin"
+
+[[l1.FPAC]]
+name = "OptimismPortalProxy"
+method = "guardian()"
+resolvesToAddressOf = "Guardian"
+
+[[l1.FPAC]]
+name = "OptimismPortalProxy"
+method = "systemConfig()"
+resolvesToAddressOf = "SystemConfigProxy"
