@@ -11,24 +11,55 @@ import (
 // Util-types for hex-encoding/decoding.
 // This avoids circular dependencies with downstream eth packages that have their own hex utils.
 
-type Address [20]byte
+const addressLen = 20
+
+type Address [addressLen]byte
+
+// mMintain a global list of unmarshalled addresses in this package.
+// This is used to enforce checksums.
+var globalListOfAddressText = make([]string, 0)
 
 func (b *Address) UnmarshalText(text []byte) error {
+	globalListOfAddressText = append(globalListOfAddressText, string(text))
 	return decodeHex(b[:], text)
 }
 
 func (b Address) MarshalText() ([]byte, error) {
-	return []byte(b.String()), nil
+	return []byte(checksumAddress(b)), nil
 }
 
 func (b Address) String() string {
-	return encodeHex(b[:])
+	return checksumAddress(b)
 }
 
-func HexToAddress(s string) Address {
+func MustHexToAddress(s string) Address {
 	var a Address
-	_ = a.UnmarshalText([]byte(s))
+	err := a.UnmarshalText([]byte(s))
+	if err != nil {
+		panic(err)
+	}
 	return a
+}
+
+// checksumAddress computes the checksum-formatted prefixed hex representation of an address.
+// implements https://eips.ethereum.org/EIPS/eip-55
+func checksumAddress(addr [20]byte) string {
+	var out [2 + addressLen*2]byte
+	copy(out[:2], "0x")
+	hex.Encode(out[2:], addr[:])
+	hash := keccak256(out[2:])
+	for i := 0; i < addressLen*2; i++ {
+		nib := hash[i/2]
+		if i%2 == 0 {
+			nib = nib >> 4
+		} else {
+			nib &= 0xf
+		}
+		if out[i+2] > '9' && nib > 7 {
+			out[i+2] -= 32 // upper-case if top bit is 1
+		}
+	}
+	return string(out[:])
 }
 
 type Hash [32]byte
