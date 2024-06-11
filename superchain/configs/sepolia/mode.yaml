@@ -7,7 +7,7 @@ explorer: https://sepolia.explorer.mode.network
 superchain_level: 2
 superchain_time: 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
 
-batch_inbox_addr: "0xcddae6148da1e003c230e4527f9baedc8a204e7e"
+batch_inbox_addr: "0xcDDaE6148dA1E003C230E4527f9baEdc8a204e7E"
 
 genesis:
   l1:

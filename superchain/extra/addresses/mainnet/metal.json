@@ -8,8 +8,8 @@
   "OptimismPortalProxy": "0x3F37aBdE2C6b5B2ed6F8045787Df1ED1E3753956",
   "SystemConfigProxy": "0x7BD909970B0EEdcF078De6Aeff23ce571663b8aA",
   "ProxyAdmin": "0x37Ff0ae34dadA1A95A4251d10ef7Caa868c7AC99",
-  "ProxyAdminOwner": "0x4a4962275df8c60a80d3a25faec5aa7de116a746",
-  "SystemConfigOwner": "0x4a4962275df8c60a80d3a25faec5aa7de116a746",
+  "ProxyAdminOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+  "SystemConfigOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
   "Guardian": "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2",
-  "Challenger": "0x4a4962275df8c60a80d3a25faec5aa7de116a746"
+  "Challenger": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
 }
