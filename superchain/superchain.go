@@ -48,12 +48,12 @@ type ChainGenesis struct {
 }
 
 type SystemConfig struct {
-	BatcherAddr       string `json:"batcherAddr"`
-	Overhead          string `json:"overhead"`
-	Scalar            string `json:"scalar"`
-	GasLimit          uint64 `json:"gasLimit"`
-	BaseFeeScalar     uint64 `json:"baseFeeScalar"`
-	BlobBaseFeeScalar uint64 `json:"blobBaseFeeScalar"`
+	BatcherAddr       Address `json:"batcherAddr"`
+	Overhead          string  `json:"overhead"`
+	Scalar            string  `json:"scalar"`
+	GasLimit          uint64  `json:"gasLimit"`
+	BaseFeeScalar     uint64  `json:"baseFeeScalar"`
+	BlobBaseFeeScalar uint64  `json:"blobBaseFeeScalar"`
 }
 
 type GenesisData struct {
