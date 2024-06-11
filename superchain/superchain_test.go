@@ -1,6 +1,7 @@
 package superchain
 
 import (
+	"encoding/hex"
 	"path"
 	"strings"
 	"testing"
@@ -11,10 +12,10 @@ import (
 
 func TestAddressFor(t *testing.T) {
 	al := AddressList{
-		ProxyAdmin:     HexToAddress("0xD98bD7a1F2384D890d0D6153CbCFcCF6F813ab6c"),
+		ProxyAdmin:     MustHexToAddress("0xD98bd7A1F2384D890D0d6153cBcfCcF6F813Ab6c"),
 		AddressManager: Address{},
 	}
-	want := HexToAddress("0xD98bD7a1F2384D890d0D6153CbCFcCF6F813ab6c")
+	want := MustHexToAddress("0xD98bd7A1F2384D890D0d6153cBcfCcF6F813Ab6c")
 	got, err := al.AddressFor("ProxyAdmin")
 	require.NoError(t, err)
 	require.Equal(t, want, got)
@@ -129,25 +130,25 @@ func TestContractImplementations(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to load contract implementations: %v", err)
 	}
-	if impls.L1CrossDomainMessenger.Get("1.6.0") != HexToAddress("0xf4d5682dA3ad1820ea83E1cEE5Fd92a3A7BabC30") {
+	if impls.L1CrossDomainMessenger.Get("1.6.0") != MustHexToAddress("0xf4d5682dA3ad1820ea83E1cEE5Fd92a3A7BabC30") {
 		t.Fatal("wrong L1CrossDomainMessenger address")
 	}
-	if impls.L1ERC721Bridge.Get("1.3.0") != HexToAddress("0x8ADd7FB53A242e827373519d260EE3B8F7612Ba1") {
+	if impls.L1ERC721Bridge.Get("1.3.0") != MustHexToAddress("0x8ADd7FB53A242e827373519d260EE3B8F7612Ba1") {
 		t.Fatal("wrong L1ERC721Bridge address")
 	}
-	if impls.L1StandardBridge.Get("1.3.0") != HexToAddress("0x9c540e769B9453d174EdB683a90D9170e6559F16") {
+	if impls.L1StandardBridge.Get("1.3.0") != MustHexToAddress("0x9c540e769B9453d174EdB683a90D9170e6559F16") {
 		t.Fatal("wrong L1StandardBridge address")
 	}
-	if impls.L2OutputOracle.Get("1.5.0") != HexToAddress("0x7a811C9862ab54E677EEdA7e6F075aC86a1f551e") {
+	if impls.L2OutputOracle.Get("1.5.0") != MustHexToAddress("0x7a811C9862ab54E677EEdA7e6F075aC86a1f551e") {
 		t.Fatal("wrong L2OutputOracle address")
 	}
-	if impls.OptimismMintableERC20Factory.Get("1.4.0") != HexToAddress("0x135B9097A0e1e56190251c62f111B676Fb4Ec494") {
+	if impls.OptimismMintableERC20Factory.Get("1.4.0") != MustHexToAddress("0x135B9097A0e1e56190251c62f111B676Fb4Ec494") {
 		t.Fatal("wrong OptimismMintableERC20 address")
 	}
-	if impls.OptimismPortal.Get("1.9.0") != HexToAddress("0x8Cfa294bD0c6F63cD65d492bdB754eAcf684D871") {
+	if impls.OptimismPortal.Get("1.9.0") != MustHexToAddress("0x8Cfa294bD0c6F63cD65d492bdB754eAcf684D871") {
 		t.Fatal("wrong OptimismPortal address")
 	}
-	if impls.SystemConfig.Get("1.7.0") != HexToAddress("0x09323D05868393c7EBa8190BAc173f843b82030a") {
+	if impls.SystemConfig.Get("1.7.0") != MustHexToAddress("0x09323D05868393c7EBa8190BAc173f843b82030a") {
 		t.Fatal("wrong SystemConfig address")
 	}
 }
@@ -335,7 +336,25 @@ func TestContractVersionsResolveFaultProofContracts(t *testing.T) {
 	require.Equalf(t, VersionedContract{}, list.L2OutputOracle, "L2OutputOracle erroneously configured with fault proof contracts")
 }
 
-// TestResolve ensures that resolve finds implementations that exactly match the requested version
+func testAddr(v string) Address {
+	v = strings.TrimPrefix(v, "0x")
+	if len(v)%2 != 0 {
+		v += "0"
+	}
+	if len(v) > 2*addressLen {
+		panic("test address is too long")
+	}
+	var out Address
+	_, err := hex.Decode(out[:], []byte(v))
+	if err != nil {
+		panic(err)
+	}
+	return out
+}
+
+// TestResolve ensures that the low level resolve function works on semantic
+// versioning correctly. It will return the highest version that matches the
+// given semver string.
 func TestResolve(t *testing.T) {
 	cases := []struct {
 		name    string
@@ -346,90 +365,89 @@ func TestResolve(t *testing.T) {
 		{
 			name: "match singleton option",
 			set: AddressSet{
-				"v0.0.1": HexToAddress("0x01"),
+				"v0.0.1": testAddr("0x01"),
 			},
 			version: "v0.0.1",
 			expect: VersionedContract{
 				Version: "v0.0.1",
-				Address: HexToAddress("0x01"),
+				Address: testAddr("0x01"),
 			},
 		},
 		{
 			name: "match first address",
 			set: AddressSet{
-				"v0.0.1": HexToAddress("0x01"),
-				"v1.0.0": HexToAddress("0x02"),
-				"v1.0.1": HexToAddress("0x03"),
+				"v0.0.1": testAddr("0x01"),
+				"v1.0.0": testAddr("0x02"),
+				"v1.0.1": testAddr("0x03"),
 			},
 			version: "v0.0.1",
 			expect: VersionedContract{
 				Version: "v0.0.1",
-				Address: HexToAddress("0x01"),
+				Address: testAddr("0x01"),
 			},
 		},
 		{
 			name: "match last address",
 			set: AddressSet{
-				"v0.0.1": HexToAddress("0x01"),
-				"v1.0.0": HexToAddress("0x02"),
-				"v1.0.1": HexToAddress("0x03"),
+				"v0.0.1": testAddr("0x01"),
+				"v1.0.0": testAddr("0x02"),
+				"v1.0.1": testAddr("0x03"),
 			},
 			version: "v1.0.1",
 			expect: VersionedContract{
 				Version: "v1.0.1",
-				Address: HexToAddress("0x02"),
+				Address: testAddr("0x03"),
 			},
 		},
 		{
 			name: "match middle address",
 			set: AddressSet{
-				"v0.0.1": HexToAddress("0x01"),
-				"v1.0.0": HexToAddress("0x02"),
-				"v1.0.1": HexToAddress("0x03"),
+				"v0.0.1": testAddr("0x01"),
+				"v1.0.0": testAddr("0x02"),
+				"v1.0.1": testAddr("0x03"),
 			},
 			version: "v1.0.0",
 			expect: VersionedContract{
 				Version: "v1.0.0",
-				Address: HexToAddress("0x02"),
+				Address: testAddr("0x02"),
 			},
 		},
 		{
 			name: "match first address (missing prefix)",
 			set: AddressSet{
-				"v0.0.1": HexToAddress("0x01"),
-				"v1.0.0": HexToAddress("0x02"),
-				"v1.0.1": HexToAddress("0x03"),
+				"v0.0.1": testAddr("0x01"),
+				"v1.0.0": testAddr("0x02"),
+				"v1.0.1": testAddr("0x03"),
 			},
 			version: "0.0.1",
 			expect: VersionedContract{
 				Version: "v0.0.1",
-				Address: HexToAddress("0x01"),
+				Address: testAddr("0x01"),
 			},
 		},
 		{
 			name: "match last address (missing prefix)",
 			set: AddressSet{
-				"v0.0.1": HexToAddress("0x01"),
-				"v1.0.0": HexToAddress("0x02"),
-				"v2.0.1": HexToAddress("0x03"),
+				"v0.0.1": testAddr("0x01"),
+				"v1.0.0": testAddr("0x02"),
+				"v2.0.1": testAddr("0x03"),
 			},
 			version: "2.0.1",
 			expect: VersionedContract{
 				Version: "v2.0.1",
-				Address: HexToAddress("0x03"),
+				Address: testAddr("0x03"),
 			},
 		},
 		{
 			name: "match middle address (missing prefix)",
 			set: AddressSet{
-				"v0.0.1": HexToAddress("0x01"),
-				"v1.0.0": HexToAddress("0x02"),
-				"v2.0.1": HexToAddress("0x03"),
-			},
-			version: "1.0.0",
+				"v0.0.1": testAddr("0x01"),
+				"v1.0.0": testAddr("0x02"),
+				"v2.0.1": testAddr("0x03"),
+			}, version: "1.0.0",
 			expect: VersionedContract{
 				Version: "v1.0.0",
-				Address: HexToAddress("0x02"),
+				Address: testAddr("0x02"),
 			},
 		},
 	}
@@ -458,9 +476,9 @@ func TestResolveWithError(t *testing.T) {
 		{
 			name: "Empty version supplied",
 			set: AddressSet{
-				"v0.0.1":  HexToAddress("0x01"),
-				"v2.0.1":  HexToAddress("0x02"),
-				"v99.0.1": HexToAddress("0x03"),
+				"v0.0.1":  testAddr("0x01"),
+				"v2.0.1":  testAddr("0x02"),
+				"v99.0.1": testAddr("0x03"),
 			},
 			version:     "",
 			expectError: ErrEmptyVersion.Error(),
@@ -468,9 +486,9 @@ func TestResolveWithError(t *testing.T) {
 		{
 			name: "Semver with operator prefix",
 			set: AddressSet{
-				"v0.0.1":  HexToAddress("0x01"),
-				"v2.0.1":  HexToAddress("0x02"),
-				"v99.0.1": HexToAddress("0x03"),
+				"v0.0.1":  testAddr("0x01"),
+				"v2.0.1":  testAddr("0x02"),
+				"v99.0.1": testAddr("0x03"),
 			},
 			version:     "^0.0.1",
 			expectError: "invalid semver",
@@ -478,9 +496,9 @@ func TestResolveWithError(t *testing.T) {
 		{
 			name: "Semver with operator and 'v' prefix",
 			set: AddressSet{
-				"v0.0.1":  HexToAddress("0x01"),
-				"v2.0.1":  HexToAddress("0x02"),
-				"v99.0.1": HexToAddress("0x03"),
+				"v0.0.1":  testAddr("0x01"),
+				"v2.0.1":  testAddr("0x02"),
+				"v99.0.1": testAddr("0x03"),
 			},
 			version:     "~v0.0.1",
 			expectError: "invalid semver",
@@ -488,9 +506,9 @@ func TestResolveWithError(t *testing.T) {
 		{
 			name: "Semver with wildcard",
 			set: AddressSet{
-				"v0.0.1":  HexToAddress("0x01"),
-				"v2.0.1":  HexToAddress("0x02"),
-				"v99.0.1": HexToAddress("0x03"),
+				"v0.0.1":  testAddr("0x01"),
+				"v2.0.1":  testAddr("0x02"),
+				"v99.0.1": testAddr("0x03"),
 			},
 			version:     "2.0.x",
 			expectError: "invalid semver",
@@ -498,9 +516,9 @@ func TestResolveWithError(t *testing.T) {
 		{
 			name: "Semver with wildcard and version",
 			set: AddressSet{
-				"v0.0.1":  HexToAddress("0x01"),
-				"v2.0.1":  HexToAddress("0x02"),
-				"v99.0.1": HexToAddress("0x03"),
+				"v0.0.1":  testAddr("0x01"),
+				"v2.0.1":  testAddr("0x02"),
+				"v99.0.1": testAddr("0x03"),
 			},
 			version:     "v2.0.x",
 			expectError: "invalid semver",
@@ -508,9 +526,9 @@ func TestResolveWithError(t *testing.T) {
 		{
 			name: "No exact match",
 			set: AddressSet{
-				"v0.0.1":  HexToAddress("0x01"),
-				"v2.0.1":  HexToAddress("0x02"),
-				"v99.0.1": HexToAddress("0x03"),
+				"v0.0.1":  testAddr("0x01"),
+				"v2.0.1":  testAddr("0x02"),
+				"v99.0.1": testAddr("0x03"),
 			},
 			version:     "2.0.0",
 			expectError: "cannot resolve semver",
@@ -535,21 +553,21 @@ func TestResolveWithError(t *testing.T) {
 // both the "v" prefix and without the "v" prefix.
 func TestAddressSet(t *testing.T) {
 	set := AddressSet{
-		"v1.0.0": HexToAddress("0x123"),
-		"1.1.0":  HexToAddress("0x234"),
+		"v1.0.0": testAddr("0x123"),
+		"1.1.0":  testAddr("0x234"),
 	}
 
-	if set.Get("v1.0.0") != HexToAddress("0x123") {
+	if set.Get("v1.0.0") != testAddr("0x123") {
 		t.Fatal("wrong address")
 	}
-	if set.Get("1.0.0") != HexToAddress("0x123") {
+	if set.Get("1.0.0") != testAddr("0x123") {
 		t.Fatal("wrong address")
 	}
 
-	if set.Get("v1.1.0") != HexToAddress("0x234") {
+	if set.Get("v1.1.0") != testAddr("0x234") {
 		t.Fatal("wrong address")
 	}
-	if set.Get("1.1.0") != HexToAddress("0x234") {
+	if set.Get("1.1.0") != testAddr("0x234") {
 		t.Fatal("wrong address")
 	}
 }
@@ -655,8 +673,8 @@ fjord_time:
 		PublicRPC: "https://disney.com",
 		Explorer:  "https://disneyscan.io",
 	}, s.L1)
-	require.Equal(t, "0x252cbe9517f731c618961d890d534183822dcc8d", s.ProtocolVersionsAddr.String())
-	require.Equal(t, "0x02d91cf852423640d93920be0cadcec0e7a00fa7", s.SuperchainConfigAddr.String())
+	require.Equal(t, "0x252CbE9517F731C618961D890D534183822dcC8d", s.ProtocolVersionsAddr.String())
+	require.Equal(t, "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7", s.SuperchainConfigAddr.String())
 	require.Equal(t, uint64Ptr(uint64(1)), s.hardForkDefaults.CanyonTime)
 	require.Equal(t, uint64Ptr(uint64(2)), s.hardForkDefaults.DeltaTime)
 	require.Equal(t, uint64Ptr(uint64(3)), s.hardForkDefaults.EcotoneTime)
