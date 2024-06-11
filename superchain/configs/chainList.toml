@@ -1,127 +1,175 @@
 [[chains]]
-  name = "Base Sepolia"
-  identifier = "sepolia/base"
-  chainId = 84532
-  public_rpc = "https://sepolia.base.org"
-  explorer = "https://sepolia-explorer.base.org"
-  superchain_level = 2
-
-[[chains]]
-  name = "Mode Sepolia"
-  identifier = "sepolia/mode"
-  chainId = 919
-  public_rpc = "https://sepolia.mode.network"
-  explorer = "https://sepolia.explorer.mode.network"
-  superchain_level = 2
-
-[[chains]]
-  name = "OP-Sepolia"
-  identifier = "sepolia/op"
-  chainId = 11155420
-  public_rpc = "https://sepolia.optimism.io"
-  explorer = "https://sepolia-optimistic.etherscan.io"
-  superchain_level = 2
-
-[[chains]]
-  name = "race"
-  identifier = "sepolia/race"
-  chainId = 90001
-  public_rpc = "https://racetestnet.io"
-  explorer = "https://testnet.racescan.io"
-  superchain_level = 2
-
-[[chains]]
-  name = "Zora Sepolia"
-  identifier = "sepolia/zora"
-  chainId = 999999999
-  public_rpc = "https://sepolia.rpc.zora.energy"
-  explorer = "https://sepolia.explorer.zora.energy"
-  superchain_level = 2
-
-[[chains]]
-  name = "PGN Sepolia"
-  identifier = "sepolia/pgn"
-  chainId = 58008
-  public_rpc = "https://sepolia.publicgoods.network"
-  explorer = "https://explorer.sepolia.publicgoods.network"
-  superchain_level = 1
-
-[[chains]]
-  name = "Base devnet 0"
-  identifier = "sepolia-dev-0/base-devnet-0"
-  chainId = 11763072
-  public_rpc = ""
-  explorer = ""
-  superchain_level = 2
-
-[[chains]]
-  name = "OP Labs Sepolia devnet 0"
-  identifier = "sepolia-dev-0/oplabs-devnet-0"
-  chainId = 11155421
-  public_rpc = ""
-  explorer = ""
-  superchain_level = 2
-
-[[chains]]
   name = "Base"
   identifier = "mainnet/base"
   chainId = 8453
-  public_rpc = "https://mainnet.base.org"
-  explorer = "https://explorer.base.org"
+  rpc = ["https://mainnet.base.org"]
+  explorers = ["https://explorer.base.org"]
   superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
 
 [[chains]]
   name = "Metal"
   identifier = "mainnet/metal"
   chainId = 1750
-  public_rpc = "https://rpc.metall2.com"
-  explorer = "https://explorer.metall2.com"
+  rpc = ["https://rpc.metall2.com"]
+  explorers = ["https://explorer.metall2.com"]
   superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
 
 [[chains]]
   name = "Mode"
   identifier = "mainnet/mode"
   chainId = 34443
-  public_rpc = "https://mainnet.mode.network"
-  explorer = "https://explorer.mode.network"
+  rpc = ["https://mainnet.mode.network"]
+  explorers = ["https://explorer.mode.network"]
   superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
 
 [[chains]]
   name = "OP-Mainnet"
   identifier = "mainnet/op"
   chainId = 10
-  public_rpc = "https://mainnet.optimism.io"
-  explorer = "https://explorer.optimism.io"
+  rpc = ["https://mainnet.optimism.io"]
+  explorers = ["https://explorer.optimism.io"]
   superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
 
 [[chains]]
   name = "Zora"
   identifier = "mainnet/zora"
   chainId = 7777777
-  public_rpc = "https://rpc.zora.energy"
-  explorer = "https://explorer.zora.energy"
+  rpc = ["https://rpc.zora.energy"]
+  explorers = ["https://explorer.zora.energy"]
   superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
 
 [[chains]]
   name = "Lyra"
   identifier = "mainnet/lyra"
   chainId = 957
-  public_rpc = "https://rpc.lyra.finance"
-  explorer = "https://explorer.lyra.finance"
+  rpc = ["https://rpc.lyra.finance"]
+  explorers = ["https://explorer.lyra.finance"]
   superchain_level = 1
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
 
 [[chains]]
   name = "Orderly Network"
   identifier = "mainnet/orderly"
   chainId = 291
-  public_rpc = "https://rpc.orderly.network"
-  explorer = "https://explorer.orderly.network"
+  rpc = ["https://rpc.orderly.network"]
+  explorers = ["https://explorer.orderly.network"]
   superchain_level = 1
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
 
 [[chains]]
   name = "PGN"
   identifier = "mainnet/pgn"
   chainId = 424
-  public_rpc = "https://rpc.publicgoods.network"
-  explorer = "https://explorer.publicgoods.network"
+  rpc = ["https://rpc.publicgoods.network"]
+  explorers = ["https://explorer.publicgoods.network"]
   superchain_level = 1
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Base Sepolia"
+  identifier = "sepolia/base"
+  chainId = 84532
+  rpc = ["https://sepolia.base.org"]
+  explorers = ["https://sepolia-explorer.base.org"]
+  superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Mode Sepolia"
+  identifier = "sepolia/mode"
+  chainId = 919
+  rpc = ["https://sepolia.mode.network"]
+  explorers = ["https://sepolia.explorer.mode.network"]
+  superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "OP-Sepolia"
+  identifier = "sepolia/op"
+  chainId = 11155420
+  rpc = ["https://sepolia.optimism.io"]
+  explorers = ["https://sepolia-optimistic.etherscan.io"]
+  superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "race"
+  identifier = "sepolia/race"
+  chainId = 90001
+  rpc = ["https://racetestnet.io"]
+  explorers = ["https://testnet.racescan.io"]
+  superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Zora Sepolia"
+  identifier = "sepolia/zora"
+  chainId = 999999999
+  rpc = ["https://sepolia.rpc.zora.energy"]
+  explorers = ["https://sepolia.explorer.zora.energy"]
+  superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "PGN Sepolia"
+  identifier = "sepolia/pgn"
+  chainId = 58008
+  rpc = ["https://sepolia.publicgoods.network"]
+  explorers = ["https://explorer.sepolia.publicgoods.network"]
+  superchain_level = 1
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Base devnet 0"
+  identifier = "sepolia-dev-0/base-devnet-0"
+  chainId = 11763072
+  rpc = [""]
+  explorers = [""]
+  superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia-dev-0"
+
+[[chains]]
+  name = "OP Labs Sepolia devnet 0"
+  identifier = "sepolia-dev-0/oplabs-devnet-0"
+  chainId = 11155421
+  rpc = [""]
+  explorers = [""]
+  superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia-dev-0"

@@ -15,12 +15,19 @@ import (
 )
 
 type ChainEntry struct {
-	Name            string `json:"name" toml:"name"`
-	Identifier      string `json:"identifier" toml:"identifier"`
-	ChainId         uint64 `json:"chainId" toml:"chainId"`
-	PublicRPC       string `json:"public_rpc" toml:"public_rpc"`
-	Explorer        string `json:"explorer" toml:"explorer"`
-	SuperchainLevel uint   `json:"superchain_level" toml:"superchain_level"`
+	Name            string   `json:"name" toml:"name"`
+	Identifier      string   `json:"identifier" toml:"identifier"`
+	ChainId         uint64   `json:"chainId" toml:"chainId"`
+	RPC             []string `json:"rpc" toml:"rpc"`
+	Explorer        []string `json:"explorers" toml:"explorers"`
+	SuperchainLevel uint     `json:"superchain_level" toml:"superchain_level"`
+	Parent          Parent   `json:"parent" toml:"parent"`
+}
+
+type Parent struct {
+	Type    string   `json:"type" toml:"type"`
+	Chain   string   `json:"chain" toml:"chain"`
+	Bridges []string `json:"bridge,omitempty" toml:"bridges,omitempty"`
 }
 
 func main() {
@@ -37,9 +44,10 @@ func main() {
 				Name:            chain.Name,
 				Identifier:      chain.Identifier(),
 				ChainId:         chain.ChainID,
-				PublicRPC:       chain.PublicRPC,
-				Explorer:        chain.Explorer,
+				RPC:             []string{chain.PublicRPC},
+				Explorer:        []string{chain.Explorer},
 				SuperchainLevel: uint(chain.SuperchainLevel),
+				Parent:          Parent{"L2", chain.Superchain, []string{}},
 			}
 			switch chain.SuperchainLevel {
 			case Standard:
