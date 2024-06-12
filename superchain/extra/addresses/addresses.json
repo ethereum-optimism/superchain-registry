@@ -90,10 +90,10 @@
     "OptimismPortalProxy": "0x3F37aBdE2C6b5B2ed6F8045787Df1ED1E3753956",
     "SystemConfigProxy": "0x7BD909970B0EEdcF078De6Aeff23ce571663b8aA",
     "ProxyAdmin": "0x37Ff0ae34dadA1A95A4251d10ef7Caa868c7AC99",
-    "ProxyAdminOwner": "0x4a4962275df8c60a80d3a25faec5aa7de116a746",
-    "SystemConfigOwner": "0x4a4962275df8c60a80d3a25faec5aa7de116a746",
+    "ProxyAdminOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+    "SystemConfigOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
     "Guardian": "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2",
-    "Challenger": "0x4a4962275df8c60a80d3a25faec5aa7de116a746"
+    "Challenger": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
   },
   "8453": {
     "AddressManager": "0x8EfB6B5c4767B09Dc9AA6Af4eAA89F749522BaE2",
@@ -133,7 +133,7 @@
     "L2OutputOracleProxy": "0xD5bAc3152ffC25318F848B3DD5dA6C85171BaEEe",
     "OptimismMintableERC20FactoryProxy": "0x0167EF3188FDaa2661e4530A4623Ee1aB4555683",
     "OptimismPortalProxy": "0xF04BdD5353Bb0EFF6CA60CfcC78594278eBfE179",
-    "ProxyAdmin": "0x5f336973dabad13409ea93416b8487d92769e457",
+    "ProxyAdmin": "0x5f336973dabaD13409EA93416b8487D92769e457",
     "SystemConfigProxy": "0x4BCCC52151f0ad7C62D45Ce0aA77d9d8ffCE534e",
     "ProxyAdminOwner": "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C",
     "SystemConfigOwner": "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C",
@@ -150,8 +150,8 @@
     "OptimismPortalProxy": "0x49f53e41452C74589E85cA1677426Ba426459e85",
     "ProxyAdmin": "0x0389E59Aa0a41E4A413Ae70f0008e76CAA34b1F3",
     "SystemConfigProxy": "0xf272670eb55e895584501d564AfEB048bEd26194",
-    "ProxyAdminOwner": "0x0fe884546476ddd290ec46318785046ef68a0ba9",
-    "SystemConfigOwner": "0x0fe884546476ddd290ec46318785046ef68a0ba9",
+    "ProxyAdminOwner": "0x0fe884546476dDd290eC46318785046ef68a0BA9",
+    "SystemConfigOwner": "0x0fe884546476dDd290eC46318785046ef68a0BA9",
     "Guardian": "0xA9FF930151130fd19DA1F03E5077AFB7C78F8503",
     "Challenger": "0xDa3037Ff70Ac92CD867c683BD807e5A484857405"
   },
