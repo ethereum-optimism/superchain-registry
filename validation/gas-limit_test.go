@@ -29,7 +29,7 @@ func TestGasLimit(t *testing.T) {
 		require.NoError(t, err)
 
 		desiredParam := standard.Config[chain.Superchain].SystemConfig.GasLimit
-		actualParam, err := getGasLimitWithRetries(context.Background(), common.Address(contractAddress), client)
+		actualParam, err := getGasLimitWithRetries(context.Background(), common.Address(*contractAddress), client)
 		require.NoError(t, err)
 
 		assertIntInBounds(t, "gas_limit", actualParam, desiredParam)

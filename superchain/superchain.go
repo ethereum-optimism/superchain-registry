@@ -229,81 +229,78 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 
 // AddressList represents the set of network specific contracts for a given network.
 type AddressList struct {
-	AddressManager                    Address `json:"AddressManager"`
-	L1CrossDomainMessengerProxy       Address `json:"L1CrossDomainMessengerProxy"`
-	L1ERC721BridgeProxy               Address `json:"L1ERC721BridgeProxy"`
-	L1StandardBridgeProxy             Address `json:"L1StandardBridgeProxy"`
-	L2OutputOracleProxy               Address `json:"L2OutputOracleProxy"`
-	OptimismMintableERC20FactoryProxy Address `json:"OptimismMintableERC20FactoryProxy"`
-	OptimismPortalProxy               Address `json:"OptimismPortalProxy"`
-	SystemConfigProxy                 Address `json:"SystemConfigProxy"`
-	SystemConfigOwner                 Address `json:"SystemConfigOwner"`
-	ProxyAdmin                        Address `json:"ProxyAdmin"`
-	ProxyAdminOwner                   Address `json:"ProxyAdminOwner"`
-	Guardian                          Address `json:"Guardian"`
-	Challenger                        Address `json:"Challenger"`
+	AddressManager                    *Address `json:"AddressManager,omitempty"`
+	L1CrossDomainMessengerProxy       *Address `json:"L1CrossDomainMessengerProxy,omitempty"`
+	L1ERC721BridgeProxy               *Address `json:"L1ERC721BridgeProxy,omitempty"`
+	L1StandardBridgeProxy             *Address `json:"L1StandardBridgeProxy,omitempty"`
+	L2OutputOracleProxy               *Address `json:"L2OutputOracleProxy,omitempty"`
+	OptimismMintableERC20FactoryProxy *Address `json:"OptimismMintableERC20FactoryProxy,omitempty"`
+	OptimismPortalProxy               *Address `json:"OptimismPortalProxy,omitempty"`
+	SystemConfigProxy                 *Address `json:"SystemConfigProxy,omitempty"`
+	SystemConfigOwner                 *Address `json:"SystemConfigOwner,omitempty"`
+	ProxyAdmin                        *Address `json:"ProxyAdmin,omitempty"`
+	ProxyAdminOwner                   *Address `json:"ProxyAdminOwner,omitempty"`
+	Guardian                          *Address `json:"Guardian,omitempty"`
+	Challenger                        *Address `json:"Challenger,omitempty"`
 	// Fault Proof contracts:
-	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty"`
-	DelayedWETHProxy         Address `json:"DelayedWETHProxy,omitempty"`
-	DisputeGameFactoryProxy  Address `json:"DisputeGameFactoryProxy,omitempty"`
-	FaultDisputeGame         Address `json:"FaultDisputeGame,omitempty"`
-	MIPS                     Address `json:"MIPS,omitempty"`
-	PermissionedDisputeGame  Address `json:"PermissionedDisputeGame,omitempty"`
-	PreimageOracle           Address `json:"PreimageOracle,omitempty"`
+	AnchorStateRegistryProxy *Address `json:"AnchorStateRegistryProxy,omitempty"`
+	DelayedWETHProxy         *Address `json:"DelayedWETHProxy,omitempty"`
+	DisputeGameFactoryProxy  *Address `json:"DisputeGameFactoryProxy,omitempty"`
+	FaultDisputeGame         *Address `json:"FaultDisputeGame,omitempty"`
+	MIPS                     *Address `json:"MIPS,omitempty"`
+	PermissionedDisputeGame  *Address `json:"PermissionedDisputeGame,omitempty"`
+	PreimageOracle           *Address `json:"PreimageOracle,omitempty"`
 }
 
-// AddressFor returns a nonzero address for the supplied name, if it has been specified
-// (and an error otherwise). Useful for slicing into the struct using a string.
-func (a AddressList) AddressFor(name string) (Address, error) {
-	var address Address
+// AddressFor returns a pointer to an address for the supplied name, if the name
+// is one of the supported contract names (and an error otherwise).
+// Useful for slicing into the struct using a string. Returns a nil pointer if
+// there is no such address in the registry.
+func (a AddressList) AddressFor(name string) (*Address, error) {
 	switch name {
 	case "AddressManager":
-		address = a.AddressManager
+		return a.AddressManager, nil
 	case "ProxyAdmin":
-		address = a.ProxyAdmin
+		return a.ProxyAdmin, nil
 	case "L1CrossDomainMessengerProxy":
-		address = a.L1CrossDomainMessengerProxy
+		return a.L1CrossDomainMessengerProxy, nil
 	case "L1ERC721BridgeProxy":
-		address = a.L1ERC721BridgeProxy
+		return a.L1ERC721BridgeProxy, nil
 	case "L1StandardBridgeProxy":
-		address = a.L1StandardBridgeProxy
+		return a.L1StandardBridgeProxy, nil
 	case "L2OutputOracleProxy":
-		address = a.L2OutputOracleProxy
+		return a.L2OutputOracleProxy, nil
 	case "OptimismMintableERC20FactoryProxy":
-		address = a.OptimismMintableERC20FactoryProxy
+		return a.OptimismMintableERC20FactoryProxy, nil
 	case "OptimismPortalProxy":
-		address = a.OptimismPortalProxy
+		return a.OptimismPortalProxy, nil
 	case "SystemConfigProxy":
-		address = a.SystemConfigProxy
+		return a.SystemConfigProxy, nil
 	case "AnchorStateRegistryProxy":
-		address = a.AnchorStateRegistryProxy
+		return a.AnchorStateRegistryProxy, nil
 	case "DelayedWETHProxy":
-		address = a.DelayedWETHProxy
+		return a.DelayedWETHProxy, nil
 	case "DisputeGameFactoryProxy":
-		address = a.DisputeGameFactoryProxy
+		return a.DisputeGameFactoryProxy, nil
 	case "FaultDisputeGame":
-		address = a.FaultDisputeGame
+		return a.FaultDisputeGame, nil
 	case "MIPS":
-		address = a.MIPS
+		return a.MIPS, nil
 	case "PermissionedDisputeGame":
-		address = a.PermissionedDisputeGame
+		return a.PermissionedDisputeGame, nil
 	case "PreimageOracle":
-		address = a.PreimageOracle
+		return a.PreimageOracle, nil
 	case "SystemConfigOwner":
-		address = a.SystemConfigOwner
+		return a.SystemConfigOwner, nil
 	case "ProxyAdminOwner":
-		address = a.ProxyAdminOwner
+		return a.ProxyAdminOwner, nil
 	case "Guardian":
-		address = a.Guardian
+		return a.Guardian, nil
 	case "Challenger":
-		address = a.Challenger
+		return a.Challenger, nil
 	default:
-		return address, fmt.Errorf("no such name %s", name)
+		return nil, fmt.Errorf("no such name %s", name)
 	}
-	if address == (Address{}) {
-		return address, fmt.Errorf("no address or zero address specified for  %s", name)
-	}
-	return address, nil
 }
 
 // ImplementationList represents the set of implementation contracts to be used together

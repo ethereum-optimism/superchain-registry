@@ -29,7 +29,7 @@ func TestResourceConfig(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
 		require.NoError(t, err)
 
-		actualResourceConfig, err := getResourceConfigWithRetries(context.Background(), common.Address(contractAddress), client)
+		actualResourceConfig, err := getResourceConfigWithRetries(context.Background(), common.Address(*contractAddress), client)
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
 		desiredParams := standard.Config[chain.Superchain].ResourceConfig

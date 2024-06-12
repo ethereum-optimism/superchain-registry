@@ -48,14 +48,14 @@ func TestL2OOParams(t *testing.T) {
 
 		desiredParams := standard.Config[chain.Superchain].L2OOParams
 
-		version, err := getVersion(context.Background(), common.Address(contractAddress), client)
+		version, err := getVersion(context.Background(), common.Address(*contractAddress), client)
 		require.NoError(t, err)
 
 		var actualParams L2OOParams
 		if version == "1.3.0" || version == "1.3.1" {
-			actualParams, err = getl2OOParamsWithRetriesLegacy(context.Background(), common.Address(contractAddress), client)
+			actualParams, err = getl2OOParamsWithRetriesLegacy(context.Background(), common.Address(*contractAddress), client)
 		} else {
-			actualParams, err = getl2OOParamsWithRetries(context.Background(), common.Address(contractAddress), client)
+			actualParams, err = getl2OOParamsWithRetries(context.Background(), common.Address(*contractAddress), client)
 		}
 		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
 

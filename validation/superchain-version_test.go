@@ -129,7 +129,7 @@ func TestContractVersions(t *testing.T) {
 			}
 			contractAddress, err := Addresses[chain.ChainID].AddressFor(localizedContractName)
 			require.NoErrorf(t, err, "%s/%s.%s.version= UNSPECIFIED", chain.Superchain, chain.Name, localizedContractName)
-			checkSemverForContract(t, localizedContractName, &contractAddress, client, desiredSemver)
+			checkSemverForContract(t, localizedContractName, contractAddress, client, desiredSemver)
 		}
 	}
 
