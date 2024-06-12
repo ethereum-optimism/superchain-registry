@@ -11,18 +11,16 @@ import (
 )
 
 func TestAddressFor(t *testing.T) {
-	addr := MustHexToAddress("0xD98bd7A1F2384D890D0d6153cBcfCcF6F813Ab6c")
 	al := AddressList{
-		ProxyAdmin:     &addr,
-		AddressManager: nil,
+		ProxyAdmin:     MustHexToAddress("0xD98bd7A1F2384D890D0d6153cBcfCcF6F813Ab6c"),
+		AddressManager: Address{},
 	}
-	want := &addr
+	want := MustHexToAddress("0xD98bd7A1F2384D890D0d6153cBcfCcF6F813Ab6c")
 	got, err := al.AddressFor("ProxyAdmin")
 	require.NoError(t, err)
 	require.Equal(t, want, got)
-	got, err = al.AddressFor("AddressManager")
-	require.NoError(t, err)
-	require.Nil(t, got)
+	_, err = al.AddressFor("AddressManager")
+	require.Error(t, err)
 	_, err = al.AddressFor("Garbage")
 	require.Error(t, err)
 }

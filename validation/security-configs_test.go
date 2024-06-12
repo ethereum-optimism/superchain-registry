@@ -51,7 +51,7 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 
 	portalProxyAddress, err := Addresses[chainID].AddressFor("OptimismPortalProxy")
 	require.NoError(t, err)
-	portalProxy, err := bindings.NewOptimismPortal(common.Address(*portalProxyAddress), client)
+	portalProxy, err := bindings.NewOptimismPortal(common.Address(portalProxyAddress), client)
 	require.NoError(t, err)
 	version, err := portalProxy.Version(&bind.CallOpts{})
 	require.NoError(t, err)
@@ -87,7 +87,7 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 		want, err := Addresses[chainID].AddressFor(r.shouldResolveToAddressOf)
 		require.NoError(t, err)
 
-		got, err := getAddressWithRetries(r.method, *contractAddress, client)
+		got, err := getAddressWithRetries(r.method, contractAddress, client)
 		require.NoErrorf(t, err, "problem calling %s.%s", contractAddress, r.method)
 
 		assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", r.name, r.method, got, want, r.shouldResolveToAddressOf)
@@ -101,7 +101,7 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 	// we now have assurance that L1CrossDomainMessenger's proxy is properly managed.
 	l1cdmp, err := Addresses[chainID].AddressFor("L1CrossDomainMessengerProxy")
 	require.NoError(t, err)
-	actualAddressManagerBytes, err := getMappingValue(*l1cdmp, 1, *l1cdmp, client)
+	actualAddressManagerBytes, err := getMappingValue(l1cdmp, 1, l1cdmp, client)
 	require.NoError(t, err)
 	am, err := Addresses[chainID].AddressFor("AddressManager")
 	require.NoError(t, err)
