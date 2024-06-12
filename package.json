@@ -1,0 +1,28 @@
+{
+  "name": "@eth-optimism/superchain-registry",
+  "version": "0.0.1-alpha.1",
+  "type": "module",
+  "description": "[Optimism] Superchain Registry",
+  "author": "Optimism",
+  "private": false,
+  "keywords": [
+    "superchain",
+    "optimism",
+    "op-stack",
+    "ethereum"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ethereum-optimism/superchain-registry.git"
+  },
+  "files": [
+    "superchain/",
+    "assets/",
+    "!**/*.go",
+    "!**/*.md"
+  ],
+  "scripts": {
+    "codegen": "node ./scripts/codegen.js"
+  }
+}
