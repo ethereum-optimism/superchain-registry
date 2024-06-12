@@ -18,7 +18,7 @@ mod chain_config;
 pub use chain_config::{ChainConfig, HardForkConfiguration, OPChains, PlasmaConfig};
 
 mod genesis;
-pub use genesis::{ChainGenesis, GenesisSystemConfig, GenesisSystemConfigs};
+pub use genesis::{ChainGenesis, GenesisSystemConfigs};
 
 mod block;
 pub use block::BlockID;

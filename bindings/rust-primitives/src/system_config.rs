@@ -17,7 +17,7 @@ pub struct SystemConfig {
     /// Gas limit value
     pub gas_limit: u64,
     /// Base fee scalar value
-    pub base_fee_scalar: u64,
+    pub base_fee_scalar: Option<u64>,
     /// Blob base fee scalar value
-    pub blob_base_fee_scalar: u64,
+    pub blob_base_fee_scalar: Option<u64>,
 }

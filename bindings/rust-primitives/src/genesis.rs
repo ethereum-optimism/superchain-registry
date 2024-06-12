@@ -2,11 +2,11 @@
 
 use crate::BlockID;
 use crate::SystemConfig;
-use alloy_primitives::{Address, Bytes, B256};
+use alloy_primitives::Bytes;
 use hashbrown::HashMap;
 
 /// Map of chain IDs to their chain's genesis system configurations.
-pub type GenesisSystemConfigs = HashMap<u64, GenesisSystemConfig>;
+pub type GenesisSystemConfigs = HashMap<u64, SystemConfig>;
 
 /// Chain genesis information.
 #[derive(Debug, Clone, Default)]
@@ -23,19 +23,4 @@ pub struct ChainGenesis {
     /// Optional System configuration
     #[cfg_attr(feature = "serde", serde(flatten))]
     pub system_config: Option<SystemConfig>,
-}
-
-/// Genesis system configuration.
-#[derive(Debug, Clone, Default)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
-pub struct GenesisSystemConfig {
-    /// Batcher address
-    pub batcher_addr: Address,
-    /// Fee overhead value
-    pub overhead: B256,
-    /// Fee scalar value
-    pub scalar: B256,
-    /// Gas limit value
-    pub gas_limit: u64,
 }
