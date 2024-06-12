@@ -93,7 +93,7 @@ Omit the `-run=` flag to run checks for all chains.
 This is a tool which will rewrite certain summary files of all the chains in the registry, including the one you are adding. The output will be checked in a continuous integration checks (it is required to pass):
 
 ```
-go run superchain/internal/codegen/main.go
+sh scripts/codegen.sh
 ```
 
 ### 6. Open Your Pull Request

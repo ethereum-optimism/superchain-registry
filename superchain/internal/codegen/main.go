@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strconv"
 
 	"github.com/BurntSushi/toml"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
@@ -87,8 +86,6 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Wrote chainList.toml file")
-
-	generateAddresses()
 }
 
 func currentDir() string {
@@ -98,23 +95,4 @@ func currentDir() string {
 		os.Exit(1)
 	}
 	return filepath.Dir(currentFilePath)
-}
-
-func generateAddresses() {
-	addressList := make(map[string]AddressList)
-	for id := range OPChains {
-		list := Addresses[id]
-		addressList[strconv.Itoa(int(id))] = *list
-	}
-	addressListBytes, err := json.MarshalIndent(addressList, "", " ")
-	if err != nil {
-		panic(err)
-	}
-
-	currentDir := currentDir()
-	err = os.WriteFile(filepath.Join(currentDir, "../../extra/addresses/addresses.json"), addressListBytes, 0o644)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Wrote addresses.json file")
 }
