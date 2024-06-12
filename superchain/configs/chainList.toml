@@ -1,7 +1,7 @@
 [[chains]]
   name = "Base"
   identifier = "mainnet/base"
-  chainId = 8453
+  chain_id = 8453
   rpc = ["https://mainnet.base.org"]
   explorers = ["https://explorer.base.org"]
   superchain_level = 2
@@ -12,7 +12,7 @@
 [[chains]]
   name = "Metal"
   identifier = "mainnet/metal"
-  chainId = 1750
+  chain_id = 1750
   rpc = ["https://rpc.metall2.com"]
   explorers = ["https://explorer.metall2.com"]
   superchain_level = 2
@@ -23,7 +23,7 @@
 [[chains]]
   name = "Mode"
   identifier = "mainnet/mode"
-  chainId = 34443
+  chain_id = 34443
   rpc = ["https://mainnet.mode.network"]
   explorers = ["https://explorer.mode.network"]
   superchain_level = 2
@@ -34,7 +34,7 @@
 [[chains]]
   name = "OP-Mainnet"
   identifier = "mainnet/op"
-  chainId = 10
+  chain_id = 10
   rpc = ["https://mainnet.optimism.io"]
   explorers = ["https://explorer.optimism.io"]
   superchain_level = 2
@@ -45,7 +45,7 @@
 [[chains]]
   name = "Zora"
   identifier = "mainnet/zora"
-  chainId = 7777777
+  chain_id = 7777777
   rpc = ["https://rpc.zora.energy"]
   explorers = ["https://explorer.zora.energy"]
   superchain_level = 2
@@ -56,7 +56,7 @@
 [[chains]]
   name = "Lyra"
   identifier = "mainnet/lyra"
-  chainId = 957
+  chain_id = 957
   rpc = ["https://rpc.lyra.finance"]
   explorers = ["https://explorer.lyra.finance"]
   superchain_level = 1
@@ -67,7 +67,7 @@
 [[chains]]
   name = "Orderly Network"
   identifier = "mainnet/orderly"
-  chainId = 291
+  chain_id = 291
   rpc = ["https://rpc.orderly.network"]
   explorers = ["https://explorer.orderly.network"]
   superchain_level = 1
@@ -78,7 +78,7 @@
 [[chains]]
   name = "PGN"
   identifier = "mainnet/pgn"
-  chainId = 424
+  chain_id = 424
   rpc = ["https://rpc.publicgoods.network"]
   explorers = ["https://explorer.publicgoods.network"]
   superchain_level = 1
@@ -89,7 +89,7 @@
 [[chains]]
   name = "Base Sepolia"
   identifier = "sepolia/base"
-  chainId = 84532
+  chain_id = 84532
   rpc = ["https://sepolia.base.org"]
   explorers = ["https://sepolia-explorer.base.org"]
   superchain_level = 2
@@ -100,7 +100,7 @@
 [[chains]]
   name = "Mode Sepolia"
   identifier = "sepolia/mode"
-  chainId = 919
+  chain_id = 919
   rpc = ["https://sepolia.mode.network"]
   explorers = ["https://sepolia.explorer.mode.network"]
   superchain_level = 2
@@ -111,7 +111,7 @@
 [[chains]]
   name = "OP-Sepolia"
   identifier = "sepolia/op"
-  chainId = 11155420
+  chain_id = 11155420
   rpc = ["https://sepolia.optimism.io"]
   explorers = ["https://sepolia-optimistic.etherscan.io"]
   superchain_level = 2
@@ -122,7 +122,7 @@
 [[chains]]
   name = "race"
   identifier = "sepolia/race"
-  chainId = 90001
+  chain_id = 90001
   rpc = ["https://racetestnet.io"]
   explorers = ["https://testnet.racescan.io"]
   superchain_level = 2
@@ -133,7 +133,7 @@
 [[chains]]
   name = "Zora Sepolia"
   identifier = "sepolia/zora"
-  chainId = 999999999
+  chain_id = 999999999
   rpc = ["https://sepolia.rpc.zora.energy"]
   explorers = ["https://sepolia.explorer.zora.energy"]
   superchain_level = 2
@@ -144,7 +144,7 @@
 [[chains]]
   name = "PGN Sepolia"
   identifier = "sepolia/pgn"
-  chainId = 58008
+  chain_id = 58008
   rpc = ["https://sepolia.publicgoods.network"]
   explorers = ["https://explorer.sepolia.publicgoods.network"]
   superchain_level = 1
@@ -155,7 +155,7 @@
 [[chains]]
   name = "Base devnet 0"
   identifier = "sepolia-dev-0/base-devnet-0"
-  chainId = 11763072
+  chain_id = 11763072
   rpc = [""]
   explorers = [""]
   superchain_level = 2
@@ -166,7 +166,7 @@
 [[chains]]
   name = "OP Labs Sepolia devnet 0"
   identifier = "sepolia-dev-0/oplabs-devnet-0"
-  chainId = 11155421
+  chain_id = 11155421
   rpc = [""]
   explorers = [""]
   superchain_level = 2

@@ -9,7 +9,7 @@
     "explorers": [
       "https://explorer.base.org"
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -25,7 +25,7 @@
     "explorers": [
       "https://explorer.metall2.com"
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -41,7 +41,7 @@
     "explorers": [
       "https://explorer.mode.network"
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -57,7 +57,7 @@
     "explorers": [
       "https://explorer.optimism.io"
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -73,7 +73,7 @@
     "explorers": [
       "https://explorer.zora.energy"
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -89,7 +89,7 @@
     "explorers": [
       "https://explorer.lyra.finance"
     ],
-    "superchain_level": 1,
+    "superchainLevel": 1,
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -105,7 +105,7 @@
     "explorers": [
       "https://explorer.orderly.network"
     ],
-    "superchain_level": 1,
+    "superchainLevel": 1,
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -121,7 +121,7 @@
     "explorers": [
       "https://explorer.publicgoods.network"
     ],
-    "superchain_level": 1,
+    "superchainLevel": 1,
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -137,7 +137,7 @@
     "explorers": [
       "https://sepolia-explorer.base.org"
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -153,7 +153,7 @@
     "explorers": [
       "https://sepolia.explorer.mode.network"
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -169,7 +169,7 @@
     "explorers": [
       "https://sepolia-optimistic.etherscan.io"
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -185,7 +185,7 @@
     "explorers": [
       "https://testnet.racescan.io"
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -201,7 +201,7 @@
     "explorers": [
       "https://sepolia.explorer.zora.energy"
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -217,7 +217,7 @@
     "explorers": [
       "https://explorer.sepolia.publicgoods.network"
     ],
-    "superchain_level": 1,
+    "superchainLevel": 1,
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -233,7 +233,7 @@
     "explorers": [
       ""
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "sepolia-dev-0"
@@ -249,7 +249,7 @@
     "explorers": [
       ""
     ],
-    "superchain_level": 2,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "sepolia-dev-0"

@@ -17,10 +17,10 @@ import (
 type ChainEntry struct {
 	Name            string   `json:"name" toml:"name"`
 	Identifier      string   `json:"identifier" toml:"identifier"`
-	ChainId         uint64   `json:"chainId" toml:"chainId"`
+	ChainId         uint64   `json:"chainId" toml:"chain_id"`
 	RPC             []string `json:"rpc" toml:"rpc"`
 	Explorer        []string `json:"explorers" toml:"explorers"`
-	SuperchainLevel uint     `json:"superchain_level" toml:"superchain_level"`
+	SuperchainLevel uint     `json:"superchainLevel" toml:"superchain_level"`
 	Parent          Parent   `json:"parent" toml:"parent"`
 }
 
