@@ -14,6 +14,14 @@ pub use superchain::{
     Superchain, SuperchainConfig, SuperchainL1Info, SuperchainLevel, Superchains,
 };
 
+mod rollup_config;
+pub use rollup_config::{
+    RollupConfig, OP_SEPOLIA_BASE_FEE_PARAMS, OP_SEPOLIA_CANYON_BASE_FEE_PARAMS,
+    OP_SEPOLIA_EIP1559_BASE_FEE_MAX_CHANGE_DENOMINATOR_CANYON,
+    OP_SEPOLIA_EIP1559_DEFAULT_BASE_FEE_MAX_CHANGE_DENOMINATOR,
+    OP_SEPOLIA_EIP1559_DEFAULT_ELASTICITY_MULTIPLIER,
+};
+
 mod chain_config;
 pub use chain_config::{ChainConfig, HardForkConfiguration, OPChains, PlasmaConfig};
 

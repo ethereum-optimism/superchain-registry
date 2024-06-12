@@ -4,7 +4,7 @@ use alloy_primitives::B256;
 use core::fmt::Display;
 
 /// Block identifier.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Copy, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct BlockID {
     /// Block hash

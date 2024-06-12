@@ -1,6 +1,6 @@
 //! Rollup Config Types
 
-use crate::genesis::Genesis;
+use crate::genesis::ChainGenesis;
 use alloy_eips::eip1559::BaseFeeParams;
 use alloy_primitives::Address;
 
@@ -53,11 +53,11 @@ pub const OP_CANYON_BASE_FEE_PARAMS: BaseFeeParams = BaseFeeParams {
 };
 
 /// The Rollup configuration.
-#[derive(Debug, Clone, Copy, Default)]
+#[derive(Debug, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RollupConfig {
     /// The genesis state of the rollup.
-    pub genesis: Genesis,
+    pub genesis: ChainGenesis,
     /// The block time of the L2, in seconds.
     pub block_time: u64,
     /// Sequencer batches may not be more than MaxSequencerDrift seconds after
@@ -161,7 +161,8 @@ impl RollupConfig {
     /// Returns true if a DA Challenge proxy Address is provided in the rollup config and the
     /// address is not zero.
     pub fn is_plasma_enabled(&self) -> bool {
-        self.da_challenge_address.map_or(false, |addr| !addr.is_zero())
+        self.da_challenge_address
+            .map_or(false, |addr| !addr.is_zero())
     }
 
     /// Returns the base fee parameters for the given rollup configuration.
@@ -198,4 +199,3 @@ impl RollupConfig {
         }
     }
 }
-
