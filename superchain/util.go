@@ -15,7 +15,7 @@ const addressLen = 20
 
 type Address [addressLen]byte
 
-// mMintain a global list of unmarshalled addresses in this package.
+// Maintain a global list of unmarshalled addresses in this package.
 // This is used to enforce checksums.
 var globalListOfAddressText = make([]string, 0)
 
@@ -43,7 +43,7 @@ func MustHexToAddress(s string) Address {
 
 // checksumAddress computes the checksum-formatted prefixed hex representation of an address.
 // implements https://eips.ethereum.org/EIPS/eip-55
-func checksumAddress(addr [20]byte) string {
+func checksumAddress(addr Address) string {
 	var out [2 + addressLen*2]byte
 	copy(out[:2], "0x")
 	hex.Encode(out[2:], addr[:])
