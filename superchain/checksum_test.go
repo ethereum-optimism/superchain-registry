@@ -53,13 +53,9 @@ func TestMustBeCheckSummedHexAddr(t *testing.T) {
 			})
 			t.Run("roundtrip", func(t *testing.T) {
 				var a Address
-				if err := a.UnmarshalText([]byte(tc)); err != nil {
-					t.Fatal(err)
-				}
+				require.NoError(t, a.UnmarshalText([]byte(tc)))
 				dat, err := a.MarshalText()
-				if err != nil {
-					t.Fatal(err)
-				}
+				require.NoError(t, err)
 				if string(dat) != tc {
 					t.Fatalf("encoded %q but expected %q", dat, tc)
 				}
