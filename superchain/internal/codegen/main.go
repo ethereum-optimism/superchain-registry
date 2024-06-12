@@ -88,7 +88,7 @@ func main() {
 	}
 	fmt.Println("Wrote chainList.toml file")
 
-	addresses()
+	generateAddresses()
 }
 
 func currentDir() string {
@@ -100,7 +100,7 @@ func currentDir() string {
 	return filepath.Dir(currentFilePath)
 }
 
-func addresses() {
+func generateAddresses() {
 	addressList := make(map[string]AddressList)
 	for id := range OPChains {
 		list := Addresses[id]
