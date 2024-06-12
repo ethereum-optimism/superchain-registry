@@ -64,24 +64,13 @@ func main() {
 
 	fmt.Printf("Found %d chains...\n", len(allChains))
 
-	// Determine the absolute path of the current file
-	_, currentFilePath, _, ok := runtime.Caller(0)
-	if !ok {
-		fmt.Println("Error: Unable to determine the current file path")
-		os.Exit(1)
-	}
-
-	// Get the directory of the current file
-	currentDir := filepath.Dir(currentFilePath)
-
-	// Define the file path in the parent directory
-	parentDir := filepath.Join(currentDir, "../..")
+	currentDir := currentDir()
 
 	allChainsBytes, err := json.MarshalIndent(allChains, "", "  ")
 	if err != nil {
 		panic(err)
 	}
-	err = os.WriteFile(filepath.Join(parentDir, "/configs/chainList.json"), allChainsBytes, 0o644)
+	err = os.WriteFile(filepath.Join(currentDir, "../../configs/chainList.json"), allChainsBytes, 0o644)
 	if err != nil {
 		panic(err)
 	}
@@ -93,13 +82,22 @@ func main() {
 		fmt.Println("Error encoding TOML:", err)
 		return
 	}
-	err = os.WriteFile(filepath.Join(parentDir, "/configs/chainList.toml"), buf.Bytes(), 0o644)
+	err = os.WriteFile(filepath.Join(currentDir, "../../configs/chainList.toml"), buf.Bytes(), 0o644)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Wrote chainList.toml file")
 
 	addresses()
+}
+
+func currentDir() string {
+	_, currentFilePath, _, ok := runtime.Caller(0)
+	if !ok {
+		fmt.Println("Error: Unable to determine the current file path")
+		os.Exit(1)
+	}
+	return filepath.Dir(currentFilePath)
 }
 
 func addresses() {
@@ -112,20 +110,9 @@ func addresses() {
 	if err != nil {
 		panic(err)
 	}
-	// Determine the absolute path of the current file
-	_, currentFilePath, _, ok := runtime.Caller(0)
-	if !ok {
-		fmt.Println("Error: Unable to determine the current file path")
-		os.Exit(1)
-	}
 
-	// Get the directory of the current file
-	currentDir := filepath.Dir(currentFilePath)
-
-	// Define the file path in the parent directory
-	path := filepath.Join(currentDir, "../../extra/addresses/addresses.json")
-
-	err = os.WriteFile(path, addressListBytes, 0o644)
+	currentDir := currentDir()
+	err = os.WriteFile(filepath.Join(currentDir, "../../extra/addresses/addresses.json"), addressListBytes, 0o644)
 	if err != nil {
 		panic(err)
 	}
