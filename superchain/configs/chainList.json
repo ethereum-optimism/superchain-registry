@@ -1,0 +1,258 @@
+[
+  {
+    "name": "Base",
+    "identifier": "mainnet/base",
+    "chainId": 8453,
+    "rpc": [
+      "https://mainnet.base.org"
+    ],
+    "explorers": [
+      "https://explorer.base.org"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Metal",
+    "identifier": "mainnet/metal",
+    "chainId": 1750,
+    "rpc": [
+      "https://rpc.metall2.com"
+    ],
+    "explorers": [
+      "https://explorer.metall2.com"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Mode",
+    "identifier": "mainnet/mode",
+    "chainId": 34443,
+    "rpc": [
+      "https://mainnet.mode.network"
+    ],
+    "explorers": [
+      "https://explorer.mode.network"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "OP-Mainnet",
+    "identifier": "mainnet/op",
+    "chainId": 10,
+    "rpc": [
+      "https://mainnet.optimism.io"
+    ],
+    "explorers": [
+      "https://explorer.optimism.io"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Zora",
+    "identifier": "mainnet/zora",
+    "chainId": 7777777,
+    "rpc": [
+      "https://rpc.zora.energy"
+    ],
+    "explorers": [
+      "https://explorer.zora.energy"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Lyra",
+    "identifier": "mainnet/lyra",
+    "chainId": 957,
+    "rpc": [
+      "https://rpc.lyra.finance"
+    ],
+    "explorers": [
+      "https://explorer.lyra.finance"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Orderly Network",
+    "identifier": "mainnet/orderly",
+    "chainId": 291,
+    "rpc": [
+      "https://rpc.orderly.network"
+    ],
+    "explorers": [
+      "https://explorer.orderly.network"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "PGN",
+    "identifier": "mainnet/pgn",
+    "chainId": 424,
+    "rpc": [
+      "https://rpc.publicgoods.network"
+    ],
+    "explorers": [
+      "https://explorer.publicgoods.network"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Base Sepolia",
+    "identifier": "sepolia/base",
+    "chainId": 84532,
+    "rpc": [
+      "https://sepolia.base.org"
+    ],
+    "explorers": [
+      "https://sepolia-explorer.base.org"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Mode Sepolia",
+    "identifier": "sepolia/mode",
+    "chainId": 919,
+    "rpc": [
+      "https://sepolia.mode.network"
+    ],
+    "explorers": [
+      "https://sepolia.explorer.mode.network"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "OP-Sepolia",
+    "identifier": "sepolia/op",
+    "chainId": 11155420,
+    "rpc": [
+      "https://sepolia.optimism.io"
+    ],
+    "explorers": [
+      "https://sepolia-optimistic.etherscan.io"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "race",
+    "identifier": "sepolia/race",
+    "chainId": 90001,
+    "rpc": [
+      "https://racetestnet.io"
+    ],
+    "explorers": [
+      "https://testnet.racescan.io"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Zora Sepolia",
+    "identifier": "sepolia/zora",
+    "chainId": 999999999,
+    "rpc": [
+      "https://sepolia.rpc.zora.energy"
+    ],
+    "explorers": [
+      "https://sepolia.explorer.zora.energy"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "PGN Sepolia",
+    "identifier": "sepolia/pgn",
+    "chainId": 58008,
+    "rpc": [
+      "https://sepolia.publicgoods.network"
+    ],
+    "explorers": [
+      "https://explorer.sepolia.publicgoods.network"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Base devnet 0",
+    "identifier": "sepolia-dev-0/base-devnet-0",
+    "chainId": 11763072,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia-dev-0"
+    }
+  },
+  {
+    "name": "OP Labs Sepolia devnet 0",
+    "identifier": "sepolia-dev-0/oplabs-devnet-0",
+    "chainId": 11155421,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia-dev-0"
+    }
+  }
+]

@@ -111,6 +111,10 @@ type ChainConfig struct {
 	Plasma *PlasmaConfig `yaml:"plasma,omitempty"`
 }
 
+func (c ChainConfig) Identifier() string {
+	return c.Superchain + "/" + c.Chain
+}
+
 type PlasmaConfig struct {
 	DAChallengeAddress *Address `json:"da_challenge_contract_address" yaml:"-"`
 	// DA challenge window value set on the DAC contract. Used in plasma mode

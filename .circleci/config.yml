@@ -98,13 +98,14 @@ jobs:
           name: Build and publish package on NPM 📦
           command: pnpm release
   check-codegen:
-    docker:
-      - image: cimg/node:18.18.2
+    executor:
+      name: go/default  # is based on cimg/go
+      tag: '1.21'
     steps:
       - checkout
       - run:
           name: Run codegen
-          command: pnpm codegen
+          command: go run superchain/internal/codegen/main.go
       - run:
           name: Check for changes
           command: git diff --exit-code

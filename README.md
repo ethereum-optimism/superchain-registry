@@ -89,7 +89,14 @@ Omit the `-run=` flag to run checks for all chains.
 > [!NOTE]
 > Your chain will be checked against the standard configuration requirements. These  are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
 
-### 5. Open Your Pull Request
+### 5. Run codegen
+This is a tool which will rewrite certain summary files of all the chains in the registry, including the one you are adding. The output will be checked in a continuous integration checks (it is required to pass):
+
+```
+sh scripts/codegen.sh
+```
+
+### 6. Open Your Pull Request
 When opening a PR:
 - Open it from a non-protected branch in your fork (e.g. avoid the `main` branch). This allows maintainers to push to your branch if needed, which streamlines the review and merge process.
 - Open one PR per chain you would like to add. This ensures the merge of one chain is not blocked by unexpected issues.

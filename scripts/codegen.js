@@ -3,15 +3,16 @@ import path from 'path'
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 /**
- * Generates the chainids.json file that sits at the root of the
- * superchain/configs folder. Useful to have a combined JSON file for all of
- * the various chain IDs to avoid dynamic imports.
+ * Geneartes the addresses.json file that sits at the root of the
+ * superchain/extra/addresses folder. Useful to have a combined JSON file for
+ * all of the various addresses to avoid dynamic imports.
  */
-const chainids = () => {
-  const result = {}
-  const folder = path.resolve(__dirname, '../superchain/configs')
-  const subfolders = fs.readdirSync(folder, { withFileTypes: true })
+const addresses = () => {
+  const chainids = {}
+  var folder = path.resolve(__dirname, '../superchain/configs')
+  var subfolders = fs.readdirSync(folder, { withFileTypes: true })
   for (const subfolder of subfolders) {
     if (!subfolder.isDirectory()) {
       continue
@@ -32,26 +33,14 @@ const chainids = () => {
 
       if (matches) {
         const id = parseInt(matches[1])
-        result[chain] = id
+        chainids[chain] = id
       }
     }
   }
 
-  const outpath = path.resolve(folder, 'chainids.json')
-  fs.writeFileSync(outpath, JSON.stringify(result, null, 2))
-}
-
-/**
- * Geneartes the addresses.json file that sits at the root of the
- * superchain/extra/addresses folder. Useful to have a combined JSON file for
- * all of the various addresses to avoid dynamic imports.
- */
-const addresses = () => {
   const result = {}
-  const chainpath = path.resolve(__dirname, '../superchain/configs/chainids.json')
-  const chainids = JSON.parse(fs.readFileSync(chainpath, 'utf8'))
-  const folder = path.resolve(__dirname, '../superchain/extra/addresses')
-  const subfolders = fs.readdirSync(folder, { withFileTypes: true })
+  folder = path.resolve(__dirname, '../superchain/extra/addresses')
+  subfolders = fs.readdirSync(folder, { withFileTypes: true })
   for (const subfolder of subfolders) {
     if (!subfolder.isDirectory()) {
       continue
@@ -79,5 +68,4 @@ const addresses = () => {
   fs.writeFileSync(outpath, JSON.stringify(result, null, 2))
 }
 
-chainids()
 addresses()
