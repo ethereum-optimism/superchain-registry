@@ -10,7 +10,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  cargo-tests:
+  cargo-nexttest:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
@@ -19,14 +19,30 @@ jobs:
     name: test-${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v4
-        path: ${{ matrix.dir }}
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
       - uses: taiki-e/install-action@nextest
       - name: cargo test
-        run: just t
+        run: cargo nextest run --all --all-features
+        working-directory: bindings/${{ matrix.dir }}
+  cargo-test-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        dir: ["rust-primitives", "rust-bindings"]
+    name: test-${{ matrix.dir }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      - name: cargo test
+        run: cargo test --doc --all --locked
+        working-directory: bindings/${{ matrix.dir }}
   cargo-lint:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -36,7 +52,6 @@ jobs:
     name: lint-${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v4
-        path: ${{ matrix.dir }}
       - uses: taiki-e/install-action@just
       - uses: dtolnay/rust-toolchain@nightly
         with:
@@ -44,8 +59,15 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
-      - name: fmt + lint
-        run: just l
+      - name: fmt checks
+        run: cargo +nightly fmt --all -- --check
+        working-directory: bindings/${{ matrix.dir }}
+      - name: lint-source
+        run: cargo +nightly clippy --all --all-features --all-targets -- -D warnings
+        working-directory: bindings/${{ matrix.dir }}
+      - name: lint-docs
+        run: RUSTDOCFLAGS="-D warnings" cargo doc --all --no-deps --document-private-items
+        working-directory: bindings/${{ matrix.dir }}
   cargo-build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -56,11 +78,11 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-        path: ${{ matrix.dir }}
       - uses: taiki-e/install-action@just
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
         with:
           cache-on-failure: true
       - name: build
-        run: just b
+        run: cargo build
+        working-directory: bindings/${{ matrix.dir }}
