@@ -7,6 +7,7 @@
 *.rs @ethereum-optimism/rust-reviewers
 Cargo.toml @ethereum-optimism/rust-reviewers
 /bindings/rust-* @ethereum-optimism/rust-reviewers
+.github/workflows/rust-checks.yml @ethereum-optimism/rust-reviewers
 
 ## Go
 *.go @ethereum-optimism/go-reviewers
