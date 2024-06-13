@@ -5,8 +5,8 @@ use alloc::{format, string::ToString, vec::Vec};
 use hashbrown::HashMap;
 use superchain_primitives::{
     is_config_file, AddressList, Addresses, ChainConfig, ContractImplementations,
-    GenesisSystemConfig, GenesisSystemConfigs, Implementations, OPChains, Superchain,
-    SuperchainConfig, Superchains,
+    GenesisSystemConfigs, Implementations, OPChains, Superchain, SuperchainConfig, Superchains,
+    SystemConfig,
 };
 
 pub(crate) type InitTuple = (
@@ -63,7 +63,7 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
                 ))
                 .expect("Failed to find genesis system config file")
                 .contents();
-            let genesis_config: GenesisSystemConfig = serde_json::from_slice(genesis_config_data)
+            let genesis_config: SystemConfig = serde_json::from_slice(genesis_config_data)
                 .expect("Failed to deserialize genesis system config file");
 
             let id = chain_config.chain_id;

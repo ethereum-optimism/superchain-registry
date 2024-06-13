@@ -8,6 +8,9 @@ alias b := build
 default:
   @just --list
 
+# Runs everything needed for ci
+ci: fmt lint tests
+
 # Run all tests
 tests: test test-docs
 
