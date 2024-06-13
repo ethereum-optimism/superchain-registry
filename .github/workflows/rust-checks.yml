@@ -19,7 +19,6 @@ jobs:
     name: test-${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v4
-        working-directory: ${{ matrix.dir }}
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
         with:
@@ -27,6 +26,7 @@ jobs:
       - uses: taiki-e/install-action@nextest
       - name: cargo test
         run: just t
+        working-directory: ${{ matrix.dir }}
   cargo-lint:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -36,7 +36,6 @@ jobs:
     name: lint-${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v4
-        working-directory: ${{ matrix.dir }}
       - uses: taiki-e/install-action@just
       - uses: dtolnay/rust-toolchain@nightly
         with:
@@ -46,6 +45,7 @@ jobs:
           cache-on-failure: true
       - name: fmt + lint
         run: just l
+        working-directory: ${{ matrix.dir }}
   cargo-build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -56,7 +56,6 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-        working-directory: ${{ matrix.dir }}
       - uses: taiki-e/install-action@just
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
@@ -64,3 +63,4 @@ jobs:
           cache-on-failure: true
       - name: build
         run: just b
+        working-directory: ${{ matrix.dir }}
