@@ -239,7 +239,7 @@ impl Default for SystemAccounts {
 
 #[cfg(test)]
 mod test {
-    use crate::ChainGenesis;
+    use crate::{ChainGenesis, OP_BASE_FEE_PARAMS};
 
     use super::*;
     use alloc::vec;
@@ -260,6 +260,8 @@ mod test {
             channel_timeout: 0,
             l1_chain_id: 1,
             l2_chain_id: 10,
+            base_fee_params: OP_BASE_FEE_PARAMS,
+            canyon_base_fee_params: None,
             regolith_time: Some(0),
             canyon_time: Some(0),
             delta_time: Some(0),

@@ -26,5 +26,5 @@ alloy-eips = { git = "https://github.com/alloy-rs/alloy", rev = "cb95183", defau
 [features]
 default = ["std", "serde"]
 std = []
-serde = ["dep:serde", "dep:serde_repr"]
+serde = ["dep:serde", "dep:serde_repr", "alloy-eips/serde"]
 

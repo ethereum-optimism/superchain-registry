@@ -55,7 +55,7 @@ pub const OP_CANYON_BASE_FEE_PARAMS: BaseFeeParams = BaseFeeParams {
 };
 
 /// The Rollup configuration.
-#[derive(Debug, Clone, Default, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RollupConfig {
     /// The genesis state of the rollup.
@@ -76,6 +76,11 @@ pub struct RollupConfig {
     pub l1_chain_id: u64,
     /// The L2 chain ID
     pub l2_chain_id: u64,
+    /// Base Fee Params
+    pub base_fee_params: BaseFeeParams,
+    /// Base fee params post-canyon hardfork
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    pub canyon_base_fee_params: Option<BaseFeeParams>,
     /// `regolith_time` sets the activation time of the Regolith network-upgrade:
     /// a pre-mainnet Bedrock change that addresses findings of the Sherlock contest related to
     /// deposit attributes. "Regolith" is the loose deposited rock that sits on top of Bedrock.
@@ -129,6 +134,35 @@ pub struct RollupConfig {
     pub da_challenge_address: Option<Address>,
 }
 
+// Need to manually implement Default because [`BaseFeeParams`] has no Default impl.
+impl Default for RollupConfig {
+    fn default() -> Self {
+        RollupConfig {
+            genesis: ChainGenesis::default(),
+            block_time: 0,
+            max_sequencer_drift: 0,
+            seq_window_size: 0,
+            channel_timeout: 0,
+            l1_chain_id: 0,
+            l2_chain_id: 0,
+            base_fee_params: OP_BASE_FEE_PARAMS,
+            canyon_base_fee_params: None,
+            regolith_time: None,
+            canyon_time: None,
+            delta_time: None,
+            ecotone_time: None,
+            fjord_time: None,
+            interop_time: None,
+            batch_inbox_address: Address::ZERO,
+            deposit_contract_address: Address::ZERO,
+            l1_system_config_address: Address::ZERO,
+            protocol_versions_address: Address::ZERO,
+            blobs_enabled_l1_timestamp: None,
+            da_challenge_address: None,
+        }
+    }
+}
+
 impl RollupConfig {
     /// Returns true if Regolith is active at the given timestamp.
     pub fn is_regolith_active(&self, timestamp: u64) -> bool {
@@ -165,17 +199,6 @@ impl RollupConfig {
     pub fn is_plasma_enabled(&self) -> bool {
         self.da_challenge_address
             .map_or(false, |addr| !addr.is_zero())
-    }
-
-    /// Returns the base fee parameters for the given rollup configuration.
-    ///
-    /// TODO: Consider chain-specific base fee params (i.e. Sepolia vs. Mainnet).
-    pub fn base_fee_params_at_timestamp(&self, timestamp: u64) -> BaseFeeParams {
-        if self.is_canyon_active(timestamp) {
-            OP_CANYON_BASE_FEE_PARAMS
-        } else {
-            OP_BASE_FEE_PARAMS
-        }
     }
 
     /// Checks the scalar value in Ecotone.
@@ -230,6 +253,8 @@ pub const OP_MAINNET_CONFIG: RollupConfig = RollupConfig {
     channel_timeout: 300_u64,
     l1_chain_id: 1_u64,
     l2_chain_id: 10_u64,
+    base_fee_params: OP_BASE_FEE_PARAMS,
+    canyon_base_fee_params: Some(OP_CANYON_BASE_FEE_PARAMS),
     regolith_time: Some(0_u64),
     canyon_time: Some(1_704_992_401_u64),
     delta_time: Some(1_708_560_000_u64),
@@ -272,6 +297,8 @@ pub const OP_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     channel_timeout: 300,
     l1_chain_id: 11155111,
     l2_chain_id: 11155420,
+    base_fee_params: OP_SEPOLIA_BASE_FEE_PARAMS,
+    canyon_base_fee_params: Some(OP_SEPOLIA_CANYON_BASE_FEE_PARAMS),
     regolith_time: Some(0),
     canyon_time: Some(1699981200),
     delta_time: Some(1703203200),
@@ -314,6 +341,8 @@ pub const BASE_MAINNET_CONFIG: RollupConfig = RollupConfig {
     channel_timeout: 300_u64,
     l1_chain_id: 1_u64,
     l2_chain_id: 8453_u64,
+    base_fee_params: OP_BASE_FEE_PARAMS,
+    canyon_base_fee_params: Some(OP_CANYON_BASE_FEE_PARAMS),
     regolith_time: Some(0_u64),
     canyon_time: Some(1_704_992_401_u64),
     delta_time: Some(1_708_560_000_u64),
@@ -356,6 +385,8 @@ pub const BASE_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     channel_timeout: 300,
     l1_chain_id: 11155111,
     l2_chain_id: 84532,
+    base_fee_params: OP_SEPOLIA_BASE_FEE_PARAMS,
+    canyon_base_fee_params: Some(OP_SEPOLIA_CANYON_BASE_FEE_PARAMS),
     regolith_time: Some(0),
     canyon_time: Some(1699981200),
     delta_time: Some(1703203200),
