@@ -22,7 +22,9 @@ pub use rollup_config::{
     OP_SEPOLIA_EIP1559_DEFAULT_ELASTICITY_MULTIPLIER,
 };
 
-pub use rollup_config::{OP_MAINNET_CONFIG, OP_SEPOLIA_CONFIG, BASE_MAINNET_CONFIG, BASE_SEPOLIA_CONFIG};
+pub use rollup_config::{
+    BASE_MAINNET_CONFIG, BASE_SEPOLIA_CONFIG, OP_MAINNET_CONFIG, OP_SEPOLIA_CONFIG,
+};
 
 mod chain_config;
 pub use chain_config::{ChainConfig, HardForkConfiguration, OPChains, PlasmaConfig};

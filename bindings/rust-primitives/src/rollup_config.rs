@@ -1,10 +1,10 @@
 //! Rollup Config Types
 
-use crate::system_config::SystemConfig;
 use crate::block::BlockID;
 use crate::genesis::ChainGenesis;
+use crate::system_config::SystemConfig;
 use alloy_eips::eip1559::BaseFeeParams;
-use alloy_primitives::{b256, address, uint, Address};
+use alloy_primitives::{address, b256, uint, Address};
 
 /// Base fee max change denominator for Optimism Mainnet as defined in the Optimism
 /// [transaction costs](https://community.optimism.io/docs/developers/build/differences/#transaction-costs) doc.
