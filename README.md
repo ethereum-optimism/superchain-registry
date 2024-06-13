@@ -89,7 +89,7 @@ Omit the `-run=` flag to run checks for all chains.
 > [!NOTE]
 > Your chain will be checked against the standard configuration requirements. These  are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
 
-### 7. Run codegen
+### 5. Run codegen
 This is a tool which will rewrite certain summary files of all the chains in the registry, including the one you are adding. The output will be checked in a continuous integration checks (it is required to pass):
 
 ```
