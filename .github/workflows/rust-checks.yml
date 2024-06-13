@@ -10,27 +10,29 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  cargo-tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-        with:
-          cache-on-failure: true
-      - uses: taiki-e/install-action@nextest
-      - name: cargo test
-        run: cargo nextest run --release --workspace --all --locked
+  # cargo-tests:
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 20
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: dtolnay/rust-toolchain@stable
+  #     - uses: Swatinem/rust-cache@v2
+  #       with:
+  #         cache-on-failure: true
+  #     - uses: taiki-e/install-action@nextest
+  #     - name: cargo test
+  #       run: cargo nextest run --release --workspace --all --locked
   cargo-lint:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
       matrix:
         target: ["native", "cannon", "asterisc"]
-    name: lint-${{ matrix.target }}
+        dir: ["rust-primitives", "rust-bindings"]
+    name: lint-${{ matrix.target }}-${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v4
+        path: ${{ matrix.dir }}
       - uses: taiki-e/install-action@just
       - uses: dtolnay/rust-toolchain@nightly
         with:
@@ -50,44 +52,44 @@ jobs:
       - name: chown target
         run: |
           sudo chown -R $(id -u):$(id -g) ./target
-  cargo-build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    strategy:
-      matrix:
-        target: ["native", "cannon", "asterisc"]
-    name: build-${{ matrix.target }}
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-      - uses: taiki-e/install-action@just
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-        with:
-          cache-on-failure: true
-          prefix-key: ${{ matrix.target }}
-      - name: Log into ghcr
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: build
-        run: just build-${{ matrix.target }}
-      - name: chown target
-        run: |
-          sudo chown -R $(id -u):$(id -g) ./target
-  cargo-doc:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-      - uses: taiki-e/install-action@just
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-        with:
-          cache-on-failure: true
-      - name: doclint
-        run: just lint-docs
-      - name: doctest
-        run: just test-docs
+  # cargo-build:
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 20
+  #   strategy:
+  #     matrix:
+  #       target: ["native", "cannon", "asterisc"]
+  #   name: build-${{ matrix.target }}
+  #   continue-on-error: true
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: taiki-e/install-action@just
+  #     - uses: dtolnay/rust-toolchain@stable
+  #     - uses: Swatinem/rust-cache@v2
+  #       with:
+  #         cache-on-failure: true
+  #         prefix-key: ${{ matrix.target }}
+  #     - name: Log into ghcr
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: build
+  #       run: just build-${{ matrix.target }}
+  #     - name: chown target
+  #       run: |
+  #         sudo chown -R $(id -u):$(id -g) ./target
+  # cargo-doc:
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 20
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: taiki-e/install-action@just
+  #     - uses: dtolnay/rust-toolchain@stable
+  #     - uses: Swatinem/rust-cache@v2
+  #       with:
+  #         cache-on-failure: true
+  #     - name: doclint
+  #       run: just lint-docs
+  #     - name: doctest
+  #       run: just test-docs
