@@ -6,9 +6,10 @@
 
 extern crate alloc;
 
-/// Module holding the superchain configuration type definitions.
-pub mod superchain;
-use superchain::{Addresses, GenesisSystemConfigs, Implementations, OPChains, Superchains};
+/// Re-export superchain primitives.
+pub use superchain_primitives::{
+    Addresses, GenesisSystemConfigs, Implementations, OPChains, Superchains,
+};
 
 /// Module responsible for representing the embedded filesystem
 /// that contains the superchain configurations for static access.
@@ -40,12 +41,9 @@ lazy_static::lazy_static! {
 
 #[cfg(test)]
 mod tests {
+    use crate::{ADDRESSES, OPCHAINS, SUPERCHAINS};
     use alloy_primitives::{address, b256};
-
-    use crate::{
-        superchain::{AddressList, SuperchainLevel},
-        ADDRESSES, OPCHAINS, SUPERCHAINS,
-    };
+    use superchain_primitives::{AddressList, SuperchainLevel};
 
     #[test]
     fn test_read_superchains() {

@@ -24,6 +24,7 @@ docs/
 !.env.test
 *.log
 
+*/**/target
 
 # Go workspaces checksum file
 go.work.sum
