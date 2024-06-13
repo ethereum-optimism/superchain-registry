@@ -1,0 +1,66 @@
+name: Rust CI Checks
+
+on:
+  push:
+    branches: [main]
+  merge_group:
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  cargo-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        dir: ["rust-primitives", "rust-bindings"]
+    name: test-${{ matrix.dir }}
+    steps:
+      - uses: actions/checkout@v4
+        path: ${{ matrix.dir }}
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      - uses: taiki-e/install-action@nextest
+      - name: cargo test
+        run: just t
+  cargo-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        dir: ["rust-primitives", "rust-bindings"]
+    name: lint-${{ matrix.dir }}
+    steps:
+      - uses: actions/checkout@v4
+        path: ${{ matrix.dir }}
+      - uses: taiki-e/install-action@just
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      - name: fmt + lint
+        run: just l
+  cargo-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        dir: ["rust-primitives", "rust-bindings"]
+    name: build-${{ matrix.dir }}
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        path: ${{ matrix.dir }}
+      - uses: taiki-e/install-action@just
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      - name: build
+        run: just b
