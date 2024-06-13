@@ -27,6 +27,7 @@ type L2OOParams struct {
 
 func TestL2OOParams(t *testing.T) {
 	isExcluded := map[uint64]bool{
+		10:        true, // OP mainnet - Upgraded to fault proofs
 		999999999: true, // sepolia/zora  Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
 		1740:      true, // sepolia/metal Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
 		919:       true, // sepolia/mode  Incorrect finalizationPeriodSeconds, 180 is not within bounds [12 12]

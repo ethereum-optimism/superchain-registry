@@ -95,8 +95,10 @@ func TestContractVersions(t *testing.T) {
 	}
 
 	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
+		// TODO: don't hardcode this https://github.com/ethereum-optimism/superchain-registry/issues/219
 		isFaultProofChain := map[uint64]bool{
-			11155420: true, // TODO don't hardcode this https://github.com/ethereum-optimism/superchain-registry/issues/219
+			10:       true, // OP Mainnet
+			11155420: true, // OP Sepolia
 		}
 
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC

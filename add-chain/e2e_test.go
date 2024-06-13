@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"os"
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -67,7 +66,7 @@ func compareJsonFiles(t *testing.T, dirPath, testName, chainName string) {
 	err = json.Unmarshal(testBytes, &testJSON)
 	require.NoError(t, err, "failed to read test generated json file from "+dirPath)
 
-	require.True(t, reflect.DeepEqual(expectJSON, testJSON), "test .json contents do not meet expectation:\n %s", string(testBytes))
+	require.Equal(t, expectJSON, testJSON, "test .json contents do not meet expectation")
 }
 
 func checkConfigYaml(t *testing.T, testName, chainName string) {
