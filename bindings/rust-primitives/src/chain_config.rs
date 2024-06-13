@@ -10,7 +10,7 @@ use hashbrown::HashMap;
 pub type OPChains = HashMap<u64, ChainConfig>;
 
 /// Plasma configuration.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct PlasmaConfig {
     /// Plasma DA challenge address
@@ -22,7 +22,7 @@ pub struct PlasmaConfig {
 }
 
 /// Hardfork configuration.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct HardForkConfiguration {
     /// Canyon hardfork activation time
@@ -36,7 +36,7 @@ pub struct HardForkConfiguration {
 }
 
 /// A chain configuration.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ChainConfig {
     /// Chain name (e.g. "Base")

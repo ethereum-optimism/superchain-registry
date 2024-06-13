@@ -55,7 +55,7 @@ pub const OP_CANYON_BASE_FEE_PARAMS: BaseFeeParams = BaseFeeParams {
 };
 
 /// The Rollup configuration.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RollupConfig {
     /// The genesis state of the rollup.

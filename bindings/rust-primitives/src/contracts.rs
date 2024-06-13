@@ -11,7 +11,7 @@ pub type Implementations = HashMap<String, ContractImplementations>;
 pub type AddressSet = HashMap<String, Address>;
 
 /// Contract Implementations
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(default))]
 pub struct ContractImplementations {
