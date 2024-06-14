@@ -9,7 +9,7 @@ use hashbrown::HashMap;
 pub type GenesisSystemConfigs = HashMap<u64, SystemConfig>;
 
 /// Chain genesis information.
-#[derive(Debug, Clone, Default, Eq, PartialEq)]
+#[derive(Debug, Clone, Default, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ChainGenesis {
     /// L1 genesis block
