@@ -14,7 +14,7 @@ pub const CONFIG_UPDATE_TOPIC: B256 =
 pub const CONFIG_UPDATE_EVENT_VERSION_0: B256 = B256::ZERO;
 
 /// System configuration.
-#[derive(Debug, Clone, Default, Eq, PartialEq)]
+#[derive(Debug, Clone, Default, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
 pub struct SystemConfig {
@@ -33,7 +33,7 @@ pub struct SystemConfig {
 }
 
 /// Represents type of update to the system config.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 #[repr(u64)]
 pub enum SystemConfigUpdateType {
     /// Batcher update type

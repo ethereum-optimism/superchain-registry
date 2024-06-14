@@ -9,7 +9,7 @@ use hashbrown::HashMap;
 pub type Superchains = HashMap<String, Superchain>;
 
 /// A superchain configuration.
-#[derive(Debug, Clone, Default, Eq, PartialEq)]
+#[derive(Debug, Clone, Default, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Superchain {
     /// Superchain configuration file contents.
@@ -21,7 +21,7 @@ pub struct Superchain {
 }
 
 /// A superchain configuration file format
-#[derive(Debug, Clone, Default, Eq, PartialEq)]
+#[derive(Debug, Clone, Default, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SuperchainConfig {
     /// Superchain name (e.g. "Mainnet")
@@ -38,7 +38,7 @@ pub struct SuperchainConfig {
 }
 
 /// Superchain L1 anchor information
-#[derive(Debug, Clone, Default, Eq, PartialEq)]
+#[derive(Debug, Clone, Default, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SuperchainL1Info {
     /// L1 chain ID
@@ -50,7 +50,7 @@ pub struct SuperchainL1Info {
 }
 
 /// Level of integration with the superchain.
-#[derive(Debug, Clone, Default, Eq, PartialEq)]
+#[derive(Debug, Clone, Default, Hash, Eq, PartialEq)]
 #[cfg_attr(
     feature = "serde",
     derive(serde_repr::Serialize_repr, serde_repr::Deserialize_repr)
