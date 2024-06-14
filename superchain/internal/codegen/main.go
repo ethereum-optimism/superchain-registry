@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 
 	"github.com/BurntSushi/toml"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
@@ -31,7 +32,12 @@ type Parent struct {
 
 func main() {
 	allChains := make([]ChainEntry, 0)
-	for sc := range Superchains {
+	superchainTargets := make([]string, 0)
+	for t := range Superchains {
+		superchainTargets = append(superchainTargets, t)
+	}
+	slices.Sort(superchainTargets)
+	for _, sc := range superchainTargets {
 		standardChains := make([]ChainEntry, 0)
 		frontierChains := make([]ChainEntry, 0)
 		for _, chainId := range Superchains[sc].ChainIDs {
