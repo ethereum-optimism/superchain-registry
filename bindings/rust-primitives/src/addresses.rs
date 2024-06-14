@@ -7,7 +7,7 @@ use hashbrown::HashMap;
 pub type Addresses = HashMap<u64, AddressList>;
 
 /// The set of network-specific contracts for a given chain.
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "PascalCase"))]
 pub struct AddressList {
