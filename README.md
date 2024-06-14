@@ -89,12 +89,15 @@ Omit the `-run=` flag to run checks for all chains.
 > [!NOTE]
 > Your chain will be checked against the standard configuration requirements. These  are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
 
-### 5. Run codegen
+### 5. Run codegen and check output
 This is a tool which will rewrite certain summary files of all the chains in the registry, including the one you are adding. The output will be checked in a continuous integration checks (it is required to pass):
 
 ```
 sh scripts/codegen.sh
 ```
+
+> [!NOTE]
+> Please double check the diff to this file. This data may be consumed by external services, e.g. wallets. If anything looks incorrect, please get in touch.
 
 ### 6. Open Your Pull Request
 When opening a PR:
