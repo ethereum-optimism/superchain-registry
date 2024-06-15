@@ -26,133 +26,36 @@ base_fee_scalar = [0, 10_000_000]
 gas_limit = [1000, 60_000_000]
 
 # Standard Chain Config Roles
-[[l1.universal]]
-name = "AddressManager"
-method = "owner()"
-resolves_to_address_of = "ProxyAdmin"
+# Standard Chain Config Roles
+[l1.universal]
+AddressManager."owner()" = "ProxyAdmin"
+SystemConfigProxy."owner()" = "SystemConfigOwner"
+ProxyAdmin."owner()" = "ProxyAdminOwner"
+L1CrossDomainMessengerProxy."PORTAL()" = "OptimismPortalProxy"
+L1ERC721BridgeProxy."admin()" = "ProxyAdmin"
+L1ERC721BridgeProxy."messenger()" = "L1CrossDomainMessengerProxy"
+L1StandardBridgeProxy."getOwner()" = "ProxyAdmin"
+L1StandardBridgeProxy."messenger()" = "L1CrossDomainMessengerProxy"
+OptimismMintableERC20FactoryProxy."admin()" = "ProxyAdmin"
+OptimismMintableERC20FactoryProxy."BRIDGE()" = "L1StandardBridgeProxy"
+OptimismPortalProxy."admin()" = "ProxyAdmin"
+# ProxyAdmin."owner()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A" // duplicated!
+ProxyAdmin."addressManager()" = "AddressManager"
+SystemConfigProxy."admin()" = "ProxyAdmin"
 
-[[l1.universal]]
-name = "SystemConfigProxy"
-method = "owner()"
-resolves_to_address_of = "SystemConfigOwner"
+[l1.nonFPAC]
+# OptimismPortalProxy."GUARDIAN()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
+OptimismPortalProxy."GUARDIAN()" = "Guardian"
+OptimismPortalProxy."SYSTEM_CONFIG()" = "SystemConfigProxy"
+OptimismPortalProxy."L2_ORACLE()" = "L2OutputOracleProxy"
+L2OutputOracleProxy."admin()" = "ProxyAdmin"
+L2OutputOracleProxy."CHALLENGER()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
 
-[[l1.universal]]
-name = "ProxyAdmin"
-method = "owner()"
-resolves_to = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
-resolves_to_address_of = "ProxyAdminOwner"
-
-[[l1.universal]]
-name = "L1CrossDomainMessengerProxy"
-method = "PORTAL()"
-resolves_to_address_of = "OptimismPortalProxy"
-
-[[l1.universal]]
-name = "L1ERC721BridgeProxy"
-method = "admin()"
-resolves_to_address_of = "ProxyAdmin"
-
-[[l1.universal]]
-name = "L1ERC721BridgeProxy"
-method = "messenger()"
-resolves_to_address_of = "L1CrossDomainMessengerProxy"
-
-[[l1.universal]]
-name = "L1StandardBridgeProxy"
-method = "getOwner()"
-resolves_to_address_of = "ProxyAdmin"
-
-[[l1.universal]]
-name = "L1StandardBridgeProxy"
-method = "messenger()"
-resolves_to_address_of = "L1CrossDomainMessengerProxy"
-
-[[l1.universal]]
-name = "OptimismMintableERC20FactoryProxy"
-method = "admin()"
-resolves_to_address_of = "ProxyAdmin"
-
-[[l1.universal]]
-name = "OptimismMintableERC20FactoryProxy"
-method = "BRIDGE()"
-resolves_to_address_of = "L1StandardBridgeProxy"
-
-[[l1.universal]]
-name = "OptimismPortalProxy"
-method = "admin()"
-resolves_to_address_of = "ProxyAdmin"
-
-[[l1.universal]]
-name = "ProxyAdmin"
-method = "owner()"
-resolves_to_address_of = "ProxyAdminOwner"
-
-[[l1.universal]]
-name = "ProxyAdmin"
-method = "addressManager()"
-resolves_to_address_of = "AddressManager"
-
-[[l1.universal]]
-name = "SystemConfigProxy"
-method = "admin()"
-resolves_to_address_of = "ProxyAdmin"
-
-[[l1.universal]]
-name = "SystemConfigProxy"
-method = "owner()"
-resolves_to_address_of = "SystemConfigOwner"
-
-[[l1.nonFPAC]]
-name = "OptimismPortalProxy"
-method = "GUARDIAN()"
-resolves_to_address_of = "Guardian"
-
-[[l1.nonFPAC]]
-name = "OptimismPortalProxy"
-method = "SYSTEM_CONFIG()"
-resolves_to_address_of = "SystemConfigProxy"
-
-[[l1.nonFPAC]]
-name = "OptimismPortalProxy"
-method = "L2_ORACLE()"
-resolves_to_address_of = "L2OutputOracleProxy"
-
-[[l1.nonFPAC]]
-name = "L2OutputOracleProxy"
-method = "admin()"
-resolves_to_address_of = "ProxyAdmin"
-
-[[l1.nonFPAC]]
-name = "L2OutputOracleProxy"
-meethod = "CHALLENGER()"
-resolves_to_address_of = "Challenger"
-
-[[l1.FPAC]]
-name = "DisputeGameFactoryProxy"
-method = "admin()"
-resolves_to_address_of = "ProxyAdmin"
-
-[[l1.FPAC]]
-name = "DisputeGameFactoryProxy"
-method = "owner()"
-resolves_to_address_of = "ProxyAdminOwner"
-
-[[l1.FPAC]]
-name = "AnchorStateRegistryProxy"
-method = "admin()"
-resolves_to_address_of = "ProxyAdmin"
-
-[[l1.FPAC]]
-name = "DelayedWETHProxy"
-method = "admin()"
-resolves_to_address_of = "ProxyAdmin"
-
-[[l1.FPAC]]
-name = "OptimismPortalProxy"
-method = "guardian()"
-resolves_to_address_of = "Guardian"
-
-[[l1.FPAC]]
-name = "OptimismPortalProxy"
-method = "systemConfig()"
-resolves_to_address_of = "SystemConfigProxy"
+[l1.FPAC]
+DisputeGameFactoryProxy."admin()" = "ProxyAdmin"
+DisputeGameFactoryProxy."owner()" = "ProxyAdminOwner"
+AnchorStateRegistryProxy."admin()" = "ProxyAdmin"
+DelayedWETHProxy."admin()" = "ProxyAdmin"
+# OptimismPortalProxy."guardian()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A" // TODO
+OptimismPortalProxy."guardian()" = "Guardian"
+OptimismPortalProxy."systemConfig()" = "SystemConfigProxy"

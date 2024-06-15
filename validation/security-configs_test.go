@@ -40,22 +40,27 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 
 	contractCallResolutions := standard.Config[OPChains[chainID].Superchain].L1.GetResolutions(isFPAC)
 
-	for _, r := range contractCallResolutions {
-		contractAddress, err := Addresses[chainID].AddressFor(r.Name)
+	for contract, methodToOutput := range contractCallResolutions {
+
+		contractAddress, err := Addresses[chainID].AddressFor(contract)
 		require.NoError(t, err)
 
-		var want Address
-		if r.ResolvesTo != nil {
-			want = *r.ResolvesTo
-		} else {
-			want, err = Addresses[chainID].AddressFor(r.ResolvesToAddressOf)
-			require.NoError(t, err)
+		for method, output := range methodToOutput {
+
+			var want Address
+			if strings.HasPrefix(output, "0x") {
+				want = MustHexToAddress(output)
+			} else {
+				want, err = Addresses[chainID].AddressFor(output)
+				require.NoError(t, err)
+			}
+
+			got, err := getAddressWithRetries(method, contractAddress, client)
+			require.NoErrorf(t, err, "problem calling %s.%s %s", contract, contractAddress, method)
+
+			assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
 		}
 
-		got, err := getAddressWithRetries(r.Method, contractAddress, client)
-		require.NoErrorf(t, err, "problem calling %s.%s %s", contractAddress, r.Method, r)
-
-		assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", r.Name, r.Method, got, want, r.ResolvesToAddressOf)
 	}
 
 	// Perform an extra check on a mapping value of "L1CrossDomainMessengerProxy":

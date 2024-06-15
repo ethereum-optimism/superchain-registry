@@ -2,8 +2,6 @@ package standard
 
 import (
 	"math/big"
-
-	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
 // Config is keyed by superchain target, e.g. "mainnet" or "sepolia" or "sepolia-dev-0"
@@ -18,25 +16,29 @@ type ResourceConfig struct {
 	MaximumBaseFee              *big.Int `toml:"maximum_base_fee"`
 }
 
-type L1Resolutions struct {
-	Universal []Resolution `toml:"universal"`
-	NonFPAC   []Resolution `toml:"nonFPAC"`
-	FPAC      []Resolution `toml:"FPAC"`
+// e.g. "AddressManager": "owner()":  "ProxyAdmin"
+type Resolutions map[string]map[string]string
+type L1 struct {
+	Universal Resolutions `toml:"universal"`
+	NonFPAC   Resolutions `toml:"nonFPAC"`
+	FPAC      Resolutions `toml:"FPAC"`
 }
 
-func (r L1Resolutions) GetResolutions(isFPAC bool) []Resolution {
-	if isFPAC {
-		return append(r.Universal, r.FPAC...)
-	} else {
-		return append(r.Universal, r.NonFPAC...)
+func (r L1) GetResolutions(isFPAC bool) Resolutions {
+	combinedResolutions := make(Resolutions)
+	for k, v := range r.Universal {
+		combinedResolutions[k] = v
 	}
-}
-
-type Resolution struct {
-	Name                string              `toml:"name"`
-	Method              string              `toml:"method"`
-	ResolvesTo          *superchain.Address `toml:"resolves_to"`
-	ResolvesToAddressOf string              `toml:"resolves_to_address_of"`
+	if isFPAC {
+		for k, v := range r.FPAC {
+			combinedResolutions[k] = v
+		}
+	} else {
+		for k, v := range r.NonFPAC {
+			combinedResolutions[k] = v
+		}
+	}
+	return combinedResolutions
 }
 
 type L2OOParamsBounds struct {
@@ -76,5 +78,5 @@ type ConfigType struct {
 	L2OOParams     L2OOParamsBounds     `toml:"l2_output_oracle"`
 	GPOParams      GasPriceOracleBounds `toml:"gas_price_oracle"`
 	SystemConfig   SystemConfig         `toml:"system_config"`
-	L1             L1Resolutions        `toml:"l1"`
+	L1             L1                   `toml:"l1"`
 }

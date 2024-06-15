@@ -25,9 +25,7 @@ base_fee_scalar = [0, 10_000_000]
 [system_config]
 gas_limit = [8_000_000, 200_000_000]
 
-
 # Standard Chain Config Roles
-[[l1]]
 [l1.universal]
 AddressManager."owner()" = "ProxyAdmin"
 SystemConfigProxy."owner()" = "SystemConfigOwner"
@@ -40,22 +38,23 @@ L1StandardBridgeProxy."messenger()" = "L1CrossDomainMessengerProxy"
 OptimismMintableERC20FactoryProxy."admin()" = "ProxyAdmin"
 OptimismMintableERC20FactoryProxy."BRIDGE()" = "L1StandardBridgeProxy"
 OptimismPortalProxy."admin()" = "ProxyAdmin"
-ProxyAdmin."owner()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
+# ProxyAdmin."owner()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A" // duplicated!
 ProxyAdmin."addressManager()" = "AddressManager"
 SystemConfigProxy."admin()" = "ProxyAdmin"
-SystemConfigProxy."owner()" = "SystemConfigOwner"
 
-[[l1.nonFPAC]]
-OptimismPortalProxy."GUARDIAN()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
+[l1.nonFPAC]
+# OptimismPortalProxy."GUARDIAN()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
+OptimismPortalProxy."GUARDIAN()" = "Guardian"
 OptimismPortalProxy."SYSTEM_CONFIG()" = "SystemConfigProxy"
 OptimismPortalProxy."L2_ORACLE()" = "L2OutputOracleProxy"
 L2OutputOracleProxy."admin()" = "ProxyAdmin"
 L2OutputOracleProxy."CHALLENGER()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
 
-[[l1.FPAC]]
+[l1.FPAC]
 DisputeGameFactoryProxy."admin()" = "ProxyAdmin"
 DisputeGameFactoryProxy."owner()" = "ProxyAdminOwner"
 AnchorStateRegistryProxy."admin()" = "ProxyAdmin"
 DelayedWETHProxy."admin()" = "ProxyAdmin"
-OptimismPortalProxy."guardian()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
+# OptimismPortalProxy."guardian()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A" // TODO
+OptimismPortalProxy."guardian()" = "Guardian"
 OptimismPortalProxy."systemConfig()" = "SystemConfigProxy"
