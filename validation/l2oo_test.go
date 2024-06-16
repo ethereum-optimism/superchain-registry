@@ -77,7 +77,6 @@ func TestL2OOParams(t *testing.T) {
 // retrying up to 10 times with exponential backoff.
 func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (L2OOParams, error) {
 	callOpts := &bind.CallOpts{Context: ctx}
-	const maxAttempts = 3
 	l2OO, err := bindings.NewL2OutputOracle(l2OOAddr, client)
 	if err != nil {
 		return L2OOParams{}, err
@@ -107,7 +106,6 @@ func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, clie
 // retrying up to 10 times with exponential backoff.
 func getl2OOParamsWithRetriesLegacy(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (L2OOParams, error) {
 	callOpts := &bind.CallOpts{Context: ctx}
-	const maxAttempts = 3
 	l2OO, err := legacy.NewL2OutputOracleCaller(l2OOAddr, client)
 	if err != nil {
 		return L2OOParams{}, err
