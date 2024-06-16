@@ -24,3 +24,34 @@ base_fee_scalar = [0, 10_000_000]
 
 [system_config]
 gas_limit = [1000, 60_000_000]
+
+# Standard Chain Config Roles
+[l1.universal]
+AddressManager."owner()" = "ProxyAdmin"
+SystemConfigProxy."owner()" = "SystemConfigOwner"
+ProxyAdmin."owner()" = "ProxyAdminOwner"
+L1CrossDomainMessengerProxy."PORTAL()" = "OptimismPortalProxy"
+L1ERC721BridgeProxy."admin()" = "ProxyAdmin"
+L1ERC721BridgeProxy."messenger()" = "L1CrossDomainMessengerProxy"
+L1StandardBridgeProxy."getOwner()" = "ProxyAdmin"
+L1StandardBridgeProxy."messenger()" = "L1CrossDomainMessengerProxy"
+OptimismMintableERC20FactoryProxy."admin()" = "ProxyAdmin"
+OptimismMintableERC20FactoryProxy."BRIDGE()" = "L1StandardBridgeProxy"
+OptimismPortalProxy."admin()" = "ProxyAdmin"
+ProxyAdmin."addressManager()" = "AddressManager"
+SystemConfigProxy."admin()" = "ProxyAdmin"
+
+[l1.nonFPAC]
+OptimismPortalProxy."GUARDIAN()" = "Guardian"
+OptimismPortalProxy."SYSTEM_CONFIG()" = "SystemConfigProxy"
+OptimismPortalProxy."L2_ORACLE()" = "L2OutputOracleProxy"
+L2OutputOracleProxy."admin()" = "ProxyAdmin"
+L2OutputOracleProxy."CHALLENGER()" = "Challenger"
+
+[l1.FPAC]
+DisputeGameFactoryProxy."admin()" = "ProxyAdmin"
+DisputeGameFactoryProxy."owner()" = "ProxyAdminOwner"
+AnchorStateRegistryProxy."admin()" = "ProxyAdmin"
+DelayedWETHProxy."admin()" = "ProxyAdmin"
+OptimismPortalProxy."guardian()" = "Guardian"
+OptimismPortalProxy."systemConfig()" = "SystemConfigProxy"
