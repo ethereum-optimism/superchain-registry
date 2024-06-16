@@ -46,7 +46,7 @@ OptimismPortalProxy."GUARDIAN()" = "Guardian"
 OptimismPortalProxy."SYSTEM_CONFIG()" = "SystemConfigProxy"
 OptimismPortalProxy."L2_ORACLE()" = "L2OutputOracleProxy"
 L2OutputOracleProxy."admin()" = "ProxyAdmin"
-L2OutputOracleProxy."CHALLENGER()" = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
+L2OutputOracleProxy."CHALLENGER()" = "Challenger"
 
 [l1.FPAC]
 DisputeGameFactoryProxy."admin()" = "ProxyAdmin"

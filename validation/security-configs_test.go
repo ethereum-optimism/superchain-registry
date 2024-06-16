@@ -91,7 +91,6 @@ func TestSecurityConfigs(t *testing.T) {
 			if isExcluded[chain.ChainID] {
 				t.Skipf("chain %d: EXCLUDED from Security Config Checks", chainID)
 			}
-			SkipCheckIfFrontierChain(t, *chain)
 			testSecurityConfigOfChain(t, chainID)
 		})
 	}
