@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/ethereum-optimism/optimism/op-service/retry"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -145,7 +144,7 @@ func TestContractVersions(t *testing.T) {
 }
 
 func checkSemverForContract(t *testing.T, contractName string, contractAddress *Address, client *ethclient.Client, desiredSemver string) {
-	actualSemver, err := getVersionWithRetries(context.Background(), common.Address(*contractAddress), client)
+	actualSemver, err := getVersion(context.Background(), common.Address(*contractAddress), client)
 	require.NoError(t, err, "Could not get version for %s", contractName)
 
 	assert.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
@@ -158,7 +157,7 @@ func getVersion(ctx context.Context, addr common.Address, client *ethclient.Clie
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", addr, err)
 	}
-	version, err := isemver.Version(&bind.CallOpts{
+	version, err := Retry(isemver.Version)(&bind.CallOpts{
 		Context: ctx,
 	})
 	if err != nil {
@@ -166,13 +165,4 @@ func getVersion(ctx context.Context, addr common.Address, client *ethclient.Clie
 	}
 
 	return version, nil
-}
-
-// getVersionWithRetries is a wrapper for getVersion
-// which retries up to 10 times with exponential backoff.
-func getVersionWithRetries(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
-	const maxAttempts = 10
-	return retry.Do(ctx, maxAttempts, retry.Exponential(), func() (string, error) {
-		return getVersion(context.Background(), addr, client)
-	})
 }

@@ -9,8 +9,6 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
 
-	"github.com/ethereum-optimism/optimism/op-service/retry"
-
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -45,14 +43,9 @@ func TestGasLimit(t *testing.T) {
 
 func getGasLimitWithRetries(ctx context.Context, systemConfigAddr common.Address, client *ethclient.Client) (uint64, error) {
 	callOpts := &bind.CallOpts{Context: ctx}
-	const maxAttempts = 3
 	systemConfig, err := bindings.NewSystemConfig(systemConfigAddr, client)
 	if err != nil {
 		return 0, err
 	}
-
-	return retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (uint64, error) {
-			return systemConfig.GasLimit(callOpts)
-		})
+	return Retry(systemConfig.GasLimit)(callOpts)
 }

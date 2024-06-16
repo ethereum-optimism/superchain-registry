@@ -10,8 +10,6 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
 
-	"github.com/ethereum-optimism/optimism/op-service/retry"
-
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -29,7 +27,7 @@ func TestResourceConfig(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
 		require.NoError(t, err)
 
-		actualResourceConfig, err := getResourceConfigWithRetries(context.Background(), common.Address(contractAddress), client)
+		actualResourceConfig, err := getResourceConfig(context.Background(), common.Address(contractAddress), client)
 		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
 		desiredParams := standard.Config[chain.Superchain].ResourceConfig
@@ -52,7 +50,7 @@ func getResourceConfig(ctx context.Context, systemConfigAddr common.Address, cli
 		return bindings.ResourceMeteringResourceConfig{}, fmt.Errorf("%s: %w", systemConfigAddr, err)
 	}
 
-	resourceConfig, err := systemConfig.ResourceConfig(&bind.CallOpts{
+	resourceConfig, err := Retry(systemConfig.ResourceConfig)(&bind.CallOpts{
 		Context: ctx,
 	})
 	if err != nil {
@@ -60,13 +58,4 @@ func getResourceConfig(ctx context.Context, systemConfigAddr common.Address, cli
 	}
 
 	return resourceConfig, nil
-}
-
-// getResourceConfigWithRetries is a wrapper for getResourceMetering
-// which retries up to 10 times with exponential backoff.
-func getResourceConfigWithRetries(ctx context.Context, addr common.Address, client *ethclient.Client) (bindings.ResourceMeteringResourceConfig, error) {
-	const maxAttempts = 10
-	return retry.Do(ctx, maxAttempts, retry.Exponential(), func() (bindings.ResourceMeteringResourceConfig, error) {
-		return getResourceConfig(ctx, addr, client)
-	})
 }

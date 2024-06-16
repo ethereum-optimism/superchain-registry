@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
-	"github.com/ethereum-optimism/optimism/op-service/retry"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/ethereum/go-ethereum"
@@ -56,7 +55,7 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 				require.NoError(t, err)
 			}
 
-			got, err := getAddressWithRetries(method, contractAddress, client)
+			got, err := getAddress(method, contractAddress, client)
 			require.NoErrorf(t, err, "problem calling %s.%s %s", contract, contractAddress, method)
 
 			assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
@@ -96,15 +95,6 @@ func TestSecurityConfigs(t *testing.T) {
 	}
 }
 
-// getAddressWithRetries is a wrapper for getAddress
-// which retries up to 10 times with exponential backoff.
-func getAddressWithRetries(method string, addr Address, client *ethclient.Client) (Address, error) {
-	const maxAttempts = 10
-	return retry.Do(context.Background(), maxAttempts, retry.Exponential(), func() (Address, error) {
-		return getAddress(method, addr, client)
-	})
-}
-
 func getAddress(method string, contractAddress Address, client *ethclient.Client) (Address, error) {
 	addr := (common.Address(contractAddress))
 	callMsg := ethereum.CallMsg{
@@ -113,7 +103,10 @@ func getAddress(method string, contractAddress Address, client *ethclient.Client
 	}
 
 	// Make the call
-	result, err := client.CallContract(context.Background(), callMsg, nil)
+	callContract := func(msg ethereum.CallMsg) ([]byte, error) {
+		return client.CallContract(context.Background(), msg, nil)
+	}
+	result, err := Retry(callContract)(callMsg)
 	if err != nil {
 		return Address{}, err
 	}
