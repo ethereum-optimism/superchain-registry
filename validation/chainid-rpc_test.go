@@ -2,10 +2,8 @@ package validation
 
 import (
 	"context"
-	"math/big"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/op-service/retry"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/require"
@@ -28,12 +26,7 @@ func TestChainIdRPC(t *testing.T) {
 			defer client.Close()
 
 			// Fetch the chain ID
-			const maxAttempts = 3
-			ctx := context.Background()
-			chainID, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
-				func() (*big.Int, error) {
-					return client.NetworkID(ctx)
-				})
+			chainID, err := Retry(client.NetworkID)(context.Background())
 
 			require.NoError(t, err, "Failed to fetch the chain ID")
 			require.Equal(t, declaredChainID, chainID.Uint64(), "Declared a chainId of %s, but RPC returned ID %s", declaredChainID, chainID.Uint64())

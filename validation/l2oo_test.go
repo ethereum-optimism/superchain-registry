@@ -12,8 +12,6 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
 
-	"github.com/ethereum-optimism/optimism/op-service/retry"
-
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -79,7 +77,6 @@ func TestL2OOParams(t *testing.T) {
 // retrying up to 10 times with exponential backoff.
 func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (L2OOParams, error) {
 	callOpts := &bind.CallOpts{Context: ctx}
-	const maxAttempts = 3
 	l2OO, err := bindings.NewL2OutputOracle(l2OOAddr, client)
 	if err != nil {
 		return L2OOParams{}, err
@@ -87,24 +84,17 @@ func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, clie
 
 	params := L2OOParams{}
 
-	params.SubmissionInterval, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) {
-			return l2OO.SubmissionInterval(callOpts)
-		})
+	params.SubmissionInterval, err = Retry(l2OO.SubmissionInterval)(callOpts)
 	if err != nil {
 		return L2OOParams{}, fmt.Errorf("could not get submissionInterval: %w", err)
 	}
-	params.L2BlockTime, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) {
-			return l2OO.L2BlockTime(callOpts)
-		})
+
+	params.L2BlockTime, err = Retry(l2OO.L2BlockTime)(callOpts)
 	if err != nil {
 		return L2OOParams{}, fmt.Errorf("could not get l2Blocktime: %w", err)
 	}
-	params.FinalizationPeriodSeconds, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) {
-			return l2OO.FinalizationPeriodSeconds(callOpts)
-		})
+
+	params.FinalizationPeriodSeconds, err = Retry(l2OO.FinalizationPeriodSeconds)(callOpts)
 	if err != nil {
 		return L2OOParams{}, fmt.Errorf("could not get finalizationPeriodSeconds: %w", err)
 	}
@@ -116,7 +106,6 @@ func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, clie
 // retrying up to 10 times with exponential backoff.
 func getl2OOParamsWithRetriesLegacy(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (L2OOParams, error) {
 	callOpts := &bind.CallOpts{Context: ctx}
-	const maxAttempts = 3
 	l2OO, err := legacy.NewL2OutputOracleCaller(l2OOAddr, client)
 	if err != nil {
 		return L2OOParams{}, err
@@ -124,24 +113,17 @@ func getl2OOParamsWithRetriesLegacy(ctx context.Context, l2OOAddr common.Address
 
 	params := L2OOParams{}
 
-	params.SubmissionInterval, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) {
-			return l2OO.SUBMISSIONINTERVAL(callOpts)
-		})
+	params.SubmissionInterval, err = Retry(l2OO.SUBMISSIONINTERVAL)(callOpts)
 	if err != nil {
 		return L2OOParams{}, fmt.Errorf("could not get submissionInterval: %w", err)
 	}
-	params.L2BlockTime, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) {
-			return l2OO.L2BLOCKTIME(callOpts)
-		})
+
+	params.L2BlockTime, err = Retry(l2OO.L2BLOCKTIME)(callOpts)
 	if err != nil {
 		return L2OOParams{}, fmt.Errorf("could not get l2Blocktime: %w", err)
 	}
-	params.FinalizationPeriodSeconds, err = retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) {
-			return l2OO.FINALIZATIONPERIODSECONDS(callOpts)
-		})
+
+	params.FinalizationPeriodSeconds, err = Retry(l2OO.FINALIZATIONPERIODSECONDS)(callOpts)
 	if err != nil {
 		return L2OOParams{}, fmt.Errorf("could not get finalizationPeriodSeconds: %w", err)
 	}
