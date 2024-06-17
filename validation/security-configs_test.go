@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	"github.com/ethereum-optimism/optimism/op-service/retry"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -25,30 +26,6 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-	type resolution struct {
-		name                     string
-		method                   string
-		shouldResolveToAddressOf string
-	}
-
-	contractCallResolutions := []resolution{
-		{"AddressManager", "owner()", "ProxyAdmin"},
-		{"SystemConfigProxy", "owner()", "SystemConfigOwner"},
-		{"ProxyAdmin", "owner()", "ProxyAdminOwner"},
-		{"L1CrossDomainMessengerProxy", "PORTAL()", "OptimismPortalProxy"},
-		{"L1ERC721BridgeProxy", "admin()", "ProxyAdmin"},
-		{"L1ERC721BridgeProxy", "messenger()", "L1CrossDomainMessengerProxy"},
-		{"L1StandardBridgeProxy", "getOwner()", "ProxyAdmin"},
-		{"L1StandardBridgeProxy", "messenger()", "L1CrossDomainMessengerProxy"},
-		{"OptimismMintableERC20FactoryProxy", "admin()", "ProxyAdmin"},
-		{"OptimismMintableERC20FactoryProxy", "BRIDGE()", "L1StandardBridgeProxy"},
-		{"OptimismPortalProxy", "admin()", "ProxyAdmin"},
-		{"ProxyAdmin", "owner()", "ProxyAdminOwner"},
-		{"ProxyAdmin", "addressManager()", "AddressManager"},
-		{"SystemConfigProxy", "admin()", "ProxyAdmin"},
-		{"SystemConfigProxy", "owner()", "SystemConfigOwner"},
-	}
-
 	portalProxyAddress, err := Addresses[chainID].AddressFor("OptimismPortalProxy")
 	require.NoError(t, err)
 	portalProxy, err := bindings.NewOptimismPortal(common.Address(portalProxyAddress), client)
@@ -61,36 +38,30 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
 	isFPAC := majorVersion >= 3
 
-	if isFPAC {
-		contractCallResolutions = append(contractCallResolutions,
-			resolution{"DisputeGameFactoryProxy", "admin()", "ProxyAdmin"},
-			resolution{"DisputeGameFactoryProxy", "owner()", "ProxyAdminOwner"},
-			resolution{"AnchorStateRegistryProxy", "admin()", "ProxyAdmin"},
-			resolution{"DelayedWETHProxy", "admin()", "ProxyAdmin"},
-			resolution{"OptimismPortalProxy", "guardian()", "Guardian"},
-			resolution{"OptimismPortalProxy", "systemConfig()", "SystemConfigProxy"},
-		)
-	} else {
-		contractCallResolutions = append(contractCallResolutions,
-			resolution{"OptimismPortalProxy", "GUARDIAN()", "Guardian"},
-			resolution{"OptimismPortalProxy", "SYSTEM_CONFIG()", "SystemConfigProxy"},
-			resolution{"OptimismPortalProxy", "L2_ORACLE()", "L2OutputOracleProxy"},
-			resolution{"L2OutputOracleProxy", "admin()", "ProxyAdmin"},
-			resolution{"L2OutputOracleProxy", "CHALLENGER()", "Challenger"},
-		)
-	}
+	contractCallResolutions := standard.Config[OPChains[chainID].Superchain].L1.GetResolutions(isFPAC)
 
-	for _, r := range contractCallResolutions {
-		contractAddress, err := Addresses[chainID].AddressFor(r.name)
+	for contract, methodToOutput := range contractCallResolutions {
+
+		contractAddress, err := Addresses[chainID].AddressFor(contract)
 		require.NoError(t, err)
 
-		want, err := Addresses[chainID].AddressFor(r.shouldResolveToAddressOf)
-		require.NoError(t, err)
+		for method, output := range methodToOutput {
 
-		got, err := getAddressWithRetries(r.method, contractAddress, client)
-		require.NoErrorf(t, err, "problem calling %s.%s", contractAddress, r.method)
+			var want Address
 
-		assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", r.name, r.method, got, want, r.shouldResolveToAddressOf)
+			if common.IsHexAddress(output) {
+				want = Address(common.HexToAddress(output))
+			} else {
+				want, err = Addresses[chainID].AddressFor(output)
+				require.NoError(t, err)
+			}
+
+			got, err := getAddressWithRetries(method, contractAddress, client)
+			require.NoErrorf(t, err, "problem calling %s.%s %s", contract, contractAddress, method)
+
+			assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
+		}
+
 	}
 
 	// Perform an extra check on a mapping value of "L1CrossDomainMessengerProxy":
