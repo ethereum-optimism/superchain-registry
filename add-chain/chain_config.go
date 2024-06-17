@@ -44,6 +44,7 @@ func constructChainConfig(
 	sequencerRPC,
 	explorer string,
 	superchainLevel superchain.SuperchainLevel,
+	runStandardChecks bool,
 ) (superchain.ChainConfig, error) {
 	fmt.Printf("Attempting to read from %s\n", inputFilePath)
 	file, err := os.ReadFile(inputFilePath)
@@ -61,16 +62,17 @@ func constructChainConfig(
 	}
 
 	chainConfig := superchain.ChainConfig{
-		Name:            chainName,
-		ChainID:         jsonConfig.ChainID,
-		PublicRPC:       publicRPC,
-		SequencerRPC:    sequencerRPC,
-		Explorer:        explorer,
-		BatchInboxAddr:  jsonConfig.BatchInboxAddr,
-		Genesis:         jsonConfig.Genesis,
-		SuperchainLevel: superchainLevel,
-		SuperchainTime:  nil,
-		Plasma:          jsonConfig.PlasmaConfig,
+		Name:              chainName,
+		ChainID:           jsonConfig.ChainID,
+		PublicRPC:         publicRPC,
+		SequencerRPC:      sequencerRPC,
+		Explorer:          explorer,
+		BatchInboxAddr:    jsonConfig.BatchInboxAddr,
+		Genesis:           jsonConfig.Genesis,
+		SuperchainLevel:   superchainLevel,
+		RunStandardChecks: runStandardChecks,
+		SuperchainTime:    nil,
+		Plasma:            jsonConfig.PlasmaConfig,
 		HardForkConfiguration: superchain.HardForkConfiguration{
 			CanyonTime:  jsonConfig.CanyonTime,
 			DeltaTime:   jsonConfig.DeltaTime,
@@ -91,25 +93,6 @@ func writeChainConfig(
 	superchainRepoPath string,
 	superchainTarget string,
 ) error {
-	// Create genesis-system-config data
-	// (this is deprecated, users should load this from L1, when available via SystemConfig)
-	dirPath := filepath.Join(superchainRepoPath, "superchain", "extra", "genesis-system-configs", superchainTarget)
-
-	if err := os.MkdirAll(dirPath, 0o755); err != nil {
-		return fmt.Errorf("failed to create directory: %w", err)
-	}
-
-	systemConfigJSON, err := json.MarshalIndent(rollupConfig.Genesis.SystemConfig, "", "  ")
-	if err != nil {
-		return fmt.Errorf("failed to marshal genesis system config json: %w", err)
-	}
-
-	// Write the genesis system config JSON to a new file
-	filePath := filepath.Join(dirPath, rollupConfig.Name+".json")
-	if err := os.WriteFile(filePath, systemConfigJSON, 0o644); err != nil {
-		return fmt.Errorf("failed to write genesis system config json: %w", err)
-	}
-	fmt.Printf("Genesis system config written to: %s\n", filePath)
 
 	// Remove hardfork timestamp override fields if they match superchain defaults
 	defaults := superchain.Superchains[superchainTarget]
