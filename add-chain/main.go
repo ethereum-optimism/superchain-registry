@@ -11,12 +11,6 @@ import (
 )
 
 var (
-	RunStandardChecks = &cli.BoolFlag{
-		Name:     "run-standard-checks",
-		Value:    false,
-		Usage:    "Whether to run standard chain validation checks",
-		Required: false,
-	}
 	ChainTypeFlag = &cli.StringFlag{
 		Name:     "chain-type",
 		Value:    "frontier",
@@ -41,13 +35,19 @@ var (
 		Usage:    "Indicates if go tests are being run",
 		Required: false,
 	}
+	RunStandardChecks = &cli.BoolFlag{
+		Name:     "run-standard-checks",
+		Value:    false,
+		Usage:    "Whether to run standard chain validation checks",
+		Required: false,
+	}
 )
 
 func main() {
 	app := &cli.App{
 		Name:     "add-chain",
 		Usage:    "Add a new chain to the superchain-registry",
-		Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag},
+		Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag, RunStandardChecks},
 		Action:   entrypoint,
 		Commands: []*cli.Command{&PromoteToStandardCmd},
 	}
