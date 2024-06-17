@@ -4,9 +4,9 @@ use crate::embed;
 use alloc::{format, string::ToString, vec::Vec};
 use hashbrown::HashMap;
 use superchain_primitives::{
-    is_config_file, AddressList, Addresses, ChainConfig, ContractImplementations,
-    GenesisSystemConfigs, Implementations, OPChains, Superchain, SuperchainConfig, Superchains,
-    SystemConfig,
+    is_config_file, load_op_stack_rollup_config, AddressList, Addresses, ChainConfig,
+    ContractImplementations, GenesisSystemConfigs, Implementations, OPChains, RollupConfigs,
+    Superchain, SuperchainConfig, Superchains, SystemConfig,
 };
 
 pub(crate) type InitTuple = (
@@ -15,6 +15,7 @@ pub(crate) type InitTuple = (
     Addresses,
     GenesisSystemConfigs,
     Implementations,
+    RollupConfigs,
 );
 
 /// Initialize the superchain configurations from the embedded filesystem.
@@ -24,6 +25,7 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
     let mut addresses = HashMap::new();
     let mut genesis_system_configs = HashMap::new();
     let mut implementations = HashMap::new();
+    let mut rollup_configs = HashMap::new();
 
     for target_dir in embed::CONFIGS_DIR.dirs() {
         let target_name = target_dir.path().file_name().unwrap().to_str().unwrap();
@@ -69,8 +71,10 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
             let id = chain_config.chain_id;
             chain_config.superchain = target_name.to_string();
             genesis_system_configs.insert(id, genesis_config);
+            let rollup_config = load_op_stack_rollup_config(&chain_config, &addrs);
             op_chains.insert(id, chain_config);
             addresses.insert(id, addrs);
+            rollup_configs.insert(id, rollup_config);
             chain_ids.push(id);
         }
 
@@ -108,6 +112,7 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
         addresses,
         genesis_system_configs,
         implementations,
+        rollup_configs,
     )
 }
 

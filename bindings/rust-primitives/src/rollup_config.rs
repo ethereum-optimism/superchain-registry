@@ -1,11 +1,17 @@
 //! Rollup Config Types
 
+use crate::addresses::AddressList;
 use crate::block::BlockID;
+use crate::chain_config::ChainConfig;
 use crate::genesis::ChainGenesis;
 use crate::system_config::SystemConfig;
 use alloy_eips::eip1559::BaseFeeParams;
 use alloy_primitives::{address, b256, uint, Address};
 use anyhow::{anyhow, Result};
+use hashbrown::HashMap;
+
+/// Map of OPChain IDs to their [RollupConfig].
+pub type RollupConfigs = HashMap<u64, RollupConfig>;
 
 /// Returns the rollup config for the given chain ID.
 pub fn rollup_config_from_chain_id(chain_id: u64) -> Result<RollupConfig> {
@@ -180,6 +186,53 @@ impl Default for RollupConfig {
             blobs_enabled_l1_timestamp: None,
             da_challenge_address: None,
         }
+    }
+}
+
+/// Loads the rollup config for the OP-Stack chain given the chain config and address list.
+pub fn load_op_stack_rollup_config(
+    chain_config: &ChainConfig,
+    addrs: &AddressList,
+) -> RollupConfig {
+    const PGN_SEPOLIA: u64 = 58008;
+    RollupConfig {
+        genesis: chain_config.genesis.clone(),
+        l1_chain_id: chain_config.chain_id,
+        l2_chain_id: chain_config.chain_id,
+        base_fee_params: OP_BASE_FEE_PARAMS,
+        canyon_base_fee_params: Some(OP_CANYON_BASE_FEE_PARAMS),
+        regolith_time: chain_config.hardfork_configuration.canyon_time,
+        canyon_time: chain_config.hardfork_configuration.canyon_time,
+        delta_time: chain_config.hardfork_configuration.delta_time,
+        ecotone_time: chain_config.hardfork_configuration.ecotone_time,
+        fjord_time: chain_config.hardfork_configuration.fjord_time,
+        interop_time: chain_config.hardfork_configuration.interop_time,
+        batch_inbox_address: chain_config.batch_inbox_addr,
+        deposit_contract_address: addrs.optimism_portal_proxy,
+        l1_system_config_address: addrs.system_config_proxy,
+        protocol_versions_address: addrs.address_manager,
+        blobs_enabled_l1_timestamp: None,
+        da_challenge_address: chain_config
+            .plasma
+            .as_ref()
+            .and_then(|plasma| plasma.da_challenge_address),
+
+        // The below chain parameters can be different per OP-Stack chain,
+        // but since none of the superchain chains differ, it's not represented in the superchain-registry yet.
+        // This restriction on superchain-chains may change in the future.
+        // Test/Alt configurations can still load custom rollup-configs when necessary.
+        block_time: 2,
+        channel_timeout: 300,
+        max_sequencer_drift: if chain_config.chain_id == PGN_SEPOLIA {
+            1000
+        } else {
+            600
+        },
+        seq_window_size: if chain_config.chain_id == PGN_SEPOLIA {
+            7200
+        } else {
+            3600
+        },
     }
 }
 
