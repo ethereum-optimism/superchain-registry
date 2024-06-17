@@ -113,7 +113,6 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 
 func TestSecurityConfigs(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		11155421: true, // OP_Labs_Sepolia_devnet_0  (no AnchorStateRegistryProxy specified)
 		11763072: true, // Base_devnet_0 (no AnchorStateRegistryProxy specified)
 	}
 	for chainID, chain := range OPChains {
