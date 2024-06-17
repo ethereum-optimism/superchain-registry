@@ -45,6 +45,9 @@ pub struct ChainConfig {
     pub name: String,
     /// Chain ID
     pub chain_id: u64,
+    /// L1 chain ID
+    #[cfg_attr(feature = "serde", serde(skip))]
+    pub l1_chain_id: u64,
     /// Chain public RPC endpoint
     pub public_rpc: String,
     /// Chain sequencer RPC endpoint

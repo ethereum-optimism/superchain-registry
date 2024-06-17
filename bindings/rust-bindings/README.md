@@ -18,11 +18,11 @@ superchain-registry = "0.1.0"
 ## Example
 
 ```rust
-use superchain_registry::SUPERCHAINS;
-
-let superchains = SUPERCHAINS.clone();
-
-for (name, superchain) in superchains.iter() {
-    println!("Loaded Superchain: {} with {} chain IDs", name, superchain.chain_ids.len());
-}
+// use superchain_registry::SUPERCHAINS;
+//
+// let superchains = SUPERCHAINS.clone();
+//
+// for (name, superchain) in superchains.iter() {
+//     println!("Loaded Superchain: {} with {} chain IDs", name, superchain.chain_ids.len());
+// }
 ```

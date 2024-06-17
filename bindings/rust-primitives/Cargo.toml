@@ -11,8 +11,6 @@ homepage = "https://github.com/ethereum-optimism/superchain-registry/bindings/ru
 [dependencies]
 # External Dependencies
 anyhow = { version = "1.0.86", default-features = false }
-serde = { version = "1.0.203", default-features = false, features = ["derive", "alloc"], optional = true }
-serde_repr = { version = "0.1", optional = true }
 hashbrown = { version = "0.14.3" }
 
 # Alloy Types
@@ -22,6 +20,9 @@ alloy-genesis = { git = "https://github.com/alloy-rs/alloy", rev = "cb95183", de
 alloy-consensus = { git = "https://github.com/alloy-rs/alloy", rev = "cb95183", default-features = false }
 alloy-eips = { git = "https://github.com/alloy-rs/alloy", rev = "cb95183", default-features = false }
 
+# `serde` feature flag dependencies
+serde = { version = "1.0.203", default-features = false, features = ["derive", "alloc"], optional = true }
+serde_repr = { version = "0.1", optional = true }
 
 [features]
 default = ["std", "serde"]

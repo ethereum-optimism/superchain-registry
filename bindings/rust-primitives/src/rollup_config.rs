@@ -197,7 +197,7 @@ pub fn load_op_stack_rollup_config(
     const PGN_SEPOLIA: u64 = 58008;
     RollupConfig {
         genesis: chain_config.genesis.clone(),
-        l1_chain_id: chain_config.chain_id,
+        l1_chain_id: chain_config.l1_chain_id,
         l2_chain_id: chain_config.chain_id,
         base_fee_params: OP_BASE_FEE_PARAMS,
         canyon_base_fee_params: Some(OP_CANYON_BASE_FEE_PARAMS),
@@ -338,7 +338,7 @@ pub const OP_MAINNET_CONFIG: RollupConfig = RollupConfig {
     deposit_contract_address: address!("beb5fc579115071764c7423a4f12edde41f106ed"),
     l1_system_config_address: address!("229047fed2591dbec1ef1118d64f7af3db9eb290"),
     protocol_versions_address: address!("8062abc286f5e7d9428a0ccb9abd71e50d93b935"),
-    da_challenge_address: Some(address!("0000000000000000000000000000000000000000")),
+    da_challenge_address: None,
     blobs_enabled_l1_timestamp: None,
 };
 
@@ -382,7 +382,7 @@ pub const OP_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     deposit_contract_address: address!("16fc5058f25648194471939df75cf27a2fdc48bc"),
     l1_system_config_address: address!("034edd2a225f7f429a63e0f1d2084b9e0a93b538"),
     protocol_versions_address: address!("79add5713b383daa0a138d3c4780c7a1804a8090"),
-    da_challenge_address: Some(address!("0000000000000000000000000000000000000000")),
+    da_challenge_address: None,
     blobs_enabled_l1_timestamp: None,
 };
 
@@ -426,7 +426,7 @@ pub const BASE_MAINNET_CONFIG: RollupConfig = RollupConfig {
     deposit_contract_address: address!("49048044d57e1c92a77f79988d21fa8faf74e97e"),
     l1_system_config_address: address!("73a79fab69143498ed3712e519a88a918e1f4072"),
     protocol_versions_address: address!("8062abc286f5e7d9428a0ccb9abd71e50d93b935"),
-    da_challenge_address: Some(address!("0000000000000000000000000000000000000000")),
+    da_challenge_address: None,
     blobs_enabled_l1_timestamp: None,
 };
 
@@ -470,6 +470,6 @@ pub const BASE_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     deposit_contract_address: address!("49f53e41452c74589e85ca1677426ba426459e85"),
     l1_system_config_address: address!("f272670eb55e895584501d564afeb048bed26194"),
     protocol_versions_address: address!("79add5713b383daa0a138d3c4780c7a1804a8090"),
-    da_challenge_address: Some(address!("0000000000000000000000000000000000000000")),
+    da_challenge_address: None,
     blobs_enabled_l1_timestamp: None,
 };
