@@ -1,6 +1,6 @@
 set -e
 
-go run ./add-chain -chain-type=$1
+go run ./add-chain -chain-type=$1 $2
 
 # Get the absolute path of the current script, including following symlinks
 SCRIPT_PATH=$(readlink -f "$0" || realpath "$0")
