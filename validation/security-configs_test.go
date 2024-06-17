@@ -48,8 +48,9 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 		for method, output := range methodToOutput {
 
 			var want Address
-			if strings.HasPrefix(output, "0x") {
-				want = MustHexToAddress(output)
+
+			if common.IsHexAddress(output) {
+				want = Address(common.HexToAddress(output))
 			} else {
 				want, err = Addresses[chainID].AddressFor(output)
 				require.NoError(t, err)
