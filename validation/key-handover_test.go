@@ -20,7 +20,7 @@ func testKeyHandoverOfChain(t *testing.T, chainID uint64) {
 	proxyAdmin, err := Addresses[chainID].AddressFor("ProxyAdmin")
 	require.NoError(t, err)
 
-	got, err := getAddressWithRetries("owner()", proxyAdmin, client)
+	got, err := getAddress("owner()", proxyAdmin, client)
 	require.NoError(t, err)
 
 	want := Address(common.HexToAddress("0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"))
