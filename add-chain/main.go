@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,11 +11,17 @@ import (
 )
 
 var (
+	RunStandardChecks = &cli.BoolFlag{
+		Name:     "run-standard-checks",
+		Value:    false,
+		Usage:    "Whether to run standard chain validation checks",
+		Required: false,
+	}
 	ChainTypeFlag = &cli.StringFlag{
 		Name:     "chain-type",
-		Value:    "",
+		Value:    "frontier",
 		Usage:    "Type of chain (either standard or frontier)",
-		Required: true,
+		Required: false,
 	}
 	ChainNameFlag = &cli.StringFlag{
 		Name:     "chain-name",
@@ -116,7 +123,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md")
 	}
 
-	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel)
+	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, RunStandardChecks.Get(ctx))
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
