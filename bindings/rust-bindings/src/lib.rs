@@ -37,6 +37,9 @@ lazy_static::lazy_static! {
 
     /// Contract implementations exported from the registry
     pub static ref IMPLEMENTATIONS: Implementations = _INIT.4.clone();
+
+    /// Rollup configurations exported from the registry
+    pub static ref ROLLUP_CONFIGS: superchain_primitives::RollupConfigs = _INIT.5.clone();
 }
 
 #[cfg(test)]
