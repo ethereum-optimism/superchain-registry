@@ -12,20 +12,17 @@ homepage = "https://github.com/ethereum-optimism/superchain-registry/bindings/ru
 # types
 alloy-primitives = { version = "0.7.1", default-features = false }
 alloy-genesis = { version = "0.1", default-features = false }
-superchain-primitives = { path = "../rust-primitives", version = "0.1" }
+superchain-primitives = { path = "../rust-primitives", version = "0.1", default-features = false, features = ["serde"] }
 
 # serialization
 serde = { version = "1.0.203", default-features = false, features = ["derive", "alloc"] }
-serde_json = { version = "1.0", default-features = false }
 toml = { version = "0.8.14" }
-serde_yaml = { version = "0.9", default-features = false }
 serde_repr = "0.1"
 
 # utils
 hashbrown = { version = "0.14.3", features = ["serde"] }
-include_dir = { version = "0.7.3" }
 lazy_static = "1.4.0"
 
 [features]
 default = ["std"]
-std = []
+std = ["superchain-primitives/std"]
