@@ -23,7 +23,8 @@ pub use rollup_config::{
 };
 
 pub use rollup_config::{
-    BASE_MAINNET_CONFIG, BASE_SEPOLIA_CONFIG, OP_MAINNET_CONFIG, OP_SEPOLIA_CONFIG,
+    rollup_config_from_chain_id, BASE_MAINNET_CONFIG, BASE_SEPOLIA_CONFIG, OP_MAINNET_CONFIG,
+    OP_SEPOLIA_CONFIG,
 };
 
 mod chain_config;

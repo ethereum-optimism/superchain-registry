@@ -5,6 +5,26 @@ use crate::genesis::ChainGenesis;
 use crate::system_config::SystemConfig;
 use alloy_eips::eip1559::BaseFeeParams;
 use alloy_primitives::{address, b256, uint, Address};
+use anyhow::{anyhow, Result};
+
+/// Returns the rollup config for the given chain ID.
+pub fn rollup_config_from_chain_id(chain_id: u64) -> Result<RollupConfig> {
+    chain_id.try_into()
+}
+
+impl TryFrom<u64> for RollupConfig {
+    type Error = anyhow::Error;
+
+    fn try_from(chain_id: u64) -> Result<RollupConfig> {
+        match chain_id {
+            10 => Ok(OP_MAINNET_CONFIG),
+            11155420 => Ok(OP_SEPOLIA_CONFIG),
+            8453 => Ok(BASE_MAINNET_CONFIG),
+            84532 => Ok(BASE_SEPOLIA_CONFIG),
+            _ => Err(anyhow!("Unknown chain ID")),
+        }
+    }
+}
 
 /// Base fee max change denominator for Optimism Mainnet as defined in the Optimism
 /// [transaction costs](https://community.optimism.io/docs/developers/build/differences/#transaction-costs) doc.
