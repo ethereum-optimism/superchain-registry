@@ -90,7 +90,6 @@ func constructChainConfig(
 func writeChainConfig(
 	rollupConfig superchain.ChainConfig,
 	targetDirectory string,
-	superchainRepoPath string,
 	superchainTarget string,
 ) error {
 

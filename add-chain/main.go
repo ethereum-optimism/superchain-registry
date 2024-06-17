@@ -135,7 +135,7 @@ func entrypoint(ctx *cli.Context) error {
 	}
 
 	targetFilePath := filepath.Join(targetDir, chainName+".yaml")
-	err = writeChainConfig(rollupConfig, targetFilePath, superchainRepoPath, superchainTarget)
+	err = writeChainConfig(rollupConfig, targetFilePath, superchainTarget)
 	if err != nil {
 		return fmt.Errorf("error generating chain config .yaml file: %w", err)
 	}

@@ -42,7 +42,7 @@ var PromoteToStandardCmd = cli.Command{
 		superchainRepoPath := path.Join(currentFilePath, "../..")
 		targetDir := filepath.Join(superchainRepoPath, "superchain", "configs", chain.Superchain)
 		targetFilePath := filepath.Join(targetDir, chain.Name+".yaml")
-		err := writeChainConfig(*chain, targetFilePath, superchainRepoPath, chain.Superchain)
+		err := writeChainConfig(*chain, targetFilePath, chain.Superchain)
 		if err != nil {
 			panic(err)
 		}
