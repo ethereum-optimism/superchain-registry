@@ -69,8 +69,8 @@ func TestIsIntWithinBounds(t *testing.T) {
 	}
 }
 
-func SkipCheckIfFrontierChain(t *testing.T, chain superchain.ChainConfig) {
-	if chain.SuperchainLevel == superchain.Frontier {
-		t.Skip("Frontier chain excluded from this check")
+func RunOnlyOnStandardChains(t *testing.T, chain superchain.ChainConfig) {
+	if chain.SuperchainLevel != superchain.Standard {
+		t.Skip("Chain excluded from this check (NOT a Standard Chain)")
 	}
 }

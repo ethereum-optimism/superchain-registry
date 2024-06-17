@@ -67,7 +67,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 			if isExcluded[chainID] {
 				t.Skip()
 			}
-			SkipCheckIfFrontierChain(t, *chain)
+			RunOnlyOnStandardChains(t, *chain)
 			rpcEndpoint := chain.PublicRPC
 			require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
 			client, err := ethclient.Dial(rpcEndpoint)

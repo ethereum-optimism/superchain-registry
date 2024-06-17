@@ -37,7 +37,7 @@ func TestResourceConfig(t *testing.T) {
 
 	for _, chain := range OPChains {
 		t.Run(perChainTestName(chain), func(t *testing.T) {
-			SkipCheckIfFrontierChain(t, *chain)
+			RunOnlyOnStandardChains(t, *chain)
 			checkResourceConfig(t, chain)
 		})
 	}
