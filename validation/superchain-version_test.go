@@ -137,7 +137,7 @@ func TestContractVersions(t *testing.T) {
 			if isExcluded[chainID] {
 				t.Skipf("chain %d: EXCLUDED from contract version validation", chainID)
 			}
-			RunOnlyOnStandardChains(t, *chain)
+			RunOnlyOnStandardishChains(t, *chain)
 			checkOPChainSatisfiesSemver(t, chain)
 		})
 	}
