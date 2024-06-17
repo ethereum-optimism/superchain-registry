@@ -45,10 +45,11 @@ var (
 
 func main() {
 	app := &cli.App{
-		Name:   "add-chain",
-		Usage:  "Add a new chain to the superchain-registry",
-		Flags:  []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag},
-		Action: entrypoint,
+		Name:     "add-chain",
+		Usage:    "Add a new chain to the superchain-registry",
+		Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag},
+		Action:   entrypoint,
+		Commands: []*cli.Command{&PromoteToStandardCmd},
 	}
 
 	if err := app.Run(os.Args); err != nil {
