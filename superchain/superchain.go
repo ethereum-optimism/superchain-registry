@@ -11,6 +11,7 @@ import (
 	"io/fs"
 	"path"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -187,6 +188,8 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfi
 // EnhanceYAML creates a customized yaml string from a RollupConfig. After completion,
 // the *yaml.Node pointer can be used with a yaml encoder to write the custom format to file
 func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
+	hexStringRegex := regexp.MustCompile(`^0x[a-fA-F0-9]+$`)
+
 	// Check if context is done before processing
 	if err := ctx.Err(); err != nil {
 		return fmt.Errorf("context error: %w", err)
@@ -200,6 +203,9 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 	for i := 0; i < len(node.Content)-1; i += 2 {
 		keyNode := node.Content[i]
 		valNode := node.Content[i+1]
+		if valNode.Kind == yaml.ScalarNode && valNode.Tag == "!!str" && hexStringRegex.MatchString(valNode.Value) {
+			valNode.Style = yaml.DoubleQuotedStyle
+		}
 
 		// Add blank line AFTER these keys
 		if lastKey == "explorer" || lastKey == "superchain_time" || lastKey == "genesis" {
