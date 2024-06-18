@@ -11,7 +11,6 @@ import (
 var standardConfigFile embed.FS
 
 func init() {
-
 	Config = ConfigType{
 		Params: make(map[string]*Params),
 		Roles:  new(Roles),

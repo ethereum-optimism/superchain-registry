@@ -121,7 +121,6 @@ func testL2SecurityConfigForChain(t *testing.T, chain ChainConfig) {
 			})
 		}
 	}
-
 }
 
 func TestL2SecurityConfigs(t *testing.T) {
