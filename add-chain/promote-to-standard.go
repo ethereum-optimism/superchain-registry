@@ -29,6 +29,7 @@ var PromoteToStandardCmd = cli.Command{
 			panic(fmt.Sprintf("No chain found with id %d", chainId))
 		}
 
+		chain.StandardChainCandidate = false
 		chain.SuperchainLevel = superchain.Standard
 
 		now := uint64(time.Now().Unix())
