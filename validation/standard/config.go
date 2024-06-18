@@ -23,6 +23,9 @@ type (
 		NonFPAC   Resolutions `toml:"nonFPAC"`
 		FPAC      Resolutions `toml:"FPAC"`
 	}
+	L2 struct {
+		Universal Resolutions `toml:"universal"`
+	}
 )
 
 func (r L1) GetResolutions(isFPAC bool) Resolutions {
@@ -80,4 +83,5 @@ type ConfigType struct {
 	GPOParams      GasPriceOracleBounds `toml:"gas_price_oracle"`
 	SystemConfig   SystemConfig         `toml:"system_config"`
 	L1             L1                   `toml:"l1"`
+	L2             L2                   `toml:"L2"`
 }

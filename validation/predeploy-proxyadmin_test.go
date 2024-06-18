@@ -1,13 +1,11 @@
 package validation
 
 import (
-	"strings"
+	"fmt"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
-	"github.com/ethereum-optimism/optimism/op-bindings/predeploys"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/assert"
@@ -19,28 +17,22 @@ func testProxyAdminIsAdminOfPredeploysForChain(t *testing.T, chain ChainConfig) 
 	client, err := ethclient.Dial(chain.PublicRPC)
 	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
 	defer client.Close()
+	contractCallResolutions := standard.Config[OPChains[chain.ChainID].Superchain].L2.Universal
 
-	proxyAdminAddr := predeploys.ProxyAdminAddr
+	for contract, methodToOutput := range contractCallResolutions {
+		for method, output := range methodToOutput {
+			t.Run(fmt.Sprintf("%s.%s", contract, method), func(t *testing.T) {
+				method := method
+				output := output
+				t.Parallel()
+				want := Address(common.HexToAddress(output))
 
-	proxyAdmin, err := bindings.NewProxyAdmin(proxyAdminAddr, client)
-	require.NoError(t, err)
+				got, err := getAddress(method, MustHexToAddress(contract), client)
+				require.NoErrorf(t, err, "problem calling %s.%s %s", contract, contract, method)
 
-	getProxyAdmin := func(a common.Address) (common.Address, error) {
-		return proxyAdmin.GetProxyAdmin(&bind.CallOpts{}, a)
-	}
-
-	for k, p := range predeploys.Predeploys {
-		t.Run(k, func(t *testing.T) {
-			if !strings.HasPrefix(p.Address.Hex(), "0x42") {
-				t.Skipf("%s is not a predeploy (probably a preinstall)", k)
-			}
-			if k == "GovernanceToken" || k == "WETH" || k == "WETH9" {
-				t.Skipf("%s excluded", k)
-			}
-			proxyAdminOf, err := Retry(getProxyAdmin)(p.Address)
-			assert.NoError(t, err)
-			assert.Equal(t, proxyAdminOf, proxyAdminAddr, "ProxyAdmin.getProxyAdmin(%s) = %s, expected %s", p.Address, proxyAdminOf, proxyAdminAddr)
-		})
+				assert.Equal(t, want, got, "%s.%s = %s, expected %s", contract, method, got, want)
+			})
+		}
 	}
 
 }
