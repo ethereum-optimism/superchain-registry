@@ -35,10 +35,10 @@ var (
 		Usage:    "Indicates if go tests are being run",
 		Required: false,
 	}
-	RunStandardChecks = &cli.BoolFlag{
-		Name:     "run-standard-checks",
+	StandardChainCandidateFlag = &cli.BoolFlag{
+		Name:     "standard-chain-candidate",
 		Value:    false,
-		Usage:    "Whether to run standard chain validation checks",
+		Usage:    "Whether the chain is a candidate to become a standard chain. Will be subject to most standard chain validation checks",
 		Required: false,
 	}
 )
@@ -47,7 +47,7 @@ func main() {
 	app := &cli.App{
 		Name:     "add-chain",
 		Usage:    "Add a new chain to the superchain-registry",
-		Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag, RunStandardChecks},
+		Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag, StandardChainCandidateFlag},
 		Action:   entrypoint,
 		Commands: []*cli.Command{&PromoteToStandardCmd},
 	}
@@ -124,7 +124,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md")
 	}
 
-	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, RunStandardChecks.Get(ctx))
+	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, StandardChainCandidateFlag.Get(ctx))
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}

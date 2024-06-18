@@ -1,7 +1,7 @@
 name: Sepolia Dev 0
 l1:
   chain_id: 11155111
-  public_rpc: https://ethereum-sepolia-rpc.allthatnode.com
+  public_rpc: https://sepolia.infura.io/v3/a0e6212bdaa547878a300083366b9720
   explorer: https://sepolia.etherscan.io
 
 protocol_versions_addr: "0x252CbE9517F731C618961D890D534183822dcC8d"

@@ -44,7 +44,7 @@ func constructChainConfig(
 	sequencerRPC,
 	explorer string,
 	superchainLevel superchain.SuperchainLevel,
-	runStandardChecks bool,
+	standardChainCandidate bool,
 ) (superchain.ChainConfig, error) {
 	fmt.Printf("Attempting to read from %s\n", inputFilePath)
 	file, err := os.ReadFile(inputFilePath)
@@ -62,17 +62,17 @@ func constructChainConfig(
 	}
 
 	chainConfig := superchain.ChainConfig{
-		Name:              chainName,
-		ChainID:           jsonConfig.ChainID,
-		PublicRPC:         publicRPC,
-		SequencerRPC:      sequencerRPC,
-		Explorer:          explorer,
-		BatchInboxAddr:    jsonConfig.BatchInboxAddr,
-		Genesis:           jsonConfig.Genesis,
-		SuperchainLevel:   superchainLevel,
-		RunStandardChecks: runStandardChecks,
-		SuperchainTime:    nil,
-		Plasma:            jsonConfig.PlasmaConfig,
+		Name:                   chainName,
+		ChainID:                jsonConfig.ChainID,
+		PublicRPC:              publicRPC,
+		SequencerRPC:           sequencerRPC,
+		Explorer:               explorer,
+		BatchInboxAddr:         jsonConfig.BatchInboxAddr,
+		Genesis:                jsonConfig.Genesis,
+		SuperchainLevel:        superchainLevel,
+		StandardChainCandidate: standardChainCandidate,
+		SuperchainTime:         nil,
+		Plasma:                 jsonConfig.PlasmaConfig,
 		HardForkConfiguration: superchain.HardForkConfiguration{
 			CanyonTime:  jsonConfig.CanyonTime,
 			DeltaTime:   jsonConfig.DeltaTime,

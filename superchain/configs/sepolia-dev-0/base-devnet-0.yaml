@@ -5,7 +5,7 @@ sequencer_rpc: ""
 explorer: ""
 
 superchain_level: 1
-runs_standard_checks: true
+standard_chain_candidate: true
 superchain_time: 1706634000 # joined from Ecotone
 
 system_config_addr: "0x7F67DC4959cb3E532B10A99F41bDD906C46FdFdE"

@@ -5,7 +5,7 @@ sequencer_rpc: https://sepolia.mode.network
 explorer: https://sepolia.explorer.mode.network
 
 superchain_level: 1
-runs_standard_checks: true
+standard_chain_candidate: true
 superchain_time: 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
 
 batch_inbox_addr: "0xcDDaE6148dA1E003C230E4527f9baEdc8a204e7E"

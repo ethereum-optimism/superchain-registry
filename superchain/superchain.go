@@ -91,9 +91,9 @@ type ChainConfig struct {
 
 	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
 
-	// If RunStandardChecks is true, standard chain validation checks will
+	// If StandardChainCandidate is true, standard chain validation checks will
 	// run on this chain even if it is a frontier chain.
-	RunStandardChecks bool `yaml:"run_standard_checks,omitempty"`
+	StandardChainCandidate bool `yaml:"standard_chain_candidate,omitempty"`
 
 	// If SuperchainTime is set, hardforks times after SuperchainTime
 	// will be inherited from the superchain-wide config.

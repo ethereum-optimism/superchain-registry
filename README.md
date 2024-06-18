@@ -51,10 +51,10 @@ sh scripts/add-chain.sh frontier
 #### Standard chains
 A chain may meet the definition of a **standard** chain. Adding a standard chain is a two-step process.
 
-First, the chain should be added as a frontier chain but with `runs-standard-checks` flag set:
+First, the chain should be added as a frontier chain but with `standard-chain-candidate` flag set:
 
 ```shell
-sh scripts/add-chain.sh standard -runs-standard-checks
+sh scripts/add-chain.sh standard -standard-chain-candidate
 ```
 
 The remaining steps should then be followed to merge the config data into the registry -- a prerequisite for [promoting the chain](#promote-chain) to a standard chain.
@@ -96,7 +96,7 @@ go test -run=TestGasPriceOracleParams/11155420
 Omit the `-run=` flag to run checks for all chains.
 
 > [!NOTE]
-> If you set `-run-standard-checks`, your chain will be checked against the majority of the standard configuration requirements. These are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
+> If you set `-standard-chain-candidate`, your chain will be checked against the majority of the standard configuration requirements. These are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
 >
 > The final requirement to a standard chain concerns the `ProxyAdminOwner`. That check will not be run until the chain is promoted to standard.
 
