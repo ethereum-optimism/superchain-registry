@@ -87,6 +87,8 @@ func TestSecurityConfigs(t *testing.T) {
 	}
 	for chainID, chain := range OPChains {
 		t.Run(perChainTestName(chain), func(t *testing.T) {
+			chain := chain
+			chainID := chainID
 			t.Parallel()
 			if isExcluded[chain.ChainID] {
 				t.Skipf("chain %d: EXCLUDED from Security Config Checks", chainID)
