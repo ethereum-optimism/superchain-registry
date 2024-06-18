@@ -12,35 +12,30 @@ var standardConfigFile embed.FS
 
 func init() {
 
-	Config = make(map[string]ConfigType)
-
-	Config["mainnet"] = ConfigType{new(Params), new(Roles)}
-	var err error
-	err = decodeTOMLFileIntoConfig("standard-config-params-mainnet.toml", Config["mainnet"].Params)
-	if err != nil {
-		panic(err)
+	Config = ConfigType{
+		Params: make(map[string]*Params),
+		Roles:  new(Roles),
 	}
-	err = decodeTOMLFileIntoConfig("standard-config-roles.toml", Config["mainnet"].Roles)
+
+	err := decodeTOMLFileIntoConfig("standard-config-roles.toml", Config.Roles)
 	if err != nil {
 		panic(err)
 	}
 
-	Config["sepolia"] = ConfigType{new(Params), new(Roles)}
-	err = decodeTOMLFileIntoConfig("standard-config-params-sepolia.toml", Config["sepolia"].Params)
-	if err != nil {
-		panic(err)
-	}
-	err = decodeTOMLFileIntoConfig("standard-config-roles.toml", Config["sepolia"].Roles)
+	Config.Params["mainnet"] = new(Params)
+	err = decodeTOMLFileIntoConfig("standard-config-params-mainnet.toml", Config.Params["mainnet"])
 	if err != nil {
 		panic(err)
 	}
 
-	Config["sepolia-dev-0"] = ConfigType{new(Params), new(Roles)}
-	err = decodeTOMLFileIntoConfig("standard-config-params-sepolia-dev-0.toml", Config["sepolia-dev-0"].Params)
+	Config.Params["sepolia"] = new(Params)
+	err = decodeTOMLFileIntoConfig("standard-config-params-sepolia.toml", Config.Params["sepolia"])
 	if err != nil {
 		panic(err)
 	}
-	err = decodeTOMLFileIntoConfig("standard-config-roles.toml", Config["sepolia-dev-0"].Roles)
+
+	Config.Params["sepolia-dev-0"] = new(Params)
+	err = decodeTOMLFileIntoConfig("standard-config-params-sepolia-dev-0.toml", Config.Params["sepolia-dev-0"])
 	if err != nil {
 		panic(err)
 	}

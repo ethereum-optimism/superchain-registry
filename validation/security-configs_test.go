@@ -38,7 +38,7 @@ func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
 	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
 	isFPAC := majorVersion >= 3
 
-	contractCallResolutions := standard.Config[OPChains[chainID].Superchain].L1.GetResolutions(isFPAC)
+	contractCallResolutions := standard.Config.Roles.L1.GetResolutions(isFPAC)
 
 	for contract, methodToOutput := range contractCallResolutions {
 
@@ -104,7 +104,7 @@ func testL2SecurityConfigForChain(t *testing.T, chain ChainConfig) {
 	client, err := ethclient.Dial(chain.PublicRPC)
 	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
 	defer client.Close()
-	contractCallResolutions := standard.Config[OPChains[chain.ChainID].Superchain].L2.Universal
+	contractCallResolutions := standard.Config.Roles.L2.Universal
 
 	for contract, methodToOutput := range contractCallResolutions {
 		for method, output := range methodToOutput {
@@ -132,6 +132,9 @@ func TestL2SecurityConfigs(t *testing.T) {
 
 	for chainID, chain := range OPChains {
 		t.Run(perChainTestName(chain), func(t *testing.T) {
+			chain := chain
+			chainID := chainID
+			t.Parallel()
 			if isExcluded[chainID] {
 				t.Skip("chain excluded from check")
 			}

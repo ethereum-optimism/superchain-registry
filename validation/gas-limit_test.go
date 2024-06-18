@@ -26,7 +26,7 @@ func TestGasLimit(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
 		require.NoError(t, err)
 
-		desiredParam := standard.Config[chain.Superchain].SystemConfig.GasLimit
+		desiredParam := standard.Config.Params[chain.Superchain].SystemConfig.GasLimit
 		actualParam, err := getGasLimitWithRetries(context.Background(), common.Address(contractAddress), client)
 		require.NoError(t, err)
 

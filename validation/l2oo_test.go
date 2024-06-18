@@ -44,7 +44,7 @@ func TestL2OOParams(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("L2OutputOracleProxy")
 		require.NoError(t, err)
 
-		desiredParams := standard.Config[chain.Superchain].L2OOParams
+		desiredParams := standard.Config.Params[chain.Superchain].L2OOParams
 
 		version, err := getVersion(context.Background(), common.Address(contractAddress), client)
 		require.NoError(t, err)

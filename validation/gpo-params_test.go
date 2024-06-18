@@ -27,7 +27,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		desiredParams := standard.Config[chain.Superchain].GPOParams.PreEcotone
+		desiredParams := standard.Config.Params[chain.Superchain].GPOParams.PreEcotone
 
 		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
@@ -41,7 +41,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 
 	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		desiredParams := standard.Config[chain.Superchain].GPOParams.Ecotone
+		desiredParams := standard.Config.Params[chain.Superchain].GPOParams.Ecotone
 
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)

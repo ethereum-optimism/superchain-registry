@@ -1,9 +1,9 @@
 package standard
 
-// Config is keyed by superchain target, e.g. "mainnet" or "sepolia" or "sepolia-dev-0"
-var Config map[string]ConfigType
-
+// Config.Params is keyed by superchain target, e.g. "mainnet" or "sepolia" or "sepolia-dev-0"
 type ConfigType struct {
-	*Params
-	*Roles
+	Params map[string]*Params
+	Roles  *Roles
 }
+
+var Config = ConfigType{}
