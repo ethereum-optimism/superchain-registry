@@ -92,7 +92,6 @@ func writeChainConfig(
 	targetDirectory string,
 	superchainTarget string,
 ) error {
-
 	// Remove hardfork timestamp override fields if they match superchain defaults
 	defaults := superchain.Superchains[superchainTarget]
 	rollupConfig.SetDefaultHardforkTimestampsToNil(&defaults.Config)
