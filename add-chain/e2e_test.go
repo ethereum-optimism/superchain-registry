@@ -7,17 +7,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v3"
 )
 
 func TestCLIApp(t *testing.T) {
-	app := &cli.App{
-		Name:   "add-chain",
-		Usage:  "Add a new chain to the superchain-registry",
-		Flags:  []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag},
-		Action: entrypoint,
-	}
 
 	tests := []struct {
 		name                   string
@@ -52,7 +45,12 @@ func TestCLIApp(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			args := []string{"add-chain", "-chain-type", tt.chainType, "-chain-name", tt.chainName, "-rollup-config", tt.rollupConfigFile, "-test", "true", "-standard-chain-candidate", strconv.FormatBool(tt.standardChainCandidate)}
+			args := []string{"add-chain",
+				"-chain-type", tt.chainType,
+				"-chain-name", tt.chainName,
+				"-rollup-config", tt.rollupConfigFile,
+				"-test", "true",
+				"-standard-chain-candidate", strconv.FormatBool(tt.standardChainCandidate)}
 			err := app.Run(args)
 			require.NoError(t, err, "add-chain app failed")
 

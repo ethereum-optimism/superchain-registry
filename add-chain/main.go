@@ -10,6 +10,14 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var app = &cli.App{
+	Name:     "add-chain",
+	Usage:    "Add a new chain to the superchain-registry",
+	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag, StandardChainCandidateFlag},
+	Action:   entrypoint,
+	Commands: []*cli.Command{&PromoteToStandardCmd},
+}
+
 var (
 	ChainTypeFlag = &cli.StringFlag{
 		Name:     "chain-type",
@@ -44,14 +52,6 @@ var (
 )
 
 func main() {
-	app := &cli.App{
-		Name:     "add-chain",
-		Usage:    "Add a new chain to the superchain-registry",
-		Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag, StandardChainCandidateFlag},
-		Action:   entrypoint,
-		Commands: []*cli.Command{&PromoteToStandardCmd},
-	}
-
 	if err := app.Run(os.Args); err != nil {
 		fmt.Println(err)
 		fmt.Println("*********************")
@@ -65,6 +65,7 @@ func main() {
 func entrypoint(ctx *cli.Context) error {
 	chainType := ctx.String(ChainTypeFlag.Name)
 	runningTests := ctx.Bool(TestFlag.Name)
+	standardChainCandidate := ctx.Bool(StandardChainCandidateFlag.Name)
 
 	superchainLevel, err := getSuperchainLevel(chainType)
 	if err != nil {
@@ -124,7 +125,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md")
 	}
 
-	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, StandardChainCandidateFlag.Get(ctx))
+	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
