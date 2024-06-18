@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -19,19 +20,30 @@ func TestCLIApp(t *testing.T) {
 	}
 
 	tests := []struct {
-		name             string
-		chainName        string
-		rollupConfigFile string
+		name                   string
+		chainName              string
+		rollupConfigFile       string
+		standardChainCandidate bool
+		chainType              string
 	}{
 		{
 			name:             "baseline",
 			chainName:        "awesomechain_baseline",
 			rollupConfigFile: "./testdata/monorepo/op-node/rollup_baseline.json",
+			chainType:        "standard",
 		},
 		{
 			name:             "plasma",
 			chainName:        "awesomechain_plasma",
 			rollupConfigFile: "./testdata/monorepo/op-node/rollup_plasma.json",
+			chainType:        "standard",
+		},
+		{
+			name:                   "standard-candidate",
+			chainName:              "awesomechain_standard-candidate",
+			rollupConfigFile:       "./testdata/monorepo/op-node/rollup_baseline.json",
+			chainType:              "frontier",
+			standardChainCandidate: true,
 		},
 	}
 
@@ -40,7 +52,7 @@ func TestCLIApp(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			args := []string{"add-chain", "-chain-type", "standard", "-chain-name", tt.chainName, "-rollup-config", tt.rollupConfigFile, "-test", "true"}
+			args := []string{"add-chain", "-chain-type", tt.chainType, "-chain-name", tt.chainName, "-rollup-config", tt.rollupConfigFile, "-test", "true", "-standard-chain-candidate", strconv.FormatBool(tt.standardChainCandidate)}
 			err := app.Run(args)
 			require.NoError(t, err, "add-chain app failed")
 
