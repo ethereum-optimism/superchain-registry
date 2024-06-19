@@ -44,7 +44,7 @@ func TestL2OOParams(t *testing.T) {
 		contractAddress, err := Addresses[chain.ChainID].AddressFor("L2OutputOracleProxy")
 		require.NoError(t, err)
 
-		desiredParams := standard.Config[chain.Superchain].L2OOParams
+		desiredParams := standard.Config.Params[chain.Superchain].L2OOParams
 
 		version, err := getVersion(context.Background(), common.Address(contractAddress), client)
 		require.NoError(t, err)
@@ -103,7 +103,6 @@ func getl2OOParamsWithRetries(ctx context.Context, l2OOAddr common.Address, clie
 }
 
 // getl2OOParamsWithRetriesLegacy gets each of the parameters from the L2OutputOracle at l2OOAddr,
-// retrying up to 10 times with exponential backoff.
 func getl2OOParamsWithRetriesLegacy(ctx context.Context, l2OOAddr common.Address, client *ethclient.Client) (L2OOParams, error) {
 	callOpts := &bind.CallOpts{Context: ctx}
 	l2OO, err := legacy.NewL2OutputOracleCaller(l2OOAddr, client)

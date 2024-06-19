@@ -2,6 +2,7 @@ package validation
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 	"testing"
@@ -18,7 +19,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
+func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
 	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
 
@@ -37,7 +38,7 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
 	isFPAC := majorVersion >= 3
 
-	contractCallResolutions := standard.Config[OPChains[chainID].Superchain].L1.GetResolutions(isFPAC)
+	contractCallResolutions := standard.Config.Roles.L1.GetResolutions(isFPAC)
 
 	for contract, methodToOutput := range contractCallResolutions {
 
@@ -81,16 +82,60 @@ func testSecurityConfigOfChain(t *testing.T, chainID uint64) {
 	)
 }
 
-func TestSecurityConfigs(t *testing.T) {
+func TestL1SecurityConfigs(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		11763072: true, // Base_devnet_0 (no AnchorStateRegistryProxy specified)
 	}
-	for chainID, chain := range OPChains {
-		t.Run(perChainTestName(chain), func(t *testing.T) {
+	for chainID, chainPtr := range OPChains {
+		chain, chainID := *chainPtr, chainID
+		t.Run(perChainTestName(&chain), func(t *testing.T) {
+			t.Parallel()
 			if isExcluded[chain.ChainID] {
 				t.Skipf("chain %d: EXCLUDED from Security Config Checks", chainID)
 			}
-			testSecurityConfigOfChain(t, chainID)
+			testL1SecurityConfigOfChain(t, chainID)
+		})
+	}
+}
+
+func testL2SecurityConfigForChain(t *testing.T, chain ChainConfig) {
+	// Create an ethclient connection to the specified RPC URL
+	client, err := ethclient.Dial(chain.PublicRPC)
+	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
+	defer client.Close()
+	contractCallResolutions := standard.Config.Roles.L2.Universal
+
+	for contract, methodToOutput := range contractCallResolutions {
+		for method, output := range methodToOutput {
+			method, output := method, output
+			t.Run(fmt.Sprintf("%s.%s", contract, method), func(t *testing.T) {
+				t.Parallel()
+				want := Address(common.HexToAddress(output))
+
+				got, err := getAddress(method, MustHexToAddress(contract), client)
+				require.NoErrorf(t, err, "problem calling %s.%s %s", contract, contract, method)
+
+				assert.Equal(t, want, got, "%s.%s = %s, expected %s", contract, method, got, want)
+			})
+		}
+	}
+}
+
+func TestL2SecurityConfigs(t *testing.T) {
+	isExcluded := map[uint64]bool{
+		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
+		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
+	}
+
+	for chainID, chainPtr := range OPChains {
+		chain, chainID := *chainPtr, chainID
+		t.Run(perChainTestName(&chain), func(t *testing.T) {
+			t.Parallel()
+			if isExcluded[chainID] {
+				t.Skip("chain excluded from check")
+			}
+			SkipCheckIfFrontierChain(t, chain)
+			testL2SecurityConfigForChain(t, chain)
 		})
 	}
 }
