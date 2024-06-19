@@ -46,11 +46,12 @@ func TestCLIApp(t *testing.T) {
 			t.Parallel()
 
 			args := []string{"add-chain",
-				"-chain-type", tt.chainType,
-				"-chain-name", tt.chainName,
-				"-rollup-config", tt.rollupConfigFile,
-				"-test", "true",
-				"-standard-chain-candidate", strconv.FormatBool(tt.standardChainCandidate)}
+				"--chain-type=" + tt.chainType,
+				"--chain-name=" + tt.chainName,
+				"--rollup-config=" + tt.rollupConfigFile,
+				"--standard-chain-candidate=" + strconv.FormatBool(tt.standardChainCandidate),
+				"--test=" + "true",
+			}
 			err := app.Run(args)
 			require.NoError(t, err, "add-chain app failed")
 

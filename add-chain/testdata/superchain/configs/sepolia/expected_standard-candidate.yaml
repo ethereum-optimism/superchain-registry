@@ -5,8 +5,8 @@ sequencer_rpc: http://awe.some.seq.rpc
 explorer: https://awesomescan.org
 
 superchain_level: 1
-superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
 standard_chain_candidate: true
+superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
 
 batch_inbox_addr: 0xFf00000000000000000000000000000000042069
 
