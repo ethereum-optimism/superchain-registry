@@ -51,10 +51,10 @@ sh scripts/add-chain.sh frontier
 #### Standard chains
 A chain may meet the definition of a **standard** chain. Adding a standard chain is a two-step process.
 
-First, the chain should be added as a frontier chain but with `standard-chain-candidate` flag set:
+First, the chain should be added as a frontier chain but with `--standard-chain-candidate` flag set:
 
 ```shell
-sh scripts/add-chain.sh standard -standard-chain-candidate
+sh scripts/add-chain.sh standard --standard-chain-candidate
 ```
 
 The remaining steps should then be followed to merge the config data into the registry -- a prerequisite for [promoting the chain](#promote-chain) to a standard chain.
