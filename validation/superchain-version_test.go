@@ -96,6 +96,7 @@ func TestContractVersions(t *testing.T) {
 }
 
 func getContractVersionsFromChain(list AddressList, client *ethclient.Client, isFPAC bool) (ContractVersions, error) {
+	// TODO parallelize this fn
 	versions := ContractVersions{}
 	var err error
 
@@ -163,12 +164,6 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, is
 	if err != nil {
 		return versions, err
 	}
-
-	// TODO ProtocolVersions
-	// versions.ProtocolVersions, err = getVersion(context.Background(), common.Address(list.ProtocolVersions), client)
-	// if err != nil {
-	// 	return versions, err
-	// }
 
 	return versions, nil
 
