@@ -67,7 +67,7 @@ func TestL2OOParams(t *testing.T) {
 			if isExcluded[chainID] {
 				t.Skip()
 			}
-			RunOnlyOnStandardCandidateChains(t, *chain)
+			RunOnStandardAndStandardCandidateChains(t, *chain)
 			checkL2OOParams(t, chain)
 		})
 	}
