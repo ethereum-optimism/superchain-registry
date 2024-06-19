@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 
 	"github.com/spf13/viper"
 	"github.com/urfave/cli/v2"
@@ -176,7 +178,23 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to retrieve L1 rpc url: %w", err)
 	}
 
-	err = readAddressesFromChain(addresses, l1RpcUrl)
+	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
+	version, err := castCall(addresses[OptimismPortalProxy], "version()(string)", l1RpcUrl)
+	if err != nil {
+		return fmt.Errorf("failed to get OptimismPortalProxy.version(): %w", err)
+	}
+
+	version, err = strconv.Unquote(version)
+	if err != nil {
+		return fmt.Errorf("failed to get parse OptimismPortalProxy.version(): %w", err)
+	}
+	majorVersion, err := strconv.ParseInt(strings.Split(version, ".")[0], 10, 32)
+	if err != nil {
+		return fmt.Errorf("failed to get parse OptimismPortalProxy.version(): %w", err)
+	}
+	isFPAC := majorVersion >= 3
+
+	err = readAddressesFromChain(addresses, l1RpcUrl, isFPAC)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from chain: %w", err)
 	}
