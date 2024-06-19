@@ -2,12 +2,14 @@ package validation
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"slices"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -165,4 +167,50 @@ func getVersion(ctx context.Context, addr common.Address, client *ethclient.Clie
 	}
 
 	return version, nil
+}
+
+func TestFindOPContractTag(t *testing.T) {
+	shouldMatch := ContractVersions{
+		L1CrossDomainMessenger:       "1.4.0",
+		L1ERC721Bridge:               "1.1.1",
+		L1StandardBridge:             "1.1.0",
+		L2OutputOracle:               "1.3.0",
+		OptimismMintableERC20Factory: "1.1.0",
+		OptimismPortal:               "1.6.0",
+		SystemConfig:                 "1.3.0",
+		ProtocolVersions:             "1.0.0",
+	}
+
+	got, err := findOPContractTag(shouldMatch)
+	require.NoError(t, err)
+	want := []standard.Tag{"op-contracts/v1.1.0"}
+	require.Equal(t, got, want)
+
+	shouldNotMatch := ContractVersions{
+		L1CrossDomainMessenger:       "1.4.0",
+		L1ERC721Bridge:               "1.1.1",
+		L1StandardBridge:             "1.1.0",
+		L2OutputOracle:               "1.3.0",
+		OptimismMintableERC20Factory: "1.1.0",
+		OptimismPortal:               "1.5.0",
+		SystemConfig:                 "1.3.0",
+		ProtocolVersions:             "1.0.0",
+	}
+	got, err = findOPContractTag(shouldNotMatch)
+	require.Error(t, err)
+	want = []standard.Tag{}
+	require.Equal(t, got, want)
+
+}
+
+func findOPContractTag(versions ContractVersions) ([]standard.Tag, error) {
+	matchingTags := make([]standard.Tag, 0)
+	err := errors.New("no matching tag found")
+	for tag := range standard.Versions {
+		if standard.Versions[tag] == versions {
+			matchingTags = append(matchingTags, tag)
+			err = nil
+		}
+	}
+	return matchingTags, err
 }

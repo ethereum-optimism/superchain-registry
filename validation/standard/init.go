@@ -28,9 +28,11 @@ func init() {
 		decodeTOMLFileIntoConfig("standard-config-params-"+network+".toml", Config.Params[network])
 
 	}
+
+	decodeTOMLFileIntoConfig("standard-versions.toml", &Versions)
 }
 
-func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles](filename string, config *T) {
+func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles | VersionsType](filename string, config *T) {
 	data, err := fs.ReadFile(standardConfigFile, filename)
 	if err != nil {
 		panic(err)
