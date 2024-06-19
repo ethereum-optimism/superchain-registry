@@ -1,7 +1,7 @@
 name: Mainnet
 l1:
   chain_id: 1
-  public_rpc: https://mainnet.infura.io/v3/a0e6212bdaa547878a300083366b9720
+  public_rpc: https://ethereum-mainnet-rpc.allthatnode.com
   explorer: https://etherscan.io
 
 protocol_versions_addr: "0x8062AbC286f5e7D9428a0Ccb9AbD71e50d93b935"
