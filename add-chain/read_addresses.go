@@ -33,45 +33,45 @@ var (
 	SystemConfigOwner = "SystemConfigOwner"
 )
 
-func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string) error {
+func readAddressesFromChain(addresses map[string]string, l1RpcUrl string) error {
 	// SuperchainConfig
-	address, err := castCall(contractAddresses[OptimismPortalProxy], "superchainConfig()(address)", l1RpcUrl)
+	address, err := castCall(addresses[OptimismPortalProxy], "superchainConfig()(address)", l1RpcUrl)
 	if err != nil {
-		contractAddresses[SuperchainConfig] = ""
+		addresses[SuperchainConfig] = ""
 	} else {
-		contractAddresses[SuperchainConfig] = address
+		addresses[SuperchainConfig] = address
 	}
 
 	// Guardian
-	address, err = castCall(contractAddresses[SuperchainConfig], "guardian()(address)", l1RpcUrl)
+	address, err = castCall(addresses[SuperchainConfig], "guardian()(address)", l1RpcUrl)
 	if err != nil {
-		address, err = castCall(contractAddresses[OptimismPortalProxy], "guardian()(address)", l1RpcUrl)
+		address, err = castCall(addresses[OptimismPortalProxy], "guardian()(address)", l1RpcUrl)
 		if err != nil {
 			return fmt.Errorf("could not retrieve address for Guardian %w", err)
 		}
 	}
-	contractAddresses[Guardian] = address
+	addresses[Guardian] = address
 
 	// Challenger
-	address, err = castCall(contractAddresses[L2OutputOracleProxy], "challenger()(address)", l1RpcUrl)
+	address, err = castCall(addresses[L2OutputOracleProxy], "challenger()(address)", l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("could not retrieve address for Guardian")
 	}
-	contractAddresses[Challenger] = address
+	addresses[Challenger] = address
 
 	// ProxyAdminOwner
-	address, err = castCall(contractAddresses[ProxyAdmin], "owner()(address)", l1RpcUrl)
+	address, err = castCall(addresses[ProxyAdmin], "owner()(address)", l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("could not retrieve address for ProxyAdminOwner")
 	}
-	contractAddresses[ProxyAdminOwner] = address
+	addresses[ProxyAdminOwner] = address
 
 	// SystemConfigOwner
-	address, err = castCall(contractAddresses[SystemConfigProxy], "owner()(address)", l1RpcUrl)
+	address, err = castCall(addresses[SystemConfigProxy], "owner()(address)", l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("could not retrieve address for ProxyAdminOwner")
 	}
-	contractAddresses[SystemConfigOwner] = address
+	addresses[SystemConfigOwner] = address
 
 	fmt.Printf("Contract addresses read from on-chain contracts\n")
 	return nil

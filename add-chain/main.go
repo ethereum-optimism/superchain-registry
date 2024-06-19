@@ -134,10 +134,10 @@ func entrypoint(ctx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
-	contractAddresses := make(map[string]string)
+	addresses := make(map[string]string)
 	if rollupConfig.Plasma != nil {
 		// Store this address before it gets removed from rollupConfig
-		contractAddresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
+		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
 	}
 
 	targetFilePath := filepath.Join(targetDir, chainName+".yaml")
@@ -166,7 +166,7 @@ func entrypoint(ctx *cli.Context) error {
 	}
 	fmt.Printf("Genesis system config written to: %s\n", filePath)
 
-	err = readAddressesFromJSON(contractAddresses, deploymentsDir)
+	err = readAddressesFromJSON(addresses, deploymentsDir)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from JSON files: %w", err)
 	}
@@ -176,12 +176,12 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to retrieve L1 rpc url: %w", err)
 	}
 
-	err = readAddressesFromChain(contractAddresses, l1RpcUrl)
+	err = readAddressesFromChain(addresses, l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from chain: %w", err)
 	}
 
-	err = writeAddressesToJSON(contractAddresses, superchainRepoPath, superchainTarget, chainName)
+	err = writeAddressesToJSON(addresses, superchainRepoPath, superchainTarget, chainName)
 	if err != nil {
 		return fmt.Errorf("failed to write contract addresses to JSON file: %w", err)
 	}
