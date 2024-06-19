@@ -33,6 +33,8 @@ AnchorStateRegistryProxy."admin()" = "ProxyAdmin"
 DelayedWETHProxy."admin()" = "ProxyAdmin"
 OptimismPortalProxy."guardian()" = "Guardian"
 OptimismPortalProxy."systemConfig()" = "SystemConfigProxy"
+PermissionedDisputeGame."challenger()" = "Challenger"
+PermissionedDisputeGame."proposer()" = "Proposer"
 
 [l2.universal]
 "0x4200000000000000000000000000000000000016"."admin()" = "0x4200000000000000000000000000000000000018"

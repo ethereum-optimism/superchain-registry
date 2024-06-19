@@ -67,13 +67,6 @@ func readAddressesFromChain(addresses map[string]string, l1RpcUrl string, isFPAC
 	}
 	addresses[Guardian] = address
 
-	// Challenger
-	address, err = castCall(addresses[L2OutputOracleProxy], "challenger()(address)", l1RpcUrl)
-	if err != nil {
-		return fmt.Errorf("could not retrieve address for Guardian")
-	}
-	addresses[Challenger] = address
-
 	// ProxyAdminOwner
 	address, err = castCall(addresses[ProxyAdmin], "owner()(address)", l1RpcUrl)
 	if err != nil {
@@ -103,13 +96,33 @@ func readAddressesFromChain(addresses map[string]string, l1RpcUrl string, isFPAC
 	addresses[BatchSubmitter] = "0x" + hash[24:63]
 
 	if isFPAC {
+		// Proposer
+		address, err = castCall(addresses[PermissionedDisputeGame], "PROPOSER()(address)", l1RpcUrl)
+		if err != nil {
+			return fmt.Errorf("could not retrieve address for Proposer")
+		}
+		addresses[UnsafeBlockSigner] = address
+
+		// Challenger
+		address, err = castCall(addresses[PermissionedDisputeGame], "challenger()(address)", l1RpcUrl)
+		if err != nil {
+			return fmt.Errorf("could not retrieve address for Challenger")
+		}
+		addresses[Challenger] = address
 	} else {
 		// Proposer
 		address, err = castCall(addresses[L2OutputOracleProxy], "PROPOSER()(address)", l1RpcUrl)
 		if err != nil {
-			return fmt.Errorf("could not retrieve address for UnsafeBlockSigner")
+			return fmt.Errorf("could not retrieve address for Proposer")
 		}
 		addresses[UnsafeBlockSigner] = address
+
+		// Challenger
+		address, err = castCall(addresses[L2OutputOracleProxy], "challenger()(address)", l1RpcUrl)
+		if err != nil {
+			return fmt.Errorf("could not retrieve address for Challenger")
+		}
+		addresses[Challenger] = address
 	}
 
 	fmt.Printf("Addresses read from chain\n")
