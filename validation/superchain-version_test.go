@@ -2,9 +2,7 @@ package validation
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"slices"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
@@ -95,43 +93,18 @@ func TestContractVersions(t *testing.T) {
 		999999999: true, // sepolia/zora
 	}
 
-	checkOPChainSatisfiesSemver := func(t *testing.T, chain *ChainConfig) {
-		// TODO: don't hardcode this https://github.com/ethereum-optimism/superchain-registry/issues/219
-		isFaultProofChain := map[uint64]bool{
-			10:       true, // OP Mainnet
-			11155420: true, // OP Sepolia
-		}
-
+	checkOPChainMatchesATag := func(t *testing.T, chain *ChainConfig) {
 		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-
 		require.NotEmpty(t, rpcEndpoint)
 
 		client, err := ethclient.Dial(rpcEndpoint)
 		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-
-		contractNames := BaseStackContractNames
-		if isFaultProofChain[chain.ChainID] {
-			// The FaultProof contracts are only present in chains that have activated fault proofs
-			contractNames = append(contractNames, FaultProofContractNames...)
-		} else {
-			// The L2OutputOracle contract is only present in chains that have not activated fault proofs
-			contractNames = append(contractNames, "L2OutputOracle")
-		}
-
-		for _, contractName := range contractNames {
-			desiredSemver, err := SuperchainSemver[chain.Superchain].VersionFor(contractName)
-			require.NoError(t, err)
-			// ASSUMPTION: we will check the version of the implementation via the declared proxy contract
-			var localizedContractName string
-			if slices.Contains(UnproxiedContractNames, contractName) {
-				localizedContractName = contractName
-			} else {
-				localizedContractName = contractName + "Proxy"
-			}
-			contractAddress, err := Addresses[chain.ChainID].AddressFor(localizedContractName)
-			require.NoErrorf(t, err, "%s/%s.%s.version= UNSPECIFIED", chain.Superchain, chain.Name, localizedContractName)
-			checkSemverForContract(t, localizedContractName, &contractAddress, client, desiredSemver)
-		}
+		isFPAC := chain.ChainID == 10 || chain.ChainID == 11155420 || chain.ChainID == 11155421 // TODO don't hardcode this
+		versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client, isFPAC)
+		require.NoError(t, err)
+		matches, err := findOPContractTag(versions)
+		require.NoError(t, err)
+		require.NotEmpty(t, matches)
 	}
 
 	for chainID, chain := range OPChains {
@@ -140,9 +113,88 @@ func TestContractVersions(t *testing.T) {
 				t.Skipf("chain %d: EXCLUDED from contract version validation", chainID)
 			}
 			RunOnStandardAndStandardCandidateChains(t, *chain)
-			checkOPChainSatisfiesSemver(t, chain)
+			checkOPChainMatchesATag(t, chain)
 		})
 	}
+}
+
+func getContractVersionsFromChain(list AddressList, client *ethclient.Client, isFPAC bool) (ContractVersions, error) {
+	versions := ContractVersions{}
+	var err error
+
+	versions.L1CrossDomainMessenger, err = getVersion(context.Background(), common.Address(list.L1CrossDomainMessengerProxy), client)
+	if err != nil {
+		return versions, err
+	}
+	versions.L1ERC721Bridge, err = getVersion(context.Background(), common.Address(list.L1ERC721BridgeProxy), client)
+	if err != nil {
+		return versions, err
+	}
+
+	versions.L1StandardBridge, err = getVersion(context.Background(), common.Address(list.L1StandardBridgeProxy), client)
+	if err != nil {
+		return versions, err
+	}
+
+	if !isFPAC {
+		versions.L2OutputOracle, err = getVersion(context.Background(), common.Address(list.L2OutputOracleProxy), client)
+		if err != nil {
+			return versions, err
+		}
+	} else {
+		versions.AnchorStateRegistry, err = getVersion(context.Background(), common.Address(list.AnchorStateRegistryProxy), client)
+		if err != nil {
+			return versions, err
+		}
+		versions.DelayedWETH, err = getVersion(context.Background(), common.Address(list.DelayedWETHProxy), client)
+		if err != nil {
+			return versions, err
+		}
+		versions.DisputeGameFactory, err = getVersion(context.Background(), common.Address(list.DisputeGameFactoryProxy), client)
+		if err != nil {
+			return versions, err
+		}
+		versions.FaultDisputeGame, err = getVersion(context.Background(), common.Address(list.FaultDisputeGame), client)
+		if err != nil {
+			return versions, err
+		}
+		versions.MIPS, err = getVersion(context.Background(), common.Address(list.MIPS), client)
+		if err != nil {
+			return versions, err
+		}
+		versions.PermissionedDisputeGame, err = getVersion(context.Background(), common.Address(list.PermissionedDisputeGame), client)
+		if err != nil {
+			return versions, err
+		}
+		versions.PreimageOracle, err = getVersion(context.Background(), common.Address(list.PreimageOracle), client)
+		if err != nil {
+			return versions, err
+		}
+	}
+
+	versions.OptimismMintableERC20Factory, err = getVersion(context.Background(), common.Address(list.OptimismMintableERC20FactoryProxy), client)
+	if err != nil {
+		return versions, err
+	}
+
+	versions.OptimismPortal, err = getVersion(context.Background(), common.Address(list.OptimismPortalProxy), client)
+	if err != nil {
+		return versions, err
+	}
+
+	versions.SystemConfig, err = getVersion(context.Background(), common.Address(list.SystemConfigProxy), client)
+	if err != nil {
+		return versions, err
+	}
+
+	// TODO ProtocolVersions
+	// versions.ProtocolVersions, err = getVersion(context.Background(), common.Address(list.ProtocolVersions), client)
+	// if err != nil {
+	// 	return versions, err
+	// }
+
+	return versions, nil
+
 }
 
 func checkSemverForContract(t *testing.T, contractName string, contractAddress *Address, client *ethclient.Client, desiredSemver string) {
@@ -205,7 +257,7 @@ func TestFindOPContractTag(t *testing.T) {
 
 func findOPContractTag(versions ContractVersions) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
-	err := errors.New("no matching tag found")
+	err := fmt.Errorf("no matching tag found %+v", versions)
 	for tag := range standard.Versions {
 		if standard.Versions[tag] == versions {
 			matchingTags = append(matchingTags, tag)
