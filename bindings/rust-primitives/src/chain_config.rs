@@ -33,6 +33,8 @@ pub struct HardForkConfiguration {
     pub ecotone_time: Option<u64>,
     /// Fjord hardfork activation time
     pub fjord_time: Option<u64>,
+    /// Interop hardfork activation time
+    pub interop_time: Option<u64>,
 }
 
 /// A chain configuration.
@@ -43,6 +45,9 @@ pub struct ChainConfig {
     pub name: String,
     /// Chain ID
     pub chain_id: u64,
+    /// L1 chain ID
+    #[cfg_attr(feature = "serde", serde(skip))]
+    pub l1_chain_id: u64,
     /// Chain public RPC endpoint
     pub public_rpc: String,
     /// Chain sequencer RPC endpoint
@@ -95,6 +100,9 @@ impl ChainConfig {
         }
         if cfg.fjord_time.is_some_and(|t| t > super_time) {
             cfg.fjord_time = defaults.fjord_time;
+        }
+        if cfg.interop_time.is_some_and(|t| t > super_time) {
+            cfg.interop_time = defaults.interop_time;
         }
     }
 }

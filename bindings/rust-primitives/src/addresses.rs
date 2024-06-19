@@ -29,8 +29,14 @@ pub struct AddressList {
     pub optimism_portal_proxy: Address,
     /// System Config Proxy address
     pub system_config_proxy: Address,
+    /// The system config owner
+    pub system_config_owner: Address,
     /// Proxy Admin address
     pub proxy_admin: Address,
+    /// The owner of the Proxy Admin
+    pub proxy_admin_owner: Address,
+    /// The guardian address
+    pub guardian: Address,
 
     // Fault Proof Contract Addresses
     /// Anchor State Registry Proxy address
@@ -49,4 +55,6 @@ pub struct AddressList {
     pub permissioned_dispute_game: Option<Address>,
     /// Preimage Oracle Proxy address
     pub preimage_oracle: Option<Address>,
+    /// The challenger's address
+    pub challenger: Option<Address>,
 }

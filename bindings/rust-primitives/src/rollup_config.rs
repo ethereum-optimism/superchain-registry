@@ -1,10 +1,36 @@
 //! Rollup Config Types
 
+use crate::addresses::AddressList;
 use crate::block::BlockID;
+use crate::chain_config::ChainConfig;
 use crate::genesis::ChainGenesis;
 use crate::system_config::SystemConfig;
 use alloy_eips::eip1559::BaseFeeParams;
 use alloy_primitives::{address, b256, uint, Address};
+use anyhow::{anyhow, Result};
+use hashbrown::HashMap;
+
+/// Map of OPChain IDs to their [RollupConfig].
+pub type RollupConfigs = HashMap<u64, RollupConfig>;
+
+/// Returns the rollup config for the given chain ID.
+pub fn rollup_config_from_chain_id(chain_id: u64) -> Result<RollupConfig> {
+    chain_id.try_into()
+}
+
+impl TryFrom<u64> for RollupConfig {
+    type Error = anyhow::Error;
+
+    fn try_from(chain_id: u64) -> Result<RollupConfig> {
+        match chain_id {
+            10 => Ok(OP_MAINNET_CONFIG),
+            11155420 => Ok(OP_SEPOLIA_CONFIG),
+            8453 => Ok(BASE_MAINNET_CONFIG),
+            84532 => Ok(BASE_SEPOLIA_CONFIG),
+            _ => Err(anyhow!("Unknown chain ID")),
+        }
+    }
+}
 
 /// Base fee max change denominator for Optimism Mainnet as defined in the Optimism
 /// [transaction costs](https://community.optimism.io/docs/developers/build/differences/#transaction-costs) doc.
@@ -168,6 +194,53 @@ impl Default for RollupConfig {
     }
 }
 
+/// Loads the rollup config for the OP-Stack chain given the chain config and address list.
+pub fn load_op_stack_rollup_config(
+    chain_config: &ChainConfig,
+    addrs: &AddressList,
+) -> RollupConfig {
+    const PGN_SEPOLIA: u64 = 58008;
+    RollupConfig {
+        genesis: chain_config.genesis.clone(),
+        l1_chain_id: chain_config.l1_chain_id,
+        l2_chain_id: chain_config.chain_id,
+        base_fee_params: OP_BASE_FEE_PARAMS,
+        canyon_base_fee_params: Some(OP_CANYON_BASE_FEE_PARAMS),
+        regolith_time: chain_config.hardfork_configuration.canyon_time,
+        canyon_time: chain_config.hardfork_configuration.canyon_time,
+        delta_time: chain_config.hardfork_configuration.delta_time,
+        ecotone_time: chain_config.hardfork_configuration.ecotone_time,
+        fjord_time: chain_config.hardfork_configuration.fjord_time,
+        interop_time: chain_config.hardfork_configuration.interop_time,
+        batch_inbox_address: chain_config.batch_inbox_addr,
+        deposit_contract_address: addrs.optimism_portal_proxy,
+        l1_system_config_address: addrs.system_config_proxy,
+        protocol_versions_address: addrs.address_manager,
+        blobs_enabled_l1_timestamp: None,
+        da_challenge_address: chain_config
+            .plasma
+            .as_ref()
+            .and_then(|plasma| plasma.da_challenge_address),
+
+        // The below chain parameters can be different per OP-Stack chain,
+        // but since none of the superchain chains differ, it's not represented in the superchain-registry yet.
+        // This restriction on superchain-chains may change in the future.
+        // Test/Alt configurations can still load custom rollup-configs when necessary.
+        block_time: 2,
+        channel_timeout: 300,
+        max_sequencer_drift: if chain_config.chain_id == PGN_SEPOLIA {
+            1000
+        } else {
+            600
+        },
+        seq_window_size: if chain_config.chain_id == PGN_SEPOLIA {
+            7200
+        } else {
+            3600
+        },
+    }
+}
+
 impl RollupConfig {
     /// Returns true if Regolith is active at the given timestamp.
     pub fn is_regolith_active(&self, timestamp: u64) -> bool {
@@ -279,7 +352,7 @@ pub const OP_MAINNET_CONFIG: RollupConfig = RollupConfig {
     deposit_contract_address: address!("beb5fc579115071764c7423a4f12edde41f106ed"),
     l1_system_config_address: address!("229047fed2591dbec1ef1118d64f7af3db9eb290"),
     protocol_versions_address: address!("8062abc286f5e7d9428a0ccb9abd71e50d93b935"),
-    da_challenge_address: Some(address!("0000000000000000000000000000000000000000")),
+    da_challenge_address: None,
     blobs_enabled_l1_timestamp: None,
 };
 
@@ -323,7 +396,7 @@ pub const OP_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     deposit_contract_address: address!("16fc5058f25648194471939df75cf27a2fdc48bc"),
     l1_system_config_address: address!("034edd2a225f7f429a63e0f1d2084b9e0a93b538"),
     protocol_versions_address: address!("79add5713b383daa0a138d3c4780c7a1804a8090"),
-    da_challenge_address: Some(address!("0000000000000000000000000000000000000000")),
+    da_challenge_address: None,
     blobs_enabled_l1_timestamp: None,
 };
 
@@ -367,7 +440,7 @@ pub const BASE_MAINNET_CONFIG: RollupConfig = RollupConfig {
     deposit_contract_address: address!("49048044d57e1c92a77f79988d21fa8faf74e97e"),
     l1_system_config_address: address!("73a79fab69143498ed3712e519a88a918e1f4072"),
     protocol_versions_address: address!("8062abc286f5e7d9428a0ccb9abd71e50d93b935"),
-    da_challenge_address: Some(address!("0000000000000000000000000000000000000000")),
+    da_challenge_address: None,
     blobs_enabled_l1_timestamp: None,
 };
 
@@ -411,7 +484,7 @@ pub const BASE_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     deposit_contract_address: address!("49f53e41452c74589e85ca1677426ba426459e85"),
     l1_system_config_address: address!("f272670eb55e895584501d564afeb048bed26194"),
     protocol_versions_address: address!("79add5713b383daa0a138d3c4780c7a1804a8090"),
-    da_challenge_address: Some(address!("0000000000000000000000000000000000000000")),
+    da_challenge_address: None,
     blobs_enabled_l1_timestamp: None,
 };
 
