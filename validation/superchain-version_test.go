@@ -17,32 +17,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-var BaseStackContractNames = []string{
-	"L1CrossDomainMessenger",
-	"L1ERC721Bridge",
-	"L1StandardBridge",
-	"OptimismMintableERC20Factory",
-	"OptimismPortal",
-	"SystemConfig",
-}
-
-var FaultProofContractNames = []string{
-	"AnchorStateRegistry",
-	"DelayedWETH",
-	"DisputeGameFactory",
-	"FaultDisputeGame",
-	"MIPS",
-	"PermissionedDisputeGame",
-	"PreimageOracle",
-}
-
-var UnproxiedContractNames = []string{
-	"FaultDisputeGame",
-	"MIPS",
-	"PermissionedDisputeGame",
-	"PreimageOracle",
-}
-
 var isSemverAcceptable = func(desired, actual string) bool {
 	return desired == actual
 }
@@ -80,6 +54,7 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 
 func TestContractVersions(t *testing.T) {
 	isExcluded := map[uint64]bool{
+		10:        true, // mainnet/op
 		919:       true, // sepolia/mode   L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		1740:      true, // sepolia/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
 		1750:      true, // mainnet/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
@@ -89,7 +64,9 @@ func TestContractVersions(t *testing.T) {
 		84532:     true, // sepolia/base
 		90001:     true, // sepolia/race, due to https://github.com/ethereum-optimism/superchain-registry/issues/147
 		7777777:   true, // mainnet/zora
+		11155420:  true, // sepolia/op
 		11155421:  true, // sepolia-dev-0/oplabs-devnet-0
+		11763072:  true, // sepolia-dev-0/base-devnet-0
 		999999999: true, // sepolia/zora
 	}
 
