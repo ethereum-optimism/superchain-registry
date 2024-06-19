@@ -86,9 +86,9 @@ func TestL1SecurityConfigs(t *testing.T) {
 	isExcluded := map[uint64]bool{
 		11763072: true, // Base_devnet_0 (no AnchorStateRegistryProxy specified)
 	}
-	for chainID, chain := range OPChains {
-		chain, chainID := chain, chainID
-		t.Run(perChainTestName(chain), func(t *testing.T) {
+	for chainID, chainPtr := range OPChains {
+		chain, chainID := *chainPtr, chainID
+		t.Run(perChainTestName(&chain), func(t *testing.T) {
 			t.Parallel()
 			if isExcluded[chain.ChainID] {
 				t.Skipf("chain %d: EXCLUDED from Security Config Checks", chainID)
@@ -127,15 +127,15 @@ func TestL2SecurityConfigs(t *testing.T) {
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
 	}
 
-	for chainID, chain := range OPChains {
-		chain, chainID := chain, chainID
-		t.Run(perChainTestName(chain), func(t *testing.T) {
+	for chainID, chainPtr := range OPChains {
+		chain, chainID := *chainPtr, chainID
+		t.Run(perChainTestName(&chain), func(t *testing.T) {
 			t.Parallel()
 			if isExcluded[chainID] {
 				t.Skip("chain excluded from check")
 			}
-			SkipCheckIfFrontierChain(t, *chain)
-			testL2SecurityConfigForChain(t, *chain)
+			SkipCheckIfFrontierChain(t, chain)
+			testL2SecurityConfigForChain(t, chain)
 		})
 	}
 }
