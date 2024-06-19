@@ -54,6 +54,9 @@ pub const OP_CANYON_BASE_FEE_PARAMS: BaseFeeParams = BaseFeeParams {
     elasticity_multiplier: OP_MAINNET_EIP1559_DEFAULT_ELASTICITY_MULTIPLIER,
 };
 
+/// The max sequencer drift when the Fjord hardfork is active.
+pub const FJORD_MAX_SEQUENCER_DRIFT: u64 = 1800;
+
 /// The Rollup configuration.
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -67,6 +70,8 @@ pub struct RollupConfig {
     ///
     /// Note: When L1 has many 1 second consecutive blocks, and L2 grows at fixed 2 seconds,
     /// the L2 time may still grow beyond this difference.
+    ///
+    /// Note: After the Fjord hardfork, this value becomes a constant of `1800`.
     pub max_sequencer_drift: u64,
     /// The sequencer window size.
     pub seq_window_size: u64,
@@ -199,6 +204,15 @@ impl RollupConfig {
     pub fn is_plasma_enabled(&self) -> bool {
         self.da_challenge_address
             .map_or(false, |addr| !addr.is_zero())
+    }
+
+    /// Returns the max sequencer drift for the given timestamp.
+    pub fn max_sequencer_drift(&self, timestamp: u64) -> u64 {
+        if self.is_fjord_active(timestamp) {
+            FJORD_MAX_SEQUENCER_DRIFT
+        } else {
+            self.max_sequencer_drift
+        }
     }
 
     /// Checks the scalar value in Ecotone.
@@ -400,3 +414,84 @@ pub const BASE_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     da_challenge_address: Some(address!("0000000000000000000000000000000000000000")),
     blobs_enabled_l1_timestamp: None,
 };
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_regolith_active() {
+        let mut config = RollupConfig::default();
+        assert!(!config.is_regolith_active(0));
+        config.regolith_time = Some(10);
+        assert!(config.is_regolith_active(10));
+        assert!(!config.is_regolith_active(9));
+    }
+
+    #[test]
+    fn test_canyon_active() {
+        let mut config = RollupConfig::default();
+        assert!(!config.is_canyon_active(0));
+        config.canyon_time = Some(10);
+        assert!(config.is_canyon_active(10));
+        assert!(!config.is_canyon_active(9));
+    }
+
+    #[test]
+    fn test_delta_active() {
+        let mut config = RollupConfig::default();
+        assert!(!config.is_delta_active(0));
+        config.delta_time = Some(10);
+        assert!(config.is_delta_active(10));
+        assert!(!config.is_delta_active(9));
+    }
+
+    #[test]
+    fn test_ecotone_active() {
+        let mut config = RollupConfig::default();
+        assert!(!config.is_ecotone_active(0));
+        config.ecotone_time = Some(10);
+        assert!(config.is_ecotone_active(10));
+        assert!(!config.is_ecotone_active(9));
+    }
+
+    #[test]
+    fn test_fjord_active() {
+        let mut config = RollupConfig::default();
+        assert!(!config.is_fjord_active(0));
+        config.fjord_time = Some(10);
+        assert!(config.is_fjord_active(10));
+        assert!(!config.is_fjord_active(9));
+    }
+
+    #[test]
+    fn test_interop_active() {
+        let mut config = RollupConfig::default();
+        assert!(!config.is_interop_active(0));
+        config.interop_time = Some(10);
+        assert!(config.is_interop_active(10));
+        assert!(!config.is_interop_active(9));
+    }
+
+    #[test]
+    fn test_plasma_enabled() {
+        let mut config = RollupConfig::default();
+        assert!(!config.is_plasma_enabled());
+        config.da_challenge_address = Some(Address::ZERO);
+        assert!(!config.is_plasma_enabled());
+        config.da_challenge_address = Some(address!("0000000000000000000000000000000000000001"));
+        assert!(config.is_plasma_enabled());
+    }
+
+    #[test]
+    fn test_max_sequencer_drift() {
+        let mut config = RollupConfig {
+            max_sequencer_drift: 100,
+            ..Default::default()
+        };
+        assert_eq!(config.max_sequencer_drift(0), 100);
+        config.fjord_time = Some(10);
+        assert_eq!(config.max_sequencer_drift(0), 100);
+        assert_eq!(config.max_sequencer_drift(10), FJORD_MAX_SEQUENCER_DRIFT);
+    }
+}
