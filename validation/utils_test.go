@@ -69,8 +69,7 @@ func TestIsIntWithinBounds(t *testing.T) {
 	}
 }
 
-// A Standardish chain is a chain with RunStandardChecks=true
-func RunOnlyOnStandardishChains(t *testing.T, chain superchain.ChainConfig) {
+func RunOnlyOnStandardCandidateChains(t *testing.T, chain superchain.ChainConfig) {
 	if !chain.StandardChainCandidate {
 		t.Skip("Chain excluded from this check (NOT a Standard Chain and NOT optimistically running standard checks)")
 	}
