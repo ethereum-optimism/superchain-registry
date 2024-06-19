@@ -11,7 +11,6 @@ import (
 )
 
 func TestCLIApp(t *testing.T) {
-
 	tests := []struct {
 		name                   string
 		chainName              string
@@ -45,7 +44,8 @@ func TestCLIApp(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			args := []string{"add-chain",
+			args := []string{
+				"add-chain",
 				"--chain-type=" + tt.chainType,
 				"--chain-name=" + tt.chainName,
 				"--rollup-config=" + tt.rollupConfigFile,
