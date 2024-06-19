@@ -87,9 +87,8 @@ func TestL1SecurityConfigs(t *testing.T) {
 		11763072: true, // Base_devnet_0 (no AnchorStateRegistryProxy specified)
 	}
 	for chainID, chain := range OPChains {
+		chain, chainID := chain, chainID
 		t.Run(perChainTestName(chain), func(t *testing.T) {
-			chain := chain
-			chainID := chainID
 			t.Parallel()
 			if isExcluded[chain.ChainID] {
 				t.Skipf("chain %d: EXCLUDED from Security Config Checks", chainID)
@@ -108,9 +107,8 @@ func testL2SecurityConfigForChain(t *testing.T, chain ChainConfig) {
 
 	for contract, methodToOutput := range contractCallResolutions {
 		for method, output := range methodToOutput {
+			method, output := method, output
 			t.Run(fmt.Sprintf("%s.%s", contract, method), func(t *testing.T) {
-				method := method
-				output := output
 				t.Parallel()
 				want := Address(common.HexToAddress(output))
 
@@ -130,9 +128,8 @@ func TestL2SecurityConfigs(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
+		chain, chainID := chain, chainID
 		t.Run(perChainTestName(chain), func(t *testing.T) {
-			chain := chain
-			chainID := chainID
 			t.Parallel()
 			if isExcluded[chainID] {
 				t.Skip("chain excluded from check")
