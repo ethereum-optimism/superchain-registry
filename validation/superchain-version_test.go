@@ -76,7 +76,9 @@ func TestContractVersions(t *testing.T) {
 	}
 
 	for chainID, chain := range OPChains {
+		chainID, chain := chainID, chain
 		t.Run(perChainTestName(chain), func(t *testing.T) {
+			t.Parallel()
 			if isExcluded[chainID] {
 				t.Skipf("chain %d: EXCLUDED from contract version validation", chainID)
 			}
