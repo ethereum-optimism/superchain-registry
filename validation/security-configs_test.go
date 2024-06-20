@@ -38,31 +38,34 @@ func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
 	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
 	isFPAC := majorVersion >= 3
 
-	contractCallResolutions := standard.Config.Roles.L1.GetResolutions(isFPAC)
+	checkResolutions := func(r standard.Resolutions) {
+		for contract, methodToOutput := range r {
 
-	for contract, methodToOutput := range contractCallResolutions {
+			contractAddress, err := Addresses[chainID].AddressFor(contract)
+			require.NoError(t, err)
 
-		contractAddress, err := Addresses[chainID].AddressFor(contract)
-		require.NoError(t, err)
+			for method, output := range methodToOutput {
 
-		for method, output := range methodToOutput {
+				var want Address
 
-			var want Address
+				if common.IsHexAddress(output) {
+					want = Address(common.HexToAddress(output))
+				} else {
+					want, err = Addresses[chainID].AddressFor(output)
+					require.NoError(t, err)
+				}
 
-			if common.IsHexAddress(output) {
-				want = Address(common.HexToAddress(output))
-			} else {
-				want, err = Addresses[chainID].AddressFor(output)
-				require.NoError(t, err)
+				got, err := getAddress(method, contractAddress, client)
+				require.NoErrorf(t, err, "problem calling %s.%s %s", contract, contractAddress, method)
+
+				assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
 			}
 
-			got, err := getAddress(method, contractAddress, client)
-			require.NoErrorf(t, err, "problem calling %s.%s %s", contract, contractAddress, method)
-
-			assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
 		}
-
 	}
+
+	checkResolutions(standard.Config.Roles.L1.GetResolutions(isFPAC))
+	checkResolutions(standard.Config.MultisigRoles[OPChains[chainID].Superchain].L1.GetResolutions(isFPAC))
 
 	// Perform an extra check on a mapping value of "L1CrossDomainMessengerProxy":
 	// This is because L1CrossDomainMessenger's proxy is a ResolvedDelegateProxy, and

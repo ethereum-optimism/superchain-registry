@@ -1,0 +1,7 @@
+[l1.nonFPAC]
+OptimismPortalProxy."GUARDIAN()" = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
+L2OutputOracleProxy."CHALLENGER()" = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
+
+[l1.FPAC]
+OptimismPortalProxy."guardian()" = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
+OptimismPortalProxy."challenger()" = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"

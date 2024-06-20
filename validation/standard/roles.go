@@ -33,3 +33,9 @@ type Roles struct {
 	L1 L1 `toml:"l1"`
 	L2 L2 `toml:"L2"`
 }
+
+type Multisigs struct {
+}
+type MultisigRoles struct {
+	L1 L1 `toml:"l1"`
+}
