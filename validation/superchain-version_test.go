@@ -2,7 +2,9 @@ package validation
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
@@ -54,20 +56,20 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 
 func TestContractVersions(t *testing.T) {
 	isExcluded := map[uint64]bool{
-		10:        true, // mainnet/op
-		919:       true, // sepolia/mode   L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
-		1740:      true, // sepolia/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
-		1750:      true, // mainnet/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
-		8453:      true, // mainnet/base
-		8866:      true, // mainnet/superlumio L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
-		34443:     true, // mainnet/mode
-		84532:     true, // sepolia/base
-		90001:     true, // sepolia/race, due to https://github.com/ethereum-optimism/superchain-registry/issues/147
-		7777777:   true, // mainnet/zora
-		11155420:  true, // sepolia/op
-		11155421:  true, // sepolia-dev-0/oplabs-devnet-0
-		11763072:  true, // sepolia-dev-0/base-devnet-0
-		999999999: true, // sepolia/zora
+		// 10:        true, // mainnet/op
+		// 919:       true, // sepolia/mode   L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
+		// 1740:      true, // sepolia/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
+		// 1750:      true, // mainnet/metal  L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
+		// 8453:      true, // mainnet/base
+		// 8866:      true, // mainnet/superlumio L1CrossDomainMessengerProxy.version=1.4.1, https://github.com/ethereum-optimism/security-pod/issues/105
+		// 34443:     true, // mainnet/mode
+		// 84532:     true, // sepolia/base
+		// 90001:     true, // sepolia/race, due to https://github.com/ethereum-optimism/superchain-registry/issues/147
+		// 7777777:   true, // mainnet/zora
+		// 11155420:  true, // sepolia/op
+		// 11155421:  true, // sepolia-dev-0/oplabs-devnet-0
+		// 11763072:  true, // sepolia-dev-0/base-devnet-0
+		// 999999999: true, // sepolia/zora
 	}
 
 	checkOPChainMatchesATag := func(t *testing.T, chain *ChainConfig) {
@@ -195,30 +197,38 @@ func getVersion(ctx context.Context, addr common.Address, client *ethclient.Clie
 
 func TestFindOPContractTag(t *testing.T) {
 	shouldMatch := ContractVersions{
-		L1CrossDomainMessenger:       "1.4.0",
-		L1ERC721Bridge:               "1.1.1",
-		L1StandardBridge:             "1.1.0",
-		L2OutputOracle:               "1.3.0",
-		OptimismMintableERC20Factory: "1.1.0",
-		OptimismPortal:               "1.6.0",
-		SystemConfig:                 "1.3.0",
-		ProtocolVersions:             "1.0.0",
+		L1CrossDomainMessenger:       "2.3.0",
+		L1ERC721Bridge:               "2.1.0",
+		L1StandardBridge:             "2.1.0",
+		L2OutputOracle:               "",
+		OptimismMintableERC20Factory: "1.9.0",
+		OptimismPortal:               "3.10.0",
+		SystemConfig:                 "2.2.0",
+		ProtocolVersions:             "",
+		SuperchainConfig:             "",
+		AnchorStateRegistry:          "1.0.0",
+		DelayedWETH:                  "1.0.0",
+		DisputeGameFactory:           "1.0.0",
+		FaultDisputeGame:             "1.2.0",
+		MIPS:                         "1.0.1",
+		PermissionedDisputeGame:      "1.2.0",
+		PreimageOracle:               "1.0.0",
 	}
 
 	got, err := findOPContractTag(shouldMatch)
 	require.NoError(t, err)
-	want := []standard.Tag{"op-contracts/v1.1.0"}
+	want := []standard.Tag{"op-contracts/v1.4.0"}
 	require.Equal(t, got, want)
 
 	shouldNotMatch := ContractVersions{
-		L1CrossDomainMessenger:       "1.4.0",
-		L1ERC721Bridge:               "1.1.1",
-		L1StandardBridge:             "1.1.0",
-		L2OutputOracle:               "1.3.0",
-		OptimismMintableERC20Factory: "1.1.0",
-		OptimismPortal:               "1.5.0",
-		SystemConfig:                 "1.3.0",
+		L1CrossDomainMessenger:       "2.3.0",
+		L1ERC721Bridge:               "2.1.0",
+		L1StandardBridge:             "2.1.0",
+		OptimismMintableERC20Factory: "1.9.0",
+		OptimismPortal:               "2.5.0",
+		SystemConfig:                 "1.12.0",
 		ProtocolVersions:             "1.0.0",
+		L2OutputOracle:               "1.0.0",
 	}
 	got, err = findOPContractTag(shouldNotMatch)
 	require.Error(t, err)
@@ -229,9 +239,35 @@ func TestFindOPContractTag(t *testing.T) {
 
 func findOPContractTag(versions ContractVersions) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
-	err := fmt.Errorf("no matching tag found %+v", versions)
+	pretty, err := json.MarshalIndent(versions, "", " ")
+	if err != nil {
+		return matchingTags, err
+	}
+	err = fmt.Errorf("no matching tag found %s", pretty)
+
+	matchesTag := func(standard, candidate ContractVersions) bool {
+		// Get the reflection value of the struct
+		s := reflect.ValueOf(standard)
+		c := reflect.ValueOf(candidate)
+
+		// Iterate over each field of the struct
+		for i := 0; i < s.NumField(); i++ {
+			field := s.Field(i)
+			if field.Kind() == reflect.String &&
+				field.String() != "" && // Don't match empty fields
+				// We can't check this contract:
+				// (until this issue resolves https://github.com/ethereum-optimism/client-pod/issues/699#issuecomment-2150970346)
+				s.Type().Field(i).Name != "ProtocolVersions" {
+				if field.String() != c.Field(i).String() {
+					return false
+				}
+			}
+		}
+		return true
+	}
+
 	for tag := range standard.Versions {
-		if standard.Versions[tag] == versions {
+		if matchesTag(standard.Versions[tag], versions) {
 			matchingTags = append(matchingTags, tag)
 			err = nil
 		}
