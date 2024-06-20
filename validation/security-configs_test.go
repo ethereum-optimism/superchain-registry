@@ -56,7 +56,7 @@ func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
 				}
 
 				got, err := getAddress(method, contractAddress, client)
-				require.NoErrorf(t, err, "problem calling %s.%s %s", contract, contractAddress, method)
+				require.NoErrorf(t, err, "problem calling %s.%s (%s)", contract, method, contractAddress)
 
 				assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
 			}
