@@ -57,9 +57,14 @@ func TestCLIApp(t *testing.T) {
 				"--chain-name=" + tt.chainName,
 				"--rollup-config=" + tt.rollupConfigFile,
 				"--standard-chain-candidate=" + strconv.FormatBool(tt.standardChainCandidate),
-				"--deployments-dir=" + tt.deploymentsDir,
 				"--test=" + "true",
+				"--test=true"}
+
+			if tt.deploymentsDir != "" {
+				args = append(args, "--deployments-dir="+tt.deploymentsDir)
+
 			}
+
 			err := app.Run(args)
 			require.NoError(t, err, "add-chain app failed")
 
