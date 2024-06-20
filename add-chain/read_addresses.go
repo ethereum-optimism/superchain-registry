@@ -147,11 +147,12 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		DisputeGameFactoryProxy,
 		FaultDisputeGame,
 		MIPS,
+		PermissionedDisputeGame,
 		PreimageOracle,
 	}...)
 	contractsFromJSONNonFPAC := append(contractsFromJSON, L2OutputOracleProxy)
 
-	contracts := contractsFromJSONNonFPAC
+	contracts := contractsFromJSONFPAC
 
 	deployFilePath := filepath.Join(deploymentsDir, ".deploy")
 	_, err := os.Stat(deployFilePath)
@@ -159,9 +160,9 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 	if err != nil {
 		// Use legacy deployment artifact schema
 
-		_, err := os.ReadFile(filepath.Join(deploymentsDir, L2OutputOracleProxy+".json"))
+		_, err := os.ReadFile(filepath.Join(deploymentsDir, AnchorStateRegistryProxy+".json"))
 		if errors.Is(err, os.ErrNotExist) {
-			contracts = contractsFromJSONFPAC
+			contracts = contractsFromJSONNonFPAC
 		}
 		for _, name := range contracts {
 			path := filepath.Join(deploymentsDir, name+".json")
@@ -186,9 +187,9 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 			return fmt.Errorf("failed to unmarshal json: %w", err)
 		}
 
-		_, err = addressList.AddressFor((L2OutputOracleProxy))
+		_, err = addressList.AddressFor(AnchorStateRegistryProxy)
 		if err != nil {
-			contracts = contractsFromJSONFPAC
+			contracts = contractsFromJSONNonFPAC
 		}
 
 		for _, name := range contracts {

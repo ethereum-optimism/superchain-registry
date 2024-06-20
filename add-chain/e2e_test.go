@@ -17,6 +17,7 @@ func TestCLIApp(t *testing.T) {
 		rollupConfigFile       string
 		standardChainCandidate bool
 		chainType              string
+		deploymentsDir         string
 	}{
 		{
 			name:             "baseline",
@@ -37,6 +38,12 @@ func TestCLIApp(t *testing.T) {
 			chainType:              "frontier",
 			standardChainCandidate: true,
 		},
+		{
+			name:             "faultproofs",
+			chainName:        "awesomechain_faultproofs",
+			rollupConfigFile: "./testdata/monorepo/op-node/rollup_faultproofs.json",
+			deploymentsDir:   "./testdata/monorepo/deployments-faultproofs",
+		},
 	}
 
 	for _, tt := range tests {
@@ -50,6 +57,7 @@ func TestCLIApp(t *testing.T) {
 				"--chain-name=" + tt.chainName,
 				"--rollup-config=" + tt.rollupConfigFile,
 				"--standard-chain-candidate=" + strconv.FormatBool(tt.standardChainCandidate),
+				"--deployments-dir=" + tt.deploymentsDir,
 				"--test=" + "true",
 			}
 			err := app.Run(args)

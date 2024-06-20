@@ -16,7 +16,7 @@ import (
 var app = &cli.App{
 	Name:     "add-chain",
 	Usage:    "Add a new chain to the superchain-registry",
-	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag, StandardChainCandidateFlag},
+	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, DeploymentsDirFlag, TestFlag, StandardChainCandidateFlag},
 	Action:   entrypoint,
 	Commands: []*cli.Command{&PromoteToStandardCmd},
 }
@@ -38,6 +38,12 @@ var (
 		Name:     "rollup-config",
 		Value:    "",
 		Usage:    "Filepath to rollup.json input file",
+		Required: false,
+	}
+	DeploymentsDirFlag = &cli.StringFlag{
+		Name:     "deployments-dir",
+		Value:    "",
+		Usage:    "Directory containing L1 Contract deployment addresses",
 		Required: false,
 	}
 	TestFlag = &cli.BoolFlag{
@@ -104,7 +110,7 @@ func entrypoint(ctx *cli.Context) error {
 	sequencerRPC := viper.GetString("SEQUENCER_RPC")
 	explorer := viper.GetString("EXPLORER")
 	superchainTarget := viper.GetString("SUPERCHAIN_TARGET")
-	deploymentsDir := viper.GetString("DEPLOYMENTS_DIR")
+
 	chainName := viper.GetString("CHAIN_NAME")
 
 	// Allow cli flags to override env vars
@@ -114,6 +120,10 @@ func entrypoint(ctx *cli.Context) error {
 	rollupConfigPath := viper.GetString("ROLLUP_CONFIG")
 	if ctx.IsSet("rollup-config") {
 		rollupConfigPath = ctx.String("rollup-config")
+	}
+	deploymentsDir := viper.GetString("DEPLOYMENTS_DIR")
+	if ctx.IsSet(DeploymentsDirFlag.Name) {
+		deploymentsDir = ctx.String(DeploymentsDirFlag.Name)
 	}
 
 	fmt.Printf("Chain Name:                     %s\n", chainName)
@@ -186,11 +196,11 @@ func entrypoint(ctx *cli.Context) error {
 
 	version, err = strconv.Unquote(version)
 	if err != nil {
-		return fmt.Errorf("failed to get parse OptimismPortalProxy.version(): %w", err)
+		return fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
 	}
 	majorVersion, err := strconv.ParseInt(strings.Split(version, ".")[0], 10, 32)
 	if err != nil {
-		return fmt.Errorf("failed to get parse OptimismPortalProxy.version(): %w", err)
+		return fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
 	}
 	isFPAC := majorVersion >= 3
 
