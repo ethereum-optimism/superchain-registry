@@ -159,7 +159,6 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, is
 	}
 
 	return versions, nil
-
 }
 
 func checkSemverForContract(t *testing.T, contractName string, contractAddress *Address, client *ethclient.Client, desiredSemver string) {
@@ -225,7 +224,6 @@ func TestFindOPContractTag(t *testing.T) {
 	require.Error(t, err)
 	want = []standard.Tag{}
 	require.Equal(t, got, want)
-
 }
 
 func findOPContractTag(versions ContractVersions) ([]standard.Tag, error) {
