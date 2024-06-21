@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -66,6 +67,10 @@ func entrypoint(ctx *cli.Context) error {
 	chainType := ctx.String(ChainTypeFlag.Name)
 	runningTests := ctx.Bool(TestFlag.Name)
 	standardChainCandidate := ctx.Bool(StandardChainCandidateFlag.Name)
+
+	if standardChainCandidate && chainType == "standard" {
+		return errors.New("cannot set both chainType=standard and standard-chain-candidate=true")
+	}
 
 	superchainLevel, err := getSuperchainLevel(chainType)
 	if err != nil {
