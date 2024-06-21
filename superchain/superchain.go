@@ -249,6 +249,10 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 			keyNode.LineComment = timestamp.Format("Mon 2 Jan 2006 15:04:05 UTC")
 		}
 
+		if keyNode.Value == "standard_chain_candidate" {
+			keyNode.LineComment = "This is a temporary field which causes most of the standard validation checks to run on this chain"
+		}
+
 		lastKey = keyNode.Value
 	}
 	return nil

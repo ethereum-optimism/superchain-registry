@@ -5,7 +5,8 @@ sequencer_rpc: ""
 explorer: ""
 
 superchain_level: 1
-standard_chain_candidate: true
+standard_chain_candidate: true # This is a temporary field which causes most of the standard validation checks to run on this chain
+
 superchain_time: 1706634000 # joined from Ecotone
 
 system_config_addr: "0x7F67DC4959cb3E532B10A99F41bDD906C46FdFdE"
