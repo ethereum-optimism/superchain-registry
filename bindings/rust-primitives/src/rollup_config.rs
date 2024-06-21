@@ -237,6 +237,17 @@ impl RollupConfig {
             }
         }
     }
+
+    /// Returns the [RollupConfig] for the given L2 chain ID.
+    pub fn from_l2_chain_id(l2_chain_id: u64) -> Option<RollupConfig> {
+        match l2_chain_id {
+            10 => Some(OP_MAINNET_CONFIG),
+            11155420 => Some(OP_SEPOLIA_CONFIG),
+            8453 => Some(BASE_MAINNET_CONFIG),
+            84532 => Some(BASE_SEPOLIA_CONFIG),
+            _ => None,
+        }
+    }
 }
 
 /// The [RollupConfig] for OP Mainnet.
