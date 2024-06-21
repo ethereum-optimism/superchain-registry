@@ -7,11 +7,16 @@
 > We're making some changes to this repository and we've paused adding new chains for now. We'll reopen this process once the repository is ready. The Superchain itself, of course, remains open for business.
 
 The Superchain Registry repository hosts Superchain-configuration data in a minimal human-readable form.
+
 This includes mainnet and testnet Superchain targets, and their respective member chains.
 
 Other configuration, such as contract-permissions and `SystemConfig` parameters are hosted and governed onchain.
 
-The superchain configs are made available in minimal form, to embed in OP-Stack software.
+A list of chains in the registry can be seen in the top level [`chainList.toml`](./chainList.toml) and [`chainList.json`](./chainList.json) files.
+
+## Downstream packages
+The superchain configs are stored in a minimal form, and are embedded in downstream OP-Stack software ([`op-node`](https://github.com/ethereum-optimism/optimism) and [`op-geth`](https://github.com/ethereum-optimism/op-geth)).
+
 Full deployment artifacts and genesis-states can be derived from the minimal form
 using the reference [`op-chain-ops`] tooling.
 

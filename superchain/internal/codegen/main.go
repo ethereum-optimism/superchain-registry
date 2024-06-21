@@ -70,12 +70,13 @@ func main() {
 	fmt.Printf("Found %d chains...\n", len(allChains))
 
 	currentDir := currentDir()
+	repositoryRoot := filepath.Join(currentDir, "../../../")
 
 	allChainsBytes, err := json.MarshalIndent(allChains, "", "  ")
 	if err != nil {
 		panic(err)
 	}
-	err = os.WriteFile(filepath.Join(currentDir, "../../configs/chainList.json"), allChainsBytes, 0o644)
+	err = os.WriteFile(filepath.Join(repositoryRoot, "chainList.json"), allChainsBytes, 0o644)
 	if err != nil {
 		panic(err)
 	}
@@ -87,7 +88,7 @@ func main() {
 		fmt.Println("Error encoding TOML:", err)
 		return
 	}
-	err = os.WriteFile(filepath.Join(currentDir, "../../configs/chainList.toml"), buf.Bytes(), 0o644)
+	err = os.WriteFile(filepath.Join(repositoryRoot, "chainList.toml"), buf.Bytes(), 0o644)
 	if err != nil {
 		panic(err)
 	}
