@@ -128,6 +128,22 @@
     }
   },
   {
+    "name": "OP-Sepolia",
+    "identifier": "sepolia/op",
+    "chainId": 11155420,
+    "rpc": [
+      "https://sepolia.optimism.io"
+    ],
+    "explorers": [
+      "https://sepolia-optimistic.etherscan.io"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Base Sepolia",
     "identifier": "sepolia/base",
     "chainId": 84532,
@@ -152,22 +168,6 @@
     ],
     "explorers": [
       "https://sepolia.explorer.mode.network"
-    ],
-    "superchainLevel": 1,
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
-    "name": "OP-Sepolia",
-    "identifier": "sepolia/op",
-    "chainId": 11155420,
-    "rpc": [
-      "https://sepolia.optimism.io"
-    ],
-    "explorers": [
-      "https://sepolia-optimistic.etherscan.io"
     ],
     "superchainLevel": 1,
     "parent": {
@@ -224,25 +224,25 @@
     }
   },
   {
-    "name": "Base devnet 0",
-    "identifier": "sepolia-dev-0/base-devnet-0",
-    "chainId": 11763072,
+    "name": "OP Labs Sepolia devnet 0",
+    "identifier": "sepolia-dev-0/oplabs-devnet-0",
+    "chainId": 11155421,
     "rpc": [
       ""
     ],
     "explorers": [
       ""
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 2,
     "parent": {
       "type": "L2",
       "chain": "sepolia-dev-0"
     }
   },
   {
-    "name": "OP Labs Sepolia devnet 0",
-    "identifier": "sepolia-dev-0/oplabs-devnet-0",
-    "chainId": 11155421,
+    "name": "Base devnet 0",
+    "identifier": "sepolia-dev-0/base-devnet-0",
+    "chainId": 11763072,
     "rpc": [
       ""
     ],

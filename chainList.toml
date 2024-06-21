@@ -87,6 +87,17 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "OP-Sepolia"
+  identifier = "sepolia/op"
+  chain_id = 11155420
+  rpc = ["https://sepolia.optimism.io"]
+  explorers = ["https://sepolia-optimistic.etherscan.io"]
+  superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Base Sepolia"
   identifier = "sepolia/base"
   chain_id = 84532
@@ -103,17 +114,6 @@
   chain_id = 919
   rpc = ["https://sepolia.mode.network"]
   explorers = ["https://sepolia.explorer.mode.network"]
-  superchain_level = 1
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-
-[[chains]]
-  name = "OP-Sepolia"
-  identifier = "sepolia/op"
-  chain_id = 11155420
-  rpc = ["https://sepolia.optimism.io"]
-  explorers = ["https://sepolia-optimistic.etherscan.io"]
   superchain_level = 1
   [chains.parent]
     type = "L2"
@@ -153,20 +153,20 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "Base devnet 0"
-  identifier = "sepolia-dev-0/base-devnet-0"
-  chain_id = 11763072
+  name = "OP Labs Sepolia devnet 0"
+  identifier = "sepolia-dev-0/oplabs-devnet-0"
+  chain_id = 11155421
   rpc = [""]
   explorers = [""]
-  superchain_level = 1
+  superchain_level = 2
   [chains.parent]
     type = "L2"
     chain = "sepolia-dev-0"
 
 [[chains]]
-  name = "OP Labs Sepolia devnet 0"
-  identifier = "sepolia-dev-0/oplabs-devnet-0"
-  chain_id = 11155421
+  name = "Base devnet 0"
+  identifier = "sepolia-dev-0/base-devnet-0"
+  chain_id = 11763072
   rpc = [""]
   explorers = [""]
   superchain_level = 1
