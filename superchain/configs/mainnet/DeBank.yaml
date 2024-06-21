@@ -1,0 +1,23 @@
+name: DeBank
+chain_id: 20240603
+public_rpc: https://rpc.mainnet.debankchain.org
+sequencer_rpc: https://rpc.mainnet.debankchain.org
+explorer: https://explorer.mainnet.debankchain.org
+
+superchain_level: 2
+superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
+
+batch_inbox_addr: "0xFF00000000000000000000000000000020240603"
+
+genesis:
+  l1:
+    hash: "0x4e6ebdb7fc4d381bc5b0ee942417b47c176cdb193b704468568270d9ee404c37"
+    number: 20014910
+  l2:
+    hash: "0x8b98650f1e26fbd09fe7693e39ceb761d65c0e278f8b0a93a97d5e0d6219e4e2"
+    number: 0
+  l2_time: 1717461335 # Tue 4 Jun 2024 00:35:35 UTC
+
+canyon_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
+delta_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
+ecotone_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
