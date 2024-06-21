@@ -57,7 +57,7 @@ First, the chain should be added as a frontier chain but with `--standard-chain-
 sh scripts/add-chain.sh standard --standard-chain-candidate
 ```
 
-The remaining steps should then be followed to merge the config data into the registry -- a prerequisite for [promoting the chain](#promote-chain) to a standard chain.
+The remaining steps should then be followed to merge the config data into the registry -- a prerequisite for [promoting the chain](#promote-a-chain-to-standard) to a standard chain.
 
 ### 3. Understand output
 The tool will write the following data:
@@ -98,7 +98,7 @@ Omit the `-run=` flag to run checks for all chains.
 > [!NOTE]
 > If you set `--standard-chain-candidate`, your chain will be checked against the majority of the standard configuration requirements. These are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
 >
-> The final requirement to a standard chain concerns the `ProxyAdminOwner`. That check will not be run until the chain is promoted to standard.
+> The final requirement to qualify as a standard chain concerns the `ProxyAdminOwner` role. The validation check for this role  will not be run until the chain is [promoted](#promote-a-chain-to-standard) to standard.
 
 ### 5. Run codegen and check output
 This is a tool which will rewrite certain summary files of all the chains in the registry, including the one you are adding. The output will be checked in a continuous integration checks (it is required to pass):
@@ -117,7 +117,7 @@ When opening a PR:
 
 Once the PR is opened, the same automated checks from Step 4 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
 
-<a name="promote-chain"></a>
+
 ## Promote a chain to standard
 This process is only possible for chains already in the registry.
 
