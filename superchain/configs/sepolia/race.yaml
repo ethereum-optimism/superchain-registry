@@ -4,7 +4,9 @@ public_rpc: https://racetestnet.io
 sequencer_rpc: https://racetestnet.io/sequencer
 explorer: https://testnet.racescan.io
 
-superchain_level: 2
+superchain_level: 1
+standard_chain_candidate: true # This is a temporary field which causes most of the standard validation checks to run on this chain
+
 
 batch_inbox_addr: "0xFf00000000000000000000000000000000042069"
 

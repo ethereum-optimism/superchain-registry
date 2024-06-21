@@ -90,6 +90,11 @@ type ChainConfig struct {
 	Explorer     string `yaml:"explorer"`
 
 	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
+
+	// If StandardChainCandidate is true, standard chain validation checks will
+	// run on this chain even if it is a frontier chain.
+	StandardChainCandidate bool `yaml:"standard_chain_candidate,omitempty"`
+
 	// If SuperchainTime is set, hardforks times after SuperchainTime
 	// will be inherited from the superchain-wide config.
 	SuperchainTime *uint64 `yaml:"superchain_time"`
@@ -242,6 +247,10 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 			}
 			timestamp := time.Unix(t, 0).UTC()
 			keyNode.LineComment = timestamp.Format("Mon 2 Jan 2006 15:04:05 UTC")
+		}
+
+		if keyNode.Value == "standard_chain_candidate" {
+			keyNode.LineComment = "This is a temporary field which causes most of the standard validation checks to run on this chain"
 		}
 
 		lastKey = keyNode.Value

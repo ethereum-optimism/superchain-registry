@@ -1,53 +1,5 @@
 [
   {
-    "name": "Base",
-    "identifier": "mainnet/base",
-    "chainId": 8453,
-    "rpc": [
-      "https://mainnet.base.org"
-    ],
-    "explorers": [
-      "https://explorer.base.org"
-    ],
-    "superchainLevel": 2,
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    }
-  },
-  {
-    "name": "Metal",
-    "identifier": "mainnet/metal",
-    "chainId": 1750,
-    "rpc": [
-      "https://rpc.metall2.com"
-    ],
-    "explorers": [
-      "https://explorer.metall2.com"
-    ],
-    "superchainLevel": 2,
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    }
-  },
-  {
-    "name": "Mode",
-    "identifier": "mainnet/mode",
-    "chainId": 34443,
-    "rpc": [
-      "https://mainnet.mode.network"
-    ],
-    "explorers": [
-      "https://explorer.mode.network"
-    ],
-    "superchainLevel": 2,
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    }
-  },
-  {
     "name": "OP-Mainnet",
     "identifier": "mainnet/op",
     "chainId": 10,
@@ -64,16 +16,16 @@
     }
   },
   {
-    "name": "Zora",
-    "identifier": "mainnet/zora",
-    "chainId": 7777777,
+    "name": "Base",
+    "identifier": "mainnet/base",
+    "chainId": 8453,
     "rpc": [
-      "https://rpc.zora.energy"
+      "https://mainnet.base.org"
     ],
     "explorers": [
-      "https://explorer.zora.energy"
+      "https://explorer.base.org"
     ],
-    "superchainLevel": 2,
+    "superchainLevel": 1,
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -88,6 +40,38 @@
     ],
     "explorers": [
       "https://explorer.lyra.finance"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Metal",
+    "identifier": "mainnet/metal",
+    "chainId": 1750,
+    "rpc": [
+      "https://rpc.metall2.com"
+    ],
+    "explorers": [
+      "https://explorer.metall2.com"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Mode",
+    "identifier": "mainnet/mode",
+    "chainId": 34443,
+    "rpc": [
+      "https://mainnet.mode.network"
+    ],
+    "explorers": [
+      "https://explorer.mode.network"
     ],
     "superchainLevel": 1,
     "parent": {
@@ -128,35 +112,19 @@
     }
   },
   {
-    "name": "Base Sepolia",
-    "identifier": "sepolia/base",
-    "chainId": 84532,
+    "name": "Zora",
+    "identifier": "mainnet/zora",
+    "chainId": 7777777,
     "rpc": [
-      "https://sepolia.base.org"
+      "https://rpc.zora.energy"
     ],
     "explorers": [
-      "https://sepolia-explorer.base.org"
+      "https://explorer.zora.energy"
     ],
-    "superchainLevel": 2,
+    "superchainLevel": 1,
     "parent": {
       "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
-    "name": "Mode Sepolia",
-    "identifier": "sepolia/mode",
-    "chainId": 919,
-    "rpc": [
-      "https://sepolia.mode.network"
-    ],
-    "explorers": [
-      "https://sepolia.explorer.mode.network"
-    ],
-    "superchainLevel": 2,
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
+      "chain": "mainnet"
     }
   },
   {
@@ -176,32 +144,32 @@
     }
   },
   {
-    "name": "race",
-    "identifier": "sepolia/race",
-    "chainId": 90001,
+    "name": "Base Sepolia",
+    "identifier": "sepolia/base",
+    "chainId": 84532,
     "rpc": [
-      "https://racetestnet.io"
+      "https://sepolia.base.org"
     ],
     "explorers": [
-      "https://testnet.racescan.io"
+      "https://sepolia-explorer.base.org"
     ],
-    "superchainLevel": 2,
+    "superchainLevel": 1,
     "parent": {
       "type": "L2",
       "chain": "sepolia"
     }
   },
   {
-    "name": "Zora Sepolia",
-    "identifier": "sepolia/zora",
-    "chainId": 999999999,
+    "name": "Mode Sepolia",
+    "identifier": "sepolia/mode",
+    "chainId": 919,
     "rpc": [
-      "https://sepolia.rpc.zora.energy"
+      "https://sepolia.mode.network"
     ],
     "explorers": [
-      "https://sepolia.explorer.zora.energy"
+      "https://sepolia.explorer.mode.network"
     ],
-    "superchainLevel": 2,
+    "superchainLevel": 1,
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -224,19 +192,35 @@
     }
   },
   {
-    "name": "Base devnet 0",
-    "identifier": "sepolia-dev-0/base-devnet-0",
-    "chainId": 11763072,
+    "name": "race",
+    "identifier": "sepolia/race",
+    "chainId": 90001,
     "rpc": [
-      ""
+      "https://racetestnet.io"
     ],
     "explorers": [
-      ""
+      "https://testnet.racescan.io"
     ],
-    "superchainLevel": 2,
+    "superchainLevel": 1,
     "parent": {
       "type": "L2",
-      "chain": "sepolia-dev-0"
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Zora Sepolia",
+    "identifier": "sepolia/zora",
+    "chainId": 999999999,
+    "rpc": [
+      "https://sepolia.rpc.zora.energy"
+    ],
+    "explorers": [
+      "https://sepolia.explorer.zora.energy"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
     }
   },
   {
@@ -250,6 +234,22 @@
       ""
     ],
     "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia-dev-0"
+    }
+  },
+  {
+    "name": "Base devnet 0",
+    "identifier": "sepolia-dev-0/base-devnet-0",
+    "chainId": 11763072,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 1,
     "parent": {
       "type": "L2",
       "chain": "sepolia-dev-0"

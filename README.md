@@ -36,13 +36,6 @@ To contribute a standard OP-Stack chain configuration, the following data is req
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 
 ### 2. Run script
-#### Standard chains
-If your chain meets the definition of a **standard** chain, you can run:
-
-
-```shell
-sh scripts/add-chain.sh standard
-```
 
 #### Frontier chains
 
@@ -54,6 +47,17 @@ configuration, you can run:
 ```shell
 sh scripts/add-chain.sh frontier
 ```
+
+#### Standard chains
+A chain may meet the definition of a **standard** chain. Adding a standard chain is a two-step process.
+
+First, the chain should be added as a frontier chain but with `--standard-chain-candidate` flag set:
+
+```shell
+sh scripts/add-chain.sh standard --standard-chain-candidate
+```
+
+The remaining steps should then be followed to merge the config data into the registry -- a prerequisite for [promoting the chain](#promote-a-chain-to-standard) to a standard chain.
 
 ### 3. Understand output
 The tool will write the following data:
@@ -92,7 +96,9 @@ go test -run=TestGasPriceOracleParams/11155420
 Omit the `-run=` flag to run checks for all chains.
 
 > [!NOTE]
-> Your chain will be checked against the standard configuration requirements. These  are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
+> If you set `--standard-chain-candidate`, your chain will be checked against the majority of the standard configuration requirements. These are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
+>
+> The final requirement to qualify as a standard chain concerns the `ProxyAdminOwner` role. The validation check for this role  will not be run until the chain is [promoted](#promote-a-chain-to-standard) to standard.
 
 ### 5. Run codegen and check output
 This is a tool which will rewrite certain summary files of all the chains in the registry, including the one you are adding. The output will be checked in a continuous integration checks (it is required to pass):
@@ -110,6 +116,20 @@ When opening a PR:
 - Open one PR per chain you would like to add. This ensures the merge of one chain is not blocked by unexpected issues.
 
 Once the PR is opened, the same automated checks from Step 4 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
+
+
+## Promote a chain to standard
+This process is only possible for chains already in the registry.
+
+Run this command:
+```
+sh scripts/promote-to-standard.sh <chain-id>
+```
+
+This command will:
+* declare the chain as a standard chain
+* set the `superchain_time`, so that the chain receives future hardforks with the rest of the superchain (baked into downstream OPStack software, selected with [network flags](https://docs.optimism.io/builders/node-operators/configuration/base-config#initialization-via-network-flags)).
+* activate the full suite of validation checks for standard chains, including checks on the `ProxyAdminOwner`
 
 ## License
 

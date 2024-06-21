@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,12 +11,20 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var app = &cli.App{
+	Name:     "add-chain",
+	Usage:    "Add a new chain to the superchain-registry",
+	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag, StandardChainCandidateFlag},
+	Action:   entrypoint,
+	Commands: []*cli.Command{&PromoteToStandardCmd},
+}
+
 var (
 	ChainTypeFlag = &cli.StringFlag{
 		Name:     "chain-type",
-		Value:    "",
+		Value:    "frontier",
 		Usage:    "Type of chain (either standard or frontier)",
-		Required: true,
+		Required: false,
 	}
 	ChainNameFlag = &cli.StringFlag{
 		Name:     "chain-name",
@@ -34,16 +44,15 @@ var (
 		Usage:    "Indicates if go tests are being run",
 		Required: false,
 	}
+	StandardChainCandidateFlag = &cli.BoolFlag{
+		Name:     "standard-chain-candidate",
+		Value:    false,
+		Usage:    "Whether the chain is a candidate to become a standard chain. Will be subject to most standard chain validation checks",
+		Required: false,
+	}
 )
 
 func main() {
-	app := &cli.App{
-		Name:   "add-chain",
-		Usage:  "Add a new chain to the superchain-registry",
-		Flags:  []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag},
-		Action: entrypoint,
-	}
-
 	if err := app.Run(os.Args); err != nil {
 		fmt.Println(err)
 		fmt.Println("*********************")
@@ -57,6 +66,11 @@ func main() {
 func entrypoint(ctx *cli.Context) error {
 	chainType := ctx.String(ChainTypeFlag.Name)
 	runningTests := ctx.Bool(TestFlag.Name)
+	standardChainCandidate := ctx.Bool(StandardChainCandidateFlag.Name)
+
+	if standardChainCandidate && chainType == "standard" {
+		return errors.New("cannot set both chainType=standard and standard-chain-candidate=true")
+	}
 
 	superchainLevel, err := getSuperchainLevel(chainType)
 	if err != nil {
@@ -116,7 +130,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md")
 	}
 
-	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel)
+	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
@@ -127,10 +141,30 @@ func entrypoint(ctx *cli.Context) error {
 	}
 
 	targetFilePath := filepath.Join(targetDir, chainName+".yaml")
-	err = writeChainConfig(rollupConfig, targetFilePath, superchainRepoPath, superchainTarget)
+	err = writeChainConfig(rollupConfig, targetFilePath, superchainTarget)
 	if err != nil {
 		return fmt.Errorf("error generating chain config .yaml file: %w", err)
 	}
+
+	// Create genesis-system-config data
+	// (this is deprecated, users should load this from L1, when available via SystemConfig)
+	dirPath := filepath.Join(superchainRepoPath, "superchain", "extra", "genesis-system-configs", superchainTarget)
+
+	if err := os.MkdirAll(dirPath, 0o755); err != nil {
+		return fmt.Errorf("failed to create directory: %w", err)
+	}
+
+	// Write the genesis system config JSON to a new file
+	systemConfigJSON, err := json.MarshalIndent(rollupConfig.Genesis.SystemConfig, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal genesis system config json: %w", err)
+	}
+
+	filePath := filepath.Join(dirPath, rollupConfig.Name+".json")
+	if err := os.WriteFile(filePath, systemConfigJSON, 0o644); err != nil {
+		return fmt.Errorf("failed to write genesis system config json: %w", err)
+	}
+	fmt.Printf("Genesis system config written to: %s\n", filePath)
 
 	err = readAddressesFromJSON(contractAddresses, deploymentsDir)
 	if err != nil {

@@ -134,7 +134,7 @@ func TestL2SecurityConfigs(t *testing.T) {
 			if isExcluded[chainID] {
 				t.Skip("chain excluded from check")
 			}
-			SkipCheckIfFrontierChain(t, chain)
+			RunOnStandardAndStandardCandidateChains(t, chain)
 			testL2SecurityConfigForChain(t, chain)
 		})
 	}

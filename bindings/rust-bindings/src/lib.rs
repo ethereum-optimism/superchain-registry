@@ -69,7 +69,7 @@ mod tests {
         assert_eq!(base.sequencer_rpc, "https://mainnet-sequencer.base.org");
         assert_eq!(base.explorer, "https://explorer.base.org");
 
-        assert!(matches!(base.superchain_level, SuperchainLevel::Standard));
+        assert!(matches!(base.superchain_level, SuperchainLevel::Frontier));
         assert_eq!(base.superchain_time, Some(0));
         assert_eq!(
             base.batch_inbox_addr,
