@@ -58,11 +58,11 @@ func TestCLIApp(t *testing.T) {
 				"--rollup-config=" + tt.rollupConfigFile,
 				"--standard-chain-candidate=" + strconv.FormatBool(tt.standardChainCandidate),
 				"--test=" + "true",
-				"--test=true"}
+				"--test=true",
+			}
 
 			if tt.deploymentsDir != "" {
 				args = append(args, "--deployments-dir="+tt.deploymentsDir)
-
 			}
 
 			err := app.Run(args)
