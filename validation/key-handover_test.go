@@ -53,7 +53,6 @@ func testKeyHandoverOfChain(t *testing.T, chainID uint64) {
 	require.NoError(t, err)
 
 	assert.Equal(t, want, got, "L2: %s.%s = %s, expected %s (%s)", proxyAdmin, "owner()", got, want, "ProxyAdminOwner")
-
 }
 
 func TestKeyHandover(t *testing.T) {
