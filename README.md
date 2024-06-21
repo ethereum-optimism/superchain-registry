@@ -127,9 +127,9 @@ sh scripts/promote-to-standard.sh <chain-id>
 ```
 
 This command will:
-* activate the full suite of validation checks for standard chains, including checks on the `ProxyAdminOwner`
 * declare the chain as a standard chain
 * set the `superchain_time`, so that the chain receives future hardforks with the rest of the superchain (baked into downstream OPStack software).
+* activate the full suite of validation checks for standard chains, including checks on the `ProxyAdminOwner`
 
 ## License
 
