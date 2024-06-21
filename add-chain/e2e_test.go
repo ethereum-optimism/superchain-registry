@@ -42,6 +42,7 @@ func TestCLIApp(t *testing.T) {
 			name:             "faultproofs",
 			chainName:        "awesomechain_faultproofs",
 			rollupConfigFile: "./testdata/monorepo/op-node/rollup_faultproofs.json",
+			chainType:        "standard",
 			deploymentsDir:   "./testdata/monorepo/deployments-faultproofs",
 		},
 	}
