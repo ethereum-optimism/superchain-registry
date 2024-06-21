@@ -128,7 +128,7 @@ sh scripts/promote-to-standard.sh <chain-id>
 
 This command will:
 * declare the chain as a standard chain
-* set the `superchain_time`, so that the chain receives future hardforks with the rest of the superchain (baked into downstream OPStack software).
+* set the `superchain_time`, so that the chain receives future hardforks with the rest of the superchain (baked into downstream OPStack software, selected with [network flags](https://docs.optimism.io/builders/node-operators/configuration/base-config#initialization-via-network-flags)).
 * activate the full suite of validation checks for standard chains, including checks on the `ProxyAdminOwner`
 
 ## License
