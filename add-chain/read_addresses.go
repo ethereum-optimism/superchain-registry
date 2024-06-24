@@ -101,7 +101,7 @@ func readAddressesFromChain(addresses map[string]string, l1RpcUrl string, isFPAC
 		if err != nil {
 			return fmt.Errorf("could not retrieve address for Proposer")
 		}
-		addresses[UnsafeBlockSigner] = address
+		addresses[Proposer] = address
 
 		// Challenger
 		address, err = castCall(addresses[PermissionedDisputeGame], "challenger()(address)", l1RpcUrl)
@@ -115,7 +115,7 @@ func readAddressesFromChain(addresses map[string]string, l1RpcUrl string, isFPAC
 		if err != nil {
 			return fmt.Errorf("could not retrieve address for Proposer")
 		}
-		addresses[UnsafeBlockSigner] = address
+		addresses[Proposer] = address
 
 		// Challenger
 		address, err = castCall(addresses[L2OutputOracleProxy], "CHALLENGER()(address)", l1RpcUrl)
