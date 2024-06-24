@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+}
+
+group = 'me.grapebaba'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url "https://hyperledger.jfrog.io/artifactory/besu-maven/"
+    }
+
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+dependencies {
+    implementation libs.besu.datatypes
+    implementation libs.bundles.jackson
+    implementation libs.tuweni.bytes
+    testImplementation platform(testLibs.junit.bom)
+    testImplementation testLibs.bundles.junit
+    implementation 'io.vertx:vertx-core:4.5.8'
+
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group = 'me.grapebaba'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+dependencies {
+    testImplementation platform(testLibs.junit.bom)
+    testImplementation testLibs.bundles.junit
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
