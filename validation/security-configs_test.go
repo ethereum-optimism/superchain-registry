@@ -20,8 +20,16 @@ import (
 
 var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64, client *ethclient.Client) {
 	for contract, methodToOutput := range r {
-		contractAddress, err := Addresses[chainID].AddressFor(contract)
-		require.NoError(t, err)
+
+		var contractAddress Address
+		var err error
+
+		if common.IsHexAddress(contract) {
+			contractAddress = Address(common.HexToAddress(contract))
+		} else {
+			contractAddress, err = Addresses[chainID].AddressFor(contract)
+			require.NoError(t, err)
+		}
 
 		for method, output := range methodToOutput {
 
