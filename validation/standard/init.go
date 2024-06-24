@@ -7,43 +7,36 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-//go:embed standard-config-params-mainnet.toml standard-config-params-sepolia.toml standard-config-params-sepolia-dev-0.toml standard-config-roles.toml
+//go:embed *.toml
 var standardConfigFile embed.FS
 
 func init() {
 	Config = ConfigType{
-		Params: make(map[string]*Params),
-		Roles:  new(Roles),
+		Params:        make(map[string]*Params),
+		Roles:         new(Roles),
+		MultisigRoles: make(map[string]*MultisigRoles),
 	}
 
-	err := decodeTOMLFileIntoConfig("standard-config-roles.toml", Config.Roles)
-	if err != nil {
-		panic(err)
-	}
+	decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
 
-	Config.Params["mainnet"] = new(Params)
-	err = decodeTOMLFileIntoConfig("standard-config-params-mainnet.toml", Config.Params["mainnet"])
-	if err != nil {
-		panic(err)
-	}
+	networks := []string{"mainnet", "sepolia", "sepolia-dev-0"}
+	for _, network := range networks {
+		Config.MultisigRoles[network] = new(MultisigRoles)
+		decodeTOMLFileIntoConfig("standard-config-roles-"+network+".toml", Config.MultisigRoles[network])
 
-	Config.Params["sepolia"] = new(Params)
-	err = decodeTOMLFileIntoConfig("standard-config-params-sepolia.toml", Config.Params["sepolia"])
-	if err != nil {
-		panic(err)
-	}
+		Config.Params[network] = new(Params)
+		decodeTOMLFileIntoConfig("standard-config-params-"+network+".toml", Config.Params[network])
 
-	Config.Params["sepolia-dev-0"] = new(Params)
-	err = decodeTOMLFileIntoConfig("standard-config-params-sepolia-dev-0.toml", Config.Params["sepolia-dev-0"])
-	if err != nil {
-		panic(err)
 	}
 }
 
-func decodeTOMLFileIntoConfig[T Params | Roles](filename string, config *T) error {
+func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles](filename string, config *T) {
 	data, err := fs.ReadFile(standardConfigFile, filename)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	return toml.Unmarshal(data, config)
+	err = toml.Unmarshal(data, config)
+	if err != nil {
+		panic(err)
+	}
 }
