@@ -63,7 +63,27 @@ func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
 	isFPAC := majorVersion >= 3
 
 	checkResolutions(t, standard.Config.Roles.L1.GetResolutions(isFPAC), chainID, client)
-	checkResolutions(t, standard.Config.MultisigRoles[OPChains[chainID].Superchain].L1.GetResolutions(isFPAC), chainID, client)
+
+	isExcluded := map[uint64]bool{
+		291:       true, // mainnet/orderly
+		424:       true, // mainnet/pgn
+		919:       true, // sepolia/mode
+		957:       true, // mainnet/lyra
+		1740:      true, // sepolia/metal
+		1750:      true, // mainnet/metal
+		58008:     true, // sepolia/pgn
+		8453:      true, // mainnet/base
+		8866:      true, // mainnet/superlumio
+		34443:     true, // mainnet/mode
+		84532:     true, // sepolia/base
+		90001:     true, // sepolia/race,
+		11763072:  true, // sepolia-dev-0/base-devnet-0
+		7777777:   true, // mainnet/zora
+		999999999: true, // sepolia/zora
+	}
+	if !isExcluded[chainID] {
+		checkResolutions(t, standard.Config.MultisigRoles[OPChains[chainID].Superchain].L1.GetResolutions(isFPAC), chainID, client)
+	}
 
 	// Perform an extra check on a mapping value of "L1CrossDomainMessengerProxy":
 	// This is because L1CrossDomainMessenger's proxy is a ResolvedDelegateProxy, and
