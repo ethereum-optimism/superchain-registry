@@ -5,3 +5,12 @@ L2OutputOracleProxy."CHALLENGER()" = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2
 [l1.FPAC]
 OptimismPortalProxy."guardian()" = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
 PermissionedDisputeGame."challenger()" = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
+
+[key-handover.l1.universal]
+# This is a 2/2 Safe between the Optimism Foundation and the Security Council
+ProxyAdmin."owner()" = "0x4377BB0F0103992b31eC12b4d796a8687B8dC8E9"
+
+[key-handover.l2]
+# This is the ALIASED address of the L1 2/2 Safe between the Optimism Foundation and the Security Council.
+# To compute the aliased address, add 0x1111000000000000000000000000000000001111
+0x4200000000000000000000000000000000000018."owner()" = "0x5488bb0f0103992b31eC12B4D796A8687B8Dd9fa"

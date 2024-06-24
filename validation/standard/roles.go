@@ -37,5 +37,10 @@ type Roles struct {
 type Multisigs struct {
 }
 type MultisigRoles struct {
-	L1 L1 `toml:"l1"`
+	L1          L1 `toml:"l1"`
+	L2          L2 `toml:"l2"`
+	KeyHandover struct {
+		L1 L1
+		L2 L2
+	} `toml:"key-handover"`
 }
