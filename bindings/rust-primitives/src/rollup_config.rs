@@ -28,7 +28,11 @@ pub const OP_SEPOLIA_EIP1559_BASE_FEE_MAX_CHANGE_DENOMINATOR_CANYON: u128 = 250;
 
 /// Base fee max change denominator for Optimism Sepolia as defined in the Optimism
 /// [transaction costs](https://community.optimism.io/docs/developers/build/differences/#transaction-costs) doc.
-pub const OP_SEPOLIA_EIP1559_DEFAULT_ELASTICITY_MULTIPLIER: u128 = 10;
+pub const OP_SEPOLIA_EIP1559_DEFAULT_ELASTICITY_MULTIPLIER: u128 = 6;
+
+/// Base fee max change denominator for Base Sepolia as defined in the Optimism
+/// [transaction costs](https://community.optimism.io/docs/developers/build/differences/#transaction-costs) doc.
+pub const BASE_SEPOLIA_EIP1559_DEFAULT_ELASTICITY_MULTIPLIER: u128 = 10;
 
 /// Get the base fee parameters for Optimism Sepolia.
 pub const OP_SEPOLIA_BASE_FEE_PARAMS: BaseFeeParams = BaseFeeParams {
@@ -40,6 +44,18 @@ pub const OP_SEPOLIA_BASE_FEE_PARAMS: BaseFeeParams = BaseFeeParams {
 pub const OP_SEPOLIA_CANYON_BASE_FEE_PARAMS: BaseFeeParams = BaseFeeParams {
     max_change_denominator: OP_SEPOLIA_EIP1559_BASE_FEE_MAX_CHANGE_DENOMINATOR_CANYON,
     elasticity_multiplier: OP_SEPOLIA_EIP1559_DEFAULT_ELASTICITY_MULTIPLIER,
+};
+
+/// Get the base fee parameters for Base Sepolia.
+pub const BASE_SEPOLIA_BASE_FEE_PARAMS: BaseFeeParams = BaseFeeParams {
+    max_change_denominator: OP_SEPOLIA_EIP1559_DEFAULT_BASE_FEE_MAX_CHANGE_DENOMINATOR,
+    elasticity_multiplier: BASE_SEPOLIA_EIP1559_DEFAULT_ELASTICITY_MULTIPLIER,
+};
+
+/// Get the base fee parameters for Base Sepolia (post Canyon).
+pub const BASE_SEPOLIA_CANYON_BASE_FEE_PARAMS: BaseFeeParams = BaseFeeParams {
+    max_change_denominator: OP_SEPOLIA_EIP1559_BASE_FEE_MAX_CHANGE_DENOMINATOR_CANYON,
+    elasticity_multiplier: BASE_SEPOLIA_EIP1559_DEFAULT_ELASTICITY_MULTIPLIER,
 };
 
 /// Get the base fee parameters for Optimism Mainnet.
@@ -410,8 +426,8 @@ pub const BASE_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     channel_timeout: 300,
     l1_chain_id: 11155111,
     l2_chain_id: 84532,
-    base_fee_params: OP_SEPOLIA_BASE_FEE_PARAMS,
-    canyon_base_fee_params: Some(OP_SEPOLIA_CANYON_BASE_FEE_PARAMS),
+    base_fee_params: BASE_SEPOLIA_BASE_FEE_PARAMS,
+    canyon_base_fee_params: Some(BASE_SEPOLIA_CANYON_BASE_FEE_PARAMS),
     regolith_time: Some(0),
     canyon_time: Some(1699981200),
     delta_time: Some(1703203200),
