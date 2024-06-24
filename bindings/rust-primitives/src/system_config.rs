@@ -239,41 +239,29 @@ impl Default for SystemAccounts {
 
 #[cfg(test)]
 mod test {
-    use crate::{ChainGenesis, OP_BASE_FEE_PARAMS};
-
     use super::*;
+    use crate::ChainGenesis;
     use alloc::vec;
     use alloy_primitives::{b256, hex, LogData, B256};
 
     fn mock_rollup_config(system_config: SystemConfig) -> RollupConfig {
         RollupConfig {
             genesis: ChainGenesis {
-                l1: crate::block::BlockID::default(),
-                l2: crate::block::BlockID::default(),
-                l2_time: 0,
-                extra_data: None,
                 system_config: Some(system_config),
+                ..Default::default()
             },
             block_time: 2,
-            max_sequencer_drift: 0,
-            seq_window_size: 0,
-            channel_timeout: 0,
             l1_chain_id: 1,
             l2_chain_id: 10,
-            base_fee_params: OP_BASE_FEE_PARAMS,
-            canyon_base_fee_params: None,
             regolith_time: Some(0),
             canyon_time: Some(0),
             delta_time: Some(0),
             ecotone_time: Some(10),
             fjord_time: Some(0),
             interop_time: Some(0),
-            batch_inbox_address: Address::ZERO,
-            deposit_contract_address: Address::ZERO,
-            l1_system_config_address: Address::ZERO,
-            protocol_versions_address: Address::ZERO,
             blobs_enabled_l1_timestamp: Some(0),
             da_challenge_address: Some(Address::ZERO),
+            ..Default::default()
         }
     }
 
