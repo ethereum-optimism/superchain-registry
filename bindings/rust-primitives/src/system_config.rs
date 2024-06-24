@@ -1,7 +1,7 @@
 //! System Config Type
 
 use crate::rollup_config::RollupConfig;
-use alloy_consensus::Receipt;
+use alloy_consensus::{Eip658Value, Receipt};
 use alloy_primitives::{address, b256, Address, Log, B256, U256, U64};
 use alloy_sol_types::{sol, SolType};
 use anyhow::{anyhow, bail, Result};
@@ -69,7 +69,7 @@ impl SystemConfig {
         l1_time: u64,
     ) -> Result<()> {
         for receipt in receipts {
-            if !receipt.status {
+            if Eip658Value::Eip658(false) == receipt.status {
                 continue;
             }
 

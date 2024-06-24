@@ -1,0 +1,41 @@
+name: Release-plz
+
+permissions:
+  pull-requests: write
+  contents: write
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - bindings/rust-primitives/**
+      - bindings/rust-bindings/**
+
+jobs:
+  release-plz:
+    name: Release-plz
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      # If releases break due to dirty `Cargo.lock` changes, toggle this step back on.
+      # If the cargo lock file changes due to upstream dependency versions updating,
+      # with semvers still matching, the workflow will have "uncommitted" changes
+      # which would prevent the release. This step commits any `Cargo.lock` changes
+      # so the release can proceed.
+      # - name: Commit Cargo.lock
+      #   run: |
+      #     git config --local user.email "action@github.com"
+      #     git config --local user.name "GitHub Action"
+      #     git add bindings/**/Cargo.lock
+      #     git commit -m "Update Cargo.lock" || echo "No changes to commit"
+      - name: Run release-plz
+        uses: MarcoIeni/release-plz-action@v0.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
