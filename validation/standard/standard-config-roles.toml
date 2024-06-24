@@ -14,6 +14,9 @@ OptimismMintableERC20FactoryProxy."BRIDGE()" = "L1StandardBridgeProxy"
 OptimismPortalProxy."admin()" = "ProxyAdmin"
 ProxyAdmin."addressManager()" = "AddressManager"
 SystemConfigProxy."admin()" = "ProxyAdmin"
+SystemConfigProxy."unsafeBlockSigner()" = "UnsafeBlockSigner"
+SystemConfigProxy."batcherHash()" = "BatchSubmitter"
+
 
 [l1.nonFPAC]
 OptimismPortalProxy."GUARDIAN()" = "Guardian"
@@ -21,6 +24,7 @@ OptimismPortalProxy."SYSTEM_CONFIG()" = "SystemConfigProxy"
 OptimismPortalProxy."L2_ORACLE()" = "L2OutputOracleProxy"
 L2OutputOracleProxy."admin()" = "ProxyAdmin"
 L2OutputOracleProxy."CHALLENGER()" = "Challenger"
+L2OutputOracleProxy."PROPOSER()" = "Proposer"
 
 [l1.FPAC]
 DisputeGameFactoryProxy."admin()" = "ProxyAdmin"
@@ -29,6 +33,8 @@ AnchorStateRegistryProxy."admin()" = "ProxyAdmin"
 DelayedWETHProxy."admin()" = "ProxyAdmin"
 OptimismPortalProxy."guardian()" = "Guardian"
 OptimismPortalProxy."systemConfig()" = "SystemConfigProxy"
+PermissionedDisputeGame."challenger()" = "Challenger"
+PermissionedDisputeGame."proposer()" = "Proposer"
 
 [l2.universal]
 "0x4200000000000000000000000000000000000016"."admin()" = "0x4200000000000000000000000000000000000018"
