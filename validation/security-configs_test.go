@@ -2,7 +2,6 @@ package validation
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	"strings"
 	"testing"
@@ -18,6 +17,39 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64, client *ethclient.Client) {
+	for contract, methodToOutput := range r {
+
+		var contractAddress Address
+		var err error
+
+		if common.IsHexAddress(contract) {
+			contractAddress = Address(common.HexToAddress(contract))
+		} else {
+			contractAddress, err = Addresses[chainID].AddressFor(contract)
+			require.NoError(t, err)
+		}
+
+		for method, output := range methodToOutput {
+
+			var want Address
+
+			if common.IsHexAddress(output) {
+				want = Address(common.HexToAddress(output))
+			} else {
+				want, err = Addresses[chainID].AddressFor(output)
+				require.NoError(t, err)
+			}
+
+			got, err := getAddress(method, contractAddress, client)
+			require.NoErrorf(t, err, "problem calling %s.%s (%s)", contract, method, contractAddress)
+
+			assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
+		}
+
+	}
+}
 
 func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
 	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC
@@ -38,30 +70,27 @@ func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
 	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
 	isFPAC := majorVersion >= 3
 
-	contractCallResolutions := standard.Config.Roles.L1.GetResolutions(isFPAC)
+	checkResolutions(t, standard.Config.Roles.L1.GetResolutions(isFPAC), chainID, client)
 
-	for contract, methodToOutput := range contractCallResolutions {
-
-		contractAddress, err := Addresses[chainID].AddressFor(contract)
-		require.NoError(t, err)
-
-		for method, output := range methodToOutput {
-
-			var want Address
-
-			if common.IsHexAddress(output) {
-				want = Address(common.HexToAddress(output))
-			} else {
-				want, err = Addresses[chainID].AddressFor(output)
-				require.NoError(t, err)
-			}
-
-			got, err := getAddress(method, contractAddress, client)
-			require.NoErrorf(t, err, "problem calling %s.%s %s", contract, contractAddress, method)
-
-			assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
-		}
-
+	isExcluded := map[uint64]bool{
+		291:       true, // mainnet/orderly
+		424:       true, // mainnet/pgn
+		919:       true, // sepolia/mode
+		957:       true, // mainnet/lyra
+		1740:      true, // sepolia/metal
+		1750:      true, // mainnet/metal
+		58008:     true, // sepolia/pgn
+		8453:      true, // mainnet/base
+		8866:      true, // mainnet/superlumio
+		34443:     true, // mainnet/mode
+		84532:     true, // sepolia/base
+		90001:     true, // sepolia/race,
+		11763072:  true, // sepolia-dev-0/base-devnet-0
+		7777777:   true, // mainnet/zora
+		999999999: true, // sepolia/zora
+	}
+	if !isExcluded[chainID] {
+		checkResolutions(t, standard.Config.MultisigRoles[OPChains[chainID].Superchain].L1.GetResolutions(isFPAC), chainID, client)
 	}
 
 	// Perform an extra check on a mapping value of "L1CrossDomainMessengerProxy":
@@ -97,22 +126,7 @@ func testL2SecurityConfigForChain(t *testing.T, chain ChainConfig) {
 	client, err := ethclient.Dial(chain.PublicRPC)
 	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
 	defer client.Close()
-	contractCallResolutions := standard.Config.Roles.L2.Universal
-
-	for contract, methodToOutput := range contractCallResolutions {
-		for method, output := range methodToOutput {
-			method, output := method, output
-			t.Run(fmt.Sprintf("%s.%s", contract, method), func(t *testing.T) {
-				t.Parallel()
-				want := Address(common.HexToAddress(output))
-
-				got, err := getAddress(method, MustHexToAddress(contract), client)
-				require.NoErrorf(t, err, "problem calling %s.%s %s", contract, contract, method)
-
-				assert.Equal(t, want, got, "%s.%s = %s, expected %s", contract, method, got, want)
-			})
-		}
-	}
+	checkResolutions(t, standard.Config.Roles.L2.Universal, chain.ChainID, client)
 }
 
 func TestL2SecurityConfigs(t *testing.T) {
