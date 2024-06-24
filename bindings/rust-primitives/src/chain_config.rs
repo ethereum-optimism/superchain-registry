@@ -67,8 +67,8 @@ pub struct ChainConfig {
     /// This matches the resource filename, it is not encoded in the config file itself.
     #[cfg_attr(feature = "serde", serde(skip))]
     pub chain: String,
-    #[cfg_attr(feature = "serde", serde(flatten))]
     /// Hardfork Configuration. These values may override the superchain-wide defaults.
+    #[cfg_attr(feature = "serde", serde(flatten))]
     pub hardfork_configuration: HardForkConfiguration,
     /// Optional Plasma DA feature
     pub plasma: Option<PlasmaConfig>,
