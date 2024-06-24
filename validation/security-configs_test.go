@@ -83,16 +83,10 @@ func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
 }
 
 func TestL1SecurityConfigs(t *testing.T) {
-	isExcluded := map[uint64]bool{
-		11763072: true, // Base_devnet_0 (no AnchorStateRegistryProxy specified)
-	}
 	for chainID, chainPtr := range OPChains {
 		chain, chainID := *chainPtr, chainID
 		t.Run(perChainTestName(&chain), func(t *testing.T) {
 			t.Parallel()
-			if isExcluded[chain.ChainID] {
-				t.Skipf("chain %d: EXCLUDED from Security Config Checks", chainID)
-			}
 			testL1SecurityConfigOfChain(t, chainID)
 		})
 	}

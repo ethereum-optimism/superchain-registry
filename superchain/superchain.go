@@ -258,8 +258,19 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 	return nil
 }
 
-// AddressList represents the set of network specific contracts for a given network.
+type Roles struct {
+	SystemConfigOwner Address `json:"SystemConfigOwner"`
+	ProxyAdminOwner   Address `json:"ProxyAdminOwner"`
+	Guardian          Address `json:"Guardian"`
+	Challenger        Address `json:"Challenger"`
+	Proposer          Address `json:"Proposer"`
+	UnsafeBlockSigner Address `json:"UnsafeBlockSigner"`
+	BatchSubmitter    Address `json:"BatchSubmitter"`
+}
+
+// AddressList represents the set of network specific contracts and roles for a given network.
 type AddressList struct {
+	Roles                             `json:",inline"`
 	AddressManager                    Address `json:"AddressManager"`
 	L1CrossDomainMessengerProxy       Address `json:"L1CrossDomainMessengerProxy"`
 	L1ERC721BridgeProxy               Address `json:"L1ERC721BridgeProxy"`
@@ -268,11 +279,8 @@ type AddressList struct {
 	OptimismMintableERC20FactoryProxy Address `json:"OptimismMintableERC20FactoryProxy"`
 	OptimismPortalProxy               Address `json:"OptimismPortalProxy"`
 	SystemConfigProxy                 Address `json:"SystemConfigProxy"`
-	SystemConfigOwner                 Address `json:"SystemConfigOwner"`
 	ProxyAdmin                        Address `json:"ProxyAdmin"`
-	ProxyAdminOwner                   Address `json:"ProxyAdminOwner"`
-	Guardian                          Address `json:"Guardian"`
-	Challenger                        Address `json:"Challenger"`
+
 	// Fault Proof contracts:
 	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty"`
 	DelayedWETHProxy         Address `json:"DelayedWETHProxy,omitempty"`
@@ -328,6 +336,12 @@ func (a AddressList) AddressFor(name string) (Address, error) {
 		address = a.Guardian
 	case "Challenger":
 		address = a.Challenger
+	case "BatchSubmitter":
+		address = a.BatchSubmitter
+	case "UnsafeBlockSigner":
+		address = a.UnsafeBlockSigner
+	case "Proposer":
+		address = a.Proposer
 	default:
 		return address, fmt.Errorf("no such name %s", name)
 	}

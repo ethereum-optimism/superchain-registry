@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -19,7 +20,6 @@ var (
 	L1CrossDomainMessengerProxy       = "L1CrossDomainMessengerProxy"
 	L1ERC721BridgeProxy               = "L1ERC721BridgeProxy"
 	L1StandardBridgeProxy             = "L1StandardBridgeProxy"
-	L2OutputOracleProxy               = "L2OutputOracleProxy"
 	OptimismMintableERC20FactoryProxy = "OptimismMintableERC20FactoryProxy"
 	SystemConfigProxy                 = "SystemConfigProxy"
 	OptimismPortalProxy               = "OptimismPortalProxy"
@@ -31,49 +31,101 @@ var (
 	Challenger        = "Challenger"
 	ProxyAdminOwner   = "ProxyAdminOwner"
 	SystemConfigOwner = "SystemConfigOwner"
+	Proposer          = "Proposer"
+	UnsafeBlockSigner = "UnsafeBlockSigner"
+	BatchSubmitter    = "BatchSubmitter"
+
+	// Non Fault Proof contracts
+	L2OutputOracleProxy = "L2OutputOracleProxy"
+
+	// Fault Proof contracts:
+	AnchorStateRegistryProxy = "AnchorStateRegistryProxy"
+	DelayedWETHProxy         = "DelayedWETHProxy"
+	DisputeGameFactoryProxy  = "DisputeGameFactoryProxy"
+	FaultDisputeGame         = "FaultDisputeGame"
+	MIPS                     = "MIPS"
+	PermissionedDisputeGame  = "PermissionedDisputeGame"
+	PreimageOracle           = "PreimageOracle"
 )
 
-func readAddressesFromChain(contractAddresses map[string]string, l1RpcUrl string) error {
+func readAddressesFromChain(addresses map[string]string, l1RpcUrl string, isFPAC bool) error {
 	// SuperchainConfig
-	address, err := castCall(contractAddresses[OptimismPortalProxy], "superchainConfig()(address)", l1RpcUrl)
+	address, err := castCall(addresses[OptimismPortalProxy], "superchainConfig()(address)", l1RpcUrl)
 	if err != nil {
-		contractAddresses[SuperchainConfig] = ""
+		addresses[SuperchainConfig] = ""
 	} else {
-		contractAddresses[SuperchainConfig] = address
+		addresses[SuperchainConfig] = address
 	}
 
 	// Guardian
-	address, err = castCall(contractAddresses[SuperchainConfig], "guardian()(address)", l1RpcUrl)
+	address, err = castCall(addresses[SuperchainConfig], "guardian()(address)", l1RpcUrl)
 	if err != nil {
-		address, err = castCall(contractAddresses[OptimismPortalProxy], "guardian()(address)", l1RpcUrl)
+		address, err = castCall(addresses[OptimismPortalProxy], "guardian()(address)", l1RpcUrl)
 		if err != nil {
 			return fmt.Errorf("could not retrieve address for Guardian %w", err)
 		}
 	}
-	contractAddresses[Guardian] = address
-
-	// Challenger
-	address, err = castCall(contractAddresses[L2OutputOracleProxy], "challenger()(address)", l1RpcUrl)
-	if err != nil {
-		return fmt.Errorf("could not retrieve address for Guardian")
-	}
-	contractAddresses[Challenger] = address
+	addresses[Guardian] = address
 
 	// ProxyAdminOwner
-	address, err = castCall(contractAddresses[ProxyAdmin], "owner()(address)", l1RpcUrl)
+	address, err = castCall(addresses[ProxyAdmin], "owner()(address)", l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("could not retrieve address for ProxyAdminOwner")
 	}
-	contractAddresses[ProxyAdminOwner] = address
+	addresses[ProxyAdminOwner] = address
 
 	// SystemConfigOwner
-	address, err = castCall(contractAddresses[SystemConfigProxy], "owner()(address)", l1RpcUrl)
+	address, err = castCall(addresses[SystemConfigProxy], "owner()(address)", l1RpcUrl)
 	if err != nil {
-		return fmt.Errorf("could not retrieve address for ProxyAdminOwner")
+		return fmt.Errorf("could not retrieve address for SystemConfigOwner")
 	}
-	contractAddresses[SystemConfigOwner] = address
+	addresses[SystemConfigOwner] = address
 
-	fmt.Printf("Contract addresses read from on-chain contracts\n")
+	// UnsafeBlockSigner
+	address, err = castCall(addresses[SystemConfigProxy], "unsafeBlockSigner()(address)", l1RpcUrl)
+	if err != nil {
+		return fmt.Errorf("could not retrieve address for UnsafeBlockSigner")
+	}
+	addresses[UnsafeBlockSigner] = address
+
+	// BatchSubmitter
+	hash, err := castCall(addresses[SystemConfigProxy], "batcherHash()(bytes32)", l1RpcUrl)
+	if err != nil {
+		return fmt.Errorf("could not retrieve batcherHash")
+	}
+	addresses[BatchSubmitter] = "0x" + hash[24:63]
+
+	if isFPAC {
+		// Proposer
+		address, err = castCall(addresses[PermissionedDisputeGame], "proposer()(address)", l1RpcUrl)
+		if err != nil {
+			return fmt.Errorf("could not retrieve address for Proposer")
+		}
+		addresses[Proposer] = address
+
+		// Challenger
+		address, err = castCall(addresses[PermissionedDisputeGame], "challenger()(address)", l1RpcUrl)
+		if err != nil {
+			return fmt.Errorf("could not retrieve address for Challenger")
+		}
+		addresses[Challenger] = address
+	} else {
+		// Proposer
+		address, err = castCall(addresses[L2OutputOracleProxy], "PROPOSER()(address)", l1RpcUrl)
+		if err != nil {
+			return fmt.Errorf("could not retrieve address for Proposer")
+		}
+		addresses[Proposer] = address
+
+		// Challenger
+		address, err = castCall(addresses[L2OutputOracleProxy], "CHALLENGER()(address)", l1RpcUrl)
+		if err != nil {
+			return fmt.Errorf("could not retrieve address for Challenger")
+		}
+		addresses[Challenger] = address
+	}
+
+	fmt.Printf("Addresses read from chain\n")
 	return nil
 }
 
@@ -83,19 +135,36 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		L1CrossDomainMessengerProxy,
 		L1ERC721BridgeProxy,
 		L1StandardBridgeProxy,
-		L2OutputOracleProxy,
 		OptimismMintableERC20FactoryProxy,
 		SystemConfigProxy,
 		OptimismPortalProxy,
 		ProxyAdmin,
 	}
 
+	contractsFromJSONFPAC := append(contractsFromJSON, []string{
+		AnchorStateRegistryProxy,
+		DelayedWETHProxy,
+		DisputeGameFactoryProxy,
+		FaultDisputeGame,
+		MIPS,
+		PermissionedDisputeGame,
+		PreimageOracle,
+	}...)
+	contractsFromJSONNonFPAC := append(contractsFromJSON, L2OutputOracleProxy)
+
+	contracts := contractsFromJSONFPAC
+
 	deployFilePath := filepath.Join(deploymentsDir, ".deploy")
 	_, err := os.Stat(deployFilePath)
 
 	if err != nil {
 		// Use legacy deployment artifact schema
-		for _, name := range contractsFromJSON {
+
+		_, err := os.ReadFile(filepath.Join(deploymentsDir, AnchorStateRegistryProxy+".json"))
+		if errors.Is(err, os.ErrNotExist) {
+			contracts = contractsFromJSONNonFPAC
+		}
+		for _, name := range contracts {
 			path := filepath.Join(deploymentsDir, name+".json")
 			file, err := os.ReadFile(path)
 			if err != nil {
@@ -118,7 +187,12 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 			return fmt.Errorf("failed to unmarshal json: %w", err)
 		}
 
-		for _, name := range contractsFromJSON {
+		_, err = addressList.AddressFor(AnchorStateRegistryProxy)
+		if err != nil {
+			contracts = contractsFromJSONNonFPAC
+		}
+
+		for _, name := range contracts {
 			address, err := addressList.AddressFor(name)
 			if err != nil {
 				return fmt.Errorf("failed to retrieve %s address from list: %w", name, err)

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 
 	"github.com/spf13/viper"
 	"github.com/urfave/cli/v2"
@@ -14,7 +16,7 @@ import (
 var app = &cli.App{
 	Name:     "add-chain",
 	Usage:    "Add a new chain to the superchain-registry",
-	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, TestFlag, StandardChainCandidateFlag},
+	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, DeploymentsDirFlag, TestFlag, StandardChainCandidateFlag},
 	Action:   entrypoint,
 	Commands: []*cli.Command{&PromoteToStandardCmd},
 }
@@ -36,6 +38,12 @@ var (
 		Name:     "rollup-config",
 		Value:    "",
 		Usage:    "Filepath to rollup.json input file",
+		Required: false,
+	}
+	DeploymentsDirFlag = &cli.StringFlag{
+		Name:     "deployments-dir",
+		Value:    "",
+		Usage:    "Directory containing L1 Contract deployment addresses",
 		Required: false,
 	}
 	TestFlag = &cli.BoolFlag{
@@ -102,7 +110,7 @@ func entrypoint(ctx *cli.Context) error {
 	sequencerRPC := viper.GetString("SEQUENCER_RPC")
 	explorer := viper.GetString("EXPLORER")
 	superchainTarget := viper.GetString("SUPERCHAIN_TARGET")
-	deploymentsDir := viper.GetString("DEPLOYMENTS_DIR")
+
 	chainName := viper.GetString("CHAIN_NAME")
 
 	// Allow cli flags to override env vars
@@ -112,6 +120,10 @@ func entrypoint(ctx *cli.Context) error {
 	rollupConfigPath := viper.GetString("ROLLUP_CONFIG")
 	if ctx.IsSet("rollup-config") {
 		rollupConfigPath = ctx.String("rollup-config")
+	}
+	deploymentsDir := viper.GetString("DEPLOYMENTS_DIR")
+	if ctx.IsSet(DeploymentsDirFlag.Name) {
+		deploymentsDir = ctx.String(DeploymentsDirFlag.Name)
 	}
 
 	fmt.Printf("Chain Name:                     %s\n", chainName)
@@ -134,10 +146,10 @@ func entrypoint(ctx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
-	contractAddresses := make(map[string]string)
+	addresses := make(map[string]string)
 	if rollupConfig.Plasma != nil {
 		// Store this address before it gets removed from rollupConfig
-		contractAddresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
+		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
 	}
 
 	targetFilePath := filepath.Join(targetDir, chainName+".yaml")
@@ -166,7 +178,7 @@ func entrypoint(ctx *cli.Context) error {
 	}
 	fmt.Printf("Genesis system config written to: %s\n", filePath)
 
-	err = readAddressesFromJSON(contractAddresses, deploymentsDir)
+	err = readAddressesFromJSON(addresses, deploymentsDir)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from JSON files: %w", err)
 	}
@@ -176,12 +188,28 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to retrieve L1 rpc url: %w", err)
 	}
 
-	err = readAddressesFromChain(contractAddresses, l1RpcUrl)
+	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
+	version, err := castCall(addresses[OptimismPortalProxy], "version()(string)", l1RpcUrl)
+	if err != nil {
+		return fmt.Errorf("failed to get OptimismPortalProxy.version(): %w", err)
+	}
+
+	version, err = strconv.Unquote(version)
+	if err != nil {
+		return fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
+	}
+	majorVersion, err := strconv.ParseInt(strings.Split(version, ".")[0], 10, 32)
+	if err != nil {
+		return fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
+	}
+	isFPAC := majorVersion >= 3
+
+	err = readAddressesFromChain(addresses, l1RpcUrl, isFPAC)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from chain: %w", err)
 	}
 
-	err = writeAddressesToJSON(contractAddresses, superchainRepoPath, superchainTarget, chainName)
+	err = writeAddressesToJSON(addresses, superchainRepoPath, superchainTarget, chainName)
 	if err != nil {
 		return fmt.Errorf("failed to write contract addresses to JSON file: %w", err)
 	}
