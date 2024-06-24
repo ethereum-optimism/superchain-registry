@@ -17,52 +17,26 @@ func init() {
 		MultisigRoles: make(map[string]*MultisigRoles),
 	}
 
-	err := decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
-	if err != nil {
-		panic(err)
-	}
+	decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
 
-	Config.MultisigRoles["mainnet"] = new(MultisigRoles)
-	err = decodeTOMLFileIntoConfig("standard-config-roles-mainnet.toml", Config.MultisigRoles["mainnet"])
-	if err != nil {
-		panic(err)
-	}
+	networks := []string{"mainnet", "sepolia", "sepolia-dev-0"}
+	for _, network := range networks {
+		Config.MultisigRoles[network] = new(MultisigRoles)
+		decodeTOMLFileIntoConfig("standard-config-roles-"+network+".toml", Config.MultisigRoles[network])
 
-	Config.MultisigRoles["sepolia"] = new(MultisigRoles)
-	err = decodeTOMLFileIntoConfig("standard-config-roles-sepolia.toml", Config.MultisigRoles["sepolia"])
-	if err != nil {
-		panic(err)
-	}
+		Config.Params[network] = new(Params)
+		decodeTOMLFileIntoConfig("standard-config-params-"+network+".toml", Config.Params[network])
 
-	Config.MultisigRoles["sepolia-dev-0"] = new(MultisigRoles)
-	err = decodeTOMLFileIntoConfig("standard-config-roles-sepolia-dev-0.toml", Config.MultisigRoles["sepolia-dev-0"])
-	if err != nil {
-		panic(err)
-	}
-
-	Config.Params["mainnet"] = new(Params)
-	err = decodeTOMLFileIntoConfig("standard-config-params-mainnet.toml", Config.Params["mainnet"])
-	if err != nil {
-		panic(err)
-	}
-
-	Config.Params["sepolia"] = new(Params)
-	err = decodeTOMLFileIntoConfig("standard-config-params-sepolia.toml", Config.Params["sepolia"])
-	if err != nil {
-		panic(err)
-	}
-
-	Config.Params["sepolia-dev-0"] = new(Params)
-	err = decodeTOMLFileIntoConfig("standard-config-params-sepolia-dev-0.toml", Config.Params["sepolia-dev-0"])
-	if err != nil {
-		panic(err)
 	}
 }
 
-func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles](filename string, config *T) error {
+func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles](filename string, config *T) {
 	data, err := fs.ReadFile(standardConfigFile, filename)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	return toml.Unmarshal(data, config)
+	err = toml.Unmarshal(data, config)
+	if err != nil {
+		panic(err)
+	}
 }
