@@ -1,6 +1,6 @@
 [[chains]]
   name = "OP Mainnet"
-  identifier = "mainnet/OP Mainnet"
+  identifier = "mainnet/oeth"
   chain_id = 10
   rpc = ["https://mainnet.optimism.io"]
   explorers = ["https://explorer.optimism.io"]
@@ -11,7 +11,7 @@
 
 [[chains]]
   name = "PGN (Public Goods Network)"
-  identifier = "mainnet/PGN (Public Goods Network)"
+  identifier = "mainnet/PGN"
   chain_id = 424
   rpc = ["https://rpc.publicgoods.network"]
   explorers = ["https://explorer.publicgoods.network"]
@@ -22,7 +22,7 @@
 
 [[chains]]
   name = "Base"
-  identifier = "mainnet/Base"
+  identifier = "mainnet/base"
   chain_id = 8453
   rpc = ["https://mainnet.base.org"]
   explorers = ["https://explorer.base.org"]
@@ -33,7 +33,7 @@
 
 [[chains]]
   name = "Lyra Chain"
-  identifier = "mainnet/Lyra Chain"
+  identifier = "mainnet/lyra"
   chain_id = 957
   rpc = ["https://rpc.lyra.finance"]
   explorers = ["https://explorer.lyra.finance"]
@@ -44,7 +44,7 @@
 
 [[chains]]
   name = "Metal"
-  identifier = "mainnet/Metal"
+  identifier = "mainnet/"
   chain_id = 1750
   rpc = ["https://rpc.metall2.com"]
   explorers = ["https://explorer.metall2.com"]
@@ -55,7 +55,7 @@
 
 [[chains]]
   name = "Mode"
-  identifier = "mainnet/Mode"
+  identifier = "mainnet/mode"
   chain_id = 34443
   rpc = ["https://mainnet.mode.network"]
   explorers = ["https://explorer.mode.network"]
@@ -66,7 +66,7 @@
 
 [[chains]]
   name = "Orderly Mainnet"
-  identifier = "mainnet/Orderly Mainnet"
+  identifier = "mainnet/orderly"
   chain_id = 291
   rpc = ["https://rpc.orderly.network"]
   explorers = ["https://explorer.orderly.network"]
@@ -77,7 +77,7 @@
 
 [[chains]]
   name = "Zora"
-  identifier = "mainnet/Zora"
+  identifier = "mainnet/zora"
   chain_id = 7777777
   rpc = ["https://rpc.zora.energy"]
   explorers = ["https://explorer.zora.energy"]
@@ -88,7 +88,7 @@
 
 [[chains]]
   name = "OP Sepolia Testnet"
-  identifier = "sepolia/OP Sepolia Testnet"
+  identifier = "sepolia/opsep"
   chain_id = 11155420
   rpc = ["https://sepolia.optimism.io"]
   explorers = ["https://sepolia-optimistic.etherscan.io"]
@@ -99,7 +99,7 @@
 
 [[chains]]
   name = "Base Sepolia Testnet"
-  identifier = "sepolia/Base Sepolia Testnet"
+  identifier = "sepolia/basesep"
   chain_id = 84532
   rpc = ["https://sepolia.base.org"]
   explorers = ["https://sepolia-explorer.base.org"]
@@ -110,7 +110,7 @@
 
 [[chains]]
   name = "Mode Sepolia"
-  identifier = "sepolia/Mode Sepolia"
+  identifier = "sepolia/"
   chain_id = 919
   rpc = ["https://sepolia.mode.network"]
   explorers = ["https://sepolia.explorer.mode.network"]
@@ -121,7 +121,7 @@
 
 [[chains]]
   name = "race"
-  identifier = "sepolia/race"
+  identifier = "sepolia/"
   chain_id = 90001
   rpc = ["https://racetestnet.io"]
   explorers = ["https://testnet.racescan.io"]
@@ -132,7 +132,7 @@
 
 [[chains]]
   name = "Sepolia PGN (Public Goods Network)"
-  identifier = "sepolia/Sepolia PGN (Public Goods Network)"
+  identifier = "sepolia/sepPGN"
   chain_id = 58008
   rpc = ["https://sepolia.publicgoods.network"]
   explorers = ["https://explorer.sepolia.publicgoods.network"]
@@ -143,7 +143,7 @@
 
 [[chains]]
   name = "Zora Sepolia Testnet"
-  identifier = "sepolia/Zora Sepolia Testnet"
+  identifier = "sepolia/zsep"
   chain_id = 999999999
   rpc = ["https://sepolia.rpc.zora.energy"]
   explorers = ["https://sepolia.explorer.zora.energy"]
@@ -154,7 +154,7 @@
 
 [[chains]]
   name = "OP Labs Sepolia devnet 0"
-  identifier = "sepolia-dev-0/OP Labs Sepolia devnet 0"
+  identifier = "sepolia-dev-0/opdev0"
   chain_id = 11155421
   rpc = [""]
   explorers = [""]
@@ -165,7 +165,7 @@
 
 [[chains]]
   name = "Base devnet 0"
-  identifier = "sepolia-dev-0/Base devnet 0"
+  identifier = "sepolia-dev-0/basedev0"
   chain_id = 11763072
   rpc = [""]
   explorers = [""]

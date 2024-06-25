@@ -1,7 +1,7 @@
 [
   {
     "name": "OP Mainnet",
-    "identifier": "mainnet/OP Mainnet",
+    "identifier": "mainnet/oeth",
     "chainId": 10,
     "rpc": [
       "https://mainnet.optimism.io"
@@ -17,7 +17,7 @@
   },
   {
     "name": "PGN (Public Goods Network)",
-    "identifier": "mainnet/PGN (Public Goods Network)",
+    "identifier": "mainnet/PGN",
     "chainId": 424,
     "rpc": [
       "https://rpc.publicgoods.network"
@@ -33,7 +33,7 @@
   },
   {
     "name": "Base",
-    "identifier": "mainnet/Base",
+    "identifier": "mainnet/base",
     "chainId": 8453,
     "rpc": [
       "https://mainnet.base.org"
@@ -49,7 +49,7 @@
   },
   {
     "name": "Lyra Chain",
-    "identifier": "mainnet/Lyra Chain",
+    "identifier": "mainnet/lyra",
     "chainId": 957,
     "rpc": [
       "https://rpc.lyra.finance"
@@ -65,7 +65,7 @@
   },
   {
     "name": "Metal",
-    "identifier": "mainnet/Metal",
+    "identifier": "mainnet/",
     "chainId": 1750,
     "rpc": [
       "https://rpc.metall2.com"
@@ -81,7 +81,7 @@
   },
   {
     "name": "Mode",
-    "identifier": "mainnet/Mode",
+    "identifier": "mainnet/mode",
     "chainId": 34443,
     "rpc": [
       "https://mainnet.mode.network"
@@ -97,7 +97,7 @@
   },
   {
     "name": "Orderly Mainnet",
-    "identifier": "mainnet/Orderly Mainnet",
+    "identifier": "mainnet/orderly",
     "chainId": 291,
     "rpc": [
       "https://rpc.orderly.network"
@@ -113,7 +113,7 @@
   },
   {
     "name": "Zora",
-    "identifier": "mainnet/Zora",
+    "identifier": "mainnet/zora",
     "chainId": 7777777,
     "rpc": [
       "https://rpc.zora.energy"
@@ -129,7 +129,7 @@
   },
   {
     "name": "OP Sepolia Testnet",
-    "identifier": "sepolia/OP Sepolia Testnet",
+    "identifier": "sepolia/opsep",
     "chainId": 11155420,
     "rpc": [
       "https://sepolia.optimism.io"
@@ -145,7 +145,7 @@
   },
   {
     "name": "Base Sepolia Testnet",
-    "identifier": "sepolia/Base Sepolia Testnet",
+    "identifier": "sepolia/basesep",
     "chainId": 84532,
     "rpc": [
       "https://sepolia.base.org"
@@ -161,7 +161,7 @@
   },
   {
     "name": "Mode Sepolia",
-    "identifier": "sepolia/Mode Sepolia",
+    "identifier": "sepolia/",
     "chainId": 919,
     "rpc": [
       "https://sepolia.mode.network"
@@ -177,7 +177,7 @@
   },
   {
     "name": "race",
-    "identifier": "sepolia/race",
+    "identifier": "sepolia/",
     "chainId": 90001,
     "rpc": [
       "https://racetestnet.io"
@@ -193,7 +193,7 @@
   },
   {
     "name": "Sepolia PGN (Public Goods Network)",
-    "identifier": "sepolia/Sepolia PGN (Public Goods Network)",
+    "identifier": "sepolia/sepPGN",
     "chainId": 58008,
     "rpc": [
       "https://sepolia.publicgoods.network"
@@ -209,7 +209,7 @@
   },
   {
     "name": "Zora Sepolia Testnet",
-    "identifier": "sepolia/Zora Sepolia Testnet",
+    "identifier": "sepolia/zsep",
     "chainId": 999999999,
     "rpc": [
       "https://sepolia.rpc.zora.energy"
@@ -225,7 +225,7 @@
   },
   {
     "name": "OP Labs Sepolia devnet 0",
-    "identifier": "sepolia-dev-0/OP Labs Sepolia devnet 0",
+    "identifier": "sepolia-dev-0/opdev0",
     "chainId": 11155421,
     "rpc": [
       ""
@@ -241,7 +241,7 @@
   },
   {
     "name": "Base devnet 0",
-    "identifier": "sepolia-dev-0/Base devnet 0",
+    "identifier": "sepolia-dev-0/basedev0",
     "chainId": 11763072,
     "rpc": [
       ""
