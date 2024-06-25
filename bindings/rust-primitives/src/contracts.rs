@@ -10,7 +10,7 @@ pub type Implementations = HashMap<String, ContractImplementations>;
 /// A set of addresses for a given contract. The key is the semver version.
 pub type AddressSet = HashMap<String, Address>;
 
-/// Contract Implementations
+/// Contract Implementations.
 #[derive(Debug, Default, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(default))]
