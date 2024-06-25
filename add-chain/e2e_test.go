@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -52,13 +53,14 @@ func TestCLIApp(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
+			defer cleanupTestFiles(t, tt.chainName)
+
 			args := []string{
 				"add-chain",
 				"--chain-type=" + tt.chainType,
 				"--chain-name=" + tt.chainName,
 				"--rollup-config=" + tt.rollupConfigFile,
 				"--standard-chain-candidate=" + strconv.FormatBool(tt.standardChainCandidate),
-				"--test=" + "true",
 				"--test=true",
 			}
 
@@ -70,28 +72,40 @@ func TestCLIApp(t *testing.T) {
 			require.NoError(t, err, "add-chain app failed")
 
 			checkConfigYaml(t, tt.name, tt.chainName)
-			compareJsonFiles(t, "./testdata/superchain/extra/addresses/sepolia/", tt.name, tt.chainName)
-			compareJsonFiles(t, "./testdata/superchain/extra/genesis-system-configs/sepolia/", tt.name, tt.chainName)
+			compareJsonFiles(t, "superchain/extra/addresses/sepolia/", tt.name, tt.chainName)
+			compareJsonFiles(t, "superchain/extra/genesis-system-configs/sepolia/", tt.name, tt.chainName)
+
+			// Must run the following subcommand after the main command completes so that when the op-node/rollup
+			// package imports the superchain package, the superchain package includes the output test files
+			//args = []string{
+			//"add-chain",
+			//"check-rollup-config",
+			//"--chain-id=" + "42069",
+			//"--rollup-config=" + tt.rollupConfigFile,
+			//}
+			//err = app.Run(args)
+			//require.NoError(t, err, "add-chain app failed")
 		})
 	}
 }
 
 func compareJsonFiles(t *testing.T, dirPath, testName, chainName string) {
-	expectedBytes, err := os.ReadFile(dirPath + "expected_" + testName + ".json")
+	expectedBytes, err := os.ReadFile("./testdata/" + dirPath + "expected_" + testName + ".json")
 	require.NoError(t, err, "failed to read expected.json file from "+dirPath)
 
 	var expectJSON map[string]interface{}
 	err = json.Unmarshal(expectedBytes, &expectJSON)
 	require.NoError(t, err, "failed to unmarshal expected.json file from "+dirPath)
 
-	testBytes, err := os.ReadFile(dirPath + chainName + ".json")
+	testBytes, err := os.ReadFile("../" + dirPath + chainName + ".json")
 	require.NoError(t, err, "failed to read test generated json file from "+dirPath)
 
 	var testJSON map[string]interface{}
 	err = json.Unmarshal(testBytes, &testJSON)
 	require.NoError(t, err, "failed to read test generated json file from "+dirPath)
 
-	require.Equal(t, expectJSON, testJSON, "test .json contents do not meet expectation")
+	diff := cmp.Diff(expectJSON, testJSON)
+	require.Equal(t, diff, "", "expected json (-) does not match test json (+): %s", diff)
 }
 
 func checkConfigYaml(t *testing.T, testName, chainName string) {
@@ -102,8 +116,24 @@ func checkConfigYaml(t *testing.T, testName, chainName string) {
 	err = yaml.Unmarshal(expectedBytes, &expectedYaml)
 	require.NoError(t, err, "failed to unmarshal expected.yaml config file: %w", err)
 
-	testBytes, err := os.ReadFile("./testdata/superchain/configs/sepolia/" + chainName + ".yaml")
+	testBytes, err := os.ReadFile("../superchain/configs/sepolia/" + chainName + ".yaml")
 	require.NoError(t, err, "failed to read awesomechain.yaml config file: %w", err)
 
 	require.Equal(t, string(expectedBytes), string(testBytes), "test .yaml contents do not meet expectation")
+}
+
+func cleanupTestFiles(t *testing.T, chainName string) {
+	paths := []string{
+		"../superchain/extra/addresses/sepolia/" + chainName + ".json",
+		"../superchain/extra/genesis-system-configs/sepolia/" + chainName + ".json",
+		"../superchain/configs/sepolia/" + chainName + ".yaml",
+	}
+
+	for _, path := range paths {
+		if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+			// Log the error if it's something other than "file does not exist"
+			t.Logf("Error removing file %s: %v\n", path, err)
+		}
+	}
+	t.Logf("Removed test artifacts for chain: %s", chainName)
 }
