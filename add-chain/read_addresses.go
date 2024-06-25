@@ -93,7 +93,7 @@ func readAddressesFromChain(addresses map[string]string, l1RpcUrl string, isFPAC
 	if err != nil {
 		return fmt.Errorf("could not retrieve batcherHash")
 	}
-	addresses[BatchSubmitter] = "0x" + hash[24:63]
+	addresses[BatchSubmitter] = "0x" + hash[26:66]
 
 	if isFPAC {
 		// Proposer
