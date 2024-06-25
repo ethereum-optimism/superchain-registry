@@ -1,4 +1,5 @@
 name: race
+short_name: race
 chain_id: 90001
 public_rpc: https://racetestnet.io
 sequencer_rpc: https://racetestnet.io/sequencer

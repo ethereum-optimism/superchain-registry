@@ -44,7 +44,7 @@
 
 [[chains]]
   name = "Metal"
-  identifier = "mainnet/"
+  identifier = "mainnet/metal"
   chain_id = 1750
   rpc = ["https://rpc.metall2.com"]
   explorers = ["https://explorer.metall2.com"]
@@ -110,7 +110,7 @@
 
 [[chains]]
   name = "Mode Sepolia"
-  identifier = "sepolia/"
+  identifier = "sepolia/modesep"
   chain_id = 919
   rpc = ["https://sepolia.mode.network"]
   explorers = ["https://sepolia.explorer.mode.network"]
@@ -121,7 +121,7 @@
 
 [[chains]]
   name = "race"
-  identifier = "sepolia/"
+  identifier = "sepolia/race"
   chain_id = 90001
   rpc = ["https://racetestnet.io"]
   explorers = ["https://testnet.racescan.io"]

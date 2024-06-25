@@ -65,7 +65,7 @@
   },
   {
     "name": "Metal",
-    "identifier": "mainnet/",
+    "identifier": "mainnet/metal",
     "chainId": 1750,
     "rpc": [
       "https://rpc.metall2.com"
@@ -161,7 +161,7 @@
   },
   {
     "name": "Mode Sepolia",
-    "identifier": "sepolia/",
+    "identifier": "sepolia/modesep",
     "chainId": 919,
     "rpc": [
       "https://sepolia.mode.network"
@@ -177,7 +177,7 @@
   },
   {
     "name": "race",
-    "identifier": "sepolia/",
+    "identifier": "sepolia/race",
     "chainId": 90001,
     "rpc": [
       "https://racetestnet.io"
