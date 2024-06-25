@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"sync"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
@@ -89,76 +90,67 @@ func TestContractVersions(t *testing.T) {
 }
 
 func getContractVersionsFromChain(list AddressList, client *ethclient.Client, isFPAC bool) (ContractVersions, error) {
-	// TODO parallelize this fn
-	versions := ContractVersions{}
-	var err error
 
-	versions.L1CrossDomainMessenger, err = getVersion(context.Background(), common.Address(list.L1CrossDomainMessengerProxy), client)
-	if err != nil {
-		return versions, err
-	}
-	versions.L1ERC721Bridge, err = getVersion(context.Background(), common.Address(list.L1ERC721BridgeProxy), client)
-	if err != nil {
-		return versions, err
-	}
-
-	versions.L1StandardBridge, err = getVersion(context.Background(), common.Address(list.L1StandardBridgeProxy), client)
-	if err != nil {
-		return versions, err
+	contractsToCheck := []string{
+		"L1CrossDomainMessengerProxy",
+		"L1ERC721BridgeProxy",
+		"L1StandardBridgeProxy",
+		"OptimismMintableERC20FactoryProxy",
+		"OptimismPortalProxy",
+		"SystemConfigProxy",
 	}
 
 	if !isFPAC {
-		versions.L2OutputOracle, err = getVersion(context.Background(), common.Address(list.L2OutputOracleProxy), client)
-		if err != nil {
-			return versions, err
-		}
+		contractsToCheck = append(contractsToCheck, "L2OutputOracleProxy")
 	} else {
-		versions.AnchorStateRegistry, err = getVersion(context.Background(), common.Address(list.AnchorStateRegistryProxy), client)
-		if err != nil {
-			return versions, err
-		}
-		versions.DelayedWETH, err = getVersion(context.Background(), common.Address(list.DelayedWETHProxy), client)
-		if err != nil {
-			return versions, err
-		}
-		versions.DisputeGameFactory, err = getVersion(context.Background(), common.Address(list.DisputeGameFactoryProxy), client)
-		if err != nil {
-			return versions, err
-		}
-		versions.FaultDisputeGame, err = getVersion(context.Background(), common.Address(list.FaultDisputeGame), client)
-		if err != nil {
-			return versions, err
-		}
-		versions.MIPS, err = getVersion(context.Background(), common.Address(list.MIPS), client)
-		if err != nil {
-			return versions, err
-		}
-		versions.PermissionedDisputeGame, err = getVersion(context.Background(), common.Address(list.PermissionedDisputeGame), client)
-		if err != nil {
-			return versions, err
-		}
-		versions.PreimageOracle, err = getVersion(context.Background(), common.Address(list.PreimageOracle), client)
-		if err != nil {
-			return versions, err
-		}
+		contractsToCheck = append(contractsToCheck,
+			"AnchorStateRegistryProxy",
+			"DelayedWETHProxy",
+			"DisputeGameFactoryProxy",
+			"FaultDisputeGame",
+			"MIPS",
+			"PermissionedDisputeGame",
+			"PreimageOracle",
+		)
 	}
 
-	versions.OptimismMintableERC20Factory, err = getVersion(context.Background(), common.Address(list.OptimismMintableERC20FactoryProxy), client)
-	if err != nil {
-		return versions, err
+	results := new(sync.Map)
+
+	getVersionAsync := func(contractAddress Address, results *sync.Map, key string, wg *sync.WaitGroup) {
+		r, err := getVersion(context.Background(), common.Address(contractAddress), client)
+		if err != nil {
+			panic(err)
+		}
+		results.Store(key, r)
+		wg.Done()
+
 	}
 
-	versions.OptimismPortal, err = getVersion(context.Background(), common.Address(list.OptimismPortalProxy), client)
-	if err != nil {
-		return versions, err
+	wg := new(sync.WaitGroup)
+
+	for _, contractAddress := range contractsToCheck {
+		a, err := list.AddressFor(contractAddress)
+		if err != nil {
+			return ContractVersions{}, err
+		}
+		wg.Add(1)
+		go getVersionAsync(a, results, contractAddress, wg)
 	}
 
-	versions.SystemConfig, err = getVersion(context.Background(), common.Address(list.SystemConfigProxy), client)
-	if err != nil {
-		return versions, err
-	}
+	wg.Wait()
 
-	return versions, nil
+	cv := ContractVersions{}
+	results.Range(func(k, v any) bool {
+		s := reflect.ValueOf(cv)
+		for i := 0; i < s.NumField(); i++ {
+			if s.Type().Field(i).Name == k || s.Type().Field(i).Name+"Proxy" == k {
+				reflect.ValueOf(&cv).Elem().Field(i).SetString(v.(string))
+			}
+		}
+		return true
+	})
+
+	return cv, nil
 }
 
 func checkSemverForContract(t *testing.T, contractName string, contractAddress *Address, client *ethclient.Client, desiredSemver string) {
