@@ -73,21 +73,15 @@ func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
 	checkResolutions(t, standard.Config.Roles.L1.GetResolutions(isFPAC), chainID, client)
 
 	isExcluded := map[uint64]bool{
-		291:       true, // mainnet/orderly
-		424:       true, // mainnet/pgn
-		919:       true, // sepolia/mode
-		957:       true, // mainnet/lyra
-		1740:      true, // sepolia/metal
-		1750:      true, // mainnet/metal
-		58008:     true, // sepolia/pgn
-		8453:      true, // mainnet/base
-		8866:      true, // mainnet/superlumio
-		34443:     true, // mainnet/mode
-		84532:     true, // sepolia/base
-		90001:     true, // sepolia/race,
-		11763072:  true, // sepolia-dev-0/base-devnet-0
-		7777777:   true, // mainnet/zora
-		999999999: true, // sepolia/zora
+		8453:      true, // base (incorrect challenger, incorrect guardian)
+		11763072:  true, // base-devnet-0 (incorrect challenger, incorrect guardian)
+		90001:     true, // race (incorrect challenger, incorrect guardian)
+		84532:     true, // base-sepolia (incorrect challenger)
+		7777777:   true, // zora (incorrect challenger)
+		1750:      true, // metal (incorrect challenger)
+		919:       true, // mode sepolia (incorrect challenger)
+		999999999: true, // zora sepolia (incorrect challenger)
+		34443:     true, // mode (incorrect challenger)
 	}
 	if !isExcluded[chainID] {
 		checkResolutions(t, standard.Config.MultisigRoles[OPChains[chainID].Superchain].L1.GetResolutions(isFPAC), chainID, client)
@@ -116,6 +110,7 @@ func TestL1SecurityConfigs(t *testing.T) {
 		chain, chainID := *chainPtr, chainID
 		t.Run(perChainTestName(&chain), func(t *testing.T) {
 			t.Parallel()
+			RunOnStandardAndStandardCandidateChains(t, chain)
 			testL1SecurityConfigOfChain(t, chainID)
 		})
 	}
