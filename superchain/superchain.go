@@ -136,21 +136,6 @@ type PlasmaConfig struct {
 	DAResolveWindow *uint64 `json:"da_resolve_window" yaml:"da_resolve_window"`
 }
 
-// SetDefaultHardforkTimestampsToNil sets each hardfork timestamp to nil (to remove the override)
-// if the timestamp matches the superchain default
-func (c *ChainConfig) SetDefaultHardforkTimestampsToNil(s *SuperchainConfig) {
-	cVal := reflect.ValueOf(&c.HardForkConfiguration).Elem()
-	sVal := reflect.ValueOf(&s.hardForkDefaults).Elem()
-
-	for i := 0; i < reflect.Indirect(cVal).NumField(); i++ {
-		overrideValue := cVal.Field(i)
-		defaultValue := sVal.Field(i)
-		if reflect.DeepEqual(overrideValue.Interface(), defaultValue.Interface()) {
-			overrideValue.Set(reflect.Zero(overrideValue.Type()))
-		}
-	}
-}
-
 // setNilHardforkTimestampsToDefaultOrZero overwrites each unspecified hardfork activation time override
 // with the superchain default, if the default is not nil and is after the SuperchainTime. If the default
 // is after the chain's l2 time, that hardfork activation time is set to zero (meaning "activates at genesis").
