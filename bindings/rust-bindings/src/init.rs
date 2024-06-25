@@ -9,6 +9,7 @@ use superchain_primitives::{
     SystemConfig,
 };
 
+/// Tuple type holding the various initializers.
 pub(crate) type InitTuple = (
     Superchains,
     OPChains,
