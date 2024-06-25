@@ -133,10 +133,6 @@ func entrypoint(ctx *cli.Context) error {
 	if ctx.IsSet(DeploymentsDirFlag.Name) {
 		deploymentsDir = ctx.String(DeploymentsDirFlag.Name)
 	}
-	// are these the same?
-	// if ctx.IsSet("deployments-dir") {
-	// 	chainName = ctx.String("deployments-dir")
-	// }
 	if ctx.IsSet("standard-chain-candidate") {
 		standardChainCandidate = ctx.Bool("standard-chain-candidate")
 	}
