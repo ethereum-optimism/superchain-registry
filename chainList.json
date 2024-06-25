@@ -1,7 +1,7 @@
 [
   {
-    "name": "OP-Mainnet",
-    "identifier": "mainnet/op",
+    "name": "OP Mainnet",
+    "identifier": "mainnet/OP Mainnet",
     "chainId": 10,
     "rpc": [
       "https://mainnet.optimism.io"
@@ -16,8 +16,24 @@
     }
   },
   {
+    "name": "PGN (Public Goods Network)",
+    "identifier": "mainnet/PGN (Public Goods Network)",
+    "chainId": 424,
+    "rpc": [
+      "https://rpc.publicgoods.network"
+    ],
+    "explorers": [
+      "https://explorer.publicgoods.network"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Base",
-    "identifier": "mainnet/base",
+    "identifier": "mainnet/Base",
     "chainId": 8453,
     "rpc": [
       "https://mainnet.base.org"
@@ -32,8 +48,8 @@
     }
   },
   {
-    "name": "Lyra",
-    "identifier": "mainnet/lyra",
+    "name": "Lyra Chain",
+    "identifier": "mainnet/Lyra Chain",
     "chainId": 957,
     "rpc": [
       "https://rpc.lyra.finance"
@@ -49,7 +65,7 @@
   },
   {
     "name": "Metal",
-    "identifier": "mainnet/metal",
+    "identifier": "mainnet/Metal",
     "chainId": 1750,
     "rpc": [
       "https://rpc.metall2.com"
@@ -65,7 +81,7 @@
   },
   {
     "name": "Mode",
-    "identifier": "mainnet/mode",
+    "identifier": "mainnet/Mode",
     "chainId": 34443,
     "rpc": [
       "https://mainnet.mode.network"
@@ -80,8 +96,8 @@
     }
   },
   {
-    "name": "Orderly Network",
-    "identifier": "mainnet/orderly",
+    "name": "Orderly Mainnet",
+    "identifier": "mainnet/Orderly Mainnet",
     "chainId": 291,
     "rpc": [
       "https://rpc.orderly.network"
@@ -96,24 +112,8 @@
     }
   },
   {
-    "name": "PGN",
-    "identifier": "mainnet/pgn",
-    "chainId": 424,
-    "rpc": [
-      "https://rpc.publicgoods.network"
-    ],
-    "explorers": [
-      "https://explorer.publicgoods.network"
-    ],
-    "superchainLevel": 1,
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    }
-  },
-  {
     "name": "Zora",
-    "identifier": "mainnet/zora",
+    "identifier": "mainnet/Zora",
     "chainId": 7777777,
     "rpc": [
       "https://rpc.zora.energy"
@@ -128,8 +128,8 @@
     }
   },
   {
-    "name": "OP-Sepolia",
-    "identifier": "sepolia/op",
+    "name": "OP Sepolia Testnet",
+    "identifier": "sepolia/OP Sepolia Testnet",
     "chainId": 11155420,
     "rpc": [
       "https://sepolia.optimism.io"
@@ -144,8 +144,8 @@
     }
   },
   {
-    "name": "Base Sepolia",
-    "identifier": "sepolia/base",
+    "name": "Base Sepolia Testnet",
+    "identifier": "sepolia/Base Sepolia Testnet",
     "chainId": 84532,
     "rpc": [
       "https://sepolia.base.org"
@@ -161,29 +161,13 @@
   },
   {
     "name": "Mode Sepolia",
-    "identifier": "sepolia/mode",
+    "identifier": "sepolia/Mode Sepolia",
     "chainId": 919,
     "rpc": [
       "https://sepolia.mode.network"
     ],
     "explorers": [
       "https://sepolia.explorer.mode.network"
-    ],
-    "superchainLevel": 1,
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
-    "name": "PGN Sepolia",
-    "identifier": "sepolia/pgn",
-    "chainId": 58008,
-    "rpc": [
-      "https://sepolia.publicgoods.network"
-    ],
-    "explorers": [
-      "https://explorer.sepolia.publicgoods.network"
     ],
     "superchainLevel": 1,
     "parent": {
@@ -208,8 +192,24 @@
     }
   },
   {
-    "name": "Zora Sepolia",
-    "identifier": "sepolia/zora",
+    "name": "Sepolia PGN (Public Goods Network)",
+    "identifier": "sepolia/Sepolia PGN (Public Goods Network)",
+    "chainId": 58008,
+    "rpc": [
+      "https://sepolia.publicgoods.network"
+    ],
+    "explorers": [
+      "https://explorer.sepolia.publicgoods.network"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Zora Sepolia Testnet",
+    "identifier": "sepolia/Zora Sepolia Testnet",
     "chainId": 999999999,
     "rpc": [
       "https://sepolia.rpc.zora.energy"
@@ -225,7 +225,7 @@
   },
   {
     "name": "OP Labs Sepolia devnet 0",
-    "identifier": "sepolia-dev-0/oplabs-devnet-0",
+    "identifier": "sepolia-dev-0/OP Labs Sepolia devnet 0",
     "chainId": 11155421,
     "rpc": [
       ""
@@ -241,7 +241,7 @@
   },
   {
     "name": "Base devnet 0",
-    "identifier": "sepolia-dev-0/base-devnet-0",
+    "identifier": "sepolia-dev-0/Base devnet 0",
     "chainId": 11763072,
     "rpc": [
       ""
