@@ -92,7 +92,6 @@ func TestContractVersions(t *testing.T) {
 // getContractVersionsFromChain pulls the appropriate contract versions (depending on the isFPAC argument) from chain
 // using the supplied client (calling the version() method for each contract). It does this concurrently.
 func getContractVersionsFromChain(list AddressList, client *ethclient.Client, isFPAC bool) (ContractVersions, error) {
-
 	// build up list of contracts to check
 	contractsToCheck := []string{
 		"L1CrossDomainMessengerProxy",
