@@ -89,8 +89,11 @@ func TestContractVersions(t *testing.T) {
 	}
 }
 
+// getContractVersionsFromChain pulls the appropriate contract versions (depending on the isFPAC argument) from chain
+// using the supplied client (calling the version() method for each contract). It does this concurrently.
 func getContractVersionsFromChain(list AddressList, client *ethclient.Client, isFPAC bool) (ContractVersions, error) {
 
+	// build up list of contracts to check
 	contractsToCheck := []string{
 		"L1CrossDomainMessengerProxy",
 		"L1ERC721BridgeProxy",
@@ -114,6 +117,8 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, is
 		)
 	}
 
+	// Prepare a concurrency-safe object to store version information in, and
+	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
 
 	getVersionAsync := func(contractAddress Address, results *sync.Map, key string, wg *sync.WaitGroup) {
@@ -123,7 +128,6 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, is
 		}
 		results.Store(key, r)
 		wg.Done()
-
 	}
 
 	wg := new(sync.WaitGroup)
@@ -139,6 +143,8 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, is
 
 	wg.Wait()
 
+	// use reflection to convert results mapping into a ContractVersions object
+	// without resorting to boilerplate code.
 	cv := ContractVersions{}
 	results.Range(func(k, v any) bool {
 		s := reflect.ValueOf(cv)
