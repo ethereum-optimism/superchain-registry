@@ -40,7 +40,6 @@ jobs:
       #     git commit -m "Update Cargo.lock" || echo "No changes to commit"
       - name: Run release-plz
         uses: MarcoIeni/release-plz-action@v0.5
-        working-directory: ${{ matrix.dir }}
         with:
           manifest_path: ${{ matrix.dir }}/Cargo.toml
         env:
