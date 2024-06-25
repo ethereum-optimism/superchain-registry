@@ -235,21 +235,31 @@ func findOPContractTag(versions ContractVersions) ([]standard.Tag, error) {
 	err = fmt.Errorf("no matching tag found %s", pretty)
 
 	matchesTag := func(standard, candidate ContractVersions) bool {
-		// Get the reflection value of the struct
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
 
-		// Iterate over each field of the struct
+		// Iterate over each field of the standard struct
 		for i := 0; i < s.NumField(); i++ {
-			field := s.Field(i)
-			if field.Kind() == reflect.String &&
-				field.String() != "" && // Don't match empty fields
+
+			if s.Type().Field(i).Name == "ProtocolVersions" {
 				// We can't check this contract:
 				// (until this issue resolves https://github.com/ethereum-optimism/client-pod/issues/699#issuecomment-2150970346)
-				s.Type().Field(i).Name != "ProtocolVersions" {
-				if field.String() != c.Field(i).String() {
-					return false
-				}
+				continue
+			}
+
+			field := s.Field(i)
+
+			if field.Kind() != reflect.String {
+				panic("versions must be strings")
+			}
+
+			if field.String() == "" {
+				// Ignore any empty strings, these are treated as "match anything"
+				continue
+			}
+
+			if field.String() != c.Field(i).String() {
+				return false
 			}
 		}
 		return true
