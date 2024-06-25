@@ -136,6 +136,10 @@ func entrypoint(ctx *cli.Context) error {
 		deploymentsDir = ctx.String(DeploymentsDirFlag.Name)
 	}
 
+	if chainShortName == "" {
+		return fmt.Errorf("must set chain-short-name (CHAIN_SHORT_NAME)")
+	}
+
 	fmt.Printf("Chain Name:                     %s\n", chainName)
 	fmt.Printf("Chain Short Name:               %s\n", chainShortName)
 	fmt.Printf("Superchain target:              %s\n", superchainTarget)
@@ -183,7 +187,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to marshal genesis system config json: %w", err)
 	}
 
-	filePath := filepath.Join(dirPath, rollupConfig.Name+".json")
+	filePath := filepath.Join(dirPath, chainShortName+".json")
 	if err := os.WriteFile(filePath, systemConfigJSON, 0o644); err != nil {
 		return fmt.Errorf("failed to write genesis system config json: %w", err)
 	}
@@ -220,7 +224,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to read addresses from chain: %w", err)
 	}
 
-	err = writeAddressesToJSON(addresses, superchainRepoPath, superchainTarget, chainName)
+	err = writeAddressesToJSON(addresses, superchainRepoPath, superchainTarget, chainShortName)
 	if err != nil {
 		return fmt.Errorf("failed to write contract addresses to JSON file: %w", err)
 	}

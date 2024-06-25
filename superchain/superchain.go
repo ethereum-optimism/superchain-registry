@@ -116,7 +116,7 @@ type ChainConfig struct {
 }
 
 func (c ChainConfig) Identifier() string {
-	return c.Superchain + "/" + c.Chain
+	return c.Superchain + "/" + c.Name
 }
 
 type PlasmaConfig struct {

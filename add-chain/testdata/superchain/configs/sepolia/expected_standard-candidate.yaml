@@ -1,4 +1,5 @@
 name: awesomechain_standard-candidate
+short_name: awsm_standard-candidate
 chain_id: 42069
 public_rpc: http://awe.some.rpc
 sequencer_rpc: http://awe.some.seq.rpc
