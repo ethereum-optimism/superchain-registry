@@ -148,6 +148,12 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, is
 	results.Range(func(k, v any) bool {
 		s := reflect.ValueOf(cv)
 		for i := 0; i < s.NumField(); i++ {
+			// The keys of the results mapping come from the AddressList type,
+			// which includes both proxied and unproxied contracts.
+			// The cv object (of type ContractVersions), on the other hand,
+			// only lists implementation contract versions. The next line accounts for
+			// this: we may get the version directly from the implemntation, or via a Proxy,
+			// but we store it against the implementation name in either case.
 			if s.Type().Field(i).Name == k || s.Type().Field(i).Name+"Proxy" == k {
 				reflect.ValueOf(&cv).Elem().Field(i).SetString(v.(string))
 			}
