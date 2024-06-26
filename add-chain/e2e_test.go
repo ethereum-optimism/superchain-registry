@@ -17,7 +17,6 @@ var tests = []struct {
 	rollupConfigFile       string
 	standardChainCandidate bool
 	chainType              string
-	chainId                uint64
 	deploymentsDir         string
 }{
 	{
@@ -25,21 +24,18 @@ var tests = []struct {
 		chainName:        "testchain_baseline",
 		rollupConfigFile: "./testdata/monorepo/op-node/rollup_baseline.json",
 		chainType:        "standard",
-		chainId:          4206900,
 	},
 	{
 		name:             "plasma",
 		chainName:        "testchain_plasma",
 		rollupConfigFile: "./testdata/monorepo/op-node/rollup_plasma.json",
 		chainType:        "standard",
-		chainId:          4206901,
 	},
 	{
 		name:                   "standard-candidate",
 		chainName:              "testchain_standard-candidate",
 		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_standard-candidate.json",
 		chainType:              "frontier",
-		chainId:                4206902,
 		standardChainCandidate: true,
 	},
 	{
@@ -47,7 +43,6 @@ var tests = []struct {
 		chainName:        "testchain_faultproofs",
 		rollupConfigFile: "./testdata/monorepo/op-node/rollup_faultproofs.json",
 		chainType:        "standard",
-		chainId:          4206903,
 		deploymentsDir:   "./testdata/monorepo/deployments-faultproofs",
 	},
 }
@@ -93,7 +88,6 @@ func TestAddChain_CheckRollupConfig(t *testing.T) {
 			args := []string{
 				"add-chain",
 				"check-rollup-config",
-				"--chain-id=" + strconv.FormatUint(tt.chainId, 10),
 				"--rollup-config=" + tt.rollupConfigFile,
 			}
 			err := app.Run(args)
