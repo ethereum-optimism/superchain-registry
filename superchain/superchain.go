@@ -99,6 +99,11 @@ type ChainConfig struct {
 	// will be inherited from the superchain-wide config.
 	SuperchainTime *uint64 `yaml:"superchain_time"`
 
+	// An op-contracts tag from github.com/ethereum-optimism/optimism
+	// from which contracts were deployed. Example: "op-contracts/v1.4.0".
+	// May be nil for frontier chains.
+	ContractsVersionTag *string `yaml:"contracts_version_tag"`
+
 	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
 	Genesis ChainGenesis `yaml:"genesis"`
@@ -213,8 +218,18 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 		}
 
 		// Add blank line AFTER these keys
-		if lastKey == "explorer" || lastKey == "superchain_time" || lastKey == "genesis" {
+		if lastKey == "explorer" || lastKey == "contracts_version_tag" || lastKey == "genesis" {
 			keyNode.HeadComment = "\n"
+		}
+
+		if keyNode.Value == "contracts_version_tag" {
+			switch valNode.Value {
+			case "op-contracts/v1.3.0":
+				keyNode.LineComment = "Multi-Chain Prep (MCP) https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.3.0"
+			case "op-contracts/v1.4.0":
+				keyNode.LineComment = "Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.4.0"
+
+			}
 		}
 
 		// Add blank line BEFORE these keys
@@ -521,24 +536,24 @@ func resolve(set AddressSet, version string) (VersionedContract, error) {
 // in the superchain. This currently only supports L1 contracts but could
 // represent L2 predeploys in the future.
 type ContractVersions struct {
-	L1CrossDomainMessenger       string `yaml:"l1_cross_domain_messenger"`
-	L1ERC721Bridge               string `yaml:"l1_erc721_bridge"`
-	L1StandardBridge             string `yaml:"l1_standard_bridge"`
-	L2OutputOracle               string `yaml:"l2_output_oracle,omitempty"`
-	OptimismMintableERC20Factory string `yaml:"optimism_mintable_erc20_factory"`
-	OptimismPortal               string `yaml:"optimism_portal"`
-	SystemConfig                 string `yaml:"system_config"`
+	L1CrossDomainMessenger       string `yaml:"l1_cross_domain_messenger" toml:"l1_cross_domain_messenger"`
+	L1ERC721Bridge               string `yaml:"l1_erc721_bridge" toml:"l1_erc721_bridge"`
+	L1StandardBridge             string `yaml:"l1_standard_bridge" toml:"l1_standard_bridge"`
+	L2OutputOracle               string `yaml:"l2_output_oracle,omitempty" toml:"l2_output_oracle,omitempty"`
+	OptimismMintableERC20Factory string `yaml:"optimism_mintable_erc20_factory" toml:"optimism_mintable_erc20_factory"`
+	OptimismPortal               string `yaml:"optimism_portal" toml:"optimism_portal"`
+	SystemConfig                 string `yaml:"system_config" toml:"system_config"`
 	// Superchain-wide contracts:
-	ProtocolVersions string `yaml:"protocol_versions"`
+	ProtocolVersions string `yaml:"protocol_versions" toml:"protocol_versions"`
 	SuperchainConfig string `yaml:"superchain_config,omitempty"`
 	// Fault Proof contracts:
-	AnchorStateRegistry     string `yaml:"anchor_state_registry,omitempty"`
-	DelayedWETH             string `yaml:"delayed_weth,omitempty"`
-	DisputeGameFactory      string `yaml:"dispute_game_factory,omitempty"`
-	FaultDisputeGame        string `yaml:"fault_dispute_game,omitempty"`
-	MIPS                    string `yaml:"mips,omitempty"`
-	PermissionedDisputeGame string `yaml:"permissioned_dispute_game,omitempty"`
-	PreimageOracle          string `yaml:"preimage_oracle,omitempty"`
+	AnchorStateRegistry     string `yaml:"anchor_state_registry,omitempty" toml:"anchor_state_registry,omitempty"`
+	DelayedWETH             string `yaml:"delayed_weth,omitempty" toml:"delayed_weth,omitempty"`
+	DisputeGameFactory      string `yaml:"dispute_game_factory,omitempty" toml:"dispute_game_factory,omitempty"`
+	FaultDisputeGame        string `yaml:"fault_dispute_game,omitempty" toml:"fault_dispute_game,omitempty"`
+	MIPS                    string `yaml:"mips,omitempty" toml:"mips,omitempty"`
+	PermissionedDisputeGame string `yaml:"permissioned_dispute_game,omitempty" toml:"permissioned_dispute_game,omitempty"`
+	PreimageOracle          string `yaml:"preimage_oracle,omitempty" toml:"preimage_oracle,omitempty"`
 }
 
 // VersionFor returns the version for the supplied contract name, if it exits

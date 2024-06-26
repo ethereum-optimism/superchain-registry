@@ -45,6 +45,7 @@ func constructChainConfig(
 	explorer string,
 	superchainLevel superchain.SuperchainLevel,
 	standardChainCandidate bool,
+	isFaultProofs bool,
 ) (superchain.ChainConfig, error) {
 	fmt.Printf("Attempting to read from %s\n", inputFilePath)
 	file, err := os.ReadFile(inputFilePath)
@@ -79,6 +80,16 @@ func constructChainConfig(
 			EcotoneTime: jsonConfig.EcotoneTime,
 			FjordTime:   jsonConfig.FjordTime,
 		},
+	}
+
+	if superchainLevel == superchain.Standard || standardChainCandidate {
+		var contractsVersionTag string
+		if isFaultProofs {
+			contractsVersionTag = "op-contracts/v1.4.0"
+		} else {
+			contractsVersionTag = "op-contracts/v1.3.0"
+		}
+		chainConfig.ContractsVersionTag = &contractsVersionTag
 	}
 
 	fmt.Printf("Rollup config successfully constructed\n")

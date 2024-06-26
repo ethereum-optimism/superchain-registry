@@ -7,6 +7,7 @@ explorer: https://awesomescan.org
 superchain_level: 1
 standard_chain_candidate: true # This is a temporary field which causes most of the standard validation checks to run on this chain
 superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
+contracts_version_tag: op-contracts/v1.3.0 # Multi-Chain Prep (MCP) https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.3.0
 
 batch_inbox_addr: "0xFf00000000000000000000000000000000042069"
 
