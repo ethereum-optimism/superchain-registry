@@ -68,12 +68,16 @@ func TestContractVersions(t *testing.T) {
 
 		client, err := ethclient.Dial(rpcEndpoint)
 		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-		isFPAC := chain.ChainID == 10 || chain.ChainID == 11155420 || chain.ChainID == 11155421 // TODO don't hardcode this
+		require.NotNil(t, chain.ContractsVersionTag, "Chain does not declare a contracts_version_tag")
+
+		isFPAC := *chain.ContractsVersionTag == "op-contracts/v1.4.0"
+
 		versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client, isFPAC)
 		require.NoError(t, err)
 		matches, err := findOPContractTag(versions)
 		require.NoError(t, err)
-		require.NotEmpty(t, matches)
+
+		require.Containsf(t, matches, standard.Tag(*chain.ContractsVersionTag), "Chain config does not declare the correct contracts_version_tag")
 	}
 
 	for chainID, chain := range OPChains {

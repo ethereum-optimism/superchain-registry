@@ -99,6 +99,11 @@ type ChainConfig struct {
 	// will be inherited from the superchain-wide config.
 	SuperchainTime *uint64 `yaml:"superchain_time"`
 
+	// An op-contracts tag from github.com/ethereum-optimism/optimism
+	// from which contracts were deployed. Example: "op-contracts/v1.4.0".
+	// May be nil for frontier chains.
+	ContractsVersionTag *string `yaml:"contracts_version_tag"`
+
 	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
 	Genesis ChainGenesis `yaml:"genesis"`
@@ -213,7 +218,7 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 		}
 
 		// Add blank line AFTER these keys
-		if lastKey == "explorer" || lastKey == "superchain_time" || lastKey == "genesis" {
+		if lastKey == "explorer" || lastKey == "contracts_version_tag" || lastKey == "genesis" {
 			keyNode.HeadComment = "\n"
 		}
 
