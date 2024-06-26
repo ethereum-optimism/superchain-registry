@@ -1,5 +1,5 @@
-name: awesomechain_plasma
-chain_id: 42069
+name: testchain_plasma
+chain_id: 4206901
 public_rpc: http://awe.some.rpc
 sequencer_rpc: http://awe.some.seq.rpc
 explorer: https://awesomescan.org
