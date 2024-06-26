@@ -142,14 +142,25 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md")
 	}
 
-	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate)
+	l1RpcUrl, err := getL1RpcUrl(superchainTarget)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve L1 rpc url: %w", err)
+	}
+
+	addresses := make(map[string]string)
+	err = readAddressesFromJSON(addresses, deploymentsDir)
+	if err != nil {
+		return fmt.Errorf("failed to read addresses from JSON files: %w", err)
+	}
+
+	isFaultProofs, err := inferIsFaultProofs(addresses["OptimismPortalProxy"], l1RpcUrl)
+	if err != nil {
+		return fmt.Errorf("failed to infer fault proofs status of chain: %w", err)
+	}
+
+	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate, isFaultProofs)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
-	}
-	addresses := make(map[string]string)
-	if rollupConfig.Plasma != nil {
-		// Store this address before it gets removed from rollupConfig
-		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
 	}
 
 	targetFilePath := filepath.Join(targetDir, chainName+".yaml")
@@ -178,35 +189,14 @@ func entrypoint(ctx *cli.Context) error {
 	}
 	fmt.Printf("Genesis system config written to: %s\n", filePath)
 
-	err = readAddressesFromJSON(addresses, deploymentsDir)
-	if err != nil {
-		return fmt.Errorf("failed to read addresses from JSON files: %w", err)
-	}
-
-	l1RpcUrl, err := getL1RpcUrl(superchainTarget)
-	if err != nil {
-		return fmt.Errorf("failed to retrieve L1 rpc url: %w", err)
-	}
-
-	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
-	version, err := castCall(addresses[OptimismPortalProxy], "version()(string)", l1RpcUrl)
-	if err != nil {
-		return fmt.Errorf("failed to get OptimismPortalProxy.version(): %w", err)
-	}
-
-	version, err = strconv.Unquote(version)
-	if err != nil {
-		return fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
-	}
-	majorVersion, err := strconv.ParseInt(strings.Split(version, ".")[0], 10, 32)
-	if err != nil {
-		return fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
-	}
-	isFPAC := majorVersion >= 3
-
-	err = readAddressesFromChain(addresses, l1RpcUrl, isFPAC)
+	err = readAddressesFromChain(addresses, l1RpcUrl, isFaultProofs)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from chain: %w", err)
+	}
+
+	if rollupConfig.Plasma != nil {
+		// Store this address before it gets removed from rollupConfig
+		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
 	}
 
 	err = writeAddressesToJSON(addresses, superchainRepoPath, superchainTarget, chainName)
@@ -215,4 +205,22 @@ func entrypoint(ctx *cli.Context) error {
 	}
 
 	return nil
+}
+
+func inferIsFaultProofs(optimismPortalProxyAddress, l1RpcUrl string) (bool, error) {
+	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
+	version, err := castCall(optimismPortalProxyAddress, "version()(string)", l1RpcUrl)
+	if err != nil {
+		return false, fmt.Errorf("failed to get OptimismPortalProxy.version(): %w", err)
+	}
+
+	version, err = strconv.Unquote(version)
+	if err != nil {
+		return false, fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
+	}
+	majorVersion, err := strconv.ParseInt(strings.Split(version, ".")[0], 10, 32)
+	if err != nil {
+		return false, fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
+	}
+	return majorVersion >= 3, nil
 }

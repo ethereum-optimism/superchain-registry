@@ -48,7 +48,7 @@ var (
 	PreimageOracle           = "PreimageOracle"
 )
 
-func readAddressesFromChain(addresses map[string]string, l1RpcUrl string, isFPAC bool) error {
+func readAddressesFromChain(addresses map[string]string, l1RpcUrl string, isFaultProofs bool) error {
 	// SuperchainConfig
 	address, err := castCall(addresses[OptimismPortalProxy], "superchainConfig()(address)", l1RpcUrl)
 	if err != nil {
@@ -95,7 +95,7 @@ func readAddressesFromChain(addresses map[string]string, l1RpcUrl string, isFPAC
 	}
 	addresses[BatchSubmitter] = "0x" + hash[26:66]
 
-	if isFPAC {
+	if isFaultProofs {
 		// Proposer
 		address, err = castCall(addresses[PermissionedDisputeGame], "proposer()(address)", l1RpcUrl)
 		if err != nil {

@@ -45,6 +45,7 @@ func constructChainConfig(
 	explorer string,
 	superchainLevel superchain.SuperchainLevel,
 	standardChainCandidate bool,
+	isFaultProofs bool,
 ) (superchain.ChainConfig, error) {
 	fmt.Printf("Attempting to read from %s\n", inputFilePath)
 	file, err := os.ReadFile(inputFilePath)
@@ -82,7 +83,12 @@ func constructChainConfig(
 	}
 
 	if superchainLevel == superchain.Standard || standardChainCandidate {
-		faultProofsTag := "op-contracts/v.1.4.0"
+		var faultProofsTag string
+		if isFaultProofs {
+			faultProofsTag = "op-contracts/v1.4.0"
+		} else {
+			faultProofsTag = "op-contracts/v1.3.0"
+		}
 		chainConfig.ContractsVersionTag = &faultProofsTag
 	}
 
