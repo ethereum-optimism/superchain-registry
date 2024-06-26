@@ -85,6 +85,7 @@ jobs:
           working_directory: add-chain
       - run:
           name: run add-chain module additional tests
+          # Now run all other tests (excluding TestAddChain_Main)
           command: go test -run '[^TestAddChain_Main]' -v
           working_directory: add-chain
       - notify-failures-on-main
