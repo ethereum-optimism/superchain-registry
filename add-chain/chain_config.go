@@ -83,13 +83,13 @@ func constructChainConfig(
 	}
 
 	if superchainLevel == superchain.Standard || standardChainCandidate {
-		var faultProofsTag string
+		var contractsVersionTag string
 		if isFaultProofs {
-			faultProofsTag = "op-contracts/v1.4.0"
+			contractsVersionTag = "op-contracts/v1.4.0"
 		} else {
-			faultProofsTag = "op-contracts/v1.3.0"
+			contractsVersionTag = "op-contracts/v1.3.0"
 		}
-		chainConfig.ContractsVersionTag = &faultProofsTag
+		chainConfig.ContractsVersionTag = &contractsVersionTag
 	}
 
 	fmt.Printf("Rollup config successfully constructed\n")
