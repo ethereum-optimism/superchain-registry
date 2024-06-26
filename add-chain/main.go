@@ -195,7 +195,6 @@ func entrypoint(ctx *cli.Context) error {
 	}
 
 	if rollupConfig.Plasma != nil {
-		// Store this address before it gets removed from rollupConfig
 		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
 	}
 
