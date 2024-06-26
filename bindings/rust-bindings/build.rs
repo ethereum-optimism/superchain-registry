@@ -2,8 +2,7 @@ use std::env;
 use std::path::PathBuf;
 
 fn main() {
-    let manifest_dir = env::current_dir().expect("Failed to get current directory");
-    // let manifest_dir = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR is not set");
+    let manifest_dir = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR is not set");
 
     let superchain_configs = PathBuf::from(&manifest_dir).join("../../superchain/configs");
     let superchain_extra = PathBuf::from(&manifest_dir).join("../../superchain/extra");
