@@ -222,6 +222,16 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 			keyNode.HeadComment = "\n"
 		}
 
+		if keyNode.Value == "contracts_version_tag" {
+			switch valNode.Value {
+			case "op-contracts/v1.3.0":
+				keyNode.LineComment = "Multi-Chain Prep (MCP) https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.3.0"
+			case "op-contracts/v1.4.0":
+				keyNode.LineComment = "Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.4.0"
+
+			}
+		}
+
 		// Add blank line BEFORE these keys
 		if keyNode.Value == "genesis" || keyNode.Value == "plasma" {
 			keyNode.HeadComment = "\n"
