@@ -83,7 +83,7 @@ func TestAddChain_Main(t *testing.T) {
 			err := app.Run(args)
 			require.NoError(t, err, "add-chain app failed")
 
-			checkConfigYaml(t, tt.name, tt.chainName)
+			checkConfigYaml(t, tt.name, tt.chainShortName)
 			compareJsonFiles(t, "superchain/extra/addresses/sepolia/", tt.name, tt.chainShortName)
 			compareJsonFiles(t, "superchain/extra/genesis-system-configs/sepolia/", tt.name, tt.chainShortName)
 		})
