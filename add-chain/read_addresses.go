@@ -206,6 +206,12 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 }
 
 func writeAddressesToJSON(contractsAddresses map[string]string, superchainRepoPath, target, chainName string) error {
+
+	checkSummedContractAddresses := make(map[string]string)
+	for k, v := range contractsAddresses {
+		checkSummedContractAddresses[k] = superchain.MustHexToAddress(v).String()
+	}
+
 	dirPath := filepath.Join(superchainRepoPath, "superchain", "extra", "addresses", target)
 	if err := os.MkdirAll(dirPath, 0o755); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
@@ -219,7 +225,7 @@ func writeAddressesToJSON(contractsAddresses map[string]string, superchainRepoPa
 	defer file.Close()
 
 	// Marshal the map to JSON
-	jsonData, err := json.MarshalIndent(contractsAddresses, "", "  ")
+	jsonData, err := json.MarshalIndent(checkSummedContractAddresses, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal json: %w", err)
 	}
