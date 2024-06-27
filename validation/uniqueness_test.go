@@ -9,6 +9,7 @@ import (
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type uniqueProperties struct {
@@ -106,17 +107,18 @@ func TestChainsAreGloballyUnique(t *testing.T) {
 	localChainShortNames := make(chainShortNameSet)
 
 	for _, chain := range OPChains {
-		if globalChainIds[uint(chain.ChainID)] != nil {
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			require.NotNil(t, globalChainIds[uint(chain.ChainID)], "chain ID is not listed at chainid.network")
 			globalChainName := globalChainIds[uint(chain.ChainID)].Name
 			globalShortName := globalChainIds[uint(chain.ChainID)].ShortName
 			assert.Equal(t, globalChainName, chain.Name,
 				"Local chain name for %d does not match name from chainid.network", chain.ChainID)
 			assert.Equal(t, chain.ShortName, globalShortName,
 				"Local short chain name for %d does not match name from chainid.network", chain.ChainID)
-		}
 
-		assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
-		assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
-		assert.NoError(t, localChainShortNames.AddIfUnique(chain.ShortName))
+			assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
+			assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
+			assert.NoError(t, localChainShortNames.AddIfUnique(chain.ShortName))
+		})
 	}
 }
