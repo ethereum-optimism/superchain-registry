@@ -3,7 +3,6 @@ package validation
 import (
 	"fmt"
 	"math/big"
-	"strings"
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
@@ -80,11 +79,5 @@ func RunOnStandardAndStandardCandidateChains(t *testing.T, chain superchain.Chai
 func RunOnlyOnStandardChains(t *testing.T, chain superchain.ChainConfig) {
 	if chain.SuperchainLevel != superchain.Standard {
 		t.Skip("Chain excluded from this check (NOT a Standard Chain)")
-	}
-}
-
-func SkipCheckIfDevnet(t *testing.T, chain superchain.ChainConfig) {
-	if strings.Contains(chain.Superchain, "dev") {
-		t.Skip("Chain excluded from this check (in a dev superchain)")
 	}
 }

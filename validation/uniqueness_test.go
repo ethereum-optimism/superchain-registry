@@ -118,7 +118,9 @@ func TestChainsAreGloballyUnique(t *testing.T) {
 	localChainShortNames := make(chainShortNameSet)
 
 	isExcluded := map[uint64]bool{
-		90001: true, // sepolia/race, known chainId collision
+		90001:    true, // sepolia/race, known chainId collision
+		11155421: true, // oplabs devnet 0, not in upstream repo
+		11763072: true, // base devnet 0, not in upstream repo
 	}
 
 	for _, chain := range OPChains {
@@ -126,7 +128,6 @@ func TestChainsAreGloballyUnique(t *testing.T) {
 			if isExcluded[chain.ChainID] {
 				t.Skip("excluded from global chain id check")
 			}
-			SkipCheckIfDevnet(t, *chain)
 			props := globalChainIds[uint(chain.ChainID)]
 			require.NotNil(t, props, "chain ID is not listed at chainid.network")
 			globalChainName := props.Name
