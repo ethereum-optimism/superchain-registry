@@ -10,17 +10,6 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "PGN (Public Goods Network)"
-  identifier = "mainnet/PGN"
-  chain_id = 424
-  rpc = ["https://rpc.publicgoods.network"]
-  explorers = ["https://explorer.publicgoods.network"]
-  superchain_level = 1
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-
-[[chains]]
   name = "Base"
   identifier = "mainnet/base"
   chain_id = 8453
@@ -43,8 +32,8 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "Metal"
-  identifier = "mainnet/metal"
+  name = "Metal L2"
+  identifier = "mainnet/metall2"
   chain_id = 1750
   rpc = ["https://rpc.metall2.com"]
   explorers = ["https://explorer.metall2.com"]
@@ -70,6 +59,17 @@
   chain_id = 291
   rpc = ["https://rpc.orderly.network"]
   explorers = ["https://explorer.orderly.network"]
+  superchain_level = 1
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "PGN (Public Goods Network)"
+  identifier = "mainnet/PGN"
+  chain_id = 424
+  rpc = ["https://rpc.publicgoods.network"]
+  explorers = ["https://explorer.publicgoods.network"]
   superchain_level = 1
   [chains.parent]
     type = "L2"
@@ -109,22 +109,11 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "Mode Sepolia"
+  name = "Mode Testnet"
   identifier = "sepolia/modesep"
   chain_id = 919
   rpc = ["https://sepolia.mode.network"]
   explorers = ["https://sepolia.explorer.mode.network"]
-  superchain_level = 1
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-
-[[chains]]
-  name = "race"
-  identifier = "sepolia/race"
-  chain_id = 90001
-  rpc = ["https://racetestnet.io"]
-  explorers = ["https://testnet.racescan.io"]
   superchain_level = 1
   [chains.parent]
     type = "L2"
@@ -136,6 +125,17 @@
   chain_id = 58008
   rpc = ["https://sepolia.publicgoods.network"]
   explorers = ["https://explorer.sepolia.publicgoods.network"]
+  superchain_level = 1
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "race"
+  identifier = "sepolia/race"
+  chain_id = 90001
+  rpc = ["https://racetestnet.io"]
+  explorers = ["https://testnet.racescan.io"]
   superchain_level = 1
   [chains.parent]
     type = "L2"

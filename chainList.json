@@ -16,22 +16,6 @@
     }
   },
   {
-    "name": "PGN (Public Goods Network)",
-    "identifier": "mainnet/PGN",
-    "chainId": 424,
-    "rpc": [
-      "https://rpc.publicgoods.network"
-    ],
-    "explorers": [
-      "https://explorer.publicgoods.network"
-    ],
-    "superchainLevel": 1,
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    }
-  },
-  {
     "name": "Base",
     "identifier": "mainnet/base",
     "chainId": 8453,
@@ -64,8 +48,8 @@
     }
   },
   {
-    "name": "Metal",
-    "identifier": "mainnet/metal",
+    "name": "Metal L2",
+    "identifier": "mainnet/metall2",
     "chainId": 1750,
     "rpc": [
       "https://rpc.metall2.com"
@@ -104,6 +88,22 @@
     ],
     "explorers": [
       "https://explorer.orderly.network"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "PGN (Public Goods Network)",
+    "identifier": "mainnet/PGN",
+    "chainId": 424,
+    "rpc": [
+      "https://rpc.publicgoods.network"
+    ],
+    "explorers": [
+      "https://explorer.publicgoods.network"
     ],
     "superchainLevel": 1,
     "parent": {
@@ -160,7 +160,7 @@
     }
   },
   {
-    "name": "Mode Sepolia",
+    "name": "Mode Testnet",
     "identifier": "sepolia/modesep",
     "chainId": 919,
     "rpc": [
@@ -168,22 +168,6 @@
     ],
     "explorers": [
       "https://sepolia.explorer.mode.network"
-    ],
-    "superchainLevel": 1,
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
-    "name": "race",
-    "identifier": "sepolia/race",
-    "chainId": 90001,
-    "rpc": [
-      "https://racetestnet.io"
-    ],
-    "explorers": [
-      "https://testnet.racescan.io"
     ],
     "superchainLevel": 1,
     "parent": {
@@ -200,6 +184,22 @@
     ],
     "explorers": [
       "https://explorer.sepolia.publicgoods.network"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "race",
+    "identifier": "sepolia/race",
+    "chainId": 90001,
+    "rpc": [
+      "https://racetestnet.io"
+    ],
+    "explorers": [
+      "https://testnet.racescan.io"
     ],
     "superchainLevel": 1,
     "parent": {
