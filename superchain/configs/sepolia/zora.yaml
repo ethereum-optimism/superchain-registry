@@ -1,4 +1,5 @@
-name: Zora Sepolia
+name: Zora Sepolia Testnet
+short_name: zsep
 chain_id: 999999999
 public_rpc: "https://sepolia.rpc.zora.energy"
 sequencer_rpc: "https://sepolia.rpc.zora.energy"

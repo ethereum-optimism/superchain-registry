@@ -1,4 +1,5 @@
-name: Lyra
+name: Lyra Chain
+short_name: lyra
 chain_id: 957
 public_rpc: https://rpc.lyra.finance
 sequencer_rpc: https://rpc.lyra.finance

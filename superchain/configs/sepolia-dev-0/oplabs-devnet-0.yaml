@@ -1,4 +1,5 @@
 name: OP Labs Sepolia devnet 0
+short_name: opdev0
 chain_id: 11155421
 public_rpc: ""
 sequencer_rpc: ""
