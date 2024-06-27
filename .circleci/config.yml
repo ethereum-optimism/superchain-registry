@@ -78,8 +78,15 @@ jobs:
           command: go test ./... -v
           working_directory: validation
       - run:
-          name: run add-chain module tests
-          command: go test ./... -v
+          name: run add-chain module main test
+          # We force this test to run first because it creates artifacts that must
+          # be imported by subsequent tests
+          command: go test -run TestAddChain_Main -v
+          working_directory: add-chain
+      - run:
+          name: run add-chain module additional tests
+          # Now run all other tests (excluding TestAddChain_Main)
+          command: go test -run '[^TestAddChain_Main]' -v
           working_directory: add-chain
       - notify-failures-on-main
   publish-bot:

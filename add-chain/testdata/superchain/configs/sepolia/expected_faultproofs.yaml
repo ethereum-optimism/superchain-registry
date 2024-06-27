@@ -1,5 +1,5 @@
-name: awesomechain_faultproofs
-chain_id: 11155421
+name: testchain_faultproofs
+chain_id: 4206903
 public_rpc: http://awe.some.rpc
 sequencer_rpc: http://awe.some.seq.rpc
 explorer: https://awesomescan.org

@@ -101,12 +101,7 @@ func constructChainConfig(
 func writeChainConfig(
 	rollupConfig superchain.ChainConfig,
 	targetDirectory string,
-	superchainTarget string,
 ) error {
-	// Remove hardfork timestamp override fields if they match superchain defaults
-	defaults := superchain.Superchains[superchainTarget]
-	rollupConfig.SetDefaultHardforkTimestampsToNil(&defaults.Config)
-
 	yamlData, err := yaml.Marshal(rollupConfig)
 	if err != nil {
 		return fmt.Errorf("failed to marshal yaml: %w", err)

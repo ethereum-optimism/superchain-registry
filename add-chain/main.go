@@ -18,7 +18,7 @@ var app = &cli.App{
 	Usage:    "Add a new chain to the superchain-registry",
 	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, DeploymentsDirFlag, TestFlag, StandardChainCandidateFlag},
 	Action:   entrypoint,
-	Commands: []*cli.Command{&PromoteToStandardCmd},
+	Commands: []*cli.Command{&PromoteToStandardCmd, &CheckRollupConfigCmd},
 }
 
 var (
@@ -86,16 +86,17 @@ func entrypoint(ctx *cli.Context) error {
 	}
 
 	// Get the current script's directory
-	superchainRepoPath, err := os.Getwd()
-	envFilename := ".env"
-	envPath := "."
+	superchainRepoReadPath, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("error getting current directory: %w", err)
 	}
+	superchainRepoWritePath := filepath.Dir(superchainRepoReadPath)
+	envFilename := ".env"
+	envPath := "."
 	if runningTests {
 		envFilename = ".env.test"
 		envPath = "./testdata"
-		superchainRepoPath = filepath.Join(superchainRepoPath, "testdata")
+		superchainRepoReadPath = filepath.Join(superchainRepoReadPath, "testdata")
 	}
 
 	// Load environment variables
@@ -110,7 +111,6 @@ func entrypoint(ctx *cli.Context) error {
 	sequencerRPC := viper.GetString("SEQUENCER_RPC")
 	explorer := viper.GetString("EXPLORER")
 	superchainTarget := viper.GetString("SUPERCHAIN_TARGET")
-
 	chainName := viper.GetString("CHAIN_NAME")
 
 	// Allow cli flags to override env vars
@@ -128,7 +128,7 @@ func entrypoint(ctx *cli.Context) error {
 
 	fmt.Printf("Chain Name:                     %s\n", chainName)
 	fmt.Printf("Superchain target:              %s\n", superchainTarget)
-	fmt.Printf("Superchain-registry repo dir:   %s\n", superchainRepoPath)
+	fmt.Printf("Superchain-registry repo dir:   %s\n", superchainRepoReadPath)
 	fmt.Printf("With deployments directory:     %s\n", deploymentsDir)
 	fmt.Printf("Rollup config filepath:         %s\n", rollupConfigPath)
 	fmt.Printf("Public RPC endpoint:            %s\n", publicRPC)
@@ -137,9 +137,9 @@ func entrypoint(ctx *cli.Context) error {
 	fmt.Println()
 
 	// Check if superchain target directory exists
-	targetDir := filepath.Join(superchainRepoPath, "superchain", "configs", superchainTarget)
+	targetDir := filepath.Join(superchainRepoWritePath, "superchain", "configs", superchainTarget)
 	if _, err := os.Stat(targetDir); os.IsNotExist(err) {
-		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md")
+		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md: %s", targetDir)
 	}
 
 	l1RpcUrl, err := getL1RpcUrl(superchainTarget)
@@ -164,14 +164,14 @@ func entrypoint(ctx *cli.Context) error {
 	}
 
 	targetFilePath := filepath.Join(targetDir, chainName+".yaml")
-	err = writeChainConfig(rollupConfig, targetFilePath, superchainTarget)
+	err = writeChainConfig(rollupConfig, targetFilePath)
 	if err != nil {
 		return fmt.Errorf("error generating chain config .yaml file: %w", err)
 	}
 
 	// Create genesis-system-config data
 	// (this is deprecated, users should load this from L1, when available via SystemConfig)
-	dirPath := filepath.Join(superchainRepoPath, "superchain", "extra", "genesis-system-configs", superchainTarget)
+	dirPath := filepath.Join(superchainRepoWritePath, "superchain", "extra", "genesis-system-configs", superchainTarget)
 
 	if err := os.MkdirAll(dirPath, 0o755); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
@@ -198,7 +198,7 @@ func entrypoint(ctx *cli.Context) error {
 		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
 	}
 
-	err = writeAddressesToJSON(addresses, superchainRepoPath, superchainTarget, chainName)
+	err = writeAddressesToJSON(addresses, superchainRepoWritePath, superchainTarget, chainName)
 	if err != nil {
 		return fmt.Errorf("failed to write contract addresses to JSON file: %w", err)
 	}

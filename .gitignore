@@ -2,6 +2,10 @@
 cache/
 out/
 
+
+# test output artifacts
+superchain/**/testchain*
+
 # Ignores development broadcast logs
 !/broadcast
 /broadcast/*/31337/
