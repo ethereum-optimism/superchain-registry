@@ -11,6 +11,12 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	addressDir       = "../superchain/extra/addresses/sepolia/"
+	ymlConfigDir     = "../superchain/configs/sepolia/"
+	genesisConfigDir = "../superchain/extra/genesis-system-configs/sepolia/"
+)
+
 var tests = []struct {
 	name                   string
 	chainName              string
@@ -123,7 +129,7 @@ func checkConfigYaml(t *testing.T, testName, chainName string) {
 	err = yaml.Unmarshal(expectedBytes, &expectedYaml)
 	require.NoError(t, err, "failed to unmarshal expected.yaml config file: %w", err)
 
-	testBytes, err := os.ReadFile("../superchain/configs/sepolia/" + chainName + ".yaml")
+	testBytes, err := os.ReadFile(ymlConfigDir + chainName + ".yaml")
 	require.NoError(t, err, "failed to read testchain.yaml config file: %w", err)
 
 	require.Equal(t, string(expectedBytes), string(testBytes), "test .yaml contents do not meet expectation")
@@ -131,9 +137,9 @@ func checkConfigYaml(t *testing.T, testName, chainName string) {
 
 func cleanupTestFiles(t *testing.T, chainName string) {
 	paths := []string{
-		"../superchain/extra/addresses/sepolia/" + chainName + ".json",
-		"../superchain/extra/genesis-system-configs/sepolia/" + chainName + ".json",
-		"../superchain/configs/sepolia/" + chainName + ".yaml",
+		addressDir + chainName + ".json",
+		genesisConfigDir + chainName + ".json",
+		ymlConfigDir + chainName + ".yaml",
 	}
 
 	for _, path := range paths {
