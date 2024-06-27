@@ -46,6 +46,7 @@ func constructChainConfig(
 	explorer string,
 	superchainLevel superchain.SuperchainLevel,
 	standardChainCandidate bool,
+	isFaultProofs bool,
 ) (superchain.ChainConfig, error) {
 	fmt.Printf("Attempting to read from %s\n", inputFilePath)
 	file, err := os.ReadFile(inputFilePath)
@@ -83,6 +84,16 @@ func constructChainConfig(
 		},
 	}
 
+	if superchainLevel == superchain.Standard || standardChainCandidate {
+		var contractsVersionTag string
+		if isFaultProofs {
+			contractsVersionTag = "op-contracts/v1.4.0"
+		} else {
+			contractsVersionTag = "op-contracts/v1.3.0"
+		}
+		chainConfig.ContractsVersionTag = &contractsVersionTag
+	}
+
 	fmt.Printf("Rollup config successfully constructed\n")
 	return chainConfig, nil
 }
@@ -92,12 +103,7 @@ func constructChainConfig(
 func writeChainConfig(
 	rollupConfig superchain.ChainConfig,
 	targetDirectory string,
-	superchainTarget string,
 ) error {
-	// Remove hardfork timestamp override fields if they match superchain defaults
-	defaults := superchain.Superchains[superchainTarget]
-	rollupConfig.SetDefaultHardforkTimestampsToNil(&defaults.Config)
-
 	yamlData, err := yaml.Marshal(rollupConfig)
 	if err != nil {
 		return fmt.Errorf("failed to marshal yaml: %w", err)
