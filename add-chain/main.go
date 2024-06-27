@@ -16,7 +16,7 @@ import (
 var app = &cli.App{
 	Name:     "add-chain",
 	Usage:    "Add a new chain to the superchain-registry",
-	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, RollupConfigFlag, DeploymentsDirFlag, TestFlag, StandardChainCandidateFlag},
+	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, ChainShortNameFlag, RollupConfigFlag, DeploymentsDirFlag, TestFlag, StandardChainCandidateFlag},
 	Action:   entrypoint,
 	Commands: []*cli.Command{&PromoteToStandardCmd, &CheckRollupConfigCmd},
 }
@@ -32,6 +32,12 @@ var (
 		Name:     "chain-name",
 		Value:    "",
 		Usage:    "Custom name of the chain",
+		Required: false,
+	}
+	ChainShortNameFlag = &cli.StringFlag{
+		Name:     "chain-short-name",
+		Value:    "",
+		Usage:    "Custom short name of the chain",
 		Required: false,
 	}
 	RollupConfigFlag = &cli.StringFlag{
@@ -112,10 +118,14 @@ func entrypoint(ctx *cli.Context) error {
 	explorer := viper.GetString("EXPLORER")
 	superchainTarget := viper.GetString("SUPERCHAIN_TARGET")
 	chainName := viper.GetString("CHAIN_NAME")
+	chainShortName := viper.GetString("CHAIN_SHORT_NAME")
 
 	// Allow cli flags to override env vars
 	if ctx.IsSet("chain-name") {
 		chainName = ctx.String("chain-name")
+	}
+	if ctx.IsSet("chain-short-name") {
+		chainShortName = ctx.String("chain-short-name")
 	}
 	rollupConfigPath := viper.GetString("ROLLUP_CONFIG")
 	if ctx.IsSet("rollup-config") {
@@ -126,7 +136,12 @@ func entrypoint(ctx *cli.Context) error {
 		deploymentsDir = ctx.String(DeploymentsDirFlag.Name)
 	}
 
+	if chainShortName == "" {
+		return fmt.Errorf("must set chain-short-name (CHAIN_SHORT_NAME)")
+	}
+
 	fmt.Printf("Chain Name:                     %s\n", chainName)
+	fmt.Printf("Chain Short Name:               %s\n", chainShortName)
 	fmt.Printf("Superchain target:              %s\n", superchainTarget)
 	fmt.Printf("Superchain-registry repo dir:   %s\n", superchainRepoReadPath)
 	fmt.Printf("With deployments directory:     %s\n", deploymentsDir)
@@ -158,12 +173,12 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to infer fault proofs status of chain: %w", err)
 	}
 
-	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate, isFaultProofs)
+	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, chainShortName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate, isFaultProofs)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
 
-	targetFilePath := filepath.Join(targetDir, chainName+".yaml")
+	targetFilePath := filepath.Join(targetDir, chainShortName+".yaml")
 	err = writeChainConfig(rollupConfig, targetFilePath)
 	if err != nil {
 		return fmt.Errorf("error generating chain config .yaml file: %w", err)
@@ -183,7 +198,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to marshal genesis system config json: %w", err)
 	}
 
-	filePath := filepath.Join(dirPath, rollupConfig.Name+".json")
+	filePath := filepath.Join(dirPath, chainShortName+".json")
 	if err := os.WriteFile(filePath, systemConfigJSON, 0o644); err != nil {
 		return fmt.Errorf("failed to write genesis system config json: %w", err)
 	}
@@ -198,7 +213,7 @@ func entrypoint(ctx *cli.Context) error {
 		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
 	}
 
-	err = writeAddressesToJSON(addresses, superchainRepoWritePath, superchainTarget, chainName)
+	err = writeAddressesToJSON(addresses, superchainRepoWritePath, superchainTarget, chainShortName)
 	if err != nil {
 		return fmt.Errorf("failed to write contract addresses to JSON file: %w", err)
 	}
