@@ -206,7 +206,6 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 }
 
 func writeAddressesToJSON(contractsAddresses map[string]string, superchainRepoPath, target, chainName string) error {
-
 	checkSummedContractAddresses := make(map[string]string)
 	for k, v := range contractsAddresses {
 		checkSummedContractAddresses[k] = superchain.MustHexToAddress(v).String()
