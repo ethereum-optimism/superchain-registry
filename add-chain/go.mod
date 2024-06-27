@@ -5,6 +5,7 @@ go 1.21
 require (
 	github.com/ethereum-optimism/optimism v1.7.1-0.20240306112011-eac79900756b
 	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240430193954-bd84389308cb
+	github.com/ethereum/go-ethereum v1.13.8
 	github.com/google/go-cmp v0.6.0
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.9.0
@@ -34,7 +35,6 @@ require (
 	github.com/deckarep/golang-set/v2 v2.1.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
 	github.com/ethereum/c-kzg-4844 v0.4.0 // indirect
-	github.com/ethereum/go-ethereum v1.13.8 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gballet/go-verkle v0.1.1-0.20231031103413-a67434b50f46 // indirect
 	github.com/getsentry/sentry-go v0.18.0 // indirect
