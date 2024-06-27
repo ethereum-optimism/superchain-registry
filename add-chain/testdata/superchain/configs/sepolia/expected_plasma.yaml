@@ -1,4 +1,5 @@
 name: testchain_plasma
+short_name: testchain_p
 chain_id: 4206901
 public_rpc: http://awe.some.rpc
 sequencer_rpc: http://awe.some.seq.rpc
