@@ -107,6 +107,9 @@ type ChainConfig struct {
 	// Superchain is a simple string to identify the superchain.
 	// This is implied by directory structure, and not encoded in the config file itself.
 	Superchain string `yaml:"-"`
+	// Chain is a simple string to identify the chain, within its superchain context.
+	// This matches the resource filename, it is not encoded in the config file itself.
+	Chain string `yaml:"-"`
 
 	// Hardfork Configuration Overrides
 	HardForkConfiguration `yaml:",inline"`
@@ -868,7 +871,7 @@ func LoadGenesis(chainID uint64) (*Genesis, error) {
 	if !ok {
 		return nil, fmt.Errorf("unknown chain %d", chainID)
 	}
-	f, err := extraFS.Open(path.Join("extra", "genesis", ch.Superchain, ch.ShortName+".json.gz"))
+	f, err := extraFS.Open(path.Join("extra", "genesis", ch.Superchain, ch.Chain+".json.gz"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open chain genesis definition of %d: %w", chainID, err)
 	}
