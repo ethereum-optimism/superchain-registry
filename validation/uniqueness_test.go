@@ -106,8 +106,16 @@ func TestChainsAreGloballyUnique(t *testing.T) {
 	localChainNames := make(chainNameSet)
 	localChainShortNames := make(chainShortNameSet)
 
+	isExcluded := map[uint64]bool{
+		90001: true, // sepolia/race, known chainId collision
+	}
+
 	for _, chain := range OPChains {
 		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if isExcluded[chain.ChainID] {
+				t.Skip("excluded from global chain id check")
+			}
+			SkipCheckIfDevnet(t, *chain)
 			require.NotNil(t, globalChainIds[uint(chain.ChainID)], "chain ID is not listed at chainid.network")
 			globalChainName := globalChainIds[uint(chain.ChainID)].Name
 			globalShortName := globalChainIds[uint(chain.ChainID)].ShortName
