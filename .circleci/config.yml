@@ -112,7 +112,7 @@ jobs:
       - checkout
       - run:
           name: Run codegen
-          command: go run superchain/internal/codegen/main.go
+          command: make codegen
       - run:
           name: Check for changes
           command: git diff --exit-code
