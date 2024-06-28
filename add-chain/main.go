@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -91,18 +92,18 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to get superchain level: %w", err)
 	}
 
-	// Get the current script's directory
-	superchainRepoReadPath, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("error getting current directory: %w", err)
+	// Get the current script filepath
+	_, thisFile, _, ok := runtime.Caller(0)
+	if !ok {
+		panic("error getting current filepath")
 	}
-	superchainRepoWritePath := filepath.Dir(superchainRepoReadPath)
+	superchainRepoRoot := filepath.Dir(filepath.Dir(thisFile))
+
 	envFilename := ".env"
 	envPath := "."
 	if runningTests {
 		envFilename = ".env.test"
 		envPath = "./testdata"
-		superchainRepoReadPath = filepath.Join(superchainRepoReadPath, "testdata")
 	}
 
 	// Load environment variables
@@ -143,7 +144,7 @@ func entrypoint(ctx *cli.Context) error {
 	fmt.Printf("Chain Name:                     %s\n", chainName)
 	fmt.Printf("Chain Short Name:               %s\n", chainShortName)
 	fmt.Printf("Superchain target:              %s\n", superchainTarget)
-	fmt.Printf("Superchain-registry repo dir:   %s\n", superchainRepoReadPath)
+	fmt.Printf("Superchain-registry repo dir:   %s\n", superchainRepoRoot)
 	fmt.Printf("With deployments directory:     %s\n", deploymentsDir)
 	fmt.Printf("Rollup config filepath:         %s\n", rollupConfigPath)
 	fmt.Printf("Public RPC endpoint:            %s\n", publicRPC)
@@ -152,7 +153,7 @@ func entrypoint(ctx *cli.Context) error {
 	fmt.Println()
 
 	// Check if superchain target directory exists
-	targetDir := filepath.Join(superchainRepoWritePath, "superchain", "configs", superchainTarget)
+	targetDir := filepath.Join(superchainRepoRoot, "superchain", "configs", superchainTarget)
 	if _, err := os.Stat(targetDir); os.IsNotExist(err) {
 		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md: %s", targetDir)
 	}
@@ -188,7 +189,7 @@ func entrypoint(ctx *cli.Context) error {
 
 	// Create genesis-system-config data
 	// (this is deprecated, users should load this from L1, when available via SystemConfig)
-	dirPath := filepath.Join(superchainRepoWritePath, "superchain", "extra", "genesis-system-configs", superchainTarget)
+	dirPath := filepath.Join(superchainRepoRoot, "superchain", "extra", "genesis-system-configs", superchainTarget)
 
 	if err := os.MkdirAll(dirPath, 0o755); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
@@ -215,7 +216,7 @@ func entrypoint(ctx *cli.Context) error {
 		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
 	}
 
-	err = writeAddressesToJSON(addresses, superchainRepoWritePath, superchainTarget, chainShortName)
+	err = writeAddressesToJSON(addresses, superchainRepoRoot, superchainTarget, chainShortName)
 	if err != nil {
 		return fmt.Errorf("failed to write contract addresses to JSON file: %w", err)
 	}
