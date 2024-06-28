@@ -192,22 +192,6 @@
     }
   },
   {
-    "name": "race",
-    "identifier": "sepolia/race",
-    "chainId": 90001,
-    "rpc": [
-      "https://racetestnet.io"
-    ],
-    "explorers": [
-      "https://testnet.racescan.io"
-    ],
-    "superchainLevel": 1,
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
     "name": "Zora Sepolia",
     "identifier": "sepolia/zora",
     "chainId": 999999999,
