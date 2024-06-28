@@ -12,7 +12,10 @@ add-chain:
 		--l2-genesis=$(GENESIS_CONFIG) \
 		--bytecodes-dir=$(ROOT_DIR)/superchain/extra/bytecodes \
 		--output=$(ROOT_DIR)/superchain/extra/genesis/$(SUPERCHAIN_TARGET)/$(CHAIN_SHORT_NAME).json.gz
+	make codegen
 
+promote-to-standard:
+	go run ./add-chain promote-to-standard --chain-id=${chain-id}
 
 ### Auto-generated files
 codegen:
