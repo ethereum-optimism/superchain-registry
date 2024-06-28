@@ -64,7 +64,7 @@ func TestAddChain_Main(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			cleanupTestFiles(t, tt.chainName)
+			cleanupTestFiles(t, tt.chainShortName)
 
 			args := []string{
 				"add-chain",
@@ -141,11 +141,11 @@ func checkConfigYaml(t *testing.T, testName, chainShortName string) {
 	require.Equal(t, string(expectedBytes), string(testBytes), "test .yaml contents do not meet expectation")
 }
 
-func cleanupTestFiles(t *testing.T, chainName string) {
+func cleanupTestFiles(t *testing.T, chainShortName string) {
 	paths := []string{
-		addressDir + chainName + ".json",
-		genesisConfigDir + chainName + ".json",
-		ymlConfigDir + chainName + ".yaml",
+		addressDir + chainShortName + ".json",
+		genesisConfigDir + chainShortName + ".json",
+		ymlConfigDir + chainShortName + ".yaml",
 	}
 
 	for _, path := range paths {
@@ -154,5 +154,5 @@ func cleanupTestFiles(t *testing.T, chainName string) {
 			t.Logf("Error removing file %s: %v\n", path, err)
 		}
 	}
-	t.Logf("Removed test artifacts for chain: %s", chainName)
+	t.Logf("Removed test artifacts for chain: %s", chainShortName)
 }
