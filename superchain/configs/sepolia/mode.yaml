@@ -1,4 +1,4 @@
-name: Mode Sepolia
+name: Mode Testnet
 chain_id: 919
 public_rpc: https://sepolia.mode.network
 sequencer_rpc: https://sepolia.mode.network

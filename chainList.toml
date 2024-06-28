@@ -1,5 +1,5 @@
 [[chains]]
-  name = "OP-Mainnet"
+  name = "OP Mainnet"
   identifier = "mainnet/op"
   chain_id = 10
   rpc = ["https://mainnet.optimism.io"]
@@ -21,7 +21,7 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "Lyra"
+  name = "Lyra Chain"
   identifier = "mainnet/lyra"
   chain_id = 957
   rpc = ["https://rpc.lyra.finance"]
@@ -32,7 +32,7 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "Metal"
+  name = "Metal L2"
   identifier = "mainnet/metal"
   chain_id = 1750
   rpc = ["https://rpc.metall2.com"]
@@ -54,7 +54,7 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "Orderly Network"
+  name = "Orderly Mainnet"
   identifier = "mainnet/orderly"
   chain_id = 291
   rpc = ["https://rpc.orderly.network"]
@@ -65,7 +65,7 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "PGN"
+  name = "PGN (Public Goods Network)"
   identifier = "mainnet/pgn"
   chain_id = 424
   rpc = ["https://rpc.publicgoods.network"]
@@ -87,7 +87,7 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "OP-Sepolia"
+  name = "OP Sepolia Testnet"
   identifier = "sepolia/op"
   chain_id = 11155420
   rpc = ["https://sepolia.optimism.io"]
@@ -98,7 +98,7 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "Base Sepolia"
+  name = "Base Sepolia Testnet"
   identifier = "sepolia/base"
   chain_id = 84532
   rpc = ["https://sepolia.base.org"]
@@ -109,7 +109,7 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "Mode Sepolia"
+  name = "Mode Testnet"
   identifier = "sepolia/mode"
   chain_id = 919
   rpc = ["https://sepolia.mode.network"]
@@ -120,7 +120,7 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "PGN Sepolia"
+  name = "Sepolia PGN (Public Goods Network)"
   identifier = "sepolia/pgn"
   chain_id = 58008
   rpc = ["https://sepolia.publicgoods.network"]
@@ -131,7 +131,7 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "Zora Sepolia"
+  name = "Zora Sepolia Testnet"
   identifier = "sepolia/zora"
   chain_id = 999999999
   rpc = ["https://sepolia.rpc.zora.energy"]

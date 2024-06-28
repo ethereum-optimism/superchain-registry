@@ -17,5 +17,4 @@ cd $MONOREPO_DIR
 go run ./op-chain-ops/cmd/registry-data \
   --l2-genesis=$GENESIS_CONFIG \
   --bytecodes-dir=$SUPERCHAIN_REPO/superchain/extra/bytecodes \
-  --output=$SUPERCHAIN_REPO/superchain/extra/genesis/$SUPERCHAIN_TARGET/$CHAIN_NAME.json.gz
-
+  --output=$SUPERCHAIN_REPO/superchain/extra/genesis/$SUPERCHAIN_TARGET/$CHAIN_SHORT_NAME.json.gz

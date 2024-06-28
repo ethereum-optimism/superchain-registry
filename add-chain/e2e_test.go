@@ -20,6 +20,7 @@ const (
 var tests = []struct {
 	name                   string
 	chainName              string
+	chainShortName         string
 	rollupConfigFile       string
 	standardChainCandidate bool
 	chainType              string
@@ -28,18 +29,21 @@ var tests = []struct {
 	{
 		name:             "baseline",
 		chainName:        "testchain_baseline",
+		chainShortName:   "testchain_b",
 		rollupConfigFile: "./testdata/monorepo/op-node/rollup_baseline.json",
 		chainType:        "standard",
 	},
 	{
 		name:             "plasma",
 		chainName:        "testchain_plasma",
+		chainShortName:   "testchain_p",
 		rollupConfigFile: "./testdata/monorepo/op-node/rollup_plasma.json",
 		chainType:        "standard",
 	},
 	{
 		name:                   "standard-candidate",
 		chainName:              "testchain_standard-candidate",
+		chainShortName:         "testchain_sc",
 		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_standard-candidate.json",
 		chainType:              "frontier",
 		standardChainCandidate: true,
@@ -47,6 +51,7 @@ var tests = []struct {
 	{
 		name:             "faultproofs",
 		chainName:        "testchain_faultproofs",
+		chainShortName:   "testchain_fp",
 		rollupConfigFile: "./testdata/monorepo/op-node/rollup_faultproofs.json",
 		chainType:        "standard",
 		deploymentsDir:   "./testdata/monorepo/deployments-faultproofs",
@@ -59,12 +64,13 @@ func TestAddChain_Main(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			cleanupTestFiles(t, tt.chainName)
+			cleanupTestFiles(t, tt.chainShortName)
 
 			args := []string{
 				"add-chain",
 				"--chain-type=" + tt.chainType,
 				"--chain-name=" + tt.chainName,
+				"--chain-short-name=" + tt.chainShortName,
 				"--rollup-config=" + tt.rollupConfigFile,
 				"--standard-chain-candidate=" + strconv.FormatBool(tt.standardChainCandidate),
 				"--test=true",
@@ -77,9 +83,9 @@ func TestAddChain_Main(t *testing.T) {
 			err := app.Run(args)
 			require.NoError(t, err, "add-chain app failed")
 
-			checkConfigYaml(t, tt.name, tt.chainName)
-			compareJsonFiles(t, "superchain/extra/addresses/sepolia/", tt.name, tt.chainName)
-			compareJsonFiles(t, "superchain/extra/genesis-system-configs/sepolia/", tt.name, tt.chainName)
+			checkConfigYaml(t, tt.name, tt.chainShortName)
+			compareJsonFiles(t, "superchain/extra/addresses/sepolia/", tt.name, tt.chainShortName)
+			compareJsonFiles(t, "superchain/extra/genesis-system-configs/sepolia/", tt.name, tt.chainShortName)
 		})
 	}
 }
@@ -102,7 +108,7 @@ func TestAddChain_CheckRollupConfig(t *testing.T) {
 	}
 }
 
-func compareJsonFiles(t *testing.T, dirPath, testName, chainName string) {
+func compareJsonFiles(t *testing.T, dirPath, testName, chainShortName string) {
 	expectedBytes, err := os.ReadFile("./testdata/" + dirPath + "expected_" + testName + ".json")
 	require.NoError(t, err, "failed to read expected.json file from "+dirPath)
 
@@ -110,7 +116,7 @@ func compareJsonFiles(t *testing.T, dirPath, testName, chainName string) {
 	err = json.Unmarshal(expectedBytes, &expectJSON)
 	require.NoError(t, err, "failed to unmarshal expected.json file from "+dirPath)
 
-	testBytes, err := os.ReadFile("../" + dirPath + chainName + ".json")
+	testBytes, err := os.ReadFile("../" + dirPath + chainShortName + ".json")
 	require.NoError(t, err, "failed to read test generated json file from "+dirPath)
 
 	var testJSON map[string]interface{}
@@ -121,7 +127,7 @@ func compareJsonFiles(t *testing.T, dirPath, testName, chainName string) {
 	require.Equal(t, diff, "", "expected json (-) does not match test json (+): %s", diff)
 }
 
-func checkConfigYaml(t *testing.T, testName, chainName string) {
+func checkConfigYaml(t *testing.T, testName, chainShortName string) {
 	expectedBytes, err := os.ReadFile("./testdata/superchain/configs/sepolia/expected_" + testName + ".yaml")
 	require.NoError(t, err, "failed to read expected.yaml config file: %w", err)
 
@@ -129,17 +135,17 @@ func checkConfigYaml(t *testing.T, testName, chainName string) {
 	err = yaml.Unmarshal(expectedBytes, &expectedYaml)
 	require.NoError(t, err, "failed to unmarshal expected.yaml config file: %w", err)
 
-	testBytes, err := os.ReadFile(ymlConfigDir + chainName + ".yaml")
+	testBytes, err := os.ReadFile(ymlConfigDir + chainShortName + ".yaml")
 	require.NoError(t, err, "failed to read testchain.yaml config file: %w", err)
 
 	require.Equal(t, string(expectedBytes), string(testBytes), "test .yaml contents do not meet expectation")
 }
 
-func cleanupTestFiles(t *testing.T, chainName string) {
+func cleanupTestFiles(t *testing.T, chainShortName string) {
 	paths := []string{
-		addressDir + chainName + ".json",
-		genesisConfigDir + chainName + ".json",
-		ymlConfigDir + chainName + ".yaml",
+		addressDir + chainShortName + ".json",
+		genesisConfigDir + chainShortName + ".json",
+		ymlConfigDir + chainShortName + ".yaml",
 	}
 
 	for _, path := range paths {
@@ -148,5 +154,5 @@ func cleanupTestFiles(t *testing.T, chainName string) {
 			t.Logf("Error removing file %s: %v\n", path, err)
 		}
 	}
-	t.Logf("Removed test artifacts for chain: %s", chainName)
+	t.Logf("Removed test artifacts for chain: %s", chainShortName)
 }

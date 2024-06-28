@@ -1,4 +1,4 @@
-name: PGN
+name: PGN (Public Goods Network)
 chain_id: 424
 public_rpc: https://rpc.publicgoods.network
 sequencer_rpc: https://rpc.publicgoods.network

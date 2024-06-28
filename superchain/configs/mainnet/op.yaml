@@ -1,4 +1,4 @@
-name: OP-Mainnet
+name: OP Mainnet
 chain_id: 10
 public_rpc: https://mainnet.optimism.io
 sequencer_rpc: https://mainnet-sequencer.optimism.io

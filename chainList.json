@@ -1,6 +1,6 @@
 [
   {
-    "name": "OP-Mainnet",
+    "name": "OP Mainnet",
     "identifier": "mainnet/op",
     "chainId": 10,
     "rpc": [
@@ -32,7 +32,7 @@
     }
   },
   {
-    "name": "Lyra",
+    "name": "Lyra Chain",
     "identifier": "mainnet/lyra",
     "chainId": 957,
     "rpc": [
@@ -48,7 +48,7 @@
     }
   },
   {
-    "name": "Metal",
+    "name": "Metal L2",
     "identifier": "mainnet/metal",
     "chainId": 1750,
     "rpc": [
@@ -80,7 +80,7 @@
     }
   },
   {
-    "name": "Orderly Network",
+    "name": "Orderly Mainnet",
     "identifier": "mainnet/orderly",
     "chainId": 291,
     "rpc": [
@@ -96,7 +96,7 @@
     }
   },
   {
-    "name": "PGN",
+    "name": "PGN (Public Goods Network)",
     "identifier": "mainnet/pgn",
     "chainId": 424,
     "rpc": [
@@ -128,7 +128,7 @@
     }
   },
   {
-    "name": "OP-Sepolia",
+    "name": "OP Sepolia Testnet",
     "identifier": "sepolia/op",
     "chainId": 11155420,
     "rpc": [
@@ -144,7 +144,7 @@
     }
   },
   {
-    "name": "Base Sepolia",
+    "name": "Base Sepolia Testnet",
     "identifier": "sepolia/base",
     "chainId": 84532,
     "rpc": [
@@ -160,7 +160,7 @@
     }
   },
   {
-    "name": "Mode Sepolia",
+    "name": "Mode Testnet",
     "identifier": "sepolia/mode",
     "chainId": 919,
     "rpc": [
@@ -176,7 +176,7 @@
     }
   },
   {
-    "name": "PGN Sepolia",
+    "name": "Sepolia PGN (Public Goods Network)",
     "identifier": "sepolia/pgn",
     "chainId": 58008,
     "rpc": [
@@ -192,7 +192,7 @@
     }
   },
   {
-    "name": "Zora Sepolia",
+    "name": "Zora Sepolia Testnet",
     "identifier": "sepolia/zora",
     "chainId": 999999999,
     "rpc": [

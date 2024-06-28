@@ -1,4 +1,4 @@
-name: OP-Sepolia
+name: OP Sepolia Testnet
 chain_id: 11155420
 public_rpc: "https://sepolia.optimism.io"
 sequencer_rpc: "https://sepolia-sequencer.optimism.io"
