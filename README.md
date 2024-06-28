@@ -38,27 +38,22 @@ You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](http
 To contribute a standard OP-Stack chain configuration, in addition to user-supplied metadata (chain name) the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
 
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
-
-### 3. Run script
-
 #### Frontier chains
 
 Frontier chains are chains with customizations beyond the standard OP
 Stack configuration. To contribute a frontier OP-Stack chain
-configuration, you can run:
+configuration, you set the `CHAIN_TYPE=frontier` in the `.env` file.
 
-
-```shell
-sh scripts/add-chain.sh frontier
-```
 
 #### Standard chains
 A chain may meet the definition of a **standard** chain. Adding a standard chain is a two-step process.
 
-First, the chain should be added as a frontier chain but with `--standard-chain-candidate` flag set:
+First, the chain should be added as a frontier chain as above, but with `STANDARD_CHAIN_CANDIDATE=true` in the `.env` file.
+
+### 3. Run script
 
 ```shell
-sh scripts/add-chain.sh frontier --standard-chain-candidate
+make add-chain
 ```
 
 The remaining steps should then be followed to merge the config data into the registry -- a prerequisite for [promoting the chain](#promote-a-chain-to-standard) to a standard chain.

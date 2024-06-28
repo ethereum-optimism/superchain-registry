@@ -1,3 +1,19 @@
+#!make
+ROOT_DIR:=$(CURDIR)
+include .env
+
+### Adding a chain
+.PHONY: add-chain
+add-chain:
+	go run ./add-chain
+	# go run ./add-chain check-rollup-config
+	mkdir -p ./superchain/extra/genesis/$(SUPERCHAIN_TARGET)
+	cd $(MONOREPO_DIR) && go run ./op-chain-ops/cmd/registry-data \
+		--l2-genesis=$(GENESIS_CONFIG) \
+		--bytecodes-dir=$(ROOT_DIR)/superchain/extra/bytecodes \
+		--output=$(ROOT_DIR)/superchain/extra/genesis/$(SUPERCHAIN_TARGET)/$(CHAIN_SHORT_NAME).json.gz
+
+
 ### Auto-generated files
 codegen:
 	go run superchain/internal/codegen/main.go
