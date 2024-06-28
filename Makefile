@@ -9,6 +9,10 @@ add-chain:
 	go run ./add-chain check-rollup-config
 	go run ./add-chain compress-genesis
 	go run ./add-chain check-genesis
+	make codegen
+
+promote-to-standard:
+	go run ./add-chain promote-to-standard --chain-id=${chain-id}
 
 ### Auto-generated files
 codegen:
