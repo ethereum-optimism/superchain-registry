@@ -1,6 +1,6 @@
 [[chains]]
   name = "OP Mainnet"
-  identifier = "mainnet/oeth"
+  identifier = "mainnet/op"
   chain_id = 10
   rpc = ["https://mainnet.optimism.io"]
   explorers = ["https://explorer.optimism.io"]
@@ -33,7 +33,7 @@
 
 [[chains]]
   name = "Metal L2"
-  identifier = "mainnet/metall2"
+  identifier = "mainnet/metal"
   chain_id = 1750
   rpc = ["https://rpc.metall2.com"]
   explorers = ["https://explorer.metall2.com"]
@@ -66,7 +66,7 @@
 
 [[chains]]
   name = "PGN (Public Goods Network)"
-  identifier = "mainnet/PGN"
+  identifier = "mainnet/pgn"
   chain_id = 424
   rpc = ["https://rpc.publicgoods.network"]
   explorers = ["https://explorer.publicgoods.network"]
@@ -88,7 +88,7 @@
 
 [[chains]]
   name = "OP Sepolia Testnet"
-  identifier = "sepolia/opsep"
+  identifier = "sepolia/op"
   chain_id = 11155420
   rpc = ["https://sepolia.optimism.io"]
   explorers = ["https://sepolia-optimistic.etherscan.io"]
@@ -99,7 +99,7 @@
 
 [[chains]]
   name = "Base Sepolia Testnet"
-  identifier = "sepolia/basesep"
+  identifier = "sepolia/base"
   chain_id = 84532
   rpc = ["https://sepolia.base.org"]
   explorers = ["https://sepolia-explorer.base.org"]
@@ -110,7 +110,7 @@
 
 [[chains]]
   name = "Mode Testnet"
-  identifier = "sepolia/modesep"
+  identifier = "sepolia/mode"
   chain_id = 919
   rpc = ["https://sepolia.mode.network"]
   explorers = ["https://sepolia.explorer.mode.network"]
@@ -121,7 +121,7 @@
 
 [[chains]]
   name = "Sepolia PGN (Public Goods Network)"
-  identifier = "sepolia/sepPGN"
+  identifier = "sepolia/pgn"
   chain_id = 58008
   rpc = ["https://sepolia.publicgoods.network"]
   explorers = ["https://explorer.sepolia.publicgoods.network"]
@@ -143,7 +143,7 @@
 
 [[chains]]
   name = "Zora Sepolia Testnet"
-  identifier = "sepolia/zsep"
+  identifier = "sepolia/zora"
   chain_id = 999999999
   rpc = ["https://sepolia.rpc.zora.energy"]
   explorers = ["https://sepolia.explorer.zora.energy"]
@@ -154,7 +154,7 @@
 
 [[chains]]
   name = "OP Labs Sepolia devnet 0"
-  identifier = "sepolia-dev-0/opdev0"
+  identifier = "sepolia-dev-0/oplabs-devnet-0"
   chain_id = 11155421
   rpc = [""]
   explorers = [""]
@@ -165,7 +165,7 @@
 
 [[chains]]
   name = "Base devnet 0"
-  identifier = "sepolia-dev-0/basedev0"
+  identifier = "sepolia-dev-0/base-devnet-0"
   chain_id = 11763072
   rpc = [""]
   explorers = [""]

@@ -1,7 +1,7 @@
 [
   {
     "name": "OP Mainnet",
-    "identifier": "mainnet/oeth",
+    "identifier": "mainnet/op",
     "chainId": 10,
     "rpc": [
       "https://mainnet.optimism.io"
@@ -49,7 +49,7 @@
   },
   {
     "name": "Metal L2",
-    "identifier": "mainnet/metall2",
+    "identifier": "mainnet/metal",
     "chainId": 1750,
     "rpc": [
       "https://rpc.metall2.com"
@@ -97,7 +97,7 @@
   },
   {
     "name": "PGN (Public Goods Network)",
-    "identifier": "mainnet/PGN",
+    "identifier": "mainnet/pgn",
     "chainId": 424,
     "rpc": [
       "https://rpc.publicgoods.network"
@@ -129,7 +129,7 @@
   },
   {
     "name": "OP Sepolia Testnet",
-    "identifier": "sepolia/opsep",
+    "identifier": "sepolia/op",
     "chainId": 11155420,
     "rpc": [
       "https://sepolia.optimism.io"
@@ -145,7 +145,7 @@
   },
   {
     "name": "Base Sepolia Testnet",
-    "identifier": "sepolia/basesep",
+    "identifier": "sepolia/base",
     "chainId": 84532,
     "rpc": [
       "https://sepolia.base.org"
@@ -161,7 +161,7 @@
   },
   {
     "name": "Mode Testnet",
-    "identifier": "sepolia/modesep",
+    "identifier": "sepolia/mode",
     "chainId": 919,
     "rpc": [
       "https://sepolia.mode.network"
@@ -177,7 +177,7 @@
   },
   {
     "name": "Sepolia PGN (Public Goods Network)",
-    "identifier": "sepolia/sepPGN",
+    "identifier": "sepolia/pgn",
     "chainId": 58008,
     "rpc": [
       "https://sepolia.publicgoods.network"
@@ -209,7 +209,7 @@
   },
   {
     "name": "Zora Sepolia Testnet",
-    "identifier": "sepolia/zsep",
+    "identifier": "sepolia/zora",
     "chainId": 999999999,
     "rpc": [
       "https://sepolia.rpc.zora.energy"
@@ -225,7 +225,7 @@
   },
   {
     "name": "OP Labs Sepolia devnet 0",
-    "identifier": "sepolia-dev-0/opdev0",
+    "identifier": "sepolia-dev-0/oplabs-devnet-0",
     "chainId": 11155421,
     "rpc": [
       ""
@@ -241,7 +241,7 @@
   },
   {
     "name": "Base devnet 0",
-    "identifier": "sepolia-dev-0/basedev0",
+    "identifier": "sepolia-dev-0/base-devnet-0",
     "chainId": 11763072,
     "rpc": [
       ""
