@@ -79,18 +79,7 @@ func main() {
 }
 
 func entrypoint(ctx *cli.Context) error {
-	chainType := ctx.String(ChainTypeFlag.Name)
 	runningTests := ctx.Bool(TestFlag.Name)
-	standardChainCandidate := ctx.Bool(StandardChainCandidateFlag.Name)
-
-	if standardChainCandidate && chainType == "standard" {
-		return errors.New("cannot set both chainType=standard and standard-chain-candidate=true")
-	}
-
-	superchainLevel, err := getSuperchainLevel(chainType)
-	if err != nil {
-		return fmt.Errorf("failed to get superchain level: %w", err)
-	}
 
 	// Get the current script filepath
 	_, thisFile, _, ok := runtime.Caller(0)
@@ -120,8 +109,16 @@ func entrypoint(ctx *cli.Context) error {
 	superchainTarget := viper.GetString("SUPERCHAIN_TARGET")
 	chainName := viper.GetString("CHAIN_NAME")
 	chainShortName := viper.GetString("CHAIN_SHORT_NAME")
+	chainType := viper.GetString("CHAIN_TYPE")
+	standardChainCandidate := viper.GetBool("STANDARD_CHAIN_CANDIDATE")
 
 	// Allow cli flags to override env vars
+	if ctx.IsSet("chain-type") {
+		chainType = ctx.String("chain-type")
+	}
+	if ctx.IsSet("standard-chain-candidate") {
+		standardChainCandidate = ctx.Bool("standard-chain-candidate")
+	}
 	if ctx.IsSet("chain-name") {
 		chainName = ctx.String("chain-name")
 	}
@@ -139,6 +136,15 @@ func entrypoint(ctx *cli.Context) error {
 
 	if chainShortName == "" {
 		return fmt.Errorf("must set chain-short-name (CHAIN_SHORT_NAME)")
+	}
+
+	if standardChainCandidate && chainType == "standard" {
+		return errors.New("cannot set both chainType=standard and standard-chain-candidate=true")
+	}
+
+	superchainLevel, err := getSuperchainLevel(chainType)
+	if err != nil {
+		return fmt.Errorf("failed to get superchain level: %w", err)
 	}
 
 	fmt.Printf("Chain Name:                     %s\n", chainName)

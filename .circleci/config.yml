@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   go: circleci/go@1.8.0
+  node: circleci/node@5.2.0
   slack: circleci/slack@4.10.1
 
 commands:
@@ -24,7 +25,7 @@ jobs:
       tag: '1.21'
     steps:
       - checkout
-      - run:  golangci-lint run superchain/... validation/... add-chain/...
+      - run:  make lint-all
   golang-modules-tidy:
     executor:
       name: go/default  # is based on cimg/go
@@ -32,17 +33,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: tidy superchain module
-          command: go mod tidy
-          working_directory: superchain
-      - run:
-          name: tidy validation module
-          command: go mod tidy
-          working_directory: validation
-      - run:
-          name: tidy add-chain module
-          command: go mod tidy
-          working_directory: add-chain
+          name: tidy
+          command: make tidy-all
       - run:
           name: check git tree is clean
           command: git diff --exit-code
@@ -71,23 +63,13 @@ jobs:
             forge --version
       - run:
           name: run superchain module tests
-          command: go test ./... -v
-          working_directory: superchain
+          command: make test-superchain
       - run:
           name: run validation module tests
-          command: go test ./... -v
-          working_directory: validation
+          command: make test-validation
       - run:
-          name: run add-chain module main test
-          # We force this test to run first because it creates artifacts that must
-          # be imported by subsequent tests
-          command: go test -run TestAddChain_Main -v
-          working_directory: add-chain
-      - run:
-          name: run add-chain module additional tests
-          # Now run all other tests (excluding TestAddChain_Main)
-          command: go test -run '[^TestAddChain_Main]' -v
-          working_directory: add-chain
+          name: run add-chain module tests
+          command: make test-add-chain
       - notify-failures-on-main
   publish-bot:
     environment:
@@ -110,12 +92,12 @@ jobs:
       tag: '1.21'
     steps:
       - checkout
+      - node/install:
+          install-yarn: false
+          node-version: '14.16.1'
       - run:
           name: Run codegen
-          command: go run superchain/internal/codegen/main.go
-      - run:
-          name: Check for changes
-          command: git diff --exit-code
+          command: make codegen
 
 workflows:
   hourly:
