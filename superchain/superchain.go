@@ -84,7 +84,6 @@ const (
 
 type ChainConfig struct {
 	Name         string `yaml:"name"`
-	ShortName    string `yaml:"short_name"`
 	ChainID      uint64 `yaml:"chain_id"`
 	PublicRPC    string `yaml:"public_rpc"`
 	SequencerRPC string `yaml:"sequencer_rpc"`

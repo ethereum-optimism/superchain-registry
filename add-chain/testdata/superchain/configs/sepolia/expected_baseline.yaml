@@ -1,5 +1,4 @@
 name: testchain_baseline
-short_name: testchain_b
 chain_id: 4206900
 public_rpc: http://awe.some.rpc
 sequencer_rpc: http://awe.some.seq.rpc

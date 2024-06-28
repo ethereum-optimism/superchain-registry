@@ -35,7 +35,7 @@ You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](http
 
 ### 2. Set env vars
 
-To contribute a standard OP-Stack chain configuration, the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
+To contribute a standard OP-Stack chain configuration, in addition to user-supplied metadata (chain name) the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
 
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 

@@ -173,7 +173,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to infer fault proofs status of chain: %w", err)
 	}
 
-	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, chainShortName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate, isFaultProofs)
+	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate, isFaultProofs)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
@@ -183,6 +183,8 @@ func entrypoint(ctx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("error generating chain config .yaml file: %w", err)
 	}
+
+	fmt.Printf("Wrote config for new chain with identifier %s", rollupConfig.Identifier())
 
 	// Create genesis-system-config data
 	// (this is deprecated, users should load this from L1, when available via SystemConfig)

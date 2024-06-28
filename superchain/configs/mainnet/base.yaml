@@ -1,5 +1,4 @@
 name: Base
-short_name: base
 chain_id: 8453
 public_rpc: https://mainnet.base.org
 sequencer_rpc: https://mainnet-sequencer.base.org

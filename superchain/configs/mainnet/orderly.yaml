@@ -1,5 +1,4 @@
 name: Orderly Mainnet
-short_name: orderly
 chain_id: 291
 public_rpc: https://rpc.orderly.network
 sequencer_rpc: https://rpc.orderly.network

@@ -1,5 +1,4 @@
 name: Mode
-short_name: mode
 chain_id: 34443
 public_rpc: https://mainnet.mode.network
 sequencer_rpc: https://mainnet-sequencer.mode.network

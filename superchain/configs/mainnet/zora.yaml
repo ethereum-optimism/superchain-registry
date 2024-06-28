@@ -1,5 +1,4 @@
 name: Zora
-short_name: zora
 chain_id: 7777777
 public_rpc: https://rpc.zora.energy
 sequencer_rpc: https://rpc.zora.energy

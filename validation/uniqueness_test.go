@@ -40,16 +40,6 @@ func (s chainNameSet) AddIfUnique(name string) error {
 	return nil
 }
 
-type chainShortNameSet map[string]bool
-
-func (s chainShortNameSet) AddIfUnique(name string) error {
-	if s[name] {
-		return fmt.Errorf("Chain with short name %s is duplicated", name)
-	}
-	s[name] = true
-	return nil
-}
-
 func getGlobalChains() (map[uint]*uniqueProperties, error) {
 	chainListUrl := "https://chainid.network/chains_mini.json"
 
@@ -115,7 +105,6 @@ func TestChainsAreGloballyUnique(t *testing.T) {
 	}
 	localChainIds := make(chainIDSet)
 	localChainNames := make(chainNameSet)
-	localChainShortNames := make(chainShortNameSet)
 
 	isExcluded := map[uint64]bool{
 		90001:    true, // sepolia/race, known chainId collision
@@ -131,15 +120,10 @@ func TestChainsAreGloballyUnique(t *testing.T) {
 			props := globalChainIds[uint(chain.ChainID)]
 			require.NotNil(t, props, "chain ID is not listed at chainid.network")
 			globalChainName := props.Name
-			globalShortName := props.ShortName
 			assert.Equal(t, globalChainName, chain.Name,
 				"Local chain name for %d does not match name from chainid.network", chain.ChainID)
-			assert.Equal(t, chain.ShortName, globalShortName,
-				"Local short chain name for %d does not match name from chainid.network", chain.ChainID)
-
 			assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
 			assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
-			assert.NoError(t, localChainShortNames.AddIfUnique(chain.ShortName))
 			normalizedURL, err := normalizeURL(chain.PublicRPC)
 			require.NoError(t, err)
 			assert.Contains(t, props.RPC, normalizedURL, "Specified RPC not specified in chainid.network")

@@ -1,5 +1,4 @@
 name: testchain_standard-candidate
-short_name: testchain_sc
 chain_id: 4206902
 public_rpc: http://awe.some.rpc
 sequencer_rpc: http://awe.some.seq.rpc

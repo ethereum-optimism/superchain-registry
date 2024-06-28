@@ -40,7 +40,6 @@ func (c *JSONChainConfig) VerifyPlasma() error {
 func constructChainConfig(
 	inputFilePath,
 	chainName,
-	chainShortName,
 	publicRPC,
 	sequencerRPC,
 	explorer string,
@@ -65,7 +64,6 @@ func constructChainConfig(
 
 	chainConfig := superchain.ChainConfig{
 		Name:                   chainName,
-		ShortName:              chainShortName,
 		ChainID:                jsonConfig.ChainID,
 		PublicRPC:              publicRPC,
 		SequencerRPC:           sequencerRPC,

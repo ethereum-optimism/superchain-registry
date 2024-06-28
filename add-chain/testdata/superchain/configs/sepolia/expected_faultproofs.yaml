@@ -1,5 +1,4 @@
 name: testchain_faultproofs
-short_name: testchain_fp
 chain_id: 4206903
 public_rpc: http://awe.some.rpc
 sequencer_rpc: http://awe.some.seq.rpc
