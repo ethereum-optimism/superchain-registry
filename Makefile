@@ -1,3 +1,15 @@
+#!make
+ROOT_DIR:=$(CURDIR)
+include .env
+
+### Adding a chain
+.PHONY: add-chain
+add-chain:
+	go run ./add-chain
+	go run ./add-chain check-rollup-config
+	go run ./add-chain compress-genesis
+	go run ./add-chain check-genesis
+
 ### Auto-generated files
 codegen:
 	go run superchain/internal/codegen/main.go
