@@ -41,6 +41,11 @@ func (s chainNameSet) AddIfUnique(name string) error {
 }
 
 func getGlobalChains() (map[uint]*uniqueProperties, error) {
+	// The following URL exposes the list of chains from
+	// https://github.com/ethereum-lists/chains, which is
+	// the leading repository of EVM chain information.
+	// It is where EVM chains go to claim a chainID and to
+	// becomes discoverable by wallets and users in general.
 	chainListUrl := "https://chainid.network/chains_mini.json"
 
 	client := http.Client{}
