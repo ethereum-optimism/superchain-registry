@@ -97,7 +97,7 @@ jobs:
           node-version: '14.16.1'
       - run:
           name: Run codegen
-          command: make codegen-all
+          command: make codegen
 
 workflows:
   hourly:
