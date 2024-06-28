@@ -24,7 +24,7 @@ jobs:
       tag: '1.21'
     steps:
       - checkout
-      - run:  golangci-lint run superchain/... validation/... add-chain/...
+      - run:  make lint-all
   golang-modules-tidy:
     executor:
       name: go/default  # is based on cimg/go
@@ -32,17 +32,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: tidy superchain module
-          command: go mod tidy
-          working_directory: superchain
-      - run:
-          name: tidy validation module
-          command: go mod tidy
-          working_directory: validation
-      - run:
-          name: tidy add-chain module
-          command: go mod tidy
-          working_directory: add-chain
+          name: tidy
+          command: make tidy-all
       - run:
           name: check git tree is clean
           command: git diff --exit-code
@@ -71,23 +62,14 @@ jobs:
             forge --version
       - run:
           name: run superchain module tests
-          command: go test ./... -v
-          working_directory: superchain
+          command: make test-superchain
       - run:
           name: run validation module tests
-          command: go test ./... -v
+          command: make test-validation
           working_directory: validation
       - run:
-          name: run add-chain module main test
-          # We force this test to run first because it creates artifacts that must
-          # be imported by subsequent tests
-          command: go test -run TestAddChain_Main -v
-          working_directory: add-chain
-      - run:
-          name: run add-chain module additional tests
-          # Now run all other tests (excluding TestAddChain_Main)
-          command: go test -run '[^TestAddChain_Main]' -v
-          working_directory: add-chain
+          name: run add-chain module tests
+          command: make test-add-chain
       - notify-failures-on-main
   publish-bot:
     environment:
