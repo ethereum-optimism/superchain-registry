@@ -1,6 +1,10 @@
 ### Auto-generated files
-codegen:
+codegen-all: go-codegen js-codegen
+
+go-codegen:
 	go run superchain/internal/codegen/main.go
+
+js-codegen:
 	node ./scripts/codegen.js
 
 ### Linting
