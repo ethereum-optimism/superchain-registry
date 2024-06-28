@@ -87,9 +87,11 @@ jobs:
           name: Build and publish package on NPM 📦
           command: pnpm release
   check-codegen:
-    executor:
-      name: go/default  # is based on cimg/go
-      tag: '1.21'
+    docker:
+      - image: circleci/golang:1.20
+        name: primary
+      - image: node:14-alpine
+        name: nodejs
     steps:
       - checkout
       - run:
