@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -85,12 +86,14 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to get superchain level: %w", err)
 	}
 
-	// Get the current script's directory
-	superchainRepoReadPath, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("error getting current directory: %w", err)
+	// Get the current script filepath
+	_, thisFile, _, ok := runtime.Caller(0)
+	if !ok {
+		panic("error getting current filepath")
 	}
+	superchainRepoReadPath := filepath.Dir(thisFile)
 	superchainRepoWritePath := filepath.Dir(superchainRepoReadPath)
+
 	envFilename := ".env"
 	envPath := "."
 	if runningTests {
