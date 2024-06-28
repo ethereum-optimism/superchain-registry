@@ -45,3 +45,9 @@ tidy-superchain:
 tidy-validation:
 	cd validation && go mod tidy
 
+### Removing a chain, example: make remove-chain superchain_target=sepolia chain=mychain
+remove-chain:
+	rm superchain/configs/$(superchain_target)/$(chain).yaml
+	rm superchain/extra/addresses/$(superchain_target)/$(chain).json
+	rm superchain/extra/genesis-system-configs/$(superchain_target)/$(chain).json
+	rm superchain/extra/genesis/$(superchain_target)/$(chain).json.gz
