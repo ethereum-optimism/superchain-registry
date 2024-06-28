@@ -14,6 +14,7 @@ import (
 var ChainIdFlag = &cli.Uint64Flag{
 	Name:     "chain-id",
 	Usage:    "ID of chain to promote",
+	EnvVars:  []string{"CHAIN_ID"},
 	Required: true,
 }
 

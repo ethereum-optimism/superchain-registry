@@ -26,24 +26,28 @@ var (
 	ChainTypeFlag = &cli.StringFlag{
 		Name:     "chain-type",
 		Value:    "frontier",
+		EnvVars:  []string{"CHAIN_TYPE"},
 		Usage:    "Type of chain (either standard or frontier)",
 		Required: false,
 	}
 	ChainNameFlag = &cli.StringFlag{
 		Name:     "chain-name",
 		Value:    "",
+		EnvVars:  []string{"CHAIN_NAME"},
 		Usage:    "Custom name of the chain",
 		Required: false,
 	}
 	RollupConfigFlag = &cli.StringFlag{
 		Name:     "rollup-config",
 		Value:    "",
+		EnvVars:  []string{"ROLLUP_CONFIG"},
 		Usage:    "Filepath to rollup.json input file",
 		Required: false,
 	}
 	DeploymentsDirFlag = &cli.StringFlag{
 		Name:     "deployments-dir",
 		Value:    "",
+		EnvVars:  []string{"DEPLOYMENTS_DIR"},
 		Usage:    "Directory containing L1 Contract deployment addresses",
 		Required: false,
 	}
@@ -56,6 +60,7 @@ var (
 	StandardChainCandidateFlag = &cli.BoolFlag{
 		Name:     "standard-chain-candidate",
 		Value:    false,
+		EnvVars:  []string{"STANDARD_CHAIN_CANDIDATE"},
 		Usage:    "Whether the chain is a candidate to become a standard chain. Will be subject to most standard chain validation checks",
 		Required: false,
 	}
@@ -115,6 +120,9 @@ func entrypoint(ctx *cli.Context) error {
 	chainName := viper.GetString("CHAIN_NAME")
 
 	// Allow cli flags to override env vars
+	if ctx.IsSet("chain-type") {
+		chainType = ctx.String("chain-type")
+	}
 	if ctx.IsSet("chain-name") {
 		chainName = ctx.String("chain-name")
 	}
@@ -126,6 +134,10 @@ func entrypoint(ctx *cli.Context) error {
 	if ctx.IsSet(DeploymentsDirFlag.Name) {
 		deploymentsDir = ctx.String(DeploymentsDirFlag.Name)
 	}
+	if ctx.IsSet("standard-chain-candidate") {
+		standardChainCandidate = ctx.Bool("standard-chain-candidate")
+	}
+
 
 	fmt.Printf("Chain Name:                     %s\n", chainName)
 	fmt.Printf("Superchain target:              %s\n", superchainTarget)
