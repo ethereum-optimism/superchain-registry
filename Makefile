@@ -1,6 +1,6 @@
 #!make
+include .env
 ROOT_DIR:=$(CURDIR)
-include ./.env
 
 ### Adding a chain
 .PHONY: add-chain
