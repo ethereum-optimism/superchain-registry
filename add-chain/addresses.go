@@ -158,6 +158,7 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 	_, err := os.Stat(deployFilePath)
 
 	if err != nil {
+		fmt.Printf("failed to find .deploy file. Will look for legacy .json files")
 		// Use legacy deployment artifact schema
 
 		_, err := os.ReadFile(filepath.Join(deploymentsDir, AnchorStateRegistryProxy+".json"))

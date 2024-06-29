@@ -77,13 +77,14 @@ func entrypoint(ctx *cli.Context) error {
 	sequencerRPC := os.Getenv("SCR_SEQUENCER_RPC")
 	explorer := os.Getenv("SCR_EXPLORER")
 	superchainTarget := os.Getenv("SCR_SUPERCHAIN_TARGET")
+	monorepoDir := os.Getenv("SCR_MONOREPO_DIR")
 
 	chainName := ctx.String(flags.ChainNameFlag.Name)
 	rollupConfigPath := ctx.String(flags.RollupConfigFlag.Name)
 	deploymentsDir := ctx.String(flags.DeploymentsDirFlag.Name)
 	chainShortName := ctx.String(flags.ChainShortNameFlag.Name)
 	if chainShortName == "" {
-		return fmt.Errorf("must set chain-short-name (CHAIN_SHORT_NAME)")
+		return fmt.Errorf("must set chain-short-name (SCR_CHAIN_SHORT_NAME)")
 	}
 
 	// Get the current script filepath
@@ -97,6 +98,7 @@ func entrypoint(ctx *cli.Context) error {
 	fmt.Printf("Chain Short Name:               %s\n", chainShortName)
 	fmt.Printf("Superchain target:              %s\n", superchainTarget)
 	fmt.Printf("Superchain-registry repo dir:   %s\n", superchainRepoRoot)
+	fmt.Printf("Monorepo dir:                   %s\n", monorepoDir)
 	fmt.Printf("Deployments directory:          %s\n", deploymentsDir)
 	fmt.Printf("Rollup config filepath:         %s\n", rollupConfigPath)
 	fmt.Printf("Public RPC endpoint:            %s\n", publicRPC)
