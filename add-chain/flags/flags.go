@@ -1,10 +1,10 @@
-package main
+package flags
 
 import (
 	"github.com/urfave/cli/v2"
 )
 
-const EnvVarPrefix = "SCR_"
+const EnvVarPrefix = "SCR"
 
 func prefixEnvVars(names ...string) []string {
 	envs := make([]string, 0, len(names))
@@ -38,10 +38,9 @@ var (
 	}
 	RollupConfigFlag = &cli.StringFlag{
 		Name:     "rollup-config",
-		Value:    "",
 		EnvVars:  prefixEnvVars("ROLLUP_CONFIG"),
 		Usage:    "Filepath to rollup.json input file",
-		Required: false,
+		Required: true,
 	}
 	DeploymentsDirFlag = &cli.StringFlag{
 		Name:     "deployments-dir",
@@ -57,10 +56,9 @@ var (
 		Usage:    "Whether the chain is a candidate to become a standard chain. Will be subject to most standard chain validation checks",
 		Required: false,
 	}
-	TestFlag = &cli.BoolFlag{
-		Name:     "test",
-		Value:    false,
-		Usage:    "Indicates if go tests are being run",
-		Required: false,
+	ChainIdFlag = &cli.Uint64Flag{
+		Name:     "chain-id",
+		Usage:    "ID of chain to promote",
+		Required: true,
 	}
 )

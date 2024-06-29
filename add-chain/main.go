@@ -10,6 +10,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ethereum-optimism/superchain-registry/add-chain/cmd"
+	"github.com/ethereum-optimism/superchain-registry/add-chain/config"
+	"github.com/ethereum-optimism/superchain-registry/add-chain/flags"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 )
@@ -18,15 +21,15 @@ var app = &cli.App{
 	Name:  "add-chain",
 	Usage: "Add a new chain to the superchain-registry",
 	Flags: []cli.Flag{
-		ChainTypeFlag,
-		ChainNameFlag,
-		ChainShortNameFlag,
-		RollupConfigFlag,
-		DeploymentsDirFlag,
-		StandardChainCandidateFlag,
+		flags.ChainTypeFlag,
+		flags.ChainNameFlag,
+		flags.ChainShortNameFlag,
+		flags.RollupConfigFlag,
+		flags.DeploymentsDirFlag,
+		flags.StandardChainCandidateFlag,
 	},
 	Action:   entrypoint,
-	Commands: []*cli.Command{&PromoteToStandardCmd, &CheckRollupConfigCmd},
+	Commands: []*cli.Command{&cmd.PromoteToStandardCmd, &cmd.CheckRollupConfigCmd},
 }
 
 func main() {
@@ -59,8 +62,8 @@ func runApp(args []string) error {
 }
 
 func entrypoint(ctx *cli.Context) error {
-	chainType := ctx.String(ChainTypeFlag.Name)
-	standardChainCandidate := ctx.Bool(StandardChainCandidateFlag.Name)
+	chainType := ctx.String(flags.ChainTypeFlag.Name)
+	standardChainCandidate := ctx.Bool(flags.StandardChainCandidateFlag.Name)
 	if standardChainCandidate && chainType == "standard" {
 		return errors.New("cannot set both chainType=standard and standard-chain-candidate=true")
 	}
@@ -75,10 +78,10 @@ func entrypoint(ctx *cli.Context) error {
 	explorer := os.Getenv("SCR_EXPLORER")
 	superchainTarget := os.Getenv("SCR_SUPERCHAIN_TARGET")
 
-	chainName := ctx.String(ChainNameFlag.Name)
-	rollupConfigPath := ctx.String(RollupConfigFlag.Name)
-	deploymentsDir := ctx.String(DeploymentsDirFlag.Name)
-	chainShortName := ctx.String(ChainShortNameFlag.Name)
+	chainName := ctx.String(flags.ChainNameFlag.Name)
+	rollupConfigPath := ctx.String(flags.RollupConfigFlag.Name)
+	deploymentsDir := ctx.String(flags.DeploymentsDirFlag.Name)
+	chainShortName := ctx.String(flags.ChainShortNameFlag.Name)
 	if chainShortName == "" {
 		return fmt.Errorf("must set chain-short-name (CHAIN_SHORT_NAME)")
 	}
@@ -107,7 +110,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md: %s", targetDir)
 	}
 
-	l1RpcUrl, err := getL1RpcUrl(superchainTarget)
+	l1RpcUrl, err := config.GetL1RpcUrl(superchainTarget)
 	if err != nil {
 		return fmt.Errorf("failed to retrieve L1 rpc url: %w", err)
 	}
@@ -123,13 +126,13 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to infer fault proofs status of chain: %w", err)
 	}
 
-	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate, isFaultProofs)
+	rollupConfig, err := config.ConstructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate, isFaultProofs)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
 
 	targetFilePath := filepath.Join(targetDir, chainShortName+".yaml")
-	err = writeChainConfig(rollupConfig, targetFilePath)
+	err = config.WriteChainConfig(rollupConfig, targetFilePath)
 	if err != nil {
 		return fmt.Errorf("error generating chain config .yaml file: %w", err)
 	}

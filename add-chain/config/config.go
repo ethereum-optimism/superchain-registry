@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"context"
@@ -37,7 +37,7 @@ func (c *JSONChainConfig) VerifyPlasma() error {
 
 // constructChainConfig creates and populates a ChainConfig struct by reading from an input file and
 // explicitly setting some additional fields to input argument values
-func constructChainConfig(
+func ConstructChainConfig(
 	inputFilePath,
 	chainName,
 	publicRPC,
@@ -98,7 +98,7 @@ func constructChainConfig(
 
 // writeChainConfig accepts a rollupConfig, formats it, and writes some output files based on the given
 // target directories
-func writeChainConfig(
+func WriteChainConfig(
 	rollupConfig superchain.ChainConfig,
 	targetDirectory string,
 ) error {
@@ -139,7 +139,7 @@ func writeChainConfig(
 	return nil
 }
 
-func getL1RpcUrl(superchainTarget string) (string, error) {
+func GetL1RpcUrl(superchainTarget string) (string, error) {
 	superChain, ok := superchain.Superchains[superchainTarget]
 	if !ok {
 		return "", fmt.Errorf("unknown superchain target provided: %s", superchainTarget)
