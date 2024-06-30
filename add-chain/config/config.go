@@ -35,7 +35,7 @@ func (c *JSONChainConfig) VerifyPlasma() error {
 	return nil
 }
 
-// constructChainConfig creates and populates a ChainConfig struct by reading from an input file and
+// ConstructChainConfig creates and populates a ChainConfig struct by reading from an input file and
 // explicitly setting some additional fields to input argument values
 func ConstructChainConfig(
 	inputFilePath,
@@ -96,7 +96,7 @@ func ConstructChainConfig(
 	return chainConfig, nil
 }
 
-// writeChainConfig accepts a rollupConfig, formats it, and writes some output files based on the given
+// WriteChainConfig accepts a rollupConfig, formats it, and writes some output files based on the given
 // target directories
 func WriteChainConfig(
 	rollupConfig superchain.ChainConfig,
