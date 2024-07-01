@@ -10,65 +10,35 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/spf13/viper"
+	"github.com/ethereum-optimism/superchain-registry/add-chain/cmd"
+	"github.com/ethereum-optimism/superchain-registry/add-chain/config"
+	"github.com/ethereum-optimism/superchain-registry/add-chain/flags"
+	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 )
 
 var app = &cli.App{
-	Name:     "add-chain",
-	Usage:    "Add a new chain to the superchain-registry",
-	Flags:    []cli.Flag{ChainTypeFlag, ChainNameFlag, ChainShortNameFlag, RollupConfigFlag, DeploymentsDirFlag, TestFlag, StandardChainCandidateFlag},
+	Name:  "add-chain",
+	Usage: "Add a new chain to the superchain-registry",
+	Flags: []cli.Flag{
+		flags.PublicRpcFlag,
+		flags.SequencerRpcFlag,
+		flags.ExplorerFlag,
+		flags.SuperchainTargetFlag,
+		flags.MonorepoDirFlag,
+		flags.ChainTypeFlag,
+		flags.ChainNameFlag,
+		flags.ChainShortNameFlag,
+		flags.RollupConfigFlag,
+		flags.DeploymentsDirFlag,
+		flags.StandardChainCandidateFlag,
+	},
 	Action:   entrypoint,
-	Commands: []*cli.Command{&PromoteToStandardCmd, &CheckRollupConfigCmd},
+	Commands: []*cli.Command{&cmd.PromoteToStandardCmd, &cmd.CheckRollupConfigCmd},
 }
 
-var (
-	ChainTypeFlag = &cli.StringFlag{
-		Name:     "chain-type",
-		Value:    "frontier",
-		Usage:    "Type of chain (either standard or frontier)",
-		Required: false,
-	}
-	ChainNameFlag = &cli.StringFlag{
-		Name:     "chain-name",
-		Value:    "",
-		Usage:    "Custom name of the chain",
-		Required: false,
-	}
-	ChainShortNameFlag = &cli.StringFlag{
-		Name:     "chain-short-name",
-		Value:    "",
-		Usage:    "Custom short name of the chain",
-		Required: false,
-	}
-	RollupConfigFlag = &cli.StringFlag{
-		Name:     "rollup-config",
-		Value:    "",
-		Usage:    "Filepath to rollup.json input file",
-		Required: false,
-	}
-	DeploymentsDirFlag = &cli.StringFlag{
-		Name:     "deployments-dir",
-		Value:    "",
-		Usage:    "Directory containing L1 Contract deployment addresses",
-		Required: false,
-	}
-	TestFlag = &cli.BoolFlag{
-		Name:     "test",
-		Value:    false,
-		Usage:    "Indicates if go tests are being run",
-		Required: false,
-	}
-	StandardChainCandidateFlag = &cli.BoolFlag{
-		Name:     "standard-chain-candidate",
-		Value:    false,
-		Usage:    "Whether the chain is a candidate to become a standard chain. Will be subject to most standard chain validation checks",
-		Required: false,
-	}
-)
-
 func main() {
-	if err := app.Run(os.Args); err != nil {
+	if err := runApp(os.Args); err != nil {
 		fmt.Println(err)
 		fmt.Println("*********************")
 		fmt.Printf("FAILED: %s\n", app.Name)
@@ -78,11 +48,27 @@ func main() {
 	fmt.Printf("SUCCESS: %s\n", app.Name)
 }
 
-func entrypoint(ctx *cli.Context) error {
-	chainType := ctx.String(ChainTypeFlag.Name)
-	runningTests := ctx.Bool(TestFlag.Name)
-	standardChainCandidate := ctx.Bool(StandardChainCandidateFlag.Name)
+func runApp(args []string) error {
+	// Load the appropriate .env file
+	var err error
+	if runningTests := os.Getenv("SCR_RUN_TESTS"); runningTests == "true" {
+		fmt.Println("Loading .env.test")
+		err = godotenv.Load("./testdata/.env.test")
+	} else {
+		fmt.Println("Loading .env")
+		err = godotenv.Load()
+	}
 
+	if err != nil {
+		panic("error loading .env file")
+	}
+
+	return app.Run(args)
+}
+
+func entrypoint(ctx *cli.Context) error {
+	chainType := ctx.String(flags.ChainTypeFlag.Name)
+	standardChainCandidate := ctx.Bool(flags.StandardChainCandidateFlag.Name)
 	if standardChainCandidate && chainType == "standard" {
 		return errors.New("cannot set both chainType=standard and standard-chain-candidate=true")
 	}
@@ -92,6 +78,20 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to get superchain level: %w", err)
 	}
 
+	publicRPC := ctx.String(flags.PublicRpcFlag.Name)
+	sequencerRPC := ctx.String(flags.SequencerRpcFlag.Name)
+	explorer := ctx.String(flags.ExplorerFlag.Name)
+	superchainTarget := ctx.String(flags.SuperchainTargetFlag.Name)
+	monorepoDir := ctx.String(flags.MonorepoDirFlag.Name)
+
+	chainName := ctx.String(flags.ChainNameFlag.Name)
+	rollupConfigPath := ctx.String(flags.RollupConfigFlag.Name)
+	deploymentsDir := ctx.String(flags.DeploymentsDirFlag.Name)
+	chainShortName := ctx.String(flags.ChainShortNameFlag.Name)
+	if chainShortName == "" {
+		return fmt.Errorf("must set chain-short-name (SCR_CHAIN_SHORT_NAME)")
+	}
+
 	// Get the current script filepath
 	_, thisFile, _, ok := runtime.Caller(0)
 	if !ok {
@@ -99,53 +99,12 @@ func entrypoint(ctx *cli.Context) error {
 	}
 	superchainRepoRoot := filepath.Dir(filepath.Dir(thisFile))
 
-	envFilename := ".env"
-	envPath := "."
-	if runningTests {
-		envFilename = ".env.test"
-		envPath = "./testdata"
-	}
-
-	// Load environment variables
-	viper.SetConfigName(envFilename) // name of config file (without extension)
-	viper.SetConfigType("env")       // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath(envPath)     // path to look for the config file in
-	if err := viper.ReadInConfig(); err != nil {
-		return fmt.Errorf("error reading config file: %w", err)
-	}
-
-	publicRPC := viper.GetString("PUBLIC_RPC")
-	sequencerRPC := viper.GetString("SEQUENCER_RPC")
-	explorer := viper.GetString("EXPLORER")
-	superchainTarget := viper.GetString("SUPERCHAIN_TARGET")
-	chainName := viper.GetString("CHAIN_NAME")
-	chainShortName := viper.GetString("CHAIN_SHORT_NAME")
-
-	// Allow cli flags to override env vars
-	if ctx.IsSet("chain-name") {
-		chainName = ctx.String("chain-name")
-	}
-	if ctx.IsSet("chain-short-name") {
-		chainShortName = ctx.String("chain-short-name")
-	}
-	rollupConfigPath := viper.GetString("ROLLUP_CONFIG")
-	if ctx.IsSet("rollup-config") {
-		rollupConfigPath = ctx.String("rollup-config")
-	}
-	deploymentsDir := viper.GetString("DEPLOYMENTS_DIR")
-	if ctx.IsSet(DeploymentsDirFlag.Name) {
-		deploymentsDir = ctx.String(DeploymentsDirFlag.Name)
-	}
-
-	if chainShortName == "" {
-		return fmt.Errorf("must set chain-short-name (CHAIN_SHORT_NAME)")
-	}
-
 	fmt.Printf("Chain Name:                     %s\n", chainName)
 	fmt.Printf("Chain Short Name:               %s\n", chainShortName)
 	fmt.Printf("Superchain target:              %s\n", superchainTarget)
 	fmt.Printf("Superchain-registry repo dir:   %s\n", superchainRepoRoot)
-	fmt.Printf("With deployments directory:     %s\n", deploymentsDir)
+	fmt.Printf("Monorepo dir:                   %s\n", monorepoDir)
+	fmt.Printf("Deployments directory:          %s\n", deploymentsDir)
 	fmt.Printf("Rollup config filepath:         %s\n", rollupConfigPath)
 	fmt.Printf("Public RPC endpoint:            %s\n", publicRPC)
 	fmt.Printf("Sequencer RPC endpoint:         %s\n", sequencerRPC)
@@ -158,7 +117,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md: %s", targetDir)
 	}
 
-	l1RpcUrl, err := getL1RpcUrl(superchainTarget)
+	l1RpcUrl, err := config.GetL1RpcUrl(superchainTarget)
 	if err != nil {
 		return fmt.Errorf("failed to retrieve L1 rpc url: %w", err)
 	}
@@ -174,13 +133,13 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to infer fault proofs status of chain: %w", err)
 	}
 
-	rollupConfig, err := constructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate, isFaultProofs)
+	rollupConfig, err := config.ConstructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate, isFaultProofs)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
 
 	targetFilePath := filepath.Join(targetDir, chainShortName+".yaml")
-	err = writeChainConfig(rollupConfig, targetFilePath)
+	err = config.WriteChainConfig(rollupConfig, targetFilePath)
 	if err != nil {
 		return fmt.Errorf("error generating chain config .yaml file: %w", err)
 	}

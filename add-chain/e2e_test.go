@@ -31,6 +31,7 @@ var tests = []struct {
 		chainName:        "testchain_baseline",
 		chainShortName:   "testchain_b",
 		rollupConfigFile: "./testdata/monorepo/op-node/rollup_baseline.json",
+		deploymentsDir:   "./testdata/monorepo/deployments",
 		chainType:        "standard",
 	},
 	{
@@ -38,6 +39,7 @@ var tests = []struct {
 		chainName:        "testchain_plasma",
 		chainShortName:   "testchain_p",
 		rollupConfigFile: "./testdata/monorepo/op-node/rollup_plasma.json",
+		deploymentsDir:   "./testdata/monorepo/deployments",
 		chainType:        "standard",
 	},
 	{
@@ -46,6 +48,7 @@ var tests = []struct {
 		chainShortName:         "testchain_sc",
 		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_standard-candidate.json",
 		chainType:              "frontier",
+		deploymentsDir:         "./testdata/monorepo/deployments",
 		standardChainCandidate: true,
 	},
 	{
@@ -66,21 +69,20 @@ func TestAddChain_Main(t *testing.T) {
 
 			cleanupTestFiles(t, tt.chainShortName)
 
+			err := os.Setenv("SCR_RUN_TESTS", "true")
+			require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
+
 			args := []string{
 				"add-chain",
 				"--chain-type=" + tt.chainType,
 				"--chain-name=" + tt.chainName,
 				"--chain-short-name=" + tt.chainShortName,
 				"--rollup-config=" + tt.rollupConfigFile,
+				"--deployments-dir=" + tt.deploymentsDir,
 				"--standard-chain-candidate=" + strconv.FormatBool(tt.standardChainCandidate),
-				"--test=true",
 			}
 
-			if tt.deploymentsDir != "" {
-				args = append(args, "--deployments-dir="+tt.deploymentsDir)
-			}
-
-			err := app.Run(args)
+			err = runApp(args)
 			require.NoError(t, err, "add-chain app failed")
 
 			checkConfigYaml(t, tt.name, tt.chainShortName)
@@ -97,12 +99,15 @@ func TestAddChain_CheckRollupConfig(t *testing.T) {
 			t.Parallel()
 			// Must run the following subcommand after the main command completes so that when the op-node/rollup
 			// package imports the superchain package, the superchain package includes the output test files
+			err := os.Setenv("SCR_RUN_TESTS", "true")
+			require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
+
 			args := []string{
 				"add-chain",
 				"check-rollup-config",
 				"--rollup-config=" + tt.rollupConfigFile,
 			}
-			err := app.Run(args)
+			err = runApp(args)
 			require.NoError(t, err, "add-chain check-rollup-config failed")
 		})
 	}
