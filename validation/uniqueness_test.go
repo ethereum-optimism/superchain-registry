@@ -103,9 +103,11 @@ func getGlobalChains() (map[uint]*uniqueProperties, error) {
 	return globalChainIds, nil
 }
 
-var globalChainIds map[uint]*uniqueProperties
-var localChainIds = make(chainIDSet)
-var localChainNames = make(chainNameSet)
+var (
+	globalChainIds  map[uint]*uniqueProperties
+	localChainIds   = make(chainIDSet)
+	localChainNames = make(chainNameSet)
+)
 
 func init() {
 	var err error

@@ -57,7 +57,6 @@ func testUniversal(t *testing.T, chain *ChainConfig) {
 	t.Run("ChainID RPC Check", func(t *testing.T) {
 		testChainIDFromRPCofChain(t, chain)
 	})
-
 }
 
 // testStandardCandidate should be applied only to a fully Standard Chain,

@@ -19,7 +19,6 @@ import (
 )
 
 func testGasPriceOracleParamsOfChain(t *testing.T, chain *ChainConfig) {
-
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
