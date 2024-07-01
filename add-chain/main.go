@@ -21,6 +21,11 @@ var app = &cli.App{
 	Name:  "add-chain",
 	Usage: "Add a new chain to the superchain-registry",
 	Flags: []cli.Flag{
+		flags.PublicRpcFlag,
+		flags.SequencerRpcFlag,
+		flags.ExplorerFlag,
+		flags.SuperchainTargetFlag,
+		flags.MonorepoDirFlag,
 		flags.ChainTypeFlag,
 		flags.ChainNameFlag,
 		flags.ChainShortNameFlag,
@@ -73,11 +78,11 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to get superchain level: %w", err)
 	}
 
-	publicRPC := os.Getenv("SCR_PUBLIC_RPC")
-	sequencerRPC := os.Getenv("SCR_SEQUENCER_RPC")
-	explorer := os.Getenv("SCR_EXPLORER")
-	superchainTarget := os.Getenv("SCR_SUPERCHAIN_TARGET")
-	monorepoDir := os.Getenv("SCR_MONOREPO_DIR")
+	publicRPC := ctx.String(flags.PublicRpcFlag.Name)
+	sequencerRPC := ctx.String(flags.SequencerRpcFlag.Name)
+	explorer := ctx.String(flags.ExplorerFlag.Name)
+	superchainTarget := ctx.String(flags.SuperchainTargetFlag.Name)
+	monorepoDir := ctx.String(flags.MonorepoDirFlag.Name)
 
 	chainName := ctx.String(flags.ChainNameFlag.Name)
 	rollupConfigPath := ctx.String(flags.RollupConfigFlag.Name)

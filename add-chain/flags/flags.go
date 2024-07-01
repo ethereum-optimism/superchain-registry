@@ -36,6 +36,41 @@ var (
 		Usage:    "Custom short name of the chain",
 		Required: false,
 	}
+	PublicRpcFlag = &cli.StringFlag{
+		Name:     "public-rpc",
+		Value:    "",
+		EnvVars:  prefixEnvVars("PUBLIC_RPC"),
+		Usage:    "L2 node public rpc url",
+		Required: false,
+	}
+	SequencerRpcFlag = &cli.StringFlag{
+		Name:     "sequencer-rpc",
+		Value:    "",
+		EnvVars:  prefixEnvVars("SEQUENCER_RPC"),
+		Usage:    "sequencer rpc url",
+		Required: false,
+	}
+	ExplorerFlag = &cli.StringFlag{
+		Name:     "explorer",
+		Value:    "",
+		EnvVars:  prefixEnvVars("EXPLORER"),
+		Usage:    "block explorer url",
+		Required: false,
+	}
+	SuperchainTargetFlag = &cli.StringFlag{
+		Name:     "superchain-target",
+		Value:    "",
+		EnvVars:  prefixEnvVars("SUPERCHAIN_TARGET"),
+		Usage:    "superchain this L2 will belong to (mainnet or sepolia)",
+		Required: false,
+	}
+	MonorepoDirFlag = &cli.StringFlag{
+		Name:     "monorepo-dir",
+		Value:    "",
+		EnvVars:  prefixEnvVars("MONOREPO_DIR"),
+		Usage:    "path to local 'ethereum-optimism/optimism' monorepo",
+		Required: false,
+	}
 	RollupConfigFlag = &cli.StringFlag{
 		Name:     "rollup-config",
 		EnvVars:  prefixEnvVars("ROLLUP_CONFIG"),
