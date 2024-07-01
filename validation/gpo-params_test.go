@@ -18,11 +18,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func TestGasPriceOracleParams(t *testing.T) {
-	isExcluded := map[uint64]bool{
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
-		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
-	}
+func testGasPriceOracleParamsOfChain(t *testing.T, chain *ChainConfig) {
 
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
@@ -62,19 +58,18 @@ func TestGasPriceOracleParams(t *testing.T) {
 		}
 	}
 
-	for chainID, chain := range OPChains {
-		t.Run(perChainTestName(chain), func(t *testing.T) {
-			if isExcluded[chainID] {
-				t.Skip()
-			}
-			RunOnStandardAndStandardCandidateChains(t, *chain)
-			rpcEndpoint := chain.PublicRPC
-			require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
-			client, err := ethclient.Dial(rpcEndpoint)
-			require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-			checkResourceConfig(t, chain, client)
-		})
+	isExcluded := map[uint64]bool{
+		11155421: true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
+		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
 	}
+	if isExcluded[chain.ChainID] {
+		t.Skip()
+	}
+	rpcEndpoint := chain.PublicRPC
+	require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
+	client, err := ethclient.Dial(rpcEndpoint)
+	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	checkResourceConfig(t, chain, client)
 }
 
 type PreEcotoneGasPriceOracleParams struct {

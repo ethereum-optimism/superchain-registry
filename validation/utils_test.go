@@ -68,16 +68,3 @@ func TestIsIntWithinBounds(t *testing.T) {
 		})
 	}
 }
-
-func RunOnStandardAndStandardCandidateChains(t *testing.T, chain superchain.ChainConfig) {
-	if chain.StandardChainCandidate || chain.SuperchainLevel == superchain.Standard {
-		return
-	}
-	t.Skip("Chain excluded from this check (NOT a Standard Chain and NOT optimistically running standard checks)")
-}
-
-func RunOnlyOnStandardChains(t *testing.T, chain superchain.ChainConfig) {
-	if chain.SuperchainLevel != superchain.Standard {
-		t.Skip("Chain excluded from this check (NOT a Standard Chain)")
-	}
-}

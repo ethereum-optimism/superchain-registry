@@ -23,7 +23,7 @@ type L2OOParams struct {
 	FinalizationPeriodSeconds *big.Int
 }
 
-func TestL2OOParams(t *testing.T) {
+func testL2OOParamsOfChain(t *testing.T, chain *ChainConfig) {
 	isExcluded := map[uint64]bool{
 		10:        true, // OP mainnet - Upgraded to fault proofs
 		999999999: true, // sepolia/zora  Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
@@ -32,45 +32,36 @@ func TestL2OOParams(t *testing.T) {
 		11155420:  true, // sepolia/op No L2OO because this chain uses Fault Proofs https://github.com/ethereum-optimism/superchain-registry/issues/219
 		11155421:  true, // oplabs-sepolia-devnet-0 No L2OO because this chain uses Fault Proofs https://github.com/ethereum-optimism/superchain-registry/issues/219
 	}
-
-	checkL2OOParams := func(t *testing.T, chain *ChainConfig) {
-		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-
-		require.NotEmpty(t, rpcEndpoint)
-
-		client, err := ethclient.Dial(rpcEndpoint)
-		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-
-		contractAddress, err := Addresses[chain.ChainID].AddressFor("L2OutputOracleProxy")
-		require.NoError(t, err)
-
-		desiredParams := standard.Config.Params[chain.Superchain].L2OOParams
-
-		version, err := getVersion(context.Background(), common.Address(contractAddress), client)
-		require.NoError(t, err)
-
-		var actualParams L2OOParams
-		if version == "1.3.0" || version == "1.3.1" {
-			actualParams, err = getl2OOParamsWithRetriesLegacy(context.Background(), common.Address(contractAddress), client)
-		} else {
-			actualParams, err = getl2OOParamsWithRetries(context.Background(), common.Address(contractAddress), client)
-		}
-		require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
-
-		assertBigIntInBounds(t, "submissionInterval", actualParams.SubmissionInterval, desiredParams.SubmissionInterval)
-		assertBigIntInBounds(t, "l2BlockTime", actualParams.L2BlockTime, desiredParams.L2BlockTime)
-		assertBigIntInBounds(t, "challengePeriodSeconds", actualParams.FinalizationPeriodSeconds, desiredParams.ChallengePeriodSeconds)
+	if isExcluded[chain.ChainID] {
+		t.Skip()
 	}
 
-	for chainID, chain := range OPChains {
-		t.Run(perChainTestName(chain), func(t *testing.T) {
-			if isExcluded[chainID] {
-				t.Skip()
-			}
-			RunOnStandardAndStandardCandidateChains(t, *chain)
-			checkL2OOParams(t, chain)
-		})
+	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
+
+	require.NotEmpty(t, rpcEndpoint)
+
+	client, err := ethclient.Dial(rpcEndpoint)
+	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+
+	contractAddress, err := Addresses[chain.ChainID].AddressFor("L2OutputOracleProxy")
+	require.NoError(t, err)
+
+	desiredParams := standard.Config.Params[chain.Superchain].L2OOParams
+
+	version, err := getVersion(context.Background(), common.Address(contractAddress), client)
+	require.NoError(t, err)
+
+	var actualParams L2OOParams
+	if version == "1.3.0" || version == "1.3.1" {
+		actualParams, err = getl2OOParamsWithRetriesLegacy(context.Background(), common.Address(contractAddress), client)
+	} else {
+		actualParams, err = getl2OOParamsWithRetries(context.Background(), common.Address(contractAddress), client)
 	}
+	require.NoErrorf(t, err, "RPC endpoint %s", rpcEndpoint)
+
+	assertBigIntInBounds(t, "submissionInterval", actualParams.SubmissionInterval, desiredParams.SubmissionInterval)
+	assertBigIntInBounds(t, "l2BlockTime", actualParams.L2BlockTime, desiredParams.L2BlockTime)
+	assertBigIntInBounds(t, "challengePeriodSeconds", actualParams.FinalizationPeriodSeconds, desiredParams.ChallengePeriodSeconds)
 }
 
 // getl2OOParamsWithRetries gets each of the parameters from the L2OutputOracle at l2OOAddr,
