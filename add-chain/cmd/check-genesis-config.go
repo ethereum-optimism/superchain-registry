@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/big"
 	"os"
-	"path/filepath"
 	"reflect"
 
 	"github.com/ethereum-optimism/superchain-registry/add-chain/flags"
@@ -64,27 +63,4 @@ var CheckGenesisConfigCmd = cli.Command{
 		fmt.Println("Regenerated genesis config matches existing one")
 		return nil
 	},
-}
-
-func writeGenesisJSON(genesis *core.Genesis) error {
-	filePath := filepath.Join("op-sepolia-genesis.json")
-	file, err := os.Create(filePath)
-	if err != nil {
-		return fmt.Errorf("failed to create file: %w", err)
-	}
-	defer file.Close()
-
-	// Marshal the map to JSON
-	jsonData, err := json.MarshalIndent(genesis, "", "  ")
-	if err != nil {
-		return fmt.Errorf("failed to marshal json: %w", err)
-	}
-
-	// Write the JSON data to the file
-	if _, err := file.Write(jsonData); err != nil {
-		return fmt.Errorf("failed to write json to file: %w", err)
-	}
-	fmt.Printf("Contract addresses written to: %s\n", filePath)
-
-	return nil
 }
