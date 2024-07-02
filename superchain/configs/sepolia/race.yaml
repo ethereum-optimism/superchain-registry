@@ -1,0 +1,24 @@
+name: Race
+chain_id: 6806
+public_rpc: https://racetestnet.io
+sequencer_rpc: https://racetestnet.io/sequencer
+explorer: https://testnet.racescan.io/
+
+superchain_level: 2
+superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
+contracts_version_tag: op-contracts/v1.3.0 # Multi-Chain Prep (MCP) https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.3.0
+
+batch_inbox_addr: "0xff00000000000000000000000000000000006806"
+
+genesis:
+  l1:
+    hash: "0x28dd1dd74080560ef0b02f8f1ae31d1be75b01a70a5be6ef22e673cec538770f"
+    number: 6210400
+  l2:
+    hash: "0x994d67464c3368b8eb6f9770087399486b25d721a1868b95bb37de327b49ab89"
+    number: 0
+  l2_time: 1719646560 # Sat 29 Jun 2024 07:36:00 UTC
+
+canyon_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
+delta_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
+ecotone_time: 0 # Thu 1 Jan 1970 00:00:00 UTC
