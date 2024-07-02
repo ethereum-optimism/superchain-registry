@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func testGenesisHashOfChain(t *testing.T, chainID uint64) {
+func testGenesisHash(t *testing.T, chainID uint64) {
 	if chainID == 10 {
 		t.Skipf("chain %d: EXCLUDED from Genesis block hash validation", chainID)
 	}
@@ -50,12 +50,12 @@ func TestGenesisHash(t *testing.T) {
 			if isExcluded[chain.ChainID] {
 				t.Skipf("chain %d: EXCLUDED from Genesis block hash validation", chainID)
 			}
-			testGenesisHashOfChain(t, chainID)
+			testGenesisHash(t, chainID)
 		})
 	}
 }
 
-func testGenesisHashAgainstRPCofChain(t *testing.T, chain *ChainConfig) {
+func testGenesisHashAgainstRPC(t *testing.T, chain *ChainConfig) {
 	isExcluded := map[uint64]bool{
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
 		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)

@@ -51,7 +51,7 @@ var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64
 	}
 }
 
-func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
+func testL1SecurityConfig(t *testing.T, chainID uint64) {
 	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
 
@@ -105,7 +105,7 @@ func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
 	)
 }
 
-func testL2SecurityConfigForChain(t *testing.T, chain *ChainConfig) {
+func testL2SecurityConfig(t *testing.T, chain *ChainConfig) {
 	isExcluded := map[uint64]bool{
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared

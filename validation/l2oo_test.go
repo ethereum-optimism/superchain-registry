@@ -23,7 +23,7 @@ type L2OOParams struct {
 	FinalizationPeriodSeconds *big.Int
 }
 
-func testL2OOParamsOfChain(t *testing.T, chain *ChainConfig) {
+func testL2OOParams(t *testing.T, chain *ChainConfig) {
 	isExcluded := map[uint64]bool{
 		10:        true, // OP mainnet - Upgraded to fault proofs
 		999999999: true, // sepolia/zora  Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]

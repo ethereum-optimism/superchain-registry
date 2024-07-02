@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func testChainIDFromRPCofChain(t *testing.T, chain *ChainConfig) {
+func testChainIDFromRPC(t *testing.T, chain *ChainConfig) {
 	isExcluded := map[uint64]bool{
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared

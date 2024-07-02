@@ -55,7 +55,7 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 	}
 }
 
-func testOPChainMatchesATag(t *testing.T, chain *ChainConfig) {
+func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	isExcluded := map[uint64]bool{
 		8453:     true, // mainnet/base
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0

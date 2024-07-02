@@ -7,6 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func testDataAvailabilityOfChain(t *testing.T, chain *ChainConfig) {
+func testDataAvailability(t *testing.T, chain *ChainConfig) {
 	require.Nil(t, chain.Plasma, "Standard chains use Ethereum L1 calldata or blobs for data availability (plasma not permitted)")
 }

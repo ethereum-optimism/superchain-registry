@@ -117,7 +117,7 @@ func init() {
 	}
 }
 
-func testChainIsGloballyUnique(t *testing.T, chain *ChainConfig) {
+func testIsGloballyUnique(t *testing.T, chain *ChainConfig) {
 	isExcluded := map[uint64]bool{
 		11155421: true, // oplabs devnet 0, not in upstream repo
 		11763072: true, // base devnet 0, not in upstream repo

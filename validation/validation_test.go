@@ -46,16 +46,16 @@ func testValidation(t *testing.T, chain *ChainConfig) {
 // sanity checking basic consistency conditions.
 func testUniversal(t *testing.T, chain *ChainConfig) {
 	t.Run("Genesis Hash Check (op-geth)", func(t *testing.T) {
-		testGenesisHashOfChain(t, chain.ChainID)
+		testGenesisHash(t, chain.ChainID)
 	})
 	t.Run("Genesis Check (RPC)", func(t *testing.T) {
-		testGenesisHashAgainstRPCofChain(t, chain)
+		testGenesisHashAgainstRPC(t, chain)
 	})
 	t.Run("Uniqueness Check", func(t *testing.T) {
-		testChainIsGloballyUnique(t, chain)
+		testIsGloballyUnique(t, chain)
 	})
 	t.Run("ChainID RPC Check", func(t *testing.T) {
-		testChainIDFromRPCofChain(t, chain)
+		testChainIDFromRPC(t, chain)
 	})
 }
 
@@ -63,18 +63,18 @@ func testUniversal(t *testing.T, chain *ChainConfig) {
 // i.e. not to a Standard Candidate Chain.
 func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	t.Run("Standard Config Params", func(t *testing.T) {
-		testDataAvailabilityOfChain(t, chain)
-		testResourceConfigOfChain(t, chain)
-		testL2OOParamsOfChain(t, chain)
-		testGasLimitOfChain(t, chain)
-		testGasPriceOracleParamsOfChain(t, chain)
+		testDataAvailability(t, chain)
+		testResourceConfig(t, chain)
+		testL2OOParams(t, chain)
+		testGasLimit(t, chain)
+		testGasPriceOracleParams(t, chain)
 	})
 	t.Run("Standard Config Roles", func(t *testing.T) {
-		testL1SecurityConfigOfChain(t, chain.ChainID)
-		testL2SecurityConfigForChain(t, chain)
+		testL1SecurityConfig(t, chain.ChainID)
+		testL2SecurityConfig(t, chain)
 	})
 	t.Run("Standard Contract Versions", func(t *testing.T) {
-		testOPChainMatchesATag(t, chain)
+		testContractsMatchATag(t, chain)
 	})
 }
 
@@ -82,6 +82,6 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 // i.e. not to a Standard Candidate Chain.
 func testStandard(t *testing.T, chain *ChainConfig) {
 	t.Run("Key Handover Check", func(t *testing.T) {
-		testKeyHandoverOfChain(t, chain.ChainID)
+		testKeyHandover(t, chain.ChainID)
 	})
 }

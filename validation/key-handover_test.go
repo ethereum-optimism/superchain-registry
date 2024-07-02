@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func testKeyHandoverOfChain(t *testing.T, chainID uint64) {
+func testKeyHandover(t *testing.T, chainID uint64) {
 	superchain := OPChains[chainID].Superchain
 	rpcEndpoint := Superchains[superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
