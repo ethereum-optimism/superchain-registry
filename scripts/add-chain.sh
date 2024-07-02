@@ -10,11 +10,4 @@ source ${SUPERCHAIN_REPO}/.env
 
 go run ./add-chain --chain-type=$1 $2
 go run ./add-chain check-rollup-config
-
-# create extra genesis data
-mkdir -p $SUPERCHAIN_REPO/superchain/extra/genesis/$SUPERCHAIN_TARGET
-cd $MONOREPO_DIR
-go run ./op-chain-ops/cmd/registry-data \
-  --l2-genesis=$GENESIS_CONFIG \
-  --bytecodes-dir=$SUPERCHAIN_REPO/superchain/extra/bytecodes \
-  --output=$SUPERCHAIN_REPO/superchain/extra/genesis/$SUPERCHAIN_TARGET/$CHAIN_SHORT_NAME.json.gz
+go run ./add-chain compress-genesis
