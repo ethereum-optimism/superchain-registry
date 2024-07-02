@@ -122,7 +122,7 @@ the following privilege grants and role designations:
       L2 senders.
    4. Trusted oracles. For example, `OptimismPortalProxy` specifies
       the L2 oracle they trust with the L2 state root information.
-      1. After the FPAC upgrade, the `OptimismPortalProxy` specifies the `DisputeGameFactory` they trust rather
+      1. After the Fault Proofs upgrade, the `OptimismPortalProxy` specifies the `DisputeGameFactory` they trust rather
       than the legacy `L2OutputOracle` contract.
    5. Trusted system config. For example, `OptimismPortalProxy`
       specifies the system config they trust to get resource config
@@ -131,10 +131,10 @@ the following privilege grants and role designations:
 3. Optimism privileged operational roles:
    1. Guardians. This is the role that can pause withdraws in the
       Optimism protocol.
-      1. After the FPAC upgrade, the `Guardian` can also blacklist dispute games and change the respected game type
+      1. After the Fault Proofs upgrade, the `Guardian` can also blacklist dispute games and change the respected game type
          in the `OptimismPortal`.
    2. Challengers. This is the role that can delete `L2OutputOracleProxy`'s output roots in the Optimism protocol
-      1. After the FPAC upgrade, the `CHALLENGER` is a permissionless role in the `FaultDisputeGame`. However,
+      1. After the Fault Proofs upgrade, the `CHALLENGER` is a permissionless role in the `FaultDisputeGame`. However,
          in the `PermissionedDisputeGame`, the `CHALLENGER` role is the only party allowed to dispute output proposals
          created by the `PROPOSER` role.
 

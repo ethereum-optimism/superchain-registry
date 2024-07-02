@@ -141,7 +141,7 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		ProxyAdmin,
 	}
 
-	contractsFromJSONFPAC := append(contractsFromJSON, []string{
+	contractsFromJSONFaultProofs := append(contractsFromJSON, []string{
 		AnchorStateRegistryProxy,
 		DelayedWETHProxy,
 		DisputeGameFactoryProxy,
@@ -150,9 +150,9 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		PermissionedDisputeGame,
 		PreimageOracle,
 	}...)
-	contractsFromJSONNonFPAC := append(contractsFromJSON, L2OutputOracleProxy)
+	contractsFromJSONNonFaultProofs := append(contractsFromJSON, L2OutputOracleProxy)
 
-	contracts := contractsFromJSONFPAC
+	contracts := contractsFromJSONFaultProofs
 
 	deployFilePath := filepath.Join(deploymentsDir, ".deploy")
 	_, err := os.Stat(deployFilePath)
@@ -163,7 +163,7 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 
 		_, err := os.ReadFile(filepath.Join(deploymentsDir, AnchorStateRegistryProxy+".json"))
 		if errors.Is(err, os.ErrNotExist) {
-			contracts = contractsFromJSONNonFPAC
+			contracts = contractsFromJSONNonFaultProofs
 		}
 		for _, name := range contracts {
 			path := filepath.Join(deploymentsDir, name+".json")
@@ -190,7 +190,7 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 
 		_, err = addressList.AddressFor(AnchorStateRegistryProxy)
 		if err != nil {
-			contracts = contractsFromJSONNonFPAC
+			contracts = contractsFromJSONNonFaultProofs
 		}
 
 		for _, name := range contracts {

@@ -68,9 +68,9 @@ func testL1SecurityConfig(t *testing.T, chainID uint64) {
 	require.NoError(t, err)
 
 	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
-	isFPAC := majorVersion >= 3
+	isFaultProofs := majorVersion >= 3
 
-	checkResolutions(t, standard.Config.Roles.L1.GetResolutions(isFPAC), chainID, client)
+	checkResolutions(t, standard.Config.Roles.L1.GetResolutions(isFaultProofs), chainID, client)
 
 	isExcluded := map[uint64]bool{
 		8453:      true, // base (incorrect challenger, incorrect guardian)
@@ -84,7 +84,7 @@ func testL1SecurityConfig(t *testing.T, chainID uint64) {
 		34443:     true, // mode (incorrect challenger)
 	}
 	if !isExcluded[chainID] {
-		checkResolutions(t, standard.Config.MultisigRoles[OPChains[chainID].Superchain].L1.GetResolutions(isFPAC), chainID, client)
+		checkResolutions(t, standard.Config.MultisigRoles[OPChains[chainID].Superchain].L1.GetResolutions(isFaultProofs), chainID, client)
 	}
 
 	// Perform an extra check on a mapping value of "L1CrossDomainMessengerProxy":
