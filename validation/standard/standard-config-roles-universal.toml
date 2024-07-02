@@ -18,7 +18,7 @@ SystemConfigProxy."unsafeBlockSigner()" = "UnsafeBlockSigner"
 SystemConfigProxy."batcherHash()" = "BatchSubmitter"
 
 
-[l1.nonFPAC]
+[l1.nonFaultProofs]
 OptimismPortalProxy."GUARDIAN()" = "Guardian"
 OptimismPortalProxy."SYSTEM_CONFIG()" = "SystemConfigProxy"
 OptimismPortalProxy."L2_ORACLE()" = "L2OutputOracleProxy"
@@ -26,7 +26,7 @@ L2OutputOracleProxy."admin()" = "ProxyAdmin"
 L2OutputOracleProxy."CHALLENGER()" = "Challenger"
 L2OutputOracleProxy."PROPOSER()" = "Proposer"
 
-[l1.FPAC]
+[l1.FaultProofs]
 DisputeGameFactoryProxy."admin()" = "ProxyAdmin"
 DisputeGameFactoryProxy."owner()" = "ProxyAdminOwner"
 AnchorStateRegistryProxy."admin()" = "ProxyAdmin"
