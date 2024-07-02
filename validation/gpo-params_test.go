@@ -43,6 +43,10 @@ func testGasPriceOracleParams(t *testing.T, chain *ChainConfig) {
 
 		assert.True(t, isBigIntWithinBounds(actualParams.Decimals, desiredParams.Decimals),
 			"decimals parameter %d out of bounds %d", actualParams.Decimals, desiredParams.Decimals)
+		assert.True(t, isBigIntWithinBounds(actualParams.Overhead, desiredParams.Overhead),
+			"overhead parameter %d out of bounds %d", actualParams.Overhead, desiredParams.Overhead)
+		assert.True(t, isBigIntWithinBounds(actualParams.Scalar, desiredParams.Scalar),
+			"scalar parameter %d out of bounds %d", actualParams.Scalar, desiredParams.Scalar)
 		assert.True(t, isIntWithinBounds(actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar),
 			"blobBaseFeeScalar %d out of bounds %d", actualParams.BlobBaseFeeScalar, desiredParams.BlobBaseFeeScalar)
 		assert.True(t, isIntWithinBounds(actualParams.BaseFeeScalar, desiredParams.BaseFeeScalar),
@@ -78,7 +82,7 @@ type PreEcotoneGasPriceOracleParams struct {
 }
 
 type EcotoneGasPriceOracleParams struct {
-	Decimals          *big.Int
+	PreEcotoneGasPriceOracleParams
 	BlobBaseFeeScalar uint32
 	BaseFeeScalar     uint32
 }
@@ -119,9 +123,9 @@ func getEcotoneGasPriceOracleParams(ctx context.Context, addr common.Address, cl
 		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
 	}
 
-	decimals, err := Retry(gasPriceOracle.Decimals)(callOpts)
+	preEcotoneParams, err := getPreEcotoneGasPriceOracleParams(ctx, addr, client)
 	if err != nil {
-		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s.Decimals(): %w", addr, err)
+		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
 	}
 
 	blobBaseFeeScalar, err := Retry(gasPriceOracle.BlobBaseFeeScalar)(callOpts)
@@ -135,8 +139,8 @@ func getEcotoneGasPriceOracleParams(ctx context.Context, addr common.Address, cl
 	}
 
 	return EcotoneGasPriceOracleParams{
-		Decimals:          decimals,
-		BlobBaseFeeScalar: blobBaseFeeScalar,
-		BaseFeeScalar:     baseFeeScalar,
+		PreEcotoneGasPriceOracleParams: preEcotoneParams,
+		BlobBaseFeeScalar:              blobBaseFeeScalar,
+		BaseFeeScalar:                  baseFeeScalar,
 	}, nil
 }

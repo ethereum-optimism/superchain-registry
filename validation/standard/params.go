@@ -38,6 +38,7 @@ type (
 )
 
 type EcotoneGasPriceOracleBounds struct {
+	PreEcotoneGasPriceOracleBounds
 	Decimals          BigIntBounds `toml:"decimals"`
 	BlobBaseFeeScalar Uint32Bounds `toml:"blob_base_fee_scalar"`
 	BaseFeeScalar     Uint32Bounds `toml:"base_fee_scalar"`

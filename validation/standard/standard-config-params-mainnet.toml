@@ -19,6 +19,8 @@ scalar = [684_000, 684_000]
 
 [gas_price_oracle.ecotone]
 decimals = [6, 6]
+scalar = [0, 0]
+overhead = [0, 0]
 blob_base_fee_scalar = [0, 10_000_000]
 base_fee_scalar = [0, 10_000_000]
 
