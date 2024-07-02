@@ -131,6 +131,23 @@ func TestAddChain_CheckRollupConfig(t *testing.T) {
 	}
 }
 
+func TestAddChain_CheckGenesisConfig(t *testing.T) {
+	t.Run("genesis", func(t *testing.T) {
+		// t.Parallel()
+		err := os.Setenv("SCR_RUN_TESTS", "true")
+		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
+
+		args := []string{
+			"add-chain",
+			"check-genesis-config",
+			"--genesis-config=" + "./testdata/monorepo/op-node/genesis_metal.json",
+			"--chain-id=" + "1750",
+		}
+		err = runApp(args)
+		require.NoError(t, err, "add-chain check-genesis-config failed")
+	})
+}
+
 func compareJsonFiles(t *testing.T, dirPath, testName, chainShortName string) {
 	expectedBytes, err := os.ReadFile("./testdata/" + dirPath + "expected_" + testName + ".json")
 	require.NoError(t, err, "failed to read expected.json file from "+dirPath)
