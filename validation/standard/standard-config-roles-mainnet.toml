@@ -1,8 +1,8 @@
-[l1.nonFPAC]
+[l1.nonFaultProofs]
 OptimismPortalProxy."GUARDIAN()" = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
 L2OutputOracleProxy."CHALLENGER()" = "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A"
 
-[l1.FPAC]
+[l1.FaultProofs]
 OptimismPortalProxy."guardian()" = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
 PermissionedDisputeGame."challenger()" = "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A"
 

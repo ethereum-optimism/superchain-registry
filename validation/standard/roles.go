@@ -3,26 +3,26 @@ package standard
 type (
 	Resolutions map[string]map[string]string // e.g. "AddressManager": "owner()":  "ProxyAdmin"
 	L1          struct {
-		Universal Resolutions `toml:"universal"`
-		NonFPAC   Resolutions `toml:"nonFPAC"`
-		FPAC      Resolutions `toml:"FPAC"`
+		Universal      Resolutions `toml:"universal"`
+		NonFaultProofs Resolutions `toml:"nonFaultProofs"`
+		FaultProofs    Resolutions `toml:"FaultProofs"`
 	}
 	L2 struct {
 		Universal Resolutions `toml:"universal"`
 	}
 )
 
-func (r L1) GetResolutions(isFPAC bool) Resolutions {
+func (r L1) GetResolutions(isFaultProofs bool) Resolutions {
 	combinedResolutions := make(Resolutions)
 	for k, v := range r.Universal {
 		combinedResolutions[k] = v
 	}
-	if isFPAC {
-		for k, v := range r.FPAC {
+	if isFaultProofs {
+		for k, v := range r.FaultProofs {
 			combinedResolutions[k] = v
 		}
 	} else {
-		for k, v := range r.NonFPAC {
+		for k, v := range r.NonFaultProofs {
 			combinedResolutions[k] = v
 		}
 	}

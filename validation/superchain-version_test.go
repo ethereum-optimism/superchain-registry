@@ -72,9 +72,9 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 	require.NotNil(t, chain.ContractsVersionTag, "Chain does not declare a contracts_version_tag")
 
-	isFPAC := *chain.ContractsVersionTag == "op-contracts/v1.4.0"
+	isFaultProofs := *chain.ContractsVersionTag == "op-contracts/v1.4.0"
 
-	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client, isFPAC)
+	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client, isFaultProofs)
 	require.NoError(t, err)
 	matches, err := findOPContractTag(versions)
 	require.NoError(t, err)
@@ -82,9 +82,9 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	require.Containsf(t, matches, standard.Tag(*chain.ContractsVersionTag), "Chain config does not declare the correct contracts_version_tag")
 }
 
-// getContractVersionsFromChain pulls the appropriate contract versions (depending on the isFPAC argument) from chain
+// getContractVersionsFromChain pulls the appropriate contract versions (depending on the isFaultProofs argument) from chain
 // using the supplied client (calling the version() method for each contract). It does this concurrently.
-func getContractVersionsFromChain(list AddressList, client *ethclient.Client, isFPAC bool) (ContractVersions, error) {
+func getContractVersionsFromChain(list AddressList, client *ethclient.Client, isFaultProofs bool) (ContractVersions, error) {
 	// build up list of contracts to check
 	contractsToCheck := []string{
 		"L1CrossDomainMessengerProxy",
@@ -95,7 +95,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, is
 		"SystemConfigProxy",
 	}
 
-	if !isFPAC {
+	if !isFaultProofs {
 		contractsToCheck = append(contractsToCheck, "L2OutputOracleProxy")
 	} else {
 		contractsToCheck = append(contractsToCheck,
