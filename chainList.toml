@@ -98,6 +98,17 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Race"
+  identifier = "sepolia/race"
+  chain_id = 6806
+  rpc = ["https://racetestnet.io"]
+  explorers = ["https://testnet.racescan.io/"]
+  superchain_level = 2
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Base Sepolia Testnet"
   identifier = "sepolia/base"
   chain_id = 84532

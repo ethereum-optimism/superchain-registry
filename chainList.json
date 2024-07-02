@@ -144,6 +144,22 @@
     }
   },
   {
+    "name": "Race",
+    "identifier": "sepolia/race",
+    "chainId": 6806,
+    "rpc": [
+      "https://racetestnet.io"
+    ],
+    "explorers": [
+      "https://testnet.racescan.io/"
+    ],
+    "superchainLevel": 2,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Base Sepolia Testnet",
     "identifier": "sepolia/base",
     "chainId": 84532,
