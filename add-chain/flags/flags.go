@@ -77,6 +77,12 @@ var (
 		Usage:    "Filepath to rollup.json input file",
 		Required: true,
 	}
+	GenesisConfigFlag = &cli.StringFlag{
+		Name:     "genesis-config",
+		EnvVars:  prefixEnvVars("GENESIS_CONFIG"),
+		Usage:    "Filepath to genesis.json input file",
+		Required: true,
+	}
 	DeploymentsDirFlag = &cli.StringFlag{
 		Name:     "deployments-dir",
 		Value:    "",
@@ -93,7 +99,7 @@ var (
 	}
 	ChainIdFlag = &cli.Uint64Flag{
 		Name:     "chain-id",
-		Usage:    "ID of chain to promote",
+		Usage:    "globally unique ID of chain",
 		Required: true,
 	}
 )
