@@ -133,7 +133,7 @@ func TestAddChain_CheckRollupConfig(t *testing.T) {
 
 func TestAddChain_CheckGenesisConfig(t *testing.T) {
 	t.Run("genesis", func(t *testing.T) {
-		// t.Parallel()
+		t.Parallel()
 		err := os.Setenv("SCR_RUN_TESTS", "true")
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
 
