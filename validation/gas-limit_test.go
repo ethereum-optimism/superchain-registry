@@ -14,31 +14,22 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func TestGasLimit(t *testing.T) {
-	checkGasLimit := func(t *testing.T, chain *ChainConfig) {
-		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
+func testGasLimit(t *testing.T, chain *ChainConfig) {
+	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
-		require.NotEmpty(t, rpcEndpoint)
+	require.NotEmpty(t, rpcEndpoint)
 
-		client, err := ethclient.Dial(rpcEndpoint)
-		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	client, err := ethclient.Dial(rpcEndpoint)
+	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-		contractAddress, err := Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
-		require.NoError(t, err)
+	contractAddress, err := Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
+	require.NoError(t, err)
 
-		desiredParam := standard.Config.Params[chain.Superchain].SystemConfig.GasLimit
-		actualParam, err := getGasLimitWithRetries(context.Background(), common.Address(contractAddress), client)
-		require.NoError(t, err)
+	desiredParam := standard.Config.Params[chain.Superchain].SystemConfig.GasLimit
+	actualParam, err := getGasLimitWithRetries(context.Background(), common.Address(contractAddress), client)
+	require.NoError(t, err)
 
-		assertIntInBounds(t, "gas_limit", actualParam, desiredParam)
-	}
-
-	for _, chain := range OPChains {
-		t.Run(perChainTestName(chain), func(t *testing.T) {
-			RunOnStandardAndStandardCandidateChains(t, *chain)
-			checkGasLimit(t, chain)
-		})
-	}
+	assertIntInBounds(t, "gas_limit", actualParam, desiredParam)
 }
 
 func getGasLimitWithRetries(ctx context.Context, systemConfigAddr common.Address, client *ethclient.Client) (uint64, error) {

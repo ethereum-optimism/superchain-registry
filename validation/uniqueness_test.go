@@ -103,37 +103,38 @@ func getGlobalChains() (map[uint]*uniqueProperties, error) {
 	return globalChainIds, nil
 }
 
-func TestChainsAreGloballyUnique(t *testing.T) {
-	globalChainIds, err := getGlobalChains()
-	if err != nil {
-		t.Fatal(err)
-	}
-	localChainIds := make(chainIDSet)
-	localChainNames := make(chainNameSet)
+var (
+	globalChainIds  map[uint]*uniqueProperties
+	localChainIds   = make(chainIDSet)
+	localChainNames = make(chainNameSet)
+)
 
+func init() {
+	var err error
+	globalChainIds, err = getGlobalChains()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func testIsGloballyUnique(t *testing.T, chain *ChainConfig) {
 	isExcluded := map[uint64]bool{
-		90001:    true, // sepolia/race, known chainId collision
 		11155421: true, // oplabs devnet 0, not in upstream repo
 		11763072: true, // base devnet 0, not in upstream repo
 	}
-
-	for _, chain := range OPChains {
-		t.Run(perChainTestName(chain), func(t *testing.T) {
-			if isExcluded[chain.ChainID] {
-				t.Skip("excluded from global chain id check")
-			}
-			props := globalChainIds[uint(chain.ChainID)]
-			require.NotNil(t, props, "chain ID is not listed at chainid.network")
-			globalChainName := props.Name
-			assert.Equal(t, globalChainName, chain.Name,
-				"Local chain name for %d does not match name from chainid.network", chain.ChainID)
-			assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
-			assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
-			normalizedURL, err := normalizeURL(chain.PublicRPC)
-			require.NoError(t, err)
-			assert.Contains(t, props.RPC, normalizedURL, "Specified RPC not specified in chainid.network")
-		})
+	if isExcluded[chain.ChainID] {
+		t.Skip("excluded from global chain id check")
 	}
+	props := globalChainIds[uint(chain.ChainID)]
+	require.NotNil(t, props, "chain ID is not listed at chainid.network")
+	globalChainName := props.Name
+	assert.Equal(t, globalChainName, chain.Name,
+		"Local chain name for %d does not match name from chainid.network", chain.ChainID)
+	assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
+	assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
+	normalizedURL, err := normalizeURL(chain.PublicRPC)
+	require.NoError(t, err)
+	assert.Contains(t, props.RPC, normalizedURL, "Specified RPC not specified in chainid.network")
 }
 
 func normalizeURL(rawURL string) (string, error) {

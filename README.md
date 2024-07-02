@@ -87,15 +87,11 @@ The format is a gzipped JSON `genesis.json` file, with either:
 
 Run the following command from the `validation` folder to run the Go validation checks, for only the chain you added (replace the chain name or ID accordingly):
 ```
-go test -run=/OP-Sepolia
+go test -run=TestValidation/OP_Sepolia
 ```
 or
 ```
-go test -run=/11155420
-```
-You can even focus on a particular test and chain combination:
-```
-go test -run=TestGasPriceOracleParams/11155420
+go test -run=TestValidation/11155420
 ```
 Omit the `-run=` flag to run checks for all chains.
 

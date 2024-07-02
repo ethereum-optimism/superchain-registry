@@ -55,42 +55,31 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 	}
 }
 
-func TestContractVersions(t *testing.T) {
+func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	isExcluded := map[uint64]bool{
 		8453:     true, // mainnet/base
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0
 		11763072: true, // sepolia-dev-0/base-devnet-0
 	}
-
-	checkOPChainMatchesATag := func(t *testing.T, chain *ChainConfig) {
-		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-		require.NotEmpty(t, rpcEndpoint)
-
-		client, err := ethclient.Dial(rpcEndpoint)
-		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-		require.NotNil(t, chain.ContractsVersionTag, "Chain does not declare a contracts_version_tag")
-
-		isFPAC := *chain.ContractsVersionTag == "op-contracts/v1.4.0"
-
-		versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client, isFPAC)
-		require.NoError(t, err)
-		matches, err := findOPContractTag(versions)
-		require.NoError(t, err)
-
-		require.Containsf(t, matches, standard.Tag(*chain.ContractsVersionTag), "Chain config does not declare the correct contracts_version_tag")
+	if isExcluded[chain.ChainID] {
+		t.Skipf("chain %d: EXCLUDED from contract version validation", chain.ChainID)
 	}
 
-	for chainID, chain := range OPChains {
-		chainID, chain := chainID, chain
-		t.Run(perChainTestName(chain), func(t *testing.T) {
-			t.Parallel()
-			if isExcluded[chainID] {
-				t.Skipf("chain %d: EXCLUDED from contract version validation", chainID)
-			}
-			RunOnStandardAndStandardCandidateChains(t, *chain)
-			checkOPChainMatchesATag(t, chain)
-		})
-	}
+	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
+	require.NotEmpty(t, rpcEndpoint)
+
+	client, err := ethclient.Dial(rpcEndpoint)
+	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	require.NotNil(t, chain.ContractsVersionTag, "Chain does not declare a contracts_version_tag")
+
+	isFPAC := *chain.ContractsVersionTag == "op-contracts/v1.4.0"
+
+	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client, isFPAC)
+	require.NoError(t, err)
+	matches, err := findOPContractTag(versions)
+	require.NoError(t, err)
+
+	require.Containsf(t, matches, standard.Tag(*chain.ContractsVersionTag), "Chain config does not declare the correct contracts_version_tag")
 }
 
 // getContractVersionsFromChain pulls the appropriate contract versions (depending on the isFPAC argument) from chain

@@ -51,7 +51,7 @@ var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64
 	}
 }
 
-func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
+func testL1SecurityConfig(t *testing.T, chainID uint64) {
 	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
 
@@ -105,42 +105,21 @@ func testL1SecurityConfigOfChain(t *testing.T, chainID uint64) {
 	)
 }
 
-func TestL1SecurityConfigs(t *testing.T) {
-	for chainID, chainPtr := range OPChains {
-		chain, chainID := *chainPtr, chainID
-		t.Run(perChainTestName(&chain), func(t *testing.T) {
-			t.Parallel()
-			RunOnStandardAndStandardCandidateChains(t, chain)
-			testL1SecurityConfigOfChain(t, chainID)
-		})
-	}
-}
-
-func testL2SecurityConfigForChain(t *testing.T, chain ChainConfig) {
-	// Create an ethclient connection to the specified RPC URL
-	client, err := ethclient.Dial(chain.PublicRPC)
-	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
-	defer client.Close()
-	checkResolutions(t, standard.Config.Roles.L2.Universal, chain.ChainID, client)
-}
-
-func TestL2SecurityConfigs(t *testing.T) {
+func testL2SecurityConfig(t *testing.T, chain *ChainConfig) {
 	isExcluded := map[uint64]bool{
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
 	}
 
-	for chainID, chainPtr := range OPChains {
-		chain, chainID := *chainPtr, chainID
-		t.Run(perChainTestName(&chain), func(t *testing.T) {
-			t.Parallel()
-			if isExcluded[chainID] {
-				t.Skip("chain excluded from check")
-			}
-			RunOnStandardAndStandardCandidateChains(t, chain)
-			testL2SecurityConfigForChain(t, chain)
-		})
+	if isExcluded[chain.ChainID] {
+		t.Skip("chain excluded from check")
 	}
+
+	// Create an ethclient connection to the specified RPC URL
+	client, err := ethclient.Dial(chain.PublicRPC)
+	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
+	defer client.Close()
+	checkResolutions(t, standard.Config.Roles.L2.Universal, chain.ChainID, client)
 }
 
 func getAddress(method string, contractAddress Address, client *ethclient.Client) (Address, error) {

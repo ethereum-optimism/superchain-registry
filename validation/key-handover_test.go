@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func testKeyHandoverOfChain(t *testing.T, chainID uint64) {
+func testKeyHandover(t *testing.T, chainID uint64) {
 	superchain := OPChains[chainID].Superchain
 	rpcEndpoint := Superchains[superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
@@ -22,19 +22,4 @@ func testKeyHandoverOfChain(t *testing.T, chainID uint64) {
 
 	// L2 Proxy Admin
 	checkResolutions(t, standard.Config.MultisigRoles[superchain].KeyHandover.L1.Universal, chainID, client)
-}
-
-func TestKeyHandover(t *testing.T) {
-	isExcluded := map[uint64]bool{
-		11155421: true, // OP Labs Sepolia devnet 0 (no rpc endpoint)
-	}
-	for chainID, chain := range OPChains {
-		t.Run(perChainTestName(chain), func(t *testing.T) {
-			if isExcluded[chainID] {
-				t.Skip("chain excluded from key handover check")
-			}
-			RunOnlyOnStandardChains(t, *chain)
-			testKeyHandoverOfChain(t, chainID)
-		})
-	}
 }

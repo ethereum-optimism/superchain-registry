@@ -15,32 +15,23 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func TestResourceConfig(t *testing.T) {
-	checkResourceConfig := func(t *testing.T, chain *ChainConfig) {
-		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
+func testResourceConfig(t *testing.T, chain *ChainConfig) {
+	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
-		require.NotEmpty(t, rpcEndpoint)
+	require.NotEmpty(t, rpcEndpoint)
 
-		client, err := ethclient.Dial(rpcEndpoint)
-		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	client, err := ethclient.Dial(rpcEndpoint)
+	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-		contractAddress, err := Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
-		require.NoError(t, err)
+	contractAddress, err := Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
+	require.NoError(t, err)
 
-		actualResourceConfig, err := getResourceConfig(context.Background(), common.Address(contractAddress), client)
-		require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
+	actualResourceConfig, err := getResourceConfig(context.Background(), common.Address(contractAddress), client)
+	require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
 
-		desiredParams := standard.Config.Params[chain.Superchain].ResourceConfig
+	desiredParams := standard.Config.Params[chain.Superchain].ResourceConfig
 
-		require.Equal(t, bindings.ResourceMeteringResourceConfig(desiredParams), actualResourceConfig, "resource config unacceptable")
-	}
-
-	for _, chain := range OPChains {
-		t.Run(perChainTestName(chain), func(t *testing.T) {
-			RunOnStandardAndStandardCandidateChains(t, *chain)
-			checkResourceConfig(t, chain)
-		})
-	}
+	require.Equal(t, bindings.ResourceMeteringResourceConfig(desiredParams), actualResourceConfig, "resource config unacceptable")
 }
 
 // getResourceConfig will get the resoureConfig stored in the contract at systemConfigAddr.
