@@ -38,7 +38,7 @@ var app = &cli.App{
 		&cmd.PromoteToStandardCmd,
 		&cmd.CheckRollupConfigCmd,
 		&cmd.CompressGenesisCmd,
-		&cmd.CheckGenesisConfigCmd,
+		&cmd.CheckGenesisCmd,
 	},
 }
 

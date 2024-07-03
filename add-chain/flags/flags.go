@@ -77,7 +77,7 @@ var (
 		Usage:    "Filepath to rollup.json input file",
 		Required: true,
 	}
-	GenesisConfigFlag = &cli.StringFlag{
+	GenesisFlag = &cli.StringFlag{
 		Name:     "genesis-config",
 		EnvVars:  prefixEnvVars("GENESIS_CONFIG"),
 		Usage:    "Filepath to genesis.json input file",
