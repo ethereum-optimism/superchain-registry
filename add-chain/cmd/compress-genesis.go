@@ -24,7 +24,7 @@ import (
 var CompressGenesisCmd = cli.Command{
 	Name: "compress-genesis",
 	Flags: []cli.Flag{
-		flags.L2GenesisFlag,
+		flags.GenesisFlag,
 		flags.L2GenesisHeaderFlag,
 		flags.ChainShortNameFlag,
 		flags.SuperchainTargetFlag,
@@ -47,7 +47,7 @@ var CompressGenesisCmd = cli.Command{
 		}
 
 		zipOutputDir := filepath.Join(superchainRepoRoot, "/superchain/extra/genesis", superchainTarget, chainShortName+".json.gz")
-		genesisPath := ctx.Path(flags.L2GenesisFlag.Name)
+		genesisPath := ctx.Path(flags.GenesisFlag.Name)
 		if genesisPath == "" {
 			// When the genesis-state is too large, or not meant to be available, only the header data is made available.
 			// This allows the user to verify the header-chain starting from genesis, and state-sync the latest state,

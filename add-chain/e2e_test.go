@@ -110,7 +110,7 @@ func TestAddChain_Main(t *testing.T) {
 		args := []string{
 			"add-chain",
 			"compress-genesis",
-			"--l2-genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
+			"--genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
 			"--superchain-target=" + "sepolia",
 			"--chain-short-name=" + "testchain_zs",
 		}
@@ -149,7 +149,7 @@ func TestAddChain_CheckGenesis(t *testing.T) {
 		args := []string{
 			"add-chain",
 			"check-genesis",
-			"--genesis-config=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
+			"--genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
 			"--chain-id=" + "4206904",
 		}
 		err = runApp(args)
