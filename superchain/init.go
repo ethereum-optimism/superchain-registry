@@ -116,13 +116,6 @@ func init() {
 		}
 
 		Superchains[superchainEntry.Superchain] = &superchainEntry
-
-		implementations, err := newContractImplementations(s.Name())
-		if err != nil {
-			panic(fmt.Errorf("failed to read implementations of superchain target %s: %w", s.Name(), err))
-		}
-
-		Implementations[s.Name()] = implementations
 	}
 }
 

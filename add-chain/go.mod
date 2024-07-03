@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/ethereum-optimism/optimism v1.7.1-0.20240306112011-eac79900756b
 	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240430193954-bd84389308cb
-	github.com/ethereum/go-ethereum v1.13.8
+	github.com/ethereum/go-ethereum v1.101308.3-rc.1
 	github.com/google/go-cmp v0.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.9.0
