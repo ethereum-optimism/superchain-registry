@@ -97,3 +97,18 @@ var (
 		Required: true,
 	}
 )
+
+var (
+	L2GenesisFlag = &cli.PathFlag{
+		Name:    "l2-genesis",
+		Value:   "genesis.json",
+		Usage:   "Path to genesis json (go-ethereum format)",
+		EnvVars: prefixEnvVars("L2_GENESIS"),
+	}
+	L2GenesisHeaderFlag = &cli.PathFlag{
+		Name:    "l2-genesis-header",
+		Value:   "genesis-header.json",
+		Usage:   "Alternative to l2-genesis flag, if genesis-state is omitted. Path to block header at genesis",
+		EnvVars: prefixEnvVars("L2_GENESIS_HEADER"),
+	}
+)

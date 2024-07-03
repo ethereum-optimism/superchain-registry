@@ -90,6 +90,24 @@ func TestAddChain_Main(t *testing.T) {
 			compareJsonFiles(t, "superchain/extra/genesis-system-configs/sepolia/", tt.name, tt.chainShortName)
 		})
 	}
+
+	t.Run("compress-genesis", func(t *testing.T) {
+		// Must run this test to produce the .json.gz output artifact for the
+		// subsequent CheckGenesisConfig test
+		t.Parallel()
+		err := os.Setenv("SCR_RUN_TESTS", "true")
+		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
+
+		args := []string{
+			"add-chain",
+			"compress-genesis",
+			"--l2-genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
+			"--superchain-target=" + "sepolia",
+			"--chain-short-name=" + "testchain_zs",
+		}
+		err = runApp(args)
+		require.NoError(t, err, "add-chain compress-genesis failed")
+	})
 }
 
 func TestAddChain_CheckRollupConfig(t *testing.T) {

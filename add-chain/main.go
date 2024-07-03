@@ -33,8 +33,12 @@ var app = &cli.App{
 		flags.DeploymentsDirFlag,
 		flags.StandardChainCandidateFlag,
 	},
-	Action:   entrypoint,
-	Commands: []*cli.Command{&cmd.PromoteToStandardCmd, &cmd.CheckRollupConfigCmd},
+	Action: entrypoint,
+	Commands: []*cli.Command{
+		&cmd.PromoteToStandardCmd,
+		&cmd.CheckRollupConfigCmd,
+		&cmd.CompressGenesisCmd,
+	},
 }
 
 func main() {
