@@ -1,7 +1,6 @@
 package superchain
 
 import (
-	"encoding/hex"
 	"path"
 	"strings"
 	"testing"
@@ -113,22 +112,6 @@ func TestGenesis(t *testing.T) {
 			t.Fatalf("failed to load genesis of chain %d: %v", id, err)
 		}
 	}
-}
-
-func testAddr(v string) Address {
-	v = strings.TrimPrefix(v, "0x")
-	if len(v)%2 != 0 {
-		v += "0"
-	}
-	if len(v) > 2*addressLen {
-		panic("test address is too long")
-	}
-	var out Address
-	_, err := hex.Decode(out[:], []byte(v))
-	if err != nil {
-		panic(err)
-	}
-	return out
 }
 
 // TestContractBytecodes verifies that all bytecodes can be loaded successfully,

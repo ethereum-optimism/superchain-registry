@@ -16,7 +16,6 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/exp/maps"
 	"golang.org/x/mod/semver"
 	"gopkg.in/yaml.v3"
 )
@@ -28,12 +27,6 @@ var superchainFS embed.FS
 
 //go:embed extra/addresses extra/bytecodes extra/genesis extra/genesis-system-configs
 var extraFS embed.FS
-
-//go:embed implementations
-var implementationsFS embed.FS
-
-//go:embed configs/**/semver.yaml
-var semverFS embed.FS
 
 type BlockID struct {
 	Hash   Hash   `yaml:"hash"`
@@ -455,9 +448,6 @@ func (c ContractVersions) Check(allowEmptyVersions bool) error {
 	return nil
 }
 
-// copySemverMap is a concrete implementation of maps.Copy for map[string]Address.
-var copySemverMap = maps.Copy[map[string]Address, map[string]Address]
-
 // canonicalizeSemver will ensure that the version string has a "v" prefix.
 // This is because the semver library being used requires the "v" prefix,
 // even though
@@ -570,20 +560,6 @@ func isConfigFile(c fs.DirEntry) bool {
 		strings.HasSuffix(c.Name(), ".yaml") &&
 		c.Name() != "superchain.yaml" &&
 		c.Name() != "semver.yaml")
-}
-
-// newContractVersions will read the contract versions from semver.yaml
-// and check to make sure that it is valid.
-func newContractVersions(superchain string) (ContractVersions, error) {
-	var versions ContractVersions
-	semvers, err := semverFS.ReadFile(path.Join("configs", superchain, "semver.yaml"))
-	if err != nil {
-		return versions, fmt.Errorf("failed to read semver.yaml: %w", err)
-	}
-	if err := yaml.Unmarshal(semvers, &versions); err != nil {
-		return versions, fmt.Errorf("failed to unmarshal semver.yaml: %w", err)
-	}
-	return versions, nil
 }
 
 func LoadGenesis(chainID uint64) (*Genesis, error) {
