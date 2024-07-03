@@ -14,12 +14,12 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var CheckGenesisConfigCmd = cli.Command{
-	Name:  "check-genesis-config",
-	Flags: []cli.Flag{flags.GenesisConfigFlag, flags.ChainIdFlag},
-	Usage: "Sanity check genesis config (genesis.json) is reproducible",
+var CheckGenesisCmd = cli.Command{
+	Name:  "check-genesis",
+	Flags: []cli.Flag{flags.GenesisFlag, flags.ChainIdFlag},
+	Usage: "Sanity check genesis (genesis.json) is reproducible",
 	Action: func(ctx *cli.Context) error {
-		genesisPath := ctx.String(flags.GenesisConfigFlag.Name)
+		genesisPath := ctx.String(flags.GenesisFlag.Name)
 		fmt.Printf("Attempting to read from %s\n", genesisPath)
 		file, err := os.ReadFile(genesisPath)
 		if err != nil {

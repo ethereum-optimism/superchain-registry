@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	addressDir       = "../superchain/extra/addresses/sepolia/"
-	ymlConfigDir     = "../superchain/configs/sepolia/"
-	genesisConfigDir = "../superchain/extra/genesis-system-configs/sepolia/"
+	addressDir             = "../superchain/extra/addresses/sepolia/"
+	ymlConfigDir           = "../superchain/configs/sepolia/"
+	genesisSystemConfigDir = "../superchain/extra/genesis-system-configs/sepolia/"
 )
 
 var tests = []struct {
@@ -102,7 +102,7 @@ func TestAddChain_Main(t *testing.T) {
 
 	t.Run("compress-genesis", func(t *testing.T) {
 		// Must run this test to produce the .json.gz output artifact for the
-		// subsequent CheckGenesisConfig test
+		// subsequent CheckGenesis test
 		t.Parallel()
 		err := os.Setenv("SCR_RUN_TESTS", "true")
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
@@ -140,7 +140,7 @@ func TestAddChain_CheckRollupConfig(t *testing.T) {
 	}
 }
 
-func TestAddChain_CheckGenesisConfig(t *testing.T) {
+func TestAddChain_CheckGenesis(t *testing.T) {
 	t.Run("genesis_zorasep", func(t *testing.T) {
 		t.Parallel()
 		err := os.Setenv("SCR_RUN_TESTS", "true")
@@ -148,12 +148,12 @@ func TestAddChain_CheckGenesisConfig(t *testing.T) {
 
 		args := []string{
 			"add-chain",
-			"check-genesis-config",
+			"check-genesis",
 			"--genesis-config=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
 			"--chain-id=" + "4206904",
 		}
 		err = runApp(args)
-		require.NoError(t, err, "add-chain check-genesis-config failed")
+		require.NoError(t, err, "add-chain check-genesis failed")
 	})
 }
 
@@ -193,7 +193,7 @@ func checkConfigYaml(t *testing.T, testName, chainShortName string) {
 func cleanupTestFiles(t *testing.T, chainShortName string) {
 	paths := []string{
 		addressDir + chainShortName + ".json",
-		genesisConfigDir + chainShortName + ".json",
+		genesisSystemConfigDir + chainShortName + ".json",
 		ymlConfigDir + chainShortName + ".yaml",
 	}
 
