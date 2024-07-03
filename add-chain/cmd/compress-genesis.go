@@ -39,11 +39,11 @@ var CompressGenesisCmd = cli.Command{
 		superchainRepoRoot := filepath.Dir(filepath.Dir(filepath.Dir(thisFile)))
 		superchainTarget := ctx.String(flags.SuperchainTargetFlag.Name)
 		if superchainTarget == "" {
-			return fmt.Errorf("must set superchain-target (SCR_SUPERCHAIN_TARGET)")
+			return fmt.Errorf("missing required flag: %s", flags.SuperchainTargetFlag.Name)
 		}
 		chainShortName := ctx.String(flags.ChainShortNameFlag.Name)
 		if chainShortName == "" {
-			return fmt.Errorf("must set chain-short-name (SCR_CHAIN_SHORT_NAME)")
+			return fmt.Errorf("missing required flag: %s", flags.ChainShortNameFlag.Name)
 		}
 
 		zipOutputDir := filepath.Join(superchainRepoRoot, "/superchain/extra/genesis", superchainTarget, chainShortName+".json.gz")
