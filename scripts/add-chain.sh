@@ -11,3 +11,4 @@ source ${SUPERCHAIN_REPO}/.env
 go run ./add-chain --chain-type=$1 $2
 go run ./add-chain check-rollup-config
 go run ./add-chain compress-genesis
+go run ./add-chain check-genesis
