@@ -91,7 +91,7 @@ func TestAddChain_Main(t *testing.T) {
 		})
 	}
 
-	t.Run("compress genesis", func(t *testing.T) {
+	t.Run("compress-genesis", func(t *testing.T) {
 		// Must run this test to produce the .json.gz output artifact for the
 		// subsequent CheckGenesisConfig test
 		t.Parallel()
@@ -101,9 +101,9 @@ func TestAddChain_Main(t *testing.T) {
 		args := []string{
 			"add-chain",
 			"compress-genesis",
-			"--l2-genesis=" + "./testdata/monorepo/op-node/genesis_baseline.json",
+			"--l2-genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
 			"--superchain-target=" + "sepolia",
-			"--chain-short-name=" + "testchain_b",
+			"--chain-short-name=" + "testchain_zs",
 		}
 		err = runApp(args)
 		require.NoError(t, err, "add-chain compress-genesis failed")
