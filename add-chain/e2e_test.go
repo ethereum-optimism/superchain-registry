@@ -35,6 +35,15 @@ var tests = []struct {
 		chainType:        "standard",
 	},
 	{
+		name:                   "zorasep",
+		chainName:              "testchain_zorasep",
+		chainShortName:         "testchain_zs",
+		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_zorasep.json",
+		deploymentsDir:         "./testdata/monorepo/deployments",
+		chainType:              "frontier",
+		standardChainCandidate: true,
+	},
+	{
 		name:             "plasma",
 		chainName:        "testchain_plasma",
 		chainShortName:   "testchain_p",
@@ -132,7 +141,7 @@ func TestAddChain_CheckRollupConfig(t *testing.T) {
 }
 
 func TestAddChain_CheckGenesisConfig(t *testing.T) {
-	t.Run("genesis", func(t *testing.T) {
+	t.Run("genesis_zorasep", func(t *testing.T) {
 		t.Parallel()
 		err := os.Setenv("SCR_RUN_TESTS", "true")
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
@@ -140,8 +149,8 @@ func TestAddChain_CheckGenesisConfig(t *testing.T) {
 		args := []string{
 			"add-chain",
 			"check-genesis-config",
-			"--genesis-config=" + "./testdata/monorepo/op-node/genesis_metal.json",
-			"--chain-id=" + "1750",
+			"--genesis-config=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
+			"--chain-id=" + "4206904",
 		}
 		err = runApp(args)
 		require.NoError(t, err, "add-chain check-genesis-config failed")
