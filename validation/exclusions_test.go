@@ -56,4 +56,8 @@ var exclusions = map[string]map[uint64]bool{
 		8453:     true, // mainnet/base
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0
 		11763072: true, // sepolia-dev-0/base-devnet-0
+	},
+	"Uniqueness_Check": {
+		11155421: true, // oplabs devnet 0, not in upstream repo
+		11763072: true, // base devnet 0, not in upstream repo}
 	}}
