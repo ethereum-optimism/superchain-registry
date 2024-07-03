@@ -106,15 +106,7 @@ func testL1SecurityConfig(t *testing.T, chainID uint64) {
 }
 
 func testL2SecurityConfig(t *testing.T, chain *ChainConfig) {
-	isExcluded := map[uint64]bool{
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
-		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
-	}
-
-	if isExcluded[chain.ChainID] {
-		t.Skip("chain excluded from check")
-	}
-
+	skipIfExcluded(t, chain.ChainID)
 	// Create an ethclient connection to the specified RPC URL
 	client, err := ethclient.Dial(chain.PublicRPC)
 	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
