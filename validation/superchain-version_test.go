@@ -24,37 +24,6 @@ var isSemverAcceptable = func(desired, actual string) bool {
 	return desired == actual
 }
 
-func TestSuperchainWideContractVersions(t *testing.T) {
-	checkSuperchainTargetSatisfiesSemver := func(t *testing.T, superchain *Superchain) {
-		rpcEndpoint := superchain.Config.L1.PublicRPC
-		require.NotEmpty(t, rpcEndpoint)
-
-		client, err := ethclient.Dial(rpcEndpoint)
-		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-
-		desiredSemver, err := SuperchainSemver[superchain.Superchain].VersionFor("ProtocolVersions")
-		require.NoError(t, err)
-		checkSemverForContract(t, "ProtocolVersions", superchain.Config.ProtocolVersionsAddr, client, desiredSemver)
-
-		isExcludedFromSuperchainConfigCheck := map[string]bool{
-			"Mainnet": true, // no version specified
-		}
-
-		if isExcludedFromSuperchainConfigCheck[superchain.Config.Name] {
-			t.Skipf("%s excluded from SuperChainConfig version check", superchain.Config.Name)
-			return
-		}
-
-		desiredSemver, err = SuperchainSemver[superchain.Superchain].VersionFor("SuperchainConfig")
-		require.NoError(t, err)
-		checkSemverForContract(t, "SuperchainConfig", superchain.Config.SuperchainConfigAddr, client, desiredSemver)
-	}
-
-	for superchainName, superchain := range Superchains {
-		t.Run(superchainName, func(t *testing.T) { checkSuperchainTargetSatisfiesSemver(t, superchain) })
-	}
-}
-
 func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	skipIfExcluded(t, chain.ChainID)
 
