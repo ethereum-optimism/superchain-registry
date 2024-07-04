@@ -64,4 +64,5 @@ var exclusions = map[string]map[uint64]bool{
 	"Uniqueness_Check": {
 		11155421: true, // oplabs devnet 0, not in upstream repo
 		11763072: true, // base devnet 0, not in upstream repo}
-	}}
+	},
+}

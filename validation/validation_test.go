@@ -63,7 +63,7 @@ func testUniversal(t *testing.T, chain *ChainConfig) {
 // i.e. not to a Standard Candidate Chain.
 func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	t.Run("Standard Config Params", func(t *testing.T) {
-		t.Run("Data Availabilty", func(t *testing.T) { testDataAvailability(t, chain) })
+		t.Run("Data Availability", func(t *testing.T) { testDataAvailability(t, chain) })
 		t.Run("Resource Config", func(t *testing.T) { testResourceConfig(t, chain) })
 		t.Run("L2OO Params", func(t *testing.T) { testL2OOParams(t, chain) })
 		t.Run("Gas Limit", func(t *testing.T) { testGasLimit(t, chain) })
