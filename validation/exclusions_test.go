@@ -22,6 +22,10 @@ var exclusions = map[string]map[uint64]bool{
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
 	},
+	"GPO_Params": {
+		11155421: true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
+		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
+	},
 	"L2OO_Params": {
 		10:        true, // OP mainnet - Upgraded to fault proofs
 		999999999: true, // sepolia/zora  Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]

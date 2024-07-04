@@ -19,6 +19,8 @@ import (
 )
 
 func testGasPriceOracleParams(t *testing.T, chain *ChainConfig) {
+	skipIfExcluded(t, chain.ChainID)
+
 	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
@@ -57,13 +59,6 @@ func testGasPriceOracleParams(t *testing.T, chain *ChainConfig) {
 		}
 	}
 
-	isExcluded := map[uint64]bool{
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
-		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
-	}
-	if isExcluded[chain.ChainID] {
-		t.Skip()
-	}
 	rpcEndpoint := chain.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
 	client, err := ethclient.Dial(rpcEndpoint)
