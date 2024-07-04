@@ -11,7 +11,6 @@ import (
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -19,10 +18,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
-
-var isSemverAcceptable = func(desired, actual string) bool {
-	return desired == actual
-}
 
 func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	skipIfExcluded(t, chain.ChainID)
@@ -117,14 +112,6 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, is
 	})
 
 	return cv, nil
-}
-
-func checkSemverForContract(t *testing.T, contractName string, contractAddress *Address, client *ethclient.Client, desiredSemver string) {
-	actualSemver, err := getVersion(context.Background(), common.Address(*contractAddress), client)
-	require.NoError(t, err, "Could not get version for %s", contractName)
-
-	assert.Condition(t, func() bool { return isSemverAcceptable(desiredSemver, actualSemver) },
-		"%s.version=%s (UNACCEPTABLE desired version %s)", contractName, actualSemver, desiredSemver)
 }
 
 // getVersion will get the version of a contract at a given address, if it exposes a version() method.
