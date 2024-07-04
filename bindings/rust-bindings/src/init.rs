@@ -4,19 +4,12 @@ use crate::embed;
 use alloc::{format, string::ToString, vec::Vec};
 use hashbrown::HashMap;
 use superchain_primitives::{
-    is_config_file, AddressList, Addresses, ChainConfig, ContractImplementations,
-    GenesisSystemConfigs, Implementations, OPChains, Superchain, SuperchainConfig, Superchains,
-    SystemConfig,
+    is_config_file, AddressList, Addresses, ChainConfig, GenesisSystemConfigs, OPChains,
+    Superchain, SuperchainConfig, Superchains, SystemConfig,
 };
 
 /// Tuple type holding the various initializers.
-pub(crate) type InitTuple = (
-    Superchains,
-    OPChains,
-    Addresses,
-    GenesisSystemConfigs,
-    Implementations,
-);
+pub(crate) type InitTuple = (Superchains, OPChains, Addresses, GenesisSystemConfigs);
 
 /// Initialize the superchain configurations from the embedded filesystem.
 pub(crate) fn load_embedded_configs() -> InitTuple {
@@ -24,7 +17,6 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
     let mut op_chains = HashMap::new();
     let mut addresses = HashMap::new();
     let mut genesis_system_configs = HashMap::new();
-    let mut implementations = HashMap::new();
 
     for target_dir in embed::CONFIGS_DIR.dirs() {
         let target_name = target_dir.path().file_name().unwrap().to_str().unwrap();
@@ -90,9 +82,6 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
             _ => {}
         }
 
-        let impls = new_contract_implementations(target_name);
-        implementations.insert(target_name.to_string(), impls);
-
         superchains.insert(
             target_name.to_string(),
             Superchain {
@@ -103,38 +92,5 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
         );
     }
 
-    (
-        superchains,
-        op_chains,
-        addresses,
-        genesis_system_configs,
-        implementations,
-    )
-}
-
-fn new_contract_implementations(network: &str) -> ContractImplementations {
-    let implementations_data = embed::IMPLEMENTATIONS_DIR
-        .get_file("implementations.yaml")
-        .expect("Failed to find implementations.yaml file")
-        .contents();
-
-    let mut global_implementations: ContractImplementations =
-        serde_yaml::from_slice(implementations_data)
-            .expect("Failed to deserialize implementations.yaml file");
-
-    if network.is_empty() {
-        return global_implementations;
-    }
-
-    let network_implementations_data = embed::IMPLEMENTATIONS_DIR
-        .get_file(format!("networks/{}.yaml", network))
-        .expect("Failed to find network implementations.yaml file")
-        .contents();
-
-    let network_implementations = serde_yaml::from_slice(network_implementations_data)
-        .expect("Failed to deserialize network implementations.yaml file");
-
-    global_implementations.merge(network_implementations);
-
-    global_implementations
+    (superchains, op_chains, addresses, genesis_system_configs)
 }
