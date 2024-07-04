@@ -46,8 +46,8 @@ type SystemConfig struct {
 	Overhead          string  `json:"overhead"`
 	Scalar            string  `json:"scalar"`
 	GasLimit          uint64  `json:"gasLimit"`
-	BaseFeeScalar     uint64  `json:"baseFeeScalar"`
-	BlobBaseFeeScalar uint64  `json:"blobBaseFeeScalar"`
+	BaseFeeScalar     *uint64 `json:"baseFeeScalar,omitempty"`
+	BlobBaseFeeScalar *uint64 `json:"blobBaseFeeScalar,omitempty"`
 }
 
 type GenesisData struct {
