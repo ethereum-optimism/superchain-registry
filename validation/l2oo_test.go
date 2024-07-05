@@ -24,17 +24,7 @@ type L2OOParams struct {
 }
 
 func testL2OOParams(t *testing.T, chain *ChainConfig) {
-	isExcluded := map[uint64]bool{
-		10:        true, // OP mainnet - Upgraded to fault proofs
-		999999999: true, // sepolia/zora  Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
-		1740:      true, // sepolia/metal Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
-		919:       true, // sepolia/mode  Incorrect finalizationPeriodSeconds, 180 is not within bounds [12 12]
-		11155420:  true, // sepolia/op No L2OO because this chain uses Fault Proofs https://github.com/ethereum-optimism/superchain-registry/issues/219
-		11155421:  true, // oplabs-sepolia-devnet-0 No L2OO because this chain uses Fault Proofs https://github.com/ethereum-optimism/superchain-registry/issues/219
-	}
-	if isExcluded[chain.ChainID] {
-		t.Skip()
-	}
+	skipIfExcluded(t, chain.ChainID)
 
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 

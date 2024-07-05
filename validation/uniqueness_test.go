@@ -118,13 +118,8 @@ func init() {
 }
 
 func testIsGloballyUnique(t *testing.T, chain *ChainConfig) {
-	isExcluded := map[uint64]bool{
-		11155421: true, // oplabs devnet 0, not in upstream repo
-		11763072: true, // base devnet 0, not in upstream repo
-	}
-	if isExcluded[chain.ChainID] {
-		t.Skip("excluded from global chain id check")
-	}
+	skipIfExcluded(t, chain.ChainID)
+
 	props := globalChainIds[uint(chain.ChainID)]
 	require.NotNil(t, props, "chain ID is not listed at chainid.network")
 	globalChainName := props.Name
