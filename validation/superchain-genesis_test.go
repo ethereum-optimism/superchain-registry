@@ -15,10 +15,7 @@ import (
 )
 
 func testGenesisHash(t *testing.T, chainID uint64) {
-	if chainID == 10 {
-		t.Skipf("chain %d: EXCLUDED from Genesis block hash validation", chainID)
-	}
-
+	skipIfExcluded(t, chainID)
 	chainConfig, ok := OPChains[chainID]
 	if !ok {
 		t.Fatalf("no chain with ID %d found", chainID)
@@ -40,34 +37,11 @@ func testGenesisHash(t *testing.T, chainID uint64) {
 	require.Equal(t, common.Hash(declaredGenesisHash), computedGenesisHash, "chain %d: Genesis block hash must match computed value", chainID)
 }
 
-// This check should apply to ALL chains in the registry, as it protects downstream code (op-geth)
-func TestGenesisHash(t *testing.T) {
-	isExcluded := map[uint64]bool{
-		10: true, // OP Mainnet, requires override (see https://github.com/ethereum-optimism/op-geth/blob/daade41d463b4ff332c6ed955603e47dcd25528b/core/superchain.go#L83-L94)
-	}
-	for chainID, chain := range OPChains {
-		t.Run(perChainTestName(chain), func(t *testing.T) {
-			if isExcluded[chain.ChainID] {
-				t.Skipf("chain %d: EXCLUDED from Genesis block hash validation", chainID)
-			}
-			testGenesisHash(t, chainID)
-		})
-	}
-}
-
 func testGenesisHashAgainstRPC(t *testing.T, chain *ChainConfig) {
-	isExcluded := map[uint64]bool{
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
-		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
-	}
-
-	if isExcluded[chain.ChainID] {
-		t.Skip("chain excluded from check")
-	}
+	skipIfExcluded(t, chain.ChainID)
 
 	declaredGenesisHash := chain.Genesis.L2.Hash
 	rpcEndpoint := chain.PublicRPC
-	require.NotEmpty(t, rpcEndpoint)
 
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)

@@ -56,14 +56,7 @@ func TestSuperchainWideContractVersions(t *testing.T) {
 }
 
 func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
-	isExcluded := map[uint64]bool{
-		8453:     true, // mainnet/base
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0
-		11763072: true, // sepolia-dev-0/base-devnet-0
-	}
-	if isExcluded[chain.ChainID] {
-		t.Skipf("chain %d: EXCLUDED from contract version validation", chain.ChainID)
-	}
+	skipIfExcluded(t, chain.ChainID)
 
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint)
