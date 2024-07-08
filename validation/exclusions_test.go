@@ -57,7 +57,6 @@ var exclusions = map[string]map[uint64]bool{
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
 	},
 	"Standard_Contract_Versions": {
-		8453:     true, // mainnet/base
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0
 		11763072: true, // sepolia-dev-0/base-devnet-0
 	},
