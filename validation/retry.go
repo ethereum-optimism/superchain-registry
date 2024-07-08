@@ -7,7 +7,7 @@ import (
 )
 
 func Retry[S, T any](fn func(S) (T, error)) func(S) (T, error) {
-	const maxAttempts = 10
+	const maxAttempts = 3
 	return func(s S) (T, error) {
 		return retry.Do(context.Background(), maxAttempts, retry.Exponential(), func() (T, error) {
 			return fn(s)

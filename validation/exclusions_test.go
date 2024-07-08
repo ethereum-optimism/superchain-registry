@@ -26,6 +26,9 @@ var exclusions = map[string]map[uint64]bool{
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
 		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
 	},
+	"Superchain_Config": {
+		11763072: true, // sepolia-dev-0/base-devnet-0 (old version of OptimismPortal)
+	},
 	"L2OO_Params": {
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0 (does not yet declare a contract versions tag)
 		11763072: true, // sepolia-dev-0/base-devnet-0  (does not yet declare a contract versions tag)
