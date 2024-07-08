@@ -127,7 +127,7 @@ func (c ChainConfig) Identifier() string {
 }
 
 type PlasmaConfig struct {
-	DAChallengeAddress *Address `json:"da_challenge_contract_address" yaml:"-"`
+	DAChallengeAddress *Address `json:"da_challenge_contract_address" yaml:"da_challenge_contract_address"`
 	// DA challenge window value set on the DAC contract. Used in plasma mode
 	// to compute when a commitment can no longer be challenged.
 	DAChallengeWindow *uint64 `json:"da_challenge_window" yaml:"da_challenge_window"`
