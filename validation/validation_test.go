@@ -3,7 +3,6 @@ package validation
 import (
 	"testing"
 
-	"github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
@@ -25,7 +24,7 @@ func testValidation(t *testing.T, chain *ChainConfig) {
 	})
 
 	t.Run("Standard Chain", func(t *testing.T) {
-		if chain.SuperchainLevel != superchain.Standard {
+		if chain.SuperchainLevel != Standard {
 			t.Skip("Chain excluded from this check (NOT a Standard Chain)")
 		}
 		testStandard(t, chain)

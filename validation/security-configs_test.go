@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
