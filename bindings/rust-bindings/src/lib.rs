@@ -34,9 +34,6 @@ lazy_static::lazy_static! {
 
     /// Genesis system configurations exported from the registry
     pub static ref GENESIS_SYSTEM_CONFIGS: GenesisSystemConfigs = _INIT.3.clone();
-
-    /// Contract implementations exported from the registry
-    pub static ref IMPLEMENTATIONS: Implementations = _INIT.4.clone();
 }
 
 #[cfg(test)]

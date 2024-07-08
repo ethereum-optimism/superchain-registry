@@ -25,11 +25,6 @@ func init() {
 			continue // ignore files, e.g. a readme
 		}
 
-		SuperchainSemver[s.Name()], err = newContractVersions(s.Name())
-		if err != nil {
-			panic(fmt.Errorf("failed to read semver.yaml: %w", err))
-		}
-
 		// Load superchain-target config
 		superchainConfigData, err := superchainFS.ReadFile(path.Join("configs", s.Name(), "superchain.yaml"))
 		if err != nil {
@@ -116,13 +111,6 @@ func init() {
 		}
 
 		Superchains[superchainEntry.Superchain] = &superchainEntry
-
-		implementations, err := newContractImplementations(s.Name())
-		if err != nil {
-			panic(fmt.Errorf("failed to read implementations of superchain target %s: %w", s.Name(), err))
-		}
-
-		Implementations[s.Name()] = implementations
 	}
 }
 

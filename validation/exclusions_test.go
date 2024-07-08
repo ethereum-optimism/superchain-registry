@@ -26,13 +26,12 @@ var exclusions = map[string]map[uint64]bool{
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
 		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
 	},
+	"Superchain_Config": {
+		11763072: true, // sepolia-dev-0/base-devnet-0 (old version of OptimismPortal)
+	},
 	"L2OO_Params": {
-		10:        true, // OP mainnet - Upgraded to fault proofs
-		999999999: true, // sepolia/zora  Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
-		1740:      true, // sepolia/metal Incorrect finalizationPeriodSeconds, 604800 is not within bounds [12 12]
-		919:       true, // sepolia/mode  Incorrect finalizationPeriodSeconds, 180 is not within bounds [12 12]
-		11155420:  true, // sepolia/op No L2OO because this chain uses Fault Proofs https://github.com/ethereum-optimism/superchain-registry/issues/219
-		11155421:  true, // oplabs-sepolia-devnet-0 No L2OO because this chain uses Fault Proofs https://github.com/ethereum-optimism/superchain-registry/issues/219
+		11155421: true, // sepolia-dev-0/oplabs-devnet-0 (does not yet declare a contract versions tag)
+		11763072: true, // sepolia-dev-0/base-devnet-0  (does not yet declare a contract versions tag)
 	},
 	"L1_Security_Config": {
 		8453:      true, // base (incorrect challenger, incorrect guardian)
@@ -57,7 +56,6 @@ var exclusions = map[string]map[uint64]bool{
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
 	},
 	"Standard_Contract_Versions": {
-		8453:     true, // mainnet/base
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0
 		11763072: true, // sepolia-dev-0/base-devnet-0
 	},

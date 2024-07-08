@@ -26,6 +26,10 @@ type L2OOParams struct {
 func testL2OOParams(t *testing.T, chain *ChainConfig) {
 	skipIfExcluded(t, chain.ChainID)
 
+	if *chain.ContractsVersionTag == "op-contracts/v1.4.0" {
+		t.Skip("Chain is on fault proofs, so there is no L2OutputOracle to track")
+	}
+
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
 	require.NotEmpty(t, rpcEndpoint)
