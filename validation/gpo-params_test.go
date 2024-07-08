@@ -6,7 +6,6 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/op-bindings/predeploys"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
@@ -21,7 +20,7 @@ import (
 func testGasPriceOracleParams(t *testing.T, chain *ChainConfig) {
 	skipIfExcluded(t, chain.ChainID)
 
-	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
+	gasPriceOraclAddr := common.HexToAddress("0x420000000000000000000000000000000000000F")
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
 		desiredParams := standard.Config.Params[chain.Superchain].GPOParams.PreEcotone
