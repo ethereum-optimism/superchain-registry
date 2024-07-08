@@ -27,8 +27,8 @@ var exclusions = map[string]map[uint64]bool{
 		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
 	},
 	"L2OO_Params": {
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0
-		11763072: true, // sepolia-dev-0/base-devnet-0
+		11155421: true, // sepolia-dev-0/oplabs-devnet-0 (does not yet declare a contract versions tag)
+		11763072: true, // sepolia-dev-0/base-devnet-0  (does not yet declare a contract versions tag)
 	},
 	"L1_Security_Config": {
 		8453:      true, // base (incorrect challenger, incorrect guardian)
