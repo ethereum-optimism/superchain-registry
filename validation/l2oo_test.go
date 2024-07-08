@@ -6,8 +6,8 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	legacy "github.com/ethereum-optimism/superchain-registry/validation/internal/legacy"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"

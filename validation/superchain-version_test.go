@@ -8,8 +8,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
