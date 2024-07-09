@@ -1,15 +1,12 @@
-#!make
-include .env
-ROOT_DIR:=$(CURDIR)
+set dotenv-load
 
 ### Adding a chain
-.PHONY: add-chain
 add-chain:
 	go run ./add-chain
 	go run ./add-chain check-rollup-config
 	go run ./add-chain compress-genesis
 	go run ./add-chain check-genesis
-	make codegen
+	just codegen
 
 promote-to-standard:
 	go run ./add-chain promote-to-standard --chain-id=${chain-id}
@@ -27,11 +24,11 @@ lint-all:
 test-all: test-add-chain test-superchain test-validation
 
 test-add-chain:
-# We separate the first test from the rest because it generates artifacts
-# Which need to exist before the remaining tests run.
+	# We separate the first test from the rest because it generates artifacts
+	# Which need to exist before the remaining tests run.
 	go test ./add-chain/... -run TestAddChain_Main -v
 	go test ./add-chain/... -run '[^TestAddChain_Main]' -v
-	make clean-add-chain
+	just clean-add-chain
 
 test-superchain:
 	go test ./superchain/... -v
@@ -57,7 +54,7 @@ tidy-superchain:
 tidy-validation:
 	cd validation && go mod tidy
 
-### Removing a chain, example: make remove-chain superchain_target=sepolia chain=mychain
+### Removing a chain, example: just remove-chain superchain_target=sepolia chain=mychain
 remove-chain:
 	rm superchain/configs/$(superchain_target)/$(chain).yaml
 	rm superchain/extra/addresses/$(superchain_target)/$(chain).json
