@@ -1,4 +1,5 @@
 set dotenv-load
+set positional-arguments
 
 ### Adding a chain
 add-chain:
@@ -8,8 +9,8 @@ add-chain:
 	go run ./add-chain check-genesis
 	just codegen
 
-promote-to-standard:
-	go run ./add-chain promote-to-standard --chain-id=${chain-id}
+promote-to-standard *args='':
+	go run ./add-chain promote-to-standard --chain-id=$1
 
 ### Auto-generated files
 codegen:
@@ -36,9 +37,8 @@ test-superchain:
 test-validation:
 	go test ./validation/... -v
 
-[positional-arguments]
-@validate:
-    go test ./validation/... -v -run=TestValidation/$1
+@validate *args='':
+	go test ./validation/... -v -run=TestValidation/$1
 
 ### Cleaning
 clean-add-chain:

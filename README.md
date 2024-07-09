@@ -80,15 +80,14 @@ The format is a gzipped JSON `genesis.json` file, with either:
 
 ### 5. Run tests locally
 
-Run the following command from the `validation` folder to run the Go validation checks, for only the chain you added (replace the chain name or ID accordingly):
+Run the following command to run the Go validation checks, for only the chain you added (replace the chain name or ID accordingly):
 ```
-go test -run=TestValidation/OP_Sepolia
+just validate OP_Sepolia
 ```
 or
 ```
-go test -run=TestValidation/11155420
+just validate 11155420
 ```
-Omit the `-run=` flag to run checks for all chains.
 
 > [!NOTE]
 > If you set `STANDARD_CHAIN_CANDIDATE`, your chain will be checked against the majority of the standard configuration requirements. These are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
