@@ -36,6 +36,10 @@ test-superchain:
 test-validation:
 	go test ./validation/... -v
 
+[positional-arguments]
+@validate:
+    go test ./validation/... -v -run=TestValidation/$1
+
 ### Cleaning
 clean-add-chain:
 	rm -f superchain/configs/sepolia/testchain_*.yaml
