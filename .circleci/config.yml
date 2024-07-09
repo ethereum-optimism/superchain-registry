@@ -113,8 +113,7 @@ workflows:
                 - main
   pr-checks:
     jobs:
-      - golang-lint
-      - golang-modules-tidy
+      - lint-and-tidy
       - golang-test
       - check-codegen
 
