@@ -15,7 +15,7 @@ import (
 
 var CheckGenesisCmd = cli.Command{
 	Name:  "check-genesis",
-	Flags: []cli.Flag{flags.GenesisFlag, flags.ChainIdFlag},
+	Flags: []cli.Flag{flags.GenesisFlag},
 	Usage: "Sanity check genesis (genesis.json) is reproducible",
 	Action: func(ctx *cli.Context) error {
 		genesisPath := ctx.String(flags.GenesisFlag.Name)
@@ -29,7 +29,8 @@ var CheckGenesisCmd = cli.Command{
 			return fmt.Errorf("failed to unmarshal local genesis.json into core.Genesis struct: %w", err)
 		}
 
-		chainId := ctx.Uint64(flags.ChainIdFlag.Name)
+		chainId := localGenesis.Config.ChainID.Uint64()
+
 		gethGenesis, err := core.LoadOPStackGenesis(chainId)
 		if err != nil {
 			return fmt.Errorf("failed to load genesis via op-geth: ensure chainId has already been added to registry: %w", err)
