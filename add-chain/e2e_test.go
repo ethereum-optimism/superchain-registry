@@ -102,7 +102,7 @@ func TestAddChain_Main(t *testing.T) {
 
 	t.Run("compress-genesis", func(t *testing.T) {
 		// Must run this test to produce the .json.gz output artifact for the
-		// subsequent CheckGenesis test
+		// subsequent TestAddChain_CheckGenesis
 		t.Parallel()
 		err := os.Setenv("SCR_RUN_TESTS", "true")
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
@@ -142,7 +142,6 @@ func TestAddChain_CheckRollupConfig(t *testing.T) {
 
 func TestAddChain_CheckGenesis(t *testing.T) {
 	t.Run("genesis_zorasep", func(t *testing.T) {
-		t.Parallel()
 		err := os.Setenv("SCR_RUN_TESTS", "true")
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
 

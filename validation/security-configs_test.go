@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -52,6 +52,8 @@ var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64
 }
 
 func testL1SecurityConfig(t *testing.T, chainID uint64) {
+	skipIfExcluded(t, chainID)
+
 	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
 
@@ -72,20 +74,7 @@ func testL1SecurityConfig(t *testing.T, chainID uint64) {
 
 	checkResolutions(t, standard.Config.Roles.L1.GetResolutions(isFaultProofs), chainID, client)
 
-	isExcluded := map[uint64]bool{
-		8453:      true, // base (incorrect challenger, incorrect guardian)
-		11763072:  true, // base-devnet-0 (incorrect challenger, incorrect guardian)
-		90001:     true, // race (incorrect challenger, incorrect guardian)
-		84532:     true, // base-sepolia (incorrect challenger)
-		7777777:   true, // zora (incorrect challenger)
-		1750:      true, // metal (incorrect challenger)
-		919:       true, // mode sepolia (incorrect challenger)
-		999999999: true, // zora sepolia (incorrect challenger)
-		34443:     true, // mode (incorrect challenger)
-	}
-	if !isExcluded[chainID] {
-		checkResolutions(t, standard.Config.MultisigRoles[OPChains[chainID].Superchain].L1.GetResolutions(isFaultProofs), chainID, client)
-	}
+	checkResolutions(t, standard.Config.MultisigRoles[OPChains[chainID].Superchain].L1.GetResolutions(isFaultProofs), chainID, client)
 
 	// Perform an extra check on a mapping value of "L1CrossDomainMessengerProxy":
 	// This is because L1CrossDomainMessenger's proxy is a ResolvedDelegateProxy, and
@@ -106,15 +95,7 @@ func testL1SecurityConfig(t *testing.T, chainID uint64) {
 }
 
 func testL2SecurityConfig(t *testing.T, chain *ChainConfig) {
-	isExcluded := map[uint64]bool{
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
-		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
-	}
-
-	if isExcluded[chain.ChainID] {
-		t.Skip("chain excluded from check")
-	}
-
+	skipIfExcluded(t, chain.ChainID)
 	// Create an ethclient connection to the specified RPC URL
 	client, err := ethclient.Dial(chain.PublicRPC)
 	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)

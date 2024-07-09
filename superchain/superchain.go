@@ -16,7 +16,6 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/exp/maps"
 	"golang.org/x/mod/semver"
 	"gopkg.in/yaml.v3"
 )
@@ -28,12 +27,6 @@ var superchainFS embed.FS
 
 //go:embed extra/addresses extra/bytecodes extra/genesis extra/genesis-system-configs
 var extraFS embed.FS
-
-//go:embed implementations
-var implementationsFS embed.FS
-
-//go:embed configs/**/semver.yaml
-var semverFS embed.FS
 
 type BlockID struct {
 	Hash   Hash   `yaml:"hash"`
@@ -127,7 +120,7 @@ func (c ChainConfig) Identifier() string {
 }
 
 type PlasmaConfig struct {
-	DAChallengeAddress *Address `json:"da_challenge_contract_address" yaml:"-"`
+	DAChallengeAddress *Address `json:"da_challenge_contract_address" yaml:"da_challenge_contract_address"`
 	// DA challenge window value set on the DAC contract. Used in plasma mode
 	// to compute when a commitment can no longer be challenged.
 	DAChallengeWindow *uint64 `json:"da_challenge_window" yaml:"da_challenge_window"`
@@ -351,47 +344,6 @@ func (a AddressList) AddressFor(name string) (Address, error) {
 	return address, nil
 }
 
-// ImplementationList represents the set of implementation contracts to be used together
-// for a network.
-type ImplementationList struct {
-	L1CrossDomainMessenger       VersionedContract `json:"L1CrossDomainMessenger"`
-	L1ERC721Bridge               VersionedContract `json:"L1ERC721Bridge"`
-	L1StandardBridge             VersionedContract `json:"L1StandardBridge"`
-	L2OutputOracle               VersionedContract `json:"L2OutputOracle,omitempty"`
-	OptimismMintableERC20Factory VersionedContract `json:"OptimismMintableERC20Factory"`
-	OptimismPortal               VersionedContract `json:"OptimismPortal"`
-	SystemConfig                 VersionedContract `json:"SystemConfig"`
-	// Fault Proof contracts:
-	AnchorStateRegistry     VersionedContract `json:"AnchorStateRegistry,omitempty"`
-	DelayedWETH             VersionedContract `json:"DelayedWETH,omitempty"`
-	DisputeGameFactory      VersionedContract `json:"DisputeGameFactory,omitempty"`
-	FaultDisputeGame        VersionedContract `json:"FaultDisputeGame,omitempty"`
-	MIPS                    VersionedContract `json:"MIPS,omitempty"`
-	PermissionedDisputeGame VersionedContract `json:"PermissionedDisputeGame,omitempty"`
-	PreimageOracle          VersionedContract `json:"PreimageOracle,omitempty"`
-}
-
-// ContractImplementations represent a set of contract implementations on a given network.
-// The key in the map represents the semantic version of the contract and the value is the
-// address that the contract is deployed to.
-type ContractImplementations struct {
-	L1CrossDomainMessenger       AddressSet `yaml:"l1_cross_domain_messenger"`
-	L1ERC721Bridge               AddressSet `yaml:"l1_erc721_bridge"`
-	L1StandardBridge             AddressSet `yaml:"l1_standard_bridge"`
-	L2OutputOracle               AddressSet `yaml:"l2_output_oracle,omitempty"`
-	OptimismMintableERC20Factory AddressSet `yaml:"optimism_mintable_erc20_factory"`
-	OptimismPortal               AddressSet `yaml:"optimism_portal"`
-	SystemConfig                 AddressSet `yaml:"system_config"`
-	// Fault Proof contracts:
-	AnchorStateRegistry     AddressSet `yaml:"anchor_state_registry,omitempty"`
-	DelayedWETH             AddressSet `yaml:"delayed_weth,omitempty"`
-	DisputeGameFactory      AddressSet `yaml:"dispute_game_factory,omitempty"`
-	FaultDisputeGame        AddressSet `yaml:"fault_dispute_game,omitempty"`
-	MIPS                    AddressSet `yaml:"mips,omitempty"`
-	PermissionedDisputeGame AddressSet `yaml:"permissioned_dispute_game,omitempty"`
-	PreimageOracle          AddressSet `yaml:"preimage_oracle,omitempty"`
-}
-
 // AddressSet represents a set of addresses for a given
 // contract. They are keyed by the semantic version.
 type AddressSet map[string]Address
@@ -400,121 +352,6 @@ type AddressSet map[string]Address
 type VersionedContract struct {
 	Version string  `json:"version"`
 	Address Address `json:"address"`
-}
-
-// Get will handle getting semantic versions from the set
-// in the case where the semver string is not prefixed with
-// a "v" as well as if it does have a "v" prefix.
-func (a AddressSet) Get(key string) Address {
-	if !strings.HasPrefix(key, "v") {
-		key = "v" + key
-	}
-	if addr, ok := a[strings.TrimPrefix(key, "v")]; ok {
-		return addr
-	}
-	return a[key]
-}
-
-// Versions will return the list of semantic versions for a contract.
-// It handles the case where the versions are not prefixed with a "v".
-func (a AddressSet) Versions() []string {
-	keys := maps.Keys(a)
-	for i, k := range keys {
-		keys[i] = canonicalizeSemver(k)
-	}
-	semver.Sort(keys)
-	return keys
-}
-
-// Resolve will return a set of addresses that resolve a given
-// semantic version set.
-func (c ContractImplementations) Resolve(versions ContractVersions) (ImplementationList, error) {
-	var implementations ImplementationList
-	var err error
-	if implementations.L1CrossDomainMessenger, err = resolve(c.L1CrossDomainMessenger, versions.L1CrossDomainMessenger); err != nil {
-		return implementations, fmt.Errorf("L1CrossDomainMessenger: %w", err)
-	}
-	if implementations.L1ERC721Bridge, err = resolve(c.L1ERC721Bridge, versions.L1ERC721Bridge); err != nil {
-		return implementations, fmt.Errorf("L1ERC721Bridge: %w", err)
-	}
-	if implementations.L1StandardBridge, err = resolve(c.L1StandardBridge, versions.L1StandardBridge); err != nil {
-		return implementations, fmt.Errorf("L1StandardBridge: %w", err)
-	}
-	if implementations.OptimismMintableERC20Factory, err = resolve(c.OptimismMintableERC20Factory, versions.OptimismMintableERC20Factory); err != nil {
-		return implementations, fmt.Errorf("OptimismMintableERC20Factory: %w", err)
-	}
-	if implementations.OptimismPortal, err = resolve(c.OptimismPortal, versions.OptimismPortal); err != nil {
-		return implementations, fmt.Errorf("OptimismPortal: %w", err)
-	}
-	if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
-		return implementations, fmt.Errorf("SystemConfig: %w", err)
-	}
-	// If the L2OutputOracle is not specified (versions.L2OutputOracle is empty), we can assume that the L2OutputOracle
-	// is not used, and fault proofs are activated.
-	if implementations.L2OutputOracle, err = resolve(c.L2OutputOracle, versions.L2OutputOracle); errors.Is(err, ErrEmptyVersion) {
-		if implementations.SystemConfig, err = resolve(c.SystemConfig, versions.SystemConfig); err != nil {
-			return implementations, fmt.Errorf("SystemConfig: %w", err)
-		}
-		if implementations.AnchorStateRegistry, err = resolve(c.AnchorStateRegistry, versions.AnchorStateRegistry); err != nil {
-			return implementations, fmt.Errorf("AnchorStateRegistry: %w", err)
-		}
-		if implementations.DelayedWETH, err = resolve(c.DelayedWETH, versions.DelayedWETH); err != nil {
-			return implementations, fmt.Errorf("DelayedWETH: %w", err)
-		}
-		if implementations.DisputeGameFactory, err = resolve(c.DisputeGameFactory, versions.DisputeGameFactory); err != nil {
-			return implementations, fmt.Errorf("DisputeGameFactory: %w", err)
-		}
-		if implementations.FaultDisputeGame, err = resolve(c.FaultDisputeGame, versions.FaultDisputeGame); err != nil {
-			return implementations, fmt.Errorf("FaultDisputeGame: %w", err)
-		}
-		if implementations.MIPS, err = resolve(c.MIPS, versions.MIPS); err != nil {
-			return implementations, fmt.Errorf("MIPS: %w", err)
-		}
-		if implementations.PermissionedDisputeGame, err = resolve(c.PermissionedDisputeGame, versions.PermissionedDisputeGame); err != nil {
-			return implementations, fmt.Errorf("PermissionedDisputeGame: %w", err)
-		}
-		if implementations.PreimageOracle, err = resolve(c.PreimageOracle, versions.PreimageOracle); err != nil {
-			return implementations, fmt.Errorf("PreimageOracle: %w", err)
-		}
-	} else if err != nil {
-		return implementations, fmt.Errorf("L2OutputOracle: %w", err)
-	}
-	return implementations, nil
-}
-
-// resolve returns a VersionedContract that matches the passed in semver version
-// given a set of addresses.
-func resolve(set AddressSet, version string) (VersionedContract, error) {
-	var out VersionedContract
-
-	if version == "" {
-		return out, ErrEmptyVersion
-	}
-
-	version = canonicalizeSemver(version)
-	if !semver.IsValid(version) {
-		return out, fmt.Errorf("invalid semver: '%s'", version)
-	}
-
-	keys := set.Versions()
-	if len(keys) == 0 {
-		return out, fmt.Errorf("no implementations found")
-	}
-
-	for _, k := range keys {
-		res := semver.Compare(k, version)
-		if res == 0 {
-			out = VersionedContract{
-				Version: k,
-				Address: set.Get(k),
-			}
-			break
-		}
-	}
-	if out == (VersionedContract{}) {
-		return out, fmt.Errorf("cannot resolve semver")
-	}
-	return out, nil
 }
 
 // ContractVersions represents the desired semantic version of the contracts
@@ -611,90 +448,6 @@ func (c ContractVersions) Check(allowEmptyVersions bool) error {
 	return nil
 }
 
-// newContractImplementations returns a new empty ContractImplementations.
-// Use this constructor to ensure that none of struct fields are nil.
-// It will also merge the local network implementations into the global implementations
-// because the global implementations were deployed with create2 and therefore should
-// be on every network.
-func newContractImplementations(network string) (ContractImplementations, error) {
-	var globals ContractImplementations
-	globalData, err := implementationsFS.ReadFile(path.Join("implementations", "implementations.yaml"))
-	if err != nil {
-		return globals, fmt.Errorf("failed to read implementations: %w", err)
-	}
-	if err := yaml.Unmarshal(globalData, &globals); err != nil {
-		return globals, fmt.Errorf("failed to decode implementations: %w", err)
-	}
-	setAddressSetsIfNil(&globals)
-	if network == "" {
-		return globals, nil
-	}
-
-	filepath := path.Join("implementations", "networks", network+".yaml")
-	var impls ContractImplementations
-	data, err := implementationsFS.ReadFile(filepath)
-	if err != nil {
-		return impls, fmt.Errorf("failed to read implementations: %w", err)
-	}
-	if err := yaml.Unmarshal(data, &impls); err != nil {
-		return impls, fmt.Errorf("failed to decode implementations: %w", err)
-	}
-	setAddressSetsIfNil(&impls)
-	globals.Merge(impls)
-
-	return globals, nil
-}
-
-// setAddressSetsIfNil will ensure that all of the struct values on a
-// ContractImplementations struct are non nil.
-func setAddressSetsIfNil(impls *ContractImplementations) {
-	if impls.L1CrossDomainMessenger == nil {
-		impls.L1CrossDomainMessenger = make(AddressSet)
-	}
-	if impls.L1ERC721Bridge == nil {
-		impls.L1ERC721Bridge = make(AddressSet)
-	}
-	if impls.L1StandardBridge == nil {
-		impls.L1StandardBridge = make(AddressSet)
-	}
-	if impls.L2OutputOracle == nil {
-		impls.L2OutputOracle = make(AddressSet)
-	}
-	if impls.OptimismMintableERC20Factory == nil {
-		impls.OptimismMintableERC20Factory = make(AddressSet)
-	}
-	if impls.OptimismPortal == nil {
-		impls.OptimismPortal = make(AddressSet)
-	}
-	if impls.SystemConfig == nil {
-		impls.SystemConfig = make(AddressSet)
-	}
-	if impls.AnchorStateRegistry == nil {
-		impls.AnchorStateRegistry = make(AddressSet)
-	}
-	if impls.DelayedWETH == nil {
-		impls.DelayedWETH = make(AddressSet)
-	}
-	if impls.DisputeGameFactory == nil {
-		impls.DisputeGameFactory = make(AddressSet)
-	}
-	if impls.FaultDisputeGame == nil {
-		impls.FaultDisputeGame = make(AddressSet)
-	}
-	if impls.MIPS == nil {
-		impls.MIPS = make(AddressSet)
-	}
-	if impls.PermissionedDisputeGame == nil {
-		impls.PermissionedDisputeGame = make(AddressSet)
-	}
-	if impls.PreimageOracle == nil {
-		impls.PreimageOracle = make(AddressSet)
-	}
-}
-
-// copySemverMap is a concrete implementation of maps.Copy for map[string]Address.
-var copySemverMap = maps.Copy[map[string]Address, map[string]Address]
-
 // canonicalizeSemver will ensure that the version string has a "v" prefix.
 // This is because the semver library being used requires the "v" prefix,
 // even though
@@ -703,45 +456,6 @@ func canonicalizeSemver(version string) string {
 		version = "v" + version
 	}
 	return version
-}
-
-// Merge will combine two ContractImplementations into one. Any conflicting keys will
-// be overwritten by the arguments. It assumes that nonce of the struct fields are nil.
-func (c ContractImplementations) Merge(other ContractImplementations) {
-	copySemverMap(c.L1CrossDomainMessenger, other.L1CrossDomainMessenger)
-	copySemverMap(c.L1ERC721Bridge, other.L1ERC721Bridge)
-	copySemverMap(c.L1StandardBridge, other.L1StandardBridge)
-	copySemverMap(c.L2OutputOracle, other.L2OutputOracle)
-	copySemverMap(c.OptimismMintableERC20Factory, other.OptimismMintableERC20Factory)
-	copySemverMap(c.OptimismPortal, other.OptimismPortal)
-	copySemverMap(c.SystemConfig, other.SystemConfig)
-	copySemverMap(c.AnchorStateRegistry, other.AnchorStateRegistry)
-	copySemverMap(c.DelayedWETH, other.DelayedWETH)
-	copySemverMap(c.DisputeGameFactory, other.DisputeGameFactory)
-	copySemverMap(c.FaultDisputeGame, other.FaultDisputeGame)
-	copySemverMap(c.MIPS, other.MIPS)
-	copySemverMap(c.PermissionedDisputeGame, other.PermissionedDisputeGame)
-	copySemverMap(c.PreimageOracle, other.PreimageOracle)
-}
-
-// Copy will return a shallow copy of the ContractImplementations.
-func (c ContractImplementations) Copy() ContractImplementations {
-	return ContractImplementations{
-		L1CrossDomainMessenger:       maps.Clone(c.L1CrossDomainMessenger),
-		L1ERC721Bridge:               maps.Clone(c.L1ERC721Bridge),
-		L1StandardBridge:             maps.Clone(c.L1StandardBridge),
-		L2OutputOracle:               maps.Clone(c.L2OutputOracle),
-		OptimismMintableERC20Factory: maps.Clone(c.OptimismMintableERC20Factory),
-		OptimismPortal:               maps.Clone(c.OptimismPortal),
-		SystemConfig:                 maps.Clone(c.SystemConfig),
-		AnchorStateRegistry:          maps.Clone(c.AnchorStateRegistry),
-		DelayedWETH:                  maps.Clone(c.DelayedWETH),
-		DisputeGameFactory:           maps.Clone(c.DisputeGameFactory),
-		FaultDisputeGame:             maps.Clone(c.FaultDisputeGame),
-		MIPS:                         maps.Clone(c.MIPS),
-		PermissionedDisputeGame:      maps.Clone(c.PermissionedDisputeGame),
-		PreimageOracle:               maps.Clone(c.PreimageOracle),
-	}
 }
 
 type GenesisSystemConfig struct {
@@ -838,9 +552,6 @@ var Addresses = map[uint64]*AddressList{}
 
 var GenesisSystemConfigs = map[uint64]*GenesisSystemConfig{}
 
-// Implementations maps superchain name to contract implementations
-var Implementations = map[string]ContractImplementations{}
-
 // SuperchainSemver maps superchain name to a contract name : approved semver version structure.
 var SuperchainSemver map[string]ContractVersions
 
@@ -849,20 +560,6 @@ func isConfigFile(c fs.DirEntry) bool {
 		strings.HasSuffix(c.Name(), ".yaml") &&
 		c.Name() != "superchain.yaml" &&
 		c.Name() != "semver.yaml")
-}
-
-// newContractVersions will read the contract versions from semver.yaml
-// and check to make sure that it is valid.
-func newContractVersions(superchain string) (ContractVersions, error) {
-	var versions ContractVersions
-	semvers, err := semverFS.ReadFile(path.Join("configs", superchain, "semver.yaml"))
-	if err != nil {
-		return versions, fmt.Errorf("failed to read semver.yaml: %w", err)
-	}
-	if err := yaml.Unmarshal(semvers, &versions); err != nil {
-		return versions, fmt.Errorf("failed to unmarshal semver.yaml: %w", err)
-	}
-	return versions, nil
 }
 
 func LoadGenesis(chainID uint64) (*Genesis, error) {

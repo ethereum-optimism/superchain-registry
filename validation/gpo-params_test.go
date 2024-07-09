@@ -6,9 +6,8 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
-	"github.com/ethereum-optimism/optimism/op-bindings/predeploys"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,7 +18,9 @@ import (
 )
 
 func testGasPriceOracleParams(t *testing.T, chain *ChainConfig) {
-	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
+	skipIfExcluded(t, chain.ChainID)
+
+	gasPriceOraclAddr := common.HexToAddress("0x420000000000000000000000000000000000000F")
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
 		desiredParams := standard.Config.Params[chain.Superchain].GPOParams.PreEcotone
@@ -57,13 +58,6 @@ func testGasPriceOracleParams(t *testing.T, chain *ChainConfig) {
 		}
 	}
 
-	isExcluded := map[uint64]bool{
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
-		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
-	}
-	if isExcluded[chain.ChainID] {
-		t.Skip()
-	}
 	rpcEndpoint := chain.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
 	client, err := ethclient.Dial(rpcEndpoint)
@@ -111,7 +105,7 @@ func getPreEcotoneGasPriceOracleParams(ctx context.Context, addr common.Address,
 	}, nil
 }
 
-// getEcotoneGasPriceOracleParams gets the params by calling getters on the contract at addr. Will retry up to 3 times for each getter.
+// getEcotoneGasPriceOracleParams gets the params by calling getters on the contract at addr. Will perform retries.
 func getEcotoneGasPriceOracleParams(ctx context.Context, addr common.Address, client *ethclient.Client) (EcotoneGasPriceOracleParams, error) {
 	callOpts := &bind.CallOpts{Context: ctx}
 	gasPriceOracle, err := bindings.NewGasPriceOracle(addr, client)

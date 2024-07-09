@@ -132,7 +132,7 @@ var CompressGenesisCmd = cli.Command{
 			Alloc:         make(jsonutil.LazySortedJsonMap[common.Address, GenesisAccount]),
 		}
 
-		// write genesis, but only reference code by code-hash, and don't encode the L2 predeploys to save space.
+		// write genesis, but only reference code by code-hash
 		for addr, account := range genesis.Alloc {
 			var codeHash common.Hash
 			if len(account.Code) > 0 {

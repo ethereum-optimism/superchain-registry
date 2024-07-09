@@ -32,7 +32,16 @@ var CheckGenesisCmd = cli.Command{
 		chainId := ctx.Uint64(flags.ChainIdFlag.Name)
 		gethGenesis, err := core.LoadOPStackGenesis(chainId)
 		if err != nil {
-			return fmt.Errorf("failed to load genesis via op-geth: %w", err)
+			return fmt.Errorf("failed to load genesis via op-geth: ensure chainId has already been added to registry: %w", err)
+		}
+
+		// Exceptions for testing
+		if localGenesis.Config.Optimism != nil {
+			// this value is always hardcoded in op-geth to 250. Need to updated op-geth to
+			// conditionally set the value (if canyon is activated) to remove the exception
+			// https://github.com/ethereum-optimism/op-geth/issues/346
+			twofifty := uint64(250)
+			localGenesis.Config.Optimism.EIP1559DenominatorCanyon = &twofifty
 		}
 
 		opts := cmp.Options{cmpopts.IgnoreUnexported(big.Int{})}
