@@ -32,7 +32,7 @@ var CheckGenesisCmd = cli.Command{
 		chainId := ctx.Uint64(flags.ChainIdFlag.Name)
 		gethGenesis, err := core.LoadOPStackGenesis(chainId)
 		if err != nil {
-			return fmt.Errorf("failed to load genesis via op-geth: %w", err)
+			return fmt.Errorf("failed to load genesis via op-geth: ensure chainId has already been added to registry: %w", err)
 		}
 
 		// Exceptions for testing
