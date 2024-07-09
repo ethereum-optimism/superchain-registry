@@ -1,4 +1,3 @@
-set dotenv-load
 set positional-arguments
 
 # Adding a chain
@@ -10,8 +9,8 @@ add-chain:
 	just codegen
 
 # Promote a standard candidate chain to a standard chain, example: just promote-to-standard 10
-promote-to-standard *args='':
-	go run ./add-chain promote-to-standard --chain-id=$1
+promote-to-standard CHAIN:
+	go run ./add-chain promote-to-standard --chain-id={{CHAIN}}
 
 # Generate auto-generated files
 codegen:
