@@ -149,7 +149,6 @@ func TestAddChain_CheckGenesis(t *testing.T) {
 			"add-chain",
 			"check-genesis",
 			"--genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
-			"--chain-id=" + "4206904",
 		}
 		err = runApp(args)
 		require.NoError(t, err, "add-chain check-genesis failed")
