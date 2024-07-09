@@ -13,7 +13,7 @@ promote-to-standard CHAIN:
 	go run ./add-chain promote-to-standard --chain-id={{CHAIN}}
 
 # Generate auto-generated files
-codegen:
+codegen: clean-add-chain
 	go run superchain/internal/codegen/main.go
 	node ./scripts/codegen.js
 
