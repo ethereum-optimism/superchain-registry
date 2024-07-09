@@ -28,7 +28,7 @@ commands:
           sudo apt install just
 
 jobs:
-  lint-and-tidy:
+  golang-lint:
     executor:
       name: go/default  # is based on cimg/go
       tag: '1.21'
@@ -36,6 +36,13 @@ jobs:
       - checkout
       - install-just
       - run: just lint-all
+  golang-modules-tidy:
+    executor:
+      name: go/default  # is based on cimg/go
+      tag: '1.21'
+    steps:
+      - checkout
+      - install-just
       - run: just tidy-all
       - run:
           name: check git tree is clean
@@ -118,7 +125,8 @@ workflows:
                 - main
   pr-checks:
     jobs:
-      - lint-and-tidy
+      - golang-lint
+      - golang-modules-tidy
       - golang-test
       - check-codegen
 
