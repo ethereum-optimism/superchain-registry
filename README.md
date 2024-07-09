@@ -117,7 +117,7 @@ This process is only possible for chains already in the registry.
 
 Run this command:
 ```
-just promote-to-standard chain-id=<chain-id>
+just promote-to-standard <chain-id>
 ```
 
 This command will:

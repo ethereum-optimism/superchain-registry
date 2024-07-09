@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"path"
 	"path/filepath"
 	"runtime"
 	"time"
@@ -31,12 +30,12 @@ var PromoteToStandardCmd = cli.Command{
 		now := uint64(time.Now().Unix())
 		chain.SuperchainTime = &now
 
-		_, currentFilePath, _, ok := runtime.Caller(0)
+		_, thisFile, _, ok := runtime.Caller(0)
 		if !ok {
 			panic("Unable to get the current file path")
 		}
 
-		superchainRepoPath := path.Join(currentFilePath, "../..")
+		superchainRepoPath := filepath.Dir(filepath.Dir(filepath.Dir(thisFile)))
 		targetDir := filepath.Join(superchainRepoPath, "superchain", "configs", chain.Superchain)
 		targetFilePath := filepath.Join(targetDir, chain.Chain+".yaml")
 		err := config.WriteChainConfig(*chain, targetFilePath)

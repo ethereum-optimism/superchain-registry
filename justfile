@@ -9,7 +9,7 @@ add-chain:
 	go run ./add-chain check-genesis
 	just codegen
 
-# Promote a standard candidate chain to a standard chain
+# Promote a standard candidate chain to a standard chain, example: just promote-to-standard 10
 promote-to-standard *args='':
 	go run ./add-chain promote-to-standard --chain-id=$1
 
