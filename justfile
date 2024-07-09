@@ -11,6 +11,7 @@ add-chain:
 # Promote a standard candidate chain to a standard chain, example: just promote-to-standard 10
 promote-to-standard CHAIN:
 	go run ./add-chain promote-to-standard --chain-id={{CHAIN}}
+	just codegen
 
 # Generate auto-generated files
 codegen: clean-add-chain
@@ -70,3 +71,4 @@ remove-chain SUPERCHAIN_TARGET CHAIN:
 	rm superchain/extra/addresses/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.json
 	rm superchain/extra/genesis-system-configs/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.json
 	rm superchain/extra/genesis/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.json.gz
+	just codegen
