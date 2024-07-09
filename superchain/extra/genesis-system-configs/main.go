@@ -38,7 +38,6 @@ func main() {
 
 	// Map chain id to genesis system config
 	gscMap := make(map[int]GenesisSystemConfig)
-	var genesisSystemConfigs []GenesisSystemConfig
 	for _, dir := range dirs {
 		if dir.IsDir() {
 			parent := dir.Name()
@@ -71,7 +70,6 @@ func main() {
 							if err != nil {
 								panic(err)
 							}
-							genesisSystemConfigs = append(genesisSystemConfigs, gsc)
 							gscMap[int(chain.ChainId)] = gsc
 							generated++
 							break
@@ -91,7 +89,7 @@ func main() {
 	}
 
 	// Only write the configs if the list is non-empty
-	if len(genesisSystemConfigs) == 0 {
+	if len(gscMap) == 0 {
 		fmt.Println("No genesis system configs found")
 		return
 	}
