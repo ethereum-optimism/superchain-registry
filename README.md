@@ -31,34 +31,29 @@ This is to ensure your chain has a unique chain ID. Our validation suite will ch
 
 
 ### 1. Install dependencies
-You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed, as well as Go.
+You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed, as well as Go and [`just`](https://just.systems/man/en/).
 
 ### 2. Set env vars
 
 To contribute a standard OP-Stack chain configuration, in addition to user-supplied metadata (chain name) the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
 
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
-
-### 3. Run script
-
 #### Frontier chains
 
 Frontier chains are chains with customizations beyond the standard OP
 Stack configuration. To contribute a frontier OP-Stack chain
-configuration, you can run:
+configuration, you set the `SCR_CHAIN_TYPE=frontier` in the `.env` file.
 
-
-```shell
-sh scripts/add-chain.sh frontier
-```
 
 #### Standard chains
 A chain may meet the definition of a **standard** chain. Adding a standard chain is a two-step process.
 
-First, the chain should be added as a frontier chain but with `--standard-chain-candidate` flag set:
+First, the chain should be added as a frontier chain as above, but with `SCR_STANDARD_CHAIN_CANDIDATE=true` in the `.env` file.
+
+### 3. Run script
 
 ```shell
-sh scripts/add-chain.sh frontier --standard-chain-candidate
+just add-chain
 ```
 
 The remaining steps should then be followed to merge the config data into the registry -- a prerequisite for [promoting the chain](#promote-a-chain-to-standard) to a standard chain.
@@ -85,18 +80,17 @@ The format is a gzipped JSON `genesis.json` file, with either:
 
 ### 5. Run tests locally
 
-Run the following command from the `validation` folder to run the Go validation checks, for only the chain you added (replace the chain name or ID accordingly):
+Run the following command to run the Go validation checks, for only the chain you added (replace the chain name or ID accordingly):
 ```
-go test -run=TestValidation/OP_Sepolia
+just validate OP_Sepolia
 ```
 or
 ```
-go test -run=TestValidation/11155420
+just validate 11155420
 ```
-Omit the `-run=` flag to run checks for all chains.
 
 > [!NOTE]
-> If you set `--standard-chain-candidate`, your chain will be checked against the majority of the standard configuration requirements. These are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
+> If you set `SCR_STANDARD_CHAIN_CANDIDATE`, your chain will be checked against the majority of the standard configuration requirements. These are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
 >
 > The final requirement to qualify as a standard chain concerns the `ProxyAdminOwner` role. The validation check for this role  will not be run until the chain is [promoted](#promote-a-chain-to-standard) to standard.
 
@@ -104,7 +98,7 @@ Omit the `-run=` flag to run checks for all chains.
 This is a tool which will rewrite certain summary files of all the chains in the registry, including the one you are adding. The output will be checked in a continuous integration checks (it is required to pass):
 
 ```
-sh scripts/codegen.sh
+just codegen
 ```
 
 > [!NOTE]
@@ -123,7 +117,7 @@ This process is only possible for chains already in the registry.
 
 Run this command:
 ```
-sh scripts/promote-to-standard.sh <chain-id>
+just promote-to-standard <chain-id>
 ```
 
 This command will:
