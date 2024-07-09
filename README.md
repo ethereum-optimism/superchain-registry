@@ -48,7 +48,7 @@ configuration, you set the `SCR_CHAIN_TYPE=frontier` in the `.env` file.
 #### Standard chains
 A chain may meet the definition of a **standard** chain. Adding a standard chain is a two-step process.
 
-First, the chain should be added as a frontier chain as above, but with `STANDARD_CHAIN_CANDIDATE=true` in the `.env` file.
+First, the chain should be added as a frontier chain as above, but with `SCR_STANDARD_CHAIN_CANDIDATE=true` in the `.env` file.
 
 ### 3. Run script
 
