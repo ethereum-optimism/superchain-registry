@@ -21,25 +21,17 @@ commands:
   install-just:
     description: "Install just"
     steps:
-     - run: sudo apt-get update && sudo apt-get install just
+     - run: sudo apt update && sudo apt install just
 jobs:
-  golang-lint:
-    executor:
-      name: go/default  # is based on cimg/go
-      tag: '1.21'
-    steps:
-      - checkout
-      - run:  just lint-all
-  golang-modules-tidy:
+  lint-and-tidy:
     executor:
       name: go/default  # is based on cimg/go
       tag: '1.21'
     steps:
       - checkout
       - install-just
-      - run:
-          name: tidy
-          command: just tidy-all
+      - run: just lint-all
+      - run: just tidy-all
       - run:
           name: check git tree is clean
           command: git diff --exit-code
