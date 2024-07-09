@@ -31,7 +31,7 @@ This is to ensure your chain has a unique chain ID. Our validation suite will ch
 
 
 ### 1. Install dependencies
-You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed, as well as Go.
+You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed, as well as Go and `just`.
 
 ### 2. Set env vars
 
@@ -53,7 +53,7 @@ First, the chain should be added as a frontier chain as above, but with `STANDAR
 ### 3. Run script
 
 ```shell
-make add-chain
+just add-chain
 ```
 
 The remaining steps should then be followed to merge the config data into the registry -- a prerequisite for [promoting the chain](#promote-a-chain-to-standard) to a standard chain.
@@ -99,7 +99,7 @@ Omit the `-run=` flag to run checks for all chains.
 This is a tool which will rewrite certain summary files of all the chains in the registry, including the one you are adding. The output will be checked in a continuous integration checks (it is required to pass):
 
 ```
-make codegen
+just codegen
 ```
 
 > [!NOTE]
@@ -118,7 +118,7 @@ This process is only possible for chains already in the registry.
 
 Run this command:
 ```
-make promote-to-standard chain-id=<chain-id>
+just promote-to-standard chain-id=<chain-id>
 ```
 
 This command will:
