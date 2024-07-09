@@ -18,6 +18,10 @@ commands:
           event: fail
           template: basic_fail_1
           branch_pattern: main
+  install-just:
+    description: "Install just"
+    steps:
+     - run: apt install just
 jobs:
   golang-lint:
     executor:
@@ -32,6 +36,7 @@ jobs:
       tag: '1.21'
     steps:
       - checkout
+      - install-just
       - run:
           name: tidy
           command: just tidy-all
@@ -45,6 +50,7 @@ jobs:
       tag: '1.21'
     steps:
       - checkout
+      - install-just
       - run:
           # need foundry to execute 'cast call' within add-chain script
           name: Install foundry
@@ -92,6 +98,7 @@ jobs:
       tag: '1.21'
     steps:
       - checkout
+      - install-just
       - node/install:
           install-yarn: false
           node-version: '14.16.1'
