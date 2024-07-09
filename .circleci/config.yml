@@ -25,7 +25,7 @@ jobs:
       tag: '1.21'
     steps:
       - checkout
-      - run:  make lint-all
+      - run:  just lint-all
   golang-modules-tidy:
     executor:
       name: go/default  # is based on cimg/go
@@ -34,7 +34,7 @@ jobs:
       - checkout
       - run:
           name: tidy
-          command: make tidy-all
+          command: just tidy-all
       - run:
           name: check git tree is clean
           command: git diff --exit-code
@@ -63,13 +63,13 @@ jobs:
             forge --version
       - run:
           name: run superchain module tests
-          command: make test-superchain
+          command: just test-superchain
       - run:
           name: run validation module tests
-          command: make test-validation
+          command: just test-validation
       - run:
           name: run add-chain module tests
-          command: make test-add-chain
+          command: just test-add-chain
       - notify-failures-on-main
   publish-bot:
     environment:
@@ -97,7 +97,7 @@ jobs:
           node-version: '14.16.1'
       - run:
           name: Run codegen
-          command: make codegen
+          command: just codegen
 
 workflows:
   hourly:
