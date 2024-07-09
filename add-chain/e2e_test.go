@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	addressDir       = "../superchain/extra/addresses/sepolia/"
-	ymlConfigDir     = "../superchain/configs/sepolia/"
-	genesisConfigDir = "../superchain/extra/genesis-system-configs/sepolia/"
+	addressDir             = "../superchain/extra/addresses/sepolia/"
+	ymlConfigDir           = "../superchain/configs/sepolia/"
+	genesisSystemConfigDir = "../superchain/extra/genesis-system-configs/sepolia/"
 )
 
 var tests = []struct {
@@ -33,6 +33,15 @@ var tests = []struct {
 		rollupConfigFile: "./testdata/monorepo/op-node/rollup_baseline.json",
 		deploymentsDir:   "./testdata/monorepo/deployments",
 		chainType:        "standard",
+	},
+	{
+		name:                   "zorasep",
+		chainName:              "testchain_zorasep",
+		chainShortName:         "testchain_zs",
+		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_zorasep.json",
+		deploymentsDir:         "./testdata/monorepo/deployments",
+		chainType:              "frontier",
+		standardChainCandidate: true,
 	},
 	{
 		name:             "plasma",
@@ -93,7 +102,7 @@ func TestAddChain_Main(t *testing.T) {
 
 	t.Run("compress-genesis", func(t *testing.T) {
 		// Must run this test to produce the .json.gz output artifact for the
-		// subsequent CheckGenesisConfig test
+		// subsequent TestAddChain_CheckGenesis
 		t.Parallel()
 		err := os.Setenv("SCR_RUN_TESTS", "true")
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
@@ -101,7 +110,7 @@ func TestAddChain_Main(t *testing.T) {
 		args := []string{
 			"add-chain",
 			"compress-genesis",
-			"--l2-genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
+			"--genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
 			"--superchain-target=" + "sepolia",
 			"--chain-short-name=" + "testchain_zs",
 		}
@@ -129,6 +138,22 @@ func TestAddChain_CheckRollupConfig(t *testing.T) {
 			require.NoError(t, err, "add-chain check-rollup-config failed")
 		})
 	}
+}
+
+func TestAddChain_CheckGenesis(t *testing.T) {
+	t.Run("genesis_zorasep", func(t *testing.T) {
+		err := os.Setenv("SCR_RUN_TESTS", "true")
+		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
+
+		args := []string{
+			"add-chain",
+			"check-genesis",
+			"--genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
+			"--chain-id=" + "4206904",
+		}
+		err = runApp(args)
+		require.NoError(t, err, "add-chain check-genesis failed")
+	})
 }
 
 func compareJsonFiles(t *testing.T, dirPath, testName, chainShortName string) {
@@ -167,7 +192,7 @@ func checkConfigYaml(t *testing.T, testName, chainShortName string) {
 func cleanupTestFiles(t *testing.T, chainShortName string) {
 	paths := []string{
 		addressDir + chainShortName + ".json",
-		genesisConfigDir + chainShortName + ".json",
+		genesisSystemConfigDir + chainShortName + ".json",
 		ymlConfigDir + chainShortName + ".yaml",
 	}
 
