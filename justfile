@@ -31,7 +31,6 @@ test-add-chain:
 	# Which need to exist before the remaining tests run.
 	go test ./add-chain/... -run TestAddChain_Main -v
 	go test ./add-chain/... -run '[^TestAddChain_Main]' -v
-	just clean-add-chain
 
 # Test all Go code in the superchain module
 test-superchain:
