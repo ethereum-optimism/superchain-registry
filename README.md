@@ -31,7 +31,7 @@ This is to ensure your chain has a unique chain ID. Our validation suite will ch
 
 
 ### 1. Install dependencies
-You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed, as well as Go and `just`.
+You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed, as well as Go and [`just`](https://just.systems/man/en/).
 
 ### 2. Set env vars
 
