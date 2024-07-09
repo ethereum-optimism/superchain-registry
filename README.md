@@ -42,7 +42,7 @@ First, make a copy of `.env.example` named `.env`, and alter the variables to ap
 
 Frontier chains are chains with customizations beyond the standard OP
 Stack configuration. To contribute a frontier OP-Stack chain
-configuration, you set the `CHAIN_TYPE=frontier` in the `.env` file.
+configuration, you set the `SCR_CHAIN_TYPE=frontier` in the `.env` file.
 
 
 #### Standard chains
