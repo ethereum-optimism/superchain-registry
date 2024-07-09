@@ -21,7 +21,7 @@ commands:
   install-just:
     description: "Install just"
     steps:
-     - run: sudo apt install just
+     - run: sudo apt-get update && sudo apt-get install just
 jobs:
   golang-lint:
     executor:
