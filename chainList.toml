@@ -76,6 +76,17 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "SuperLumio"
+  identifier = "mainnet/superlumio"
+  chain_id = 8866
+  rpc = ["https://mainnet.lumio.io"]
+  explorers = ["https://explorer.lumio.io"]
+  superchain_level = 1
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Zora"
   identifier = "mainnet/zora"
   chain_id = 7777777
@@ -103,6 +114,17 @@
   chain_id = 84532
   rpc = ["https://sepolia.base.org"]
   explorers = ["https://sepolia-explorer.base.org"]
+  superchain_level = 1
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Metal L2 Testnet"
+  identifier = "sepolia/metal"
+  chain_id = 1740
+  rpc = ["https://testnet.rpc.metall2.com"]
+  explorers = ["https://testnet.explorer.metall2.com"]
   superchain_level = 1
   [chains.parent]
     type = "L2"
