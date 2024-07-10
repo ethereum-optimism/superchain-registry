@@ -35,5 +35,5 @@ jobs:
       working-directory: validation
       id: run-command
       run: |
-        ./generate-rollup-config/diff-configs.sh ./generate-rollup-config/output-base ./generate-rollup-config/output-HEAD
+        ./scripts/diff-configs.sh ./generate-rollup-config/output-base ./generate-rollup-config/output-HEAD
 
