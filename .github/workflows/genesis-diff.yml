@@ -1,0 +1,39 @@
+name: Genesis Diff
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  compute-genesis-diff:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Ensure the full history is fetched
+
+    - name: Fetch all branches
+      run: git fetch --all
+
+    - name: Generate configs at HEAD
+      working-directory: validation
+      run: |
+        go run generate-genesis/main.go HEAD
+
+    - name: Generate configs on base branch
+      working-directory: validation
+      run: |
+        # Get the base branch revision
+        base_rev=${{ github.event.pull_request.base.sha }}
+        echo "Base branch revision: $base_rev"
+        git checkout $base_rev -- ../superchain
+        go run generate-genesis/main.go base
+
+    - name: compute diff
+      working-directory: validation
+      id: run-command
+      run: |
+        ./scripts/diff-configs.sh ./generate-genesis/output-base ./generate-genesis/output-HEAD
+
