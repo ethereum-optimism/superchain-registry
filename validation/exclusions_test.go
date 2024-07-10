@@ -48,6 +48,7 @@ var exclusions = map[string]map[uint64]bool{
 		919:       true, // mode sepolia (incorrect challenger)
 		999999999: true, // zora sepolia (incorrect challenger)
 		34443:     true, // mode (incorrect challenger)
+		1740:      true, // metal-sepolia
 	},
 	"Standard_Contract_Versions": {
 		8453:      true, // mainnet/base         MCP (at time of writing)
