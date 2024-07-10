@@ -109,6 +109,9 @@ jobs:
       - run:
           name: Run codegen
           command: just codegen
+      - run:
+          name: check git tree is clean
+          command: git diff --exit-code
 
 workflows:
   hourly:
