@@ -90,9 +90,11 @@ just validate 11155420
 ```
 
 > [!NOTE]
-> If you set `SCR_STANDARD_CHAIN_CANDIDATE`, your chain will be checked against the majority of the standard configuration requirements. These are defined in the [specs](https://specs.optimism.io/protocol/configurability.html). However, these requirements are currently a draft, pending governance approval.
+> If you set `SCR_STANDARD_CHAIN_CANDIDATE`, your chain will be checked against the majority of the standard rollup requirements as outlined by the [Standard Rollup Blockspace Charter](https://gov.optimism.io/t/season-6-draft-standard-rollup-charter/8135) (currently a draft pending Governance approval).
 >
 > The final requirement to qualify as a standard chain concerns the `ProxyAdminOwner` role. The validation check for this role  will not be run until the chain is [promoted](#promote-a-chain-to-standard) to standard.
+
+The [`validation_test.go`](./validation/validation_test.go) test declaration file defines which checks run on each class of chain. The parameters referenced in each check are recorded in [TOML files in the `standard` directory](./validation/standard).
 
 ### 6. Run codegen and check output
 This is a tool which will rewrite certain summary files of all the chains in the registry, including the one you are adding. The output will be checked in a continuous integration checks (it is required to pass):
