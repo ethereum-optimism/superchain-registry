@@ -1,7 +1,7 @@
 # Standard Rollup Blockspace Charter definition files
 This directory contains a number of TOML files which declare various parameters, addresses, contract versions and other data which define a **standard chain** in the sense of the [Standard Rollup Charter](https://gov.optimism.io/t/season-6-draft-standard-rollup-charter/8135).
 
-Where necessary, distinct declarations are made for testnets and devnets to the configuration to vary to a greater extent.
+Distinct, named declaration files have been added (where necessary) to allow testnets and devnets to have greater flexibility in their configurations.
 
 Parameters may be declared to be equal to a pair of values, meaning that the parameter must be within the bounds defined by those values.
 
