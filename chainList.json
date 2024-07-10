@@ -192,22 +192,6 @@
     }
   },
   {
-    "name": "Zora Sepolia Testnet",
-    "identifier": "sepolia/zora",
-    "chainId": 999999999,
-    "rpc": [
-      "https://sepolia.rpc.zora.energy"
-    ],
-    "explorers": [
-      "https://sepolia.explorer.zora.energy"
-    ],
-    "superchainLevel": 1,
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
     "name": "OP Labs Sepolia devnet 0",
     "identifier": "sepolia-dev-0/oplabs-devnet-0",
     "chainId": 11155421,

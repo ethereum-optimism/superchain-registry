@@ -131,17 +131,6 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "Zora Sepolia Testnet"
-  identifier = "sepolia/zora"
-  chain_id = 999999999
-  rpc = ["https://sepolia.rpc.zora.energy"]
-  explorers = ["https://sepolia.explorer.zora.energy"]
-  superchain_level = 1
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-
-[[chains]]
   name = "OP Labs Sepolia devnet 0"
   identifier = "sepolia-dev-0/oplabs-devnet-0"
   chain_id = 11155421
