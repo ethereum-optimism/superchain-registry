@@ -58,8 +58,7 @@ func testUniversal(t *testing.T, chain *ChainConfig) {
 	})
 }
 
-// testStandardCandidate should be applied only to a fully Standard Chain,
-// i.e. not to a Standard Candidate Chain.
+// testStandardCandidate applies to Standard and Standard Candidate Chains.
 func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	t.Run("Standard Config Params", func(t *testing.T) {
 		t.Run("Data Availability", func(t *testing.T) { testDataAvailability(t, chain) })
