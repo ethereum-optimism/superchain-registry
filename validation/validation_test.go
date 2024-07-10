@@ -67,6 +67,9 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	t.Run("Standard Contract Versions", func(t *testing.T) {
 		testContractsMatchATag(t, chain)
 	})
+	t.Run("Standard Genesis Predeploys", func(t *testing.T) {
+		testGenesisPredeploys(t, chain)
+	})
 }
 
 // testStandard should be applied only to a fully Standard Chain,
