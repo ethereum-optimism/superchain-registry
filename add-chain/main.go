@@ -38,6 +38,7 @@ var app = &cli.App{
 		&cmd.CheckRollupConfigCmd,
 		&cmd.CompressGenesisCmd,
 		&cmd.CheckGenesisCmd,
+		&cmd.ConvertToTOMLCmd,
 	},
 }
 
