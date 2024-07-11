@@ -14,43 +14,42 @@ Other configuration, such as contract-permissions and `SystemConfig` parameters 
 
 A list of chains in the registry can be seen in the top level [`chainList.toml`](./chainList.toml) and [`chainList.json`](./chainList.json) files.
 
+## Superchain Level and Rollup Stage
+Chains in the superchain-registry are assigned a `superchain_level` (shown in individual config files as well as the `chainList.tom/json` summaries), depending on the set of validation checks that they pass.
+
+**Frontier** chains have `superchain_level = 1`.
+
+**Standard** chains have `superchain_level = 2`. Because they satisfy a much stricter set of validation checks (see the [Standard Rollup Blockspace Charter](https://gov.optimism.io/t/season-6-draft-standard-rollup-charter/8135)), they also qualify as [Stage 1](https://ethereum-magicians.org/t/proposed-milestones-for-rollups-taking-off-training-wheels/11571) rollups chains.
+
+
 ## Downstream packages
-The superchain configs are stored in a minimal form, and are embedded in downstream OP-Stack software ([`op-node`](https://github.com/ethereum-optimism/optimism) and [`op-geth`](https://github.com/ethereum-optimism/op-geth)).
-
-Full deployment artifacts and genesis-states can be derived from the minimal form
-using the reference [`op-chain-ops`] tooling.
-
-[`op-chain-ops`]: https://github.com/ethereum-optimism/optimism/tree/develop/op-chain-ops
+The superchain configs are stored in a minimal form, and are embedded in downstream OP-Stack software ([`op-node`](https://github.com/ethereum-optimism/optimism) and [`op-geth`](https://github.com/ethereum-optimism/op-geth)). This means that, after a chain has been added to the registry, and the dependency on the registry updates in the downstream software, it is possible to start an `op-node` instance [using the `--network` flag](https://docs.optimism.io/builders/node-operators/configuration/consensus-config#network) (and also an `op-geth` instance [using the `--op-network` tag](https://docs.optimism.io/builders/node-operators/configuration/execution-config#op-network-betaop-network)) which will successfully sync with other nodes on that network.
 
 ## Adding a Chain
 
 The following are the steps you need to take to add a chain to the registry:
+### 0. Fork this repository
+You will be raising a Pull Request from your fork to the upstream repo.
 
-### 0. Ensure your chain is listed at ethereum-lists/chains
+### 1. Ensure your chain is listed at ethereum-lists/chains
 This is to ensure your chain has a unique chain ID. Our validation suite will check your chain against https://github.com/ethereum-lists/chains.
 
 
-### 1. Install dependencies
+### 2. Install dependencies
 You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](https://book.getfoundry.sh/getting-started/installation) installed, as well as Go and [`just`](https://just.systems/man/en/).
 
-### 2. Set env vars
+### 3. Set env vars
 
 To contribute a standard OP-Stack chain configuration, in addition to user-supplied metadata (chain name) the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
 
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 #### Frontier chains
-
-Frontier chains are chains with customizations beyond the standard OP
-Stack configuration. To contribute a frontier OP-Stack chain
-configuration, you set the `SCR_CHAIN_TYPE=frontier` in the `.env` file.
-
+To contribute a frontier OP-Stack chain configuration, you set the `SCR_CHAIN_TYPE=frontier` in the `.env` file. This will set `superchain_level = 1` in the registry's config file for this chain.
 
 #### Standard chains
-A chain may meet the definition of a **standard** chain. Adding a standard chain is a two-step process.
+Adding a standard chain is a two-step process. First, the chain should be added as a frontier chain as above, but with `SCR_STANDARD_CHAIN_CANDIDATE=true` in the `.env` file.
 
-First, the chain should be added as a frontier chain as above, but with `SCR_STANDARD_CHAIN_CANDIDATE=true` in the `.env` file.
-
-### 3. Run script
+### 4. Run script
 
 ```shell
 just add-chain
@@ -58,7 +57,7 @@ just add-chain
 
 The remaining steps should then be followed to merge the config data into the registry -- a prerequisite for [promoting the chain](#promote-a-chain-to-standard) to a standard chain.
 
-### 4. Understand output
+### 5. Understand output
 The tool will write the following data:
 - The main configuration source, with genesis data, and address of onchain system configuration. These are written to `superchain/configs/superchain_target/chain_short_name.yaml`.
 > **Note**
@@ -78,15 +77,11 @@ The format is a gzipped JSON `genesis.json` file, with either:
 - a `stateHash` attribute: to omit a large state (e.g. for networks with a re-genesis or migration history).
   Nodes can load the genesis block header, and state-sync to complete the node initialization.
 
-### 5. Run tests locally
+### 6. Run tests locally
 
-Run the following command to run the Go validation checks, for only the chain you added (replace the chain name or ID accordingly):
+Run the following command to run the Go validation checks, for only the chain you added (replace the `<chain-id>` accordingly):
 ```
-just validate OP_Sepolia
-```
-or
-```
-just validate 11155420
+just validate <chain-id>
 ```
 
 > [!NOTE]
@@ -96,7 +91,7 @@ just validate 11155420
 
 The [`validation_test.go`](./validation/validation_test.go) test declaration file defines which checks run on each class of chain. The parameters referenced in each check are recorded in [TOML files in the `standard` directory](./validation/standard).
 
-### 6. Run codegen and check output
+### 7. Run codegen and check output
 This is a tool which will rewrite certain summary files of all the chains in the registry, including the one you are adding. The output will be checked in a continuous integration checks (it is required to pass):
 
 ```
@@ -106,7 +101,7 @@ just codegen
 > [!NOTE]
 > Please double check the diff to this file. This data may be consumed by external services, e.g. wallets. If anything looks incorrect, please get in touch.
 
-### 7. Open Your Pull Request
+### 8. Open Your Pull Request
 When opening a PR:
 - Open it from a non-protected branch in your fork (e.g. avoid the `main` branch). This allows maintainers to push to your branch if needed, which streamlines the review and merge process.
 - Open one PR per chain you would like to add. This ensures the merge of one chain is not blocked by unexpected issues.
@@ -114,10 +109,10 @@ When opening a PR:
 Once the PR is opened, the same automated checks from Step 4 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
 
 
-## Promote a chain to standard
+## Promote a chain to standard
 This process is only possible for chains already in the registry.
 
-Run this command:
+Run this command (replace the `<chain-id>` accordingly):
 ```
 just promote-to-standard <chain-id>
 ```
