@@ -21,15 +21,15 @@ const addresses = () => {
     const subpath = path.resolve(folder, subfolder.name)
     const files = fs.readdirSync(subpath)
     for (const file of files) {
-      if (path.extname(file) !== '.yaml') {
+      if (path.extname(file) !== '.toml') {
         continue
       }
 
       const filepath = path.resolve(subpath, file)
-      const filename = filepath.replace('.yaml', '')
+      const filename = filepath.replace('.toml', '')
       const chain = path.relative(folder, filename).replace(path.sep, '/')
       const content = fs.readFileSync(filepath, 'utf8')
-      const matches = content.match(/^chain_id:\s*(\d+)$/m)
+      const matches = content.match(/^chain_id = \s*(\d+)$/m)
 
       if (matches) {
         const id = parseInt(matches[1])
