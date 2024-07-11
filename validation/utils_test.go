@@ -31,13 +31,6 @@ func isIntWithinBounds[T uint32 | uint64](actual T, bounds [2]T) bool {
 	return (actual >= bounds[0] && actual <= bounds[1])
 }
 
-// assertBigIntInBounds fails the test (but not immediately) if the passed param is outside of the passed bounds.
-var assertBigIntInBounds = func(t *testing.T, name string, got *big.Int, want [2]*big.Int) {
-	assert.True(t,
-		isBigIntWithinBounds(got, want),
-		fmt.Sprintf("Incorrect %s, %d is not within bounds %d", name, got, want))
-}
-
 // assertInBounds fails the test (but not immediately) if the passed param is outside of the passed bounds.
 func assertIntInBounds[T uint32 | uint64](t *testing.T, name string, got T, want [2]T) {
 	assert.True(t,
