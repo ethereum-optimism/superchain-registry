@@ -1,0 +1,20 @@
+name = "testchain_faultproofs"
+chain_id = 4206903
+public_rpc = "http://awe.some.rpc"
+sequencer_rpc = "http://awe.some.seq.rpc"
+explorer = "https://awesomescan.org"
+superchain_level = 2
+contracts_version_tag = "op-contracts/v1.4.0" # Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.4.0
+batch_inbox_addr = "0xFf00000000000000000000000000000011155421"
+canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+
+[genesis]
+  l2_time = 1706484048
+  [genesis.l1]
+    hash = "0x5639be97000fec7131a880b19b664cae43f975c773f628a08a9bb658c2a68df0"
+    number = 5173577
+  [genesis.l2]
+    hash = "0x3b7e820293ae595ad3accae008e287b6ac757144aa6dc152eb048665e537406d"
+    number = 0
+
