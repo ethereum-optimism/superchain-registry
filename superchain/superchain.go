@@ -29,25 +29,25 @@ var superchainFS embed.FS
 var extraFS embed.FS
 
 type BlockID struct {
-	Hash   Hash   `yaml:"hash"`
-	Number uint64 `yaml:"number"`
+	Hash   Hash   `yaml:"hash" toml:"hash"`
+	Number uint64 `yaml:"number" toml:"number"`
 }
 
 type ChainGenesis struct {
-	L1           BlockID      `yaml:"l1"`
-	L2           BlockID      `yaml:"l2"`
-	L2Time       uint64       `json:"l2_time" yaml:"l2_time"`
-	ExtraData    *HexBytes    `yaml:"extra_data,omitempty"`
-	SystemConfig SystemConfig `json:"system_config" yaml:"-"`
+	L1           BlockID      `yaml:"l1" toml:"l1"`
+	L2           BlockID      `yaml:"l2" toml:"l2"`
+	L2Time       uint64       `yaml:"l2_time" toml:"l2_time" json:"l2_time" `
+	ExtraData    *HexBytes    `yaml:"extra_data,omitempty" toml:"extra_data,omitempty"`
+	SystemConfig SystemConfig `yaml:"-" toml:"-" json:"system_config" `
 }
 
 type SystemConfig struct {
-	BatcherAddr       Address `json:"batcherAddr"`
-	Overhead          string  `json:"overhead"`
-	Scalar            string  `json:"scalar"`
-	GasLimit          uint64  `json:"gasLimit"`
-	BaseFeeScalar     *uint64 `json:"baseFeeScalar,omitempty"`
-	BlobBaseFeeScalar *uint64 `json:"blobBaseFeeScalar,omitempty"`
+	BatcherAddr       Address `json:"batcherAddr" toml:"batcherAddress"`
+	Overhead          string  `json:"overhead" toml:"overhead"`
+	Scalar            string  `json:"scalar" toml:"scalar"`
+	GasLimit          uint64  `json:"gasLimit" toml:"gasLimit"`
+	BaseFeeScalar     *uint64 `json:"baseFeeScalar,omitempty" toml:"baseFeeScalar,omitempty"`
+	BlobBaseFeeScalar *uint64 `json:"blobBaseFeeScalar,omitempty" toml:"blobBaseFeeScalar,omitempty"`
 }
 
 type GenesisData struct {
@@ -62,10 +62,10 @@ type GenesisLayer struct {
 }
 
 type HardForkConfiguration struct {
-	CanyonTime  *uint64 `json:"canyon_time,omitempty" yaml:"canyon_time,omitempty"`
-	DeltaTime   *uint64 `json:"delta_time,omitempty" yaml:"delta_time,omitempty"`
-	EcotoneTime *uint64 `json:"ecotone_time,omitempty" yaml:"ecotone_time,omitempty"`
-	FjordTime   *uint64 `json:"fjord_time,omitempty" yaml:"fjord_time,omitempty"`
+	CanyonTime  *uint64 `json:"canyon_time,omitempty" yaml:"canyon_time,omitempty" toml:"canyon_time,omitempty"`
+	DeltaTime   *uint64 `json:"delta_time,omitempty" yaml:"delta_time,omitempty" toml:"delta_time,omitempty"`
+	EcotoneTime *uint64 `json:"ecotone_time,omitempty" yaml:"ecotone_time,omitempty" toml:"ecotone_time,omitempty"`
+	FjordTime   *uint64 `json:"fjord_time,omitempty" yaml:"fjord_time,omitempty" toml:"fjord_time,omitempty"`
 }
 
 type SuperchainLevel uint
@@ -76,41 +76,41 @@ const (
 )
 
 type ChainConfig struct {
-	Name         string `yaml:"name"`
-	ChainID      uint64 `yaml:"chain_id"`
-	PublicRPC    string `yaml:"public_rpc"`
-	SequencerRPC string `yaml:"sequencer_rpc"`
-	Explorer     string `yaml:"explorer"`
+	Name         string `yaml:"name" toml:"name"`
+	ChainID      uint64 `yaml:"chain_id" toml:"chain_id"`
+	PublicRPC    string `yaml:"public_rpc" toml:"public_rpc"`
+	SequencerRPC string `yaml:"sequencer_rpc" toml:"sequencer_rpc"`
+	Explorer     string `yaml:"explorer" toml:"explorer"`
 
-	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
+	SuperchainLevel SuperchainLevel `yaml:"superchain_level" toml:"superchain_level"`
 
 	// If StandardChainCandidate is true, standard chain validation checks will
 	// run on this chain even if it is a frontier chain.
-	StandardChainCandidate bool `yaml:"standard_chain_candidate,omitempty"`
+	StandardChainCandidate bool `yaml:"standard_chain_candidate,omitempty" toml:"standard_chain_candidate,omitempty"`
 
 	// If SuperchainTime is set, hardforks times after SuperchainTime
 	// will be inherited from the superchain-wide config.
-	SuperchainTime *uint64 `yaml:"superchain_time"`
+	SuperchainTime *uint64 `yaml:"superchain_time" toml:"superchain_time"`
 
-	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
+	BatchInboxAddr Address `yaml:"batch_inbox_addr" toml:"batch_inbox_addr"`
 
-	Genesis ChainGenesis `yaml:"genesis"`
+	Genesis ChainGenesis `yaml:"genesis" toml:"genesis"`
 
 	// Superchain is a simple string to identify the superchain.
 	// This is implied by directory structure, and not encoded in the config file itself.
-	Superchain string `yaml:"-"`
+	Superchain string `yaml:"-" toml:"-"`
 	// Chain is a simple string to identify the chain, within its superchain context.
 	// This matches the resource filename, it is not encoded in the config file itself.
-	Chain string `yaml:"-"`
+	Chain string `yaml:"-" toml:"-"`
 
 	// Hardfork Configuration Overrides
-	HardForkConfiguration `yaml:",inline"`
+	HardForkConfiguration `yaml:",inline" toml:",inline"`
 
 	BlockTime           uint64 `yaml:"block_time"`
 	SequencerWindowSize uint64 `yaml:"seq_window_size"`
 
 	// Optional feature
-	Plasma *PlasmaConfig `yaml:"plasma,omitempty"`
+	Plasma *PlasmaConfig `yaml:"plasma,omitempty" toml:"plasma,omitempty"`
 }
 
 func (c ChainConfig) Identifier() string {
@@ -118,13 +118,13 @@ func (c ChainConfig) Identifier() string {
 }
 
 type PlasmaConfig struct {
-	DAChallengeAddress *Address `json:"da_challenge_contract_address" yaml:"da_challenge_contract_address"`
+	DAChallengeAddress *Address `json:"da_challenge_contract_address" yaml:"da_challenge_contract_address" toml:"da_challenge_contract_address"`
 	// DA challenge window value set on the DAC contract. Used in plasma mode
 	// to compute when a commitment can no longer be challenged.
-	DAChallengeWindow *uint64 `json:"da_challenge_window" yaml:"da_challenge_window"`
+	DAChallengeWindow *uint64 `json:"da_challenge_window" yaml:"da_challenge_window" toml:"da_challenge_window"`
 	// DA resolve window value set on the DAC contract. Used in plasma mode
 	// to compute when a challenge expires and trigger a reorg if needed.
-	DAResolveWindow *uint64 `json:"da_resolve_window" yaml:"da_resolve_window"`
+	DAResolveWindow *uint64 `json:"da_resolve_window" yaml:"da_resolve_window" toml:"da_resolve_window"`
 }
 
 // setNilHardforkTimestampsToDefaultOrZero overwrites each unspecified hardfork activation time override
@@ -169,6 +169,45 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfi
 			overridePtr.Set(ptrZero)
 		}
 	}
+}
+
+func (c *ChainConfig) EnhanceTOML(ctx context.Context) (map[string]string, error) {
+	comments := make(map[string]string)
+
+	if c.ContractsVersionTag != nil {
+		switch *c.ContractsVersionTag {
+		case "op-contracts/v1.3.0":
+			comments["contracts_version_tag"] = "# Multi-Chain Prep (MCP) https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.3.0"
+		case "op-contracts/v1.4.0":
+			comments["contracts_version_tag"] = "# Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.4.0"
+		}
+	}
+
+	createTimestampComment := func(fieldName string, fieldValue *uint64, comments map[string]string) {
+		if fieldValue != nil {
+			timestamp := time.Unix(int64(*fieldValue), 0).UTC()
+			comments[fieldName] = fmt.Sprintf("# %s", timestamp.Format("Mon 2 Jan 2006 15:04:05 UTC"))
+		}
+	}
+
+	if c.SuperchainTime != nil {
+		if *c.SuperchainTime == 0 {
+			comments["superchain_time"] = "# Missing hardfork times are inherited from superchain.yaml"
+		} else {
+			createTimestampComment("superchain_time", c.SuperchainTime, comments)
+		}
+	}
+
+	createTimestampComment("canyon_time", c.CanyonTime, comments)
+	createTimestampComment("delta_time", c.DeltaTime, comments)
+	createTimestampComment("ecotone_time", c.EcotoneTime, comments)
+	createTimestampComment("fjord_time", c.FjordTime, comments)
+
+	if c.StandardChainCandidate {
+		comments["standard_chain_candidate"] = "# This is a temporary field which causes most of the standard validation checks to run on this chain"
+	}
+
+	return comments, nil
 }
 
 // EnhanceYAML creates a customized yaml string from a RollupConfig. After completion,
@@ -545,7 +584,7 @@ var SuperchainSemver map[string]ContractVersions
 
 func isConfigFile(c fs.DirEntry) bool {
 	return (!c.IsDir() &&
-		strings.HasSuffix(c.Name(), ".yaml") &&
+		strings.HasSuffix(c.Name(), ".toml") &&
 		c.Name() != "superchain.yaml" &&
 		c.Name() != "semver.yaml")
 }

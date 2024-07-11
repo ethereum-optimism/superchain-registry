@@ -1,13 +1,16 @@
 package config
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
+	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"gopkg.in/yaml.v3"
 )
@@ -127,6 +130,43 @@ func WriteChainConfig(
 	encoder.SetIndent(2)
 	if err := encoder.Encode(&rootNode); err != nil {
 		return fmt.Errorf("failed to write yaml file: %w", err)
+	}
+
+	fmt.Printf("Rollup config written to: %s\n", filename)
+	return nil
+}
+
+func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	comments, err := rollupConfig.EnhanceTOML(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to enhance toml: %w", err)
+	}
+
+	// Marshal the struct to TOML
+	var buf bytes.Buffer
+	if err := toml.NewEncoder(&buf).Encode(rollupConfig); err != nil {
+		return fmt.Errorf("failed to marshal toml: %w", err)
+	}
+
+	// Create final content with comments
+	var finalContent strings.Builder
+	for _, line := range strings.Split(buf.String(), "\n") {
+		lineKey := strings.Split(line, "=")[0]
+		lineKey = strings.TrimSpace(lineKey)
+		if comment, exists := comments[lineKey]; exists {
+			finalContent.WriteString(line + " " + comment + "\n")
+		} else {
+			finalContent.WriteString(line + "\n")
+		}
+	}
+
+	// Write the enhanced TOML data to a file
+	filename := filepath.Join(targetDirectory)
+	if err := os.WriteFile(filename, []byte(finalContent.String()), 0o644); err != nil {
+		return fmt.Errorf("failed to write toml file: %w", err)
 	}
 
 	fmt.Printf("Rollup config written to: %s\n", filename)
