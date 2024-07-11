@@ -5,6 +5,7 @@ go 1.21
 replace github.com/ethereum-optimism/superchain-registry/superchain => ../superchain
 
 require (
+	github.com/BurntSushi/toml v1.4.0
 	github.com/ethereum-optimism/optimism v1.7.7
 	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240614103325-d8902381f5d8
 	github.com/ethereum/go-ethereum v1.13.15
