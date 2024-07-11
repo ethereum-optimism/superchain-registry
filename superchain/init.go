@@ -7,7 +7,7 @@ import (
 	"path"
 	"strings"
 
-	"gopkg.in/yaml.v3"
+	"github.com/BurntSushi/toml"
 )
 
 func init() {
@@ -52,10 +52,10 @@ func init() {
 			}
 			var chainConfig ChainConfig
 
-			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
+			if err := toml.Unmarshal(chainConfigData, &chainConfig); err != nil {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
-			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
+			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".toml")
 
 			(&chainConfig).setNilHardforkTimestampsToDefaultOrZero(&superchainEntry.Config)
 
