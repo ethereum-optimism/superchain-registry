@@ -1,0 +1,24 @@
+name = "OP Mainnet"
+chain_id = 10
+public_rpc = "https://mainnet.optimism.io"
+sequencer_rpc = "https://mainnet-sequencer.optimism.io"
+explorer = "https://explorer.optimism.io"
+superchain_level = 2
+superchain_time = 0 # Missing hardfork times are inherited from superchain.yaml
+batch_inbox_addr = "0xFF00000000000000000000000000000000000010"
+canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
+delta_time = 1708560000 # Thu 22 Feb 2024 00:00:00 UTC
+ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
+fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
+block_time = 2
+seq_window_size = 3600
+
+[genesis]
+  l2_time = 1686068903
+  [genesis.l1]
+    hash = "0x438335a20d98863a4c0c97999eb2481921ccd28553eac6f913af7c12aec04108"
+    number = 17422590
+  [genesis.l2]
+    hash = "0xdbf6a80fef073de06add9b0d14026d6e5a86c85f6d102c36d3d8e9cf89c2afd3"
+    number = 105235063
+

@@ -1,0 +1,24 @@
+name = "Lyra Chain"
+chain_id = 957
+public_rpc = "https://rpc.lyra.finance"
+sequencer_rpc = "https://rpc.lyra.finance"
+explorer = "https://explorer.lyra.finance"
+superchain_level = 1
+superchain_time = 0 # Missing hardfork times are inherited from superchain.yaml
+batch_inbox_addr = "0x5f7f7f6DB967F0ef10BdA0678964DBA185d16c50"
+canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
+delta_time = 1708560000 # Thu 22 Feb 2024 00:00:00 UTC
+ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
+fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
+block_time = 2
+seq_window_size = 3600
+
+[genesis]
+  l2_time = 1700021615
+  [genesis.l1]
+    hash = "0x00b06b23108483a0b6af8ff726b5ed3f508b7986f72c12679b10d72c05839716"
+    number = 18574841
+  [genesis.l2]
+    hash = "0x047f535b3da7ad4f96d353b5a439740b7591413daee0e2f27dd3aabb24581af2"
+    number = 0
+

@@ -1,0 +1,24 @@
+name = "Orderly Mainnet"
+chain_id = 291
+public_rpc = "https://rpc.orderly.network"
+sequencer_rpc = "https://rpc.orderly.network"
+explorer = "https://explorer.orderly.network"
+superchain_level = 1
+superchain_time = 0 # Missing hardfork times are inherited from superchain.yaml
+batch_inbox_addr = "0x08aA34cC843CeEBcC88A627F18430294aA9780be"
+canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
+delta_time = 1708560000 # Thu 22 Feb 2024 00:00:00 UTC
+ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
+fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
+block_time = 2
+seq_window_size = 3600
+
+[genesis]
+  l2_time = 1696608227
+  [genesis.l1]
+    hash = "0x787d5dd296d63bc6e7a4158d4f109e1260740ee115f5ed5124b35dece1fa3968"
+    number = 18292529
+  [genesis.l2]
+    hash = "0xe53c94ddd42714239429bd132ba2fa080c7e5cc7dca816ec6e482ec0418e6d7f"
+    number = 0
+

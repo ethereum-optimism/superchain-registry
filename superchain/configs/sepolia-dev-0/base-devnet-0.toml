@@ -1,0 +1,25 @@
+name = "Base devnet 0"
+chain_id = 11763072
+public_rpc = ""
+sequencer_rpc = ""
+explorer = ""
+superchain_level = 1
+standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+superchain_time = 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
+batch_inbox_addr = "0xfF00000000000000000000000000000011763072"
+canyon_time = 1698436800 # Fri 27 Oct 2023 20:00:00 UTC
+delta_time = 1706555000 # Mon 29 Jan 2024 19:03:20 UTC
+ecotone_time = 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
+fjord_time = 1715961600 # Fri 17 May 2024 16:00:00 UTC
+block_time = 2
+seq_window_size = 3600
+
+[genesis]
+  l2_time = 1695433056
+  [genesis.l1]
+    hash = "0x86252c512dc5bd7201d0532b31d50696ba84344a7cda545e04a98073a8e13d87"
+    number = 4344216
+  [genesis.l2]
+    hash = "0x1ab91449a7c65b8cd6c06f13e2e7ea2d10b6f9cbf5def79f362f2e7e501d2928"
+    number = 0
+

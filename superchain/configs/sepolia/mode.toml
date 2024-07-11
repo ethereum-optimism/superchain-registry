@@ -1,0 +1,25 @@
+name = "Mode Testnet"
+chain_id = 919
+public_rpc = "https://sepolia.mode.network"
+sequencer_rpc = "https://sepolia.mode.network"
+explorer = "https://sepolia.explorer.mode.network"
+superchain_level = 1
+standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+superchain_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
+batch_inbox_addr = "0xcDDaE6148dA1E003C230E4527f9baEdc8a204e7E"
+canyon_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
+delta_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
+ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
+fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
+block_time = 2
+seq_window_size = 3600
+
+[genesis]
+  l2_time = 1687867932
+  [genesis.l1]
+    hash = "0x4370cafe528a1b8f2aaffc578094731daf69ff82fd9edc30d2d842d3763f3410"
+    number = 3778382
+  [genesis.l2]
+    hash = "0x13c352562289a88ed33087a51b6b6c859a27709c8555c9def7cb9757c043acad"
+    number = 0
+

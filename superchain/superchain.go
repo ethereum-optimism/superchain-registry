@@ -106,8 +106,8 @@ type ChainConfig struct {
 	// Hardfork Configuration Overrides
 	HardForkConfiguration `yaml:",inline" toml:",inline"`
 
-	BlockTime           uint64 `yaml:"block_time"`
-	SequencerWindowSize uint64 `yaml:"seq_window_size"`
+	BlockTime           uint64 `yaml:"block_time" toml:"block_time"`
+	SequencerWindowSize uint64 `yaml:"seq_window_size" toml:"seq_window_size"`
 
 	// Optional feature
 	Plasma *PlasmaConfig `yaml:"plasma,omitempty" toml:"plasma,omitempty"`

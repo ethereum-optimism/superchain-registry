@@ -1,0 +1,24 @@
+name = "PGN (Public Goods Network)"
+chain_id = 424
+public_rpc = "https://rpc.publicgoods.network"
+sequencer_rpc = "https://rpc.publicgoods.network"
+explorer = "https://explorer.publicgoods.network"
+superchain_level = 1
+superchain_time = 0 # Missing hardfork times are inherited from superchain.yaml
+batch_inbox_addr = "0xC1B90E1e459aBBDcEc4DCF90dA45ba077d83BFc5"
+canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
+delta_time = 1708560000 # Thu 22 Feb 2024 00:00:00 UTC
+ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
+fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
+block_time = 2
+seq_window_size = 3600
+
+[genesis]
+  l2_time = 1689106727
+  [genesis.l1]
+    hash = "0x8474f830d93f50b27db60ec4dd95c704d05d7b4a39766759955374da78cfb20c"
+    number = 17672702
+  [genesis.l2]
+    hash = "0x39c02e153c193000f2d2907de42cc49f48329163f71d7f9c3fd0e15f41b529db"
+    number = 0
+

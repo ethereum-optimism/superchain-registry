@@ -1,0 +1,25 @@
+name = "Base Sepolia Testnet"
+chain_id = 84532
+public_rpc = "https://sepolia.base.org"
+sequencer_rpc = "https://sepolia-sequencer.base.org"
+explorer = "https://sepolia-explorer.base.org"
+superchain_level = 1
+standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+superchain_time = 0 # Missing hardfork times are inherited from superchain.yaml
+batch_inbox_addr = "0xfF00000000000000000000000000000000084532"
+canyon_time = 1699981200 # Tue 14 Nov 2023 17:00:00 UTC
+delta_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
+ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
+fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
+block_time = 2
+seq_window_size = 3600
+
+[genesis]
+  l2_time = 1695768288
+  [genesis.l1]
+    hash = "0xcac9a83291d4dec146d6f7f69ab2304f23f5be87b1789119a0c5b1e4482444ed"
+    number = 4370868
+  [genesis.l2]
+    hash = "0x0dcc9e089e30b90ddfc55be9a37dd15bc551aeee999d2e2b51414c54eaf934e4"
+    number = 0
+

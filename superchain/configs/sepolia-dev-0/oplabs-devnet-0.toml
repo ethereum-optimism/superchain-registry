@@ -1,0 +1,24 @@
+name = "OP Labs Sepolia devnet 0"
+chain_id = 11155421
+public_rpc = ""
+sequencer_rpc = ""
+explorer = ""
+superchain_level = 2
+superchain_time = 0 # Missing hardfork times are inherited from superchain.yaml
+batch_inbox_addr = "0xFf00000000000000000000000000000011155421"
+canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+ecotone_time = 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
+fjord_time = 1715961600 # Fri 17 May 2024 16:00:00 UTC
+block_time = 2
+seq_window_size = 3600
+
+[genesis]
+  l2_time = 1706484048
+  [genesis.l1]
+    hash = "0x5639be97000fec7131a880b19b664cae43f975c773f628a08a9bb658c2a68df0"
+    number = 5173577
+  [genesis.l2]
+    hash = "0x027ae1f4f9a441f9c8a01828f3b6d05803a0f524c07e09263264a38b755f804b"
+    number = 0
+
