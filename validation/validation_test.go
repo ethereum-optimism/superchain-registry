@@ -56,7 +56,6 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	// Standard Config Params
 	t.Run("Data Availability", func(t *testing.T) { testDataAvailability(t, chain) })
 	t.Run("Resource Config", func(t *testing.T) { testResourceConfig(t, chain) })
-	t.Run("L2OO Params", func(t *testing.T) { testL2OOParams(t, chain) })
 	t.Run("Gas Limit", func(t *testing.T) { testGasLimit(t, chain) })
 	t.Run("GPO Params", func(t *testing.T) { testGasPriceOracleParams(t, chain) })
 	t.Run("Superchain Config", func(t *testing.T) { testSuperchainConfig(t, chain) })

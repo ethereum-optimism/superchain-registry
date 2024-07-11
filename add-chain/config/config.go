@@ -82,16 +82,6 @@ func ConstructChainConfig(
 		},
 	}
 
-	if superchainLevel == superchain.Standard || standardChainCandidate {
-		var contractsVersionTag string
-		if isFaultProofs {
-			contractsVersionTag = "op-contracts/v1.4.0"
-		} else {
-			contractsVersionTag = "op-contracts/v1.3.0"
-		}
-		chainConfig.ContractsVersionTag = &contractsVersionTag
-	}
-
 	fmt.Printf("Rollup config successfully constructed\n")
 	return chainConfig, nil
 }
