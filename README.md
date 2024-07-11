@@ -14,6 +14,14 @@ Other configuration, such as contract-permissions and `SystemConfig` parameters 
 
 A list of chains in the registry can be seen in the top level [`chainList.toml`](./chainList.toml) and [`chainList.json`](./chainList.json) files.
 
+## Superchain Level and Rollup Stage
+Chains in the superchain-registry are assigned a `superchain_level` (shown in individual config files as well as the `chainList.tom/json` summaries), depending on the set of validation checks that they pass.
+
+**Frontier** chains have `superchain_level = 1`.
+
+**Standard** chains have `superchain_level = 2`. Because they satisfy a much stricter set of validation checks (see the [Standard Rollup Blockspace Charter](https://gov.optimism.io/t/season-6-draft-standard-rollup-charter/8135)), they also qualify as [Stage 1](https://ethereum-magicians.org/t/proposed-milestones-for-rollups-taking-off-training-wheels/11571) rollups chains.
+
+
 ## Downstream packages
 The superchain configs are stored in a minimal form, and are embedded in downstream OP-Stack software ([`op-node`](https://github.com/ethereum-optimism/optimism) and [`op-geth`](https://github.com/ethereum-optimism/op-geth)). This means that, after a chain has been added to the registry, and the dependency on the registry updates in the downstream software, it is possible to start an `op-node` instance [using the `--network` flag](https://docs.optimism.io/builders/node-operators/configuration/consensus-config#network) (and also an `op-geth` instance [using the `--op-network` tag](https://docs.optimism.io/builders/node-operators/configuration/execution-config#op-network-betaop-network)) which will successfully sync with other nodes on that network.
 
@@ -36,16 +44,10 @@ To contribute a standard OP-Stack chain configuration, in addition to user-suppl
 
 First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
 #### Frontier chains
-
-Frontier chains are chains with customizations beyond the standard OP
-Stack configuration. To contribute a frontier OP-Stack chain
-configuration, you set the `SCR_CHAIN_TYPE=frontier` in the `.env` file.
-
+To contribute a frontier OP-Stack chain configuration, you set the `SCR_CHAIN_TYPE=frontier` in the `.env` file. This will set `superchain_level = 1` in the registry's config file for this chain.
 
 #### Standard chains
-A chain may meet the definition of a **standard** chain. Adding a standard chain is a two-step process.
-
-First, the chain should be added as a frontier chain as above, but with `SCR_STANDARD_CHAIN_CANDIDATE=true` in the `.env` file.
+Adding a standard chain is a two-step process. First, the chain should be added as a frontier chain as above, but with `SCR_STANDARD_CHAIN_CANDIDATE=true` in the `.env` file.
 
 ### 4. Run script
 
