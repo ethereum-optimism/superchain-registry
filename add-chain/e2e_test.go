@@ -9,7 +9,6 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -169,20 +168,6 @@ func compareJsonFiles(t *testing.T, dirPath, testName, chainShortName string) {
 
 	diff := cmp.Diff(expectJSON, testJSON)
 	require.Equal(t, diff, "", "expected json (-) does not match test json (+): %s", diff)
-}
-
-func checkConfigYaml(t *testing.T, testName, chainShortName string) {
-	expectedBytes, err := os.ReadFile("./testdata/superchain/configs/sepolia/expected_" + testName + ".yaml")
-	require.NoError(t, err, "failed to read expected.yaml config file: %w", err)
-
-	var expectedYaml map[string]interface{}
-	err = yaml.Unmarshal(expectedBytes, &expectedYaml)
-	require.NoError(t, err, "failed to unmarshal expected.yaml config file: %w", err)
-
-	testBytes, err := os.ReadFile(configDir + chainShortName + ".yaml")
-	require.NoError(t, err, "failed to read testchain.yaml config file: %w", err)
-
-	require.Equal(t, string(expectedBytes), string(testBytes), "test .yaml contents do not meet expectation")
 }
 
 func checkConfigTOML(t *testing.T, testName, chainShortName string) {
