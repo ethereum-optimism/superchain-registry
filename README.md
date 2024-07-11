@@ -75,13 +75,9 @@ The format is a gzipped JSON `genesis.json` file, with either:
 
 ### 5. Run tests locally
 
-Run the following command to run the Go validation checks, for only the chain you added (replace the chain name or ID accordingly):
+Run the following command to run the Go validation checks, for only the chain you added (replace the `<chain-id>` accordingly):
 ```
-just validate OP_Sepolia
-```
-or
-```
-just validate 11155420
+just validate <chain-id>
 ```
 
 > [!NOTE]
@@ -112,7 +108,7 @@ Once the PR is opened, the same automated checks from Step 4 will then run on yo
 ## Promote a chain to standard
 This process is only possible for chains already in the registry.
 
-Run this command:
+Run this command (replace the `<chain-id>` accordingly):
 ```
 just promote-to-standard <chain-id>
 ```
