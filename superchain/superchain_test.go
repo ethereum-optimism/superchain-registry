@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/BurntSushi/toml"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -64,7 +65,7 @@ func TestChainIds(t *testing.T) {
 				require.NoError(t, err)
 				var chainConfig ChainConfig
 
-				require.NoError(t, yaml.Unmarshal(configBytes, &chainConfig))
+				require.NoError(t, toml.Unmarshal(configBytes, &chainConfig))
 
 				storeIfUnique(chainConfig.ChainID)
 			}
