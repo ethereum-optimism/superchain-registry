@@ -105,7 +105,7 @@ When opening a PR:
 Once the PR is opened, the same automated checks from Step 4 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
 
 
-## Promote a chain to standard
+## Promote a chain to standard
 This process is only possible for chains already in the registry.
 
 Run this command (replace the `<chain-id>` accordingly):
