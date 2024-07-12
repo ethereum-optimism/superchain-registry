@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -13,6 +12,7 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/add-chain/cmd"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/config"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/flags"
+	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 )
@@ -26,7 +26,6 @@ var app = &cli.App{
 		flags.ExplorerFlag,
 		flags.SuperchainTargetFlag,
 		flags.MonorepoDirFlag,
-		flags.ChainTypeFlag,
 		flags.ChainNameFlag,
 		flags.ChainShortNameFlag,
 		flags.RollupConfigFlag,
@@ -72,16 +71,9 @@ func runApp(args []string) error {
 }
 
 func entrypoint(ctx *cli.Context) error {
-	chainType := ctx.String(flags.ChainTypeFlag.Name)
 	standardChainCandidate := ctx.Bool(flags.StandardChainCandidateFlag.Name)
-	if standardChainCandidate && chainType == "standard" {
-		return errors.New("cannot set both chainType=standard and standard-chain-candidate=true")
-	}
 
-	superchainLevel, err := getSuperchainLevel(chainType)
-	if err != nil {
-		return fmt.Errorf("failed to get superchain level: %w", err)
-	}
+	superchainLevel := superchain.Frontier // All chains enter as frontier chains
 
 	publicRPC := ctx.String(flags.PublicRpcFlag.Name)
 	sequencerRPC := ctx.String(flags.SequencerRpcFlag.Name)
