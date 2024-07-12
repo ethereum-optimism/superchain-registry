@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
-
-	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
 func castCall(contractAddress, calldata, l1RpcUrl string) (string, error) {
@@ -25,17 +23,4 @@ func castCall(contractAddress, calldata, l1RpcUrl string) (string, error) {
 	}
 
 	return address, nil
-}
-
-func getSuperchainLevel(chainType string) (superchain.SuperchainLevel, error) {
-	switch chainType {
-	case "standard":
-		fmt.Printf("Adding standard chain to superchain-registry...\n\n")
-		return superchain.Standard, nil
-	case "frontier":
-		fmt.Printf("Adding frontier chain to superchain-registry...\n\n")
-		return superchain.Frontier, nil
-	}
-
-	return 0, fmt.Errorf("invalid chain type: %s", chainType)
 }
