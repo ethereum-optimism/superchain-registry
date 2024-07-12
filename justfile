@@ -29,12 +29,12 @@ test-all: test-add-chain test-superchain test-validation
 test-add-chain:
 	# We separate the first test from the rest because it generates artifacts
 	# Which need to exist before the remaining tests run.
-	go test ./add-chain/... -run TestAddChain_Main -v
-	go test ./add-chain/... -run '[^TestAddChain_Main]' -v
+	TEST_DIRECTORY=./add-chain go run gotest.tools/gotestsum@latest --format testname -- -run TestAddChain_Main
+	TEST_DIRECTORY=./add-chain go run gotest.tools/gotestsum@latest --format testname -- -run '[^TestAddChain_Main]'
 
 # Test all Go code in the superchain module
 test-superchain:
-	go test ./superchain/... -v
+	TEST_DIRECTORY=./superchain go run gotest.tools/gotestsum@latest --format testname
 
 # Test all Go code in the validation module
 test-validation: clean-add-chain
