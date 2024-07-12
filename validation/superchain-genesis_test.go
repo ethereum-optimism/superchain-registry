@@ -18,7 +18,7 @@ func testGenesisHash(t *testing.T, chainID uint64) {
 	skipIfExcluded(t, chainID)
 
 	if chainID == 10 {
-		t.Skip("OP Mainnet has a pre-bedrock genesis, so we exclude it from this check.")
+		t.Skip("OP Mainnet has a pre-bedrock genesis (with an empty allocs object stored in the registry), so we exclude it from this check.")
 	}
 
 	chainConfig, ok := OPChains[chainID]
