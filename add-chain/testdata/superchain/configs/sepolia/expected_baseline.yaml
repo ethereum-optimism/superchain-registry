@@ -6,8 +6,6 @@ explorer: https://awesomescan.org
 
 superchain_level: 1
 superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
-contracts_version_tag: null
-
 batch_inbox_addr: "0xFf00000000000000000000000000000000042069"
 
 genesis:

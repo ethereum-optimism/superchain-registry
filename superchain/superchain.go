@@ -95,7 +95,7 @@ type ChainConfig struct {
 	// An op-contracts tag from github.com/ethereum-optimism/optimism
 	// from which contracts were deployed. Example: "op-contracts/v1.4.0".
 	// May be nil for frontier chains.
-	ContractsVersionTag *string `yaml:"contracts_version_tag"`
+	ContractsVersionTag *string `yaml:"contracts_version_tag,omitempty"`
 
 	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
