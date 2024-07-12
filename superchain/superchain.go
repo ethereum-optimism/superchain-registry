@@ -38,7 +38,7 @@ type ChainGenesis struct {
 	L2           BlockID      `yaml:"l2" toml:"l2"`
 	L2Time       uint64       `yaml:"l2_time" toml:"l2_time" json:"l2_time" `
 	ExtraData    *HexBytes    `yaml:"extra_data,omitempty" toml:"extra_data,omitempty"`
-	SystemConfig SystemConfig `yaml:"-" toml:"-" json:"system_config" `
+	SystemConfig SystemConfig `yaml:"-" toml:"system_config" json:"system_config" `
 }
 
 type SystemConfig struct {
@@ -111,6 +111,8 @@ type ChainConfig struct {
 
 	// Optional feature
 	Plasma *PlasmaConfig `yaml:"plasma,omitempty" toml:"plasma,omitempty"`
+
+	Addresses AddressList `toml:"addresses"`
 }
 
 func (c ChainConfig) Identifier() string {
@@ -279,36 +281,36 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 }
 
 type Roles struct {
-	SystemConfigOwner Address `json:"SystemConfigOwner"`
-	ProxyAdminOwner   Address `json:"ProxyAdminOwner"`
-	Guardian          Address `json:"Guardian"`
-	Challenger        Address `json:"Challenger"`
-	Proposer          Address `json:"Proposer"`
-	UnsafeBlockSigner Address `json:"UnsafeBlockSigner"`
-	BatchSubmitter    Address `json:"BatchSubmitter"`
+	SystemConfigOwner Address `json:"SystemConfigOwner" toml:"SystemConfigOwner"`
+	ProxyAdminOwner   Address `json:"ProxyAdminOwner" toml:"ProxyAdminOwner"`
+	Guardian          Address `json:"Guardian" toml:"Guardian"`
+	Challenger        Address `json:"Challenger" toml:"Challenger"`
+	Proposer          Address `json:"Proposer" toml:"Proposer"`
+	UnsafeBlockSigner Address `json:"UnsafeBlockSigner" toml:"UnsafeBlockSigner"`
+	BatchSubmitter    Address `json:"BatchSubmitter" toml:"BatchSubmitter"`
 }
 
 // AddressList represents the set of network specific contracts and roles for a given network.
 type AddressList struct {
-	Roles                             `json:",inline"`
-	AddressManager                    Address `json:"AddressManager"`
-	L1CrossDomainMessengerProxy       Address `json:"L1CrossDomainMessengerProxy"`
-	L1ERC721BridgeProxy               Address `json:"L1ERC721BridgeProxy"`
-	L1StandardBridgeProxy             Address `json:"L1StandardBridgeProxy"`
-	L2OutputOracleProxy               Address `json:"L2OutputOracleProxy"`
-	OptimismMintableERC20FactoryProxy Address `json:"OptimismMintableERC20FactoryProxy"`
-	OptimismPortalProxy               Address `json:"OptimismPortalProxy"`
-	SystemConfigProxy                 Address `json:"SystemConfigProxy"`
-	ProxyAdmin                        Address `json:"ProxyAdmin"`
+	Roles                             `json:",inline" toml:",inline"`
+	AddressManager                    Address `json:"AddressManager" toml:"AddressManager"`
+	L1CrossDomainMessengerProxy       Address `json:"L1CrossDomainMessengerProxy" toml:"L1CrossDomainMessengerProxy"`
+	L1ERC721BridgeProxy               Address `json:"L1ERC721BridgeProxy" toml:"L1ERC721BridgeProxy"`
+	L1StandardBridgeProxy             Address `json:"L1StandardBridgeProxy" toml:"L1StandardBridgeProxy"`
+	L2OutputOracleProxy               Address `json:"L2OutputOracleProxy" toml:"L2OutputOracleProxy,omitempty"`
+	OptimismMintableERC20FactoryProxy Address `json:"OptimismMintableERC20FactoryProxy" toml:"OptimismMintableERC20FactoryProxy"`
+	OptimismPortalProxy               Address `json:"OptimismPortalProxy" toml:"OptimismPortalProxy"`
+	SystemConfigProxy                 Address `json:"SystemConfigProxy" toml:"SystemConfigProxy"`
+	ProxyAdmin                        Address `json:"ProxyAdmin" toml:"ProxyAdmin"`
 
 	// Fault Proof contracts:
-	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty"`
-	DelayedWETHProxy         Address `json:"DelayedWETHProxy,omitempty"`
-	DisputeGameFactoryProxy  Address `json:"DisputeGameFactoryProxy,omitempty"`
-	FaultDisputeGame         Address `json:"FaultDisputeGame,omitempty"`
-	MIPS                     Address `json:"MIPS,omitempty"`
-	PermissionedDisputeGame  Address `json:"PermissionedDisputeGame,omitempty"`
-	PreimageOracle           Address `json:"PreimageOracle,omitempty"`
+	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty" toml:"AnchorStateRegistryProxy,omitempty"`
+	DelayedWETHProxy         Address `json:"DelayedWETHProxy,omitempty" toml:"DelayedWETHProxy,omitempty"`
+	DisputeGameFactoryProxy  Address `json:"DisputeGameFactoryProxy,omitempty" toml:"DisputeGameFactoryProxy,omitempty"`
+	FaultDisputeGame         Address `json:"FaultDisputeGame,omitempty" toml:"FaultDisputeGame,omitempty"`
+	MIPS                     Address `json:"MIPS,omitempty" toml:"MIPS,omitempty"`
+	PermissionedDisputeGame  Address `json:"PermissionedDisputeGame,omitempty" toml:"PermissionedDisputeGame,omitempty"`
+	PreimageOracle           Address `json:"PreimageOracle,omitempty" toml:"PreimageOracle,omitempty"`
 }
 
 // AddressFor returns a nonzero address for the supplied name, if it has been specified
@@ -377,8 +379,8 @@ type AddressSet map[string]Address
 
 // VersionedContract represents a contract that has a semantic version.
 type VersionedContract struct {
-	Version string  `json:"version"`
-	Address Address `json:"address"`
+	Version string  `json:"version" toml:"version"`
+	Address Address `json:"address" toml:"address"`
 }
 
 // ContractVersions represents the desired semantic version of the contracts
