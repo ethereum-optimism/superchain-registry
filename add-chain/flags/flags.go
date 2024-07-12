@@ -15,13 +15,6 @@ func prefixEnvVars(names ...string) []string {
 }
 
 var (
-	ChainTypeFlag = &cli.StringFlag{
-		Name:     "chain-type",
-		Value:    "frontier",
-		EnvVars:  prefixEnvVars("CHAIN_TYPE"),
-		Usage:    "Type of chain (either standard or frontier)",
-		Required: false,
-	}
 	ChainNameFlag = &cli.StringFlag{
 		Name:     "chain-name",
 		Value:    "",
