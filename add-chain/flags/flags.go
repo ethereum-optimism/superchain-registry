@@ -20,42 +20,42 @@ var (
 		Value:    "",
 		EnvVars:  prefixEnvVars("CHAIN_NAME"),
 		Usage:    "Custom name of the chain",
-		Required: false,
+		Required: true,
 	}
 	ChainShortNameFlag = &cli.StringFlag{
 		Name:     "chain-short-name",
 		Value:    "",
 		EnvVars:  prefixEnvVars("CHAIN_SHORT_NAME"),
 		Usage:    "Custom short name of the chain",
-		Required: false,
+		Required: true,
 	}
 	PublicRpcFlag = &cli.StringFlag{
 		Name:     "public-rpc",
 		Value:    "",
 		EnvVars:  prefixEnvVars("PUBLIC_RPC"),
 		Usage:    "L2 node public rpc url",
-		Required: false,
+		Required: true,
 	}
 	SequencerRpcFlag = &cli.StringFlag{
 		Name:     "sequencer-rpc",
 		Value:    "",
 		EnvVars:  prefixEnvVars("SEQUENCER_RPC"),
 		Usage:    "sequencer rpc url",
-		Required: false,
+		Required: true,
 	}
 	ExplorerFlag = &cli.StringFlag{
 		Name:     "explorer",
 		Value:    "",
 		EnvVars:  prefixEnvVars("EXPLORER"),
 		Usage:    "block explorer url",
-		Required: false,
+		Required: true,
 	}
 	SuperchainTargetFlag = &cli.StringFlag{
 		Name:     "superchain-target",
 		Value:    "",
 		EnvVars:  prefixEnvVars("SUPERCHAIN_TARGET"),
 		Usage:    "superchain this L2 will belong to (mainnet or sepolia)",
-		Required: false,
+		Required: true,
 	}
 	MonorepoDirFlag = &cli.StringFlag{
 		Name:     "monorepo-dir",
@@ -81,7 +81,7 @@ var (
 		Value:    "",
 		EnvVars:  prefixEnvVars("DEPLOYMENTS_DIR"),
 		Usage:    "Directory containing L1 Contract deployment addresses",
-		Required: false,
+		Required: true,
 	}
 	StandardChainCandidateFlag = &cli.BoolFlag{
 		Name:     "standard-chain-candidate",
