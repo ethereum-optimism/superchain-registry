@@ -19,23 +19,16 @@ func TestValidation(t *testing.T) {
 }
 
 func testValidation(t *testing.T, chain *ChainConfig) {
-	t.Run("Universal Checks", func(t *testing.T) {
-		testUniversal(t, chain)
-	})
+	testUniversal(t, chain)
 
-	t.Run("Standard Chain", func(t *testing.T) {
-		if chain.SuperchainLevel != Standard {
-			t.Skip("Chain excluded from this check (NOT a Standard Chain)")
-		}
-		testStandard(t, chain)
-	})
-
-	t.Run("Standard or Standard Candidate Chain", func(t *testing.T) {
-		if !chain.StandardChainCandidate && chain.SuperchainLevel != Standard {
-			t.Skip("Chain excluded from this check (NOT a Standard or a Standard Candidate Chain)")
-		}
+	if chain.SuperchainLevel == Standard ||
+		(chain.SuperchainLevel == Frontier && chain.StandardChainCandidate) {
 		testStandardCandidate(t, chain)
-	})
+	}
+
+	if chain.SuperchainLevel == Standard {
+		testStandard(t, chain)
+	}
 }
 
 // testUniversal should be applied to each chain in the registry
@@ -60,18 +53,17 @@ func testUniversal(t *testing.T, chain *ChainConfig) {
 
 // testStandardCandidate applies to Standard and Standard Candidate Chains.
 func testStandardCandidate(t *testing.T, chain *ChainConfig) {
-	t.Run("Standard Config Params", func(t *testing.T) {
-		t.Run("Data Availability", func(t *testing.T) { testDataAvailability(t, chain) })
-		t.Run("Resource Config", func(t *testing.T) { testResourceConfig(t, chain) })
-		t.Run("L2OO Params", func(t *testing.T) { testL2OOParams(t, chain) })
-		t.Run("Gas Limit", func(t *testing.T) { testGasLimit(t, chain) })
-		t.Run("GPO Params", func(t *testing.T) { testGasPriceOracleParams(t, chain) })
-		t.Run("Superchain Config", func(t *testing.T) { testSuperchainConfig(t, chain) })
-	})
-	t.Run("Standard Config Roles", func(t *testing.T) {
-		t.Run("L1 Security Config", func(t *testing.T) { testL1SecurityConfig(t, chain.ChainID) })
-		t.Run("L2 Security Config", func(t *testing.T) { testL2SecurityConfig(t, chain) })
-	})
+	// Standard Config Params
+	t.Run("Data Availability", func(t *testing.T) { testDataAvailability(t, chain) })
+	t.Run("Resource Config", func(t *testing.T) { testResourceConfig(t, chain) })
+	t.Run("L2OO Params", func(t *testing.T) { testL2OOParams(t, chain) })
+	t.Run("Gas Limit", func(t *testing.T) { testGasLimit(t, chain) })
+	t.Run("GPO Params", func(t *testing.T) { testGasPriceOracleParams(t, chain) })
+	t.Run("Superchain Config", func(t *testing.T) { testSuperchainConfig(t, chain) })
+	// Standard Config Roles
+	t.Run("L1 Security Config", func(t *testing.T) { testL1SecurityConfig(t, chain.ChainID) })
+	t.Run("L2 Security Config", func(t *testing.T) { testL2SecurityConfig(t, chain) })
+	// Standard Contract Versions
 	t.Run("Standard Contract Versions", func(t *testing.T) {
 		testContractsMatchATag(t, chain)
 	})
