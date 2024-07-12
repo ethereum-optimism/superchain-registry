@@ -42,7 +42,8 @@ You will need [`jq`](https://jqlang.github.io/jq/download/) and [`foundry`](http
 
 To contribute a standard OP-Stack chain configuration, in addition to user-supplied metadata (chain name) the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
 
-First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values.
+First, make a copy of `.env.example` named `.env`, and alter the variables to appropriate values. Each value is explained in a comment in `.env.example`.
+
 #### Frontier chains
 To contribute a frontier OP-Stack chain configuration, you set the `SCR_CHAIN_TYPE=frontier` in the `.env` file. This will set `superchain_level = 1` in the registry's config file for this chain.
 
