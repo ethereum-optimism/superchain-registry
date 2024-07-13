@@ -20,3 +20,4 @@ genesis:
   l2_time: 1706484048 # Sun 28 Jan 2024 23:20:48 UTC
 
 block_time: 2
+seq_window_size: 3600

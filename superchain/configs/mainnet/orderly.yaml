@@ -20,3 +20,4 @@ genesis:
   l2_time: 1696608227 # Fri  6 Oct 2023 16:03:47 UTC
 
 block_time: 2
+seq_window_size: 3600

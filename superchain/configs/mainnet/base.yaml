@@ -23,3 +23,4 @@ genesis:
   l2_time: 1686789347 # Thu 15 Jun 2023 00:35:47 UTC
 
 block_time: 2
+seq_window_size: 3600

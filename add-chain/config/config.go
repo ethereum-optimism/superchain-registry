@@ -17,6 +17,7 @@ type JSONChainConfig struct {
 	BatchInboxAddr                   superchain.Address       `json:"batch_inbox_address"`
 	Genesis                          superchain.ChainGenesis  `json:"genesis"`
 	BlockTime                        uint64                   `json:"block_time"`
+	SequencerWindowSize              uint64                   `json:"seq_window_size"`
 	PlasmaConfig                     *superchain.PlasmaConfig `json:"plasma_config,omitempty"`
 	superchain.HardForkConfiguration `json:",inline"`
 }
@@ -81,7 +82,8 @@ func ConstructChainConfig(
 			EcotoneTime: jsonConfig.EcotoneTime,
 			FjordTime:   jsonConfig.FjordTime,
 		},
-		BlockTime: jsonConfig.BlockTime,
+		BlockTime:           jsonConfig.BlockTime,
+		SequencerWindowSize: jsonConfig.SequencerWindowSize,
 	}
 
 	fmt.Printf("Rollup config successfully constructed\n")
