@@ -21,3 +21,5 @@ genesis:
   l2_time: 1687867932
 
 canyon_time: 1703203200  # Fri 22 Dec 2023 00:00:00 UTC
+
+block_time: 2

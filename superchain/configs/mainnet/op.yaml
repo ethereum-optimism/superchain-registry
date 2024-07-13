@@ -18,3 +18,5 @@ genesis:
     hash: "0xdbf6a80fef073de06add9b0d14026d6e5a86c85f6d102c36d3d8e9cf89c2afd3"
     number: 105235063
   l2_time: 1686068903 # Tue  6 Jun 2023 16:28:23 UTC
+
+block_time: 2
