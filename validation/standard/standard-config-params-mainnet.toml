@@ -1,8 +1,8 @@
 # Standard Chain Config Parameters
 [rollup_config]
-# plasma_config must be nil
-seq_window_size = 3600
-l2_block_time = [2, 2]
+# plasma must be nil
+seq_window_size = [3600, 3600]
+block_time = [2, 2]
 
 [resource_config]
 max_resource_limit = 20000000

@@ -106,6 +106,8 @@ type ChainConfig struct {
 	// Hardfork Configuration Overrides
 	HardForkConfiguration `yaml:",inline"`
 
+	BlockTime uint64 `yaml:"block_time"`
+
 	// Optional feature
 	Plasma *PlasmaConfig `yaml:"plasma,omitempty"`
 }
@@ -196,7 +198,7 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 		}
 
 		// Add blank line BEFORE these keys
-		if keyNode.Value == "genesis" || keyNode.Value == "plasma" {
+		if keyNode.Value == "genesis" || keyNode.Value == "plasma" || keyNode.Value == "block_time" {
 			keyNode.HeadComment = "\n"
 		}
 
@@ -218,7 +220,7 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 		}
 
 		// Add human readable timestamp in comment
-		if strings.HasSuffix(keyNode.Value, "_time") && valNode.Value != "" && valNode.Value != "null" {
+		if strings.HasSuffix(keyNode.Value, "_time") && valNode.Value != "" && valNode.Value != "null" && keyNode.Value != "block_time" {
 			t, err := strconv.ParseInt(valNode.Value, 10, 64)
 			if err != nil {
 				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)

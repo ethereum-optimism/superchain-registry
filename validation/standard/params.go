@@ -1,6 +1,10 @@
 package standard
 
-import "math/big"
+import (
+	"math/big"
+
+	"github.com/ethereum-optimism/superchain-registry/superchain"
+)
 
 type ResourceConfig struct {
 	MaxResourceLimit            uint32   `toml:"max_resource_limit"`
@@ -36,7 +40,14 @@ type EcotoneGasPriceOracleBounds struct {
 	BlobBaseFeeScalar Uint32Bounds `toml:"blob_base_fee_scalar"`
 	BaseFeeScalar     Uint32Bounds `toml:"base_fee_scalar"`
 }
+
+type RollupConfigBounds struct {
+	Plasma               *superchain.PlasmaConfig `toml:"plasma"`
+	BlockTime            [2]uint64                `toml:"block_time"`
+	SequencingWindowSize [2]uint64                `toml:"seq_window_size"`
+}
 type Params struct {
+	RollupConfig   RollupConfigBounds   `toml:"rollup_config"`
 	ResourceConfig ResourceConfig       `toml:"resource_config"`
 	GPOParams      GasPriceOracleBounds `toml:"gas_price_oracle"`
 	SystemConfig   SystemConfig         `toml:"system_config"`
