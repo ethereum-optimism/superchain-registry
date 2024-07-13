@@ -50,7 +50,7 @@ type RollupConfigBounds struct {
 type OptimismPortal2Bounds struct {
 	ProofMaturityDelaySeconds       [2]uint64 `toml:"proof_maturity_delay_seconds"`
 	DisputeGameFinalityDelaySeconds [2]uint64 `toml:"dispute_game_finality_delay_seconds"`
-	RespectedGameType               uint      `toml:"respected_game_type"`
+	RespectedGameType               uint32    `toml:"respected_game_type"`
 }
 
 type Params struct {

@@ -19,7 +19,8 @@ func testOptimismPortal2Params(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err)
 	t.Log(opAddr)
 
-	rpcEndpoint := chain.PublicRPC
+	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
+
 	require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
@@ -37,7 +38,7 @@ func testOptimismPortal2Params(t *testing.T, chain *ChainConfig) {
 
 	dgfds, err := op.DisputeGameFinalityDelaySeconds(callOpts)
 	require.NoError(t, err)
-	assertIntInBounds(t, "Proof Maturity Delay", dgfds.Uint64(), std.DisputeGameFinalityDelaySeconds)
+	assertIntInBounds(t, "Dispute Game Finality Delay Seconds", dgfds.Uint64(), std.DisputeGameFinalityDelaySeconds)
 
 	rgt, err := op.RespectedGameType(callOpts)
 	require.NoError(t, err)
