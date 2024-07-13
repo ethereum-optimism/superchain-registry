@@ -46,9 +46,17 @@ type RollupConfigBounds struct {
 	BlockTime           [2]uint64                `toml:"block_time"`
 	SequencerWindowSize [2]uint64                `toml:"seq_window_size"`
 }
+
+type OptimismPortal2Bounds struct {
+	ProofMaturityDelaySeconds       [2]uint64 `toml:"proof_maturity_delay_seconds"`
+	DisputeGameFinalityDelaySeconds [2]uint64 `toml:"dispute_game_finality_delay_seconds"`
+	RespectedGameType               uint      `toml:"respected_game_type"`
+}
+
 type Params struct {
-	RollupConfig   RollupConfigBounds   `toml:"rollup_config"`
-	ResourceConfig ResourceConfig       `toml:"resource_config"`
-	GPOParams      GasPriceOracleBounds `toml:"gas_price_oracle"`
-	SystemConfig   SystemConfig         `toml:"system_config"`
+	RollupConfig          RollupConfigBounds    `toml:"rollup_config"`
+	OptimismPortal2Config OptimismPortal2Bounds `toml:"optimism_portal_2"`
+	ResourceConfig        ResourceConfig        `toml:"resource_config"`
+	GPOParams             GasPriceOracleBounds  `toml:"gas_price_oracle"`
+	SystemConfig          SystemConfig          `toml:"system_config"`
 }

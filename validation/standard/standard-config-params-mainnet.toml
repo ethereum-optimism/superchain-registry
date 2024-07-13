@@ -4,6 +4,11 @@
 seq_window_size = [3600, 3600]
 block_time = [2, 2]
 
+[optimism_portal_2]
+proof_maturity_delay_seconds = [604800, 604800]        # 7 days
+dispute_game_finality_delay_seconds = [302400, 302400] # 2.5 days
+respected_game_type = 0
+
 [resource_config]
 max_resource_limit = 20000000
 elasticity_multiplier = 10
