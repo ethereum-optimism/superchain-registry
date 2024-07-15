@@ -77,7 +77,7 @@ var exclusions = map[string]map[uint64]bool{
 		58008:     true, // sepolia/pgn          MCP (at time of writing)
 		999999999: true, // sepolia/zora         MCP (at time of writing)
 		11763072:  true, // sepolia-dev0/base-devnet-0
-	}
+	},
 }
 
 func TestExclusions(t *testing.T) {

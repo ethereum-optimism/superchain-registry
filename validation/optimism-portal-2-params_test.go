@@ -29,7 +29,8 @@ func testOptimismPortal2Params(t *testing.T, chain *ChainConfig) {
 	op, err := bindings.NewOptimismPortal2(common.Address(opAddr), client)
 	require.NoError(t, err)
 
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	callOpts := &bind.CallOpts{Context: ctx}
 
 	std := standard.Config.Params[chain.Superchain].OptimismPortal2Config
