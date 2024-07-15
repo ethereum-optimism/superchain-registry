@@ -92,11 +92,6 @@ type ChainConfig struct {
 	// will be inherited from the superchain-wide config.
 	SuperchainTime *uint64 `yaml:"superchain_time"`
 
-	// An op-contracts tag from github.com/ethereum-optimism/optimism
-	// from which contracts were deployed. Example: "op-contracts/v1.4.0".
-	// May be nil for frontier chains.
-	ContractsVersionTag *string `yaml:"contracts_version_tag,omitempty"`
-
 	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
 
 	Genesis ChainGenesis `yaml:"genesis"`
@@ -110,6 +105,9 @@ type ChainConfig struct {
 
 	// Hardfork Configuration Overrides
 	HardForkConfiguration `yaml:",inline"`
+
+	BlockTime           uint64 `yaml:"block_time"`
+	SequencerWindowSize uint64 `yaml:"seq_window_size"`
 
 	// Optional feature
 	Plasma *PlasmaConfig `yaml:"plasma,omitempty"`
@@ -196,22 +194,12 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 		}
 
 		// Add blank line AFTER these keys
-		if lastKey == "explorer" || lastKey == "contracts_version_tag" || lastKey == "genesis" {
+		if lastKey == "explorer" || lastKey == "genesis" {
 			keyNode.HeadComment = "\n"
 		}
 
-		if keyNode.Value == "contracts_version_tag" {
-			switch valNode.Value {
-			case "op-contracts/v1.3.0":
-				keyNode.LineComment = "Multi-Chain Prep (MCP) https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.3.0"
-			case "op-contracts/v1.4.0":
-				keyNode.LineComment = "Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.4.0"
-
-			}
-		}
-
 		// Add blank line BEFORE these keys
-		if keyNode.Value == "genesis" || keyNode.Value == "plasma" {
+		if keyNode.Value == "genesis" || keyNode.Value == "plasma" || keyNode.Value == "block_time" {
 			keyNode.HeadComment = "\n"
 		}
 
@@ -233,7 +221,7 @@ func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
 		}
 
 		// Add human readable timestamp in comment
-		if strings.HasSuffix(keyNode.Value, "_time") && valNode.Value != "" && valNode.Value != "null" {
+		if strings.HasSuffix(keyNode.Value, "_time") && valNode.Value != "" && valNode.Value != "null" && keyNode.Value != "block_time" {
 			t, err := strconv.ParseInt(valNode.Value, 10, 64)
 			if err != nil {
 				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)

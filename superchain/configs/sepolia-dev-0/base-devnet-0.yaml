@@ -21,3 +21,6 @@ genesis:
 
 canyon_time: 1698436800  # Fri 27 Oct 2023 20:00:00 UTC
 delta_time: 1706555000   # Mon 29 Jan 2024 19:03:20 UTC
+
+block_time: 2
+seq_window_size: 3600
