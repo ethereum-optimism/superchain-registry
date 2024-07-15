@@ -16,6 +16,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/BurntSushi/toml"
 	"golang.org/x/mod/semver"
 	"gopkg.in/yaml.v3"
 )
@@ -532,27 +533,27 @@ type SuperchainL1Info struct {
 }
 
 type SuperchainConfig struct {
-	Name string           `yaml:"name"`
-	L1   SuperchainL1Info `yaml:"l1"`
+	Name string           `yaml:"name" toml:"name"`
+	L1   SuperchainL1Info `yaml:"l1" toml:"l1"`
 
-	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
-	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
+	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty" toml:"protocol_versions_addr,omitempty"`
+	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty" toml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration. These values may be overridden by individual chains.
 	hardForkDefaults HardForkConfiguration
 }
 
-// custom unmarshal function to allow yaml to be unmarshalled into unexported fields
+// custom unmarshal function to allow toml to be unmarshalled into unexported fields
 func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
 	temp := struct {
-		*SuperchainConfig `yaml:",inline"`
-		HardForks         *HardForkConfiguration `yaml:",inline"`
+		*SuperchainConfig `yaml:",inline" toml:",inline"`
+		HardForks         *HardForkConfiguration `yaml:",inline" toml:",inline"`
 	}{
 		SuperchainConfig: s,
 		HardForks:        &s.hardForkDefaults,
 	}
 
-	return yaml.Unmarshal(data, temp)
+	return toml.Unmarshal(data, temp)
 }
 
 type Superchain struct {
@@ -579,7 +580,7 @@ var OPChains = map[uint64]*ChainConfig{}
 
 var Addresses = map[uint64]*AddressList{}
 
-var GenesisSystemConfigs = map[uint64]*GenesisSystemConfig{}
+var GenesisSystemConfigs = map[uint64]*SystemConfig{}
 
 // SuperchainSemver maps superchain name to a contract name : approved semver version structure.
 var SuperchainSemver map[string]ContractVersions
