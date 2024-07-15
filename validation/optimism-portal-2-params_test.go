@@ -3,6 +3,7 @@ package validation
 import (
 	"context"
 	"testing"
+	"time"
 
 	bindings "github.com/ethereum-optimism/optimism/op-node/bindings/preview"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
@@ -28,7 +29,8 @@ func testOptimismPortal2Params(t *testing.T, chain *ChainConfig) {
 	op, err := bindings.NewOptimismPortal2(common.Address(opAddr), client)
 	require.NoError(t, err)
 
-	callOpts := &bind.CallOpts{Context: context.Background()}
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	callOpts := &bind.CallOpts{Context: ctx}
 
 	std := standard.Config.Params[chain.Superchain].OptimismPortal2Config
 
