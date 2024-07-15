@@ -190,24 +190,23 @@ func testNetworkUpgradeTimestampOffset(l2GenesisTime uint64, blockTime uint64, u
 }
 
 func TestSuperchainConfigUnmarshaling(t *testing.T) {
-	rawYAML := `
-name: Mickey Mouse
-l1:
-  chain_id: 314
-  public_rpc: https://disney.com
-  explorer: https://disneyscan.io
+	rawTOML := `
+name = "Mickey Mouse"
+protocol_versions_addr = "0x252CbE9517F731C618961D890D534183822dcC8d"
+superchain_config_addr = "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
 
-protocol_versions_addr: "0x252CbE9517F731C618961D890D534183822dcC8d"
-superchain_config_addr: "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
+canyon_time = 1
+delta_time = 2
+ecotone_time = 3
 
-canyon_time: 1
-delta_time: 2
-ecotone_time: 3
-fjord_time:
+[l1]
+  chain_id = 314
+  public_rpc = "https://disney.com"
+  explorer = "https://disneyscan.io"
 `
 
 	s := SuperchainConfig{}
-	err := unMarshalSuperchainConfig([]byte(rawYAML), &s)
+	err := unMarshalSuperchainConfig([]byte(rawTOML), &s)
 	require.NoError(t, err)
 
 	require.Equal(t, "Mickey Mouse", s.Name)
@@ -216,6 +215,7 @@ fjord_time:
 		PublicRPC: "https://disney.com",
 		Explorer:  "https://disneyscan.io",
 	}, s.L1)
+
 	require.Equal(t, "0x252CbE9517F731C618961D890D534183822dcC8d", s.ProtocolVersionsAddr.String())
 	require.Equal(t, "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7", s.SuperchainConfigAddr.String())
 	require.Equal(t, uint64Ptr(uint64(1)), s.hardForkDefaults.CanyonTime)

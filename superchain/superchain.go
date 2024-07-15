@@ -177,15 +177,6 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfi
 func (c *ChainConfig) EnhanceTOML(ctx context.Context) (map[string]string, error) {
 	comments := make(map[string]string)
 
-	if c.ContractsVersionTag != nil {
-		switch *c.ContractsVersionTag {
-		case "op-contracts/v1.3.0":
-			comments["contracts_version_tag"] = "# Multi-Chain Prep (MCP) https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.3.0"
-		case "op-contracts/v1.4.0":
-			comments["contracts_version_tag"] = "# Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.4.0"
-		}
-	}
-
 	createTimestampComment := func(fieldName string, fieldValue *uint64, comments map[string]string) {
 		if fieldValue != nil {
 			timestamp := time.Unix(int64(*fieldValue), 0).UTC()
@@ -527,9 +518,9 @@ type Genesis struct {
 }
 
 type SuperchainL1Info struct {
-	ChainID   uint64 `yaml:"chain_id"`
-	PublicRPC string `yaml:"public_rpc"`
-	Explorer  string `yaml:"explorer"`
+	ChainID   uint64 `yaml:"chain_id" toml:"chain_id"`
+	PublicRPC string `yaml:"public_rpc" toml:"public_rpc"`
+	Explorer  string `yaml:"explorer" toml:"explorer"`
 }
 
 type SuperchainConfig struct {
@@ -546,14 +537,14 @@ type SuperchainConfig struct {
 // custom unmarshal function to allow toml to be unmarshalled into unexported fields
 func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
 	temp := struct {
-		*SuperchainConfig `yaml:",inline" toml:",inline"`
-		HardForks         *HardForkConfiguration `yaml:",inline" toml:",inline"`
+		*SuperchainConfig      `yaml:",inline" toml:",inline"`
+		*HardForkConfiguration `yaml:",inline" toml:",inline"`
 	}{
-		SuperchainConfig: s,
-		HardForks:        &s.hardForkDefaults,
+		s,
+		&s.hardForkDefaults,
 	}
 
-	return toml.Unmarshal(data, temp)
+	return toml.Unmarshal(data, &temp)
 }
 
 type Superchain struct {
@@ -588,8 +579,8 @@ var SuperchainSemver map[string]ContractVersions
 func isConfigFile(c fs.DirEntry) bool {
 	return (!c.IsDir() &&
 		strings.HasSuffix(c.Name(), ".toml") &&
-		c.Name() != "superchain.yaml" &&
-		c.Name() != "semver.yaml")
+		c.Name() != "superchain.toml" &&
+		c.Name() != "semver.toml")
 }
 
 func LoadGenesis(chainID uint64) (*Genesis, error) {
