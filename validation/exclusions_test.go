@@ -22,6 +22,10 @@ func skipIfExcluded(t *testing.T, chainID uint64) {
 
 var exclusions = map[string]map[uint64]bool{
 	// Universal Checks
+	"Genesis_Hash_Check": {
+		// OP Mainnet has a pre-bedrock genesis (with an empty allocs object stored in the registry), so we exclude it from this check.")
+		10: true,
+	},
 	"ChainID_RPC_Check": {
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
@@ -52,8 +56,12 @@ var exclusions = map[string]map[uint64]bool{
 }
 
 func TestExclusions(t *testing.T) {
-	for _, v := range exclusions {
+	for name, v := range exclusions {
 		for k := range v {
+			if k == 10 && name == "Genesis_Hash_Check" {
+				// This is the sole standard chain validation check exclusion
+				continue
+			}
 			if v[k] {
 				require.NotNil(t, superchain.OPChains[k], k)
 				require.False(t, superchain.OPChains[k].SuperchainLevel == superchain.Standard, "Standard Chain %d may not be excluded from any check", k)
