@@ -19,7 +19,7 @@ func init() {
 
 	decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
 
-	networks := []string{"mainnet", "sepolia", "sepolia-dev-0"}
+	networks := []string{"mainnet", "sepolia"}
 	for _, network := range networks {
 		Config.MultisigRoles[network] = new(MultisigRoles)
 		decodeTOMLFileIntoConfig("standard-config-roles-"+network+".toml", Config.MultisigRoles[network])

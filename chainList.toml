@@ -142,20 +142,20 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "OP Labs Sepolia devnet 0"
-  identifier = "sepolia-dev-0/oplabs-devnet-0"
-  chain_id = 11155421
+  name = "Base devnet 0"
+  identifier = "sepolia-dev-0/base-devnet-0"
+  chain_id = 11763072
   rpc = [""]
   explorers = [""]
-  superchain_level = 2
+  superchain_level = 1
   [chains.parent]
     type = "L2"
     chain = "sepolia-dev-0"
 
 [[chains]]
-  name = "Base devnet 0"
-  identifier = "sepolia-dev-0/base-devnet-0"
-  chain_id = 11763072
+  name = "OP Labs Sepolia devnet 0"
+  identifier = "sepolia-dev-0/oplabs-devnet-0"
+  chain_id = 11155421
   rpc = [""]
   explorers = [""]
   superchain_level = 1

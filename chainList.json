@@ -208,25 +208,25 @@
     }
   },
   {
-    "name": "OP Labs Sepolia devnet 0",
-    "identifier": "sepolia-dev-0/oplabs-devnet-0",
-    "chainId": 11155421,
+    "name": "Base devnet 0",
+    "identifier": "sepolia-dev-0/base-devnet-0",
+    "chainId": 11763072,
     "rpc": [
       ""
     ],
     "explorers": [
       ""
     ],
-    "superchainLevel": 2,
+    "superchainLevel": 1,
     "parent": {
       "type": "L2",
       "chain": "sepolia-dev-0"
     }
   },
   {
-    "name": "Base devnet 0",
-    "identifier": "sepolia-dev-0/base-devnet-0",
-    "chainId": 11763072,
+    "name": "OP Labs Sepolia devnet 0",
+    "identifier": "sepolia-dev-0/oplabs-devnet-0",
+    "chainId": 11155421,
     "rpc": [
       ""
     ],

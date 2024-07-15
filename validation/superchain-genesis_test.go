@@ -16,6 +16,7 @@ import (
 
 func testGenesisHash(t *testing.T, chainID uint64) {
 	skipIfExcluded(t, chainID)
+
 	chainConfig, ok := OPChains[chainID]
 	if !ok {
 		t.Fatalf("no chain with ID %d found", chainID)
@@ -27,8 +28,6 @@ func testGenesisHash(t *testing.T, chainID uint64) {
 	// superchain.OPChains, superchain.LoadGenesis, superchain.LoadContractBytecode
 	// to reconstruct a core.Genesis and compute its block hash.
 	// We can then compare that against the declared genesis block hash.
-	// TODO core.LoadOPStackGenesis actually already performs the check we are about to do
-	// TODO core.LoadOPStackGenesis could be moved to superchain
 	computedGenesis, err := core.LoadOPStackGenesis(chainID)
 	require.NoError(t, err)
 
