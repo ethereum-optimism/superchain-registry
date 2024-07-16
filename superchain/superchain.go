@@ -111,10 +111,10 @@ type ChainConfig struct {
 
 	Genesis ChainGenesis `yaml:"genesis" toml:"genesis"`
 
+	Addresses AddressList `toml:"addresses"`
+
 	// Optional feature
 	Plasma *PlasmaConfig `yaml:"plasma,omitempty" toml:"plasma,omitempty"`
-
-	Addresses AddressList `toml:"addresses"`
 }
 
 func (c ChainConfig) Identifier() string {
