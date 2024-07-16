@@ -96,8 +96,6 @@ type ChainConfig struct {
 
 	BatchInboxAddr Address `yaml:"batch_inbox_addr" toml:"batch_inbox_addr"`
 
-	Genesis ChainGenesis `yaml:"genesis" toml:"genesis"`
-
 	// Superchain is a simple string to identify the superchain.
 	// This is implied by directory structure, and not encoded in the config file itself.
 	Superchain string `yaml:"-" toml:"-"`
@@ -110,6 +108,8 @@ type ChainConfig struct {
 
 	BlockTime           uint64 `yaml:"block_time" toml:"block_time"`
 	SequencerWindowSize uint64 `yaml:"seq_window_size" toml:"seq_window_size"`
+
+	Genesis ChainGenesis `yaml:"genesis" toml:"genesis"`
 
 	// Optional feature
 	Plasma *PlasmaConfig `yaml:"plasma,omitempty" toml:"plasma,omitempty"`
