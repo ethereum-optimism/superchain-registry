@@ -1,6 +1,7 @@
 package superchain
 
 import (
+	"bytes"
 	"compress/gzip"
 	"context"
 	"embed"
@@ -174,6 +175,105 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfi
 	}
 }
 
+func (c ChainConfig) MarshalTOML() ([]byte, error) {
+	// Uses []outField to deterministically set the order of the toml based on the order of fields
+	// in the ChainConfig struct. Otherwise the fields are ordered alphabetically
+	type outField struct {
+		key   string
+		value interface{}
+	}
+	var out []outField
+	v := reflect.ValueOf(c)
+
+	processTag := func(tag string) string {
+		if tag == "-" {
+			return ""
+		} else if tag != "" {
+			key := strings.Split(string(tag), ",")
+			return key[0]
+		} else {
+			return ""
+		}
+	}
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		fieldName := v.Type().Field(i).Name
+		fieldTag, _ := v.Type().Field(i).Tag.Lookup("toml")
+		if fieldName == "HardForkConfiguration" {
+			hardForkConfig := field.Interface().(HardForkConfiguration)
+			hardForkVal := reflect.ValueOf(hardForkConfig)
+
+			for j := 0; j < hardForkVal.NumField(); j++ {
+				hfField := hardForkVal.Field(j)
+				hfFieldName := hardForkVal.Type().Field(j).Name
+				hfFieldTag, _ := hardForkVal.Type().Field(j).Tag.Lookup("toml")
+
+				if hfFieldTag == "" {
+					hfFieldTag = hfFieldName
+				}
+
+				if hfField.IsNil() {
+					continue
+				}
+
+				tag := processTag(hfFieldTag)
+				out = append(out, outField{tag, *hfField.Interface().(*uint64)})
+			}
+		} else if fieldName == "Addresses" {
+			nested, err := field.Interface().(AddressList).MarshalTOML()
+			if err != nil {
+				return nil, err
+			}
+			nestedMap := make(map[string]interface{})
+			if err := toml.Unmarshal(nested, &nestedMap); err != nil {
+				return nil, err
+			}
+			out = append(out, outField{"addresses", nestedMap})
+		} else {
+			tag := processTag(fieldTag)
+			if tag != "" {
+				out = append(out, outField{tag, field.Interface()})
+			}
+		}
+	}
+
+	var buf bytes.Buffer
+	encoder := toml.NewEncoder(&buf)
+	for _, f := range out {
+		if err := encoder.Encode(map[string]interface{}{f.key: f.value}); err != nil {
+			return nil, err
+		}
+	}
+
+	return buf.Bytes(), nil
+}
+
+// MarshalTOML excludes any addresses set to 0x000...000
+func (a AddressList) MarshalTOML() ([]byte, error) {
+	out := make(map[string]interface{})
+	v := reflect.ValueOf(a)
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		fieldName := v.Type().Field(i).Name
+		if field.Type() == reflect.TypeOf(Address{}) && !reflect.DeepEqual(field.Interface(), Address{}) {
+			out[fieldName] = field.Interface().(Address).String()
+		} else if field.Kind() == reflect.Struct && fieldName == "Roles" {
+			rolesValue := reflect.ValueOf(field.Interface())
+			for j := 0; j < rolesValue.NumField(); j++ {
+				roleField := rolesValue.Field(j)
+				roleFieldName := rolesValue.Type().Field(j).Name
+				if roleField.Type() == reflect.TypeOf(Address{}) && !reflect.DeepEqual(roleField.Interface(), Address{}) {
+					out[roleFieldName] = roleField.Interface().(Address).String()
+				}
+			}
+		}
+	}
+
+	return toml.Marshal(out)
+}
+
 func (c *ChainConfig) GenerateTOMLComments(ctx context.Context) (map[string]string, error) {
 	comments := make(map[string]string)
 
@@ -291,9 +391,10 @@ type AddressList struct {
 	L1StandardBridgeProxy             Address `json:"L1StandardBridgeProxy" toml:"L1StandardBridgeProxy"`
 	L2OutputOracleProxy               Address `json:"L2OutputOracleProxy" toml:"L2OutputOracleProxy,omitempty"`
 	OptimismMintableERC20FactoryProxy Address `json:"OptimismMintableERC20FactoryProxy" toml:"OptimismMintableERC20FactoryProxy"`
-	OptimismPortalProxy               Address `json:"OptimismPortalProxy" toml:"OptimismPortalProxy"`
+	OptimismPortalProxy               Address `json:"OptimismPortalProxy,omitempty" toml:"OptimismPortalProxy,omitempty"`
 	SystemConfigProxy                 Address `json:"SystemConfigProxy" toml:"SystemConfigProxy"`
 	ProxyAdmin                        Address `json:"ProxyAdmin" toml:"ProxyAdmin"`
+	SuperchainConfig                  Address `json:"SuperchainConfig,omitempty" toml:"SuperchainConfig,omitempty"`
 
 	// Fault Proof contracts:
 	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty" toml:"AnchorStateRegistryProxy,omitempty"`
@@ -303,6 +404,9 @@ type AddressList struct {
 	MIPS                     Address `json:"MIPS,omitempty" toml:"MIPS,omitempty"`
 	PermissionedDisputeGame  Address `json:"PermissionedDisputeGame,omitempty" toml:"PermissionedDisputeGame,omitempty"`
 	PreimageOracle           Address `json:"PreimageOracle,omitempty" toml:"PreimageOracle,omitempty"`
+
+	// Plasma contracts:
+	DAChallengeAddress Address `json:"DAChallengeAddress,omitempty" toml:"DAChallengeAddress,omitempty"`
 }
 
 // AddressFor returns a nonzero address for the supplied name, if it has been specified

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
@@ -235,6 +236,31 @@ func writeAddressesToJSON(contractsAddresses map[string]string, superchainRepoPa
 		return fmt.Errorf("failed to write json to file: %w", err)
 	}
 	fmt.Printf("Contract addresses written to: %s\n", filePath)
+
+	return nil
+}
+
+func mapToAddressList(m map[string]string, result *superchain.AddressList) error {
+	v := reflect.ValueOf(result).Elem()
+
+	for key, value := range m {
+		field := v.FieldByName(key)
+		if !field.IsValid() {
+			continue // Skip if the field is not found in the struct
+		}
+		if !field.CanSet() {
+			continue // Skip if the field cannot be set
+		}
+		if field.Kind() == reflect.Array && field.Type().Elem().Kind() == reflect.Uint8 && field.Len() == 20 {
+			addr := superchain.MustHexToAddress(value)
+			field.Set(reflect.ValueOf(addr))
+		} else if field.Kind() == reflect.Struct && field.Type() == reflect.TypeOf(superchain.Address{}) {
+			addr := superchain.MustHexToAddress(value)
+			field.Set(reflect.ValueOf(addr))
+		} else {
+			return fmt.Errorf("unsupported type: %s", field.Kind())
+		}
+	}
 
 	return nil
 }

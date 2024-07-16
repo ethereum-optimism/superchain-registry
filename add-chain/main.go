@@ -136,6 +136,22 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
 
+	err = readAddressesFromChain(addresses, l1RpcUrl, isFaultProofs)
+	if err != nil {
+		return fmt.Errorf("failed to read addresses from chain: %w", err)
+	}
+
+	if rollupConfig.Plasma != nil {
+		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
+	}
+
+	addressList := superchain.AddressList{SystemConfigProxy: superchain.MustHexToAddress("0x0fe884546476dDd290eC46318785046ef68a0BA9")}
+	err = mapToAddressList(addresses, &addressList)
+	if err != nil {
+		return fmt.Errorf("error converting map to AddressList: %w", err)
+	}
+	rollupConfig.Addresses = addressList
+
 	targetFilePath := filepath.Join(targetDir, chainShortName+".toml")
 	err = config.WriteChainConfigTOML(rollupConfig, targetFilePath)
 	if err != nil {
@@ -163,20 +179,6 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to write genesis system config json: %w", err)
 	}
 	fmt.Printf("Genesis system config written to: %s\n", filePath)
-
-	err = readAddressesFromChain(addresses, l1RpcUrl, isFaultProofs)
-	if err != nil {
-		return fmt.Errorf("failed to read addresses from chain: %w", err)
-	}
-
-	if rollupConfig.Plasma != nil {
-		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
-	}
-
-	err = writeAddressesToJSON(addresses, superchainRepoRoot, superchainTarget, chainShortName)
-	if err != nil {
-		return fmt.Errorf("failed to write contract addresses to JSON file: %w", err)
-	}
 
 	return nil
 }
