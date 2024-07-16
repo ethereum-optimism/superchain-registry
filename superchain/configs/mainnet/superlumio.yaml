@@ -20,3 +20,6 @@ genesis:
 canyon_time: 1708984633
 delta_time:  1708984633
 ecotone_time:  1710374401 # Thu 14 Mar 2024 00:00:01 UTC
+
+block_time: 2
+seq_window_size: 3600
