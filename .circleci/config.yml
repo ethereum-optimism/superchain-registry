@@ -108,9 +108,6 @@ jobs:
     steps:
       - checkout
       - install-just
-      - node/install:
-          install-yarn: false
-          node-version: '14.16.1'
       - run:
           name: Run codegen
           command: just codegen

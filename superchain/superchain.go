@@ -246,9 +246,33 @@ func (c ChainConfig) MarshalTOML() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// MarshalJSON excludes any addresses set to 0x000...000
+func (a AddressList) MarshalJSON() ([]byte, error) {
+	type AddressList2 AddressList // use another type to prevent infinite recursion later on
+	b := AddressList2(a)
+
+	o, err := json.Marshal(b)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make(map[string]Address)
+	err = json.Unmarshal(o, &out)
+	if err != nil {
+		return nil, err
+	}
+
+	for k, v := range out {
+		if (v == Address{}) {
+			delete(out, k)
+		}
+	}
+
+	return json.Marshal(out)
+}
+
 // MarshalTOML excludes any addresses set to 0x000...000
 func (a AddressList) MarshalTOML() ([]byte, error) {
-
 	type AddressList2 AddressList // use another type to prevent infinite recursion later on
 	b := AddressList2(a)
 
@@ -258,7 +282,6 @@ func (a AddressList) MarshalTOML() ([]byte, error) {
 	}
 
 	out := make(map[string]Address)
-
 	err = toml.Unmarshal(o, &out)
 	if err != nil {
 		return nil, err
