@@ -62,6 +62,7 @@ var exclusions = map[string]map[uint64]bool{
 		919:       true, // sepolia/mode         MCP (at time of writing)
 		58008:     true, // sepolia/pgn          MCP (at time of writing)
 		999999999: true, // sepolia/zora         MCP (at time of writing)
+		1740:      true, // sepolia/metal        MCP (at time of writing)
 		11155421:  true, // sepolia-dev0/oplabs-devnet-0
 		11763072:  true, // sepolia-dev0/base-devnet-0
 	},
@@ -77,6 +78,7 @@ var exclusions = map[string]map[uint64]bool{
 		919:       true, // sepolia/mode         MCP (at time of writing)
 		58008:     true, // sepolia/pgn          MCP (at time of writing)
 		999999999: true, // sepolia/zora         MCP (at time of writing)
+		1740:      true, // sepolia/metal        MCP (at time of writing)
 		11763072:  true, // sepolia-dev0/base-devnet-0
 	},
 }
