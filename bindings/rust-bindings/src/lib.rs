@@ -6,18 +6,19 @@
 
 extern crate alloc;
 
+/// Module responsible for initializing the superchain configurations
+/// from the embedded filesystem.
+mod init;
+
 /// Re-export superchain primitives.
 pub use superchain_primitives::{
     Addresses, GenesisSystemConfigs, Implementations, OPChains, Superchains,
 };
 
-/// Module responsible for representing the embedded filesystem
-/// that contains the superchain configurations for static access.
-mod embed;
+use include_dir::{include_dir, Dir};
 
-/// Module responsible for initializing the superchain configurations
-/// from the embedded filesystem.
-mod init;
+/// Directory containing the configuration files for the superchain.
+pub(crate) static CONFIGS_DIR: Dir<'_> = include_dir!("$SUPERCHAIN_CONFIGS");
 
 lazy_static::lazy_static! {
     /// Private initializer that runs once to load the superchain configurations.
@@ -28,19 +29,15 @@ lazy_static::lazy_static! {
 
     /// OPChain configurations exported from the registry
     pub static ref OPCHAINS: OPChains = _INIT.1.clone();
-
-    /// Address lists exported from the registry
-    pub static ref ADDRESSES: Addresses = _INIT.2.clone();
-
-    /// Genesis system configurations exported from the registry
-    pub static ref GENESIS_SYSTEM_CONFIGS: GenesisSystemConfigs = _INIT.3.clone();
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{ADDRESSES, OPCHAINS, SUPERCHAINS};
-    use alloy_primitives::{address, b256};
-    use superchain_primitives::{AddressList, SuperchainLevel};
+    use crate::{OPCHAINS, SUPERCHAINS};
+    use alloy_primitives::{address, b256, uint};
+    use superchain_primitives::{
+        AddressList, SuperchainLevel, SystemConfig, BASE_MAINNET_CONFIG, OP_MAINNET_CONFIG,
+    };
 
     #[test]
     fn test_read_superchains() {
@@ -48,6 +45,20 @@ mod tests {
         assert_eq!(superchains.len(), 3);
         assert_eq!(superchains.get("mainnet").unwrap().superchain, "mainnet");
         assert_eq!(superchains.get("sepolia").unwrap().superchain, "sepolia");
+    }
+
+    #[test]
+    fn test_base_mainnet_genesis() {
+        let base = BASE_MAINNET_CONFIG;
+        let derived = OPCHAINS.get(&8453).unwrap();
+        assert_eq!(base.genesis, derived.genesis);
+    }
+
+    #[test]
+    fn test_op_mainnet_genesis() {
+        let op = OP_MAINNET_CONFIG;
+        let derived = OPCHAINS.get(&10).unwrap();
+        assert_eq!(op.genesis, derived.genesis);
     }
 
     #[test]
@@ -84,17 +95,21 @@ mod tests {
         );
         assert_eq!(base.genesis.l2_time, 1686789347);
         assert_eq!(base.genesis.extra_data, None);
-        assert!(base.genesis.system_config.is_none());
+
+        let sys_config = SystemConfig {
+            batcher_address: address!("5050f69a9786f081509234f1a7f4684b5e5b76c9"),
+            overhead: uint!(0xbc_U256),
+            scalar: uint!(0xa6fe0_U256),
+            gas_limit: 30_000_000_u64,
+            base_fee_scalar: None,
+            blob_base_fee_scalar: None,
+        };
+        assert_eq!(base.genesis.system_config, Some(sys_config));
 
         assert_eq!(base.hardfork_configuration.canyon_time, Some(1704992401));
         assert_eq!(base.hardfork_configuration.delta_time, Some(1708560000));
         assert_eq!(base.hardfork_configuration.ecotone_time, Some(1710374401));
         assert_eq!(base.hardfork_configuration.fjord_time, Some(1720627201));
-    }
-
-    #[test]
-    fn test_read_chain_addresses() {
-        let addrs = ADDRESSES.get(&8453).unwrap();
 
         let expected = AddressList {
             address_manager: address!("8efb6b5c4767b09dc9aa6af4eaa89f749522bae2"),
@@ -117,6 +132,6 @@ mod tests {
             preimage_oracle: None,
         };
 
-        assert_eq!(*addrs, expected);
+        assert_eq!(base.addresses, Some(expected));
     }
 }
