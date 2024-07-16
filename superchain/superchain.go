@@ -193,10 +193,23 @@ func (c ChainConfig) MarshalTOML() ([]byte, error) {
 		}
 	}
 
+	foundStruct := false
+
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
 		fieldName := v.Type().Field(i).Name
 		fieldTag, _ := v.Type().Field(i).Tag.Lookup("toml")
+		fieldType := v.Type().Field(i).Type
+		if !strings.Contains(fieldTag, "inline") {
+			// This custom marshaler preserves the field order as defined in the ChainConfig struct.
+			// By default, the fields are ordered alphabetically. To safeguard this custom ordering,
+			// the following code will error if it detects unnested fields after nested ones
+			if !foundStruct && fieldType.Kind() == reflect.Struct {
+				foundStruct = true
+			} else if foundStruct && fieldType.Kind() != reflect.Struct {
+				return nil, fmt.Errorf("ChainConfig struct invalid: must place all unnested fields before nested ones: %s", fieldName)
+			}
+		}
 		if fieldName == "HardForkConfiguration" {
 			hardForkConfig := field.Interface().(HardForkConfiguration)
 			hardForkVal := reflect.ValueOf(hardForkConfig)
