@@ -21,11 +21,12 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
     for target_dir in embed::CONFIGS_DIR.dirs() {
         let target_name = target_dir.path().file_name().unwrap().to_str().unwrap();
         let target_data = target_dir
-            .get_file(format!("{}/superchain.yaml", target_name))
-            .expect("Failed to find superchain.yaml config file")
-            .contents();
-        let mut entry_config: SuperchainConfig = serde_yaml::from_slice(target_data)
-            .expect("Failed to deserialize superchain.yaml config file");
+            .get_file(format!("{}/superchain.toml", target_name))
+            .expect("Failed to find superchain.toml config file")
+            .contents_utf8()
+            .expect("Failed to parse superchain.toml as utf8 string");
+        let mut entry_config: SuperchainConfig =
+            toml::from_str(target_data).expect("Failed to deserialize superchain.toml config file");
 
         let mut chain_ids = Vec::new();
         for chain in target_dir.entries() {
@@ -34,10 +35,10 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
                 continue;
             }
 
-            let chain_data = chain.as_file().unwrap().contents();
-            let mut chain_config: ChainConfig = serde_yaml::from_slice(chain_data)
-                .expect("Failed to deserialize chain config file");
-            chain_config.chain = chain_name.trim_end_matches(".yaml").to_string();
+            let chain_data = chain.as_file().unwrap().contents_utf8().unwrap();
+            let mut chain_config: ChainConfig =
+                toml::from_str(chain_data).expect("Failed to deserialize chain config file");
+            chain_config.chain = chain_name.trim_end_matches(".toml").to_string();
 
             chain_config.set_missing_fork_configs(&entry_config.hardfork_defaults);
 

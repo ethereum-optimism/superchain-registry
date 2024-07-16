@@ -86,10 +86,10 @@ mod tests {
         assert_eq!(base.genesis.extra_data, None);
         assert!(base.genesis.system_config.is_none());
 
-        assert_eq!(base.hardfork_configuration.canyon_time, None);
-        assert_eq!(base.hardfork_configuration.delta_time, None);
-        assert_eq!(base.hardfork_configuration.ecotone_time, None);
-        assert_eq!(base.hardfork_configuration.fjord_time, None);
+        assert_eq!(base.hardfork_configuration.canyon_time, Some(1704992401));
+        assert_eq!(base.hardfork_configuration.delta_time, Some(1708560000));
+        assert_eq!(base.hardfork_configuration.ecotone_time, Some(1710374401));
+        assert_eq!(base.hardfork_configuration.fjord_time, Some(1720627201));
     }
 
     #[test]
