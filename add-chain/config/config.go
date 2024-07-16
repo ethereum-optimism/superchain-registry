@@ -140,7 +140,7 @@ func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory s
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	comments, err := rollupConfig.EnhanceTOML(ctx)
+	comments, err := rollupConfig.GenerateTOMLComments(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to enhance toml: %w", err)
 	}

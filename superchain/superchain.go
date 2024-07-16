@@ -174,7 +174,7 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfi
 	}
 }
 
-func (c *ChainConfig) EnhanceTOML(ctx context.Context) (map[string]string, error) {
+func (c *ChainConfig) GenerateTOMLComments(ctx context.Context) (map[string]string, error) {
 	comments := make(map[string]string)
 
 	createTimestampComment := func(fieldName string, fieldValue *uint64, comments map[string]string) {
