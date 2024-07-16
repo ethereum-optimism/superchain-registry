@@ -12,7 +12,6 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
-	"gopkg.in/yaml.v3"
 )
 
 type JSONChainConfig struct {
@@ -91,49 +90,6 @@ func ConstructChainConfig(
 
 	fmt.Printf("Rollup config successfully constructed\n")
 	return chainConfig, nil
-}
-
-// WriteChainConfig accepts a rollupConfig, formats it, and writes some output files based on the given
-// target directories
-func WriteChainConfig(
-	rollupConfig superchain.ChainConfig,
-	targetDirectory string,
-) error {
-	yamlData, err := yaml.Marshal(rollupConfig)
-	if err != nil {
-		return fmt.Errorf("failed to marshal yaml: %w", err)
-	}
-
-	// Unmarshal bytes into a yaml.Node for custom manipulation
-	var rootNode yaml.Node
-	if err = yaml.Unmarshal(yamlData, &rootNode); err != nil {
-		return err
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err = rollupConfig.EnhanceYAML(ctx, &rootNode); err != nil {
-		return err
-	}
-
-	// Write the rollup config to a yaml file
-	filename := filepath.Join(targetDirectory)
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	encoder := yaml.NewEncoder(file)
-	defer encoder.Close()
-
-	encoder.SetIndent(2)
-	if err := encoder.Encode(&rootNode); err != nil {
-		return fmt.Errorf("failed to write yaml file: %w", err)
-	}
-
-	fmt.Printf("Rollup config written to: %s\n", filename)
-	return nil
 }
 
 func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory string) error {
