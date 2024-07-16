@@ -7,7 +7,6 @@ explorer: https://testnet.explorer.metall2.com
 superchain_level: 1
 standard_chain_candidate: true # This is a temporary field which causes most of the standard validation checks to run on this chain
 superchain_time: null # Missing hardfork times are NOT yet inherited from superchain.yaml
-contracts_version_tag: "op-contracts/v1.3.0" # Multi-Chain Prep (MCP) https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.3.0
 
 batch_inbox_addr: "0x24567B64a86A4c966655fba6502a93dFb701E316"
 
@@ -23,6 +22,5 @@ genesis:
 canyon_time: 1708129622
 delta_time: 1708385400 # Mon 19 Feb 2024 23:30:00 UTC
 ecotone_time: 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
-
 block_time: 2
 seq_window_size: 3600
