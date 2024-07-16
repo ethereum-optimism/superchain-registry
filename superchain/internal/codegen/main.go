@@ -24,11 +24,6 @@ type ChainEntry struct {
 	Parent          Parent   `json:"parent" toml:"parent"`
 }
 
-type AddressEntry struct {
-	chainId   uint64
-	addresses AddressList
-}
-
 type Parent struct {
 	Type    string   `json:"type" toml:"type"`
 	Chain   string   `json:"chain" toml:"chain"`

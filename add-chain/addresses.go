@@ -208,9 +208,7 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 }
 
 func mapToAddressList(m map[string]string, result *superchain.AddressList) error {
-
 	out, err := toml.Marshal(m)
-
 	if err != nil {
 		return err
 	}
