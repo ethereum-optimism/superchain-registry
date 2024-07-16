@@ -11,6 +11,11 @@ delta_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 
+[plasma]
+  da_challenge_contract_address = "0x3333333333333333333300000000000000000000"
+  da_challenge_window = 5555555
+  da_resolve_window = 7777777
+
 [genesis]
   l2_time = 1713792864
   [genesis.l1]
@@ -46,8 +51,3 @@ seq_window_size = 3600
   SystemConfigOwner = "0xe8D525b30dD4C406570d47396b5b237DB30F13F1"
   SystemConfigProxy = "0x8787D3382F60d4e072b4276BBda065959195dB33"
   UnsafeBlockSigner = "0x9431B143448A60A374ab196d0d7C0683c5369006"
-
-[plasma]
-  da_challenge_contract_address = "0x3333333333333333333300000000000000000000"
-  da_challenge_window = 5555555
-  da_resolve_window = 7777777

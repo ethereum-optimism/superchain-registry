@@ -106,12 +106,12 @@ type ChainConfig struct {
 	BlockTime           uint64 `toml:"block_time"`
 	SequencerWindowSize uint64 `toml:"seq_window_size"`
 
+	// Optional feature
+	Plasma *PlasmaConfig `toml:"plasma,omitempty"`
+
 	Genesis ChainGenesis `toml:"genesis"`
 
 	Addresses AddressList `toml:"addresses"`
-
-	// Optional feature
-	Plasma *PlasmaConfig `toml:"plasma,omitempty"`
 }
 
 func (c ChainConfig) Identifier() string {
