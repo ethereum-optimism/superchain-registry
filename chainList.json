@@ -112,6 +112,22 @@
     }
   },
   {
+    "name": "SuperLumio",
+    "identifier": "mainnet/superlumio",
+    "chainId": 8866,
+    "rpc": [
+      "https://mainnet.lumio.io"
+    ],
+    "explorers": [
+      "https://explorer.lumio.io"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Zora",
     "identifier": "mainnet/zora",
     "chainId": 7777777,
@@ -152,6 +168,22 @@
     ],
     "explorers": [
       "https://sepolia-explorer.base.org"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Metal L2 Testnet",
+    "identifier": "sepolia/metal",
+    "chainId": 1740,
+    "rpc": [
+      "https://testnet.rpc.metall2.com"
+    ],
+    "explorers": [
+      "https://testnet.explorer.metall2.com"
     ],
     "superchainLevel": 1,
     "parent": {

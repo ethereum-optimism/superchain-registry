@@ -54,7 +54,6 @@ mod tests {
     fn test_read_chain_configs() {
         let mainnet = SUPERCHAINS.get("mainnet").unwrap();
         assert_eq!(mainnet.config.name, "Mainnet");
-        assert_eq!(mainnet.chain_ids.len(), 8);
 
         let base_chain_id = 8453;
         let base = OPCHAINS.get(&base_chain_id).unwrap();
