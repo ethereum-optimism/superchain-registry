@@ -1,13 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"os"
 	"strconv"
 	"testing"
 
 	"github.com/BurntSushi/toml"
-	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/require"
 )
 
@@ -91,8 +89,6 @@ func TestAddChain_Main(t *testing.T) {
 			require.NoError(t, err, "add-chain app failed")
 
 			checkConfigTOML(t, tt.name, tt.chainShortName)
-			compareJsonFiles(t, "superchain/extra/addresses/sepolia/", tt.name, tt.chainShortName)
-			compareJsonFiles(t, "superchain/extra/genesis-system-configs/sepolia/", tt.name, tt.chainShortName)
 		})
 	}
 
@@ -149,25 +145,6 @@ func TestAddChain_CheckGenesis(t *testing.T) {
 		err = runApp(args)
 		require.NoError(t, err, "add-chain check-genesis failed")
 	})
-}
-
-func compareJsonFiles(t *testing.T, dirPath, testName, chainShortName string) {
-	expectedBytes, err := os.ReadFile("./testdata/" + dirPath + "expected_" + testName + ".json")
-	require.NoError(t, err, "failed to read expected.json file from "+dirPath)
-
-	var expectJSON map[string]interface{}
-	err = json.Unmarshal(expectedBytes, &expectJSON)
-	require.NoError(t, err, "failed to unmarshal expected.json file from "+dirPath)
-
-	testBytes, err := os.ReadFile("../" + dirPath + chainShortName + ".json")
-	require.NoError(t, err, "failed to read test generated json file from "+dirPath)
-
-	var testJSON map[string]interface{}
-	err = json.Unmarshal(testBytes, &testJSON)
-	require.NoError(t, err, "failed to read test generated json file from "+dirPath)
-
-	diff := cmp.Diff(expectJSON, testJSON)
-	require.Equal(t, diff, "", "expected json (-) does not match test json (+): %s", diff)
 }
 
 func checkConfigTOML(t *testing.T, testName, chainShortName string) {

@@ -109,12 +109,14 @@ func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory s
 
 	// Create final content with comments
 	var finalContent strings.Builder
-	for _, line := range strings.Split(buf.String(), "\n") {
+	lines := strings.Split(buf.String(), "\n")
+
+	for i, line := range lines {
 		lineKey := strings.Split(line, "=")[0]
 		lineKey = strings.TrimSpace(lineKey)
 		if comment, exists := comments[lineKey]; exists {
 			finalContent.WriteString(line + " " + comment + "\n")
-		} else {
+		} else if i != len(lines)-1 || line != "" {
 			finalContent.WriteString(line + "\n")
 		}
 	}
