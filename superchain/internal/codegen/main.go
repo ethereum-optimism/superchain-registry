@@ -24,6 +24,11 @@ type ChainEntry struct {
 	Parent          Parent   `json:"parent" toml:"parent"`
 }
 
+type AddressEntry struct {
+	chainId   uint64
+	addresses AddressList
+}
+
 type Parent struct {
 	Type    string   `json:"type" toml:"type"`
 	Chain   string   `json:"chain" toml:"chain"`
@@ -33,6 +38,7 @@ type Parent struct {
 func main() {
 	allChains := make([]ChainEntry, 0)
 	superchainTargets := make([]string, 0)
+	chainAddresses := make(map[uint64]AddressList, 0)
 	for t := range Superchains {
 		superchainTargets = append(superchainTargets, t)
 	}
@@ -54,6 +60,7 @@ func main() {
 				SuperchainLevel: uint(chain.SuperchainLevel),
 				Parent:          Parent{"L2", chain.Superchain, []string{}},
 			}
+			chainAddresses[chainId] = chain.Addresses
 			switch chain.SuperchainLevel {
 			case Standard:
 				standardChains = append(standardChains, chainEntry)
@@ -93,6 +100,18 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Wrote chainList.toml file")
+
+	// Marshal to JSON
+	addressesBytes, err := json.MarshalIndent(chainAddresses, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+
+	err = os.WriteFile(filepath.Join(currentDir, "../../extra/addresses/addresses.json"), addressesBytes, 0o644)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Wrote addresses.json file")
 }
 
 func currentDir() string {
