@@ -231,6 +231,9 @@ func (c ChainConfig) MarshalTOML() ([]byte, error) {
 				out = append(out, outField{tag, *hfField.Interface().(*uint64)})
 			}
 		} else if fieldName == "Addresses" {
+			// Call the custom AddressList.MarshalTOML, then convert the result to a generic
+			// map[string]interface{} since this is the required format of the out struct used
+			// to preserve field order for the output toml file
 			nested, err := field.Interface().(AddressList).MarshalTOML()
 			if err != nil {
 				return nil, err
