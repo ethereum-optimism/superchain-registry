@@ -92,13 +92,19 @@ func ConstructChainConfig(
 	return chainConfig, nil
 }
 
+// WriteChainConfigTPOML accepts a rollupConfig, formats it, and writes a single output toml
+// file which includes the following:
+//   - general chain info/config
+//   - contract and role addresses
+//   - genesis system config
+//   - optional feature config info, if activated (e.g. plasma)
 func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	comments, err := rollupConfig.GenerateTOMLComments(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to enhance toml: %w", err)
+		return fmt.Errorf("failed to generate toml comments: %w", err)
 	}
 
 	// Marshal the struct to TOML
