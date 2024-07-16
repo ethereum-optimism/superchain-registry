@@ -4,7 +4,6 @@ public_rpc = ""
 sequencer_rpc = ""
 explorer = ""
 superchain_level = 1
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 superchain_time = 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
 batch_inbox_addr = "0xfF00000000000000000000000000000011763072"
 canyon_time = 1698436800 # Fri 27 Oct 2023 20:00:00 UTC
