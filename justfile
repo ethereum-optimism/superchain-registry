@@ -65,8 +65,6 @@ tidy-validation:
 
 # Removing a chain, example: just remove-chain sepolia op
 remove-chain SUPERCHAIN_TARGET CHAIN:
-	rm superchain/configs/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.yaml
-	rm superchain/extra/addresses/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.json
-	rm superchain/extra/genesis-system-configs/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.json
+	rm superchain/configs/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.toml
 	rm superchain/extra/genesis/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.json.gz
 	just codegen
