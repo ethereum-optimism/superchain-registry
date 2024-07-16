@@ -4,6 +4,7 @@ public_rpc = "https://rpc.lyra.finance"
 sequencer_rpc = "https://rpc.lyra.finance"
 explorer = "https://explorer.lyra.finance"
 superchain_level = 1
+standard_chain_candidate = false
 superchain_time = 0 # Missing hardfork times are inherited from superchain.yaml
 batch_inbox_addr = "0x5f7f7f6DB967F0ef10BdA0678964DBA185d16c50"
 canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
@@ -21,4 +22,26 @@ seq_window_size = 3600
   [genesis.l2]
     hash = "0x047f535b3da7ad4f96d353b5a439740b7591413daee0e2f27dd3aabb24581af2"
     number = 0
+  [genesis.system_config]
+    batcherAddress = "0x14e4E97bDc195d399Ad8E7FC14451C279FE04c8e"
+    overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
+    scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
+    gasLimit = 30000000
 
+[addresses]
+  AddressManager = "0xC845F9C4004EB35a8bde8ad89C4760a9c0e65CAB"
+  BatchSubmitter = "0x14e4E97bDc195d399Ad8E7FC14451C279FE04c8e"
+  Challenger = "0x91F4be0C264FAFA1fEd75c4440910Cba2cAd98e8"
+  Guardian = "0x91F4be0C264FAFA1fEd75c4440910Cba2cAd98e8"
+  L1CrossDomainMessengerProxy = "0x5456f02c08e9A018E42C39b351328E5AA864174A"
+  L1ERC721BridgeProxy = "0x6CC3268794c5d3E3d9d52adEfC748B59d536cb22"
+  L1StandardBridgeProxy = "0x61E44dC0dae6888B5a301887732217d5725B0bFf"
+  L2OutputOracleProxy = "0x1145E7848c8B64c6cab86Fd6D378733385c5C3Ba"
+  OptimismMintableERC20FactoryProxy = "0x08Dea366F26C25a08C8D1C3568ad07d1e587136d"
+  OptimismPortalProxy = "0x85eA9c11cf3D4786027F7FD08F4406b15777e5f8"
+  Proposer = "0x03e820562ffd2e0390787caD706EaF1FF98C2608"
+  ProxyAdmin = "0x35d5D43271548c984662d4879FBc8e041Bc1Ff93"
+  ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
+  SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
+  SystemConfigProxy = "0x0e4C4CDd01ceCB01070E9Fdfe7600871e4ae996e"
+  UnsafeBlockSigner = "0xB71B58FfE538628557433dbBfA08d45ee5a69B44"
