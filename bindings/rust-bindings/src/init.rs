@@ -1,31 +1,29 @@
 //! Initializers for the Superchain Registry.
 
-use crate::embed;
-use alloc::{format, string::ToString, vec::Vec};
+use crate::CONFIGS_DIR;
+use alloc::{format, vec::Vec};
 use hashbrown::HashMap;
 use superchain_primitives::{
-    is_config_file, AddressList, Addresses, ChainConfig, GenesisSystemConfigs, OPChains,
-    Superchain, SuperchainConfig, Superchains, SystemConfig,
+    is_config_file, ChainConfig, OPChains, Superchain, SuperchainConfig, Superchains,
 };
 
 /// Tuple type holding the various initializers.
-pub(crate) type InitTuple = (Superchains, OPChains, Addresses, GenesisSystemConfigs);
+pub(crate) type InitTuple = (Superchains, OPChains);
 
 /// Initialize the superchain configurations from the embedded filesystem.
 pub(crate) fn load_embedded_configs() -> InitTuple {
     let mut superchains = HashMap::new();
     let mut op_chains = HashMap::new();
-    let mut addresses = HashMap::new();
-    let mut genesis_system_configs = HashMap::new();
 
-    for target_dir in embed::CONFIGS_DIR.dirs() {
+    for target_dir in CONFIGS_DIR.dirs() {
         let target_name = target_dir.path().file_name().unwrap().to_str().unwrap();
         let target_data = target_dir
-            .get_file(format!("{}/superchain.yaml", target_name))
-            .expect("Failed to find superchain.yaml config file")
-            .contents();
-        let mut entry_config: SuperchainConfig = serde_yaml::from_slice(target_data)
-            .expect("Failed to deserialize superchain.yaml config file");
+            .get_file(format!("{}/superchain.toml", target_name))
+            .expect("Failed to find superchain.toml config file")
+            .contents_utf8()
+            .expect("Failed to parse superchain.toml as utf8 string");
+        let mut entry_config: SuperchainConfig =
+            toml::from_str(target_data).expect("Failed to deserialize superchain.toml config file");
 
         let mut chain_ids = Vec::new();
         for chain in target_dir.entries() {
@@ -34,37 +32,15 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
                 continue;
             }
 
-            let chain_data = chain.as_file().unwrap().contents();
-            let mut chain_config: ChainConfig = serde_yaml::from_slice(chain_data)
-                .expect("Failed to deserialize chain config file");
-            chain_config.chain = chain_name.trim_end_matches(".yaml").to_string();
-
+            let chain_data = chain.as_file().unwrap().contents_utf8().unwrap();
+            let mut chain_config: ChainConfig =
+                toml::from_str(chain_data).expect("Failed to deserialize chain config file");
+            chain_config.chain = chain_name.trim_end_matches(".toml").to_string();
             chain_config.set_missing_fork_configs(&entry_config.hardfork_defaults);
 
-            let json_file_name = chain_config.chain.clone() + ".json";
-            let addresses_data = embed::EXTRA_DIR
-                .get_file(format!("addresses/{}/{}", target_name, json_file_name))
-                .expect("Failed to find address list file")
-                .contents();
-            let addrs: AddressList = serde_json::from_slice(addresses_data)
-                .expect("Failed to deserialize address list file");
-
-            let genesis_config_data = embed::EXTRA_DIR
-                .get_file(format!(
-                    "genesis-system-configs/{}/{}",
-                    target_name, json_file_name
-                ))
-                .expect("Failed to find genesis system config file")
-                .contents();
-            let genesis_config: SystemConfig = serde_json::from_slice(genesis_config_data)
-                .expect("Failed to deserialize genesis system config file");
-
-            let id = chain_config.chain_id;
             chain_config.superchain = target_name.to_string();
-            genesis_system_configs.insert(id, genesis_config);
-            op_chains.insert(id, chain_config);
-            addresses.insert(id, addrs);
-            chain_ids.push(id);
+            chain_ids.push(chain_config.chain_id);
+            op_chains.insert(chain_config.chain_id, chain_config);
         }
 
         #[cfg(feature = "std")]
@@ -92,5 +68,5 @@ pub(crate) fn load_embedded_configs() -> InitTuple {
         );
     }
 
-    (superchains, op_chains, addresses, genesis_system_configs)
+    (superchains, op_chains)
 }

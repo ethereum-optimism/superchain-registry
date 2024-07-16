@@ -1,5 +1,6 @@
 //! Chain Config Types
 
+use crate::AddressList;
 use crate::ChainGenesis;
 use crate::SuperchainLevel;
 use alloc::string::String;
@@ -72,6 +73,8 @@ pub struct ChainConfig {
     pub hardfork_configuration: HardForkConfiguration,
     /// Optional Plasma DA feature
     pub plasma: Option<PlasmaConfig>,
+    /// Addresses
+    pub addresses: Option<AddressList>,
 }
 
 impl ChainConfig {

@@ -56,5 +56,5 @@ pub use contracts::{AddressSet, ContractImplementations, Implementations};
 
 /// Validates if a file is a configuration file.
 pub fn is_config_file(name: &str) -> bool {
-    name.ends_with(".yaml") && name != "superchain.yaml" && name != "semver.yaml"
+    name.ends_with(".toml") && name != "superchain.toml" && name != "semver.toml"
 }
