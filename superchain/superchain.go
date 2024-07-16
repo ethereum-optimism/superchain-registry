@@ -248,23 +248,25 @@ func (c ChainConfig) MarshalTOML() ([]byte, error) {
 
 // MarshalTOML excludes any addresses set to 0x000...000
 func (a AddressList) MarshalTOML() ([]byte, error) {
-	out := make(map[string]interface{})
-	v := reflect.ValueOf(a)
 
-	for i := 0; i < v.NumField(); i++ {
-		field := v.Field(i)
-		fieldName := v.Type().Field(i).Name
-		if field.Type() == reflect.TypeOf(Address{}) && !reflect.DeepEqual(field.Interface(), Address{}) {
-			out[fieldName] = field.Interface().(Address).String()
-		} else if field.Kind() == reflect.Struct && fieldName == "Roles" {
-			rolesValue := reflect.ValueOf(field.Interface())
-			for j := 0; j < rolesValue.NumField(); j++ {
-				roleField := rolesValue.Field(j)
-				roleFieldName := rolesValue.Type().Field(j).Name
-				if roleField.Type() == reflect.TypeOf(Address{}) && !reflect.DeepEqual(roleField.Interface(), Address{}) {
-					out[roleFieldName] = roleField.Interface().(Address).String()
-				}
-			}
+	type AddressList2 AddressList // use another type to prevent infinite recursion later on
+	b := AddressList2(a)
+
+	o, err := toml.Marshal(b)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make(map[string]Address)
+
+	err = toml.Unmarshal(o, &out)
+	if err != nil {
+		return nil, err
+	}
+
+	for k, v := range out {
+		if (v == Address{}) {
+			delete(out, k)
 		}
 	}
 
