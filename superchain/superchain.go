@@ -24,7 +24,7 @@ var ErrEmptyVersion = errors.New("empty version")
 //go:embed configs
 var superchainFS embed.FS
 
-//go:embed extra/addresses extra/bytecodes extra/genesis extra/genesis-system-configs
+//go:embed extra/addresses extra/bytecodes extra/genesis
 var extraFS embed.FS
 
 type BlockID struct {
