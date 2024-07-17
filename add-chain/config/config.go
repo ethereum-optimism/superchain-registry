@@ -118,11 +118,16 @@ func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory s
 	lines := strings.Split(buf.String(), "\n")
 
 	for i, line := range lines {
-		lineKey := strings.Split(line, "=")[0]
-		lineKey = strings.TrimSpace(lineKey)
+		splits := strings.Split(line, "=")
+		lineKey := strings.TrimSpace(splits[0])
+		if len(splits) > 1 && strings.TrimSpace(splits[1]) == "\"0x0000000000000000000000000000000000000000\"" {
+			// Skip this line to exclude zero addresses from the output file. Makes the config .toml cleaner
+			continue
+		}
 		if comment, exists := comments[lineKey]; exists {
 			finalContent.WriteString(line + " " + comment + "\n")
 		} else if i != len(lines)-1 || line != "" {
+			// Prevent double empty line at the end of the file
 			finalContent.WriteString(line + "\n")
 		}
 	}

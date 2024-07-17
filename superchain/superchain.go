@@ -1,7 +1,6 @@
 package superchain
 
 import (
-	"bytes"
 	"compress/gzip"
 	"context"
 	"embed"
@@ -172,96 +171,6 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfi
 	}
 }
 
-func (c ChainConfig) MarshalTOML() ([]byte, error) {
-	// Uses []outField to deterministically set the order of the toml based on the order of fields
-	// in the ChainConfig struct. Otherwise the fields are ordered alphabetically
-	type outField struct {
-		key   string
-		value interface{}
-	}
-	var out []outField
-	v := reflect.ValueOf(c)
-
-	processTag := func(tag string) string {
-		if tag == "-" {
-			return ""
-		} else if tag != "" {
-			key := strings.Split(string(tag), ",")
-			return key[0]
-		} else {
-			return ""
-		}
-	}
-
-	foundStruct := false
-
-	for i := 0; i < v.NumField(); i++ {
-		field := v.Field(i)
-		fieldName := v.Type().Field(i).Name
-		fieldTag, _ := v.Type().Field(i).Tag.Lookup("toml")
-		fieldType := v.Type().Field(i).Type
-		if !strings.Contains(fieldTag, "inline") {
-			// This custom marshaler preserves the field order as defined in the ChainConfig struct.
-			// By default, the fields are ordered alphabetically. To safeguard this custom ordering,
-			// the following code will error if it detects unnested fields after nested ones
-			if !foundStruct && fieldType.Kind() == reflect.Struct {
-				foundStruct = true
-			} else if foundStruct && fieldType.Kind() != reflect.Struct {
-				return nil, fmt.Errorf("ChainConfig struct invalid: must place all unnested fields before nested ones: %s", fieldName)
-			}
-		}
-		if fieldName == "HardForkConfiguration" {
-			hardForkConfig := field.Interface().(HardForkConfiguration)
-			hardForkVal := reflect.ValueOf(hardForkConfig)
-
-			for j := 0; j < hardForkVal.NumField(); j++ {
-				hfField := hardForkVal.Field(j)
-				hfFieldName := hardForkVal.Type().Field(j).Name
-				hfFieldTag, _ := hardForkVal.Type().Field(j).Tag.Lookup("toml")
-
-				if hfFieldTag == "" {
-					hfFieldTag = hfFieldName
-				}
-
-				if hfField.IsNil() {
-					continue
-				}
-
-				tag := processTag(hfFieldTag)
-				out = append(out, outField{tag, *hfField.Interface().(*uint64)})
-			}
-		} else if fieldName == "Addresses" {
-			// Call the custom AddressList.MarshalTOML, then convert the result to a generic
-			// map[string]interface{} since this is the required format of the out struct used
-			// to preserve field order for the output toml file
-			nested, err := field.Interface().(AddressList).MarshalTOML()
-			if err != nil {
-				return nil, err
-			}
-			nestedMap := make(map[string]interface{})
-			if err := toml.Unmarshal(nested, &nestedMap); err != nil {
-				return nil, err
-			}
-			out = append(out, outField{"addresses", nestedMap})
-		} else {
-			tag := processTag(fieldTag)
-			if tag != "" {
-				out = append(out, outField{tag, field.Interface()})
-			}
-		}
-	}
-
-	var buf bytes.Buffer
-	encoder := toml.NewEncoder(&buf)
-	for _, f := range out {
-		if err := encoder.Encode(map[string]interface{}{f.key: f.value}); err != nil {
-			return nil, err
-		}
-	}
-
-	return buf.Bytes(), nil
-}
-
 // MarshalJSON excludes any addresses set to 0x000...000
 func (a AddressList) MarshalJSON() ([]byte, error) {
 	type AddressList2 AddressList // use another type to prevent infinite recursion later on
@@ -285,31 +194,6 @@ func (a AddressList) MarshalJSON() ([]byte, error) {
 	}
 
 	return json.Marshal(out)
-}
-
-// MarshalTOML excludes any addresses set to 0x000...000
-func (a AddressList) MarshalTOML() ([]byte, error) {
-	type AddressList2 AddressList // use another type to prevent infinite recursion later on
-	b := AddressList2(a)
-
-	o, err := toml.Marshal(b)
-	if err != nil {
-		return nil, err
-	}
-
-	out := make(map[string]Address)
-	err = toml.Unmarshal(o, &out)
-	if err != nil {
-		return nil, err
-	}
-
-	for k, v := range out {
-		if (v == Address{}) {
-			delete(out, k)
-		}
-	}
-
-	return toml.Marshal(out)
 }
 
 func (c *ChainConfig) GenerateTOMLComments(ctx context.Context) (map[string]string, error) {
