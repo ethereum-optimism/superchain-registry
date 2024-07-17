@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
@@ -206,35 +207,11 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 	return nil
 }
 
-func writeAddressesToJSON(contractsAddresses map[string]string, superchainRepoPath, target, chainName string) error {
-	checkSummedContractAddresses := make(map[string]string)
-	for k, v := range contractsAddresses {
-		checkSummedContractAddresses[k] = superchain.MustHexToAddress(v).String()
-	}
-
-	dirPath := filepath.Join(superchainRepoPath, "superchain", "extra", "addresses", target)
-	if err := os.MkdirAll(dirPath, 0o755); err != nil {
-		return fmt.Errorf("failed to create directory: %w", err)
-	}
-
-	filePath := filepath.Join(dirPath, chainName+".json")
-	file, err := os.Create(filePath)
+func mapToAddressList(m map[string]string, result *superchain.AddressList) error {
+	out, err := toml.Marshal(m)
 	if err != nil {
-		return fmt.Errorf("failed to create file: %w", err)
-	}
-	defer file.Close()
-
-	// Marshal the map to JSON
-	jsonData, err := json.MarshalIndent(checkSummedContractAddresses, "", "  ")
-	if err != nil {
-		return fmt.Errorf("failed to marshal json: %w", err)
+		return err
 	}
 
-	// Write the JSON data to the file
-	if _, err := file.Write(jsonData); err != nil {
-		return fmt.Errorf("failed to write json to file: %w", err)
-	}
-	fmt.Printf("Contract addresses written to: %s\n", filePath)
-
-	return nil
+	return toml.Unmarshal(out, result)
 }

@@ -1,15 +1,17 @@
 package config
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
+	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
-	"gopkg.in/yaml.v3"
 )
 
 type JSONChainConfig struct {
@@ -90,43 +92,50 @@ func ConstructChainConfig(
 	return chainConfig, nil
 }
 
-// WriteChainConfig accepts a rollupConfig, formats it, and writes some output files based on the given
-// target directories
-func WriteChainConfig(
-	rollupConfig superchain.ChainConfig,
-	targetDirectory string,
-) error {
-	yamlData, err := yaml.Marshal(rollupConfig)
-	if err != nil {
-		return fmt.Errorf("failed to marshal yaml: %w", err)
-	}
-
-	// Unmarshal bytes into a yaml.Node for custom manipulation
-	var rootNode yaml.Node
-	if err = yaml.Unmarshal(yamlData, &rootNode); err != nil {
-		return err
-	}
-
+// WriteChainConfigTPOML accepts a rollupConfig, formats it, and writes a single output toml
+// file which includes the following:
+//   - general chain info/config
+//   - contract and role addresses
+//   - genesis system config
+//   - optional feature config info, if activated (e.g. plasma)
+func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err = rollupConfig.EnhanceYAML(ctx, &rootNode); err != nil {
-		return err
-	}
 
-	// Write the rollup config to a yaml file
-	filename := filepath.Join(targetDirectory)
-	file, err := os.Create(filename)
+	comments, err := rollupConfig.GenerateTOMLComments(ctx)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to generate toml comments: %w", err)
 	}
-	defer file.Close()
 
-	encoder := yaml.NewEncoder(file)
-	defer encoder.Close()
+	// Marshal the struct to TOML
+	var buf bytes.Buffer
+	if err := toml.NewEncoder(&buf).Encode(rollupConfig); err != nil {
+		return fmt.Errorf("failed to marshal toml: %w", err)
+	}
 
-	encoder.SetIndent(2)
-	if err := encoder.Encode(&rootNode); err != nil {
-		return fmt.Errorf("failed to write yaml file: %w", err)
+	// Create final content with comments
+	var finalContent strings.Builder
+	lines := strings.Split(buf.String(), "\n")
+
+	for i, line := range lines {
+		splits := strings.Split(line, "=")
+		lineKey := strings.TrimSpace(splits[0])
+		if len(splits) > 1 && strings.TrimSpace(splits[1]) == "\"0x0000000000000000000000000000000000000000\"" {
+			// Skip this line to exclude zero addresses from the output file. Makes the config .toml cleaner
+			continue
+		}
+		if comment, exists := comments[lineKey]; exists {
+			finalContent.WriteString(line + " " + comment + "\n")
+		} else if i != len(lines)-1 || line != "" {
+			// Prevent double empty line at the end of the file
+			finalContent.WriteString(line + "\n")
+		}
+	}
+
+	// Write the enhanced TOML data to a file
+	filename := filepath.Join(targetDirectory)
+	if err := os.WriteFile(filename, []byte(finalContent.String()), 0o644); err != nil {
+		return fmt.Errorf("failed to write toml file: %w", err)
 	}
 
 	fmt.Printf("Rollup config written to: %s\n", filename)

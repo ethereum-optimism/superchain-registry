@@ -21,6 +21,5 @@ pub struct ChainGenesis {
     /// Extra data for the genesis block
     pub extra_data: Option<Bytes>,
     /// Optional System configuration
-    #[cfg_attr(feature = "serde", serde(flatten))]
     pub system_config: Option<SystemConfig>,
 }

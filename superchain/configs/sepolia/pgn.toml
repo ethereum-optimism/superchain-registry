@@ -1,0 +1,47 @@
+name = "Sepolia PGN (Public Goods Network)"
+chain_id = 58008
+public_rpc = "https://sepolia.publicgoods.network"
+sequencer_rpc = "https://sepolia.publicgoods.network"
+explorer = "https://explorer.sepolia.publicgoods.network"
+superchain_level = 1
+standard_chain_candidate = false
+superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
+batch_inbox_addr = "0x454A2A86132C937AD4eFc8721f1b85418f92cbCe"
+canyon_time = 1699981200 # Tue 14 Nov 2023 17:00:00 UTC
+delta_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
+ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
+fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
+block_time = 2
+seq_window_size = 3600
+
+[genesis]
+  l2_time = 1685727972
+  [genesis.l1]
+    hash = "0x41dc2afe8963b5ca8e1c7457ffc356acb4366c6fef6bec353b1463245f02cd8b"
+    number = 3610357
+  [genesis.l2]
+    hash = "0x1d2ad9a8139d33161b1915698d2ae94019fd0817f2113198b6cb568110fa16ad"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x7224e05E6cF6E07aFBE1eFa09a3fA23A637DD485"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000834"
+    scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
+    gasLimit = 30000000
+
+[addresses]
+  AddressManager = "0x0Ad91488288BBe60ff38258785568A6D1EB3B983"
+  BatchSubmitter = "0x7224e05E6cF6E07aFBE1eFa09a3fA23A637DD485"
+  Challenger = "0x69F0FFc19504B57e9AE4B6D7694d028c3CD876F8"
+  Guardian = "0x45eFFbD799Ab49122eeEAB75B78D9C56A187F9A7"
+  L1CrossDomainMessengerProxy = "0x97f3558Ce48FE71B8CeFA5497708A49531D5A8E1"
+  L1ERC721BridgeProxy = "0xBA8397B6f255618D5985d0fB427D8c0496F3a5FA"
+  L1StandardBridgeProxy = "0xFaE6abCAF30D23e233AC7faF747F2fC3a5a6Bfa3"
+  L2OutputOracleProxy = "0xD5bAc3152ffC25318F848B3DD5dA6C85171BaEEe"
+  OptimismMintableERC20FactoryProxy = "0x0167EF3188FDaa2661e4530A4623Ee1aB4555683"
+  OptimismPortalProxy = "0xF04BdD5353Bb0EFF6CA60CfcC78594278eBfE179"
+  Proposer = "0xD457799C5ba870D609f21048c67a9b11aC611BF0"
+  ProxyAdmin = "0x5f336973dabaD13409EA93416b8487D92769e457"
+  ProxyAdminOwner = "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C"
+  SystemConfigOwner = "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C"
+  SystemConfigProxy = "0x4BCCC52151f0ad7C62D45Ce0aA77d9d8ffCE534e"
+  UnsafeBlockSigner = "0x91Bf8996f15B128FDDC80e170FD1aA2C52659A4e"

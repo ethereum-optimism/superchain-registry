@@ -5,6 +5,7 @@ go 1.21
 replace github.com/ethereum-optimism/superchain-registry/superchain => ../superchain
 
 require (
+	github.com/BurntSushi/toml v1.4.0
 	github.com/ethereum-optimism/optimism v1.7.7
 	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240614103325-d8902381f5d8
 	github.com/ethereum/go-ethereum v1.13.15
@@ -12,7 +13,6 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.9.0
 	github.com/urfave/cli/v2 v2.27.1
-	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -91,5 +91,6 @@ require (
 	golang.org/x/tools v0.21.0 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect
 )

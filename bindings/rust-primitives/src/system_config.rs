@@ -19,7 +19,7 @@ pub const CONFIG_UPDATE_EVENT_VERSION_0: B256 = B256::ZERO;
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
 pub struct SystemConfig {
     /// Batcher address
-    pub batcher_addr: Address,
+    pub batcher_address: Address,
     /// Fee overhead value
     pub overhead: U256,
     /// Fee scalar value
@@ -146,7 +146,7 @@ impl SystemConfig {
                 let batcher_address =
                     <sol!(address)>::abi_decode(&log.data.data.as_ref()[64..], true)
                         .map_err(|_| anyhow!("Failed to decode batcher update log"))?;
-                self.batcher_addr = batcher_address;
+                self.batcher_address = batcher_address;
             }
             SystemConfigUpdateType::GasConfig => {
                 if log_data.len() != 128 {
@@ -291,7 +291,7 @@ mod test {
             .unwrap();
 
         assert_eq!(
-            system_config.batcher_addr,
+            system_config.batcher_address,
             address!("000000000000000000000000000000000000bEEF")
         );
     }

@@ -1,19 +1,17 @@
 package main
 
 import (
-	"encoding/json"
 	"os"
 	"strconv"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/BurntSushi/toml"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/yaml.v3"
 )
 
 const (
 	addressDir             = "../superchain/extra/addresses/sepolia/"
-	ymlConfigDir           = "../superchain/configs/sepolia/"
+	configDir              = "../superchain/configs/sepolia/"
 	genesisSystemConfigDir = "../superchain/extra/genesis-system-configs/sepolia/"
 )
 
@@ -90,9 +88,7 @@ func TestAddChain_Main(t *testing.T) {
 			err = runApp(args)
 			require.NoError(t, err, "add-chain app failed")
 
-			checkConfigYaml(t, tt.name, tt.chainShortName)
-			compareJsonFiles(t, "superchain/extra/addresses/sepolia/", tt.name, tt.chainShortName)
-			compareJsonFiles(t, "superchain/extra/genesis-system-configs/sepolia/", tt.name, tt.chainShortName)
+			checkConfigTOML(t, tt.name, tt.chainShortName)
 		})
 	}
 
@@ -151,44 +147,25 @@ func TestAddChain_CheckGenesis(t *testing.T) {
 	})
 }
 
-func compareJsonFiles(t *testing.T, dirPath, testName, chainShortName string) {
-	expectedBytes, err := os.ReadFile("./testdata/" + dirPath + "expected_" + testName + ".json")
-	require.NoError(t, err, "failed to read expected.json file from "+dirPath)
+func checkConfigTOML(t *testing.T, testName, chainShortName string) {
+	expectedBytes, err := os.ReadFile("./testdata/superchain/configs/sepolia/expected_" + testName + ".toml")
+	require.NoError(t, err, "failed to read expected.toml config file: %w", err)
 
-	var expectJSON map[string]interface{}
-	err = json.Unmarshal(expectedBytes, &expectJSON)
-	require.NoError(t, err, "failed to unmarshal expected.json file from "+dirPath)
+	var expectedTOML map[string]interface{}
+	err = toml.Unmarshal(expectedBytes, &expectedTOML)
+	require.NoError(t, err, "failed to unmarshal expected.toml config file: %w", err)
 
-	testBytes, err := os.ReadFile("../" + dirPath + chainShortName + ".json")
-	require.NoError(t, err, "failed to read test generated json file from "+dirPath)
+	testBytes, err := os.ReadFile(configDir + chainShortName + ".toml")
+	require.NoError(t, err, "failed to read testchain.toml config file: %w", err)
 
-	var testJSON map[string]interface{}
-	err = json.Unmarshal(testBytes, &testJSON)
-	require.NoError(t, err, "failed to read test generated json file from "+dirPath)
-
-	diff := cmp.Diff(expectJSON, testJSON)
-	require.Equal(t, diff, "", "expected json (-) does not match test json (+): %s", diff)
-}
-
-func checkConfigYaml(t *testing.T, testName, chainShortName string) {
-	expectedBytes, err := os.ReadFile("./testdata/superchain/configs/sepolia/expected_" + testName + ".yaml")
-	require.NoError(t, err, "failed to read expected.yaml config file: %w", err)
-
-	var expectedYaml map[string]interface{}
-	err = yaml.Unmarshal(expectedBytes, &expectedYaml)
-	require.NoError(t, err, "failed to unmarshal expected.yaml config file: %w", err)
-
-	testBytes, err := os.ReadFile(ymlConfigDir + chainShortName + ".yaml")
-	require.NoError(t, err, "failed to read testchain.yaml config file: %w", err)
-
-	require.Equal(t, string(expectedBytes), string(testBytes), "test .yaml contents do not meet expectation")
+	require.Equal(t, string(expectedBytes), string(testBytes), "test .toml contents do not meet expectation")
 }
 
 func cleanupTestFiles(t *testing.T, chainShortName string) {
 	paths := []string{
 		addressDir + chainShortName + ".json",
 		genesisSystemConfigDir + chainShortName + ".json",
-		ymlConfigDir + chainShortName + ".yaml",
+		configDir + chainShortName + ".toml",
 	}
 
 	for _, path := range paths {

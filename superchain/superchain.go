@@ -11,13 +11,11 @@ import (
 	"io/fs"
 	"path"
 	"reflect"
-	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
+	"github.com/BurntSushi/toml"
 	"golang.org/x/mod/semver"
-	"gopkg.in/yaml.v3"
 )
 
 var ErrEmptyVersion = errors.New("empty version")
@@ -25,47 +23,47 @@ var ErrEmptyVersion = errors.New("empty version")
 //go:embed configs
 var superchainFS embed.FS
 
-//go:embed extra/addresses extra/bytecodes extra/genesis extra/genesis-system-configs
+//go:embed extra/bytecodes extra/genesis
 var extraFS embed.FS
 
 type BlockID struct {
-	Hash   Hash   `yaml:"hash"`
-	Number uint64 `yaml:"number"`
+	Hash   Hash   `toml:"hash"`
+	Number uint64 `toml:"number"`
 }
 
 type ChainGenesis struct {
-	L1           BlockID      `yaml:"l1"`
-	L2           BlockID      `yaml:"l2"`
-	L2Time       uint64       `json:"l2_time" yaml:"l2_time"`
-	ExtraData    *HexBytes    `yaml:"extra_data,omitempty"`
-	SystemConfig SystemConfig `json:"system_config" yaml:"-"`
+	L1           BlockID      `toml:"l1"`
+	L2           BlockID      `toml:"l2"`
+	L2Time       uint64       `toml:"l2_time" json:"l2_time"`
+	ExtraData    *HexBytes    `toml:"extra_data,omitempty"`
+	SystemConfig SystemConfig `toml:"system_config" json:"system_config" `
 }
 
 type SystemConfig struct {
-	BatcherAddr       Address `json:"batcherAddr"`
-	Overhead          string  `json:"overhead"`
-	Scalar            string  `json:"scalar"`
-	GasLimit          uint64  `json:"gasLimit"`
-	BaseFeeScalar     *uint64 `json:"baseFeeScalar,omitempty"`
-	BlobBaseFeeScalar *uint64 `json:"blobBaseFeeScalar,omitempty"`
+	BatcherAddr       Address `json:"batcherAddr" toml:"batcherAddress"`
+	Overhead          Hash    `json:"overhead" toml:"overhead"`
+	Scalar            Hash    `json:"scalar" toml:"scalar"`
+	GasLimit          uint64  `json:"gasLimit" toml:"gasLimit"`
+	BaseFeeScalar     *uint64 `json:"baseFeeScalar,omitempty" toml:"baseFeeScalar,omitempty"`
+	BlobBaseFeeScalar *uint64 `json:"blobBaseFeeScalar,omitempty" toml:"blobBaseFeeScalar,omitempty"`
 }
 
 type GenesisData struct {
-	L1     GenesisLayer `json:"l1" yaml:"l1"`
-	L2     GenesisLayer `json:"l2" yaml:"l2"`
-	L2Time int          `json:"l2_time" yaml:"l2_time"`
+	L1     GenesisLayer `json:"l1"`
+	L2     GenesisLayer `json:"l2"`
+	L2Time int          `json:"l2_time"`
 }
 
 type GenesisLayer struct {
-	Hash   string `json:"hash" yaml:"hash"`
-	Number int    `json:"number" yaml:"number"`
+	Hash   string `json:"hash"`
+	Number int    `json:"number"`
 }
 
 type HardForkConfiguration struct {
-	CanyonTime  *uint64 `json:"canyon_time,omitempty" yaml:"canyon_time,omitempty"`
-	DeltaTime   *uint64 `json:"delta_time,omitempty" yaml:"delta_time,omitempty"`
-	EcotoneTime *uint64 `json:"ecotone_time,omitempty" yaml:"ecotone_time,omitempty"`
-	FjordTime   *uint64 `json:"fjord_time,omitempty" yaml:"fjord_time,omitempty"`
+	CanyonTime  *uint64 `json:"canyon_time,omitempty" toml:"canyon_time,omitempty"`
+	DeltaTime   *uint64 `json:"delta_time,omitempty" toml:"delta_time,omitempty"`
+	EcotoneTime *uint64 `json:"ecotone_time,omitempty" toml:"ecotone_time,omitempty"`
+	FjordTime   *uint64 `json:"fjord_time,omitempty" toml:"fjord_time,omitempty"`
 }
 
 type SuperchainLevel uint
@@ -76,41 +74,43 @@ const (
 )
 
 type ChainConfig struct {
-	Name         string `yaml:"name"`
-	ChainID      uint64 `yaml:"chain_id"`
-	PublicRPC    string `yaml:"public_rpc"`
-	SequencerRPC string `yaml:"sequencer_rpc"`
-	Explorer     string `yaml:"explorer"`
+	Name         string `toml:"name"`
+	ChainID      uint64 `toml:"chain_id"`
+	PublicRPC    string `toml:"public_rpc"`
+	SequencerRPC string `toml:"sequencer_rpc"`
+	Explorer     string `toml:"explorer"`
 
-	SuperchainLevel SuperchainLevel `yaml:"superchain_level"`
+	SuperchainLevel SuperchainLevel `toml:"superchain_level"`
 
 	// If StandardChainCandidate is true, standard chain validation checks will
 	// run on this chain even if it is a frontier chain.
-	StandardChainCandidate bool `yaml:"standard_chain_candidate,omitempty"`
+	StandardChainCandidate bool `toml:"standard_chain_candidate,omitempty"`
 
 	// If SuperchainTime is set, hardforks times after SuperchainTime
 	// will be inherited from the superchain-wide config.
-	SuperchainTime *uint64 `yaml:"superchain_time"`
+	SuperchainTime *uint64 `toml:"superchain_time"`
 
-	BatchInboxAddr Address `yaml:"batch_inbox_addr"`
-
-	Genesis ChainGenesis `yaml:"genesis"`
+	BatchInboxAddr Address `toml:"batch_inbox_addr"`
 
 	// Superchain is a simple string to identify the superchain.
 	// This is implied by directory structure, and not encoded in the config file itself.
-	Superchain string `yaml:"-"`
+	Superchain string `toml:"-"`
 	// Chain is a simple string to identify the chain, within its superchain context.
 	// This matches the resource filename, it is not encoded in the config file itself.
-	Chain string `yaml:"-"`
+	Chain string `toml:"-"`
 
 	// Hardfork Configuration Overrides
-	HardForkConfiguration `yaml:",inline"`
+	HardForkConfiguration `toml:",inline"`
 
-	BlockTime           uint64 `yaml:"block_time"`
-	SequencerWindowSize uint64 `yaml:"seq_window_size"`
+	BlockTime           uint64 `toml:"block_time"`
+	SequencerWindowSize uint64 `toml:"seq_window_size"`
 
 	// Optional feature
-	Plasma *PlasmaConfig `yaml:"plasma,omitempty"`
+	Plasma *PlasmaConfig `toml:"plasma,omitempty"`
+
+	Genesis ChainGenesis `toml:"genesis"`
+
+	Addresses AddressList `toml:"addresses"`
 }
 
 func (c ChainConfig) Identifier() string {
@@ -118,13 +118,13 @@ func (c ChainConfig) Identifier() string {
 }
 
 type PlasmaConfig struct {
-	DAChallengeAddress *Address `json:"da_challenge_contract_address" yaml:"da_challenge_contract_address"`
+	DAChallengeAddress *Address `json:"da_challenge_contract_address" toml:"da_challenge_contract_address"`
 	// DA challenge window value set on the DAC contract. Used in plasma mode
 	// to compute when a commitment can no longer be challenged.
-	DAChallengeWindow *uint64 `json:"da_challenge_window" yaml:"da_challenge_window"`
+	DAChallengeWindow *uint64 `json:"da_challenge_window" toml:"da_challenge_window"`
 	// DA resolve window value set on the DAC contract. Used in plasma mode
 	// to compute when a challenge expires and trigger a reorg if needed.
-	DAResolveWindow *uint64 `json:"da_resolve_window" yaml:"da_resolve_window"`
+	DAResolveWindow *uint64 `json:"da_resolve_window" toml:"da_resolve_window"`
 }
 
 // setNilHardforkTimestampsToDefaultOrZero overwrites each unspecified hardfork activation time override
@@ -171,105 +171,96 @@ func (c *ChainConfig) setNilHardforkTimestampsToDefaultOrZero(s *SuperchainConfi
 	}
 }
 
-// EnhanceYAML creates a customized yaml string from a RollupConfig. After completion,
-// the *yaml.Node pointer can be used with a yaml encoder to write the custom format to file
-func (c *ChainConfig) EnhanceYAML(ctx context.Context, node *yaml.Node) error {
-	hexStringRegex := regexp.MustCompile(`^0x[a-fA-F0-9]+$`)
+// MarshalJSON excludes any addresses set to 0x000...000
+func (a AddressList) MarshalJSON() ([]byte, error) {
+	type AddressList2 AddressList // use another type to prevent infinite recursion later on
+	b := AddressList2(a)
 
-	// Check if context is done before processing
-	if err := ctx.Err(); err != nil {
-		return fmt.Errorf("context error: %w", err)
+	o, err := json.Marshal(b)
+	if err != nil {
+		return nil, err
 	}
 
-	if node.Kind == yaml.DocumentNode && len(node.Content) > 0 {
-		node = node.Content[0] // Dive into the document node
+	out := make(map[string]Address)
+	err = json.Unmarshal(o, &out)
+	if err != nil {
+		return nil, err
 	}
 
-	var lastKey string
-	for i := 0; i < len(node.Content)-1; i += 2 {
-		keyNode := node.Content[i]
-		valNode := node.Content[i+1]
-		if valNode.Kind == yaml.ScalarNode && valNode.Tag == "!!str" && hexStringRegex.MatchString(valNode.Value) {
-			valNode.Style = yaml.DoubleQuotedStyle
+	for k, v := range out {
+		if (v == Address{}) {
+			delete(out, k)
 		}
-
-		// Add blank line AFTER these keys
-		if lastKey == "explorer" || lastKey == "genesis" {
-			keyNode.HeadComment = "\n"
-		}
-
-		// Add blank line BEFORE these keys
-		if keyNode.Value == "genesis" || keyNode.Value == "plasma" || keyNode.Value == "block_time" {
-			keyNode.HeadComment = "\n"
-		}
-
-		// Recursive call to check nested fields for "_time" suffix
-		if valNode.Kind == yaml.MappingNode {
-			if err := c.EnhanceYAML(ctx, valNode); err != nil {
-				return err
-			}
-		}
-
-		if keyNode.Value == "superchain_time" {
-			if valNode.Value == "" || valNode.Value == "null" {
-				keyNode.LineComment = "Missing hardfork times are NOT yet inherited from superchain.yaml"
-			} else if valNode.Value == "0" {
-				keyNode.LineComment = "Missing hardfork times are inherited from superchain.yaml"
-			} else {
-				keyNode.LineComment = "Missing hardfork times after this time are inherited from superchain.yaml"
-			}
-		}
-
-		// Add human readable timestamp in comment
-		if strings.HasSuffix(keyNode.Value, "_time") && valNode.Value != "" && valNode.Value != "null" && keyNode.Value != "block_time" {
-			t, err := strconv.ParseInt(valNode.Value, 10, 64)
-			if err != nil {
-				return fmt.Errorf("failed to convert yaml string timestamp to int: %w", err)
-			}
-			timestamp := time.Unix(t, 0).UTC()
-			keyNode.LineComment = timestamp.Format("Mon 2 Jan 2006 15:04:05 UTC")
-		}
-
-		if keyNode.Value == "standard_chain_candidate" {
-			keyNode.LineComment = "This is a temporary field which causes most of the standard validation checks to run on this chain"
-		}
-
-		lastKey = keyNode.Value
 	}
-	return nil
+
+	return json.Marshal(out)
+}
+
+func (c *ChainConfig) GenerateTOMLComments(ctx context.Context) (map[string]string, error) {
+	comments := make(map[string]string)
+
+	createTimestampComment := func(fieldName string, fieldValue *uint64, comments map[string]string) {
+		if fieldValue != nil {
+			timestamp := time.Unix(int64(*fieldValue), 0).UTC()
+			comments[fieldName] = fmt.Sprintf("# %s", timestamp.Format("Mon 2 Jan 2006 15:04:05 UTC"))
+		}
+	}
+
+	if c.SuperchainTime != nil {
+		if *c.SuperchainTime == 0 {
+			comments["superchain_time"] = "# Missing hardfork times are inherited from superchain.toml"
+		} else {
+			createTimestampComment("superchain_time", c.SuperchainTime, comments)
+		}
+	}
+
+	createTimestampComment("canyon_time", c.CanyonTime, comments)
+	createTimestampComment("delta_time", c.DeltaTime, comments)
+	createTimestampComment("ecotone_time", c.EcotoneTime, comments)
+	createTimestampComment("fjord_time", c.FjordTime, comments)
+
+	if c.StandardChainCandidate {
+		comments["standard_chain_candidate"] = "# This is a temporary field which causes most of the standard validation checks to run on this chain"
+	}
+
+	return comments, nil
 }
 
 type Roles struct {
-	SystemConfigOwner Address `json:"SystemConfigOwner"`
-	ProxyAdminOwner   Address `json:"ProxyAdminOwner"`
-	Guardian          Address `json:"Guardian"`
-	Challenger        Address `json:"Challenger"`
-	Proposer          Address `json:"Proposer"`
-	UnsafeBlockSigner Address `json:"UnsafeBlockSigner"`
-	BatchSubmitter    Address `json:"BatchSubmitter"`
+	SystemConfigOwner Address `json:"SystemConfigOwner" toml:"SystemConfigOwner"`
+	ProxyAdminOwner   Address `json:"ProxyAdminOwner" toml:"ProxyAdminOwner"`
+	Guardian          Address `json:"Guardian" toml:"Guardian"`
+	Challenger        Address `json:"Challenger" toml:"Challenger"`
+	Proposer          Address `json:"Proposer" toml:"Proposer"`
+	UnsafeBlockSigner Address `json:"UnsafeBlockSigner" toml:"UnsafeBlockSigner"`
+	BatchSubmitter    Address `json:"BatchSubmitter" toml:"BatchSubmitter"`
 }
 
 // AddressList represents the set of network specific contracts and roles for a given network.
 type AddressList struct {
-	Roles                             `json:",inline"`
-	AddressManager                    Address `json:"AddressManager"`
-	L1CrossDomainMessengerProxy       Address `json:"L1CrossDomainMessengerProxy"`
-	L1ERC721BridgeProxy               Address `json:"L1ERC721BridgeProxy"`
-	L1StandardBridgeProxy             Address `json:"L1StandardBridgeProxy"`
-	L2OutputOracleProxy               Address `json:"L2OutputOracleProxy"`
-	OptimismMintableERC20FactoryProxy Address `json:"OptimismMintableERC20FactoryProxy"`
-	OptimismPortalProxy               Address `json:"OptimismPortalProxy"`
-	SystemConfigProxy                 Address `json:"SystemConfigProxy"`
-	ProxyAdmin                        Address `json:"ProxyAdmin"`
+	Roles                             `json:",inline" toml:",inline"`
+	AddressManager                    Address `json:"AddressManager" toml:"AddressManager"`
+	L1CrossDomainMessengerProxy       Address `json:"L1CrossDomainMessengerProxy" toml:"L1CrossDomainMessengerProxy"`
+	L1ERC721BridgeProxy               Address `json:"L1ERC721BridgeProxy" toml:"L1ERC721BridgeProxy"`
+	L1StandardBridgeProxy             Address `json:"L1StandardBridgeProxy" toml:"L1StandardBridgeProxy"`
+	L2OutputOracleProxy               Address `json:"L2OutputOracleProxy" toml:"L2OutputOracleProxy,omitempty"`
+	OptimismMintableERC20FactoryProxy Address `json:"OptimismMintableERC20FactoryProxy" toml:"OptimismMintableERC20FactoryProxy"`
+	OptimismPortalProxy               Address `json:"OptimismPortalProxy,omitempty" toml:"OptimismPortalProxy,omitempty"`
+	SystemConfigProxy                 Address `json:"SystemConfigProxy" toml:"SystemConfigProxy"`
+	ProxyAdmin                        Address `json:"ProxyAdmin" toml:"ProxyAdmin"`
+	SuperchainConfig                  Address `json:"SuperchainConfig,omitempty" toml:"SuperchainConfig,omitempty"`
 
 	// Fault Proof contracts:
-	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty"`
-	DelayedWETHProxy         Address `json:"DelayedWETHProxy,omitempty"`
-	DisputeGameFactoryProxy  Address `json:"DisputeGameFactoryProxy,omitempty"`
-	FaultDisputeGame         Address `json:"FaultDisputeGame,omitempty"`
-	MIPS                     Address `json:"MIPS,omitempty"`
-	PermissionedDisputeGame  Address `json:"PermissionedDisputeGame,omitempty"`
-	PreimageOracle           Address `json:"PreimageOracle,omitempty"`
+	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty" toml:"AnchorStateRegistryProxy,omitempty"`
+	DelayedWETHProxy         Address `json:"DelayedWETHProxy,omitempty" toml:"DelayedWETHProxy,omitempty"`
+	DisputeGameFactoryProxy  Address `json:"DisputeGameFactoryProxy,omitempty" toml:"DisputeGameFactoryProxy,omitempty"`
+	FaultDisputeGame         Address `json:"FaultDisputeGame,omitempty" toml:"FaultDisputeGame,omitempty"`
+	MIPS                     Address `json:"MIPS,omitempty" toml:"MIPS,omitempty"`
+	PermissionedDisputeGame  Address `json:"PermissionedDisputeGame,omitempty" toml:"PermissionedDisputeGame,omitempty"`
+	PreimageOracle           Address `json:"PreimageOracle,omitempty" toml:"PreimageOracle,omitempty"`
+
+	// Plasma contracts:
+	DAChallengeAddress Address `json:"DAChallengeAddress,omitempty" toml:"DAChallengeAddress,omitempty"`
 }
 
 // AddressFor returns a nonzero address for the supplied name, if it has been specified
@@ -338,32 +329,32 @@ type AddressSet map[string]Address
 
 // VersionedContract represents a contract that has a semantic version.
 type VersionedContract struct {
-	Version string  `json:"version"`
-	Address Address `json:"address"`
+	Version string  `json:"version" toml:"version"`
+	Address Address `json:"address" toml:"address"`
 }
 
 // ContractVersions represents the desired semantic version of the contracts
 // in the superchain. This currently only supports L1 contracts but could
 // represent L2 predeploys in the future.
 type ContractVersions struct {
-	L1CrossDomainMessenger       string `yaml:"l1_cross_domain_messenger" toml:"l1_cross_domain_messenger"`
-	L1ERC721Bridge               string `yaml:"l1_erc721_bridge" toml:"l1_erc721_bridge"`
-	L1StandardBridge             string `yaml:"l1_standard_bridge" toml:"l1_standard_bridge"`
-	L2OutputOracle               string `yaml:"l2_output_oracle,omitempty" toml:"l2_output_oracle,omitempty"`
-	OptimismMintableERC20Factory string `yaml:"optimism_mintable_erc20_factory" toml:"optimism_mintable_erc20_factory"`
-	OptimismPortal               string `yaml:"optimism_portal" toml:"optimism_portal"`
-	SystemConfig                 string `yaml:"system_config" toml:"system_config"`
+	L1CrossDomainMessenger       string `toml:"l1_cross_domain_messenger"`
+	L1ERC721Bridge               string `toml:"l1_erc721_bridge"`
+	L1StandardBridge             string `toml:"l1_standard_bridge"`
+	L2OutputOracle               string `toml:"l2_output_oracle,omitempty"`
+	OptimismMintableERC20Factory string `toml:"optimism_mintable_erc20_factory"`
+	OptimismPortal               string `toml:"optimism_portal"`
+	SystemConfig                 string `toml:"system_config"`
 	// Superchain-wide contracts:
-	ProtocolVersions string `yaml:"protocol_versions" toml:"protocol_versions"`
-	SuperchainConfig string `yaml:"superchain_config,omitempty"`
+	ProtocolVersions string `toml:"protocol_versions"`
+	SuperchainConfig string `toml:"superchain_config,omitempty"`
 	// Fault Proof contracts:
-	AnchorStateRegistry     string `yaml:"anchor_state_registry,omitempty" toml:"anchor_state_registry,omitempty"`
-	DelayedWETH             string `yaml:"delayed_weth,omitempty" toml:"delayed_weth,omitempty"`
-	DisputeGameFactory      string `yaml:"dispute_game_factory,omitempty" toml:"dispute_game_factory,omitempty"`
-	FaultDisputeGame        string `yaml:"fault_dispute_game,omitempty" toml:"fault_dispute_game,omitempty"`
-	MIPS                    string `yaml:"mips,omitempty" toml:"mips,omitempty"`
-	PermissionedDisputeGame string `yaml:"permissioned_dispute_game,omitempty" toml:"permissioned_dispute_game,omitempty"`
-	PreimageOracle          string `yaml:"preimage_oracle,omitempty" toml:"preimage_oracle,omitempty"`
+	AnchorStateRegistry     string `toml:"anchor_state_registry,omitempty"`
+	DelayedWETH             string `toml:"delayed_weth,omitempty"`
+	DisputeGameFactory      string `toml:"dispute_game_factory,omitempty"`
+	FaultDisputeGame        string `toml:"fault_dispute_game,omitempty"`
+	MIPS                    string `toml:"mips,omitempty"`
+	PermissionedDisputeGame string `toml:"permissioned_dispute_game,omitempty"`
+	PreimageOracle          string `toml:"preimage_oracle,omitempty"`
 }
 
 // VersionFor returns the version for the supplied contract name, if it exits
@@ -485,33 +476,33 @@ type Genesis struct {
 }
 
 type SuperchainL1Info struct {
-	ChainID   uint64 `yaml:"chain_id"`
-	PublicRPC string `yaml:"public_rpc"`
-	Explorer  string `yaml:"explorer"`
+	ChainID   uint64 `toml:"chain_id"`
+	PublicRPC string `toml:"public_rpc"`
+	Explorer  string `toml:"explorer"`
 }
 
 type SuperchainConfig struct {
-	Name string           `yaml:"name"`
-	L1   SuperchainL1Info `yaml:"l1"`
+	Name string           `toml:"name"`
+	L1   SuperchainL1Info `toml:"l1"`
 
-	ProtocolVersionsAddr *Address `yaml:"protocol_versions_addr,omitempty"`
-	SuperchainConfigAddr *Address `yaml:"superchain_config_addr,omitempty"`
+	ProtocolVersionsAddr *Address `toml:"protocol_versions_addr,omitempty"`
+	SuperchainConfigAddr *Address `toml:"superchain_config_addr,omitempty"`
 
 	// Hardfork Configuration. These values may be overridden by individual chains.
 	hardForkDefaults HardForkConfiguration
 }
 
-// custom unmarshal function to allow yaml to be unmarshalled into unexported fields
+// custom unmarshal function to allow toml to be unmarshalled into unexported fields
 func unMarshalSuperchainConfig(data []byte, s *SuperchainConfig) error {
 	temp := struct {
-		*SuperchainConfig `yaml:",inline"`
-		HardForks         *HardForkConfiguration `yaml:",inline"`
+		*SuperchainConfig      `toml:",inline"`
+		*HardForkConfiguration `toml:",inline"`
 	}{
-		SuperchainConfig: s,
-		HardForks:        &s.hardForkDefaults,
+		s,
+		&s.hardForkDefaults,
 	}
 
-	return yaml.Unmarshal(data, temp)
+	return toml.Unmarshal(data, &temp)
 }
 
 type Superchain struct {
@@ -538,16 +529,16 @@ var OPChains = map[uint64]*ChainConfig{}
 
 var Addresses = map[uint64]*AddressList{}
 
-var GenesisSystemConfigs = map[uint64]*GenesisSystemConfig{}
+var GenesisSystemConfigs = map[uint64]*SystemConfig{}
 
 // SuperchainSemver maps superchain name to a contract name : approved semver version structure.
 var SuperchainSemver map[string]ContractVersions
 
 func isConfigFile(c fs.DirEntry) bool {
 	return (!c.IsDir() &&
-		strings.HasSuffix(c.Name(), ".yaml") &&
-		c.Name() != "superchain.yaml" &&
-		c.Name() != "semver.yaml")
+		strings.HasSuffix(c.Name(), ".toml") &&
+		c.Name() != "superchain.toml" &&
+		c.Name() != "semver.toml")
 }
 
 func LoadGenesis(chainID uint64) (*Genesis, error) {

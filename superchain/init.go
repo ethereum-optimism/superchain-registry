@@ -1,13 +1,12 @@
 package superchain
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path"
 	"strings"
 
-	"gopkg.in/yaml.v3"
+	"github.com/BurntSushi/toml"
 )
 
 func init() {
@@ -26,7 +25,7 @@ func init() {
 		}
 
 		// Load superchain-target config
-		superchainConfigData, err := superchainFS.ReadFile(path.Join("configs", s.Name(), "superchain.yaml"))
+		superchainConfigData, err := superchainFS.ReadFile(path.Join("configs", s.Name(), "superchain.toml"))
 		if err != nil {
 			panic(fmt.Errorf("failed to read superchain config: %w", err))
 		}
@@ -52,33 +51,14 @@ func init() {
 			}
 			var chainConfig ChainConfig
 
-			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
+			if err := toml.Unmarshal(chainConfigData, &chainConfig); err != nil {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
-			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
+			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".toml")
 
 			(&chainConfig).setNilHardforkTimestampsToDefaultOrZero(&superchainEntry.Config)
 
 			MustBeValidSuperchainLevel(chainConfig)
-
-			jsonName := chainConfig.Chain + ".json"
-			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
-			if err != nil {
-				panic(fmt.Errorf("failed to read addresses data of chain %s/%s: %w", s.Name(), jsonName, err))
-			}
-			var addrs AddressList
-			if err := json.Unmarshal(addressesData, &addrs); err != nil {
-				panic(fmt.Errorf("failed to decode addresses %s/%s: %w", s.Name(), jsonName, err))
-			}
-
-			genesisSysCfgData, err := extraFS.ReadFile(path.Join("extra", "genesis-system-configs", s.Name(), jsonName))
-			if err != nil {
-				panic(fmt.Errorf("failed to read genesis system config data of chain %s/%s: %w", s.Name(), jsonName, err))
-			}
-			var genesisSysCfg GenesisSystemConfig
-			if err := json.Unmarshal(genesisSysCfgData, &genesisSysCfg); err != nil {
-				panic(fmt.Errorf("failed to decode genesis system config %s/%s: %w", s.Name(), jsonName, err))
-			}
 
 			chainConfig.Superchain = s.Name()
 			if other, ok := OPChains[chainConfig.ChainID]; ok {
@@ -89,9 +69,8 @@ func init() {
 			}
 			superchainEntry.ChainIDs = append(superchainEntry.ChainIDs, chainConfig.ChainID)
 			OPChains[chainConfig.ChainID] = &chainConfig
-			Addresses[chainConfig.ChainID] = &addrs
-			GenesisSystemConfigs[chainConfig.ChainID] = &genesisSysCfg
-
+			Addresses[chainConfig.ChainID] = &chainConfig.Addresses
+			GenesisSystemConfigs[chainConfig.ChainID] = &chainConfig.Genesis.SystemConfig
 		}
 
 		ciMainnetRPC := os.Getenv("CIRCLE_CI_MAINNET_RPC")
