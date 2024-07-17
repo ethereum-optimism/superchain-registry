@@ -13,17 +13,14 @@ var standardConfigFile embed.FS
 
 func init() {
 
-	opSepoliaGenesis, err := superchain.LoadGenesis(11155420)
-	if err != nil {
-		panic(err)
-	}
-
 	Config = ConfigType{
-		GenesisAlloc:  opSepoliaGenesis.Alloc,
+		Alloc:         make(map[string][]superchain.Hash),
 		Params:        make(map[string]*Params),
 		Roles:         new(Roles),
 		MultisigRoles: make(map[string]*MultisigRoles),
 	}
+
+	decodeTOMLFileIntoConfig("standard-allocs.toml", &Config.Alloc)
 
 	decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
 
@@ -40,7 +37,7 @@ func init() {
 	decodeTOMLFileIntoConfig("standard-versions.toml", &Versions)
 }
 
-func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles | VersionTags](filename string, config *T) {
+func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles | VersionTags | map[string][]superchain.Hash](filename string, config *T) {
 	data, err := fs.ReadFile(standardConfigFile, filename)
 	if err != nil {
 		panic(err)

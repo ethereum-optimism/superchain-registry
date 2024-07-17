@@ -7,7 +7,6 @@ import (
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
-	"github.com/google/go-cmp/cmp"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
@@ -60,13 +59,26 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	g, err := LoadGenesis(chain.ChainID)
 	require.NoError(t, err)
 
-	// Define a filter to ignore the "storage" field
-	opts := cmp.FilterPath(func(path cmp.Path) bool {
-		return path.Last().String() == ".Storage"
-	}, cmp.Ignore())
-
-	if diff := cmp.Diff(standard.Config.GenesisAlloc, g.Alloc, opts); diff != "" {
-		t.Errorf("genesis allocs (-) do not match standard allocs (+): %s", diff)
+	for address, listOfAcceptableCodeHashes := range standard.Config.Alloc {
+		ch := g.Alloc[MustHexToAddress(address)].CodeHash
+		require.Contains(t, listOfAcceptableCodeHashes, ch,
+			"account %s: codehash %s not present in list of acceptable codehases %s", address, ch, listOfAcceptableCodeHashes)
 	}
 
+}
+
+func TestGPs(t *testing.T) {
+	for _, chain := range OPChains {
+		chain := chain
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			t.Parallel()
+			if chain.StandardChainCandidate == false && chain.SuperchainLevel == Frontier {
+				t.Skip()
+			}
+			if chain.ChainID == 10 {
+				t.Skip("we don't have the allocs for op mainnet")
+			}
+			testGenesisPredeploys(t, chain)
+		})
+	}
 }

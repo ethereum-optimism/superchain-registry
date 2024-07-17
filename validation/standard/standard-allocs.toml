@@ -1,0 +1,14 @@
+# Proxies
+"0x4200000000000000000000000000000000000000" = [ # LegacyMessagePasser Proxy
+    "0x1f958654ab06a152993e7a0ae7b6dbb0d4b19265cc9337b8789fe1353bd9dc35", # op sepolia
+    "0xfa8c9db6c6cab7108dea276f4cd09d575674eb0852c0fa3187e59e98ef977998", # base devnet 0
+    # "0x1f958654ab06a152993e7a0ae7b6dbb0d4b19265cc9337b8789fe1353bd9dc35",
+]
+# Implementations
+"0xc0D3C0d3C0d3C0D3c0d3C0d3c0D3C0d3c0d30000" = [ # LegacyMessagePasser Implementation
+    "0xd0c57b27c0149599951da23bcee9961707a75bbbf366771dc3261dd8290a7193", # op labs sepolia dev 0
+    "0x6a2619046f959bfd80513ca610c8357e44ada87541da78828bfa992dc40e0378", # zora sepolia
+    "0x74e5e83bf5526d5dfb64227d4664a88106bf04648d663cd8a95467a78995242f", # base devnet 0
+    "0xbed693ca28ddf7933272302afe2dedfd01d56dd67dbdb6f49f88a113f1663830", # mode 919
+]
+# Unproxied Predeploys
