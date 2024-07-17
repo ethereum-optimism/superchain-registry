@@ -4,11 +4,68 @@
     "0xfa8c9db6c6cab7108dea276f4cd09d575674eb0852c0fa3187e59e98ef977998", # base devnet 0
     # "0x1f958654ab06a152993e7a0ae7b6dbb0d4b19265cc9337b8789fe1353bd9dc35",
 ]
+# TODO the rest of the proxies can be declared in a more compact way, they _should_ all have the same code
 # Implementations
+# TODO TOML's lexicographical ordering is annoying here. To address that, we can group implementation and proxy together
+# under a key which is the predeploy name
+"0xc0d3c0d3c0d3C0d3c0d3C0D3C0D3c0d3C0D30020" = [ # SchemaRegistry Implementation
+    "0xcaab1ca32c5f0e516394deea7c2d0d9ce5e74851fd18f3fa249eabaf1daf427d",
+    "0xeb6128493b861c32aa48ed0d5c17e97f73a4b6681faf125f14f2a86653bb21b1", # metal 1750
+    "0x0000000000000000000000000000000000000000000000000000000000000000", # zora, mode, base, zora sepolia
+    "0x4f01862031e523fc22a2bbe86c670a2f57f0da57ce1f582b0776042290377672", # base sepolia
+]
 "0xc0D3C0d3C0d3C0D3c0d3C0d3c0D3C0d3c0d30000" = [ # LegacyMessagePasser Implementation
     "0xd0c57b27c0149599951da23bcee9961707a75bbbf366771dc3261dd8290a7193", # op labs sepolia dev 0
     "0x6a2619046f959bfd80513ca610c8357e44ada87541da78828bfa992dc40e0378", # zora sepolia
     "0x74e5e83bf5526d5dfb64227d4664a88106bf04648d663cd8a95467a78995242f", # base devnet 0
     "0xbed693ca28ddf7933272302afe2dedfd01d56dd67dbdb6f49f88a113f1663830", # mode 919
 ]
+"0xC0D3C0d3C0D3c0D3C0d3c0D3C0d3c0d3C0d30013" = [ # L1BlockNumber Implementation
+    "0xa62645a1b1b376a0b6942cd82384c5b6a071d75db62314b38e3745ae94d53816",
+    "0x18588b72db862ad59571100d883ab40945ad27e472ce401918947cbd4c36bfdf", # mode 919, zora, base
+    "0x9ee56c39d32e0dcf297520c9e4c4c25b3c0d0596b1d0186f46fe4e77475b1aa0", # mode 34443, zora sepolia
+    "0x3991bc7c9fb1845c9b8b2b966793c9d2391e75414101a3b3674ca23d5703369a", # metal 1750
+]
+# "0xC0D3C0d3C0d3c0d3C0d3C0D3c0D3c0d3c0D30016" = [
+#     "0xafed496eeff664f90df645c21879ba74e635f8ba119cac0c385e13bb7c6df267",
+# ]
+# "0xC0D3C0d3c0d3c0d3C0D3c0d3C0D3c0d3c0D30011" = [
+#     "0x49e9274ef3797dfd82800f63aaa690bf76ab6f4fb16c3270263242416f4dbc3c",
+# ]
+# "0xC0D3c0D3C0d3c0D3c0D3C0D3c0D3c0d3c0d30021" = [
+#     "0xfd595b8934b26b4c1f82f6cefe2e8859bb9b44bf06d7c57335d6fa37e0dadb0e",
+# ]
+# "0xC0D3c0d3c0d3c0d3c0D3C0d3C0D3C0D3c0d30014" = [
+#     "0x573eb3b515c37cf134d53b6f46c479b0f607ac75633acea7776044a5dac59d87",
+# ]
+# "0xC0d3C0D3c0d3C0d3c0d3c0D3C0D3C0d3C0D30018" = [
+#     "0xaebd68b2a785d0af4b7e1f3e600efde438efa83b08f2ad8bcd9287322f396e5f",
+# ]
+# "0xC0d3c0D3c0d3C0D3C0D3C0d3c0D3C0D3c0d30019" = [
+#     "0x3dc970ec0cdda4b95471e12ff03669c48d304ed422526b9841b305d8b51b3c64",
+# ]
+# "0xC0d3c0d3c0D3c0D3C0d3C0D3C0D3c0d3c0d30007" = [
+#     "0x8828c26faea3455d8cf44084dc1e8f772ce7296d53cd7e3f2b5567a7bad103ab",
+# ]
+# "0xC0d3c0d3c0D3c0d3C0D3c0D3C0d3C0D3C0D30010" = [
+#     "0xb6485623e50ac90a4bac2a30873232e832a9e6d90dfe975e461b6c4e2c054d32",
+# ]
+# "0xc0D3c0D3C0d3c0d3c0d3C0d3c0d3C0d3C0D3001A" = [
+#     "0x3dc970ec0cdda4b95471e12ff03669c48d304ed422526b9841b305d8b51b3c64",
+# ]
+# "0xc0D3c0d3C0d3c0d3c0D3c0d3c0D3c0D3c0D30012" = [
+#     "0x11b4a6968897a70786df5f7d71cceacfd176373d4bf2e4e67c1346dc4774d4be",
+# ]
+# "0xc0d3C0D3C0D3c0D3C0D3C0d3C0D3c0D3c0d30015" = [
+#     "0x501b4cf554540333a4cd4a6bf2e583ee592154727aab5d9013800cf55ef2ac9c",
+# ]
+# "0xc0d3C0d3C0d3C0d3C0d3c0d3C0D3C0d3C0D30017" = [
+#     "0x24d1020819c60ceb1496220ad35e5191e673f0e346764ba59d0a8b006274affa",
+# ]
+# "0xc0d3C0d3C0d3c0D3C0D3C0d3C0d3C0D3C0D3000f" = [
+#     "0xd223cb25972538aad56c0018258f9891373c8d9b54d51426d0f792a8e80dd245",
+# ]
+# "0xc0d3c0d3C0d3c0D3c0d3C0D3c0d3C0d3c0D30002" = [
+#     "0xe3063f1039431988686bb413c9b597422217296282c89a4ee28d0e0d1ff3a982",
+# ]
 # Unproxied Predeploys
