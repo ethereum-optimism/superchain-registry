@@ -1,15 +1,17 @@
 package validation
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"math/big"
 	"os"
+	"strings"
 	"testing"
 
-	"github.com/BurntSushi/toml"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
+	"github.com/naoina/toml"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
@@ -137,7 +139,52 @@ func TestWritePredeployCodeHashSummary(t *testing.T) {
 		}
 	}
 
-	t.Log(results)
+	// Encode the struct to a buffer
+	var buf bytes.Buffer
+	if err := toml.NewEncoder(&buf).Encode(results); err != nil {
+		fmt.Println("Error encoding TOML:", err)
+		return
+	}
+
+	names := map[string]string{
+		prefix + "0000": "LegacyMessagePasser",
+		prefix + "0002": "DeployerWhitelist",
+		"0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000": "LegacyERC20ETH",
+		"0x4200000000000000000000000000000000000006": "WETH9",
+		prefix + "0007": "L2CrossDomainMessenger",
+		prefix + "0010": "L2StandardBridge",
+		prefix + "0011": "SequencerFeeVault",
+		prefix + "0012": "OptimismMintableERC20Factory",
+		prefix + "0013": "L1BlockNumber",
+		prefix + "000F": "GasPriceOracle",
+		prefix + "0042": "GovernanceToken",
+		prefix + "0015": "L1Block",
+		prefix + "0016": "L2ToL1MessagePasser",
+		prefix + "0014": "L2ERC721Bridge",
+		prefix + "0017": "OptimismMintableERC721Factory",
+		prefix + "0018": "ProxyAdmin",
+		prefix + "0019": "BaseFeeVault",
+		prefix + "001a": "L1FeeVault",
+		prefix + "0020": "SchemaRegistry",
+		prefix + "0021": "EAS",
+		"0x000F3df6D732807Ef1319fB7B8bB8522d0Beac02": "BeaconBlockRoot",
+	}
+	// Function to add comments to specific lines based on a lookup mapping
+	addComments := func(input string, lookup map[string]string) string {
+		lines := strings.Split(input, "\n")
+		for i, line := range lines {
+			for key, comment := range lookup {
+				if strings.Contains(line, key) {
+					lines[i] = fmt.Sprintf("%s # %s", line, comment)
+				}
+			}
+		}
+		return strings.Join(lines, "\n")
+	}
+
+	// Add comments to the raw string
+	modifiedString := addComments(buf.String(), names)
+
 	// Open the file for writing in the current directory
 	file, err := os.Create("results.toml")
 	if err != nil {
@@ -146,8 +193,8 @@ func TestWritePredeployCodeHashSummary(t *testing.T) {
 	}
 	defer file.Close()
 
-	// Encode the struct to TOML and write to the file
-	if err := toml.NewEncoder(file).Encode(results); err != nil {
-		fmt.Println("Error encoding TOML:", err)
+	// Write the modified string to the file
+	if _, err := file.WriteString(modifiedString); err != nil {
+		fmt.Println("Error writing to file:", err)
 	}
 }
