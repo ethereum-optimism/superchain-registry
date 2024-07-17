@@ -2,7 +2,6 @@
 "0x4200000000000000000000000000000000000000" = [ # LegacyMessagePasser Proxy
     "0x1f958654ab06a152993e7a0ae7b6dbb0d4b19265cc9337b8789fe1353bd9dc35", # op sepolia
     "0xfa8c9db6c6cab7108dea276f4cd09d575674eb0852c0fa3187e59e98ef977998", # base devnet 0
-    # "0x1f958654ab06a152993e7a0ae7b6dbb0d4b19265cc9337b8789fe1353bd9dc35",
 ]
 # TODO the rest of the proxies can be declared in a more compact way, they _should_ all have the same code
 # Implementations
