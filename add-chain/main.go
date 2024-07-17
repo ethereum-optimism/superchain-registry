@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -144,7 +143,7 @@ func entrypoint(ctx *cli.Context) error {
 		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
 	}
 
-	addressList := superchain.AddressList{SystemConfigProxy: superchain.MustHexToAddress("0x0fe884546476dDd290eC46318785046ef68a0BA9")}
+	addressList := superchain.AddressList{}
 	err = mapToAddressList(addresses, &addressList)
 	if err != nil {
 		return fmt.Errorf("error converting map to AddressList: %w", err)
@@ -158,27 +157,6 @@ func entrypoint(ctx *cli.Context) error {
 	}
 
 	fmt.Printf("Wrote config for new chain with identifier %s", rollupConfig.Identifier())
-
-	// Create genesis-system-config data
-	// (this is deprecated, users should load this from L1, when available via SystemConfig)
-	dirPath := filepath.Join(superchainRepoRoot, "superchain", "extra", "genesis-system-configs", superchainTarget)
-
-	if err := os.MkdirAll(dirPath, 0o755); err != nil {
-		return fmt.Errorf("failed to create directory: %w", err)
-	}
-
-	// Write the genesis system config JSON to a new file
-	systemConfigJSON, err := json.MarshalIndent(rollupConfig.Genesis.SystemConfig, "", "  ")
-	if err != nil {
-		return fmt.Errorf("failed to marshal genesis system config json: %w", err)
-	}
-
-	filePath := filepath.Join(dirPath, chainShortName+".json")
-	if err := os.WriteFile(filePath, systemConfigJSON, 0o644); err != nil {
-		return fmt.Errorf("failed to write genesis system config json: %w", err)
-	}
-	fmt.Printf("Genesis system config written to: %s\n", filePath)
-
 	return nil
 }
 
