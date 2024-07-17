@@ -4,6 +4,7 @@ orbs:
   go: circleci/go@1.8.0
   node: circleci/node@5.2.0
   slack: circleci/slack@4.10.1
+  rust: circleci/rust@1.6.1
 
 commands:
   notify-failures-on-main:
@@ -28,6 +29,19 @@ commands:
             echo "deb [arch=all,$(dpkg --print-architecture) signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
             sudo apt update
             sudo apt install just
+  install-nextest:
+    description: "Installs cargo nextest"
+    steps:
+      - run:
+          name: "Install nextest"
+          command: cargo install cargo-nextest --locked
+  install-rust-toolchain:
+    description: "Installs rust toolchain components"
+    steps:
+      - run:
+          name: "Install toolchain"
+          command: |
+            rustup install nightly-x86_64-unknown-linux-gnu
 
 jobs:
   golang-lint:
@@ -114,6 +128,71 @@ jobs:
       - run:
           name: check git tree is clean
           command: git diff --exit-code
+  cargo-tests:
+    docker:
+      - image: cimg/rust:1.79
+    steps:
+      - checkout
+      - install-just
+      - install-nextest
+      - run:
+          name: Cargo Tests
+          command: just cargo-tests
+      - notify-failures-on-main
+  cargo-lint:
+    docker:
+      - image: cimg/rust:1.79
+    steps:
+      - checkout
+      - install-just
+      - install-rust-toolchain
+      - run:
+          name: Cargo lints
+          command: just cargo-lint
+      - notify-failures-on-main
+  cargo-build:
+    docker:
+      - image: cimg/rust:1.79
+    steps:
+      - checkout
+      - install-just
+      - run:
+          name: Cargo build
+          command: just cargo-build
+      - notify-failures-on-main
+  release-dry-run:
+    # filters:
+    #   branches:
+    #     only:
+    #       - main
+    docker:
+      - image: cimg/rust:1.79
+    steps:
+      - checkout
+      - run:
+          name: Release packages [dry-run]
+          command: |
+            cargo install cargo-release
+            cargo login ${CARGO_REGISTRY_TOKEN}
+            cargo release publish --manifest-path bindings/rust-primitives/Cargo.toml --dry-run
+            cargo release publish --manifest-path bindings/rust-bindings/Cargo.toml --dry-run
+  release-publish:
+    # filters:
+    #   branches:
+    #     only:
+    #       - main
+    docker:
+      - image: cimg/rust:1.79
+    steps:
+      - checkout
+      - run:
+          name: Release packages
+          command: |
+            cargo install cargo-release
+            cargo login ${CARGO_REGISTRY_TOKEN}
+            cargo release publish --manifest-path bindings/rust-primitives/Cargo.toml --execute
+            cargo release publish --manifest-path bindings/rust-bindings/Cargo.toml --execute
+      - notify-failures-on-main
 
 workflows:
   hourly:
@@ -134,5 +213,10 @@ workflows:
       - golang-modules-tidy
       - golang-test
       - check-codegen
-
-
+      - cargo-tests
+      - cargo-lint
+      - cargo-build
+      - release-dry-run
+      - release-publish:
+          name: Release
+          requires: [release-dry-run]
