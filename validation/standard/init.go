@@ -5,13 +5,21 @@ import (
 	"io/fs"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
 //go:embed *.toml
 var standardConfigFile embed.FS
 
 func init() {
+
+	opSepoliaGenesis, err := superchain.LoadGenesis(11155420)
+	if err != nil {
+		panic(err)
+	}
+
 	Config = ConfigType{
+		GenesisAlloc:  opSepoliaGenesis.Alloc,
 		Params:        make(map[string]*Params),
 		Roles:         new(Roles),
 		MultisigRoles: make(map[string]*MultisigRoles),
