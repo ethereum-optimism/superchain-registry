@@ -5,12 +5,9 @@ import (
 	"fmt"
 	"math/big"
 	"os"
-	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/BurntSushi/toml"
-	"github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 
@@ -90,32 +87,54 @@ func TestGPs(t *testing.T) {
 }
 
 func TestWritePredeployCodeHashSummary(t *testing.T) {
-	results := make(map[string]map[string]superchain.Hash)
+	// This maps implementation address to codehash to chain identifier
+	results := make(map[string]map[string][]string)
 
-	for _, chain := range OPChains {
-		chain := chain
-		t.Run(perChainTestName(chain), func(t *testing.T) {
+	prefix := "0xc0d3c0d3c0d3C0d3c0d3C0D3C0D3c0d3C0D3"
+	implementationAddresses := []string{ // from the specs
+		prefix + "0000",
+		prefix + "0002",
+		"0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+		"0x4200000000000000000000000000000000000006",
+		prefix + "0007",
+		prefix + "0010",
+		prefix + "0011",
+		prefix + "0012",
+		prefix + "0013",
+		prefix + "000F",
+		prefix + "0042",
+		prefix + "0015",
+		prefix + "0016",
+		prefix + "0014",
+		prefix + "0017",
+		prefix + "0018",
+		prefix + "0019",
+		prefix + "001a",
+		prefix + "0020",
+		prefix + "0021",
+		"0x000F3df6D732807Ef1319fB7B8bB8522d0Beac02",
+	}
+	for _, implementation := range implementationAddresses {
+		results[implementation] = make(map[string][]string)
+		for _, chain := range OPChains {
 			if chain.StandardChainCandidate == false && chain.SuperchainLevel == Frontier {
-				t.Skip()
+				continue
 			}
 			if chain.ChainID == 10 {
-				t.Skip("we don't have the allocs for op mainnet")
+				continue
 			}
 
 			g, err := LoadGenesis(chain.ChainID)
 			require.NoError(t, err)
 
-			stringChainID := strconv.FormatUint(chain.ChainID, 10)
-			results[stringChainID] = make(map[string]superchain.Hash)
-			for address, account := range g.Alloc {
+			ch := g.Alloc[MustHexToAddress(implementation)].CodeHash
 
-				if !strings.HasPrefix(address.String(), "0xc0D3C0d3") {
-					continue // concentrating on predeploy implementations for now
-				}
-
-				results[stringChainID][address.String()] = account.CodeHash
+			if results[implementation] == nil {
+				results[implementation][ch.String()] = []string{chain.Identifier()}
+			} else {
+				results[implementation][ch.String()] = append(results[implementation][ch.String()], chain.Identifier())
 			}
-		})
+		}
 	}
 
 	t.Log(results)
