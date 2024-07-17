@@ -2,9 +2,15 @@ package validation
 
 import (
 	"context"
+	"fmt"
 	"math/big"
+	"os"
+	"strconv"
+	"strings"
 	"testing"
 
+	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 
@@ -80,5 +86,49 @@ func TestGPs(t *testing.T) {
 			}
 			testGenesisPredeploys(t, chain)
 		})
+	}
+}
+
+func TestWritePredeployCodeHashSummary(t *testing.T) {
+	results := make(map[string]map[string]superchain.Hash)
+
+	for _, chain := range OPChains {
+		chain := chain
+		t.Run(perChainTestName(chain), func(t *testing.T) {
+			if chain.StandardChainCandidate == false && chain.SuperchainLevel == Frontier {
+				t.Skip()
+			}
+			if chain.ChainID == 10 {
+				t.Skip("we don't have the allocs for op mainnet")
+			}
+
+			g, err := LoadGenesis(chain.ChainID)
+			require.NoError(t, err)
+
+			stringChainID := strconv.FormatUint(chain.ChainID, 10)
+			results[stringChainID] = make(map[string]superchain.Hash)
+			for address, account := range g.Alloc {
+
+				if !strings.HasPrefix(address.String(), "0xc0D3C0d3") {
+					continue // concentrating on predeploy implementations for now
+				}
+
+				results[stringChainID][address.String()] = account.CodeHash
+			}
+		})
+	}
+
+	t.Log(results)
+	// Open the file for writing in the current directory
+	file, err := os.Create("results.toml")
+	if err != nil {
+		fmt.Println("Error creating file:", err)
+		return
+	}
+	defer file.Close()
+
+	// Encode the struct to TOML and write to the file
+	if err := toml.NewEncoder(file).Encode(results); err != nil {
+		fmt.Println("Error encoding TOML:", err)
 	}
 }
