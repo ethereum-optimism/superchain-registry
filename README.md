@@ -25,7 +25,7 @@ To help with clarity and a common understanding, here are some helpful terms and
 **Standard chain:** A chain that conform to the [Standard Rollup Charter - not ratified yet](https://gov.optimism.io/t/season-6-draft-standard-rollup-charter/8135)
 **Frontier chain:** A non-standard chain which has modifications that do not fit the `Standard Rollup Charter` criteria. 
 **Standard chain candidate:** A chain that has met most of the standard chain criteria, except for the `ProxyAdminOwner` key handover.    
-**Key handover:**  A colloquial term for updating the chain's `ProxyAdminOwner` to fufil the requirements from the standard rollup charter.  
+**Key handover:**  A colloquial term for updating the chain's `ProxyAdminOwner` to fulfill the requirements from the standard rollup charter.  
 
 ### Superchain Level and Rollup Stage
 
@@ -90,9 +90,8 @@ The remaining steps should then be followed to merge the config data into the re
 
 ### 4. Understand output
 The tool will write the following data:
-- The main configuration source, with genesis data, and address of onchain system configuration. These are written to `superchain/configs/superchain_target/chain_short_name.yaml`.
-- Hardfork override times, where they have been set, will be included. If and when a chain becomes a standard chain, a `superchain_time` is set in the chain config. From that time on, future hardfork activation times which are missing from the chain config will be inherited from superchain-wide values in the neighboring `superchain.yaml` file.
-- Addresses of L1 contracts are written to `extra/addresses/superchain_target/chain_short_name.json`. Note that all L2 addresses are statically known addresses defined in the OP-Stack specification, and thus not configured per chain.
+- The main configuration source, with genesis data, and address of onchain system configuration. These are written to `uperchain/configs/<superchain-target>/<chain-short-name>.toml`.
+- Hardfork override times, where they have been set, will be included. If and when a chain becomes a standard chain, a `superchain_time` is set in the chain config. From that time on, future hardfork activation times which are missing from the chain config will be inherited from superchain-wide values in the neighboring `superchain.toml` file.
 - Genesis system config data
 - Compressed `genesis.json` definitions (in the `extra/genesis` directory) which pull in the bytecode by hash
 
@@ -118,8 +117,8 @@ just validate <chain-id>
 The [`validation_test.go`](./validation/validation_test.go) test declaration file defines which checks run on each class of chain. The parameters referenced in each check are recorded in [TOML files in the `standard` directory](./validation/standard).
 
 ### 6. Run codegen and check output
-This is a tool which will rewrite certain summary files of all the chains in the registry, including the one you are adding. 
-The output will be checked in a continuous integration checks (it is required to pass):
+
+This tool will add your chain to the `chainList.toml` and `addresses.json` files, which contain summaries of all chains in the registry.
 
 ```
 just codegen
@@ -135,7 +134,7 @@ When opening a PR:
 - Open it from a non-protected branch in your fork (e.g. avoid the `main` branch). This allows maintainers to push to your branch if needed, which streamlines the review and merge process.
 - Open one PR per chain you would like to add. This ensures the merge of one chain is not blocked by unexpected issues.
 
-Once the PR is opened, the same automated checks from Step 5 will then run on your PR, and your PR will be reviewed in due course. Once these checks pass the PR will be merged.
+Once the PR is opened, the same automated checks you've run locally will then run on your PR, and your PR will be reviewed in due course. Once these checks pass, the PR will be merged.
 
 
 ## Promote a chain to standard
