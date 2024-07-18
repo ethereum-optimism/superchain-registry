@@ -5,21 +5,16 @@ import (
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/stretchr/testify/require"
 )
 
-func testKeyHandover(t *testing.T, chainID uint64) {
-	superchain := OPChains[chainID].Superchain
-	rpcEndpoint := Superchains[superchain].Config.L1.PublicRPC
-	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
-
-	client, err := ethclient.Dial(rpcEndpoint)
-	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+func testKeyHandover(t *testing.T, chain *ChainConfig) {
+	client := clients.L1[chain.Superchain]
 
 	// L1 Proxy Admin
-	checkResolutions(t, standard.Config.MultisigRoles[superchain].KeyHandover.L1.Universal, chainID, client)
+	checkResolutions(t, standard.Config.MultisigRoles[chain.Superchain].KeyHandover.L1.Universal, chain.ChainID, client)
+
+	client = clients.L2[chain.ChainID]
 
 	// L2 Proxy Admin
-	checkResolutions(t, standard.Config.MultisigRoles[superchain].KeyHandover.L1.Universal, chainID, client)
+	checkResolutions(t, standard.Config.MultisigRoles[chain.Superchain].KeyHandover.L2.Universal, chain.ChainID, client)
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/require"
 )
 
@@ -40,10 +39,9 @@ func testGenesisHashAgainstRPC(t *testing.T, chain *ChainConfig) {
 	skipIfExcluded(t, chain.ChainID)
 
 	declaredGenesisHash := chain.Genesis.L2.Hash
-	rpcEndpoint := chain.PublicRPC
 
-	client, err := ethclient.Dial(rpcEndpoint)
-	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	client := clients.L2[chain.ChainID]
+	defer client.Close()
 
 	blockByNumber := func(blockNumber uint64) (*types.Block, error) {
 		return client.BlockByNumber(context.Background(), big.NewInt(int64(blockNumber)))

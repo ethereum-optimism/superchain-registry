@@ -58,10 +58,7 @@ func testGasPriceOracleParams(t *testing.T, chain *ChainConfig) {
 		}
 	}
 
-	rpcEndpoint := chain.PublicRPC
-	require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
-	client, err := ethclient.Dial(rpcEndpoint)
-	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	client := clients.L2[chain.ChainID]
 	checkResourceConfig(t, chain, client)
 }
 

@@ -15,12 +15,7 @@ import (
 )
 
 func testGasLimit(t *testing.T, chain *ChainConfig) {
-	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-
-	require.NotEmpty(t, rpcEndpoint)
-
-	client, err := ethclient.Dial(rpcEndpoint)
-	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	client := clients.L1[chain.Superchain]
 
 	contractAddress, err := Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
 	require.NoError(t, err)

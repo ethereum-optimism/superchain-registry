@@ -5,16 +5,13 @@ import (
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/require"
 )
 
 func testChainIDFromRPC(t *testing.T, chain *ChainConfig) {
 	skipIfExcluded(t, chain.ChainID)
 	// Create an ethclient connection to the specified RPC URL
-	client, err := ethclient.Dial(chain.PublicRPC)
-	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
-	defer client.Close()
+	client := clients.L2[chain.ChainID]
 
 	// Fetch the chain ID
 	chainID, err := Retry(client.NetworkID)(context.Background())

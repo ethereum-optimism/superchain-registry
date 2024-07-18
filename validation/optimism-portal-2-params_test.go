@@ -10,7 +10,6 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -20,11 +19,8 @@ func testOptimismPortal2Params(t *testing.T, chain *ChainConfig) {
 	opAddr, err := Addresses[chain.ChainID].AddressFor("OptimismPortalProxy")
 	require.NoError(t, err)
 
-	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-
-	require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
-	client, err := ethclient.Dial(rpcEndpoint)
-	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	client := clients.L1[chain.Superchain]
+	defer client.Close()
 
 	op, err := bindings.NewOptimismPortal2(common.Address(opAddr), client)
 	require.NoError(t, err)

@@ -73,6 +73,6 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 // i.e. not to a Standard Candidate Chain.
 func testStandard(t *testing.T, chain *ChainConfig) {
 	t.Run("Key Handover Check", func(t *testing.T) {
-		testKeyHandover(t, chain.ChainID)
+		testKeyHandover(t, chain)
 	})
 }

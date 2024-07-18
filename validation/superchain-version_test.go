@@ -22,11 +22,8 @@ import (
 func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	skipIfExcluded(t, chain.ChainID)
 
-	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-	require.NotEmpty(t, rpcEndpoint)
-
-	client, err := ethclient.Dial(rpcEndpoint)
-	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	client := clients.L1[chain.Superchain]
+	defer client.Close()
 
 	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client)
 	require.NoError(t, err)

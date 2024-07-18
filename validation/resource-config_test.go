@@ -16,18 +16,14 @@ import (
 )
 
 func testResourceConfig(t *testing.T, chain *ChainConfig) {
-	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-
-	require.NotEmpty(t, rpcEndpoint)
-
-	client, err := ethclient.Dial(rpcEndpoint)
-	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	client := clients.L1[chain.Superchain]
+	defer client.Close()
 
 	contractAddress, err := Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
 	require.NoError(t, err)
 
 	actualResourceConfig, err := getResourceConfig(context.Background(), common.Address(contractAddress), client)
-	require.NoErrorf(t, err, "RPC endpoint %s: %s", rpcEndpoint)
+	require.NoError(t, err)
 
 	desiredParams := standard.Config.Params[chain.Superchain].ResourceConfig
 

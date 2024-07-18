@@ -53,12 +53,8 @@ var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64
 
 func testL1SecurityConfig(t *testing.T, chainID uint64) {
 	skipIfExcluded(t, chainID)
-
-	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC
-	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
-
-	client, err := ethclient.Dial(rpcEndpoint)
-	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	client := clients.L1[OPChains[chainID].Superchain]
+	defer client.Close()
 
 	portalProxyAddress, err := Addresses[chainID].AddressFor("OptimismPortalProxy")
 	require.NoError(t, err)
@@ -96,9 +92,7 @@ func testL1SecurityConfig(t *testing.T, chainID uint64) {
 
 func testL2SecurityConfig(t *testing.T, chain *ChainConfig) {
 	skipIfExcluded(t, chain.ChainID)
-	// Create an ethclient connection to the specified RPC URL
-	client, err := ethclient.Dial(chain.PublicRPC)
-	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
+	client := clients.L2[chain.ChainID]
 	defer client.Close()
 	checkResolutions(t, standard.Config.Roles.L2.Universal, chain.ChainID, client)
 }
