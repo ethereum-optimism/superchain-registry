@@ -44,7 +44,7 @@ impl SuperchainParent {
         match self.chain.as_ref() {
             "mainnet" => 1,
             "sepolia" => 11155111,
-            "sepolia-dev-0" => 11155420,
+            "sepolia-dev-0" => 11155421,
             _ => 10,
         }
     }
