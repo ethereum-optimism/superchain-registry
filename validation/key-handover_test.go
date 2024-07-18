@@ -20,6 +20,12 @@ func testKeyHandover(t *testing.T, chainID uint64) {
 	// L1 Proxy Admin
 	checkResolutions(t, standard.Config.MultisigRoles[superchain].KeyHandover.L1.Universal, chainID, client)
 
+	rpcEndpoint = OPChains[chainID].PublicRPC
+	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
+
+	client, err = ethclient.Dial(rpcEndpoint)
+	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+
 	// L2 Proxy Admin
-	checkResolutions(t, standard.Config.MultisigRoles[superchain].KeyHandover.L1.Universal, chainID, client)
+	checkResolutions(t, standard.Config.MultisigRoles[superchain].KeyHandover.L2.Universal, chainID, client)
 }
