@@ -68,15 +68,11 @@ Install the following dependencies
 
 Make a copy of `.env.example` named `.env`, and alter the variables to appropriate values. Each value is explained in a comment in `.env.example`.
 
-#### Frontier chains
-To contribute a frontier OP-Stack chain configuration, you set the `SCR_CHAIN_TYPE=frontier` in the `.env` file. This will set `superchain_level = 1` in the registry's config file for this chain.
-
-#### Standard chains
-
-todo: is this different from frontier chains? and which tool are we referring to?
-To contribute a standard OP-Stack chain configuration, in addition to user-supplied metadata (chain name) the following data is required: contracts deployment, rollup config, L2 genesis. We provide a tool to scrape this information from your local [monorepo](https://github.com/ethereum-optimism/optimism) folder.
-
-Adding a standard chain is a two-step process. First, the chain should be added as a frontier chain as above, but with `SCR_STANDARD_CHAIN_CANDIDATE=true` in the `.env` file.
+> [!IMPORTANT]
+> Adding a standard chain is a two-step process. For your initial PR, ensure
+> `SCR_STANDARD_CHAIN_CANDIDATE=true` in the `.env` file. After you've met all
+> of the Standard chain requirements, you'll open a new PR following the 
+> [Promote a chain to standard](#promote-a-chain-to-standard) process.
 
 ### 3. Run script
 
