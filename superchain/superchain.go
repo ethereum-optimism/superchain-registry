@@ -48,17 +48,6 @@ type SystemConfig struct {
 	BlobBaseFeeScalar *uint64 `json:"blobBaseFeeScalar,omitempty" toml:"blobBaseFeeScalar,omitempty"`
 }
 
-type GenesisData struct {
-	L1     GenesisLayer `json:"l1"`
-	L2     GenesisLayer `json:"l2"`
-	L2Time int          `json:"l2_time"`
-}
-
-type GenesisLayer struct {
-	Hash   string `json:"hash"`
-	Number int    `json:"number"`
-}
-
 type HardForkConfiguration struct {
 	CanyonTime  *uint64 `json:"canyon_time,omitempty" toml:"canyon_time,omitempty"`
 	DeltaTime   *uint64 `json:"delta_time,omitempty" toml:"delta_time,omitempty"`
@@ -436,13 +425,6 @@ func canonicalizeSemver(version string) string {
 		version = "v" + version
 	}
 	return version
-}
-
-type GenesisSystemConfig struct {
-	BatcherAddr Address `json:"batcherAddr"`
-	Overhead    Hash    `json:"overhead"`
-	Scalar      Hash    `json:"scalar"`
-	GasLimit    uint64  `json:"gasLimit"`
 }
 
 type GenesisAccount struct {
