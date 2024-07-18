@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/BurntSushi/toml"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/yaml.v3"
 )
 
 func TestAddressFor(t *testing.T) {
@@ -64,7 +64,7 @@ func TestChainIds(t *testing.T) {
 				require.NoError(t, err)
 				var chainConfig ChainConfig
 
-				require.NoError(t, yaml.Unmarshal(configBytes, &chainConfig))
+				require.NoError(t, toml.Unmarshal(configBytes, &chainConfig))
 
 				storeIfUnique(chainConfig.ChainID)
 			}
@@ -189,24 +189,23 @@ func testNetworkUpgradeTimestampOffset(l2GenesisTime uint64, blockTime uint64, u
 }
 
 func TestSuperchainConfigUnmarshaling(t *testing.T) {
-	rawYAML := `
-name: Mickey Mouse
-l1:
-  chain_id: 314
-  public_rpc: https://disney.com
-  explorer: https://disneyscan.io
+	rawTOML := `
+name = "Mickey Mouse"
+protocol_versions_addr = "0x252CbE9517F731C618961D890D534183822dcC8d"
+superchain_config_addr = "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
 
-protocol_versions_addr: "0x252CbE9517F731C618961D890D534183822dcC8d"
-superchain_config_addr: "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
+canyon_time = 1
+delta_time = 2
+ecotone_time = 3
 
-canyon_time: 1
-delta_time: 2
-ecotone_time: 3
-fjord_time:
+[l1]
+  chain_id = 314
+  public_rpc = "https://disney.com"
+  explorer = "https://disneyscan.io"
 `
 
 	s := SuperchainConfig{}
-	err := unMarshalSuperchainConfig([]byte(rawYAML), &s)
+	err := unMarshalSuperchainConfig([]byte(rawTOML), &s)
 	require.NoError(t, err)
 
 	require.Equal(t, "Mickey Mouse", s.Name)
@@ -215,6 +214,7 @@ fjord_time:
 		PublicRPC: "https://disney.com",
 		Explorer:  "https://disneyscan.io",
 	}, s.L1)
+
 	require.Equal(t, "0x252CbE9517F731C618961D890D534183822dcC8d", s.ProtocolVersionsAddr.String())
 	require.Equal(t, "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7", s.SuperchainConfigAddr.String())
 	require.Equal(t, uint64Ptr(uint64(1)), s.hardForkDefaults.CanyonTime)
@@ -237,42 +237,36 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 	}
 
 	overridenCanyonTime := uint64Ptr(uint64(8))
-	override := []byte(`canyon_time: 8`)
-	nilOverride := []byte(`canyon_time:`)
-	nilOverride2 := []byte(``)
-	nilOverride3 := []byte(`superchain_time: 2`)
-	nilOverride4 := []byte(`superchain_time: 0`)
-	nilOverride5 := []byte(`superchain_time: 10`)
-	nilOverride6 := []byte(`
-superchain_time: 1
-genesis:
-  l2_time: 4
+	override := []byte(`canyon_time = 8`)
+	nilOverride1 := []byte(`superchain_time = 2`)
+	nilOverride2 := []byte(`superchain_time = 0`)
+	nilOverride3 := []byte(`superchain_time = 10`)
+	nilOverride4 := []byte(`
+superchain_time = 1
+[genesis]
+  l2_time = 4
 `)
 
 	type testCase struct {
 		name               string
 		scConfig           SuperchainConfig
-		rawYAML            []byte
+		rawTOML            []byte
 		expectedCanyonTime *uint64
 	}
 
 	testCases := []testCase{
 		{"default + override  (nil superchain_time)= override", defaultSuperchainConfig, override, overridenCanyonTime},
-		{"default + nil override (nil superchain_time) = nil", defaultSuperchainConfig, nilOverride, nil},
-		{"default + no override (nil superchain_time )= nil", defaultSuperchainConfig, nilOverride2, nil},
 		{"nil default + override = override", nilDefaultSuperchainConfig, override, overridenCanyonTime},
-		{"nil default + nil override = nil", nilDefaultSuperchainConfig, nilOverride, nil},
-		{"nil default + no override = nil", nilDefaultSuperchainConfig, nilOverride2, nil},
-		{"default + nil override (default after superchain_time) = default", defaultSuperchainConfig, nilOverride3, &defaultCanyonTime},
-		{"default + nil override (default after zero superchain_time) = default", defaultSuperchainConfig, nilOverride4, &defaultCanyonTime},
-		{"default + nil override (default before superchain_time) = nil", defaultSuperchainConfig, nilOverride5, nil},
-		{"default + nil override (default after zero superchain_time but before genesis) = 0", defaultSuperchainConfig, nilOverride6, uint64Ptr(0)},
+		{"default + nil override (default after superchain_time) = default", defaultSuperchainConfig, nilOverride1, &defaultCanyonTime},
+		{"default + nil override (default after zero superchain_time) = default", defaultSuperchainConfig, nilOverride2, &defaultCanyonTime},
+		{"default + nil override (default before superchain_time) = nil", defaultSuperchainConfig, nilOverride3, nil},
+		{"default + nil override (default after zero superchain_time but before genesis) = 0", defaultSuperchainConfig, nilOverride4, uint64Ptr(0)},
 	}
 
 	executeTestCase := func(t *testing.T, tt testCase) {
 		c := ChainConfig{}
 
-		err := yaml.Unmarshal([]byte(tt.rawYAML), &c)
+		err := toml.Unmarshal([]byte(tt.rawTOML), &c)
 		require.NoError(t, err)
 
 		c.setNilHardforkTimestampsToDefaultOrZero(&tt.scConfig)
@@ -295,12 +289,12 @@ func TestHardForkOverridesAndDefaults2(t *testing.T) {
 
 	c := ChainConfig{}
 
-	rawYAML := `
-ecotone_time: 2
-fjord_time: 3
+	rawTOML := `
+ecotone_time = 2
+fjord_time = 3
 `
 
-	err := yaml.Unmarshal([]byte(rawYAML), &c)
+	err := toml.Unmarshal([]byte(rawTOML), &c)
 	require.NoError(t, err)
 
 	c.setNilHardforkTimestampsToDefaultOrZero(&defaultSuperchainConfig)

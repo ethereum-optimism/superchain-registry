@@ -37,8 +37,8 @@ var PromoteToStandardCmd = cli.Command{
 
 		superchainRepoPath := filepath.Dir(filepath.Dir(filepath.Dir(thisFile)))
 		targetDir := filepath.Join(superchainRepoPath, "superchain", "configs", chain.Superchain)
-		targetFilePath := filepath.Join(targetDir, chain.Chain+".yaml")
-		err := config.WriteChainConfig(*chain, targetFilePath)
+		targetFilePath := filepath.Join(targetDir, chain.Chain+".toml")
+		err := config.WriteChainConfigTOML(*chain, targetFilePath)
 		if err != nil {
 			panic(err)
 		}

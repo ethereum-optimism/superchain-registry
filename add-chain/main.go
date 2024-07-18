@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -135,34 +134,6 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
 
-	targetFilePath := filepath.Join(targetDir, chainShortName+".yaml")
-	err = config.WriteChainConfig(rollupConfig, targetFilePath)
-	if err != nil {
-		return fmt.Errorf("error generating chain config .yaml file: %w", err)
-	}
-
-	fmt.Printf("Wrote config for new chain with identifier %s", rollupConfig.Identifier())
-
-	// Create genesis-system-config data
-	// (this is deprecated, users should load this from L1, when available via SystemConfig)
-	dirPath := filepath.Join(superchainRepoRoot, "superchain", "extra", "genesis-system-configs", superchainTarget)
-
-	if err := os.MkdirAll(dirPath, 0o755); err != nil {
-		return fmt.Errorf("failed to create directory: %w", err)
-	}
-
-	// Write the genesis system config JSON to a new file
-	systemConfigJSON, err := json.MarshalIndent(rollupConfig.Genesis.SystemConfig, "", "  ")
-	if err != nil {
-		return fmt.Errorf("failed to marshal genesis system config json: %w", err)
-	}
-
-	filePath := filepath.Join(dirPath, chainShortName+".json")
-	if err := os.WriteFile(filePath, systemConfigJSON, 0o644); err != nil {
-		return fmt.Errorf("failed to write genesis system config json: %w", err)
-	}
-	fmt.Printf("Genesis system config written to: %s\n", filePath)
-
 	err = readAddressesFromChain(addresses, l1RpcUrl, isFaultProofs)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from chain: %w", err)
@@ -172,11 +143,20 @@ func entrypoint(ctx *cli.Context) error {
 		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
 	}
 
-	err = writeAddressesToJSON(addresses, superchainRepoRoot, superchainTarget, chainShortName)
+	addressList := superchain.AddressList{}
+	err = mapToAddressList(addresses, &addressList)
 	if err != nil {
-		return fmt.Errorf("failed to write contract addresses to JSON file: %w", err)
+		return fmt.Errorf("error converting map to AddressList: %w", err)
+	}
+	rollupConfig.Addresses = addressList
+
+	targetFilePath := filepath.Join(targetDir, chainShortName+".toml")
+	err = config.WriteChainConfigTOML(rollupConfig, targetFilePath)
+	if err != nil {
+		return fmt.Errorf("error generating chain config .yaml file: %w", err)
 	}
 
+	fmt.Printf("Wrote config for new chain with identifier %s", rollupConfig.Identifier())
 	return nil
 }
 
