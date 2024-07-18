@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+  "sort"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -104,6 +105,9 @@ func main() {
   for _, chain := range OPChains {
     cfgs = append(cfgs, *chain)
   }
+  sort.Slice(cfgs, func(i, j int) bool {
+      return cfgs[i].ChainID < cfgs[j].ChainID
+  })
   if len(cfgs) != 0 {
     var buf bytes.Buffer
     if err := toml.NewEncoder(&buf).Encode(Configs{Configs: cfgs}); err != nil {
