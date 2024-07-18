@@ -34,6 +34,8 @@ pub struct HardForkConfiguration {
     pub ecotone_time: Option<u64>,
     /// Fjord hardfork activation time
     pub fjord_time: Option<u64>,
+    /// Interop hardfork activation time
+    pub interop_time: Option<u64>,
 }
 
 /// A chain configuration.
@@ -44,6 +46,9 @@ pub struct ChainConfig {
     pub name: String,
     /// Chain ID
     pub chain_id: u64,
+    /// L1 chain ID
+    #[cfg_attr(feature = "serde", serde(skip))]
+    pub l1_chain_id: u64,
     /// Chain public RPC endpoint
     pub public_rpc: String,
     /// Chain sequencer RPC endpoint
@@ -87,17 +92,20 @@ impl ChainConfig {
         };
         let cfg = &mut self.hardfork_configuration;
 
-        if cfg.canyon_time.is_some_and(|t| t > super_time) {
+        if cfg.canyon_time.is_none() && defaults.canyon_time.is_some_and(|t| t > super_time) {
             cfg.canyon_time = defaults.canyon_time;
         }
-        if cfg.delta_time.is_some_and(|t| t > super_time) {
+        if cfg.delta_time.is_none() && defaults.delta_time.is_some_and(|t| t > super_time) {
             cfg.delta_time = defaults.delta_time;
         }
-        if cfg.ecotone_time.is_some_and(|t| t > super_time) {
+        if cfg.ecotone_time.is_none() && defaults.ecotone_time.is_some_and(|t| t > super_time) {
             cfg.ecotone_time = defaults.ecotone_time;
         }
-        if cfg.fjord_time.is_some_and(|t| t > super_time) {
+        if cfg.fjord_time.is_none() && defaults.fjord_time.is_some_and(|t| t > super_time) {
             cfg.fjord_time = defaults.fjord_time;
+        }
+        if cfg.interop_time.is_none() && defaults.interop_time.is_some_and(|t| t > super_time) {
+            cfg.interop_time = defaults.interop_time;
         }
     }
 }

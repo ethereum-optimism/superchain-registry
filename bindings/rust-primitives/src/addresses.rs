@@ -29,8 +29,14 @@ pub struct AddressList {
     pub optimism_portal_proxy: Address,
     /// System Config Proxy address
     pub system_config_proxy: Address,
+    /// The system config owner
+    pub system_config_owner: Address,
     /// Proxy Admin address
     pub proxy_admin: Address,
+    /// The owner of the Proxy Admin
+    pub proxy_admin_owner: Address,
+    /// The guardian address
+    pub guardian: Address,
 
     // Fault Proof Contract Addresses
     /// Anchor State Registry Proxy address
@@ -49,4 +55,36 @@ pub struct AddressList {
     pub permissioned_dispute_game: Option<Address>,
     /// Preimage Oracle Proxy address
     pub preimage_oracle: Option<Address>,
+    /// The challenger's address
+    pub challenger: Option<Address>,
+}
+
+impl AddressList {
+    /// Sets zeroed addresses to [`Option::None`].
+    pub fn zero_proof_addresses(&mut self) {
+        if self.anchor_state_registry_proxy == Some(Address::ZERO) {
+            self.anchor_state_registry_proxy = None;
+        }
+        if self.delayed_weth_proxy == Some(Address::ZERO) {
+            self.delayed_weth_proxy = None;
+        }
+        if self.dispute_game_factory_proxy == Some(Address::ZERO) {
+            self.dispute_game_factory_proxy = None;
+        }
+        if self.fault_dispute_game == Some(Address::ZERO) {
+            self.fault_dispute_game = None;
+        }
+        if self.mips == Some(Address::ZERO) {
+            self.mips = None;
+        }
+        if self.permissioned_dispute_game == Some(Address::ZERO) {
+            self.permissioned_dispute_game = None;
+        }
+        if self.preimage_oracle == Some(Address::ZERO) {
+            self.preimage_oracle = None;
+        }
+        if self.challenger == Some(Address::ZERO) {
+            self.challenger = None;
+        }
+    }
 }
