@@ -24,7 +24,7 @@ func testGasToken(t *testing.T, chain *ChainConfig) {
 	want := "0000000000000000000000000000000000000000000000000000000000000020" + // offset
 		"000000000000000000000000000000000000000000000000000000000000000d" + // length
 		"5772617070656420457468657200000000000000000000000000000000000000" // "Wrapped Ether" padded to 32 bytes
-	gotName, err := getString("name()", MustHexToAddress("0x4200000000000000000000000000000000000006"), client)
+	gotName, err := getHexString("name()", MustHexToAddress("0x4200000000000000000000000000000000000006"), client)
 	require.NoError(t, err)
 	require.Equal(t, want, gotName)
 
@@ -54,7 +54,7 @@ func testGasToken(t *testing.T, chain *ChainConfig) {
 	}
 }
 
-func getString(method string, contractAddress Address, client *ethclient.Client) (string, error) {
+func getHexString(method string, contractAddress Address, client *ethclient.Client) (string, error) {
 	addr := (common.Address(contractAddress))
 	callMsg := ethereum.CallMsg{
 		To:   &addr,
