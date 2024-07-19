@@ -26,7 +26,7 @@ lazy_static::lazy_static! {
     pub static ref CHAINS: Vec<Chain> = _INIT.chains.clone();
 
     /// OP Chain configurations exported from the registry
-    pub static ref OPCHAINS: OPChains = _INIT.op_chains.clone();
+    pub static ref OPCHAINS: HashMap<u64, ChainConfig> = _INIT.op_chains.clone();
 
     /// Rollup configurations exported from the registry
     pub static ref ROLLUP_CONFIGS: RollupConfigs = _INIT.rollup_configs.clone();
