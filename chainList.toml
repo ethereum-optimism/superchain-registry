@@ -76,6 +76,17 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "RACE Mainnet"
+  identifier = "mainnet/race"
+  chain_id = 6805
+  rpc = ["https://racemainnet.io"]
+  explorers = ["https://racescan.io/"]
+  superchain_level = 1
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "SuperLumio"
   identifier = "mainnet/superlumio"
   chain_id = 8866
