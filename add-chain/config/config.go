@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
@@ -49,7 +50,6 @@ func ConstructChainConfig(
 	explorer string,
 	superchainLevel superchain.SuperchainLevel,
 	standardChainCandidate bool,
-	isFaultProofs bool,
 ) (superchain.ChainConfig, error) {
 	fmt.Printf("Attempting to read from %s\n", inputFilePath)
 	file, err := os.ReadFile(inputFilePath)

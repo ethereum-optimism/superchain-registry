@@ -8,10 +8,14 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ethereum-optimism/optimism/op-e2e/bindings"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/cmd"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/config"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/flags"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 )
@@ -129,7 +133,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to infer fault proofs status of chain: %w", err)
 	}
 
-	rollupConfig, err := config.ConstructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate, isFaultProofs)
+	rollupConfig, err := config.ConstructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
@@ -149,6 +153,16 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("error converting map to AddressList: %w", err)
 	}
 	rollupConfig.Addresses = addressList
+
+	l1RpcUrl, err = config.GetL1RpcUrl(superchainTarget)
+	if err != nil {
+		return fmt.Errorf("error getting l1RpcUrl: %w", err)
+	}
+	gpt, err := getGasPayingToken(l1RpcUrl, addressList.SystemConfigProxy)
+	if err != nil {
+		return fmt.Errorf("error inferring gas paying token: %w", err)
+	}
+	rollupConfig.GasPayingToken = gpt
 
 	targetFilePath := filepath.Join(targetDir, chainShortName+".toml")
 	err = config.WriteChainConfigTOML(rollupConfig, targetFilePath)
@@ -176,4 +190,34 @@ func inferIsFaultProofs(optimismPortalProxyAddress, l1RpcUrl string) (bool, erro
 		return false, fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
 	}
 	return majorVersion >= 3, nil
+}
+
+func getGasPayingToken(l1rpcURl string, SystemConfigAddress superchain.Address) (*superchain.Address, error) {
+	client, err := ethclient.Dial(l1rpcURl)
+	if err != nil {
+		return nil, err
+	}
+	sc, err := bindings.NewSystemConfig(common.Address(SystemConfigAddress), client)
+	if err != nil {
+		return nil, err
+	}
+
+	opts := bind.CallOpts{}
+	result, err := sc.GasPayingToken(&opts)
+	if strings.Contains(err.Error(), "execution reverted") {
+		// This happens when the SystemConfig contract
+		// does not yet have the CGT functionality.
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	if (result.Addr == common.Address{}) {
+		// This happens with the SystemConfig contract
+		// does have the CGT functionality, but it has
+		// not been enabled.
+		return nil, nil
+	}
+
+	return (*superchain.Address)(&result.Addr), nil
 }
