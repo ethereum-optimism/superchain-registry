@@ -160,39 +160,6 @@ jobs:
           name: Cargo build
           command: just cargo-build
       - notify-failures-on-main
-  release-dry-run:
-    # filters:
-    #   branches:
-    #     only:
-    #       - main
-    docker:
-      - image: cimg/rust:1.79
-    steps:
-      - checkout
-      - run:
-          name: Release packages [dry-run]
-          command: |
-            cargo install cargo-release
-            cargo login ${CARGO_REGISTRY_TOKEN}
-            cargo release publish --manifest-path bindings/rust-primitives/Cargo.toml --dry-run
-            cargo release publish --manifest-path bindings/rust-bindings/Cargo.toml --dry-run
-  release-publish:
-    # filters:
-    #   branches:
-    #     only:
-    #       - main
-    docker:
-      - image: cimg/rust:1.79
-    steps:
-      - checkout
-      - run:
-          name: Release packages
-          command: |
-            cargo install cargo-release
-            cargo login ${CARGO_REGISTRY_TOKEN}
-            cargo release publish --manifest-path bindings/rust-primitives/Cargo.toml --execute
-            cargo release publish --manifest-path bindings/rust-bindings/Cargo.toml --execute
-      - notify-failures-on-main
 
 workflows:
   hourly:
@@ -216,7 +183,3 @@ workflows:
       - cargo-tests
       - cargo-lint
       - cargo-build
-      - release-dry-run
-      - release-publish:
-          name: Release
-          requires: [release-dry-run]
