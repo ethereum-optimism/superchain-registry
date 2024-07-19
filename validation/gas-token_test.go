@@ -3,7 +3,6 @@ package validation
 import (
 	"context"
 	"errors"
-	"strings"
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
@@ -31,9 +30,10 @@ func testGasToken(t *testing.T, chain *ChainConfig) {
 
 	// L1Block .isCustomGasToken() check
 	got, err := getBool("isCustomGasToken()", MustHexToAddress("0x4200000000000000000000000000000000000015"), client)
-	if !strings.Contains(err.Error(), "execution reverted") {
+
+	if err != nil {
 		// Pre: Custom Gas Token feature. Reverting is acceptable.
-		require.NoError(t, err)
+		require.Contains(t, err.Error(), "execution reverted")
 	} else {
 		// Post: Custom Gas Token fearure. Must be set to false.
 		require.False(t, got)
@@ -45,9 +45,9 @@ func testGasToken(t *testing.T, chain *ChainConfig) {
 	defer client.Close()
 
 	got, err = getBool("isCustomGasToken()", Addresses[chain.ChainID].SystemConfigProxy, client)
-	if !strings.Contains(err.Error(), "execution reverted") {
+	if err != nil {
 		// Pre: Custom Gas Token feature. Reverting is acceptable.
-		require.NoError(t, err)
+		require.Contains(t, err.Error(), "execution reverted")
 	} else {
 		// Post: Custom Gas Token fearure. Must be set to false.
 		require.False(t, got)
