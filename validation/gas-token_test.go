@@ -54,7 +54,7 @@ func testGasToken(t *testing.T, chain *ChainConfig) {
 	}
 }
 
-func getHexString(method string, contractAddress Address, client *ethclient.Client) (string, error) {
+func getBytes(method string, contractAddress Address, client *ethclient.Client) ([]byte, error) {
 	addr := (common.Address(contractAddress))
 	callMsg := ethereum.CallMsg{
 		To:   &addr,
@@ -66,40 +66,27 @@ func getHexString(method string, contractAddress Address, client *ethclient.Clie
 		return client.CallContract(context.Background(), msg, nil)
 	}
 
-	result, err := Retry(callContract)(callMsg)
+	return Retry(callContract)(callMsg)
+}
+func getHexString(method string, contractAddress Address, client *ethclient.Client) (string, error) {
+
+	result, err := getBytes(method, contractAddress, client)
 
 	return common.Bytes2Hex(result), err
 }
 
 func getBool(method string, contractAddress Address, client *ethclient.Client) (bool, error) {
-	addr := (common.Address(contractAddress))
-	callMsg := ethereum.CallMsg{
-		To:   &addr,
-		Data: crypto.Keccak256([]byte(method))[:4],
-	}
-
-	// Make the call
-	callContract := func(msg ethereum.CallMsg) ([]byte, error) {
-		return client.CallContract(context.Background(), msg, nil)
-	}
-
-	result, err := Retry(callContract)(callMsg)
-
+	result, err := getBytes(method, contractAddress, client)
 	if err != nil {
 		return false, err
 	}
 
-	// Decode the result
-	var decodedBool bool
-
-	// If the result is a string "0x1" or "0x0", convert to bool
-	if string(result) == "0x1" {
-		decodedBool = true
-	} else if string(result) == "0x0" {
-		decodedBool = false
-	} else {
-		return false, errors.New("Unexpected return value, cannot convert to bool")
+	switch string(result) {
+	case "0x1":
+		return true, nil
+	case "0x0":
+		return false, nil
+	default:
+		return false, errors.New("unexpected non-bool return value")
 	}
-
-	return decodedBool, nil
 }
