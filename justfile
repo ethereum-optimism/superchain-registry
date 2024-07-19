@@ -67,3 +67,18 @@ remove-chain SUPERCHAIN_TARGET CHAIN:
 	rm superchain/configs/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.toml
 	rm superchain/extra/genesis/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.json.gz
 	just codegen
+
+# Run cargo tests
+cargo-tests:
+  just bindings/rust-primitives/tests
+  just bindings/rust-bindings/tests
+
+# Run cargo lints
+cargo-lint:
+  just bindings/rust-primitives/lint
+  just bindings/rust-bindings/lint
+
+# Cargo build
+cargo-build:
+  just bindings/rust-primitives/build
+  just bindings/rust-bindings/build
