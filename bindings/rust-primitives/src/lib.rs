@@ -38,10 +38,10 @@ pub use rollup_config::{
 };
 
 mod chain_config;
-pub use chain_config::{ChainConfig, HardForkConfiguration, OPChains, PlasmaConfig};
+pub use chain_config::{ChainConfig, HardForkConfiguration, PlasmaConfig};
 
 mod genesis;
-pub use genesis::{ChainGenesis, GenesisSystemConfigs};
+pub use genesis::ChainGenesis;
 
 mod block;
 pub use block::BlockID;
@@ -50,12 +50,4 @@ mod system_config;
 pub use system_config::SystemConfig;
 
 mod addresses;
-pub use addresses::{AddressList, Addresses};
-
-mod contracts;
-pub use contracts::{AddressSet, ContractImplementations, Implementations};
-
-/// Validates if a file is a configuration file.
-pub fn is_config_file(name: &str) -> bool {
-    name.ends_with(".toml") && name != "superchain.toml" && name != "semver.toml"
-}
+pub use addresses::AddressList;

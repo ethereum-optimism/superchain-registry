@@ -1,6 +1,6 @@
 //! Contains the full superchain data.
 
-use super::{Chain, ChainConfig, ChainList, HashMap, OPChains, RollupConfigs, SuperchainConfig};
+use super::{Chain, ChainConfig, ChainList, HashMap, RollupConfigs, SuperchainConfig};
 
 /// A list of chain configs.
 #[derive(Debug, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
@@ -17,7 +17,7 @@ pub struct Superchain {
     /// The list of chains.
     pub chains: Vec<Chain>,
     /// Map of chain IDs to their chain configuration.
-    pub op_chains: OPChains,
+    pub op_chains: HashMap<u64, ChainConfig>,
     /// Map of chain IDs to their rollup configurations.
     pub rollup_configs: RollupConfigs,
 }

@@ -3,10 +3,6 @@
 use crate::BlockID;
 use crate::SystemConfig;
 use alloy_primitives::Bytes;
-use hashbrown::HashMap;
-
-/// Map of chain IDs to their chain's genesis system configurations.
-pub type GenesisSystemConfigs = HashMap<u64, SystemConfig>;
 
 /// Chain genesis information.
 #[derive(Debug, Clone, Default, Hash, Eq, PartialEq)]

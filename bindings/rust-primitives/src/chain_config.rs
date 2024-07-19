@@ -5,10 +5,6 @@ use crate::ChainGenesis;
 use crate::SuperchainLevel;
 use alloc::string::String;
 use alloy_primitives::Address;
-use hashbrown::HashMap;
-
-/// Map of OPChain IDs to their [ChainConfig].
-pub type OPChains = HashMap<u64, ChainConfig>;
 
 /// Plasma configuration.
 #[derive(Debug, Clone, Default, Hash, Eq, PartialEq)]

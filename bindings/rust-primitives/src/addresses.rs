@@ -1,10 +1,6 @@
 //! Address Types
 
 use alloy_primitives::Address;
-use hashbrown::HashMap;
-
-/// Map of chain IDs to their address lists.
-pub type Addresses = HashMap<u64, AddressList>;
 
 /// The set of network-specific contracts for a given chain.
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Default)]
