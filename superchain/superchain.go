@@ -106,7 +106,8 @@ type ChainConfig struct {
 	SequencerWindowSize uint64 `toml:"seq_window_size"`
 
 	// Optional feature
-	Plasma *PlasmaConfig `toml:"plasma,omitempty"`
+	Plasma         *PlasmaConfig `toml:"plasma,omitempty"`
+	GasPayingToken *Address      `toml:"gas_paying_token,omitempty"` // Just metadata, not consumed by downstream OPStack software
 
 	Genesis ChainGenesis `toml:"genesis"`
 

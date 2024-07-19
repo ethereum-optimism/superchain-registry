@@ -55,6 +55,7 @@ func testUniversal(t *testing.T, chain *ChainConfig) {
 func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	// Standard Config Params
 	t.Run("Rollup Config", func(t *testing.T) { testRollupConfig(t, chain) })
+	t.Run("Gas Token", (func(t *testing.T) { testGasToken(t, chain) }))
 	t.Run("Optimism Portal 2 Params", func(t *testing.T) { testOptimismPortal2Params(t, chain) })
 	t.Run("Resource Config", func(t *testing.T) { testResourceConfig(t, chain) })
 	t.Run("Gas Limit", func(t *testing.T) { testGasLimit(t, chain) })
