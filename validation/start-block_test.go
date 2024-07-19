@@ -24,11 +24,14 @@ func testStartBlock(t *testing.T, chain *ChainConfig) {
 	contractAddress := Addresses[chain.ChainID].SystemConfigProxy
 	require.NotZero(t, contractAddress)
 
-	desiredParam := chain.Genesis.L1.Number
-	actualParam, err := getStartBlockWithRetries(context.Background(), common.Address(contractAddress), client)
+	offChainParam := chain.Genesis.L1.Number
+	onChainParam, err := getStartBlockWithRetries(context.Background(), common.Address(contractAddress), client)
 	require.NoError(t, err)
 
-	require.Equal(t, desiredParam, actualParam, fmt.Sprintf("off-chain = %d, on-chain = %d", desiredParam, actualParam))
+	isValid := offChainParam <= onChainParam
+	// offChainParam determines when new nodes will start when trying to sync. If the offChain value is
+	// greater than the onChain value, there is a risk new nodes will miss deposit txs
+	require.True(t, isValid, fmt.Sprintf("off-chain = %d, on-chain = %d", offChainParam, onChainParam))
 }
 
 func getStartBlockWithRetries(ctx context.Context, systemConfigAddr common.Address, client *ethclient.Client) (uint64, error) {
