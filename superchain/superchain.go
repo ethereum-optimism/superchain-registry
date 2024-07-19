@@ -107,7 +107,7 @@ type ChainConfig struct {
 
 	// Optional feature
 	Plasma         *PlasmaConfig `toml:"plasma,omitempty"`
-	GasPayingToken *Address      `toml:"gas_paying_token, omitempty"` // Just metadata, not consumed by downstream OPStack software
+	GasPayingToken *Address      `toml:"gas_paying_token,omitempty"` // Just metadata, not consumed by downstream OPStack software
 
 	Genesis ChainGenesis `toml:"genesis"`
 
