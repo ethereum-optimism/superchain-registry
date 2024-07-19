@@ -15,7 +15,7 @@ promote-to-standard CHAIN:
 
 # Generate auto-generated files
 codegen: clean-add-chain
-	go run superchain/internal/codegen/main.go
+	CODEGEN=true go run superchain/internal/codegen/main.go
 
 # Lint all Go code
 lint-all:
