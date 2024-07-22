@@ -2,11 +2,23 @@
 
 use super::{Chain, ChainConfig, ChainList, HashMap, RollupConfigs, SuperchainConfig};
 
-/// A list of chain configs.
+/// A list of Hydrated Superchain Configs.
 #[derive(Debug, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ChainConfigList {
-    /// Chain configs.
+pub struct HydratedSuperchainConfigs {
+    /// A list of hydrated superchain configs.
+    pub superchains: Vec<HydratedSuperchainConfig>,
+}
+
+/// A hydrated Superchain Config.
+#[derive(Debug, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HydratedSuperchainConfig {
+    /// The superchain name.
+    pub name: String,
+    /// The superchain config.
+    pub superchain: SuperchainConfig,
+    /// A list of chain configs.
     pub configs: Vec<ChainConfig>,
 }
 
@@ -23,58 +35,44 @@ pub struct Superchain {
 }
 
 impl Superchain {
+    /// Read the chain list.
+    pub fn read_chain_list() -> ChainList {
+        let chain_list = include_str!("../../../chainList.toml");
+        toml::from_str(chain_list).expect("Failed to read chain list")
+    }
+
+    /// Read superchain configs.
+    pub fn read_superchain_configs() -> HydratedSuperchainConfigs {
+        let superchain_configs = include_str!("../../../superchain/configs/configs.toml");
+        toml::from_str(superchain_configs).expect("Failed to read superchain configs")
+    }
+
     /// Initialize the superchain configurations from the chain list.
     pub fn from_chain_list() -> Self {
-        let chain_list = include_str!("../../../chainList.toml");
-        let chains: ChainList = toml::from_str(chain_list).unwrap();
-
+        let chains = Self::read_chain_list().chains;
+        let superchains = Self::read_superchain_configs();
         let mut op_chains = HashMap::new();
         let mut rollup_configs = HashMap::new();
 
-        let mainnet_sc = include_str!("../../../superchain/configs/mainnet/superchain.toml");
-        let mainnet_superchain_entry: SuperchainConfig =
-            toml::from_str(mainnet_sc).expect("Failed to read mainnet superchain toml");
-        let sepolia_sc = include_str!("../../../superchain/configs/sepolia/superchain.toml");
-        let sepolia_superchain_entry: SuperchainConfig =
-            toml::from_str(sepolia_sc).expect("Failed to read sepolia superchain toml");
-        let devnet_sc = include_str!("../../../superchain/configs/sepolia-dev-0/superchain.toml");
-        let devnet_superchain_entry: SuperchainConfig =
-            toml::from_str(devnet_sc).expect("Failed to read devnet superchain toml");
-
-        let config_list = include_str!("../../../superchain/configs/configs.toml");
-        let configs: ChainConfigList = toml::from_str(config_list).unwrap();
-
-        for mut config in configs.configs.into_iter() {
-            // Get the chain from the chains list for the chain ID.
-            let chain = chains
-                .chains
-                .iter()
-                .find(|c| c.chain_id == config.chain_id)
-                .expect("Chain not found in chain list");
-            config.l1_chain_id = chain.parent.chain_id();
-            if let Some(a) = &mut config.addresses {
-                a.zero_proof_addresses();
+        for superchain in superchains.superchains.into_iter() {
+            for mut chain_config in superchain.configs.into_iter() {
+                chain_config.l1_chain_id = superchain.superchain.l1.chain_id;
+                if let Some(a) = &mut chain_config.addresses {
+                    a.zero_proof_addresses();
+                }
+                let mut rollup = superchain_primitives::load_op_stack_rollup_config(&chain_config);
+                rollup.protocol_versions_address = superchain
+                    .superchain
+                    .protocol_versions_addr
+                    .expect("Missing protocol versions address");
+                rollup.superchain_config_address = superchain.superchain.superchain_config_addr;
+                rollup_configs.insert(chain_config.chain_id, rollup);
+                op_chains.insert(chain_config.chain_id, chain_config);
             }
-
-            let mut rollup = superchain_primitives::load_op_stack_rollup_config(&config);
-            rollup.protocol_versions_address = match rollup.l1_chain_id {
-                1 => mainnet_superchain_entry
-                    .protocol_versions_addr
-                    .unwrap_or(rollup.protocol_versions_address),
-                11155111 => sepolia_superchain_entry
-                    .protocol_versions_addr
-                    .unwrap_or(rollup.protocol_versions_address),
-                _ => devnet_superchain_entry
-                    .protocol_versions_addr
-                    .unwrap_or(rollup.protocol_versions_address),
-            };
-
-            rollup_configs.insert(config.chain_id, rollup);
-            op_chains.insert(config.chain_id, config);
         }
 
         Self {
-            chains: chains.chains,
+            chains,
             op_chains,
             rollup_configs,
         }
