@@ -153,6 +153,17 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "RACE Testnet"
+  identifier = "sepolia/race"
+  chain_id = 6806
+  rpc = ["https://racetestnet.io"]
+  explorers = ["https://testnet.racescan.io/"]
+  superchain_level = 1
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Zora Sepolia Testnet"
   identifier = "sepolia/zora"
   chain_id = 999999999
