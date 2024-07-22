@@ -55,6 +55,8 @@ func getStartBlockWithRetries(ctx context.Context, systemConfigAddr common.Addre
 	return val.Uint64(), nil
 }
 
+// checkForDepositEvents looks in the blocks between startBlock and endBlock (inclusive) for any TransactionDeposited
+// events emitted by the OptimismPortalProxy contract at portalAddress
 func checkForDepositEvents(client *ethclient.Client, portalAddress common.Address, startBlock uint64, endBlock uint64) ([]types.Log, error) {
 	// eventTopic for TransactionDeposited(address indexed from, address indexed to, uint256 indexed version, bytes opaqueData)
 	// - copied from validation/internal/bindings/optimism-portal.go
@@ -68,7 +70,6 @@ func checkForDepositEvents(client *ethclient.Client, portalAddress common.Addres
 		Topics:    [][]common.Hash{{eventTopic}},
 	}
 
-	// Fetch logs for the current chunk
 	missedEvents, err := client.FilterLogs(context.Background(), query)
 	if err != nil {
 		return []types.Log{}, err
