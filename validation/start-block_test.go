@@ -4,6 +4,7 @@ import (
 	"context"
 	"math/big"
 	"testing"
+	"time"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
@@ -26,8 +27,11 @@ func testStartBlock(t *testing.T, chain *ChainConfig) {
 	systemConfigAddress := Addresses[chain.ChainID].SystemConfigProxy
 	require.NotZero(t, systemConfigAddress)
 
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	offChainParam := chain.Genesis.L1.Number
-	onChainParam, err := getStartBlockWithRetries(context.Background(), common.Address(systemConfigAddress), client)
+	onChainParam, err := getStartBlockWithRetries(ctx, common.Address(systemConfigAddress), client)
 	require.NoError(t, err)
 
 	if offChainParam > onChainParam {
@@ -35,9 +39,9 @@ func testStartBlock(t *testing.T, chain *ChainConfig) {
 		portalAddress := Addresses[chain.ChainID].OptimismPortalProxy
 		require.NotZero(t, portalAddress)
 
-		missedEvents, err := checkForDepositEvents(client, common.Address(portalAddress), onChainParam, offChainParam)
+		missedEvents, err := checkForDepositEvents(ctx, client, common.Address(portalAddress), onChainParam, offChainParam)
 		require.NoError(t, err)
-		require.Zero(t, len(missedEvents))
+		require.Len(t, missedEvents, 0)
 	}
 }
 
@@ -57,9 +61,14 @@ func getStartBlockWithRetries(ctx context.Context, systemConfigAddr common.Addre
 
 // checkForDepositEvents looks in the blocks between startBlock and endBlock (inclusive) for any TransactionDeposited
 // events emitted by the OptimismPortalProxy contract at portalAddress
-func checkForDepositEvents(client *ethclient.Client, portalAddress common.Address, startBlock uint64, endBlock uint64) ([]types.Log, error) {
+func checkForDepositEvents(
+	ctx context.Context,
+	client *ethclient.Client,
+	portalAddress common.Address,
+	startBlock uint64,
+	endBlock uint64,
+) ([]types.Log, error) {
 	// eventTopic for TransactionDeposited(address indexed from, address indexed to, uint256 indexed version, bytes opaqueData)
-	// - copied from validation/internal/bindings/optimism-portal.go
 	eventTopic := common.HexToHash("0xb3813568d9991fc951961fcb4c784893574240a28925604d09fc577c55bb7c32")
 
 	// Create a query
@@ -70,9 +79,9 @@ func checkForDepositEvents(client *ethclient.Client, portalAddress common.Addres
 		Topics:    [][]common.Hash{{eventTopic}},
 	}
 
-	missedEvents, err := client.FilterLogs(context.Background(), query)
+	missedEvents, err := client.FilterLogs(ctx, query)
 	if err != nil {
-		return []types.Log{}, err
+		return nil, err
 	}
 
 	return missedEvents, nil
