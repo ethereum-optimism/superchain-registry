@@ -99,11 +99,18 @@ func main() {
 	}
 	fmt.Println("Wrote chainList.toml file")
 
+  // Write chainList.toml file to the rust-bindings directory so it can be included in crate releases.
+  err = os.WriteFile(filepath.Join(repositoryRoot, "bindings/rust-bindings/etc/chainList.toml"), buf.Bytes(), 0o644)
+  if err != nil {
+    panic(err)
+  }
+  fmt.Println("Wrote rust-bindings chainList.toml file")
+
 	// Write all chain configs to a single file
 	type Superchain struct {
     Name string `toml:"name"`
-    Config SuperchainConfig `toml:"superchain"`
-		ChainConfigs []ChainConfig `toml:"configs"`
+    Config SuperchainConfig `toml:"config"`
+		ChainConfigs []ChainConfig `toml:"chains"`
 	}
   superchains := make([]Superchain, 0)
   for _, sc := range Superchains {
@@ -141,13 +148,12 @@ func main() {
 ##############################################
 
 `)
+    // Write configs.toml file to the rust-bindings directory so it can be included in crate releases.
 		buf = *bytes.NewBuffer(append(header, buf.Bytes()...))
-		superchainDir := filepath.Join(repositoryRoot, "superchain")
-		configsDir := filepath.Join(superchainDir, "configs")
-		err = os.WriteFile(filepath.Join(configsDir, "configs.toml"), buf.Bytes(), 0o644)
-		if err != nil {
-			panic(fmt.Errorf("failed to write rollup configs: %w", err))
-		}
+    err = os.WriteFile(filepath.Join(repositoryRoot, "bindings/rust-bindings/etc/configs.toml"), buf.Bytes(), 0o644)
+    if err != nil {
+      panic(err)
+    }
 		fmt.Println("Wrote configs.toml file")
 	}
 

@@ -1,49 +1,37 @@
 //! Contains the full superchain data.
 
-use super::{Chain, ChainConfig, ChainList, HashMap, RollupConfigs, SuperchainConfig};
+use super::{Chain, ChainConfig, ChainList, HashMap, RollupConfig, Superchain};
 
 /// A list of Hydrated Superchain Configs.
 #[derive(Debug, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct HydratedSuperchainConfigs {
-    /// A list of hydrated superchain configs.
-    pub superchains: Vec<HydratedSuperchainConfig>,
+pub struct Superchains {
+    /// A list of superchain configs.
+    pub superchains: Vec<Superchain>,
 }
 
-/// A hydrated Superchain Config.
+/// The registry containing all the superchain configurations.
 #[derive(Debug, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct HydratedSuperchainConfig {
-    /// The superchain name.
-    pub name: String,
-    /// The superchain config.
-    pub superchain: SuperchainConfig,
-    /// A list of chain configs.
-    pub configs: Vec<ChainConfig>,
-}
-
-/// A Chain Definition.
-#[derive(Debug, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Superchain {
+pub struct Registry {
     /// The list of chains.
     pub chains: Vec<Chain>,
     /// Map of chain IDs to their chain configuration.
     pub op_chains: HashMap<u64, ChainConfig>,
     /// Map of chain IDs to their rollup configurations.
-    pub rollup_configs: RollupConfigs,
+    pub rollup_configs: HashMap<u64, RollupConfig>,
 }
 
-impl Superchain {
+impl Registry {
     /// Read the chain list.
     pub fn read_chain_list() -> ChainList {
-        let chain_list = include_str!("../../../chainList.toml");
+        let chain_list = include_str!("../etc/chainList.toml");
         toml::from_str(chain_list).expect("Failed to read chain list")
     }
 
     /// Read superchain configs.
-    pub fn read_superchain_configs() -> HydratedSuperchainConfigs {
-        let superchain_configs = include_str!("../../../superchain/configs/configs.toml");
+    pub fn read_superchain_configs() -> Superchains {
+        let superchain_configs = include_str!("../etc/configs.toml");
         toml::from_str(superchain_configs).expect("Failed to read superchain configs")
     }
 
@@ -55,17 +43,17 @@ impl Superchain {
         let mut rollup_configs = HashMap::new();
 
         for superchain in superchains.superchains.into_iter() {
-            for mut chain_config in superchain.configs.into_iter() {
-                chain_config.l1_chain_id = superchain.superchain.l1.chain_id;
+            for mut chain_config in superchain.chains.into_iter() {
+                chain_config.l1_chain_id = superchain.config.l1.chain_id;
                 if let Some(a) = &mut chain_config.addresses {
                     a.zero_proof_addresses();
                 }
                 let mut rollup = superchain_primitives::load_op_stack_rollup_config(&chain_config);
                 rollup.protocol_versions_address = superchain
-                    .superchain
+                    .config
                     .protocol_versions_addr
                     .expect("Missing protocol versions address");
-                rollup.superchain_config_address = superchain.superchain.superchain_config_addr;
+                rollup.superchain_config_address = superchain.config.superchain_config_addr;
                 rollup_configs.insert(chain_config.chain_id, rollup);
                 op_chains.insert(chain_config.chain_id, chain_config);
             }
@@ -89,7 +77,7 @@ mod tests {
 
     #[test]
     fn test_read_chain_configs() {
-        let superchains = Superchain::from_chain_list();
+        let superchains = Registry::from_chain_list();
         assert!(superchains.chains.len() > 1);
         let base_config = ChainConfig {
             name: String::from("Base"),
@@ -157,7 +145,7 @@ mod tests {
     #[test]
     fn test_read_rollup_configs() {
         use superchain_primitives::OP_MAINNET_CONFIG;
-        let superchains = Superchain::from_chain_list();
+        let superchains = Registry::from_chain_list();
         assert_eq!(
             *superchains.rollup_configs.get(&10).unwrap(),
             OP_MAINNET_CONFIG

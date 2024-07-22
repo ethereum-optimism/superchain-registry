@@ -47,3 +47,7 @@ test *args='':
 # Test the Rust documentation
 test-docs:
   cargo test --doc --all --locked
+
+# Release the crate
+release:
+  cargo release publish --execute

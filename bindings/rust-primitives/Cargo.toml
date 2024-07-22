@@ -1,7 +1,7 @@
 [package]
 name = "superchain-primitives"
 description = "Primitive Types for the Superchain Registry"
-version = "0.1.2"
+version = "0.2.0"
 edition = "2021"
 license = "MIT"
 authors = ["OP Contributors"]
@@ -11,14 +11,13 @@ homepage = "https://github.com/ethereum-optimism/superchain-registry/bindings/ru
 [dependencies]
 # External Dependencies
 anyhow = { version = "1.0.86", default-features = false }
-hashbrown = { version = "0.14.3" }
 
 # Alloy Types
 alloy-sol-types = { version = "0.7.6", default-features = false }
 alloy-primitives = { version = "0.7.1", default-features = false }
-alloy-genesis = { version = "0.1", default-features = false }
-alloy-consensus = { version = "0.1", default-features = false }
-alloy-eips = { version = "0.1", default-features = false }
+alloy-genesis = { version = "0.2", default-features = false }
+alloy-consensus = { version = "0.2", default-features = false }
+alloy-eips = { version = "0.2", default-features = false }
 
 # `serde` feature flag dependencies
 serde = { version = "1.0.203", default-features = false, features = ["derive", "alloc"], optional = true }
@@ -27,4 +26,4 @@ serde_repr = { version = "0.1", optional = true }
 [features]
 default = ["std", "serde"]
 std = []
-serde = ["dep:serde", "dep:serde_repr", "alloy-eips/serde", "hashbrown/serde", "alloy-consensus/serde", "alloy-primitives/serde"]
+serde = ["dep:serde", "dep:serde_repr", "alloy-eips/serde", "alloy-consensus/serde", "alloy-primitives/serde"]
