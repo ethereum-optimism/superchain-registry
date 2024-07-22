@@ -5,17 +5,22 @@ import (
 	"io/fs"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
 //go:embed *.toml
 var standardConfigFile embed.FS
 
 func init() {
+
 	Config = ConfigType{
+		Alloc:         make(map[string][]superchain.Hash),
 		Params:        make(map[string]*Params),
 		Roles:         new(Roles),
 		MultisigRoles: make(map[string]*MultisigRoles),
 	}
+
+	decodeTOMLFileIntoConfig("standard-allocs.toml", &Config.Alloc)
 
 	decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
 
@@ -32,7 +37,7 @@ func init() {
 	decodeTOMLFileIntoConfig("standard-versions.toml", &Versions)
 }
 
-func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles | VersionTags](filename string, config *T) {
+func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles | VersionTags | map[string][]superchain.Hash](filename string, config *T) {
 	data, err := fs.ReadFile(standardConfigFile, filename)
 	if err != nil {
 		panic(err)

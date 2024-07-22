@@ -41,6 +41,15 @@ func MustHexToAddress(s string) Address {
 	return a
 }
 
+func MustHexToHash(s string) Hash {
+	var h Hash
+	err := h.UnmarshalText([]byte(s))
+	if err != nil {
+		panic(err)
+	}
+	return h
+}
+
 // checksumAddress computes the checksum-formatted prefixed hex representation of an address.
 // implements https://eips.ethereum.org/EIPS/eip-55
 func checksumAddress(addr Address) string {
