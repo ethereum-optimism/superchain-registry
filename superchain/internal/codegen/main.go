@@ -109,8 +109,8 @@ func main() {
   for _, sc := range Superchains {
     chainConfigs := make([]ChainConfig, 0)
     for _, chainId := range sc.ChainIDs {
-      chain := OPChains[uint64(chainId)]
-      if chain == nil {
+      chain, found := OPChains[uint64(chainId)]
+      if !found {
         log.Fatalf("cannot find chain with id %d", chainId)
       }
       chainConfigs = append(chainConfigs, *chain)
