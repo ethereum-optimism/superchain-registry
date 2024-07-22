@@ -2,15 +2,17 @@ package validation
 
 import (
 	"context"
-	"fmt"
+	"math/big"
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/stretchr/testify/require"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
@@ -21,17 +23,22 @@ func testStartBlock(t *testing.T, chain *ChainConfig) {
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-	contractAddress := Addresses[chain.ChainID].SystemConfigProxy
-	require.NotZero(t, contractAddress)
+	systemConfigAddress := Addresses[chain.ChainID].SystemConfigProxy
+	require.NotZero(t, systemConfigAddress)
 
 	offChainParam := chain.Genesis.L1.Number
-	onChainParam, err := getStartBlockWithRetries(context.Background(), common.Address(contractAddress), client)
+	onChainParam, err := getStartBlockWithRetries(context.Background(), common.Address(systemConfigAddress), client)
 	require.NoError(t, err)
 
-	isValid := offChainParam <= onChainParam
-	// offChainParam determines when new nodes will start when trying to sync. If the offChain value is
-	// greater than the onChain value, there is a risk new nodes will miss deposit txs
-	require.True(t, isValid, fmt.Sprintf("off-chain = %d, on-chain = %d", offChainParam, onChainParam))
+	if offChainParam > onChainParam {
+		// Ensure there aren't any skipped deposits in the block gap
+		portalAddress := Addresses[chain.ChainID].OptimismPortalProxy
+		require.NotZero(t, portalAddress)
+
+		missedEvents, err := checkForDepositEvents(client, common.Address(portalAddress), onChainParam, offChainParam)
+		require.NoError(t, err)
+		require.Zero(t, len(missedEvents))
+	}
 }
 
 func getStartBlockWithRetries(ctx context.Context, systemConfigAddr common.Address, client *ethclient.Client) (uint64, error) {
@@ -46,4 +53,26 @@ func getStartBlockWithRetries(ctx context.Context, systemConfigAddr common.Addre
 	}
 
 	return val.Uint64(), nil
+}
+
+func checkForDepositEvents(client *ethclient.Client, portalAddress common.Address, startBlock uint64, endBlock uint64) ([]types.Log, error) {
+	// eventTopic for TransactionDeposited(address indexed from, address indexed to, uint256 indexed version, bytes opaqueData)
+	// - copied from validation/internal/bindings/optimism-portal.go
+	eventTopic := common.HexToHash("0xb3813568d9991fc951961fcb4c784893574240a28925604d09fc577c55bb7c32")
+
+	// Create a query
+	query := ethereum.FilterQuery{
+		FromBlock: big.NewInt(int64(startBlock)),
+		ToBlock:   big.NewInt(int64(endBlock)),
+		Addresses: []common.Address{portalAddress},
+		Topics:    [][]common.Hash{{eventTopic}},
+	}
+
+	// Fetch logs for the current chunk
+	missedEvents, err := client.FilterLogs(context.Background(), query)
+	if err != nil {
+		return []types.Log{}, err
+	}
+
+	return missedEvents, nil
 }
