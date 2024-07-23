@@ -5,6 +5,7 @@
   rpc = ["https://mainnet.optimism.io"]
   explorers = ["https://explorer.optimism.io"]
   superchain_level = 2
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -16,6 +17,7 @@
   rpc = ["https://mainnet.base.org"]
   explorers = ["https://explorer.base.org"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -27,6 +29,7 @@
   rpc = ["https://rpc.lyra.finance"]
   explorers = ["https://explorer.lyra.finance"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -38,6 +41,7 @@
   rpc = ["https://rpc.metall2.com"]
   explorers = ["https://explorer.metall2.com"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -49,6 +53,7 @@
   rpc = ["https://mainnet.mode.network"]
   explorers = ["https://explorer.mode.network"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -60,6 +65,7 @@
   rpc = ["https://rpc.orderly.network"]
   explorers = ["https://explorer.orderly.network"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -71,6 +77,7 @@
   rpc = ["https://rpc.publicgoods.network"]
   explorers = ["https://explorer.publicgoods.network"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -93,6 +100,7 @@
   rpc = ["https://mainnet.lumio.io"]
   explorers = ["https://explorer.lumio.io"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -104,6 +112,7 @@
   rpc = ["https://rpc.zora.energy"]
   explorers = ["https://explorer.zora.energy"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -115,6 +124,7 @@
   rpc = ["https://sepolia.optimism.io"]
   explorers = ["https://sepolia-optimistic.etherscan.io"]
   superchain_level = 2
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
@@ -126,6 +136,7 @@
   rpc = ["https://sepolia.base.org"]
   explorers = ["https://sepolia-explorer.base.org"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
@@ -137,6 +148,7 @@
   rpc = ["https://testnet.rpc.metall2.com"]
   explorers = ["https://testnet.explorer.metall2.com"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
@@ -148,6 +160,7 @@
   rpc = ["https://sepolia.mode.network"]
   explorers = ["https://sepolia.explorer.mode.network"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
@@ -159,6 +172,7 @@
   rpc = ["https://sepolia.publicgoods.network"]
   explorers = ["https://explorer.sepolia.publicgoods.network"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
@@ -170,6 +184,7 @@
   rpc = ["https://racetestnet.io"]
   explorers = ["https://testnet.racescan.io/"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
@@ -181,6 +196,7 @@
   rpc = ["https://sepolia.rpc.zora.energy"]
   explorers = ["https://sepolia.explorer.zora.energy"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
@@ -192,6 +208,7 @@
   rpc = [""]
   explorers = [""]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia-dev-0"
@@ -203,6 +220,7 @@
   rpc = [""]
   explorers = [""]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia-dev-0"
