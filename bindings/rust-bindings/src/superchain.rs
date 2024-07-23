@@ -1,6 +1,7 @@
 //! Contains the full superchain data.
 
 use super::{Chain, ChainConfig, ChainList, HashMap, RollupConfig, Superchain};
+use alloc::vec::Vec;
 
 /// A list of Hydrated Superchain Configs.
 #[derive(Debug, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]

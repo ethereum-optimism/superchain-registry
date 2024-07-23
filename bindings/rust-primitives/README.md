@@ -8,20 +8,16 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-superchain-primitives = "0.1.0"
+superchain-primitives = "0.2"
 ```
 
 ## Example
 
 ```rust
-use alloy_primitives::b256;
-use superchain_primitives::BlockID;
+use superchain_primitives::rollup_config_from_chain_id;
 
-let block_id = BlockID {
-    hash: b256!("0000000000000000000000000000000000000000000000000000000000000000"),
-    number: 0u64,
-};
-println!("Block ID: {block_id}");
+let op_mainnet_rollup_config = rollup_config_from_chain_id(10).unwrap();
+println!("OP Mainnet Rollup Config:\n{op_mainnet_rollup_config:?}");
 ```
 
 ## Feature Flags
