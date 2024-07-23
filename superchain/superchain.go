@@ -53,6 +53,7 @@ type HardForkConfiguration struct {
 	DeltaTime   *uint64 `json:"delta_time,omitempty" toml:"delta_time,omitempty"`
 	EcotoneTime *uint64 `json:"ecotone_time,omitempty" toml:"ecotone_time,omitempty"`
 	FjordTime   *uint64 `json:"fjord_time,omitempty" toml:"fjord_time,omitempty"`
+	GraniteTime *uint64 `json:"granite_time,omitempty" toml:"granite_time,omitempty"`
 }
 
 type SuperchainLevel uint
