@@ -12,13 +12,13 @@ default:
 ci: fmt lint tests
 
 # Run all tests
-tests: test test-docs
+tests: test test-features test-docs
 
 # Formats
 fmt: fmt-fix fmt-check
 
 # Lint the workspace for all available targets
-lint: lint-source lint-docs
+lint: lint-source lint-source-features lint-docs
 
 # Build for the native target
 build *args='':
@@ -34,14 +34,22 @@ fmt-check:
 
 # Lint the workspace
 lint-source: fmt-check
+  cargo +nightly clippy --all --all-targets -- -D warnings
+
+# Lint the workspace
+lint-source-features: fmt-check
   cargo +nightly clippy --all --all-features --all-targets -- -D warnings
 
 # Lint the Rust documentation
 lint-docs:
   RUSTDOCFLAGS="-D warnings" cargo doc --all --no-deps --document-private-items
 
-# Test for the native target with all features
+# Test without features
 test *args='':
+  cargo nextest run --all $@
+
+# Test for the native target with all features
+test-features *args='':
   cargo nextest run --all --all-features $@
 
 # Test the Rust documentation

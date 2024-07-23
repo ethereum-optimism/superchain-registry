@@ -4,7 +4,7 @@ This package provides Rust bindings for the Superchain Registry configuration.
 
 ## Usage
 
-Add this to your `Cargo.toml`:
+Add the following to your `Cargo.toml`.
 
 ```toml
 [dependencies]
