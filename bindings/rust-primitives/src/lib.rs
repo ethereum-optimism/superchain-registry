@@ -9,10 +9,8 @@ extern crate alloc;
 /// Re-export the Genesis type from [alloy_genesis].
 pub use alloy_genesis::Genesis;
 
-mod superchain;
-pub use superchain::{
-    Superchain, SuperchainConfig, SuperchainL1Info, SuperchainLevel, Superchains,
-};
+pub mod superchain;
+pub use superchain::{Superchain, SuperchainConfig, SuperchainL1Info, SuperchainLevel};
 
 pub mod predeploys;
 pub use predeploys::{
@@ -22,9 +20,9 @@ pub use predeploys::{
     PROXY_ADMIN, SCHEMA_REGISTRY, SEQUENCER_FEE_VAULT, WETH9,
 };
 
-mod rollup_config;
-pub use rollup_config::{
-    RollupConfig, BASE_SEPOLIA_BASE_FEE_PARAMS, BASE_SEPOLIA_CANYON_BASE_FEE_PARAMS,
+pub mod fee_params;
+pub use fee_params::{
+    BASE_SEPOLIA_BASE_FEE_PARAMS, BASE_SEPOLIA_CANYON_BASE_FEE_PARAMS,
     BASE_SEPOLIA_EIP1559_DEFAULT_ELASTICITY_MULTIPLIER, OP_BASE_FEE_PARAMS,
     OP_CANYON_BASE_FEE_PARAMS, OP_SEPOLIA_BASE_FEE_PARAMS, OP_SEPOLIA_CANYON_BASE_FEE_PARAMS,
     OP_SEPOLIA_EIP1559_BASE_FEE_MAX_CHANGE_DENOMINATOR_CANYON,
@@ -32,22 +30,23 @@ pub use rollup_config::{
     OP_SEPOLIA_EIP1559_DEFAULT_ELASTICITY_MULTIPLIER,
 };
 
+pub mod rollup_config;
 pub use rollup_config::{
-    load_op_stack_rollup_config, rollup_config_from_chain_id, RollupConfigs, BASE_MAINNET_CONFIG,
+    load_op_stack_rollup_config, rollup_config_from_chain_id, RollupConfig, BASE_MAINNET_CONFIG,
     BASE_SEPOLIA_CONFIG, OP_MAINNET_CONFIG, OP_SEPOLIA_CONFIG,
 };
 
-mod chain_config;
+pub mod chain_config;
 pub use chain_config::{ChainConfig, HardForkConfiguration, PlasmaConfig};
 
-mod genesis;
+pub mod genesis;
 pub use genesis::ChainGenesis;
 
-mod block;
+pub mod block;
 pub use block::BlockID;
 
-mod system_config;
+pub mod system_config;
 pub use system_config::SystemConfig;
 
-mod addresses;
+pub mod addresses;
 pub use addresses::AddressList;

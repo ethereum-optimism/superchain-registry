@@ -8,7 +8,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-superchain-registry = "0.1.0"
+superchain-registry = "0.2"
 ```
 
 ## Feature Flags
@@ -20,9 +20,11 @@ superchain-registry = "0.1.0"
 ```rust
 use superchain_registry::ROLLUP_CONFIGS;
 
-let rollups = ROLLUP_CONFIGS.clone();
+let op_chain_id = 10;
+let op_rollup_config = ROLLUP_CONFIGS.get(&op_chain_id);
+println!("OP Mainnet Rollup Config: {:?}", op_rollup_config);
 
-for (id, config) in rollups.iter() {
+for (id, _) in ROLLUP_CONFIGS.iter() {
     println!("Loaded rollup config for chain ID {}", id);
 }
 ```

@@ -6,7 +6,7 @@
 
 extern crate alloc;
 
-/// Re-export commonly used types and traits.
+use alloc::vec::Vec;
 pub use hashbrown::HashMap;
 pub use superchain_primitives::*;
 
@@ -14,13 +14,11 @@ pub mod chain_list;
 pub use chain_list::{Chain, ChainList};
 
 pub mod superchain;
-pub use superchain::Superchain;
-
-pub use superchain_primitives::RollupConfigs;
+pub use superchain::Registry;
 
 lazy_static::lazy_static! {
     /// Private initializer that loads the superchain configurations.
-    static ref _INIT: Superchain = Superchain::from_chain_list();
+    static ref _INIT: Registry = Registry::from_chain_list();
 
     /// Chain configurations exported from the registry
     pub static ref CHAINS: Vec<Chain> = _INIT.chains.clone();
@@ -29,7 +27,7 @@ lazy_static::lazy_static! {
     pub static ref OPCHAINS: HashMap<u64, ChainConfig> = _INIT.op_chains.clone();
 
     /// Rollup configurations exported from the registry
-    pub static ref ROLLUP_CONFIGS: RollupConfigs = _INIT.rollup_configs.clone();
+    pub static ref ROLLUP_CONFIGS: HashMap<u64, RollupConfig> = _INIT.rollup_configs.clone();
 }
 
 #[cfg(test)]

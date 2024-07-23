@@ -1,23 +1,21 @@
-//! Superchain Types
+//! Superchain types.
 
-use crate::HardForkConfiguration;
 use alloc::{string::String, vec::Vec};
 use alloy_primitives::Address;
-use hashbrown::HashMap;
 
-/// Map of superchain names to their configurations.
-pub type Superchains = HashMap<String, Superchain>;
+use crate::ChainConfig;
+use crate::HardForkConfiguration;
 
 /// A superchain configuration.
 #[derive(Debug, Clone, Default, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Superchain {
+    /// Superchain identifier, without capitalization or display changes.
+    pub name: String,
     /// Superchain configuration file contents.
     pub config: SuperchainConfig,
     /// Chain IDs of chains that are part of this superchain.
-    pub chain_ids: Vec<u64>,
-    /// Superchain identifier, without capitalization or display changes.
-    pub superchain: String,
+    pub chains: Vec<ChainConfig>,
 }
 
 /// A superchain configuration file format
