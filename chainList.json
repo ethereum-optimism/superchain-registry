@@ -112,6 +112,22 @@
     }
   },
   {
+    "name": "RACE Mainnet",
+    "identifier": "mainnet/race",
+    "chainId": 6805,
+    "rpc": [
+      "https://racemainnet.io"
+    ],
+    "explorers": [
+      "https://racescan.io/"
+    ],
+    "superchainLevel": 1,
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "SuperLumio",
     "identifier": "mainnet/superlumio",
     "chainId": 8866,
