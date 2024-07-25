@@ -20,11 +20,10 @@ var UpdateConfigsCmd = cli.Command{
 				panic("Unable to get the current file path")
 			}
 
-			daType, err := chain.CheckDataAvailability()
+			err := chain.CheckDataAvailability()
 			if err != nil {
 				panic(err)
 			}
-			chain.DataAvailabilityType = daType
 
 			superchainRepoPath := filepath.Dir(filepath.Dir(filepath.Dir(thisFile)))
 			targetDir := filepath.Join(superchainRepoPath, "superchain", "configs", chain.Superchain)

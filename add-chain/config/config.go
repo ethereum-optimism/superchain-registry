@@ -36,7 +36,7 @@ func ConstructChainConfig(
 		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %w", err)
 	}
 
-	dataAvailibilityType, err := jsonConfig.CheckDataAvailability()
+	err = jsonConfig.CheckDataAvailability()
 	if err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error with json plasma config: %w", err)
 	}
@@ -61,7 +61,7 @@ func ConstructChainConfig(
 		},
 		BlockTime:            jsonConfig.BlockTime,
 		SequencerWindowSize:  jsonConfig.SequencerWindowSize,
-		DataAvailabilityType: dataAvailibilityType,
+		DataAvailabilityType: jsonConfig.DataAvailabilityType,
 	}
 
 	fmt.Printf("Rollup config successfully constructed\n")

@@ -104,8 +104,13 @@ type ChainConfig struct {
 	DataAvailabilityType DataAvailability `toml:"data_availability_type"`
 
 	// Optional feature
-	Plasma         *PlasmaConfig `toml:"plasma,omitempty" json:"plasma_config,omitempty"`
-	GasPayingToken *Address      `toml:"gas_paying_token,omitempty"` // Just metadata, not consumed by downstream OPStack software
+	LegacyUsePlasma          bool          `toml:"-,omitempty" json:"use_plasma,omitempty"`
+	LegacyDAChallengeAddress *Address      `toml:"-,omitempty" json:"da_challenge_contract_address,omitempty"`
+	LegacyDAChallengeWindow  *uint64       `toml:"-,omitempty" json:"da_challenge_window,omitempty"`
+	LegacyDAResolveWindow    *uint64       `toml:"-,omitempty" json:"da_resolve_window,omitempty"`
+	Plasma                   *PlasmaConfig `toml:"plasma,omitempty" json:"plasma_config,omitempty"`
+
+	GasPayingToken *Address `toml:"gas_paying_token,omitempty"` // Just metadata, not consumed by downstream OPStack software
 
 	Genesis ChainGenesis `toml:"genesis" json:"genesis"`
 
@@ -126,21 +131,32 @@ type PlasmaConfig struct {
 	DAResolveWindow *uint64 `json:"da_resolve_window" toml:"da_resolve_window"`
 }
 
-func (c *ChainConfig) CheckDataAvailability() (DataAvailability, error) {
-	daType := EthDA
+func (c *ChainConfig) CheckDataAvailability() error {
+	c.DataAvailabilityType = EthDA
+
+	if c.LegacyUsePlasma {
+		// Check for legacy plasma config first
+		if c.LegacyDAChallengeAddress == nil {
+			return fmt.Errorf("missing required plasma field: da_challenge_contract_address")
+		}
+		plasmaConfig := PlasmaConfig{
+			DAChallengeAddress: c.LegacyDAChallengeAddress,
+			DAChallengeWindow:  c.LegacyDAChallengeWindow,
+			DAResolveWindow:    c.LegacyDAResolveWindow,
+		}
+		c.Plasma = &plasmaConfig
+		c.DataAvailabilityType = AltDA
+		return nil
+	}
+
 	if c.Plasma != nil {
-		daType = AltDA
+		c.DataAvailabilityType = AltDA
 		if c.Plasma.DAChallengeAddress == nil {
-			return "", fmt.Errorf("missing required plasma field: da_challenge_contract_address")
-		}
-		if c.Plasma.DAChallengeWindow == nil {
-			return "", fmt.Errorf("missing required plasma field: da_challenge_window")
-		}
-		if c.Plasma.DAResolveWindow == nil {
-			return "", fmt.Errorf("missing required plasma field: da_resolve_window")
+			return fmt.Errorf("missing required plasma field: da_challenge_contract_address")
 		}
 	}
-	return daType, nil
+
+	return nil
 }
 
 // setNilHardforkTimestampsToDefaultOrZero overwrites each unspecified hardfork activation time override
