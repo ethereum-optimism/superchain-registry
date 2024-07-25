@@ -59,6 +59,7 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	t.Run("L2 Security Config", func(t *testing.T) { testL2SecurityConfig(t, chain) })
 	// Standard Contract Versions
 	t.Run("Standard Contract Versions", func(t *testing.T) { testContractsMatchATag(t, chain) })
+	t.Run("Data Availability Type", func(t *testing.T) { testDataAvailabilityType(t, chain) })
 }
 
 // testStandard should be applied only to a fully Standard Chain,
