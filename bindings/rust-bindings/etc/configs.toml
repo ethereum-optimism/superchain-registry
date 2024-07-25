@@ -307,6 +307,7 @@
     ecotone_time = 0
     block_time = 2
     seq_window_size = 3600
+    data_availability_type = "eth-da"
     [superchains.chains.genesis]
       l2_time = 1720421591
       [superchains.chains.genesis.l1]

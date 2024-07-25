@@ -129,6 +129,7 @@
       "https://racescan.io/"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"

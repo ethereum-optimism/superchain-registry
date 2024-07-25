@@ -89,6 +89,7 @@
   rpc = ["https://racemainnet.io"]
   explorers = ["https://racescan.io/"]
   superchain_level = 1
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
