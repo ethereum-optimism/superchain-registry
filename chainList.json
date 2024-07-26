@@ -102,23 +102,6 @@
     }
   },
   {
-    "name": "PGN (Public Goods Network)",
-    "identifier": "mainnet/pgn",
-    "chainId": 424,
-    "rpc": [
-      "https://rpc.publicgoods.network"
-    ],
-    "explorers": [
-      "https://explorer.publicgoods.network"
-    ],
-    "superchainLevel": 1,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    }
-  },
-  {
     "name": "RACE Mainnet",
     "identifier": "mainnet/race",
     "chainId": 6805,
@@ -127,23 +110,6 @@
     ],
     "explorers": [
       "https://racescan.io/"
-    ],
-    "superchainLevel": 1,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    }
-  },
-  {
-    "name": "SuperLumio",
-    "identifier": "mainnet/superlumio",
-    "chainId": 8866,
-    "rpc": [
-      "https://mainnet.lumio.io"
-    ],
-    "explorers": [
-      "https://explorer.lumio.io"
     ],
     "superchainLevel": 1,
     "dataAvailabilityType": "eth-da",
@@ -229,23 +195,6 @@
     ],
     "explorers": [
       "https://sepolia.explorer.mode.network"
-    ],
-    "superchainLevel": 1,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
-    "name": "Sepolia PGN (Public Goods Network)",
-    "identifier": "sepolia/pgn",
-    "chainId": 58008,
-    "rpc": [
-      "https://sepolia.publicgoods.network"
-    ],
-    "explorers": [
-      "https://explorer.sepolia.publicgoods.network"
     ],
     "superchainLevel": 1,
     "dataAvailabilityType": "eth-da",
