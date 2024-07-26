@@ -153,7 +153,6 @@ impl Default for RollupConfig {
 
 /// Loads the rollup config for the OP-Stack chain given the chain config and address list.
 pub fn load_op_stack_rollup_config(chain_config: &ChainConfig) -> RollupConfig {
-    const PGN_SEPOLIA: u64 = 58008;
     RollupConfig {
         genesis: chain_config.genesis.clone(),
         l1_chain_id: chain_config.l1_chain_id,
@@ -195,16 +194,8 @@ pub fn load_op_stack_rollup_config(chain_config: &ChainConfig) -> RollupConfig {
         // Test/Alt configurations can still load custom rollup-configs when necessary.
         block_time: 2,
         channel_timeout: 300,
-        max_sequencer_drift: if chain_config.chain_id == PGN_SEPOLIA {
-            1000
-        } else {
-            600
-        },
-        seq_window_size: if chain_config.chain_id == PGN_SEPOLIA {
-            7200
-        } else {
-            3600
-        },
+        max_sequencer_drift: 600,
+        seq_window_size: 3600,
     }
 }
 
