@@ -10,6 +10,7 @@ delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
+data_availability_type = "eth-da"
 
 [genesis]
   l2_time = 1720421591

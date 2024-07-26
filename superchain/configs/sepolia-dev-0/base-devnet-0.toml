@@ -4,7 +4,6 @@ public_rpc = ""
 sequencer_rpc = ""
 explorer = ""
 superchain_level = 1
-standard_chain_candidate = false
 superchain_time = 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
 batch_inbox_addr = "0xfF00000000000000000000000000000011763072"
 canyon_time = 1698436800 # Fri 27 Oct 2023 20:00:00 UTC
@@ -13,6 +12,7 @@ ecotone_time = 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
 fjord_time = 1715961600 # Fri 17 May 2024 16:00:00 UTC
 block_time = 2
 seq_window_size = 3600
+data_availability_type = "eth-da"
 
 [genesis]
   l2_time = 1695433056
@@ -29,19 +29,19 @@ seq_window_size = 3600
     gasLimit = 25000000
 
 [addresses]
-  AddressManager = "0x882a60911d00867Fe4ea632C479cc48e583A8D69"
-  BatchSubmitter = "0x212dD524932bC43478688F91045F2682913ad8EE"
-  Challenger = "0x5a533AaAC6cd81605b301a1077BC393A94658B6D"
+  SystemConfigOwner = "0xAf6E0E871f38c7B653700F7CbAEDafaa2784D430"
+  ProxyAdminOwner = "0xAf6E0E871f38c7B653700F7CbAEDafaa2784D430"
   Guardian = "0x4F43c7422a9b2AC4BC6145Bd4eE206EA73cF8266"
+  Challenger = "0x5a533AaAC6cd81605b301a1077BC393A94658B6D"
+  Proposer = "0xBcB04FC753D36dcEeBe9Df7E18E23c46D1fcEA3c"
+  UnsafeBlockSigner = "0xfd7bc3C58Fe4D4296F11F7843ebbA84D729A24B9"
+  BatchSubmitter = "0x212dD524932bC43478688F91045F2682913ad8EE"
+  AddressManager = "0x882a60911d00867Fe4ea632C479cc48e583A8D69"
   L1CrossDomainMessengerProxy = "0x2cbD403d5BA3949D24ee4dF57805eaC612C2662f"
   L1ERC721BridgeProxy = "0xc3016ED03E087d092d576B585F5222fFD9cadc10"
   L1StandardBridgeProxy = "0x5638e55db5Fcf7A58df525F1098E8569C8DbA80c"
   L2OutputOracleProxy = "0xB5901509329307E3f910f333Fa9C4B4A8EE7CE1A"
   OptimismMintableERC20FactoryProxy = "0xEAa11178375e6B1078d815d6F9F85cBbb69b09Cd"
   OptimismPortalProxy = "0x579c82A835B884336B632eeBeCC78FA08D3291Ec"
-  Proposer = "0xBcB04FC753D36dcEeBe9Df7E18E23c46D1fcEA3c"
-  ProxyAdmin = "0xC5aE9023bFA79124ffA50169E1423E733D0166f1"
-  ProxyAdminOwner = "0xAf6E0E871f38c7B653700F7CbAEDafaa2784D430"
-  SystemConfigOwner = "0xAf6E0E871f38c7B653700F7CbAEDafaa2784D430"
   SystemConfigProxy = "0x7F67DC4959cb3E532B10A99F41bDD906C46FdFdE"
-  UnsafeBlockSigner = "0xfd7bc3C58Fe4D4296F11F7843ebbA84D729A24B9"
+  ProxyAdmin = "0xC5aE9023bFA79124ffA50169E1423E733D0166f1"

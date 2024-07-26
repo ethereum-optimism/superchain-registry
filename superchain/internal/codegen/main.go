@@ -16,14 +16,15 @@ import (
 )
 
 type ChainEntry struct {
-	Name            string   `json:"name" toml:"name"`
-	Identifier      string   `json:"identifier" toml:"identifier"`
-	ChainId         uint64   `json:"chainId" toml:"chain_id"`
-	RPC             []string `json:"rpc" toml:"rpc"`
-	Explorer        []string `json:"explorers" toml:"explorers"`
-	SuperchainLevel uint     `json:"superchainLevel" toml:"superchain_level"`
-	Parent          Parent   `json:"parent" toml:"parent"`
-	GasPayingToken  *Address `json:"gasPayingToken,omitempty" toml:"gas_paying_token,omitempty"`
+	Name                 string   `json:"name" toml:"name"`
+	Identifier           string   `json:"identifier" toml:"identifier"`
+	ChainId              uint64   `json:"chainId" toml:"chain_id"`
+	RPC                  []string `json:"rpc" toml:"rpc"`
+	Explorer             []string `json:"explorers" toml:"explorers"`
+	SuperchainLevel      uint     `json:"superchainLevel" toml:"superchain_level"`
+	DataAvailabilityType string   `json:"dataAvailabilityType" toml:"data_availability_type"`
+	Parent               Parent   `json:"parent" toml:"parent"`
+	GasPayingToken       *Address `json:"gasPayingToken,omitempty" toml:"gas_paying_token,omitempty"`
 }
 
 type Parent struct {
@@ -49,14 +50,15 @@ func main() {
 				log.Fatalf("cannot find chain with id %d", chainId)
 			}
 			chainEntry := ChainEntry{
-				Name:            chain.Name,
-				Identifier:      chain.Identifier(),
-				ChainId:         chain.ChainID,
-				RPC:             []string{chain.PublicRPC},
-				Explorer:        []string{chain.Explorer},
-				SuperchainLevel: uint(chain.SuperchainLevel),
-				Parent:          Parent{"L2", chain.Superchain, []string{}},
-				GasPayingToken:  chain.GasPayingToken,
+				Name:                 chain.Name,
+				Identifier:           chain.Identifier(),
+				ChainId:              chain.ChainID,
+				RPC:                  []string{chain.PublicRPC},
+				Explorer:             []string{chain.Explorer},
+				SuperchainLevel:      uint(chain.SuperchainLevel),
+				DataAvailabilityType: string(chain.DataAvailabilityType),
+				Parent:               Parent{"L2", chain.Superchain, []string{}},
+				GasPayingToken:       chain.GasPayingToken,
 			}
 			chainAddresses[chainId] = chain.Addresses
 			switch chain.SuperchainLevel {
@@ -99,61 +101,61 @@ func main() {
 	}
 	fmt.Println("Wrote chainList.toml file")
 
-  // Write chainList.toml file to the rust-bindings directory so it can be included in crate releases.
-  err = os.WriteFile(filepath.Join(repositoryRoot, "bindings/rust-bindings/etc/chainList.toml"), buf.Bytes(), 0o644)
-  if err != nil {
-    panic(err)
-  }
-  fmt.Println("Wrote rust-bindings chainList.toml file")
+	// Write chainList.toml file to the rust-bindings directory so it can be included in crate releases.
+	err = os.WriteFile(filepath.Join(repositoryRoot, "bindings/rust-bindings/etc/chainList.toml"), buf.Bytes(), 0o644)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Wrote rust-bindings chainList.toml file")
 
 	// Write all chain configs to a single file
 	type Superchain struct {
-    Name string `toml:"name"`
-    Config SuperchainConfig `toml:"config"`
-		ChainConfigs []ChainConfig `toml:"chains"`
+		Name         string           `toml:"name"`
+		Config       SuperchainConfig `toml:"config"`
+		ChainConfigs []ChainConfig    `toml:"chains"`
 	}
-  superchains := make([]Superchain, 0)
-  for _, sc := range Superchains {
-    chainConfigs := make([]ChainConfig, 0)
-    for _, chainId := range sc.ChainIDs {
-      chain, found := OPChains[uint64(chainId)]
-      if !found {
-        log.Fatalf("cannot find chain with id %d", chainId)
-      }
-      chainConfigs = append(chainConfigs, *chain)
-    }
-    sort.Slice(chainConfigs, func(i, j int) bool {
-      return chainConfigs[i].ChainID < chainConfigs[j].ChainID
-    })
-    superchains = append(superchains, Superchain{
-      Name: sc.Superchain,
-      Config: sc.Config,
-      ChainConfigs: chainConfigs,
-    })
-  }
-  sort.Slice(superchains, func(i, j int) bool {
-    return superchains[i].Config.L1.ChainID < superchains[j].Config.L1.ChainID
-  })
-  if len(superchains) != 0 {
-    var buf bytes.Buffer
-    type FullSuperchains struct {
-      Chains []Superchain `toml:"superchains"`
-    }
-    if err := toml.NewEncoder(&buf).Encode(FullSuperchains{Chains: superchains}); err != nil {
-      panic(fmt.Errorf("failed to marshal toml: %w", err))
-    }
+	superchains := make([]Superchain, 0)
+	for _, sc := range Superchains {
+		chainConfigs := make([]ChainConfig, 0)
+		for _, chainId := range sc.ChainIDs {
+			chain, found := OPChains[uint64(chainId)]
+			if !found {
+				log.Fatalf("cannot find chain with id %d", chainId)
+			}
+			chainConfigs = append(chainConfigs, *chain)
+		}
+		sort.Slice(chainConfigs, func(i, j int) bool {
+			return chainConfigs[i].ChainID < chainConfigs[j].ChainID
+		})
+		superchains = append(superchains, Superchain{
+			Name:         sc.Superchain,
+			Config:       sc.Config,
+			ChainConfigs: chainConfigs,
+		})
+	}
+	sort.Slice(superchains, func(i, j int) bool {
+		return superchains[i].Config.L1.ChainID < superchains[j].Config.L1.ChainID
+	})
+	if len(superchains) != 0 {
+		var buf bytes.Buffer
+		type FullSuperchains struct {
+			Chains []Superchain `toml:"superchains"`
+		}
+		if err := toml.NewEncoder(&buf).Encode(FullSuperchains{Chains: superchains}); err != nil {
+			panic(fmt.Errorf("failed to marshal toml: %w", err))
+		}
 		// Prepend an autogenerated header.
 		header := []byte(`##############################################
 #  DO NOT EDIT - THIS FILE IS AUTOGENERATED  #
 ##############################################
 
 `)
-    // Write configs.toml file to the rust-bindings directory so it can be included in crate releases.
+		// Write configs.toml file to the rust-bindings directory so it can be included in crate releases.
 		buf = *bytes.NewBuffer(append(header, buf.Bytes()...))
-    err = os.WriteFile(filepath.Join(repositoryRoot, "bindings/rust-bindings/etc/configs.toml"), buf.Bytes(), 0o644)
-    if err != nil {
-      panic(err)
-    }
+		err = os.WriteFile(filepath.Join(repositoryRoot, "bindings/rust-bindings/etc/configs.toml"), buf.Bytes(), 0o644)
+		if err != nil {
+			panic(err)
+		}
 		fmt.Println("Wrote configs.toml file")
 	}
 

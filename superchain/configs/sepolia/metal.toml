@@ -6,11 +6,12 @@ explorer = "https://testnet.explorer.metall2.com"
 superchain_level = 1
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 batch_inbox_addr = "0x24567B64a86A4c966655fba6502a93dFb701E316"
-canyon_time = 1708129622
-delta_time = 1708385400
-ecotone_time = 1708534800
+canyon_time = 1708129622 # Sat 17 Feb 2024 00:27:02 UTC
+delta_time = 1708385400 # Mon 19 Feb 2024 23:30:00 UTC
+ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
 block_time = 2
 seq_window_size = 3600
+data_availability_type = "eth-da"
 
 [genesis]
   l2_time = 1708129620
@@ -27,6 +28,10 @@ seq_window_size = 3600
     gasLimit = 30000000
 
 [addresses]
+  SystemConfigOwner = "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C"
+  ProxyAdminOwner = "0xE75Cd021F520B160BF6b54D472Fa15e52aFe5aDD"
+  Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
+  Challenger = "0x45eFFbD799Ab49122eeEAB75B78D9C56A187F9A7"
   AddressManager = "0x394f844B9A0FC876935d1b0b791D9e94Ad905e8b"
   L1CrossDomainMessengerProxy = "0x5D335Aa7d93102110879e3B54985c5F08146091E"
   L1ERC721BridgeProxy = "0x5d6cE6917dBeeacF010c96BfFdaBE89e33a30309"
@@ -36,7 +41,3 @@ seq_window_size = 3600
   OptimismPortalProxy = "0x01D4dfC994878682811b2980653D03E589f093cB"
   SystemConfigProxy = "0x5D63A8Dc2737cE771aa4a6510D063b6Ba2c4f6F2"
   ProxyAdmin = "0xF7Bc4b3a78C7Dd8bE9B69B3128EEB0D6776Ce18A"
-  ProxyAdminOwner = "0xE75Cd021F520B160BF6b54D472Fa15e52aFe5aDD"
-  SystemConfigOwner = "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C"
-  Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
-  Challenger = "0x45eFFbD799Ab49122eeEAB75B78D9C56A187F9A7"
