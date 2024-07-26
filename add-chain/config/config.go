@@ -15,31 +15,6 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
-type JSONChainConfig struct {
-	ChainID                          uint64                   `json:"l2_chain_id"`
-	BatchInboxAddr                   superchain.Address       `json:"batch_inbox_address"`
-	Genesis                          superchain.ChainGenesis  `json:"genesis"`
-	BlockTime                        uint64                   `json:"block_time"`
-	SequencerWindowSize              uint64                   `json:"seq_window_size"`
-	PlasmaConfig                     *superchain.PlasmaConfig `json:"plasma_config,omitempty"`
-	superchain.HardForkConfiguration `json:",inline"`
-}
-
-func (c *JSONChainConfig) VerifyPlasma() error {
-	if c.PlasmaConfig != nil {
-		if c.PlasmaConfig.DAChallengeAddress == nil {
-			return fmt.Errorf("missing required field: da_challenge_contract_address")
-		}
-		if c.PlasmaConfig.DAChallengeWindow == nil {
-			return fmt.Errorf("missing required field: da_challenge_window")
-		}
-		if c.PlasmaConfig.DAResolveWindow == nil {
-			return fmt.Errorf("missing required field: da_resolve_window")
-		}
-	}
-	return nil
-}
-
 // ConstructChainConfig creates and populates a ChainConfig struct by reading from an input file and
 // explicitly setting some additional fields to input argument values
 func ConstructChainConfig(
@@ -56,12 +31,12 @@ func ConstructChainConfig(
 	if err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error reading file: %w", err)
 	}
-	var jsonConfig JSONChainConfig
+	var jsonConfig superchain.ChainConfig
 	if err = json.Unmarshal(file, &jsonConfig); err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %w", err)
 	}
 
-	err = jsonConfig.VerifyPlasma()
+	err = jsonConfig.CheckDataAvailability()
 	if err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error with json plasma config: %w", err)
 	}
@@ -77,15 +52,16 @@ func ConstructChainConfig(
 		SuperchainLevel:        superchainLevel,
 		StandardChainCandidate: standardChainCandidate,
 		SuperchainTime:         nil,
-		Plasma:                 jsonConfig.PlasmaConfig,
+		Plasma:                 jsonConfig.Plasma,
 		HardForkConfiguration: superchain.HardForkConfiguration{
 			CanyonTime:  jsonConfig.CanyonTime,
 			DeltaTime:   jsonConfig.DeltaTime,
 			EcotoneTime: jsonConfig.EcotoneTime,
 			FjordTime:   jsonConfig.FjordTime,
 		},
-		BlockTime:           jsonConfig.BlockTime,
-		SequencerWindowSize: jsonConfig.SequencerWindowSize,
+		BlockTime:            jsonConfig.BlockTime,
+		SequencerWindowSize:  jsonConfig.SequencerWindowSize,
+		DataAvailabilityType: jsonConfig.DataAvailabilityType,
 	}
 
 	fmt.Printf("Rollup config successfully constructed\n")

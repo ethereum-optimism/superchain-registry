@@ -10,6 +10,7 @@
       "https://explorer.optimism.io"
     ],
     "superchainLevel": 2,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -26,6 +27,7 @@
       "https://explorer.base.org"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -42,6 +44,7 @@
       "https://explorer.lyra.finance"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -58,6 +61,7 @@
       "https://explorer.metall2.com"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -74,6 +78,7 @@
       "https://explorer.mode.network"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -90,6 +95,7 @@
       "https://explorer.orderly.network"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -106,6 +112,24 @@
       "https://explorer.publicgoods.network"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "RACE Mainnet",
+    "identifier": "mainnet/race",
+    "chainId": 6805,
+    "rpc": [
+      "https://racemainnet.io"
+    ],
+    "explorers": [
+      "https://racescan.io/"
+    ],
+    "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -122,6 +146,7 @@
       "https://explorer.lumio.io"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -138,6 +163,7 @@
       "https://explorer.zora.energy"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -154,6 +180,7 @@
       "https://sepolia-optimistic.etherscan.io"
     ],
     "superchainLevel": 2,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -170,6 +197,7 @@
       "https://sepolia-explorer.base.org"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -186,6 +214,7 @@
       "https://testnet.explorer.metall2.com"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -202,6 +231,7 @@
       "https://sepolia.explorer.mode.network"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -218,6 +248,7 @@
       "https://explorer.sepolia.publicgoods.network"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -234,6 +265,7 @@
       "https://testnet.racescan.io/"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -250,6 +282,7 @@
       "https://sepolia.explorer.zora.energy"
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia"
@@ -266,6 +299,7 @@
       ""
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia-dev-0"
@@ -282,6 +316,7 @@
       ""
     ],
     "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia-dev-0"

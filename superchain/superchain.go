@@ -53,6 +53,7 @@ type HardForkConfiguration struct {
 	DeltaTime   *uint64 `json:"delta_time,omitempty" toml:"delta_time,omitempty"`
 	EcotoneTime *uint64 `json:"ecotone_time,omitempty" toml:"ecotone_time,omitempty"`
 	FjordTime   *uint64 `json:"fjord_time,omitempty" toml:"fjord_time,omitempty"`
+	GraniteTime *uint64 `json:"granite_time,omitempty" toml:"granite_time,omitempty"`
 }
 
 type SuperchainLevel uint
@@ -62,9 +63,16 @@ const (
 	Frontier SuperchainLevel = 1
 )
 
+type DataAvailability string
+
+const (
+	EthDA DataAvailability = "eth-da"
+	AltDA DataAvailability = "alt-da"
+)
+
 type ChainConfig struct {
 	Name         string `toml:"name"`
-	ChainID      uint64 `toml:"chain_id"`
+	ChainID      uint64 `toml:"chain_id" json:"l2_chain_id"`
 	PublicRPC    string `toml:"public_rpc"`
 	SequencerRPC string `toml:"sequencer_rpc"`
 	Explorer     string `toml:"explorer"`
@@ -79,7 +87,7 @@ type ChainConfig struct {
 	// will be inherited from the superchain-wide config.
 	SuperchainTime *uint64 `toml:"superchain_time"`
 
-	BatchInboxAddr Address `toml:"batch_inbox_addr"`
+	BatchInboxAddr Address `toml:"batch_inbox_addr" json:"batch_inbox_address"`
 
 	// Superchain is a simple string to identify the superchain.
 	// This is implied by directory structure, and not encoded in the config file itself.
@@ -91,14 +99,20 @@ type ChainConfig struct {
 	// Hardfork Configuration Overrides
 	HardForkConfiguration `toml:",inline"`
 
-	BlockTime           uint64 `toml:"block_time"`
-	SequencerWindowSize uint64 `toml:"seq_window_size"`
+	BlockTime            uint64           `toml:"block_time" json:"block_time"`
+	SequencerWindowSize  uint64           `toml:"seq_window_size" json:"seq_window_size"`
+	DataAvailabilityType DataAvailability `toml:"data_availability_type"`
 
 	// Optional feature
-	Plasma         *PlasmaConfig `toml:"plasma,omitempty"`
-	GasPayingToken *Address      `toml:"gas_paying_token,omitempty"` // Just metadata, not consumed by downstream OPStack software
+	LegacyUsePlasma          bool          `toml:"-,omitempty" json:"use_plasma,omitempty"`
+	LegacyDAChallengeAddress *Address      `toml:"-,omitempty" json:"da_challenge_contract_address,omitempty"`
+	LegacyDAChallengeWindow  *uint64       `toml:"-,omitempty" json:"da_challenge_window,omitempty"`
+	LegacyDAResolveWindow    *uint64       `toml:"-,omitempty" json:"da_resolve_window,omitempty"`
+	Plasma                   *PlasmaConfig `toml:"plasma,omitempty" json:"plasma_config,omitempty"`
 
-	Genesis ChainGenesis `toml:"genesis"`
+	GasPayingToken *Address `toml:"gas_paying_token,omitempty"` // Just metadata, not consumed by downstream OPStack software
+
+	Genesis ChainGenesis `toml:"genesis" json:"genesis"`
 
 	Addresses AddressList `toml:"addresses"`
 }
@@ -115,6 +129,34 @@ type PlasmaConfig struct {
 	// DA resolve window value set on the DAC contract. Used in plasma mode
 	// to compute when a challenge expires and trigger a reorg if needed.
 	DAResolveWindow *uint64 `json:"da_resolve_window" toml:"da_resolve_window"`
+}
+
+func (c *ChainConfig) CheckDataAvailability() error {
+	c.DataAvailabilityType = EthDA
+
+	if c.LegacyUsePlasma {
+		// Check for legacy plasma config first
+		if c.LegacyDAChallengeAddress == nil {
+			return fmt.Errorf("missing required plasma field: da_challenge_contract_address")
+		}
+		plasmaConfig := PlasmaConfig{
+			DAChallengeAddress: c.LegacyDAChallengeAddress,
+			DAChallengeWindow:  c.LegacyDAChallengeWindow,
+			DAResolveWindow:    c.LegacyDAResolveWindow,
+		}
+		c.Plasma = &plasmaConfig
+		c.DataAvailabilityType = AltDA
+		return nil
+	}
+
+	if c.Plasma != nil {
+		c.DataAvailabilityType = AltDA
+		if c.Plasma.DAChallengeAddress == nil {
+			return fmt.Errorf("missing required plasma field: da_challenge_contract_address")
+		}
+	}
+
+	return nil
 }
 
 // setNilHardforkTimestampsToDefaultOrZero overwrites each unspecified hardfork activation time override
