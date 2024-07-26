@@ -91,6 +91,7 @@
   },
   "1740": {
     "AddressManager": "0x394f844B9A0FC876935d1b0b791D9e94Ad905e8b",
+    "BatchSubmitter": "0xdb80Eca386AC72a55510e33CF9CF7533e75916eE",
     "Challenger": "0x45eFFbD799Ab49122eeEAB75B78D9C56A187F9A7",
     "Guardian": "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E",
     "L1CrossDomainMessengerProxy": "0x5D335Aa7d93102110879e3B54985c5F08146091E",
