@@ -129,7 +129,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to read addresses from JSON files: %w", err)
 	}
 
-	isFaultProofs, err := inferIsFaultProofs(addresses["OptimismPortalProxy"], l1RpcUrl)
+	isFaultProofs, err := inferIsFaultProofs(addresses["SystemConfigProxy"], addresses["OptimismPortalProxy"], l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("failed to infer fault proofs status of chain: %w", err)
 	}
@@ -175,7 +175,12 @@ func entrypoint(ctx *cli.Context) error {
 	return nil
 }
 
-func inferIsFaultProofs(optimismPortalProxyAddress, l1RpcUrl string) (bool, error) {
+func inferIsFaultProofs(systemConfigProxyAddress, optimismPortalProxyAddress, l1RpcUrl string) (bool, error) {
+	tokenAddress, err := getGasPayingToken(l1RpcUrl, superchain.MustHexToAddress(systemConfigProxyAddress))
+	if tokenAddress != nil {
+		return false, nil
+	}
+
 	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
 	version, err := castCall(optimismPortalProxyAddress, "version()(string)", l1RpcUrl)
 	if err != nil {
@@ -190,6 +195,7 @@ func inferIsFaultProofs(optimismPortalProxyAddress, l1RpcUrl string) (bool, erro
 	if err != nil {
 		return false, fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
 	}
+
 	return majorVersion >= 3, nil
 }
 
@@ -205,14 +211,12 @@ func getGasPayingToken(l1rpcURl string, SystemConfigAddress superchain.Address) 
 
 	opts := bind.CallOpts{}
 	result, err := sc.GasPayingToken(&opts)
-
-	if strings.Contains(err.Error(), "execution reverted") {
-		// This happens when the SystemConfig contract
-		// does not yet have the CGT functionality.
-		return nil, nil
-	}
-
 	if err != nil {
+		if strings.Contains(err.Error(), "execution reverted") {
+			// This happens when the SystemConfig contract
+			// does not yet have the CGT functionality.
+			return nil, nil
+		}
 		return nil, err
 	}
 

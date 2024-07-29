@@ -131,7 +131,7 @@ func readAddressesFromChain(addresses map[string]string, l1RpcUrl string, isFaul
 }
 
 func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir string) error {
-	contractsFromJSON := []string{
+	universalContracts := []string{
 		AddressManager,
 		L1CrossDomainMessengerProxy,
 		L1ERC721BridgeProxy,
@@ -142,7 +142,16 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		ProxyAdmin,
 	}
 
-	contractsFromJSONFaultProofs := append(contractsFromJSON, []string{
+	customGasTokenContracts := []string{
+		AnchorStateRegistryProxy,
+		DelayedWETHProxy,
+		DisputeGameFactoryProxy,
+		MIPS,
+		PreimageOracle,
+		L2OutputOracleProxy,
+	}
+
+	faultProofContracts := []string{
 		AnchorStateRegistryProxy,
 		DelayedWETHProxy,
 		DisputeGameFactoryProxy,
@@ -150,10 +159,9 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		MIPS,
 		PermissionedDisputeGame,
 		PreimageOracle,
-	}...)
-	contractsFromJSONNonFaultProofs := append(contractsFromJSON, L2OutputOracleProxy)
+	}
 
-	contracts := contractsFromJSONFaultProofs
+	contracts := universalContracts
 
 	// Check for the following
 	// 1. filepath == deploymentsDir
@@ -169,13 +177,17 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		deployFilePath = filepath.Join(deploymentsDir, ".deploy")
 		_, err = os.Stat(deployFilePath)
 		if err != nil {
-			fmt.Printf("failed to find .deploy file. Will look for legacy .json files")
 			// Use legacy deployment artifact schema
+			fmt.Printf("failed to find .deploy file. Will look for legacy .json files")
 
-			_, err := os.ReadFile(filepath.Join(deploymentsDir, AnchorStateRegistryProxy+".json"))
-			if errors.Is(err, os.ErrNotExist) {
-				contracts = contractsFromJSONNonFaultProofs
+			if _, err := os.ReadFile(filepath.Join(deploymentsDir, FaultDisputeGame+".json")); errors.Is(err, os.ErrNotExist) {
+				contracts = append(contracts, faultProofContracts...)
+			} else if _, err := os.ReadFile(filepath.Join(deploymentsDir, AnchorStateRegistryProxy+".json")); errors.Is(err, os.ErrNotExist) {
+				contracts = append(contracts, customGasTokenContracts...)
+			} else {
+				contracts = append(contracts, L2OutputOracleProxy)
 			}
+
 			for _, name := range contracts {
 				path := filepath.Join(deploymentsDir, name+".json")
 				file, err := os.ReadFile(path)
@@ -202,9 +214,12 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 		return fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
-	_, err = addressList.AddressFor(AnchorStateRegistryProxy)
-	if err != nil {
-		contracts = contractsFromJSONNonFaultProofs
+	if _, err = addressList.AddressFor(FaultDisputeGame); err == nil {
+		contracts = append(contracts, faultProofContracts...)
+	} else if _, err = addressList.AddressFor(AnchorStateRegistryProxy); err == nil {
+		contracts = append(contracts, customGasTokenContracts...)
+	} else {
+		contracts = append(contracts, L2OutputOracleProxy)
 	}
 
 	for _, name := range contracts {
