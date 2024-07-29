@@ -155,55 +155,66 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 
 	contracts := contractsFromJSONFaultProofs
 
-	deployFilePath := filepath.Join(deploymentsDir, ".deploy")
-	_, err := os.Stat(deployFilePath)
-
+	// Check for the following
+	// 1. filepath == deploymentsDir
+	// 2. filepath == deploymentsDir/.deploy
+	// 3. filepath == deploymentsDir/<contract-name>.json
+	deployFilePath := filepath.Join(deploymentsDir)
+	fileInfo, err := os.Stat(deployFilePath)
 	if err != nil {
-		fmt.Printf("failed to find .deploy file. Will look for legacy .json files")
-		// Use legacy deployment artifact schema
+		return fmt.Errorf("invalid deployment filepath provided: %w", err)
+	}
 
-		_, err := os.ReadFile(filepath.Join(deploymentsDir, AnchorStateRegistryProxy+".json"))
-		if errors.Is(err, os.ErrNotExist) {
-			contracts = contractsFromJSONNonFaultProofs
-		}
-		for _, name := range contracts {
-			path := filepath.Join(deploymentsDir, name+".json")
-			file, err := os.ReadFile(path)
-			if err != nil {
-				return fmt.Errorf("failed to read file: %w", err)
-			}
-			var data AddressData
-			if err = json.Unmarshal(file, &data); err != nil {
-				return fmt.Errorf("failed to unmarshal json: %w", err)
-			}
-			contractAddresses[name] = data.Address
-		}
-	} else {
-		var addressList superchain.AddressList
-		rawData, err := os.ReadFile(deployFilePath)
+	if fileInfo.IsDir() {
+		deployFilePath = filepath.Join(deploymentsDir, ".deploy")
+		_, err = os.Stat(deployFilePath)
 		if err != nil {
-			return fmt.Errorf("failed to read file: %w", err)
-		}
+			fmt.Printf("failed to find .deploy file. Will look for legacy .json files")
+			// Use legacy deployment artifact schema
 
-		if err = json.Unmarshal(rawData, &addressList); err != nil {
-			return fmt.Errorf("failed to unmarshal json: %w", err)
-		}
-
-		_, err = addressList.AddressFor(AnchorStateRegistryProxy)
-		if err != nil {
-			contracts = contractsFromJSONNonFaultProofs
-		}
-
-		for _, name := range contracts {
-			address, err := addressList.AddressFor(name)
-			if err != nil {
-				return fmt.Errorf("failed to retrieve %s address from list: %w", name, err)
+			_, err := os.ReadFile(filepath.Join(deploymentsDir, AnchorStateRegistryProxy+".json"))
+			if errors.Is(err, os.ErrNotExist) {
+				contracts = contractsFromJSONNonFaultProofs
 			}
-			contractAddresses[name] = address.String()
+			for _, name := range contracts {
+				path := filepath.Join(deploymentsDir, name+".json")
+				file, err := os.ReadFile(path)
+				if err != nil {
+					return fmt.Errorf("failed to read file: %w", err)
+				}
+				var data AddressData
+				if err = json.Unmarshal(file, &data); err != nil {
+					return fmt.Errorf("failed to unmarshal json: %w", err)
+				}
+				contractAddresses[name] = data.Address
+			}
+			return nil
 		}
 	}
 
-	fmt.Printf("Contract addresses read from deployments directory: %s\n", deploymentsDir)
+	var addressList superchain.AddressList
+	rawData, err := os.ReadFile(deployFilePath)
+	if err != nil {
+		return fmt.Errorf("failed to read file: %w", err)
+	}
+
+	if err = json.Unmarshal(rawData, &addressList); err != nil {
+		return fmt.Errorf("failed to unmarshal json: %w", err)
+	}
+
+	_, err = addressList.AddressFor(AnchorStateRegistryProxy)
+	if err != nil {
+		contracts = contractsFromJSONNonFaultProofs
+	}
+
+	for _, name := range contracts {
+		address, err := addressList.AddressFor(name)
+		if err != nil {
+			return fmt.Errorf("failed to retrieve %s address from list: %w", name, err)
+		}
+		contractAddresses[name] = address.String()
+	}
+
 	return nil
 }
 
