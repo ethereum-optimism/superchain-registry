@@ -177,6 +177,9 @@ func entrypoint(ctx *cli.Context) error {
 
 func inferIsFaultProofs(systemConfigProxyAddress, optimismPortalProxyAddress, l1RpcUrl string) (bool, error) {
 	tokenAddress, err := getGasPayingToken(l1RpcUrl, superchain.MustHexToAddress(systemConfigProxyAddress))
+	if err != nil {
+		return false, fmt.Errorf("failed to query for gasPayingToken: %w", err)
+	}
 	if tokenAddress != nil {
 		return false, nil
 	}

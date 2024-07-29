@@ -68,8 +68,8 @@ func getBytes(method string, contractAddress Address, client *ethclient.Client) 
 
 	return Retry(callContract)(callMsg)
 }
-func getHexString(method string, contractAddress Address, client *ethclient.Client) (string, error) {
 
+func getHexString(method string, contractAddress Address, client *ethclient.Client) (string, error) {
 	result, err := getBytes(method, contractAddress, client)
 
 	return common.Bytes2Hex(result), err
