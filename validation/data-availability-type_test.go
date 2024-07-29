@@ -14,6 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 func testDataAvailabilityType(t *testing.T, chain *ChainConfig) {
@@ -43,18 +44,29 @@ func testDataAvailabilityType(t *testing.T, chain *ChainConfig) {
 	nonArchivalDepth := 120
 	blockNum, found, err := eth.CheckRecentTxs(ctx, client, nonArchivalDepth, common.Address(batchSubmitterAddress))
 	if !found {
+		if err != nil {
+			t.Log("failed to check recent batcher txs, will attempt retry")
+		}
 		blockNum, found, err = eth.CheckRecentTxs(ctx, client, int(depth), common.Address(batchSubmitterAddress))
 	}
 	require.NoErrorf(t, err, "failed when checking chain for recent batcher txs from %s", batchSubmitterAddress)
-	require.True(t, found)
+	require.True(t, found, "failed to find recent batcher tx")
 
 	// Fetch the block by number
 	block, err := client.BlockByNumber(context.Background(), new(big.Int).SetUint64(blockNum))
 	require.NoError(t, err)
 
 	// Iterate over the transactions in the block
+	var chainConfig *params.ChainConfig
+	if chain.Superchain == "mainnet" {
+		chainConfig = params.MainnetChainConfig
+	} else if chain.Superchain == "sepolia" || chain.Superchain == "sepolia-dev-0" {
+		chainConfig = params.SepoliaChainConfig
+	} else {
+		require.Fail(t, "invalid l1 chain configured for l2 chain: %s", chain.Superchain)
+	}
 	for _, tx := range block.Transactions() {
-		signer := types.NewCancunSigner(tx.ChainId())
+		signer := types.MakeSigner(chainConfig, block.Number(), block.Time())
 		sender, err := types.Sender(signer, tx)
 		require.NoError(t, err)
 		if sender == common.Address(batchSubmitterAddress) {
