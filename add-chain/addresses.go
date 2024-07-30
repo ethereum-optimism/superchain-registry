@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -180,9 +179,9 @@ func readAddressesFromJSON(contractAddresses map[string]string, deploymentsDir s
 			// Use legacy deployment artifact schema
 			fmt.Printf("failed to find .deploy file. Will look for legacy .json files")
 
-			if _, err := os.ReadFile(filepath.Join(deploymentsDir, FaultDisputeGame+".json")); errors.Is(err, os.ErrNotExist) {
+			if _, err := os.Stat(filepath.Join(deploymentsDir, FaultDisputeGame+".json")); err == nil {
 				contracts = append(contracts, faultProofContracts...)
-			} else if _, err := os.ReadFile(filepath.Join(deploymentsDir, AnchorStateRegistryProxy+".json")); errors.Is(err, os.ErrNotExist) {
+			} else if _, err := os.Stat(filepath.Join(deploymentsDir, AnchorStateRegistryProxy+".json")); err == nil {
 				contracts = append(contracts, customGasTokenContracts...)
 			} else {
 				contracts = append(contracts, L2OutputOracleProxy)
