@@ -52,6 +52,9 @@ jobs:
       - checkout
       - install-just
       - run: just lint-all
+      - run:
+          name: check git tree is clean
+          command: git diff --exit-code
   golang-modules-tidy:
     executor:
       name: go/default  # is based on cimg/go

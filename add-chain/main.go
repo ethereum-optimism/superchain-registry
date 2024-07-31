@@ -123,13 +123,13 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to retrieve L1 rpc url: %w", err)
 	}
 
-	addresses := make(map[string]string)
-	err = readAddressesFromJSON(addresses, deploymentsDir)
+	var addresses superchain.AddressList
+	err = readAddressesFromJSON(&addresses, deploymentsDir)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from JSON files: %w", err)
 	}
 
-	isFaultProofs, err := inferIsFaultProofs(addresses["OptimismPortalProxy"], l1RpcUrl)
+	isFaultProofs, err := inferIsFaultProofs(addresses.SystemConfigProxy, addresses.OptimismPortalProxy, l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("failed to infer fault proofs status of chain: %w", err)
 	}
@@ -139,27 +139,22 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
 
-	err = readAddressesFromChain(addresses, l1RpcUrl, isFaultProofs)
+	err = readAddressesFromChain(&addresses, l1RpcUrl, isFaultProofs)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from chain: %w", err)
 	}
 
 	if rollupConfig.Plasma != nil {
-		addresses["DAChallengeAddress"] = rollupConfig.Plasma.DAChallengeAddress.String()
+		addresses.DAChallengeAddress = *rollupConfig.Plasma.DAChallengeAddress
 	}
 
-	addressList := superchain.AddressList{}
-	err = mapToAddressList(addresses, &addressList)
-	if err != nil {
-		return fmt.Errorf("error converting map to AddressList: %w", err)
-	}
-	rollupConfig.Addresses = addressList
+	rollupConfig.Addresses = addresses
 
 	l1RpcUrl, err = config.GetL1RpcUrl(superchainTarget)
 	if err != nil {
 		return fmt.Errorf("error getting l1RpcUrl: %w", err)
 	}
-	gpt, err := getGasPayingToken(l1RpcUrl, addressList.SystemConfigProxy)
+	gpt, err := getGasPayingToken(l1RpcUrl, addresses.SystemConfigProxy)
 	if err != nil {
 		return fmt.Errorf("error inferring gas paying token: %w", err)
 	}
@@ -175,7 +170,15 @@ func entrypoint(ctx *cli.Context) error {
 	return nil
 }
 
-func inferIsFaultProofs(optimismPortalProxyAddress, l1RpcUrl string) (bool, error) {
+func inferIsFaultProofs(systemConfigProxyAddress, optimismPortalProxyAddress superchain.Address, l1RpcUrl string) (bool, error) {
+	tokenAddress, err := getGasPayingToken(l1RpcUrl, systemConfigProxyAddress)
+	if err != nil {
+		return false, fmt.Errorf("failed to query for gasPayingToken: %w", err)
+	}
+	if tokenAddress != nil {
+		return false, nil
+	}
+
 	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
 	version, err := castCall(optimismPortalProxyAddress, "version()(string)", l1RpcUrl)
 	if err != nil {
@@ -190,6 +193,7 @@ func inferIsFaultProofs(optimismPortalProxyAddress, l1RpcUrl string) (bool, erro
 	if err != nil {
 		return false, fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
 	}
+
 	return majorVersion >= 3, nil
 }
 
@@ -205,14 +209,12 @@ func getGasPayingToken(l1rpcURl string, SystemConfigAddress superchain.Address) 
 
 	opts := bind.CallOpts{}
 	result, err := sc.GasPayingToken(&opts)
-
-	if strings.Contains(err.Error(), "execution reverted") {
-		// This happens when the SystemConfig contract
-		// does not yet have the CGT functionality.
-		return nil, nil
-	}
-
 	if err != nil {
+		if strings.Contains(err.Error(), "execution reverted") {
+			// This happens when the SystemConfig contract
+			// does not yet have the CGT functionality.
+			return nil, nil
+		}
 		return nil, err
 	}
 
