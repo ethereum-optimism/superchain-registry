@@ -18,9 +18,7 @@ type AddressData struct {
 func readAddressesFromChain(addresses *superchain.AddressList, l1RpcUrl string, isFaultProofs bool) error {
 	// SuperchainConfig
 	address, err := castCall(addresses.OptimismPortalProxy.String(), "superchainConfig()(address)", l1RpcUrl)
-	if err != nil {
-		addresses.SuperchainConfig = superchain.Address{}
-	} else {
+	if err == nil {
 		addresses.SuperchainConfig = superchain.MustHexToAddress(address)
 	}
 
