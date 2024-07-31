@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+
+	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
-func castCall(contractAddress, calldata, l1RpcUrl string) (string, error) {
-	cmd := exec.Command("cast", "call", contractAddress, calldata, "-r", l1RpcUrl)
+func castCall(contractAddress superchain.Address, calldata, l1RpcUrl string) (string, error) {
+	cmd := exec.Command("cast", "call", contractAddress.String(), calldata, "-r", l1RpcUrl)
 	var out bytes.Buffer
 	var stderr bytes.Buffer
 	cmd.Stdout = &out

@@ -180,7 +180,7 @@ func inferIsFaultProofs(systemConfigProxyAddress, optimismPortalProxyAddress sup
 	}
 
 	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
-	version, err := castCall(optimismPortalProxyAddress.String(), "version()(string)", l1RpcUrl)
+	version, err := castCall(optimismPortalProxyAddress, "version()(string)", l1RpcUrl)
 	if err != nil {
 		return false, fmt.Errorf("failed to get OptimismPortalProxy.version(): %w", err)
 	}
