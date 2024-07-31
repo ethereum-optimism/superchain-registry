@@ -32,6 +32,13 @@ var tests = []struct {
 		deploymentsDir:   "./testdata/monorepo/deployments",
 	},
 	{
+		name:             "baseline_legacy",
+		chainName:        "testchain_baseline_legacy",
+		chainShortName:   "testchain_bl",
+		rollupConfigFile: "./testdata/monorepo/op-node/rollup_baseline_legacy.json",
+		deploymentsDir:   "./testdata/monorepo/deployments-legacy",
+	},
+	{
 		name:                   "zorasep",
 		chainName:              "testchain_zorasep",
 		chainShortName:         "testchain_zs",
