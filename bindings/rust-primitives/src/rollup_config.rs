@@ -14,6 +14,15 @@ use crate::fee_params::{
 use crate::genesis::ChainGenesis;
 use crate::system_config::SystemConfig;
 
+/// The max rlp bytes per channel for the Bedrock hardfork.
+pub const MAX_RLP_BYTES_PER_CHANNEL_BEDROCK: u64 = 10_000_000;
+
+/// The max rlp bytes per channel for the Fjord hardfork.
+pub const MAX_RLP_BYTES_PER_CHANNEL_FJORD: u64 = 100_000_000;
+
+/// The max sequencer drift when the Fjord hardfork is active.
+pub const FJORD_MAX_SEQUENCER_DRIFT: u64 = 1800;
+
 /// Returns the rollup config for the given chain ID.
 pub fn rollup_config_from_chain_id(chain_id: u64) -> Result<RollupConfig> {
     chain_id.try_into()
@@ -32,9 +41,6 @@ impl TryFrom<u64> for RollupConfig {
         }
     }
 }
-
-/// The max sequencer drift when the Fjord hardfork is active.
-pub const FJORD_MAX_SEQUENCER_DRIFT: u64 = 1800;
 
 /// The Rollup configuration.
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -243,6 +249,15 @@ impl RollupConfig {
             FJORD_MAX_SEQUENCER_DRIFT
         } else {
             self.max_sequencer_drift
+        }
+    }
+
+    /// Returns the max rlp bytes per channel for the given timestamp.
+    pub fn max_rlp_bytes_per_channel(&self, timestamp: u64) -> u64 {
+        if self.is_fjord_active(timestamp) {
+            MAX_RLP_BYTES_PER_CHANNEL_FJORD
+        } else {
+            MAX_RLP_BYTES_PER_CHANNEL_BEDROCK
         }
     }
 
