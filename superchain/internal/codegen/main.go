@@ -125,7 +125,7 @@ func main() {
 			chainConfigs = append(chainConfigs, *chain)
 		}
 		sort.Slice(chainConfigs, func(i, j int) bool {
-			return chainConfigs[i].Name < chainConfigs[j].Name
+			return chainConfigs[i].ChainID < chainConfigs[j].ChainID
 		})
 		superchains = append(superchains, Superchain{
 			Name:         sc.Superchain,
