@@ -134,7 +134,7 @@ func main() {
 		})
 	}
 	sort.Slice(superchains, func(i, j int) bool {
-		return superchains[i].Config.L1.ChainID < superchains[j].Config.L1.ChainID
+		return superchains[i].Config.Name < superchains[j].Config.Name
 	})
 	if len(superchains) != 0 {
 		var buf bytes.Buffer
