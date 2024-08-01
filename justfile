@@ -82,3 +82,8 @@ cargo-lint:
 cargo-build:
   just bindings/rust-primitives/build
   just bindings/rust-bindings/build
+
+# Release
+release:
+  just bindings/rust-primitives/release
+  just bindings/rust-bindings/release
