@@ -71,35 +71,11 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "PGN (Public Goods Network)"
-  identifier = "mainnet/pgn"
-  chain_id = 424
-  rpc = ["https://rpc.publicgoods.network"]
-  explorers = ["https://explorer.publicgoods.network"]
-  superchain_level = 1
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-
-[[chains]]
   name = "RACE Mainnet"
   identifier = "mainnet/race"
   chain_id = 6805
   rpc = ["https://racemainnet.io"]
   explorers = ["https://racescan.io/"]
-  superchain_level = 1
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-
-[[chains]]
-  name = "SuperLumio"
-  identifier = "mainnet/superlumio"
-  chain_id = 8866
-  rpc = ["https://mainnet.lumio.io"]
-  explorers = ["https://explorer.lumio.io"]
   superchain_level = 1
   data_availability_type = "eth-da"
   [chains.parent]
@@ -160,18 +136,6 @@
   chain_id = 919
   rpc = ["https://sepolia.mode.network"]
   explorers = ["https://sepolia.explorer.mode.network"]
-  superchain_level = 1
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-
-[[chains]]
-  name = "Sepolia PGN (Public Goods Network)"
-  identifier = "sepolia/pgn"
-  chain_id = 58008
-  rpc = ["https://sepolia.publicgoods.network"]
-  explorers = ["https://explorer.sepolia.publicgoods.network"]
   superchain_level = 1
   data_availability_type = "eth-da"
   [chains.parent]
