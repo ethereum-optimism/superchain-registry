@@ -1,0 +1,45 @@
+name: Upload Chain Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      chain:
+        description: 'The name of the target chain (e.g. op-mainnet)'
+        required: true
+
+jobs:
+  upload-chain-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Google cloud auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Set up GCP SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: Get current commit hash
+        run: echo "COMMIT_HASH=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
+      - name: Generate genesis file
+        working-directory: validation
+        run: |
+          go run generate-genesis/main.go ${{ env.COMMIT_HASH }}
+
+      - name: Generate rollup config
+        working-directory: validation
+        run: |
+          go run generate-rollup-config/main.go ${{ env.COMMIT_HASH }}
+
+      - name: Upload artifacts
+        working-directory: validation
+        run: |
+          gsutil cp ./generate-genesis/output-${{ env.COMMIT_HASH }}/${{ github.event.inputs.chain }}.json \
+            gs://${{ secrets.GCS_BUCKET }}/chains/${{ github.event.inputs.chain }}/${{ env.COMMIT_HASH }}/genesis.json
+          gsutil cp ./generate-rollup-config/output-${{ env.COMMIT_HASH }}/${{ github.event.inputs.chain }}.json \
+            gs://${{ secrets.GCS_BUCKET }}/chains/${{ github.event.inputs.chain }}/${{ env.COMMIT_HASH }}/rollup.json
+
