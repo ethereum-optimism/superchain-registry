@@ -8,6 +8,7 @@ batch_inbox_addr = "0xff00000000000000000000000000000000006806"
 canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+granite_time = 1723478400 # Mon Aug 12 16:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 data_availability_type = "eth-da"

@@ -10,6 +10,7 @@ canyon_time = 1698436800 # Fri 27 Oct 2023 20:00:00 UTC
 delta_time = 1706555000 # Mon 29 Jan 2024 19:03:20 UTC
 ecotone_time = 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
 fjord_time = 1715961600 # Fri 17 May 2024 16:00:00 UTC
+granite_time = 1723046400 # Wed Aug 7 16:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 data_availability_type = "eth-da"
