@@ -488,7 +488,6 @@
     delta_time = 1703203200
     ecotone_time = 1708534800
     fjord_time = 1716998400
-    granite_time = 1723478400
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -544,7 +543,6 @@
     canyon_time = 1708129622
     delta_time = 1708385400
     ecotone_time = 1708534800
-    granite_time = 1723478400
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -599,7 +597,6 @@
     canyon_time = 0
     delta_time = 0
     ecotone_time = 0
-    granite_time = 1723478400
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -657,7 +654,6 @@
     delta_time = 1703203200
     ecotone_time = 1708534800
     fjord_time = 1716998400
-    granite_time = 1723478400
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -772,7 +768,6 @@
     delta_time = 1703203200
     ecotone_time = 1708534800
     fjord_time = 1716998400
-    granite_time = 1723478400
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -897,7 +892,6 @@
     delta_time = 1706555000
     ecotone_time = 1706634000
     fjord_time = 1715961600
-    granite_time = 1723046400
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
