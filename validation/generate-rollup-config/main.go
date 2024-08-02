@@ -33,7 +33,7 @@ func main() {
 			}
 		}
 
-		err = os.WriteFile(path.Join(dirPath, chain.Superchain+"-"+chain.Name+".json"), j, os.FileMode(0o644))
+		err = os.WriteFile(path.Join(dirPath, chain.Chain+"-"+chain.Superchain+".json"), j, os.FileMode(0o644))
 		if err != nil {
 			panic(err)
 		}
