@@ -250,6 +250,7 @@ func (c *ChainConfig) GenerateTOMLComments(ctx context.Context) (map[string]stri
 	createTimestampComment("delta_time", c.DeltaTime, comments)
 	createTimestampComment("ecotone_time", c.EcotoneTime, comments)
 	createTimestampComment("fjord_time", c.FjordTime, comments)
+	createTimestampComment("granite_time", c.GraniteTime, comments)
 
 	if c.StandardChainCandidate {
 		comments["standard_chain_candidate"] = "# This is a temporary field which causes most of the standard validation checks to run on this chain"
