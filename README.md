@@ -6,19 +6,23 @@
 The Superchain Registry is an index of chains which serves as the source of truth for who’s in the Superchain and what modifications they’ve made to their chains.
 
 <center>
-   <table style="text-align:center">
-      <tr style="font-size:42pt">
-         <td>👀</td>
-         <td>📝</td>
-         <td><h1></h1></td>
+   <table style="text-align:center;">
+      <tr style="font-size:42pt;">
+         <td><a href="chainList.json">👀</a></td>
+         <td><a href="superchain/configs/">⚙️</></td>
+         <td><a href="documentation/add-chain.md">📝</a></td>
       </tr>
-      <tr style="font-size:18pt">
+      <tr style="font-size:16pt">
          <td><a href="chainList.json">
-            See the list of chains
+            See the summary list of all chains in the Superchain
+            </a>
+        </td>
+        <td><a href="superchain/configs/">
+            See more detailed config information about each chain
             </a>
         </td>
          <td><a href="documentation/add-chain.md">
-            Add a new chain
+            Add a new chain to the Registry
             </a>
         </td>
       </tr>
