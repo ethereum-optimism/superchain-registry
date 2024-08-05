@@ -8,7 +8,7 @@ The Superchain Registry is an index of chains which serves as the source of trut
 ## Quickstart 
 
 <center>
-   <table style="text-align:center">
+   <table style="text-align:center; padding:1px; border:0;">
       <tr>
          <td>
             <a href="chainList.json"><img src="documentation/chain-summary.png" /></a>
