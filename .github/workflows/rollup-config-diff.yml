@@ -33,7 +33,7 @@ jobs:
 
     - name: compute diff
       working-directory: validation
-      id: run-command
+      id: run_command
       run: |
         ./scripts/diff-configs.sh ./generate-rollup-config/output-base ./generate-rollup-config/output-HEAD
       continue-on-error: true
