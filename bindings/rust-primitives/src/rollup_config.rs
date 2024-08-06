@@ -98,11 +98,16 @@ pub struct RollupConfig {
     /// otherwise.
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub fjord_time: Option<u64>,
-    /// `interop_time` sets the activation time for an experimental feature-set, activated like a
-    /// hardfork. Active if `interop_time` != None && L2 block timestamp >= Some(interop_time),
-    /// inactive otherwise.
+    /// `granite_time` sets the activation time for the Granite network upgrade.
+    /// Active if `granite_time` != None && L2 block timestamp >= Some(granite_time), inactive
+    /// otherwise.
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
-    pub interop_time: Option<u64>,
+    pub granite_time: Option<u64>,
+    /// `holocene_time` sets the activation time for the Holocene network upgrade.
+    /// Active if `holocene_time` != None && L2 block timestamp >= Some(holocene_time), inactive
+    /// otherwise.
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
+    pub holocene_time: Option<u64>,
     /// `batch_inbox_address` is the L1 address that batches are sent to.
     pub batch_inbox_address: Address,
     /// `deposit_contract_address` is the L1 address that deposits are sent to.
@@ -145,7 +150,8 @@ impl Default for RollupConfig {
             delta_time: None,
             ecotone_time: None,
             fjord_time: None,
-            interop_time: None,
+            granite_time: None,
+            holocene_time: None,
             batch_inbox_address: Address::ZERO,
             deposit_contract_address: Address::ZERO,
             l1_system_config_address: Address::ZERO,
@@ -170,7 +176,8 @@ pub fn load_op_stack_rollup_config(chain_config: &ChainConfig) -> RollupConfig {
         delta_time: chain_config.hardfork_configuration.delta_time,
         ecotone_time: chain_config.hardfork_configuration.ecotone_time,
         fjord_time: chain_config.hardfork_configuration.fjord_time,
-        interop_time: chain_config.hardfork_configuration.interop_time,
+        granite_time: chain_config.hardfork_configuration.granite_time,
+        holocene_time: chain_config.hardfork_configuration.holocene_time,
         batch_inbox_address: chain_config.batch_inbox_addr,
         deposit_contract_address: chain_config
             .addresses
@@ -231,9 +238,14 @@ impl RollupConfig {
         self.fjord_time.map_or(false, |t| timestamp >= t)
     }
 
-    /// Returns true if Interop is active at the given timestamp.
-    pub fn is_interop_active(&self, timestamp: u64) -> bool {
-        self.interop_time.map_or(false, |t| timestamp >= t)
+    /// Returns true if Granite is active at the given timestamp.
+    pub fn is_granite_active(&self, timestamp: u64) -> bool {
+        self.granite_time.map_or(false, |t| timestamp >= t)
+    }
+
+    /// Returns true if Holocene is active at the given timestamp.
+    pub fn is_holocene_active(&self, timestamp: u64) -> bool {
+        self.holocene_time.map_or(false, |t| timestamp >= t)
     }
 
     /// Returns true if a DA Challenge proxy Address is provided in the rollup config and the
@@ -331,7 +343,8 @@ pub const OP_MAINNET_CONFIG: RollupConfig = RollupConfig {
     delta_time: Some(1_708_560_000_u64),
     ecotone_time: Some(1_710_374_401_u64),
     fjord_time: Some(1_720_627_201_u64),
-    interop_time: None,
+    granite_time: None,
+    holocene_time: None,
     batch_inbox_address: address!("ff00000000000000000000000000000000000010"),
     deposit_contract_address: address!("beb5fc579115071764c7423a4f12edde41f106ed"),
     l1_system_config_address: address!("229047fed2591dbec1ef1118d64f7af3db9eb290"),
@@ -376,7 +389,8 @@ pub const OP_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     delta_time: Some(1703203200),
     ecotone_time: Some(1708534800),
     fjord_time: Some(1716998400),
-    interop_time: None,
+    granite_time: Some(1_723_478_400_u64),
+    holocene_time: None,
     batch_inbox_address: address!("ff00000000000000000000000000000011155420"),
     deposit_contract_address: address!("16fc5058f25648194471939df75cf27a2fdc48bc"),
     l1_system_config_address: address!("034edd2a225f7f429a63e0f1d2084b9e0a93b538"),
@@ -421,7 +435,8 @@ pub const BASE_MAINNET_CONFIG: RollupConfig = RollupConfig {
     delta_time: Some(1_708_560_000_u64),
     ecotone_time: Some(1_710_374_401_u64),
     fjord_time: Some(1_720_627_201_u64),
-    interop_time: None,
+    granite_time: None,
+    holocene_time: None,
     batch_inbox_address: address!("ff00000000000000000000000000000000008453"),
     deposit_contract_address: address!("49048044d57e1c92a77f79988d21fa8faf74e97e"),
     l1_system_config_address: address!("73a79fab69143498ed3712e519a88a918e1f4072"),
@@ -466,7 +481,8 @@ pub const BASE_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     delta_time: Some(1703203200),
     ecotone_time: Some(1708534800),
     fjord_time: Some(1716998400),
-    interop_time: None,
+    granite_time: Some(1_723_478_400_u64),
+    holocene_time: None,
     batch_inbox_address: address!("ff00000000000000000000000000000000084532"),
     deposit_contract_address: address!("49f53e41452c74589e85ca1677426ba426459e85"),
     l1_system_config_address: address!("f272670eb55e895584501d564afeb048bed26194"),
@@ -526,12 +542,21 @@ mod tests {
     }
 
     #[test]
-    fn test_interop_active() {
+    fn test_granite_active() {
         let mut config = RollupConfig::default();
-        assert!(!config.is_interop_active(0));
-        config.interop_time = Some(10);
-        assert!(config.is_interop_active(10));
-        assert!(!config.is_interop_active(9));
+        assert!(!config.is_granite_active(0));
+        config.granite_time = Some(10);
+        assert!(config.is_granite_active(10));
+        assert!(!config.is_granite_active(9));
+    }
+
+    #[test]
+    fn test_holocene_active() {
+        let mut config = RollupConfig::default();
+        assert!(!config.is_holocene_active(0));
+        config.holocene_time = Some(10);
+        assert!(config.is_holocene_active(10));
+        assert!(!config.is_holocene_active(9));
     }
 
     #[test]
