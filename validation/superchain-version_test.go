@@ -72,7 +72,12 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 	for _, contractAddress := range contractsToCheck {
 		a, err := list.AddressFor(contractAddress)
 		if err != nil {
-			return ContractVersions{}, err
+			// If the chain does not store this contractAddress
+			// we will continue ("storing" the empty string),
+			// so that the rest of the check can
+			// still take place. This results in a more useful
+			// error shown to the user.
+			continue
 		}
 		wg.Add(1)
 		go getVersionAsync(a, results, contractAddress, wg)
@@ -165,7 +170,13 @@ func findOPContractTag(versions ContractVersions) ([]standard.Tag, error) {
 	if err != nil {
 		return matchingTags, err
 	}
-	err = fmt.Errorf("no matching tag found %s", pretty)
+
+	prettyStandard, err := json.MarshalIndent(standard.Versions, "", " ")
+	if err != nil {
+		return matchingTags, err
+	}
+
+	err = fmt.Errorf("contract versions %s do not match any standard op-contracts tag %s", pretty, prettyStandard)
 
 	matchesTag := func(standard, candidate ContractVersions) bool {
 		s := reflect.ValueOf(standard)

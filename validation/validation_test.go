@@ -45,6 +45,10 @@ func testUniversal(t *testing.T, chain *ChainConfig) {
 
 // testStandardCandidate applies to Standard and Standard Candidate Chains.
 func testStandardCandidate(t *testing.T, chain *ChainConfig) {
+	// Standard Contract Versions
+	t.Run("Standard Contract Versions", func(t *testing.T) {
+		testContractsMatchATag(t, chain)
+	})
 	// Standard Config Params
 	t.Run("Rollup Config", func(t *testing.T) { testRollupConfig(t, chain) })
 	t.Run("Gas Token", (func(t *testing.T) { testGasToken(t, chain) }))
@@ -57,8 +61,7 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	// Standard Config Roles
 	t.Run("L1 Security Config", func(t *testing.T) { testL1SecurityConfig(t, chain.ChainID) })
 	t.Run("L2 Security Config", func(t *testing.T) { testL2SecurityConfig(t, chain) })
-	// Standard Contract Versions
-	t.Run("Standard Contract Versions", func(t *testing.T) { testContractsMatchATag(t, chain) })
+	// Other
 	t.Run("Data Availability Type", func(t *testing.T) { testDataAvailabilityType(t, chain) })
 }
 
