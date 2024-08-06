@@ -44,7 +44,6 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const github = require('@actions/github');
           const issue_number = context.payload.pull_request.number;
           const run_id = context.runId;
           const repo = context.repo.repo;
