@@ -49,11 +49,12 @@ type SystemConfig struct {
 }
 
 type HardForkConfiguration struct {
-	CanyonTime  *uint64 `json:"canyon_time,omitempty" toml:"canyon_time,omitempty"`
-	DeltaTime   *uint64 `json:"delta_time,omitempty" toml:"delta_time,omitempty"`
-	EcotoneTime *uint64 `json:"ecotone_time,omitempty" toml:"ecotone_time,omitempty"`
-	FjordTime   *uint64 `json:"fjord_time,omitempty" toml:"fjord_time,omitempty"`
-	GraniteTime *uint64 `json:"granite_time,omitempty" toml:"granite_time,omitempty"`
+	CanyonTime   *uint64 `json:"canyon_time,omitempty" toml:"canyon_time,omitempty"`
+	DeltaTime    *uint64 `json:"delta_time,omitempty" toml:"delta_time,omitempty"`
+	EcotoneTime  *uint64 `json:"ecotone_time,omitempty" toml:"ecotone_time,omitempty"`
+	FjordTime    *uint64 `json:"fjord_time,omitempty" toml:"fjord_time,omitempty"`
+	GraniteTime  *uint64 `json:"granite_time,omitempty" toml:"granite_time,omitempty"`
+	HoloceneTime *uint64 `json:"holocene_time,omitempty" toml:"holocene_time,omitempty"`
 }
 
 type SuperchainLevel uint
@@ -251,6 +252,7 @@ func (c *ChainConfig) GenerateTOMLComments(ctx context.Context) (map[string]stri
 	createTimestampComment("ecotone_time", c.EcotoneTime, comments)
 	createTimestampComment("fjord_time", c.FjordTime, comments)
 	createTimestampComment("granite_time", c.GraniteTime, comments)
+	createTimestampComment("holocene_time", c.HoloceneTime, comments)
 
 	if c.StandardChainCandidate {
 		comments["standard_chain_candidate"] = "# This is a temporary field which causes most of the standard validation checks to run on this chain"
