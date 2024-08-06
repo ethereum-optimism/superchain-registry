@@ -6,4 +6,4 @@ type Tag string
 
 type VersionTags = map[Tag]superchain.L1ContractBytecodeHashes
 
-var Versions VersionTags = make(VersionTags, 0)
+var Versions map[string]*VersionTags

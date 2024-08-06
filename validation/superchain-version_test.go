@@ -28,7 +28,7 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 
 	versions, err := getBytecodeHashesFromChain(*Addresses[chain.ChainID], client)
 	require.NoError(t, err)
-	_, err = findOPContractTag(versions)
+	_, err = findOPContractTag(versions, chain.Superchain)
 	require.NoError(t, err)
 }
 
@@ -132,28 +132,28 @@ func TestFindOPContractTag(t *testing.T) {
 		PreimageOracle:               "1.0.0",
 	}
 
-	got, err := findOPContractTag(shouldMatch)
+	got, err := findOPContractTag(shouldMatch, "mainnet")
 	require.NoError(t, err)
 	want := []standard.Tag{"op-contracts/v1.4.0"}
 	require.Equal(t, got, want)
 
 	shouldNotMatch := L1ContractBytecodeHashes{
-		L1CrossDomainMessenger:       "2.3.0",
-		L1ERC721Bridge:               "2.1.0",
-		L1StandardBridge:             "2.1.0",
-		OptimismMintableERC20Factory: "1.9.0",
-		OptimismPortal:               "2.5.0",
-		SystemConfig:                 "1.12.0",
-		ProtocolVersions:             "1.0.0",
-		L2OutputOracle:               "1.0.0",
+		L1CrossDomainMessenger:       "0xaa",
+		L1ERC721Bridge:               "0xbb",
+		L1StandardBridge:             "0xcc",
+		OptimismMintableERC20Factory: "0xdd",
+		OptimismPortal:               "0xee",
+		SystemConfig:                 "0x00",
+		ProtocolVersions:             "0xef",
+		L2OutputOracle:               "0x12",
 	}
-	got, err = findOPContractTag(shouldNotMatch)
+	got, err = findOPContractTag(shouldNotMatch, "mainnet")
 	require.Error(t, err)
 	want = []standard.Tag{}
 	require.Equal(t, got, want)
 }
 
-func findOPContractTag(bytecodeHashes L1ContractBytecodeHashes) ([]standard.Tag, error) {
+func findOPContractTag(bytecodeHashes L1ContractBytecodeHashes, network string) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
 	pretty, err := json.MarshalIndent(bytecodeHashes, "", " ")
 	if err != nil {
@@ -192,8 +192,8 @@ func findOPContractTag(bytecodeHashes L1ContractBytecodeHashes) ([]standard.Tag,
 		return true
 	}
 
-	for tag := range standard.Versions {
-		if matchesTag(standard.Versions[tag], bytecodeHashes) {
+	for tag := range *standard.Versions[network] {
+		if matchesTag((*standard.Versions[network])[tag], bytecodeHashes) {
 			matchingTags = append(matchingTags, tag)
 			err = nil
 		}
