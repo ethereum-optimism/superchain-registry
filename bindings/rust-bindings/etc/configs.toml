@@ -26,7 +26,6 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1724428800
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -83,7 +82,6 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1724428800
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -140,7 +138,6 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1724428800
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -198,7 +195,6 @@
     delta_time = 0
     ecotone_time = 0
     fjord_time = 1720627201
-    granite_time = 1724428800
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -310,7 +306,6 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1724428800
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -368,7 +363,6 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1724428800
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -426,7 +420,6 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1724428800
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
