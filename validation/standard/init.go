@@ -32,7 +32,6 @@ func init() {
 		Versions[network] = new(VersionTags)
 		decodeTOMLFileIntoConfig("standard-versions-"+network+".toml", Versions[network])
 	}
-
 }
 
 func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles | VersionTags](filename string, config *T) {

@@ -103,13 +103,11 @@ func getBytecodeHashesFromChain(list AddressList, client *ethclient.Client) (L1C
 // getBytecodeHash will get the hash of the bytecode of a contract at a given address.
 func getBytecodeHash(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
 	code, err := client.CodeAt(ctx, addr, nil)
-
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", addr, err)
 	}
 
 	return crypto.Keccak256Hash(code).Hex(), nil
-
 }
 
 func TestFindOPContractTag(t *testing.T) {
