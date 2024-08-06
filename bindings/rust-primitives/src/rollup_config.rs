@@ -23,6 +23,9 @@ pub const MAX_RLP_BYTES_PER_CHANNEL_FJORD: u64 = 100_000_000;
 /// The max sequencer drift when the Fjord hardfork is active.
 pub const FJORD_MAX_SEQUENCER_DRIFT: u64 = 1800;
 
+/// The channel timeout once the Granite hardfork is active.
+pub const GRANITE_CHANNEL_TIMEOUT: u64 = 50;
+
 /// Returns the rollup config for the given chain ID.
 pub fn rollup_config_from_chain_id(chain_id: u64) -> Result<RollupConfig> {
     chain_id.try_into()
@@ -270,6 +273,15 @@ impl RollupConfig {
             MAX_RLP_BYTES_PER_CHANNEL_FJORD
         } else {
             MAX_RLP_BYTES_PER_CHANNEL_BEDROCK
+        }
+    }
+
+    /// Returns the channel timeout for the given timestamp.
+    pub fn channel_timeout(&self, timestamp: u64) -> u64 {
+        if self.is_granite_active(timestamp) {
+            GRANITE_CHANNEL_TIMEOUT
+        } else {
+            self.channel_timeout
         }
     }
 
@@ -567,6 +579,19 @@ mod tests {
         assert!(!config.is_plasma_enabled());
         config.da_challenge_address = Some(address!("0000000000000000000000000000000000000001"));
         assert!(config.is_plasma_enabled());
+    }
+
+    #[test]
+    fn test_granite_channel_timeout() {
+        let mut config = RollupConfig {
+            channel_timeout: 100,
+            granite_time: Some(10),
+            ..Default::default()
+        };
+        assert_eq!(config.channel_timeout(0), 100);
+        assert_eq!(config.channel_timeout(10), GRANITE_CHANNEL_TIMEOUT);
+        config.granite_time = None;
+        assert_eq!(config.channel_timeout(10), 100);
     }
 
     #[test]
