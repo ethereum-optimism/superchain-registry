@@ -1,0 +1,14 @@
+["op-contracts/v1.4.0"] # Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.4.0
+address_manager = ""
+l1_cross_domain_messenger = "0x06643e7d44538ba353995b6b77634e1c5bd1282ae7902f2b1aceaec97cf572ed"       # version 2.3.0
+l1_erc721_bridge = "0x1f958654ab06a152993e7a0ae7b6dbb0d4b19265cc9337b8789fe1353bd9dc35"                # version 2.1.0
+l1_standard_bridge = "0xc7b46fc754979c0fd29ec7105b045a5705d172da4364b24a72e42e586906056f"              # version 2.1.0
+optimism_mintable_erc20_factory = "0x1f958654ab06a152993e7a0ae7b6dbb0d4b19265cc9337b8789fe1353bd9dc35" # version 1.9.0
+optimism_portal = "0x1f958654ab06a152993e7a0ae7b6dbb0d4b19265cc9337b8789fe1353bd9dc35"                 # version 3.10.0
+system_config = "0x1f958654ab06a152993e7a0ae7b6dbb0d4b19265cc9337b8789fe1353bd9dc35"                   # version 2.2.0
+protocol_versions = ""                                                                                 # version 1.0.0
+anchor_state_registry = "0xfa8c9db6c6cab7108dea276f4cd09d575674eb0852c0fa3187e59e98ef977998"           # version 1.0.0
+delayed_weth = "0xfa8c9db6c6cab7108dea276f4cd09d575674eb0852c0fa3187e59e98ef977998"                    # version 1.0.0
+dispute_game_factory = "0xfa8c9db6c6cab7108dea276f4cd09d575674eb0852c0fa3187e59e98ef977998"            # version 1.0.0
+fault_dispute_game = "0x1057ea12c464a11710906ddf6ff5b488fd2fa3ff4a6aa317192b8c3d4aee9452"              # version 1.2.0
+permissioned_dispute_game = "0x257a33a686bbb8b9a1bb1fad7581a4e1fd5c93346dff29fc860cc4ce886a3721"       # version 1.2.0
