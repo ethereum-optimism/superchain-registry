@@ -118,7 +118,7 @@
     "OptimismPortalProxy": "0x3F37aBdE2C6b5B2ed6F8045787Df1ED1E3753956",
     "Proposer": "0xC8187d40AD440328104A52BBed2D8Efc5ab1F1F6",
     "ProxyAdmin": "0x37Ff0ae34dadA1A95A4251d10ef7Caa868c7AC99",
-    "ProxyAdminOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+    "ProxyAdminOwner": "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A",
     "SystemConfigOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
     "SystemConfigProxy": "0x7BD909970B0EEdcF078De6Aeff23ce571663b8aA",
     "UnsafeBlockSigner": "0x4a65F5da5e80DEFfEA844eAa15CE130e80605dc5"
@@ -154,7 +154,7 @@
     "OptimismPortalProxy": "0x8B34b14c7c7123459Cf3076b8Cb929BE097d0C07",
     "Proposer": "0x674F64D64Ddc198db83cd9047dF54BF89cCD0ddB",
     "ProxyAdmin": "0x470d87b1dae09a454A43D1fD772A561a03276aB7",
-    "ProxyAdminOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+    "ProxyAdminOwner": "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A",
     "SystemConfigOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
     "SystemConfigProxy": "0x5e6432F18Bc5d497B1Ab2288a025Fbf9D69E2221",
     "UnsafeBlockSigner": "0xa7fA9CA4ac88686A542C0f830d7378eAB4A0278F"
@@ -210,7 +210,7 @@
     "OptimismPortalProxy": "0x1a0ad011913A150f69f6A19DF447A0CfD9551054",
     "Proposer": "0x48247032092e7b0ecf5dEF611ad89eaf3fC888Dd",
     "ProxyAdmin": "0xD4ef175B9e72cAEe9f1fe7660a6Ec19009903b49",
-    "ProxyAdminOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+    "ProxyAdminOwner": "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A",
     "SystemConfigOwner": "0xC72aE5c7cc9a332699305E29F68Be66c73b60542",
     "SystemConfigProxy": "0xA3cAB0126d5F504B071b81a3e8A2BBBF17930d86",
     "UnsafeBlockSigner": "0x3Dc8Dfd0709C835cAd15a6A27e089FF4cF4C9228"
