@@ -44,13 +44,14 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
+          const github = require('@actions/github');
           const issue_number = context.payload.pull_request.number;
           const run_id = context.runId;
           const repo = context.repo.repo;
           const owner = context.repo.owner;
           const run_url = `https://github.com/${owner}/${repo}/actions/runs/${run_id}`;
           const comment = `Detected nonzero diff in config. You can see the detail [here](${run_url}).`;
-          await github.issues.createComment({
+          await github.rest.issues.createComment({
             ...context.repo,
             issue_number,
             body: comment

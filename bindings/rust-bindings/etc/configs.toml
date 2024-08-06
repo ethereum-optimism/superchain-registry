@@ -845,7 +845,7 @@
     delta_time = 0
     ecotone_time = 1706634000
     fjord_time = 1715961600
-    granite_time = 1723046400
+    granite_time = 0
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
@@ -902,7 +902,6 @@
     delta_time = 1706555000
     ecotone_time = 1706634000
     fjord_time = 1715961600
-    granite_time = 1723046400
     block_time = 2
     seq_window_size = 3600
     data_availability_type = "eth-da"
