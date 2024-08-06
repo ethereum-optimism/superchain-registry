@@ -6,12 +6,12 @@ canyon_time = 0
 delta_time = 0
 ecotone_time = 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
 fjord_time = 1715961600   # Fri May 17 2024 16:00:00 UTC
-granite_time = 1723046400 # Wed Aug 7 16:00:00 UTC
+granite_time = 1          # TODO temporary change for testing purposes only
 
 block_time = 2
 seq_window_size = 3600
 
 [l1]
-  chain_id = 11155111
-  public_rpc = "https://ethereum-sepolia-rpc.publicnode.com"
-  explorer = "https://sepolia.etherscan.io"
+chain_id = 11155111
+public_rpc = "https://ethereum-sepolia-rpc.publicnode.com"
+explorer = "https://sepolia.etherscan.io"
