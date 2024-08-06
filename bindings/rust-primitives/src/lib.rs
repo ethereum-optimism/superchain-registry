@@ -37,7 +37,7 @@ pub use rollup_config::{
 };
 
 pub mod chain_config;
-pub use chain_config::{ChainConfig, HardForkConfiguration, PlasmaConfig};
+pub use chain_config::{ChainConfig, HardForkConfiguration, AltDAConfig};
 
 pub mod genesis;
 pub use genesis::ChainGenesis;
