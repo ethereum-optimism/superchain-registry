@@ -9,13 +9,11 @@ import (
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
-	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
@@ -28,15 +26,15 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client)
+	versions, err := getBytecodeHashesFromChain(*Addresses[chain.ChainID], client)
 	require.NoError(t, err)
 	_, err = findOPContractTag(versions)
 	require.NoError(t, err)
 }
 
-// getContractVersionsFromChain pulls the appropriate contract versions from chain
-// using the supplied client (calling the version() method for each contract). It does this concurrently.
-func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (ContractVersions, error) {
+// getBytecodeHashesFromChain pulls the appropriate bytecode from chain
+// using the supplied client. It does this concurrently.
+func getBytecodeHashesFromChain(list AddressList, client *ethclient.Client) (L1ContractBytecodeHashes, error) {
 	// build up list of contracts to check
 	contractsToCheck := []string{
 		"L1CrossDomainMessengerProxy",
@@ -58,8 +56,8 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
 
-	getVersionAsync := func(contractAddress Address, results *sync.Map, key string, wg *sync.WaitGroup) {
-		r, err := getVersion(context.Background(), common.Address(contractAddress), client)
+	getBytecodeHashAsync := func(contractAddress Address, results *sync.Map, key string, wg *sync.WaitGroup) {
+		r, err := getBytecodeHash(context.Background(), common.Address(contractAddress), client)
 		if err != nil {
 			panic(err)
 		}
@@ -72,54 +70,50 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 	for _, contractAddress := range contractsToCheck {
 		a, err := list.AddressFor(contractAddress)
 		if err != nil {
-			return ContractVersions{}, err
+			return L1ContractBytecodeHashes{}, err
 		}
 		wg.Add(1)
-		go getVersionAsync(a, results, contractAddress, wg)
+		go getBytecodeHashAsync(a, results, contractAddress, wg)
 	}
 
 	wg.Wait()
 
-	// use reflection to convert results mapping into a ContractVersions object
+	// use reflection to convert results mapping into a L1ContractBytecodeHashes object
 	// without resorting to boilerplate code.
-	cv := ContractVersions{}
+	cbh := L1ContractBytecodeHashes{}
 	results.Range(func(k, v any) bool {
-		s := reflect.ValueOf(cv)
+		s := reflect.ValueOf(cbh)
 		for i := 0; i < s.NumField(); i++ {
 			// The keys of the results mapping come from the AddressList type,
 			// which includes both proxied and unproxied contracts.
-			// The cv object (of type ContractVersions), on the other hand,
-			// only lists implementation contract versions. The next line accounts for
-			// this: we may get the version directly from the implemntation, or via a Proxy,
+			// The cbh object (of type L1ContractBytecodeHashes), on the other hand,
+			// only lists implementation contract bytecode hashes. The next line accounts for
+			// this: we may get the bytecode hash directly from the implementation, or via a Proxy,
 			// but we store it against the implementation name in either case.
 			if s.Type().Field(i).Name == k || s.Type().Field(i).Name+"Proxy" == k {
-				reflect.ValueOf(&cv).Elem().Field(i).SetString(v.(string))
+				reflect.ValueOf(&cbh).Elem().Field(i).SetString(v.(string))
 			}
 		}
 		return true
 	})
 
-	return cv, nil
+	return cbh, nil
 }
 
-// getVersion will get the version of a contract at a given address, if it exposes a version() method.
-func getVersion(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
-	isemver, err := bindings.NewISemver(addr, client)
-	if err != nil {
-		return "", fmt.Errorf("%s: %w", addr, err)
-	}
-	version, err := Retry(isemver.Version)(&bind.CallOpts{
-		Context: ctx,
-	})
+// getBytecodeHash will get the hash of the bytecode of a contract at a given address.
+func getBytecodeHash(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
+	code, err := client.CodeAt(ctx, addr, nil)
+
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", addr, err)
 	}
 
-	return version, nil
+	return crypto.Keccak256Hash(code).Hex(), nil
+
 }
 
 func TestFindOPContractTag(t *testing.T) {
-	shouldMatch := ContractVersions{
+	shouldMatch := L1ContractBytecodeHashes{
 		L1CrossDomainMessenger:       "2.3.0",
 		L1ERC721Bridge:               "2.1.0",
 		L1StandardBridge:             "2.1.0",
@@ -143,7 +137,7 @@ func TestFindOPContractTag(t *testing.T) {
 	want := []standard.Tag{"op-contracts/v1.4.0"}
 	require.Equal(t, got, want)
 
-	shouldNotMatch := ContractVersions{
+	shouldNotMatch := L1ContractBytecodeHashes{
 		L1CrossDomainMessenger:       "2.3.0",
 		L1ERC721Bridge:               "2.1.0",
 		L1StandardBridge:             "2.1.0",
@@ -159,15 +153,15 @@ func TestFindOPContractTag(t *testing.T) {
 	require.Equal(t, got, want)
 }
 
-func findOPContractTag(versions ContractVersions) ([]standard.Tag, error) {
+func findOPContractTag(bytecodeHashes L1ContractBytecodeHashes) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
-	pretty, err := json.MarshalIndent(versions, "", " ")
+	pretty, err := json.MarshalIndent(bytecodeHashes, "", " ")
 	if err != nil {
 		return matchingTags, err
 	}
 	err = fmt.Errorf("no matching tag found %s", pretty)
 
-	matchesTag := func(standard, candidate ContractVersions) bool {
+	matchesTag := func(standard, candidate L1ContractBytecodeHashes) bool {
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
 
@@ -199,7 +193,7 @@ func findOPContractTag(versions ContractVersions) ([]standard.Tag, error) {
 	}
 
 	for tag := range standard.Versions {
-		if matchesTag(standard.Versions[tag], versions) {
+		if matchesTag(standard.Versions[tag], bytecodeHashes) {
 			matchingTags = append(matchingTags, tag)
 			err = nil
 		}
