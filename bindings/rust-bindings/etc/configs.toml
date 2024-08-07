@@ -213,7 +213,7 @@
         gasLimit = 30000000
     [superchains.chains.addresses]
       SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
-      ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
+      ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
       Guardian = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
       Challenger = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
       Proposer = "0xC8187d40AD440328104A52BBed2D8Efc5ab1F1F6"
@@ -381,7 +381,7 @@
         gasLimit = 30000000
     [superchains.chains.addresses]
       SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
-      ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
+      ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
       Guardian = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
       Challenger = "0x309Fe2536d01867018D120b40e4676723C53A14C"
       Proposer = "0x674F64D64Ddc198db83cd9047dF54BF89cCD0ddB"
@@ -438,7 +438,7 @@
         gasLimit = 30000000
     [superchains.chains.addresses]
       SystemConfigOwner = "0xC72aE5c7cc9a332699305E29F68Be66c73b60542"
-      ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
+      ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
       Guardian = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
       Challenger = "0xcA4571b1ecBeC86Ea2E660d242c1c29FcB55Dc72"
       Proposer = "0x48247032092e7b0ecf5dEF611ad89eaf3fC888Dd"

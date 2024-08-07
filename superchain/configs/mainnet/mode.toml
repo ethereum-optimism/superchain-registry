@@ -31,7 +31,7 @@ data_availability_type = "eth-da"
 
 [addresses]
   SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
-  ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
+  ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
   Guardian = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
   Challenger = "0x309Fe2536d01867018D120b40e4676723C53A14C"
   Proposer = "0x674F64D64Ddc198db83cd9047dF54BF89cCD0ddB"
