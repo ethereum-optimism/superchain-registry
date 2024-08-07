@@ -49,7 +49,7 @@ jobs:
           const repo = context.repo.repo;
           const owner = context.repo.owner;
           const run_url = `https://github.com/${owner}/${repo}/actions/runs/${run_id}`;
-          const body = `Detected nonzero diff in config. This PR modifies the effective configuration of at least one chain in the registry, which may or may not have been intended. It could affect whether a node started up with this config can successfully sync with the wider network. You can see the detail [here](${run_url}).`;
+          const body = `Detected nonzero diff in config. This PR modifies the effective configuration of at least one chain in the registry, which may or may not have been intended. You can see the detail [here](${run_url}).`;
 
           // List all comments on the pull request
           const { data: comments } = await github.rest.issues.listComments({
