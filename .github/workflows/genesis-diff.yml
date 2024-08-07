@@ -33,7 +33,48 @@ jobs:
 
     - name: compute diff
       working-directory: validation
-      id: run-command
+      id: run_command
       run: |
         ./scripts/diff-configs.sh ./generate-genesis/output-base ./generate-genesis/output-HEAD
+      continue-on-error: true
 
+    - name: Check command status and comment on PR
+      if: steps.run_command.outcome == 'failure'
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const issue_number = context.payload.pull_request.number;
+          const run_id = context.runId;
+          const repo = context.repo.repo;
+          const owner = context.repo.owner;
+          const run_url = `https://github.com/${owner}/${repo}/actions/runs/${run_id}`;
+          const body = `Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended. It could affect whether a node started up with this data can successfully sync with the wider network. You can see the detail [here](${run_url}).`;
+
+          // List all comments on the pull request
+          const { data: comments } = await github.rest.issues.listComments({
+            owner,
+            repo,
+            issue_number
+          });
+
+          // Find the comment made by the GitHub Action
+          const comment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes('Detected nonzero diff in genesis.'));
+
+          if (comment) {
+            // Update existing comment
+            await github.rest.issues.updateComment({
+              owner,
+              repo,
+              comment_id: comment.id,
+              body
+            });
+          } else {
+            // Create a new comment
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body
+            });
+          }
