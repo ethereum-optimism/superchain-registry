@@ -106,11 +106,7 @@ type ChainConfig struct {
 	DataAvailabilityType DataAvailability `toml:"data_availability_type"`
 
 	// Optional feature
-	LegacyUseAltDA           bool         `toml:"-,omitempty" json:"use_plasma,omitempty"`
-	LegacyDAChallengeAddress *Address     `toml:"-,omitempty" json:"da_challenge_contract_address,omitempty"`
-	LegacyDAChallengeWindow  *uint64      `toml:"-,omitempty" json:"da_challenge_window,omitempty"`
-	LegacyDAResolveWindow    *uint64      `toml:"-,omitempty" json:"da_resolve_window,omitempty"`
-	AltDA                    *AltDAConfig `toml:"alt_da,omitempty" json:"plasma_config,omitempty"`
+	AltDA *AltDAConfig `toml:"alt_da,omitempty" json:"alt_da,omitempty"`
 
 	GasPayingToken *Address `toml:"gas_paying_token,omitempty"` // Just metadata, not consumed by downstream OPStack software
 
@@ -135,22 +131,6 @@ type AltDAConfig struct {
 
 func (c *ChainConfig) CheckDataAvailability() error {
 	c.DataAvailabilityType = EthDA
-
-	if c.LegacyUseAltDA {
-		// Check for legacy altDA config first
-		if c.LegacyDAChallengeAddress == nil {
-			return fmt.Errorf("missing required altDA field: da_challenge_contract_address")
-		}
-		altDAConfig := AltDAConfig{
-			DAChallengeAddress: c.LegacyDAChallengeAddress,
-			DAChallengeWindow:  c.LegacyDAChallengeWindow,
-			DAResolveWindow:    c.LegacyDAResolveWindow,
-		}
-		c.AltDA = &altDAConfig
-		c.DataAvailabilityType = AltDA
-		return nil
-	}
-
 	if c.AltDA != nil {
 		c.DataAvailabilityType = AltDA
 		if c.AltDA.DAChallengeAddress == nil {
