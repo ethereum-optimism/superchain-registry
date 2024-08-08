@@ -6,13 +6,13 @@ on:
 
 jobs:
   compute-genesis-diff:
-    uses: ./diff-workflow.yml
+    uses: superchain-registry/.github/workflows/diff-workflow.yml@3d49b7f8c232c0c07820d2bb1e77662eddf1ad49
     with:
       command: generate-genesis
       directory: generate-genesis
       message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
   compute-rollup-config-diff:
-    uses: ./diff-workflow.yml
+    uses: superchain-registry/.github/workflows/diff-workflow.yml@3d49b7f8c232c0c07820d2bb1e77662eddf1ad49
     with:
       command: generate-rollup-config
       directory: generate-rollup-config
