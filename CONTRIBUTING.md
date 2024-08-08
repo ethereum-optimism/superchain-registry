@@ -6,7 +6,7 @@
 > For guidelines on how to add a chain to the Registry, see the documentation for [adding a new chain](documentation/add-chain.md).
 
 The Superchain Registry repository contains:
-* raw ["per-chain" config data](./README.md#3-understand-output) in `yaml` and `json/json.gz` files arranged in a semantically meaningful directory structure
+* raw ["per-chain" config data](./README.md#3-understand-output) in `toml` and `json/json.gz` files arranged in a semantically meaningful directory structure
 * [superchain-wide config data](#superchain-wide-config-data)
 * a Go workspace with
   - a [`superchain`](#superchain-go-module) module
