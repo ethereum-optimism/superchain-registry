@@ -104,7 +104,7 @@ jobs:
           command: just test-add-chain
       - run:
           name: run validation checks
-          command: just validate-modified-chains {{ github.event.pull_request.base.ref }}
+          command: just validate-modified-chains "${{ github.event.pull_request.base.ref }}"
       - notify-failures-on-main
   publish-bot:
     environment:
