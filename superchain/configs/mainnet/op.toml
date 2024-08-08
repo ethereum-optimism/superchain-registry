@@ -51,3 +51,5 @@ data_availability_type = "eth-da"
   MIPS = "0x0f8EdFbDdD3c0256A80AD8C0F2560B1807873C9c"
   PermissionedDisputeGame = "0xE9daD167EF4DE8812C1abD013Ac9570C616599A0"
   PreimageOracle = "0xD326E10B8186e90F4E2adc5c13a2d0C137ee8b34"
+
+# foo
