@@ -35,9 +35,14 @@ test-add-chain:
 test-superchain:
 	TEST_DIRECTORY=./superchain go run gotest.tools/gotestsum@latest --format testname
 
-# Test all Go code in the validation module
+# Unit test all Go code in the validation module, and do not run validation checks themselves
 test-validation: clean-add-chain
-	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname
+	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname -- -run='[^TestValidation]'
+
+# Runs validation checks for any chain
+validate-modified-chains:
+  git diff --name-only '*.toml' | xargs awk '/chain_id/ {print $3}' | xargs -I {} just validate {}
+
 
 # Run validation checks for chains with a name or chain ID matching the supplied regex, example: just validate 10
 validate CHAIN_ID:
