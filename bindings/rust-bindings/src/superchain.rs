@@ -116,7 +116,8 @@ mod tests {
                 delta_time: Some(1708560000),
                 ecotone_time: Some(1710374401),
                 fjord_time: Some(1720627201),
-                interop_time: None,
+                granite_time: None,
+                holocene_time: None,
             },
             plasma: None,
             addresses: Some(AddressList {

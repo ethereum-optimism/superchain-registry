@@ -30,8 +30,10 @@ pub struct HardForkConfiguration {
     pub ecotone_time: Option<u64>,
     /// Fjord hardfork activation time
     pub fjord_time: Option<u64>,
-    /// Interop hardfork activation time
-    pub interop_time: Option<u64>,
+    /// Granite hardfork activation time
+    pub granite_time: Option<u64>,
+    /// Holocene hardfork activation time
+    pub holocene_time: Option<u64>,
 }
 
 /// A chain configuration.
@@ -100,8 +102,11 @@ impl ChainConfig {
         if cfg.fjord_time.is_none() && defaults.fjord_time.is_some_and(|t| t > super_time) {
             cfg.fjord_time = defaults.fjord_time;
         }
-        if cfg.interop_time.is_none() && defaults.interop_time.is_some_and(|t| t > super_time) {
-            cfg.interop_time = defaults.interop_time;
+        if cfg.granite_time.is_none() && defaults.granite_time.is_some_and(|t| t > super_time) {
+            cfg.granite_time = defaults.granite_time;
+        }
+        if cfg.holocene_time.is_none() && defaults.holocene_time.is_some_and(|t| t > super_time) {
+            cfg.holocene_time = defaults.holocene_time;
         }
     }
 }
