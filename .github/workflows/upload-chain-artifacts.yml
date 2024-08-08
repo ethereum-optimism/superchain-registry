@@ -21,6 +21,7 @@ jobs:
       - name: Google cloud auth
         uses: 'google-github-actions/auth@v2'
         with:
+          create_credentials_file: "true"
           workload_identity_provider: ${{ secrets.GCP_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
