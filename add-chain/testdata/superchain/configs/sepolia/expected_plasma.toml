@@ -10,7 +10,10 @@ canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 delta_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
+max_sequencer_drift = 600
 data_availability_type = "alt-da"
+channel_timeout_bedrock = 300
+channel_timeout_granite = 50
 
 [plasma]
   da_challenge_contract_address = "0x3333333333333333333300000000000000000000"

@@ -22,6 +22,7 @@
   "max_sequencer_drift": 600,
   "seq_window_size": 3600,
   "channel_timeout": 300,
+  "channel_timeout_granite": 50,
   "l1_chain_id": 11155111,
   "l2_chain_id": 4206900,
   "regolith_time": 0,
