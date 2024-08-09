@@ -15,7 +15,7 @@ block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
 data_availability_type = "eth-da"
-channel_timeout_bedrock = 50
+channel_timeout_bedrock = 300
 
 [genesis]
   l2_time = 1691802540
