@@ -10,7 +10,9 @@ delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
+max_sequencer_drift = 600
 data_availability_type = "eth-da"
+channel_timeout_bedrock = 50
 gas_paying_token = "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
 
 [genesis]

@@ -25,6 +25,10 @@ var UpdateConfigsCmd = cli.Command{
 				panic(err)
 			}
 
+			chain.MaxSequencerDrift = 600
+			fifty := uint64(50)
+			chain.ChannelTimeoutBedrock = &fifty
+
 			superchainRepoPath := filepath.Dir(filepath.Dir(filepath.Dir(thisFile)))
 			targetDir := filepath.Join(superchainRepoPath, "superchain", "configs", chain.Superchain)
 			targetFilePath := filepath.Join(targetDir, chain.Chain+".toml")
