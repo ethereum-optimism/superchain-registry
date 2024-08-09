@@ -8,7 +8,7 @@ If and when a frontier chain becomes a standard chain, a `superchain_time` key/v
 
 There is a mechanism whereby hardfork activation times are set _superchain-wide_ in the `superchain.toml` configuration file present for each superchain target, but then conditionally propagated to all standard chains in that superchain when configurations are loaded by OP Stack software. This allows a single location to be updated and to coordinate many chains' hardfork activations.
 
-For a chain to "receive" a particular default hardfork activation time, the following conditions must hold:
+For a chain to "receive" a particular default (superchain-wide) hardfork activation time, the following conditions must hold:
 * It must be a standard chain with `superchain_time` set (only standard chains have this field)
 * It must not set a non-nil value for this activation time in its individual configuration file
 * The default hardfork activation must be set in the superchain-wide configuration file
@@ -21,4 +21,11 @@ At the time of writing, this is implemented for
 * [op-geth](https://docs.optimism.io/builders/node-operators/configuration/base-config#initialization-via-network-flags)
 * [op-node](https://docs.optimism.io/builders/node-operators/configuration/base-config#configuring-op-node)
 
-These components load configuration via the Go bindings in the `superchain` module. See this [init-time code](../superchain/superchain.go#L163-L205) and [tests](../superchain/superchain_test.go#L226-L308).
+These components load configuration via a sofware dependency on the Go bindings in the `superchain` module. See this [init-time code](../superchain/superchain.go#L163-L205) and [tests](../superchain/superchain_test.go#L226-L308).
+
+This implies some more conditions which need to hold for a chain to receive the superchain-wide hardfork activation:
+* They must be running the above OP Stack software which supports this feature, with the relevant initialization invocations to trigger it
+* The software must be up-to-date enough to embed the latest superchain-wide default hardfork activation times as well as the chain's individual configuration file (complete with `superchain_time` field).
+
+> [!CAUTION]
+> If (for example) OP Stack components are initialized without the network flags, this will require manual coordination to pass hardfork activation times into the command line invocation of the relevant commands.
