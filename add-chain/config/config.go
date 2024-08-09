@@ -31,38 +31,23 @@ func ConstructChainConfig(
 	if err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error reading file: %w", err)
 	}
-	var jsonConfig superchain.ChainConfig
-	if err = json.Unmarshal(file, &jsonConfig); err != nil {
+	var chainConfig superchain.ChainConfig
+	if err = json.Unmarshal(file, &chainConfig); err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %w", err)
 	}
 
-	err = jsonConfig.CheckDataAvailability()
+	err = chainConfig.CheckDataAvailability()
 	if err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error with json plasma config: %w", err)
 	}
 
-	chainConfig := superchain.ChainConfig{
-		Name:                   chainName,
-		ChainID:                jsonConfig.ChainID,
-		PublicRPC:              publicRPC,
-		SequencerRPC:           sequencerRPC,
-		Explorer:               explorer,
-		BatchInboxAddr:         jsonConfig.BatchInboxAddr,
-		Genesis:                jsonConfig.Genesis,
-		SuperchainLevel:        superchainLevel,
-		StandardChainCandidate: standardChainCandidate,
-		SuperchainTime:         nil,
-		Plasma:                 jsonConfig.Plasma,
-		HardForkConfiguration: superchain.HardForkConfiguration{
-			CanyonTime:  jsonConfig.CanyonTime,
-			DeltaTime:   jsonConfig.DeltaTime,
-			EcotoneTime: jsonConfig.EcotoneTime,
-			FjordTime:   jsonConfig.FjordTime,
-		},
-		BlockTime:            jsonConfig.BlockTime,
-		SequencerWindowSize:  jsonConfig.SequencerWindowSize,
-		DataAvailabilityType: jsonConfig.DataAvailabilityType,
-	}
+	chainConfig.Name = chainName
+	chainConfig.PublicRPC = publicRPC
+	chainConfig.SequencerRPC = sequencerRPC
+	chainConfig.Explorer = explorer
+	chainConfig.SuperchainLevel = superchainLevel
+	chainConfig.StandardChainCandidate = standardChainCandidate
+	chainConfig.SuperchainTime = nil
 
 	fmt.Printf("Rollup config successfully constructed\n")
 	return chainConfig, nil
