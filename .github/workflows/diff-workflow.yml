@@ -1,0 +1,121 @@
+name: Diff Workflow
+
+on:
+  workflow_call:
+    inputs:
+      command:
+        description: 'Command to run to generate config files'
+        required: true
+        type: string
+      directory:
+        description: 'Directory where config files are stored'
+        required: true
+        type: string
+      message:
+        description: 'PR comment body prefixed message'
+        required: true
+        type: string
+
+
+jobs:
+  compute-config-diff-and-report-with-pr-comment:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Ensure the full history is fetched
+
+    - name: Fetch all branches
+      run: git fetch --all
+
+    - name: Generate configs at HEAD
+      working-directory: validation
+      run: |
+        go run ${{inputs.command}}/main.go HEAD
+
+    - name: Generate configs on base branch
+      working-directory: validation
+      run: |
+        # Get the base branch revision
+        base_rev=${{ github.event.pull_request.base.sha }}
+        echo "Base branch revision: $base_rev"
+        git checkout $base_rev -- ../superchain
+        go run ${{inputs.command}}/main.go base
+
+    - name: compute diff
+      working-directory: validation
+      id: run_command
+      run: |
+        ./scripts/diff-configs.sh ${{inputs.directory}}/output-base ${{inputs.directory}}/output-HEAD
+      continue-on-error: true
+
+    - name: If command failed, create or update comment on PR
+      if: steps.run_command.outcome == 'failure'
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const issue_number = context.payload.pull_request.number;
+          const run_id = context.runId;
+          const repo = context.repo.repo;
+          const owner = context.repo.owner;
+          const run_url = `https://github.com/${owner}/${repo}/actions/runs/${run_id}`;
+          const body = `${{inputs.message}}. You can see the detail [here](${run_url}).`;
+
+          // List all comments on the pull request
+          const { data: comments } = await github.rest.issues.listComments({
+            owner,
+            repo,
+            issue_number
+          });
+
+          // Find the comment made by the GitHub Action
+          const comment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes('${{inputs.message}}'));
+
+          if (comment) {
+            // Update existing comment
+            await github.rest.issues.updateComment({
+              owner,
+              repo,
+              comment_id: comment.id,
+              body
+            });
+          } else {
+            // Create a new comment
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body
+            });
+          }
+
+    - name: If command passed, remove a comment on the PR if it exists
+      if: steps.run_command.outcome == 'success'
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const issue_number = context.payload.pull_request.number;
+          const repo = context.repo.repo;
+          const owner = context.repo.owner;
+
+          // List all comments on the pull request
+          const { data: comments } = await github.rest.issues.listComments({
+            owner,
+            repo,
+            issue_number
+          });
+
+          // Find the comment made by the GitHub Action
+          const comment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes('${{inputs.message}}'));
+
+          if (comment) {
+            await github.rest.issues.deleteComment({
+              owner,
+              repo,
+              comment_id: comment.id
+          });
+          }

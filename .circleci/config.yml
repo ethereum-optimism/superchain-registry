@@ -94,14 +94,17 @@ jobs:
             $HOME/.foundry/bin/foundryup
             forge --version
       - run:
-          name: run superchain module tests
+          name: run superchain module unit tests
           command: just test-superchain
       - run:
-          name: run validation module tests
+          name: run validation module unit tests
           command: just test-validation
       - run:
-          name: run add-chain module tests
+          name: run add-chain module unit tests
           command: just test-add-chain
+      - run:
+          name: run validation checks
+          command: just validate-modified-chains main # TODO ideally this is the base branch
       - notify-failures-on-main
   publish-bot:
     environment:
