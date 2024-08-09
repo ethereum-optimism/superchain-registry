@@ -44,6 +44,12 @@ jobs:
         working-directory: validation
         run: |
           gsutil cp ./generate-genesis/output-${{ env.COMMIT_HASH }}/${{ github.event.inputs.chain }}.json \
+            gs://${{ secrets.GCS_BUCKET }}/chains/${{ github.event.inputs.chain }}/genesis.json
+          gsutil cp ./generate-rollup-config/output-${{ env.COMMIT_HASH }}/${{ github.event.inputs.chain }}.json \
+            gs://${{ secrets.GCS_BUCKET }}/chains/${{ github.event.inputs.chain }}/rollup.json
+
+          # Upload with commit hash for history record
+          gsutil cp ./generate-genesis/output-${{ env.COMMIT_HASH }}/${{ github.event.inputs.chain }}.json \
             gs://${{ secrets.GCS_BUCKET }}/chains/${{ github.event.inputs.chain }}/${{ env.COMMIT_HASH }}/genesis.json
           gsutil cp ./generate-rollup-config/output-${{ env.COMMIT_HASH }}/${{ github.event.inputs.chain }}.json \
             gs://${{ secrets.GCS_BUCKET }}/chains/${{ github.event.inputs.chain }}/${{ env.COMMIT_HASH }}/rollup.json
