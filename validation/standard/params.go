@@ -42,9 +42,9 @@ type EcotoneGasPriceOracleBounds struct {
 }
 
 type RollupConfigBounds struct {
-	Plasma              *superchain.PlasmaConfig `toml:"plasma"`
-	BlockTime           [2]uint64                `toml:"block_time"`
-	SequencerWindowSize [2]uint64                `toml:"seq_window_size"`
+	AltDA               *superchain.AltDAConfig `toml:"alt_da"`
+	BlockTime           [2]uint64               `toml:"block_time"`
+	SequencerWindowSize [2]uint64               `toml:"seq_window_size"`
 }
 
 type OptimismPortal2Bounds struct {

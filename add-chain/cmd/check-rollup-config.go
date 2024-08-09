@@ -42,6 +42,7 @@ var CheckRollupConfigCmd = cli.Command{
 		// Exclude this field from check since it gets populated by op-node after rollup.json is created
 		localRollupConfig.ProtocolVersionsAddress = common.Address{}
 		opNodeRollupConfig.ProtocolVersionsAddress = common.Address{}
+		localRollupConfig.ChannelTimeoutGranite = 50
 
 		opts := cmp.Options{cmpopts.IgnoreUnexported(big.Int{})}
 		if diff := cmp.Diff(localRollupConfig, opNodeRollupConfig, opts...); diff != "" {

@@ -6,8 +6,8 @@ replace github.com/ethereum-optimism/superchain-registry/superchain => ../superc
 
 require (
 	github.com/BurntSushi/toml v1.4.0
-	github.com/ethereum-optimism/optimism v1.8.1-0.20240802214749-e1c7dbe2c420
-	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240801182704-4810f97b7ee9
+	github.com/ethereum-optimism/optimism v1.8.1-0.20240806172907-e0cf941c2d5a
+	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240806142729-b01c34a11fb6
 	github.com/ethereum/go-ethereum v1.13.15
 	github.com/stretchr/testify v1.9.0
 )
@@ -82,11 +82,11 @@ require (
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/mod v0.19.0 // indirect
 	golang.org/x/net v0.27.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
 	golang.org/x/term v0.22.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
-	golang.org/x/time v0.5.0 // indirect
+	golang.org/x/time v0.6.0 // indirect
 	golang.org/x/tools v0.23.0 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect

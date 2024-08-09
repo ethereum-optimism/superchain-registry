@@ -38,7 +38,7 @@ func ConstructChainConfig(
 
 	err = jsonConfig.CheckDataAvailability()
 	if err != nil {
-		return superchain.ChainConfig{}, fmt.Errorf("error with json plasma config: %w", err)
+		return superchain.ChainConfig{}, fmt.Errorf("error with json altDA config: %w", err)
 	}
 
 	chainConfig := superchain.ChainConfig{
@@ -52,7 +52,7 @@ func ConstructChainConfig(
 		SuperchainLevel:        superchainLevel,
 		StandardChainCandidate: standardChainCandidate,
 		SuperchainTime:         nil,
-		Plasma:                 jsonConfig.Plasma,
+		AltDA:                  jsonConfig.AltDA,
 		HardForkConfiguration: superchain.HardForkConfiguration{
 			CanyonTime:  jsonConfig.CanyonTime,
 			DeltaTime:   jsonConfig.DeltaTime,
@@ -73,7 +73,7 @@ func ConstructChainConfig(
 //   - general chain info/config
 //   - contract and role addresses
 //   - genesis system config
-//   - optional feature config info, if activated (e.g. plasma)
+//   - optional feature config info, if activated (e.g. altDA)
 func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
