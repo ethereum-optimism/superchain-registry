@@ -8,7 +8,9 @@ standard_chain_candidate = true # This is a temporary field which causes most of
 batch_inbox_addr = "0xCd734290E4bd0200dAC631c7D4b9E8a33234e91f"
 block_time = 2
 seq_window_size = 3600
+max_sequencer_drift = 600
 data_availability_type = "eth-da"
+channel_timeout_bedrock = 300
 
 [genesis]
   l2_time = 1698080004

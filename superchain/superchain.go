@@ -102,7 +102,11 @@ type ChainConfig struct {
 
 	BlockTime            uint64           `toml:"block_time" json:"block_time"`
 	SequencerWindowSize  uint64           `toml:"seq_window_size" json:"seq_window_size"`
+	MaxSequencerDrift    uint64           `toml:"max_sequencer_drift" json:"max_sequencer_drift"`
 	DataAvailabilityType DataAvailability `toml:"data_availability_type"`
+
+	ChannelTimeoutBedrock *uint64 `toml:"channel_timeout_bedrock" json:"channel_timeout"`
+	ChannelTimeoutGranite *uint64 `toml:"channel_timeout_granite" json:"channel_timeout_granite"`
 
 	// Optional feature
 	LegacyUsePlasma          bool          `toml:"-,omitempty" json:"use_plasma,omitempty"`
