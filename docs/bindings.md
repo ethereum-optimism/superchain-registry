@@ -52,7 +52,7 @@ that belong to this superchain.
 ### Rust Bindings
 
 [`bindings/rust-bindings`][rb] exports rust type definitions for chains in the `superchain-registry`.
-The `rust-bindings` directory is a `no_std` [crate][rbc] called [`superchain-registry`][src].
+The `rust-bindings` directory is a `no_std` [crate][rbc] called [`superchain-registry`][sr].
 It requires `serde` and enables `serde` features on dependencies including [`superchain-primitives`][sp],
 which it depends on for types. To use the `superchain-regsitry` crate, add the crate as a dependency to
 a `Cargo.toml`.
