@@ -26,6 +26,10 @@ pub const FJORD_MAX_SEQUENCER_DRIFT: u64 = 1800;
 /// The channel timeout once the Granite hardfork is active.
 pub const GRANITE_CHANNEL_TIMEOUT: u64 = 50;
 
+fn default_granite_channel_timeout() -> u64 {
+    GRANITE_CHANNEL_TIMEOUT
+}
+
 /// Returns the rollup config for the given chain ID.
 pub fn rollup_config_from_chain_id(chain_id: u64) -> Result<RollupConfig> {
     chain_id.try_into()
@@ -65,6 +69,9 @@ pub struct RollupConfig {
     pub seq_window_size: u64,
     /// Number of L1 blocks between when a channel can be opened and when it can be closed.
     pub channel_timeout: u64,
+    /// The channel timeout after the Granite hardfork.
+    #[cfg_attr(feature = "serde", serde(default = "default_granite_channel_timeout"))]
+    pub granite_channel_timeout: u64,
     /// The L1 chain ID
     pub l1_chain_id: u64,
     /// The L2 chain ID
@@ -144,6 +151,7 @@ impl Default for RollupConfig {
             max_sequencer_drift: 0,
             seq_window_size: 0,
             channel_timeout: 0,
+            granite_channel_timeout: GRANITE_CHANNEL_TIMEOUT,
             l1_chain_id: 0,
             l2_chain_id: 0,
             base_fee_params: OP_BASE_FEE_PARAMS,
@@ -210,6 +218,7 @@ pub fn load_op_stack_rollup_config(chain_config: &ChainConfig) -> RollupConfig {
         // Test/Alt configurations can still load custom rollup-configs when necessary.
         block_time: 2,
         channel_timeout: 300,
+        granite_channel_timeout: GRANITE_CHANNEL_TIMEOUT,
         max_sequencer_drift: 600,
         seq_window_size: 3600,
     }
@@ -279,7 +288,7 @@ impl RollupConfig {
     /// Returns the channel timeout for the given timestamp.
     pub fn channel_timeout(&self, timestamp: u64) -> u64 {
         if self.is_granite_active(timestamp) {
-            GRANITE_CHANNEL_TIMEOUT
+            self.granite_channel_timeout
         } else {
             self.channel_timeout
         }
@@ -346,6 +355,7 @@ pub const OP_MAINNET_CONFIG: RollupConfig = RollupConfig {
     max_sequencer_drift: 600_u64,
     seq_window_size: 3600_u64,
     channel_timeout: 300_u64,
+    granite_channel_timeout: 50,
     l1_chain_id: 1_u64,
     l2_chain_id: 10_u64,
     base_fee_params: OP_BASE_FEE_PARAMS,
@@ -392,6 +402,7 @@ pub const OP_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     max_sequencer_drift: 600,
     seq_window_size: 3600,
     channel_timeout: 300,
+    granite_channel_timeout: 50,
     l1_chain_id: 11155111,
     l2_chain_id: 11155420,
     base_fee_params: OP_SEPOLIA_BASE_FEE_PARAMS,
@@ -401,7 +412,7 @@ pub const OP_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     delta_time: Some(1703203200),
     ecotone_time: Some(1708534800),
     fjord_time: Some(1716998400),
-    granite_time: Some(1_723_478_400_u64),
+    granite_time: Some(1723478400),
     holocene_time: None,
     batch_inbox_address: address!("ff00000000000000000000000000000011155420"),
     deposit_contract_address: address!("16fc5058f25648194471939df75cf27a2fdc48bc"),
@@ -434,19 +445,20 @@ pub const BASE_MAINNET_CONFIG: RollupConfig = RollupConfig {
         }),
         extra_data: None,
     },
-    block_time: 2_u64,
-    max_sequencer_drift: 600_u64,
-    seq_window_size: 3600_u64,
-    channel_timeout: 300_u64,
-    l1_chain_id: 1_u64,
-    l2_chain_id: 8453_u64,
+    block_time: 2,
+    max_sequencer_drift: 600,
+    seq_window_size: 3600,
+    channel_timeout: 300,
+    granite_channel_timeout: 50,
+    l1_chain_id: 1,
+    l2_chain_id: 8453,
     base_fee_params: OP_BASE_FEE_PARAMS,
     canyon_base_fee_params: Some(OP_CANYON_BASE_FEE_PARAMS),
     regolith_time: Some(0_u64),
-    canyon_time: Some(1_704_992_401_u64),
-    delta_time: Some(1_708_560_000_u64),
-    ecotone_time: Some(1_710_374_401_u64),
-    fjord_time: Some(1_720_627_201_u64),
+    canyon_time: Some(1704992401),
+    delta_time: Some(1708560000),
+    ecotone_time: Some(1710374401),
+    fjord_time: Some(1720627201),
     granite_time: None,
     holocene_time: None,
     batch_inbox_address: address!("ff00000000000000000000000000000000008453"),
@@ -484,6 +496,7 @@ pub const BASE_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     max_sequencer_drift: 600,
     seq_window_size: 3600,
     channel_timeout: 300,
+    granite_channel_timeout: 50,
     l1_chain_id: 11155111,
     l2_chain_id: 84532,
     base_fee_params: BASE_SEPOLIA_BASE_FEE_PARAMS,
@@ -493,7 +506,7 @@ pub const BASE_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
     delta_time: Some(1703203200),
     ecotone_time: Some(1708534800),
     fjord_time: Some(1716998400),
-    granite_time: Some(1_723_478_400_u64),
+    granite_time: Some(1723478400),
     holocene_time: None,
     batch_inbox_address: address!("ff00000000000000000000000000000000084532"),
     deposit_contract_address: address!("49f53e41452c74589e85ca1677426ba426459e85"),
