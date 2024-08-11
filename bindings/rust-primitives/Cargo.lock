@@ -597,7 +597,7 @@ dependencies = [
 
 [[package]]
 name = "superchain-primitives"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "alloy-consensus",
  "alloy-eips",
