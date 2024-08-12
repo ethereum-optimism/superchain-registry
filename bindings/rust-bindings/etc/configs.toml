@@ -567,6 +567,7 @@
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
     channel_timeout_bedrock = 300
+    channel_timeout_granite = 50
     [superchains.chains.genesis]
       l2_time = 1687867932
       [superchains.chains.genesis.l1]
@@ -740,6 +741,7 @@
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
     channel_timeout_bedrock = 300
+    channel_timeout_granite = 50
     [superchains.chains.genesis]
       l2_time = 1695768288
       [superchains.chains.genesis.l1]
@@ -799,6 +801,7 @@
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
     channel_timeout_bedrock = 300
+    channel_timeout_granite = 50
     [superchains.chains.genesis]
       l2_time = 1691802540
       [superchains.chains.genesis.l1]
@@ -859,6 +862,7 @@
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
     channel_timeout_bedrock = 300
+    channel_timeout_granite = 50
     [superchains.chains.genesis]
       l2_time = 1698080004
       [superchains.chains.genesis.l1]
@@ -929,6 +933,7 @@
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
     channel_timeout_bedrock = 300
+    channel_timeout_granite = 50
     [superchains.chains.genesis]
       l2_time = 1706484048
       [superchains.chains.genesis.l1]
@@ -988,6 +993,7 @@
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
     channel_timeout_bedrock = 300
+    channel_timeout_granite = 50
     [superchains.chains.genesis]
       l2_time = 1695433056
       [superchains.chains.genesis.l1]
