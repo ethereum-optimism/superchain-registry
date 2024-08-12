@@ -6,8 +6,8 @@ replace github.com/ethereum-optimism/superchain-registry/superchain => ../superc
 
 require (
 	github.com/BurntSushi/toml v1.4.0
-	github.com/ethereum-optimism/optimism v1.9.1-0.20240812164942-8612499f0197
-	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240812155913-1aa48e43825c
+	github.com/ethereum-optimism/optimism v1.9.1-0.20240812181007-584253db215b
+	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240812165403-b8989e22970b
 	github.com/ethereum/go-ethereum v1.14.7
 	github.com/google/go-cmp v0.6.0
 	github.com/joho/godotenv v1.5.1
