@@ -12,7 +12,7 @@ commands:
     parameters:
       channel:
         type: string
-        default: C03N11M0BBN
+        default: C03N11M0BBN # to slack channel `notify-ci-failures`
     steps:
       - slack/notify:
           channel: << parameters.channel >>
@@ -24,7 +24,7 @@ commands:
     parameters:
       channel:
         type: string
-        default: C03N11M0BBN # TODO - modify this to a new slack channel
+        default: C07GQQZDW1G # to slack channel `notify-superchain-validation-failures`
     steps:
       - slack/notify:
           channel: << parameters.channel >>
@@ -124,9 +124,6 @@ jobs:
     steps:
       - checkout
       - install-just
-      - run:
-          name: Install gotestsum
-          command: go install gotest.tools/gotestsum@latest
       - install-foundry
       - run:
           name: run validation checks
@@ -140,9 +137,6 @@ jobs:
     steps:
       - checkout
       - install-just
-      - run:
-          name: Install gotestsum
-          command: go install gotest.tools/gotestsum@latest
       - install-foundry
       - run:
           name: run validation checks on all chains
@@ -213,6 +207,9 @@ workflows:
   hourly:
     jobs:
       - golang-validate-all:
+          context:
+            - slack
+      - golang-test:
           context:
             - slack
     triggers:
