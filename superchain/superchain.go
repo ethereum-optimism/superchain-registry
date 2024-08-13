@@ -102,6 +102,7 @@ type ChainConfig struct {
 
 	BlockTime            uint64           `toml:"block_time" json:"block_time"`
 	SequencerWindowSize  uint64           `toml:"seq_window_size" json:"seq_window_size"`
+	MaxSequencerDrift    uint64           `toml:"max_sequencer_drift" json:"max_sequencer_drift"`
 	DataAvailabilityType DataAvailability `toml:"data_availability_type"`
 
 	// Optional feature
