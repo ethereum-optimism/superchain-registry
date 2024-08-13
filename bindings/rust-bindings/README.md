@@ -4,7 +4,7 @@ This crate provides Rust bindings for the [Superchain Registry][sr].
 
 [`serde`][s] is a required dependency unlike [`superchain-primitives`][sp].
 
-[`superchain-registry`][src] is an optionally `no_std` crate, by disabling
+[`superchain-registry`][scr] is an optionally `no_std` crate, by disabling
 the `std` feature flag. By default, `std` is enabled, providing standard
 library support.
 
@@ -27,7 +27,7 @@ superchain-registry = { version = "0.2", default-features = false }
 
 ## Example
 
-[`superchain-registry`][src] exposes lazily defined mappings from chain id
+[`superchain-registry`][scr] exposes lazily defined mappings from chain id
 to chain configurations. Below demonstrates getting the `RollupConfig` for
 OP Mainnet (Chain ID `10`).
 
