@@ -258,7 +258,8 @@ mod test {
             delta_time: Some(0),
             ecotone_time: Some(10),
             fjord_time: Some(0),
-            interop_time: Some(0),
+            granite_time: Some(0),
+            holocene_time: Some(0),
             blobs_enabled_l1_timestamp: Some(0),
             da_challenge_address: Some(Address::ZERO),
             ..Default::default()

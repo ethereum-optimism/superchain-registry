@@ -10,6 +10,7 @@ The Superchain Registry is an index of chains which serves as the source of trut
 * ### [👀 See who's in the Superchain](chainList.json)
 * ### [⚙️ Look at more detailed config information for each chain](superchain/configs)
 * ### [📝 Add a new chain to the Superchain Registry](docs/add-chain.md)
+* ### [⛓️ Work with Superchain Registry Bindings](docs/bindings.md)
 
 ## More about the Superchain Registry
 
