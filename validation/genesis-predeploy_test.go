@@ -16,7 +16,13 @@ import (
 
 // Define a struct to represent the structure of the JSON data
 type DeployedBytecode struct {
-	Object string `json:"object"`
+	Object              string                          `json:"object"`
+	ImmutableReferences map[string][]ImmutableReference `json:"immutableReferences"`
+}
+
+type ImmutableReference struct {
+	Start  int `json:"start"`
+	Length int `json:"length"`
 }
 
 type ContractData struct {
