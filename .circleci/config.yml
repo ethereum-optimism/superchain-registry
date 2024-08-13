@@ -28,7 +28,7 @@ commands:
     steps:
       - slack/notify:
           channel: << parameters.channel >>
-          event: fail
+          event: pass
           template: basic_fail_1
           branch_pattern: main
   install-just:
