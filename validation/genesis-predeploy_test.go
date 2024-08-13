@@ -11,6 +11,9 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/require"
 )
 
@@ -29,6 +32,7 @@ type ContractData struct {
 	DeployedBytecode DeployedBytecode `json:"deployedBytecode"`
 }
 
+// Invoke this with go test -timeout 0 ./validation -run=TestGenesisPredeploys -v
 // REQUIREMENTS:
 // yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
 func TestGenesisPredeploys(t *testing.T) {
@@ -43,7 +47,7 @@ func TestGenesisPredeploys(t *testing.T) {
 	monorepoDir := path.Join(dir, "../../optimism")
 	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
 
-	// chainId := 34443 // Mode mainnet
+	chainId := uint64(34443) // Mode mainnet
 
 	monorepoCommit := "d80c145e0acf23a49c6a6588524f57e32e33b91c"
 
@@ -70,7 +74,36 @@ func TestGenesisPredeploys(t *testing.T) {
 	cd := new(ContractData)
 	err = json.Unmarshal(data, cd)
 	require.NoError(t, err)
-	t.Log(cd)
+	t.Log(cd.DeployedBytecode.Object)
+	dbo, err := hexutil.Decode(cd.DeployedBytecode.Object)
+	require.NoError(t, err)
+	expectedBytecodeHash := crypto.Keccak256Hash(dbo)
+
+	g, err := superchain.LoadGenesis(chainId)
+	require.NoError(t, err)
+
+	baseFeeVaultImplementationAddress := "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30019"
+	account := g.Alloc[superchain.MustHexToAddress(baseFeeVaultImplementationAddress)]
+	gotByteCode, err := superchain.LoadContractBytecode(account.CodeHash)
+	require.NoError(t, err)
+
+	gotByteCodeHex := hexutil.Encode(gotByteCode)
+	t.Log(string(gotByteCodeHex))
+	maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
+	gotMaskedByteCodeHex := hexutil.Encode(gotByteCode)
+	t.Log(string(gotMaskedByteCodeHex))
+	gotByteCodeHash := crypto.Keccak256Hash(gotByteCode)
+	require.Equal(t, expectedBytecodeHash, gotByteCodeHash)
+}
+
+func maskBytecode(b []byte, immutableReferences map[string][]ImmutableReference) {
+	for _, v := range immutableReferences {
+		for _, r := range v {
+			for i := r.Start; i < r.Start+r.Length; i++ {
+				b[i] = 0
+			}
+		}
+	}
 }
 
 func executeCommandInDir(t *testing.T, dir string, cmd *exec.Cmd) {
