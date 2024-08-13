@@ -8,8 +8,8 @@ replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth 
 
 require (
 	github.com/BurntSushi/toml v1.4.0
-	github.com/ethereum-optimism/optimism v1.9.1-0.20240813085837-a3b6a6002994
-	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240812010938-34a43d577f74
+	github.com/ethereum-optimism/optimism v1.9.1-0.20240813221832-db21f4aa016c
+	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240813170044-d5be5587e58f
 	github.com/ethereum/go-ethereum v1.14.7
 	github.com/stretchr/testify v1.9.0
 )
