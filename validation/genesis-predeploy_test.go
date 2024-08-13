@@ -41,6 +41,9 @@ func TestGenesisPredeploys(t *testing.T) {
 	// executeCommandInDir(t, contractsDir, exec.Command("pnpm", "install"))
 
 	executeCommandInDir(t, contractsDir, exec.Command("pnpm", "install"))
+	executeCommandInDir(t, dir, exec.Command("cp", "foundry-config.patch", contractsDir))
+	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "foundry-config.patch"))
+
 	executeCommandInDir(t, contractsDir, exec.Command("forge", "build"))
 }
 
