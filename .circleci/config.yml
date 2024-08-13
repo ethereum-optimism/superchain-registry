@@ -75,9 +75,6 @@ jobs:
       - checkout
       - install-just
       - run:
-          name: Install gotestsum
-          command: go install gotest.tools/gotestsum@latest
-      - run:
           # need foundry to execute 'cast call' within add-chain script
           name: Install foundry
           command: |
