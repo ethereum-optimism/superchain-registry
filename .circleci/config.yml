@@ -128,7 +128,6 @@ jobs:
       - run:
           name: run validation checks
           command: just validate-modified-chains main # TODO ideally this is the base branch
-      - notify-failures-on-main
   golang-validate-all:
     shell: /bin/bash -eo pipefail
     executor:
