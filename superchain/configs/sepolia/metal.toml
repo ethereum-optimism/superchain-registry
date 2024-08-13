@@ -11,6 +11,7 @@ delta_time = 1708385400 # Mon 19 Feb 2024 23:30:00 UTC
 ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
 block_time = 2
 seq_window_size = 3600
+max_sequencer_drift = 600
 data_availability_type = "eth-da"
 
 [genesis]
