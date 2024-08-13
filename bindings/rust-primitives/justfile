@@ -58,4 +58,4 @@ test-docs:
 
 # Release the crate
 release:
-  cargo release publish --execute
+  cargo release publish --execute --no-confirm
