@@ -43,7 +43,6 @@ var CheckRollupConfigCmd = cli.Command{
 		localRollupConfig.ProtocolVersionsAddress = common.Address{}
 		localRollupConfig.ChannelTimeoutGranite = 50
 		opNodeRollupConfig.ProtocolVersionsAddress = common.Address{}
-		localRollupConfig.ChannelTimeoutGranite = 50
 
 		opts := cmp.Options{cmpopts.IgnoreUnexported(big.Int{})}
 		if diff := cmp.Diff(localRollupConfig, opNodeRollupConfig, opts...); diff != "" {

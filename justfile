@@ -32,8 +32,7 @@ test-add-chain:
 	TEST_DIRECTORY=./add-chain go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run '[^TestAddChain_Main]'
 
 # Test all Go code in the superchain module
-test-superchain:
-	just clean-add-chain
+test-superchain: clean-add-chain
 	TEST_DIRECTORY=./superchain go run gotest.tools/gotestsum@latest --format testname
 
 # Unit test all Go code in the validation module, and do not run validation checks themselves
