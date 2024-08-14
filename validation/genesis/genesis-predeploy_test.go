@@ -1,4 +1,4 @@
-package validation
+package genesis
 
 import (
 	"bytes"
@@ -44,7 +44,7 @@ func TestGenesisPredeploys(t *testing.T) {
 	// Get the directory of the current file
 	dir := filepath.Dir(filename)
 
-	monorepoDir := path.Join(dir, "../../optimism")
+	monorepoDir := path.Join(dir, "../../../optimism")
 	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
 
 	chainId := uint64(34443) // Mode mainnet
