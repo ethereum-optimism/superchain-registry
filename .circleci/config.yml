@@ -60,6 +60,13 @@ commands:
 
             $HOME/.foundry/bin/foundryup
             forge --version
+  validate-genesis:
+    description: "Runs genesis validation checks"
+    steps:
+      -run:
+        name: Clone monorepo
+        command: mkdir ../optimism && git clone https://github.com/ethereum-optimism/optimism.git ../optimism
+      -run: just validate-genesis
 
 jobs:
   golang-lint:
@@ -116,6 +123,7 @@ jobs:
       - run:
           name: run validation checks
           command: just validate-modified-chains main # TODO ideally this is the base branch
+      - validate-genesis # TODO this should also be filtered on modified chains
   golang-validate-all:
     shell: /bin/bash -eo pipefail
     executor:
