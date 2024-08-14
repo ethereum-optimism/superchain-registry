@@ -41,36 +41,27 @@ commands:
             echo "deb [arch=all,$(dpkg --print-architecture) signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
             sudo apt update
             sudo apt install just
-  install-node:
-    description: "Install node js"
+  install-pnpm-and-yarn:
+    description: "Install npm, pnpm, and yarn"
     steps:
       - run:
-          name: "Install node js"
+          name: "Install Node.js and npm"
           command: |
-            curl -fsSL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh
-            sudo -E bash nodesource_setup.sh
+            curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
             sudo apt-get install -y nodejs
-            node -v
-  install-pnpm:
-    description: "Install pnpm"
-    steps:
+            npm --version
       - run:
-          name: "Install pnpm"
+          name: "Install pnpm using npm"
           command: |
-            curl -fsSL https://get.pnpm.io/install.sh | bash -
-            echo 'export PATH=$HOME/.local/share/pnpm:$PATH' >> $BASH_ENV
-            echo 'source $HOME/.bashrc' >> $BASH_ENV
-            cat $BASH_ENV  # Debugging step to see what is in $BASH_ENV
-            source $BASH_ENV
-            echo $PATH  # Debugging step to see what is in $PATH
+            npm install -g pnpm
+            export PATH=$HOME/.npm-global/bin:$PATH  # Ensure global npm packages are in the PATH
             pnpm --version
-  install-yarn:
-    description: "Install yarn"
-    steps:
       - run:
-          name: "Install yarn"
+          name: "Install yarn using npm"
           command: |
-            sudo wget -qO- https://yarnpkg.com/install.sh | bash
+            npm install -g yarn
+            export PATH=$HOME/.npm-global/bin:$PATH  # Ensure global npm packages are in the PATH
+            yarn --version
   install-nextest:
     description: "Installs cargo nextest"
     steps:
@@ -154,19 +145,14 @@ jobs:
           command: just test-add-chain
       - notify-failures-on-main
   golang-validate-genesis:
-    shell: /bin/bash -eo pipefail
     executor:
       name: go/default  # is based on cimg/go
       tag: '1.21'
-    environment:
-      SHELL: /bin/bash  # Explicitly set the shell environment variable
     steps:
       - checkout
       - install-just
       - install-foundry
-      - install-node
-      - install-pnpm
-      - install-yarn
+      - install-pnpm-and-yarn
       - validate-genesis # TODO this should also be filtered on modified chains
   golang-validate-modified:
     shell: /bin/bash -eo pipefail
