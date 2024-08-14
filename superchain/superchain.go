@@ -106,11 +106,7 @@ type ChainConfig struct {
 	DataAvailabilityType DataAvailability `toml:"data_availability_type"`
 
 	// Optional feature
-	LegacyUsePlasma          bool          `toml:"-,omitempty" json:"use_plasma,omitempty"`
-	LegacyDAChallengeAddress *Address      `toml:"-,omitempty" json:"da_challenge_contract_address,omitempty"`
-	LegacyDAChallengeWindow  *uint64       `toml:"-,omitempty" json:"da_challenge_window,omitempty"`
-	LegacyDAResolveWindow    *uint64       `toml:"-,omitempty" json:"da_resolve_window,omitempty"`
-	Plasma                   *PlasmaConfig `toml:"plasma,omitempty" json:"plasma_config,omitempty"`
+	AltDA *AltDAConfig `toml:"alt_da,omitempty" json:"alt_da,omitempty"`
 
 	GasPayingToken *Address `toml:"gas_paying_token,omitempty"` // Just metadata, not consumed by downstream OPStack software
 
@@ -123,38 +119,22 @@ func (c ChainConfig) Identifier() string {
 	return c.Superchain + "/" + c.Chain
 }
 
-type PlasmaConfig struct {
+type AltDAConfig struct {
 	DAChallengeAddress *Address `json:"da_challenge_contract_address" toml:"da_challenge_contract_address"`
-	// DA challenge window value set on the DAC contract. Used in plasma mode
+	// DA challenge window value set on the DAC contract. Used in altDA mode
 	// to compute when a commitment can no longer be challenged.
 	DAChallengeWindow *uint64 `json:"da_challenge_window" toml:"da_challenge_window"`
-	// DA resolve window value set on the DAC contract. Used in plasma mode
+	// DA resolve window value set on the DAC contract. Used in altDA mode
 	// to compute when a challenge expires and trigger a reorg if needed.
 	DAResolveWindow *uint64 `json:"da_resolve_window" toml:"da_resolve_window"`
 }
 
 func (c *ChainConfig) CheckDataAvailability() error {
 	c.DataAvailabilityType = EthDA
-
-	if c.LegacyUsePlasma {
-		// Check for legacy plasma config first
-		if c.LegacyDAChallengeAddress == nil {
-			return fmt.Errorf("missing required plasma field: da_challenge_contract_address")
-		}
-		plasmaConfig := PlasmaConfig{
-			DAChallengeAddress: c.LegacyDAChallengeAddress,
-			DAChallengeWindow:  c.LegacyDAChallengeWindow,
-			DAResolveWindow:    c.LegacyDAResolveWindow,
-		}
-		c.Plasma = &plasmaConfig
+	if c.AltDA != nil {
 		c.DataAvailabilityType = AltDA
-		return nil
-	}
-
-	if c.Plasma != nil {
-		c.DataAvailabilityType = AltDA
-		if c.Plasma.DAChallengeAddress == nil {
-			return fmt.Errorf("missing required plasma field: da_challenge_contract_address")
+		if c.AltDA.DAChallengeAddress == nil {
+			return fmt.Errorf("missing required altDA field: da_challenge_contract_address")
 		}
 	}
 
@@ -295,7 +275,7 @@ type AddressList struct {
 	PermissionedDisputeGame  Address `json:"PermissionedDisputeGame,omitempty" toml:"PermissionedDisputeGame,omitempty"`
 	PreimageOracle           Address `json:"PreimageOracle,omitempty" toml:"PreimageOracle,omitempty"`
 
-	// Plasma contracts:
+	// AltDA contracts:
 	DAChallengeAddress Address `json:"DAChallengeAddress,omitempty" toml:"DAChallengeAddress,omitempty"`
 }
 
