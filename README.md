@@ -1,4 +1,4 @@
-<img src=".github/superchain-registry-banner.png" alt="Welcome to the Superchain Registry"><br/>
+<img src=".github/readme-banner.png" alt="Welcome to the Superchain Registry"><br/>
 
 > [!WARNING]
 > This repository is a **work in progress**.  At a later date, it will be proposed to, and must be approved by, Optimism Governance.  Until that time, the configuration described here is subject to change.
