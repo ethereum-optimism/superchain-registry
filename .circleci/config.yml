@@ -77,8 +77,8 @@ commands:
     description: "Runs genesis validation checks"
     steps:
       - run:
-        name: Clone monorepo
-        command: mkdir ../optimism && git clone https://github.com/ethereum-optimism/optimism.git ../optimism
+          name: Clone monorepo
+          command: mkdir ../optimism && git clone https://github.com/ethereum-optimism/optimism.git ../optimism
       - run: just validate-genesis
 
 jobs:
