@@ -28,27 +28,6 @@ commands:
             echo "deb [arch=all,$(dpkg --print-architecture) signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
             sudo apt update
             sudo apt install just
-  install-pnpm-and-yarn:
-    description: "Install npm, pnpm, and yarn"
-    steps:
-      - run:
-          name: "Install Node.js and npm"
-          command: |
-            curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-            sudo apt-get install -y nodejs
-            npm --version
-      - run:
-          name: "Install pnpm using npm"
-          command: |
-            npm install -g pnpm
-            export PATH=$HOME/.npm-global/bin:$PATH  # Ensure global npm packages are in the PATH
-            pnpm --version
-      - run:
-          name: "Install yarn using npm"
-          command: |
-            npm install -g yarn
-            export PATH=$HOME/.npm-global/bin:$PATH  # Ensure global npm packages are in the PATH
-            yarn --version
   install-nextest:
     description: "Installs cargo nextest"
     steps:
@@ -133,14 +112,24 @@ jobs:
       - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
   golang-validate-genesis:
-    executor:
-      name: go/default  # is based on cimg/go
-      tag: '1.21'
+    docker:
+      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.49.0
+    resource_class: medium
     steps:
       - checkout
       - install-just
       - install-foundry
-      - install-pnpm-and-yarn
+      # - run:
+      #     name: install node, pnpm, yarn
+      #     command: |
+      #       sudo curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+      #       sudo apt-get install -y nodejs
+      #       export PATH=$HOME/.npm-global/bin:$PATH  # Ensure global npm packages are in the PATH
+      #       npm --version
+      #       npm install -g pnpm
+      #       pnpm --version
+      #       npm install -g yarn
+      #       yarn --version
       - validate-genesis # TODO this should also be filtered on modified chains
   golang-validate-modified:
     shell: /bin/bash -eo pipefail
