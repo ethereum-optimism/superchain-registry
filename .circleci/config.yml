@@ -7,7 +7,7 @@ orbs:
   rust: circleci/rust@1.6.1
 
 commands:
-  notify-failures-to-slack:
+  notify-failures-on-main:
     description: "Notify Slack for CI job failures"
     parameters:
       channel:
@@ -102,7 +102,7 @@ jobs:
       - run:
           name: run add-chain module unit tests
           command: just test-add-chain
-      - notify-failures-to-slack:
+      - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
   golang-validate-modified:
     shell: /bin/bash -eo pipefail
@@ -128,7 +128,7 @@ jobs:
       - run:
           name: run validation checks on all chains
           command: just validate ""
-      - notify-failures-to-slack:
+      - notify-failures-on-main:
           channel: C07GQQZDW1G # to slack channel `notify-superchain-validation-failures`
   golang-promotion-test:
     shell: /bin/bash -eo pipefail
@@ -142,7 +142,7 @@ jobs:
       - run:
           name: run validation checks
           command: just promotion-test
-      - notify-failures-to-slack:
+      - notify-failures-on-main:
           channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-test-failures`
   publish-bot:
     environment:
@@ -182,7 +182,7 @@ jobs:
       - run:
           name: Cargo Tests
           command: just cargo-tests
-      - notify-failures-to-slack:
+      - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
   cargo-lint:
     docker:
@@ -194,7 +194,7 @@ jobs:
       - run:
           name: Cargo lints
           command: just cargo-lint
-      - notify-failures-to-slack:
+      - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
   cargo-build:
     docker:
@@ -205,7 +205,7 @@ jobs:
       - run:
           name: Cargo build
           command: just cargo-build
-      - notify-failures-to-slack:
+      - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
 
 workflows:

@@ -14,7 +14,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -46,7 +45,9 @@ var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64
 			require.NoErrorf(t, err, "problem calling %s.%s (%s)", contract, method, contractAddress)
 
 			// Use assert.True here for a concise output of failures, since failure info is sent to a slack channel
-			assert.True(t, want == got, "%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
+			if want != got {
+				t.Errorf("%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
+			}
 		}
 
 	}
@@ -89,10 +90,10 @@ func testL1SecurityConfig(t *testing.T, chainID uint64) {
 	require.NoError(t, err)
 	am, err := Addresses[chainID].AddressFor("AddressManager")
 	require.NoError(t, err)
-	assert.Equal(t,
-		am[:],
-		actualAddressManagerBytes[12:32],
-	)
+	actualAddress := Address(common.BytesToAddress(actualAddressManagerBytes[12:32]))
+	if am != actualAddress {
+		t.Errorf("AddressManager should be: %s, got: %s", am, actualAddress)
+	}
 }
 
 func testL2SecurityConfig(t *testing.T, chain *ChainConfig) {
