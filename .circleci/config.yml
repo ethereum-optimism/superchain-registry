@@ -117,7 +117,7 @@ jobs:
     resource_class: medium
     steps:
       - checkout
-      - install-just
+      # - install-just
       - install-foundry
       # - run:
       #     name: install node, pnpm, yarn
