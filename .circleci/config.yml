@@ -12,19 +12,6 @@ commands:
     parameters:
       channel:
         type: string
-        default: C03N11M0BBN # to slack channel `notify-ci-failures`
-    steps:
-      - slack/notify:
-          channel: << parameters.channel >>
-          event: fail
-          template: basic_fail_1
-          branch_pattern: main
-  notify-failures-on-validate-all:
-    description: "Notify Slack on any chain validation failures"
-    parameters:
-      channel:
-        type: string
-        default: C07GQQZDW1G # to slack channel `notify-superchain-validation-failures`
     steps:
       - slack/notify:
           channel: << parameters.channel >>
@@ -115,7 +102,8 @@ jobs:
       - run:
           name: run add-chain module unit tests
           command: just test-add-chain
-      - notify-failures-on-main
+      - notify-failures-on-main:
+          channel: C03N11M0BBN # to slack channel `notify-ci-failures`
   golang-validate-modified:
     shell: /bin/bash -eo pipefail
     executor:
@@ -140,7 +128,22 @@ jobs:
       - run:
           name: run validation checks on all chains
           command: just validate ""
-      - notify-failures-on-validate-all
+      - notify-failures-on-main:
+          channel: C07GQQZDW1G # to slack channel `notify-superchain-validation-failures`
+  golang-promotion-test:
+    shell: /bin/bash -eo pipefail
+    executor:
+      name: go/default  # is based on cimg/go
+      tag: '1.21'
+    steps:
+      - checkout
+      - install-just
+      - install-foundry
+      - run:
+          name: run validation checks
+          command: just promotion-test
+      - notify-failures-on-main:
+          channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-failures`
   publish-bot:
     environment:
       NODE_AUTH_TOKEN: $NPM_TOKEN  # Use NPM_TOKEN as the auth token
@@ -179,7 +182,8 @@ jobs:
       - run:
           name: Cargo Tests
           command: just cargo-tests
-      - notify-failures-on-main
+      - notify-failures-on-main:
+          channel: C03N11M0BBN # to slack channel `notify-ci-failures`
   cargo-lint:
     docker:
       - image: cimg/rust:1.79
@@ -190,7 +194,8 @@ jobs:
       - run:
           name: Cargo lints
           command: just cargo-lint
-      - notify-failures-on-main
+      - notify-failures-on-main:
+          channel: C03N11M0BBN # to slack channel `notify-ci-failures`
   cargo-build:
     docker:
       - image: cimg/rust:1.79
@@ -200,7 +205,8 @@ jobs:
       - run:
           name: Cargo build
           command: just cargo-build
-      - notify-failures-on-main
+      - notify-failures-on-main:
+          channel: C03N11M0BBN # to slack channel `notify-ci-failures`
 
 workflows:
   hourly:
@@ -214,6 +220,18 @@ workflows:
     triggers:
       - schedule:
           cron: "0 * * * *"
+          filters:
+            branches:
+              only:
+                - main
+  nightly:
+    jobs:
+      - golang-promotion-test:
+          context:
+            - slack
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
           filters:
             branches:
               only:
