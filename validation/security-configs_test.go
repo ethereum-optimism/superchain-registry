@@ -45,7 +45,8 @@ var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64
 			got, err := getAddress(method, contractAddress, client)
 			require.NoErrorf(t, err, "problem calling %s.%s (%s)", contract, method, contractAddress)
 
-			assert.Equal(t, want, got, "%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
+			// Use assert.True here for a concise output of failures, since failure info is sent to a slack channel
+			assert.True(t, want == got, "%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
 		}
 
 	}
