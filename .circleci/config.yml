@@ -121,6 +121,10 @@ jobs:
       - run:
           name: run validation checks
           command: just validate-modified-chains main # TODO ideally this is the base branch
+      - run:
+          name: Install pnpm package manager
+          command: |
+            npm i pnpm --global
       - validate-genesis # TODO this should also be filtered on modified chains
   golang-validate-all:
     shell: /bin/bash -eo pipefail
