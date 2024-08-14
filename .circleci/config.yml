@@ -142,7 +142,6 @@ jobs:
       tag: '1.21'
     steps:
       - checkout
-      - install-just
       - install-foundry
       - run:
           name: run validation checks on all chains
