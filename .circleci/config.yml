@@ -112,10 +112,9 @@ jobs:
       - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
   golang-validate-modified:
-    shell: /bin/bash -eo pipefail
-    executor:
-      name: go/default  # is based on cimg/go
-      tag: '1.21'
+    docker:
+      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:latest
+    resource_class: xlarge
     steps:
       - checkout
       - install-just
