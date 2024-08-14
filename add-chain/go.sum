@@ -61,8 +61,8 @@ github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 h1:rpfIENRNNilwHwZeG5+P150SMrnN
 github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0/go.mod h1:v57UDF4pDQJcEfFUCRop3lJL149eHGSe9Jvczhzjo/0=
 github.com/ethereum-optimism/op-geth v1.101407.0-rc.1.0.20240812224053-8d99ca68bb1a h1:OK3wB7HbdhCneSowC1XZusHaLIVdXoRLuCWgXp5Tjuc=
 github.com/ethereum-optimism/op-geth v1.101407.0-rc.1.0.20240812224053-8d99ca68bb1a/go.mod h1:9pT+bF20XwCBE7WkjfRSsCg6RN6Njdbr924DtQ3+geY=
-github.com/ethereum-optimism/optimism v1.9.1-0.20240814143323-6d34690a4c24 h1:ZAbVOWBHaTAXw7rkzByshQj+Ps/J1XPNUh9rE+5AA4Q=
-github.com/ethereum-optimism/optimism v1.9.1-0.20240814143323-6d34690a4c24/go.mod h1:9tk3Wm7Z1mRS8l0cOo7Ds+fnZWTjksLXngW8y7jNklA=
+github.com/ethereum-optimism/optimism v1.9.1-0.20240814164615-842133062eef h1:Hz0U5Z7DqIJket/vH/WOkEFqd3uSj0wG0q+f2AarMpQ=
+github.com/ethereum-optimism/optimism v1.9.1-0.20240814164615-842133062eef/go.mod h1:DJhjd9QrmoEVExglJyoTphyUCfkogMfVYzhtpdjIEKE=
 github.com/ethereum/c-kzg-4844 v1.0.0 h1:0X1LBXxaEtYD9xsyj9B9ctQEZIpnvVDeoBx8aHEwTNA=
 github.com/ethereum/c-kzg-4844 v1.0.0/go.mod h1:VewdlzQmpT5QSrVhbBuGoCdFJkpaJlO1aQputP83wc0=
 github.com/ethereum/go-verkle v0.1.1-0.20240306133620-7d920df305f0 h1:KrE8I4reeVvf7C1tm8elRjj4BdscTYzz/WAbYyf/JI4=
