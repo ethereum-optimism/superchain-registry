@@ -143,7 +143,7 @@ jobs:
           name: run validation checks
           command: just promotion-test
       - notify-failures-on-main:
-          channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-test-failures`
+          channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-failures`
   publish-bot:
     environment:
       NODE_AUTH_TOKEN: $NPM_TOKEN  # Use NPM_TOKEN as the auth token
