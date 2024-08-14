@@ -36,7 +36,6 @@ type ContractData struct {
 // REQUIREMENTS:
 // yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
 func TestGenesisPredeploys(t *testing.T) {
-
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		panic("No caller information")
