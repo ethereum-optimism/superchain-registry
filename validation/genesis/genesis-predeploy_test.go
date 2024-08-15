@@ -19,37 +19,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Define a struct to represent the structure of the JSON data
-type DeployedBytecode struct {
-	Object              string                          `json:"object"`
-	ImmutableReferences map[string][]ImmutableReference `json:"immutableReferences"`
-}
-
-type ImmutableReference struct {
-	Start  int `json:"start"`
-	Length int `json:"length"`
-}
-
-type ContractData struct {
-	DeployedBytecode DeployedBytecode `json:"deployedBytecode"`
-}
-
-type GenesisAccountLite struct {
-	Storage map[string]string  `json:"storage,omitempty"`
-	Balance *superchain.HexBig `json:"balance,omitempty"`
-	Nonce   uint64             `json:"nonce,omitempty"`
-}
-
-type GenesisLite struct {
-	// State data
-	Alloc map[string]GenesisAccountLite `json:"alloc"`
-}
-
 // Invoke this with go test -timeout 0 ./validation -run=TestGenesisPredeploys -v
 // REQUIREMENTS:
-// yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
+// pnpm and yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
 func TestGenesisPredeploys(t *testing.T) {
-
 	artifactNames := map[string]string{
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30013": "L1BlockNumber",
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30007": "L2CrossDomainMessenger",
@@ -209,7 +182,6 @@ func TestGenesisPredeploys(t *testing.T) {
 		}
 
 	}
-
 }
 
 func countImmutables(irs map[string][]ImmutableReference) int {
