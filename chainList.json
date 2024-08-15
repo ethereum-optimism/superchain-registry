@@ -9,7 +9,7 @@
     "explorers": [
       "https://explorer.optimism.io"
     ],
-    "superchainLevel": 2,
+    "superchainLevel": 1,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -26,7 +26,7 @@
     "explorers": [
       "https://explorer.base.org"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -43,7 +43,7 @@
     "explorers": [
       "https://explorer.lyra.finance"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -60,7 +60,7 @@
     "explorers": [
       "https://explorer.metall2.com"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -77,7 +77,7 @@
     "explorers": [
       "https://explorer.mode.network"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -94,7 +94,7 @@
     "explorers": [
       "https://explorer.orderly.network"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -111,7 +111,7 @@
     "explorers": [
       "https://racescan.io/"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -128,7 +128,7 @@
     "explorers": [
       "https://explorer.thebinaryholdings.com/"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -146,7 +146,7 @@
     "explorers": [
       "https://explorer.zora.energy"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -163,7 +163,7 @@
     "explorers": [
       "https://sepolia-optimistic.etherscan.io"
     ],
-    "superchainLevel": 2,
+    "superchainLevel": 1,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -180,7 +180,7 @@
     "explorers": [
       "https://sepolia-explorer.base.org"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -197,7 +197,7 @@
     "explorers": [
       "https://testnet.explorer.metall2.com"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -214,7 +214,7 @@
     "explorers": [
       "https://sepolia.explorer.mode.network"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -231,7 +231,7 @@
     "explorers": [
       "https://testnet.racescan.io/"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -248,7 +248,7 @@
     "explorers": [
       "https://sepolia.explorer.zora.energy"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -265,7 +265,7 @@
     "explorers": [
       ""
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -282,7 +282,7 @@
     "explorers": [
       ""
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
