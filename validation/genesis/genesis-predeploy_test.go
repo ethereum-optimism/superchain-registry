@@ -25,11 +25,12 @@ func TestGenesisPredeploys(t *testing.T) {
 	chainId := uint64(34443) // Mode mainnet
 
 	// TODO Another hardcode, soon this should be embedded in the chain config
-	monorepoCommit := "d80c145e0acf23a49c6a6588524f57e32e33b91c"
+	monorepoCommit := "d80c145e0acf23a49c6a6588524f57e32e33b91c" // for Mode mainnet
 
 	// This maps implementation address to contract name
 	// which is sufficient to load the relevant compilation artifact
 	// from the monorepo(for the contract in question)
+	// This has been built up by reading the optimism specs
 	artifactNames := map[string]string{
 		"0x4200000000000000000000000000000000000042": "GovernanceToken",
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30000": "LegacyMessagePasser", // Deprecated according to specs
@@ -51,6 +52,7 @@ func TestGenesisPredeploys(t *testing.T) {
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30021": "EAS",
 	}
 
+	// Setup some directory references
 	thisDir := getDirOfThisFile()
 	monorepoDir := path.Join(thisDir, "../../../optimism")
 	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
@@ -72,6 +74,7 @@ func TestGenesisPredeploys(t *testing.T) {
 	executeCommandInDir(t, thisDir, exec.Command("cp", "foundry-config.patch", contractsDir))
 
 	// apply a patch to get things working
+	// then compile the contracts
 	// TODO not sure why this is needed, it is likely coupled to the specific commit we are looking at
 	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "foundry-config.patch"))
 	executeCommandInDir(t, contractsDir, exec.Command("forge", "build"))
@@ -81,7 +84,7 @@ func TestGenesisPredeploys(t *testing.T) {
 	// Generate a "synthetic" genesis.json state dump for OP mainnet at this monorepo commit.
 	executeCommandInDir(t, monorepoDir, exec.Command(
 		"go", "run", "op-node/cmd/main.go", "genesis", "l2",
-		"--deploy-config=./packages/contracts-bedrock/deploy-config/mainnet.json",
+		"--deploy-config=./packages/contracts-bedrock/deploy-config/mainnet.json", // TODO if we have the deploy config for the chain we want to verify, the rest of the validation would be very easy
 		"--outfile.l2=expected-genesis.json",
 		"--outfile.rollup=rollup.json",
 		"--deployment-dir=./packages/contracts-bedrock/deployments/mainnet",
@@ -91,6 +94,11 @@ func TestGenesisPredeploys(t *testing.T) {
 	syntheticOPMainnetGenesis := new(GenesisLite)
 	err = json.Unmarshal(data, syntheticOPMainnetGenesis)
 	require.NoError(t, err)
+
+	// From this point on, we are validating the chain's genesis against the synthetic OP Mainnet genesis
+	// We used compilation artifacts to help us to this. They help us figure out where the immutable references are
+	// So we can mask out the places where we expect the synthetic OP Mainnet genesis to differ from genesis of the chain we
+	// are validating.
 
 	// Validate Allocs
 	for address, account := range syntheticOPMainnetGenesis.Alloc {
@@ -117,6 +125,7 @@ func TestGenesisPredeploys(t *testing.T) {
 			continue
 		}
 
+		// Load the genesis for the chain we are validating from the superchain module
 		g, err := superchain.LoadGenesis(chainId)
 		require.NoError(t, err)
 
