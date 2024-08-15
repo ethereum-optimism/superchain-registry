@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math/big"
 	"os"
 	"os/exec"
 	"path"
@@ -118,7 +119,8 @@ func TestGenesisPredeploys(t *testing.T) {
 	err = json.Unmarshal(data, expectedGenesis)
 	require.NoError(t, err)
 
-	for address := range expectedGenesis.Alloc {
+	// Validate Allocs
+	for address, account := range expectedGenesis.Alloc {
 
 		if !strings.HasPrefix(address, "0x") {
 			address = "0x" + address
@@ -149,41 +151,65 @@ func TestGenesisPredeploys(t *testing.T) {
 		}
 
 		artifactName, ok := artifactNames[address]
-		if !ok {
-			t.Logf("unimplemented artifact path mapping for %s", address)
-			continue
+
+		{ // code validation
+			if !ok {
+				t.Logf("unimplemented artifact path mapping for %s", address)
+				continue
+			}
+
+			data, err := os.ReadFile(path.Join(contractsDir, "forge-artifacts", artifactName+".sol", artifactName+".json"))
+			require.NoError(t, err)
+
+			cd := new(ContractData)
+			err = json.Unmarshal(data, cd)
+			require.NoError(t, err)
+			wantByteCodeHex := cd.DeployedBytecode.Object
+
+			require.NoError(t, err)
+
+			account := g.Alloc[superchain.MustHexToAddress(address)]
+			gotByteCode, err := superchain.LoadContractBytecode(account.CodeHash)
+			require.NoError(t, err)
+
+			// TODO check if this is already equal, in which case masking is not necessary
+			err = maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
+			if err != nil {
+				t.Errorf("err masking bytecode for %s, %s", address, err)
+			}
+			gotByteCodeHex := hexutil.Encode(gotByteCode)
+
+			require.Equal(t, wantByteCodeHex, gotByteCodeHex, "address %s failed validation!", address)
+
+			// Just realised that the Semver universal contract used immutables in the past, making immutables far more prolific (due the semver contract
+			// being inherited by many other contracts)
+			// These would not be security critical immutables, however, since they can't be changed without modifying the rest of the inherit_ing_ contracts bytecode
+			// so our "mask and check" validation approach covers us well.
+			t.Logf(address+" code ✅ OK! (%s with %d immutable references)", artifactName, countImmutables(cd.DeployedBytecode.ImmutableReferences))
 		}
 
-		data, err := os.ReadFile(path.Join(contractsDir, "forge-artifacts", artifactName+".sol", artifactName+".json"))
-		require.NoError(t, err)
+		{ // balance validation
 
-		cd := new(ContractData)
-		err = json.Unmarshal(data, cd)
-		require.NoError(t, err)
-		wantByteCodeHex := cd.DeployedBytecode.Object
+			wantBalance := account.Balance
+			gotBalance := g.Alloc[superchain.MustHexToAddress(address)].Balance
 
-		require.NoError(t, err)
+			if wantBalance == nil || (*big.Int)(wantBalance).Cmp(big.NewInt(0)) == 0 {
+				if gotBalance != nil && (*big.Int)(wantBalance).Cmp(big.NewInt(0)) != 0 {
+					t.Errorf("expected nil or zero balance for account %s (%s), but got nonzero", address, artifactName)
+				}
+				continue
+			}
 
-		account := g.Alloc[superchain.MustHexToAddress(address)]
-		gotByteCode, err := superchain.LoadContractBytecode(account.CodeHash)
-		require.NoError(t, err)
+			if gotBalance == nil {
+				t.Errorf("expected non nil balance for account %s (%s), but got nil", address, artifactName)
+				continue
+			}
 
-		// TODO check if this is already equal, in which case masking is not necessary
-		err = maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
-		if err != nil {
-			t.Errorf("err masking bytecode for %s, %s", address, err)
+			require.Equal(t, wantBalance.String(), gotBalance.String())
 		}
-		gotByteCodeHex := hexutil.Encode(gotByteCode)
-
-		require.Equal(t, wantByteCodeHex, gotByteCodeHex, "address %s failed validation!", address)
-
-		// Just realised that the Semver universal contract used immutables in the past, making immutables far more prolific (due the semver contract
-		// being inherited by many other contracts)
-		// These would not be security critical immutables, however, since they can't be changed without modifying the rest of the inherit_ing_ contracts bytecode
-		// so our "mask and check" validation approach covers us well.
-		t.Logf(address+" ✅ OK! (%s with %d immutable references)", artifactName, countImmutables(cd.DeployedBytecode.ImmutableReferences))
 
 	}
+
 }
 
 func countImmutables(irs map[string][]ImmutableReference) int {
