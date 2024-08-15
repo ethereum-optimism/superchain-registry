@@ -60,8 +60,8 @@ type HardForkConfiguration struct {
 type SuperchainLevel uint
 
 const (
-	Standard SuperchainLevel = 2
-	Frontier SuperchainLevel = 1
+	Standard SuperchainLevel = 1
+	Frontier SuperchainLevel = 0
 )
 
 type DataAvailability string

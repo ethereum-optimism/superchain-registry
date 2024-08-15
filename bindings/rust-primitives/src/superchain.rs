@@ -57,9 +57,9 @@ pub struct SuperchainL1Info {
 pub enum SuperchainLevel {
     /// Frontier chains are chains with customizations beyond the
     /// standard OP Stack configuration and are considered "advanced".
-    Frontier = 1,
+    Frontier = 0,
     /// Standard chains don't have any customizations beyond the
     /// standard OP Stack configuration and are considered "vanilla".
     #[default]
-    Standard = 2,
+    Standard = 1,
 }
