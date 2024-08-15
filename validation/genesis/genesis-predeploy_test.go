@@ -1,10 +1,7 @@
 package genesis
 
 import (
-	"bytes"
 	"encoding/json"
-	"errors"
-	"fmt"
 	"math/big"
 	"os"
 	"os/exec"
@@ -23,6 +20,17 @@ import (
 // REQUIREMENTS:
 // pnpm and yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
 func TestGenesisPredeploys(t *testing.T) {
+
+	// TODO for development purposes we are starting with a single chain
+	// Soon we would enhance this test to loop over all standard chains.
+	chainId := uint64(34443) // Mode mainnet
+
+	// TODO Another hardcode, soon this should be embedded in the chain config
+	monorepoCommit := "d80c145e0acf23a49c6a6588524f57e32e33b91c"
+
+	// This maps implementation address to contract name
+	// which is sufficient to load the relevant compilation artifact
+	// from the monorepo(for the contract in question)
 	artifactNames := map[string]string{
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30013": "L1BlockNumber",
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30007": "L2CrossDomainMessenger",
@@ -44,39 +52,34 @@ func TestGenesisPredeploys(t *testing.T) {
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30000": "LegacyMessagePasser", // Deprecated according to specs
 	}
 
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		panic("No caller information")
-	}
-	// Get the directory of the current file
-	dir := filepath.Dir(filename)
-
-	monorepoDir := path.Join(dir, "../../../optimism")
+	thisDir := getDirOfThisFile()
+	monorepoDir := path.Join(thisDir, "../../../optimism")
 	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
 
-	chainId := uint64(34443) // Mode mainnet
-
-	monorepoCommit := "d80c145e0acf23a49c6a6588524f57e32e33b91c"
-
+	// checkout appropriate commit
 	executeCommandInDir(t, monorepoDir, exec.Command("git", "checkout", monorepoCommit)) // could use reset --hard to make it easier to run again
-	executeCommandInDir(t, monorepoDir, exec.Command("git", "fetch", "--recurse-submodules"))
 
-	// TODO unskip these, I am skipping to save time in development
-	// executeCommandInDir(t, monorepoDir, exec.Command("rm", "-rf", "node_modules"))
-	// executeCommandInDir(t, contractsDir, exec.Command("rm", "-rf", "node_modules"))
+	// TODO unskip these, I am skipping to save time in development since we
+	// are not validating multiple chains yet
+	if false {
+		executeCommandInDir(t, monorepoDir, exec.Command("rm", "-rf", "node_modules"))
+		executeCommandInDir(t, contractsDir, exec.Command("rm", "-rf", "node_modules"))
+	}
 
-	// possible optimization
-	// executeCommandInDir(t, monorepoDir, exec.Command("echo", "'recursive-install=true'", ">>", ".npmrc"))
-	// executeCommandInDir(t, contractsDir, exec.Command("pnpm", "install"))
-
+	// install dependencies
+	// TODO we expect this step to vary as we scan through the monorepo history
+	// so we will need some branching logic here
 	executeCommandInDir(t, contractsDir, exec.Command("pnpm", "install"))
-	executeCommandInDir(t, dir, exec.Command("cp", "foundry-config.patch", contractsDir))
+	executeCommandInDir(t, thisDir, exec.Command("cp", "foundry-config.patch", contractsDir))
 
+	// apply a patch to get things working
+	// TODO not sure why this is needed, it is likely coupled to the specific commit we are looking at
 	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "foundry-config.patch"))
 	executeCommandInDir(t, contractsDir, exec.Command("forge", "build"))
-	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "-R", "foundry-config.patch")) // revert patch, makes rerunning script locally easier
+	// revert patch, makes rerunning script locally easier
+	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "-R", "foundry-config.patch"))
 
-	// Generate a genesis.json state dump for OP mainnet at this monorepo commit.
+	// Generate a "synthetic" genesis.json state dump for OP mainnet at this monorepo commit.
 	executeCommandInDir(t, monorepoDir, exec.Command(
 		"go", "run", "op-node/cmd/main.go", "genesis", "l2",
 		"--deploy-config=./packages/contracts-bedrock/deploy-config/mainnet.json",
@@ -84,17 +87,16 @@ func TestGenesisPredeploys(t *testing.T) {
 		"--outfile.rollup=rollup.json",
 		"--deployment-dir=./packages/contracts-bedrock/deployments/mainnet",
 		"--l1-rpc=https://ethereum-rpc.publicnode.com"))
-
 	data, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 	require.NoError(t, err)
-
-	expectedGenesis := new(GenesisLite)
-	err = json.Unmarshal(data, expectedGenesis)
+	syntheticOPMainnetGenesis := new(GenesisLite)
+	err = json.Unmarshal(data, syntheticOPMainnetGenesis)
 	require.NoError(t, err)
 
 	// Validate Allocs
-	for address, account := range expectedGenesis.Alloc {
+	for address, account := range syntheticOPMainnetGenesis.Alloc {
 
+		// I believe this is a legacy format used by geth
 		if !strings.HasPrefix(address, "0x") {
 			address = "0x" + address
 		}
@@ -184,38 +186,10 @@ func TestGenesisPredeploys(t *testing.T) {
 	}
 }
 
-func countImmutables(irs map[string][]ImmutableReference) int {
-	count := 0
-	for range irs {
-		count++
+func getDirOfThisFile() string {
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		panic("No caller information")
 	}
-	return count
-}
-
-func maskBytecode(b []byte, immutableReferences map[string][]ImmutableReference) error {
-	for _, v := range immutableReferences {
-		for _, r := range v {
-			for i := r.Start; i < r.Start+r.Length; i++ {
-				if i >= len(b) {
-					return errors.New("immutable references extend beyond bytecode")
-				}
-				b[i] = 0
-			}
-		}
-	}
-	return nil
-}
-
-func executeCommandInDir(t *testing.T, dir string, cmd *exec.Cmd) {
-	t.Logf("executing %s", cmd.String())
-	cmd.Dir = dir
-	var outErr bytes.Buffer
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = &outErr
-	err := cmd.Run()
-	if err != nil {
-		// error case : status code of command is different from 0
-		fmt.Println(outErr.String())
-		t.Fatal(err)
-	}
+	return filepath.Dir(filename)
 }
