@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
@@ -47,7 +48,7 @@ type GenesisLite struct {
 // yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
 func TestGenesisPredeploys(t *testing.T) {
 
-	addressesToCheck := map[string]string{
+	artifactPaths := map[string]string{
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3001a": "forge-artifacts/L1FeeVault.sol/L1FeeVault.json",
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30019": "forge-artifacts/BaseFeeVault.sol/BaseFeeVault.json",
 		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30020": "forge-artifacts/SchemaRegistry.sol/SchemaRegistry.json", This is missing for mode
@@ -99,11 +100,28 @@ func TestGenesisPredeploys(t *testing.T) {
 	require.NoError(t, err)
 
 	expectedGenesis := new(GenesisLite)
-
 	err = json.Unmarshal(data, expectedGenesis)
 	require.NoError(t, err)
 
-	for address, artifactPath := range addressesToCheck {
+	for address := range expectedGenesis.Alloc {
+
+		if !strings.HasPrefix(address, "0x") {
+			address = "0x" + address
+		}
+
+		g, err := superchain.LoadGenesis(chainId)
+		require.NoError(t, err)
+
+		if _, ok := g.Alloc[superchain.MustHexToAddress(address)]; !ok {
+			t.Fatalf("expected an account at %s, but did not find one", address)
+		}
+
+		artifactPath, ok := artifactPaths[address]
+		if !ok {
+			t.Logf("unimplemented artifact path mapping for %s", address)
+			continue
+		}
+
 		data, err := os.ReadFile(path.Join(contractsDir, artifactPath))
 		require.NoError(t, err)
 
@@ -112,9 +130,6 @@ func TestGenesisPredeploys(t *testing.T) {
 		require.NoError(t, err)
 		wantByteCodeHex := cd.DeployedBytecode.Object
 
-		require.NoError(t, err)
-
-		g, err := superchain.LoadGenesis(chainId)
 		require.NoError(t, err)
 
 		account := g.Alloc[superchain.MustHexToAddress(address)]
@@ -127,8 +142,8 @@ func TestGenesisPredeploys(t *testing.T) {
 
 		require.Equal(t, wantByteCodeHex, gotByteCodeHex, "address %s failed validation!", address)
 		t.Log(address + " OK!\n")
-	}
 
+	}
 }
 
 func maskBytecode(b []byte, immutableReferences map[string][]ImmutableReference) {
