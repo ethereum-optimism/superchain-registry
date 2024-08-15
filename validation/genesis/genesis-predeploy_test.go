@@ -31,6 +31,17 @@ type ContractData struct {
 	DeployedBytecode DeployedBytecode `json:"deployedBytecode"`
 }
 
+type GenesisAccountLite struct {
+	Storage map[string]string  `json:"storage,omitempty"`
+	Balance *superchain.HexBig `json:"balance,omitempty"`
+	Nonce   uint64             `json:"nonce,omitempty"`
+}
+
+type GenesisLite struct {
+	// State data
+	Alloc map[string]GenesisAccountLite `json:"alloc"`
+}
+
 // Invoke this with go test -timeout 0 ./validation -run=TestGenesisPredeploys -v
 // REQUIREMENTS:
 // yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
@@ -75,6 +86,23 @@ func TestGenesisPredeploys(t *testing.T) {
 	executeCommandInDir(t, contractsDir, exec.Command("forge", "build"))
 	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "-R", "foundry-config.patch")) // revert patch, makes rerunning script locally easier
 
+	// Generate a genesis.json state dump for OP mainnet at this monorepo commit.
+	executeCommandInDir(t, monorepoDir, exec.Command(
+		"go", "run", "op-node/cmd/main.go", "genesis", "l2",
+		"--deploy-config=./packages/contracts-bedrock/deploy-config/mainnet.json",
+		"--outfile.l2=expected-genesis.json",
+		"--outfile.rollup=rollup.json",
+		"--deployment-dir=./packages/contracts-bedrock/deployments/mainnet",
+		"--l1-rpc=https://ethereum-rpc.publicnode.com"))
+
+	data, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
+	require.NoError(t, err)
+
+	expectedGenesis := new(GenesisLite)
+
+	err = json.Unmarshal(data, expectedGenesis)
+	require.NoError(t, err)
+
 	for address, artifactPath := range addressesToCheck {
 		data, err := os.ReadFile(path.Join(contractsDir, artifactPath))
 		require.NoError(t, err)
@@ -93,6 +121,7 @@ func TestGenesisPredeploys(t *testing.T) {
 		gotByteCode, err := superchain.LoadContractBytecode(account.CodeHash)
 		require.NoError(t, err)
 
+		// TODO check if this is already equal, in which case masking is not necessary
 		maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
 		gotByteCodeHex := hexutil.Encode(gotByteCode)
 
