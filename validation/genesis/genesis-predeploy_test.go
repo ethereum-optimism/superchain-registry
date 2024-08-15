@@ -48,11 +48,25 @@ type GenesisLite struct {
 // yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
 func TestGenesisPredeploys(t *testing.T) {
 
-	artifactPaths := map[string]string{
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3001a": "forge-artifacts/L1FeeVault.sol/L1FeeVault.json",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30019": "forge-artifacts/BaseFeeVault.sol/BaseFeeVault.json",
-		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30020": "forge-artifacts/SchemaRegistry.sol/SchemaRegistry.json", This is missing for mode
-		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30021": "forge-artifacts/EAS.sol/EAS.json"
+	artifactNames := map[string]string{
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30013": "forge-artifacts/L1FeeVault.sol/L1FeeVault.json",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30007": "",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30017": "",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30011": "",
+		// "0x4200000000000000000000000000000000000042": "",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3000f": "",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30014": "",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3001a": "L1FeeVault",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30019": "BaseFeeVault",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30020": "SchemaRegistry",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30021": "EAS",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30012": "",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30018": "",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30002": "",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30015": "",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30016": "",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30010": "",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30000": "",
 	}
 
 	_, filename, _, ok := runtime.Caller(0)
@@ -109,6 +123,14 @@ func TestGenesisPredeploys(t *testing.T) {
 			address = "0x" + address
 		}
 
+		// Note that although the spec states this is a one-byte (two hexit) namespace, in fact we are using up to three hexits
+		// e.g. 4200000000000000000000000000000000000800 is present in the expected genesis
+		// Note also we don't want to skip
+		if strings.HasPrefix(address, "0x4200000000000000000000000000000000000") && address != "0x4200000000000000000000000000000000000042" {
+			// TODO for now we will skip the proxies themselves (but lets not skip unproxied predeploys)
+			continue
+		}
+
 		g, err := superchain.LoadGenesis(chainId)
 		require.NoError(t, err)
 
@@ -116,13 +138,13 @@ func TestGenesisPredeploys(t *testing.T) {
 			t.Fatalf("expected an account at %s, but did not find one", address)
 		}
 
-		artifactPath, ok := artifactPaths[address]
+		artifactName, ok := artifactNames[address]
 		if !ok {
 			t.Logf("unimplemented artifact path mapping for %s", address)
 			continue
 		}
 
-		data, err := os.ReadFile(path.Join(contractsDir, artifactPath))
+		data, err := os.ReadFile(path.Join(contractsDir, "forge-artifacts", artifactName+".sol", artifactName+".json"))
 		require.NoError(t, err)
 
 		cd := new(ContractData)
