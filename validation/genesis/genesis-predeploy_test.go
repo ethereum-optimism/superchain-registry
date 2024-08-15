@@ -37,7 +37,10 @@ type ContractData struct {
 func TestGenesisPredeploys(t *testing.T) {
 
 	addressesToCheck := map[string]string{
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3001a": "forge-artifacts/L1FeeVault.sol/L1FeeVault.json",
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30019": "forge-artifacts/BaseFeeVault.sol/BaseFeeVault.json",
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30020": "forge-artifacts/SchemaRegistry.sol/SchemaRegistry.json", This is missing for mode
+		// "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30021": "forge-artifacts/EAS.sol/EAS.json"
 	}
 
 	_, filename, _, ok := runtime.Caller(0)
@@ -67,9 +70,10 @@ func TestGenesisPredeploys(t *testing.T) {
 
 	executeCommandInDir(t, contractsDir, exec.Command("pnpm", "install"))
 	executeCommandInDir(t, dir, exec.Command("cp", "foundry-config.patch", contractsDir))
-	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "foundry-config.patch"))
 
+	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "foundry-config.patch"))
 	executeCommandInDir(t, contractsDir, exec.Command("forge", "build"))
+	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "-R", "foundry-config.patch")) // revert patch, makes rerunning script locally easier
 
 	for address, artifactPath := range addressesToCheck {
 		data, err := os.ReadFile(path.Join(contractsDir, artifactPath))
@@ -92,7 +96,8 @@ func TestGenesisPredeploys(t *testing.T) {
 		maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
 		gotByteCodeHex := hexutil.Encode(gotByteCode)
 
-		require.Equal(t, wantByteCodeHex, gotByteCodeHex)
+		require.Equal(t, wantByteCodeHex, gotByteCodeHex, "address %s failed validation!", address)
+		t.Log(address + " OK!\n")
 	}
 
 }
