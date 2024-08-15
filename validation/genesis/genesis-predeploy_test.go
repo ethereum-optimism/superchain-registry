@@ -13,7 +13,6 @@ import (
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/require"
 )
 
@@ -36,6 +35,11 @@ type ContractData struct {
 // REQUIREMENTS:
 // yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
 func TestGenesisPredeploys(t *testing.T) {
+
+	addressesToCheck := map[string]string{
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30019": "forge-artifacts/BaseFeeVault.sol/BaseFeeVault.json",
+	}
+
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		panic("No caller information")
@@ -67,32 +71,30 @@ func TestGenesisPredeploys(t *testing.T) {
 
 	executeCommandInDir(t, contractsDir, exec.Command("forge", "build"))
 
-	data, err := os.ReadFile(path.Join(contractsDir, "forge-artifacts/BaseFeeVault.sol/BaseFeeVault.json"))
-	require.NoError(t, err)
+	for address, artifactPath := range addressesToCheck {
+		data, err := os.ReadFile(path.Join(contractsDir, artifactPath))
+		require.NoError(t, err)
 
-	cd := new(ContractData)
-	err = json.Unmarshal(data, cd)
-	require.NoError(t, err)
-	t.Log(cd.DeployedBytecode.Object)
-	dbo, err := hexutil.Decode(cd.DeployedBytecode.Object)
-	require.NoError(t, err)
-	expectedBytecodeHash := crypto.Keccak256Hash(dbo)
+		cd := new(ContractData)
+		err = json.Unmarshal(data, cd)
+		require.NoError(t, err)
+		wantByteCodeHex := cd.DeployedBytecode.Object
 
-	g, err := superchain.LoadGenesis(chainId)
-	require.NoError(t, err)
+		require.NoError(t, err)
 
-	baseFeeVaultImplementationAddress := "0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30019"
-	account := g.Alloc[superchain.MustHexToAddress(baseFeeVaultImplementationAddress)]
-	gotByteCode, err := superchain.LoadContractBytecode(account.CodeHash)
-	require.NoError(t, err)
+		g, err := superchain.LoadGenesis(chainId)
+		require.NoError(t, err)
 
-	gotByteCodeHex := hexutil.Encode(gotByteCode)
-	t.Log(string(gotByteCodeHex))
-	maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
-	gotMaskedByteCodeHex := hexutil.Encode(gotByteCode)
-	t.Log(string(gotMaskedByteCodeHex))
-	gotByteCodeHash := crypto.Keccak256Hash(gotByteCode)
-	require.Equal(t, expectedBytecodeHash, gotByteCodeHash)
+		account := g.Alloc[superchain.MustHexToAddress(address)]
+		gotByteCode, err := superchain.LoadContractBytecode(account.CodeHash)
+		require.NoError(t, err)
+
+		maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
+		gotByteCodeHex := hexutil.Encode(gotByteCode)
+
+		require.Equal(t, wantByteCodeHex, gotByteCodeHex)
+	}
+
 }
 
 func maskBytecode(b []byte, immutableReferences map[string][]ImmutableReference) {
