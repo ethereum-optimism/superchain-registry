@@ -60,6 +60,14 @@ commands:
 
             $HOME/.foundry/bin/foundryup
             forge --version
+  install-gvm:
+    description: "Installs gvm"
+    steps:
+      - run:
+          name: Install gvm
+          command: |
+            sudo apt-get install bison
+            bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
   validate-genesis:
     description: "Runs genesis validation checks"
     steps:
@@ -119,17 +127,7 @@ jobs:
       - checkout
       # - install-just
       - install-foundry
-      # - run:
-      #     name: install node, pnpm, yarn
-      #     command: |
-      #       sudo curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-      #       sudo apt-get install -y nodejs
-      #       export PATH=$HOME/.npm-global/bin:$PATH  # Ensure global npm packages are in the PATH
-      #       npm --version
-      #       npm install -g pnpm
-      #       pnpm --version
-      #       npm install -g yarn
-      #       yarn --version
+      - install-gvm
       - validate-genesis # TODO this should also be filtered on modified chains
   golang-validate-modified:
     shell: /bin/bash -eo pipefail
