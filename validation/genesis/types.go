@@ -20,6 +20,7 @@ type ContractData struct {
 }
 
 type GenesisAccountLite struct {
+	Code    string             `json:"code,omitempty"`
 	Storage map[string]string  `json:"storage,omitempty"`
 	Balance *superchain.HexBig `json:"balance,omitempty"`
 	Nonce   uint64             `json:"nonce,omitempty"`
