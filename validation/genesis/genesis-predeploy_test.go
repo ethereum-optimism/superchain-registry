@@ -19,6 +19,33 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var thisDir, monorepoDir, contractsDir string
+
+// This maps implementation address to contract name
+// which is sufficient to load the relevant compilation artifact
+// from the monorepo(for the contract in question)
+// This has been built up by reading the optimism specs
+var predeployArtifactNames = map[string]string{
+	"0x4200000000000000000000000000000000000042": "GovernanceToken",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30000": "LegacyMessagePasser", // Deprecated according to specs
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30002": "DeployerWhitelist",   // Deprecated according to specs
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30007": "L2CrossDomainMessenger",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3000f": "GasPriceOracle",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30010": "L2StandardBridge",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30011": "SequencerFeeVault",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30012": "OptimismMintableERC20Factory",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30013": "L1BlockNumber",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30014": "L2ERC721Bridge",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30015": "L1Block",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30016": "L2ToL1MessagePasser",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30017": "OptimismMintableERC721Factory",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30018": "ProxyAdmin",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30019": "BaseFeeVault",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3001a": "L1FeeVault",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30020": "SchemaRegistry",
+	"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30021": "EAS",
+}
+
 // TODO deduplicate this
 // perChainTestName ensures test can easily be filtered by chain name or chain id using the -run=regex testflag.
 func perChainTestName(chain *superchain.ChainConfig) string {
@@ -49,35 +76,10 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 	monorepoCommit := vmd.GenesisCreationCommit
 
-	// This maps implementation address to contract name
-	// which is sufficient to load the relevant compilation artifact
-	// from the monorepo(for the contract in question)
-	// This has been built up by reading the optimism specs
-	predeployArtifactNames := map[string]string{
-		"0x4200000000000000000000000000000000000042": "GovernanceToken",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30000": "LegacyMessagePasser", // Deprecated according to specs
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30002": "DeployerWhitelist",   // Deprecated according to specs
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30007": "L2CrossDomainMessenger",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3000f": "GasPriceOracle",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30010": "L2StandardBridge",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30011": "SequencerFeeVault",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30012": "OptimismMintableERC20Factory",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30013": "L1BlockNumber",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30014": "L2ERC721Bridge",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30015": "L1Block",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30016": "L2ToL1MessagePasser",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30017": "OptimismMintableERC721Factory",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30018": "ProxyAdmin",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30019": "BaseFeeVault",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3001a": "L1FeeVault",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30020": "SchemaRegistry",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30021": "EAS",
-	}
-
 	// Setup some directory references
-	thisDir := getDirOfThisFile()
-	monorepoDir := path.Join(thisDir, "../../../optimism-temporary")
-	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
+	thisDir = getDirOfThisFile()
+	monorepoDir = path.Join(thisDir, "../../../optimism-temporary")
+	contractsDir = path.Join(monorepoDir, "packages/contracts-bedrock")
 
 	// reset to appropriate commit, this is preferred to git checkout because it will
 	// blow away any leftover files from the previous run
@@ -153,85 +155,8 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 			t.Fatalf("expected an account at %s, but did not find one", address)
 		}
 
-		{ // code validation
-			account := g.Alloc[MustHexToAddress(address)]
-			gotByteCode, err := LoadContractBytecode(account.CodeHash)
-			require.NoError(t, err)
-
-			var wantByteCodeHex string
-			artifactName, ok := predeployArtifactNames[address]
-			var cd *ContractData
-			if ok {
-				// it is a predeploy, we need to perform masking
-				// in order to validate it
-
-				data, err := os.ReadFile(path.Join(contractsDir, "forge-artifacts", artifactName+".sol", artifactName+".json"))
-				require.NoError(t, err)
-
-				cd = new(ContractData)
-				err = json.Unmarshal(data, cd)
-				require.NoError(t, err)
-				wantByteCodeHex = cd.DeployedBytecode.Object
-
-				require.NoError(t, err)
-
-				err = maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
-				if err != nil {
-					t.Errorf("err masking bytecode for %s, %s", address, err)
-				}
-			} else {
-				// otherwise grab code from synthetic genesis
-				wantByteCodeHex = syntheticOPMainnetGenesis.Alloc[address].Code
-			}
-
-			wantByteCode, err := hexutil.Decode(wantByteCodeHex)
-			require.NoError(t, err)
-
-			if len(gotByteCode) != len(wantByteCode) {
-				t.Errorf("expected bytecode at %s to have length %d, but got bytecode with length %d", address, len(wantByteCode), len(gotByteCode))
-				continue
-			}
-
-			gotByteCodeHex := hexutil.Encode(gotByteCode)
-
-			// Suppressing this because the output is very verbose. Sometimes useful to pipe into https://difff.jp/en/ though
-			if false {
-				require.Equal(t, wantByteCodeHex, gotByteCodeHex, "address %s failed bytecode validation!", address)
-			}
-			require.Equal(t, crypto.Keccak256Hash(wantByteCode), crypto.Keccak256Hash(gotByteCode), "address %s failed bytecodehash validation!", address)
-
-			if ok {
-				// Just realised that the Semver universal contract used immutables in the past, making immutables far more prolific (due the semver contract
-				// being inherited by many other contracts)
-				// These would not be security critical immutables, however, since they can't be changed without modifying the rest of the inherit_ing_ contracts bytecode
-				// so our "mask and check" validation approach covers us well.
-				t.Logf(address+" code ✅ OK! (%s with %d immutable references)", artifactName, countImmutables(cd.DeployedBytecode.ImmutableReferences))
-			} else {
-				t.Logf(address + " code ✅ OK!")
-
-			}
-		}
-
-		{ // balance validation
-
-			wantBalance := account.Balance
-			gotBalance := g.Alloc[MustHexToAddress(address)].Balance
-
-			if wantBalance == nil || (*big.Int)(wantBalance).Cmp(big.NewInt(0)) == 0 {
-				if gotBalance != nil && (*big.Int)(wantBalance).Cmp(big.NewInt(0)) != 0 {
-					t.Errorf("expected nil or zero balance for account %s, but got nonzero", address)
-				}
-				continue
-			}
-
-			if gotBalance == nil {
-				t.Errorf("expected non nil balance for account %s, but got nil", address)
-				continue
-			}
-
-			require.Equal(t, wantBalance.String(), gotBalance.String())
-		}
-
+		validateCode(t, address, g, syntheticOPMainnetGenesis)
+		validateBalance(t, address, account, g)
 	}
 }
 
@@ -241,4 +166,83 @@ func getDirOfThisFile() string {
 		panic("No caller information")
 	}
 	return filepath.Dir(filename)
+}
+
+func validateCode(t *testing.T, address string, g *Genesis, syntheticOPMainnetGenesis *GenesisLite) {
+	account := g.Alloc[MustHexToAddress(address)]
+	if account.CodeHash == *new(Hash) {
+		// no validation needed if codeHash is set to zero value
+		return
+	}
+	gotByteCode, err := LoadContractBytecode(account.CodeHash)
+	require.NoError(t, err)
+
+	var wantByteCodeHex string
+	artifactName, ok := predeployArtifactNames[address]
+	var cd *ContractData
+	if ok {
+		// it is a predeploy, we need to perform masking in order to validate it
+		data, err := os.ReadFile(path.Join(contractsDir, "forge-artifacts", artifactName+".sol", artifactName+".json"))
+		require.NoError(t, err)
+
+		cd = new(ContractData)
+		err = json.Unmarshal(data, cd)
+		require.NoError(t, err)
+		wantByteCodeHex = cd.DeployedBytecode.Object
+
+		require.NoError(t, err)
+
+		err = maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
+		if err != nil {
+			t.Errorf("err masking bytecode for %s, %s", address, err)
+		}
+	} else {
+		// otherwise grab code from synthetic genesis
+		wantByteCodeHex = syntheticOPMainnetGenesis.Alloc[address].Code
+	}
+
+	wantByteCode, err := hexutil.Decode(wantByteCodeHex)
+	require.NoError(t, err)
+
+	if len(gotByteCode) != len(wantByteCode) {
+		t.Errorf("expected bytecode at %s to have length %d, but got bytecode with length %d", address, len(wantByteCode), len(gotByteCode))
+		return
+	}
+
+	gotByteCodeHex := hexutil.Encode(gotByteCode)
+
+	// Suppressing this because the output is very verbose. Sometimes useful to pipe into https://difff.jp/en/ though
+	if false {
+		require.Equal(t, wantByteCodeHex, gotByteCodeHex, "address %s failed bytecode validation!", address)
+	}
+	require.Equal(t, crypto.Keccak256Hash(wantByteCode), crypto.Keccak256Hash(gotByteCode), "address %s failed bytecodehash validation!", address)
+
+	if ok {
+		// Just realised that the Semver universal contract used immutables in the past, making immutables far more prolific (due the semver contract
+		// being inherited by many other contracts)
+		// These would not be security critical immutables, however, since they can't be changed without modifying the rest of the inherit_ing_ contracts bytecode
+		// so our "mask and check" validation approach covers us well.
+		t.Logf(address+" code ✅ OK! (%s with %d immutable references)", artifactName, countImmutables(cd.DeployedBytecode.ImmutableReferences))
+	} else {
+		t.Logf(address + " code ✅ OK!")
+	}
+}
+
+func validateBalance(t *testing.T, address string, account GenesisAccountLite, g *Genesis) {
+	wantBalance := account.Balance
+	gotBalance := g.Alloc[MustHexToAddress(address)].Balance
+
+	if wantBalance == nil || (*big.Int)(wantBalance).Cmp(big.NewInt(0)) == 0 {
+		if gotBalance != nil && (*big.Int)(wantBalance).Cmp(big.NewInt(0)) != 0 {
+			t.Errorf("expected nil or zero balance for account %s, but got nonzero", address)
+		}
+		return
+	}
+
+	if gotBalance == nil {
+		t.Errorf("expected non nil balance for account %s, but got nil", address)
+		return
+	}
+
+	require.Equal(t, wantBalance.String(), gotBalance.String())
 }
