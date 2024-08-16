@@ -43,8 +43,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	monorepoCommit := chain.ValidationMetadata.GenesisCreationCommit
 
 	if monorepoCommit == nil {
-		t.Log("WARNING: cannot yet validate this chain")
-		return
+		t.Skip("WARNING: cannot yet validate this chain (no genesis creation commit)")
 	}
 
 	// This maps implementation address to contract name
