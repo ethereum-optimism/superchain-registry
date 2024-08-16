@@ -53,7 +53,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	// which is sufficient to load the relevant compilation artifact
 	// from the monorepo(for the contract in question)
 	// This has been built up by reading the optimism specs
-	artifactNames := map[string]string{
+	predeployArtifactNames := map[string]string{
 		"0x4200000000000000000000000000000000000042": "GovernanceToken",
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30000": "LegacyMessagePasser", // Deprecated according to specs
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30002": "DeployerWhitelist",   // Deprecated according to specs
@@ -153,27 +153,36 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 			t.Fatalf("expected an account at %s, but did not find one", address)
 		}
 
-		artifactName, ok := artifactNames[address]
-
 		{ // code validation
-			if !ok {
-				t.Logf("unimplemented artifact path mapping for %s", address)
-				continue
-			}
-
-			data, err := os.ReadFile(path.Join(contractsDir, "forge-artifacts", artifactName+".sol", artifactName+".json"))
-			require.NoError(t, err)
-
-			cd := new(ContractData)
-			err = json.Unmarshal(data, cd)
-			require.NoError(t, err)
-			wantByteCodeHex := cd.DeployedBytecode.Object
-
-			require.NoError(t, err)
-
 			account := g.Alloc[MustHexToAddress(address)]
 			gotByteCode, err := LoadContractBytecode(account.CodeHash)
 			require.NoError(t, err)
+
+			var wantByteCodeHex string
+			artifactName, ok := predeployArtifactNames[address]
+			var cd *ContractData
+			if ok {
+				// it is a predeploy, we need to perform masking
+				// in order to validate it
+
+				data, err := os.ReadFile(path.Join(contractsDir, "forge-artifacts", artifactName+".sol", artifactName+".json"))
+				require.NoError(t, err)
+
+				cd = new(ContractData)
+				err = json.Unmarshal(data, cd)
+				require.NoError(t, err)
+				wantByteCodeHex = cd.DeployedBytecode.Object
+
+				require.NoError(t, err)
+
+				err = maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
+				if err != nil {
+					t.Errorf("err masking bytecode for %s, %s", address, err)
+				}
+			} else {
+				// otherwise grab code from synthetic genesis
+				wantByteCodeHex = syntheticOPMainnetGenesis.Alloc[address].Code
+			}
 
 			wantByteCode, err := hexutil.Decode(wantByteCodeHex)
 			require.NoError(t, err)
@@ -183,11 +192,6 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 				continue
 			}
 
-			// TODO check if this is already equal, in which case masking is not necessary
-			err = maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
-			if err != nil {
-				t.Errorf("err masking bytecode for %s, %s", address, err)
-			}
 			gotByteCodeHex := hexutil.Encode(gotByteCode)
 
 			// Suppressing this because the output is very verbose. Sometimes useful to pipe into https://difff.jp/en/ though
@@ -196,11 +200,16 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 			}
 			require.Equal(t, crypto.Keccak256Hash(wantByteCode), crypto.Keccak256Hash(gotByteCode), "address %s failed bytecodehash validation!", address)
 
-			// Just realised that the Semver universal contract used immutables in the past, making immutables far more prolific (due the semver contract
-			// being inherited by many other contracts)
-			// These would not be security critical immutables, however, since they can't be changed without modifying the rest of the inherit_ing_ contracts bytecode
-			// so our "mask and check" validation approach covers us well.
-			t.Logf(address+" code ✅ OK! (%s with %d immutable references)", artifactName, countImmutables(cd.DeployedBytecode.ImmutableReferences))
+			if ok {
+				// Just realised that the Semver universal contract used immutables in the past, making immutables far more prolific (due the semver contract
+				// being inherited by many other contracts)
+				// These would not be security critical immutables, however, since they can't be changed without modifying the rest of the inherit_ing_ contracts bytecode
+				// so our "mask and check" validation approach covers us well.
+				t.Logf(address+" code ✅ OK! (%s with %d immutable references)", artifactName, countImmutables(cd.DeployedBytecode.ImmutableReferences))
+			} else {
+				t.Logf(address + " code ✅ OK!")
+
+			}
 		}
 
 		{ // balance validation
@@ -210,13 +219,13 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 			if wantBalance == nil || (*big.Int)(wantBalance).Cmp(big.NewInt(0)) == 0 {
 				if gotBalance != nil && (*big.Int)(wantBalance).Cmp(big.NewInt(0)) != 0 {
-					t.Errorf("expected nil or zero balance for account %s (%s), but got nonzero", address, artifactName)
+					t.Errorf("expected nil or zero balance for account %s, but got nonzero", address)
 				}
 				continue
 			}
 
 			if gotBalance == nil {
-				t.Errorf("expected non nil balance for account %s (%s), but got nil", address, artifactName)
+				t.Errorf("expected non nil balance for account %s, but got nil", address)
 				continue
 			}
 
