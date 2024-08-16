@@ -69,6 +69,7 @@
       PermissionedDisputeGame = "0xE9daD167EF4DE8812C1abD013Ac9570C616599A0"
       PreimageOracle = "0xD326E10B8186e90F4E2adc5c13a2d0C137ee8b34"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
 
   [[superchains.chains]]
     name = "Orderly Mainnet"
@@ -126,6 +127,7 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
 
   [[superchains.chains]]
     name = "Binary Mainnet"
@@ -182,6 +184,7 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0xB9fF3A5835144b0d2F4267A21e0c74458907c870"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
 
   [[superchains.chains]]
     name = "Lyra Chain"
@@ -239,6 +242,7 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
 
   [[superchains.chains]]
     name = "Metal L2"
@@ -297,6 +301,8 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
+      genesis_creation_commit = "e6ef3a900c42c8722e72c2e2314027f85d12ced5"
 
   [[superchains.chains]]
     name = "RACE Mainnet"
@@ -352,6 +358,7 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
 
   [[superchains.chains]]
     name = "Base"
@@ -410,6 +417,7 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
 
   [[superchains.chains]]
     name = "Mode"
@@ -468,6 +476,8 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
+      genesis_creation_commit = "d80c145e0acf23a49c6a6588524f57e32e33b91"
 
   [[superchains.chains]]
     name = "Zora"
@@ -526,6 +536,8 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
+      genesis_creation_commit = "d80c145e0acf23a49c6a6588524f57e32e33b91"
 
 [[superchains]]
   name = "sepolia"
@@ -596,6 +608,8 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
+      genesis_creation_commit = "d80c145e0acf23a49c6a6588524f57e32e33b91"
 
   [[superchains.chains]]
     name = "Metal L2 Testnet"
@@ -652,6 +666,8 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
+      genesis_creation_commit = "d80c145e0acf23a49c6a6588524f57e32e33b91"
 
   [[superchains.chains]]
     name = "RACE Testnet"
@@ -707,6 +723,7 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
 
   [[superchains.chains]]
     name = "Base Sepolia Testnet"
@@ -766,6 +783,7 @@
       PermissionedDisputeGame = "0x3f5c770f17A6982d2B3Ac77F6fDC93BFE0330E17"
       PreimageOracle = "0x627F825CBd48c4102d36f287be71f4234426b9e4"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
 
   [[superchains.chains]]
     name = "OP Sepolia Testnet"
@@ -824,6 +842,7 @@
       PermissionedDisputeGame = "0xBEA4384faCBcf51279962fbCFb8f16F9eD2fe0C6"
       PreimageOracle = "0x627F825CBd48c4102d36f287be71f4234426b9e4"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
 
   [[superchains.chains]]
     name = "Zora Sepolia Testnet"
@@ -883,6 +902,8 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
+      genesis_creation_commit = "d80c145e0acf23a49c6a6588524f57e32e33b91"
 
 [[superchains]]
   name = "sepolia-dev-0"
@@ -952,6 +973,7 @@
       PermissionedDisputeGame = "0x50573970b291726B881b204eD9F3c1D507e504cD"
       PreimageOracle = "0xB73342DdD69620e5Ab2Cc604Dad46434C2338025"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
 
   [[superchains.chains]]
     name = "Base devnet 0"
@@ -1010,3 +1032,4 @@
       PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
       PreimageOracle = "0x0000000000000000000000000000000000000000"
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+    [superchains.chains.validation_metadata]
