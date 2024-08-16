@@ -15,6 +15,7 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/require"
 )
 
@@ -177,6 +178,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 			if len(gotByteCode) != len(wantByteCode) {
 				t.Errorf("expected bytecode at %s to have length %d, but got bytecode with length %d", address, len(wantByteCode), len(gotByteCode))
+				continue
 			}
 
 			// TODO check if this is already equal, in which case masking is not necessary
@@ -186,7 +188,11 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 			}
 			gotByteCodeHex := hexutil.Encode(gotByteCode)
 
-			require.Equal(t, wantByteCodeHex, gotByteCodeHex, "address %s failed validation!", address)
+			// Suppressing this because the output is very verbose. Sometimes useful to pipe into https://difff.jp/en/ though
+			if false {
+				require.Equal(t, wantByteCodeHex, gotByteCodeHex, "address %s failed bytecode validation!", address)
+			}
+			require.Equal(t, crypto.Keccak256Hash(wantByteCode), crypto.Keccak256Hash(gotByteCode), "address %s failed bytecodehash validation!", address)
 
 			// Just realised that the Semver universal contract used immutables in the past, making immutables far more prolific (due the semver contract
 			// being inherited by many other contracts)
