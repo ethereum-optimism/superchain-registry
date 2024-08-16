@@ -73,11 +73,12 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 	// Setup some directory references
 	thisDir := getDirOfThisFile()
-	monorepoDir := path.Join(thisDir, "../../../optimism")
+	monorepoDir := path.Join(thisDir, "../../../optimism-temporary")
 	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
 
-	// checkout appropriate commit
-	executeCommandInDir(t, monorepoDir, exec.Command("git", "checkout", *monorepoCommit)) // could use reset --hard to make it easier to run again
+	// reset to appropriate commit, this is preferred to git checkout because it will
+	// blow away any leftover files from the previous run
+	executeCommandInDir(t, monorepoDir, exec.Command("git", "reset", "--hard", *monorepoCommit))
 
 	// TODO unskip these, I am skipping to save time in development since we
 	// are not validating multiple chains yet
@@ -92,13 +93,15 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	executeCommandInDir(t, contractsDir, exec.Command("pnpm", "install"))
 	executeCommandInDir(t, thisDir, exec.Command("cp", "foundry-config.patch", contractsDir))
 
-	// apply a patch to get things working
-	// then compile the contracts
-	// TODO not sure why this is needed, it is likely coupled to the specific commit we are looking at
-	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "foundry-config.patch"))
-	executeCommandInDir(t, contractsDir, exec.Command("forge", "build"))
-	// revert patch, makes rerunning script locally easier
-	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "-R", "foundry-config.patch"))
+	if *monorepoCommit == "d80c145e0acf23a49c6a6588524f57e32e33b91" {
+		// apply a patch to get things working
+		// then compile the contracts
+		// TODO not sure why this is needed, it is likely coupled to the specific commit we are looking at
+		executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "foundry-config.patch"))
+		executeCommandInDir(t, contractsDir, exec.Command("forge", "build"))
+		// revert patch, makes rerunning script locally easier
+		executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "-R", "foundry-config.patch"))
+	}
 
 	// Generate a "synthetic" genesis.json state dump for OP mainnet at this monorepo commit.
 	executeCommandInDir(t, thisDir, exec.Command("sh", "monorepo-outputs.sh"))
@@ -140,10 +143,10 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 		}
 
 		// Load the genesis for the chain we are validating from the superchain module
-		g, err := superchain.LoadGenesis(chainId)
+		g, err := LoadGenesis(chainId)
 		require.NoError(t, err)
 
-		if _, ok := g.Alloc[superchain.MustHexToAddress(address)]; !ok {
+		if _, ok := g.Alloc[MustHexToAddress(address)]; !ok {
 			t.Fatalf("expected an account at %s, but did not find one", address)
 		}
 
@@ -165,8 +168,8 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 			require.NoError(t, err)
 
-			account := g.Alloc[superchain.MustHexToAddress(address)]
-			gotByteCode, err := superchain.LoadContractBytecode(account.CodeHash)
+			account := g.Alloc[MustHexToAddress(address)]
+			gotByteCode, err := LoadContractBytecode(account.CodeHash)
 			require.NoError(t, err)
 
 			// TODO check if this is already equal, in which case masking is not necessary
@@ -188,7 +191,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 		{ // balance validation
 
 			wantBalance := account.Balance
-			gotBalance := g.Alloc[superchain.MustHexToAddress(address)].Balance
+			gotBalance := g.Alloc[MustHexToAddress(address)].Balance
 
 			if wantBalance == nil || (*big.Int)(wantBalance).Cmp(big.NewInt(0)) == 0 {
 				if gotBalance != nil && (*big.Int)(wantBalance).Cmp(big.NewInt(0)) != 0 {
