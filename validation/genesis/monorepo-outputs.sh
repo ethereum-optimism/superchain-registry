@@ -2,7 +2,7 @@
 set -e
 
 current_dir=$(pwd)
-monorepo_dir="${current_dir}/../../../optimism/"
+monorepo_dir="${current_dir}/../../../optimism-temporary/"
 contract_dir="${monorepo_dir}/packages/contracts-bedrock/"
 
 
