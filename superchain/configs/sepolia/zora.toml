@@ -47,3 +47,6 @@ data_availability_type = "eth-da"
   OptimismPortalProxy = "0xeffE2C6cA9Ab797D418f0D91eA60807713f3536f"
   SystemConfigProxy = "0xB54c7BFC223058773CF9b739cC5bd4095184Fb08"
   ProxyAdmin = "0xE17071F4C216Eb189437fbDBCc16Bb79c4efD9c2"
+
+[validation_metadata]
+genesis_creation_commit = "d80c145e0acf23a49c6a6588524f57e32e33b91"
