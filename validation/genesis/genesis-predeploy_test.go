@@ -2,6 +2,7 @@ package genesis
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/big"
 	"os"
 	"os/exec"
@@ -12,20 +13,39 @@ import (
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
+	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/stretchr/testify/require"
 )
 
+// TODO deduplicate this
+// perChainTestName ensures test can easily be filtered by chain name or chain id using the -run=regex testflag.
+func perChainTestName(chain *superchain.ChainConfig) string {
+	return chain.Name + fmt.Sprintf(" (%d)", chain.ChainID)
+}
+
+func TestGenesisPredeploys(t *testing.T) {
+	for _, chain := range OPChains {
+		if chain.SuperchainLevel == Standard || chain.StandardChainCandidate {
+			t.Run(perChainTestName(chain), func(t *testing.T) {
+				// Do not run in parallel
+				testGenesisPredeploys(t, chain)
+			})
+		}
+	}
+}
+
 // Invoke this with go test -timeout 0 ./validation/genesis -run=TestGenesisPredeploys -v
 // REQUIREMENTS:
 // pnpm and yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
-func TestGenesisPredeploys(t *testing.T) {
-	// TODO for development purposes we are starting with a single chain
-	// Soon we would enhance this test to loop over all standard chains.
-	chainId := uint64(34443) // Mode mainnet
+func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
+	chainId := chain.ChainID
+	monorepoCommit := chain.ValidationMetadata.GenesisCreationCommit
 
-	// TODO Another hardcode, soon this should be embedded in the chain config
-	monorepoCommit := "d80c145e0acf23a49c6a6588524f57e32e33b91c" // for Mode mainnet
+	if monorepoCommit == nil {
+		t.Log("WARNING: cannot yet validate this chain")
+		return
+	}
 
 	// This maps implementation address to contract name
 	// which is sufficient to load the relevant compilation artifact
@@ -58,7 +78,7 @@ func TestGenesisPredeploys(t *testing.T) {
 	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
 
 	// checkout appropriate commit
-	executeCommandInDir(t, monorepoDir, exec.Command("git", "checkout", monorepoCommit)) // could use reset --hard to make it easier to run again
+	executeCommandInDir(t, monorepoDir, exec.Command("git", "checkout", *monorepoCommit)) // could use reset --hard to make it easier to run again
 
 	// TODO unskip these, I am skipping to save time in development since we
 	// are not validating multiple chains yet
