@@ -119,6 +119,23 @@ func (c ChainConfig) Identifier() string {
 	return c.Superchain + "/" + c.Chain
 }
 
+// Mutates the chain config to declare the chain a standard chain.
+// NOTE: does not update any underlying files on disk.
+func (c *ChainConfig) PromoteToStandard() error {
+	if !c.StandardChainCandidate {
+		return errors.New("can only promote standard candidate chains")
+	}
+	if c.SuperchainLevel != Frontier {
+		return errors.New("can only promote frontier chains")
+	}
+
+	c.StandardChainCandidate = false
+	c.SuperchainLevel = Standard
+	now := uint64(time.Now().Unix())
+	c.SuperchainTime = &now
+	return nil
+}
+
 type AltDAConfig struct {
 	DAChallengeAddress *Address `json:"da_challenge_contract_address" toml:"da_challenge_contract_address"`
 	// DA challenge window value set on the DAC contract. Used in altDA mode

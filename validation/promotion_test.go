@@ -2,7 +2,6 @@ package validation
 
 import (
 	"testing"
-	"time"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 )
@@ -19,10 +18,10 @@ func TestPromotion(t *testing.T) {
 				exclusions = nil
 				// promote the chain to standard
 				// by mutating the chainConfig
-				chain.StandardChainCandidate = false
-				chain.SuperchainLevel = Standard
-				now := uint64(time.Now().Unix())
-				chain.SuperchainTime = &now
+				err := chain.PromoteToStandard()
+				if err != nil {
+					panic(err)
+				}
 				testStandardCandidate(t, chain)
 				testStandard(t, chain)
 			}
