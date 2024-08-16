@@ -72,7 +72,7 @@ const (
 )
 
 type ValidationMetadata struct {
-	GenesisCreationCommit *string `toml:"genesis_creation_commit"` // in https://github.com/ethereum-optimism/optimism/
+	GenesisCreationCommit string `toml:"genesis_creation_commit"` // in https://github.com/ethereum-optimism/optimism/
 }
 
 type ChainConfig struct {
@@ -118,7 +118,7 @@ type ChainConfig struct {
 
 	Addresses AddressList `toml:"addresses"`
 
-	ValidationMetadata ValidationMetadata `toml:"validation_metadata"`
+	ValidationMetadata *ValidationMetadata `toml:"validation_metadata,omitempty"`
 }
 
 func (c ChainConfig) Identifier() string {
