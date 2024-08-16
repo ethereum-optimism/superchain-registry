@@ -10,6 +10,7 @@ go_version=$(grep -m 1 '^go ' ${monorepo_dir}/go.mod | awk '{print $2}')
 
 # Source the gvm script to load gvm functions into the shell
 set +e
+source ~/.gvm/scripts/gvm || exit 1
 gvm install go${go_version} || exit 1
 gvm use go${go_version} || exit 1
 cd ${monorepo_dir} || exit 1
