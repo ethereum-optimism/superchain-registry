@@ -16,11 +16,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Invoke this with go test -timeout 0 ./validation -run=TestGenesisPredeploys -v
+// Invoke this with go test -timeout 0 ./validation/genesis -run=TestGenesisPredeploys -v
 // REQUIREMENTS:
 // pnpm and yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
 func TestGenesisPredeploys(t *testing.T) {
-
 	// TODO for development purposes we are starting with a single chain
 	// Soon we would enhance this test to loop over all standard chains.
 	chainId := uint64(34443) // Mode mainnet
@@ -32,24 +31,24 @@ func TestGenesisPredeploys(t *testing.T) {
 	// which is sufficient to load the relevant compilation artifact
 	// from the monorepo(for the contract in question)
 	artifactNames := map[string]string{
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30013": "L1BlockNumber",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30007": "L2CrossDomainMessenger",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30017": "OptimismMintableERC721Factory",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30011": "SequencerFeeVault",
 		"0x4200000000000000000000000000000000000042": "GovernanceToken",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30000": "LegacyMessagePasser", // Deprecated according to specs
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30002": "DeployerWhitelist",   // Deprecated according to specs
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30007": "L2CrossDomainMessenger",
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3000f": "GasPriceOracle",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30014": "L2ERC721Bridge",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3001a": "L1FeeVault",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30019": "BaseFeeVault",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30020": "SchemaRegistry",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30021": "EAS",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30010": "L2StandardBridge",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30011": "SequencerFeeVault",
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30012": "OptimismMintableERC20Factory",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30018": "ProxyAdmin",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30002": "DeployerWhitelist", // Deprecated according to specs
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30013": "L1BlockNumber",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30014": "L2ERC721Bridge",
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30015": "L1Block",
 		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30016": "L2ToL1MessagePasser",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30010": "L2StandardBridge",
-		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30000": "LegacyMessagePasser", // Deprecated according to specs
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30017": "OptimismMintableERC721Factory",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30018": "ProxyAdmin",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30019": "BaseFeeVault",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3001a": "L1FeeVault",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30020": "SchemaRegistry",
+		"0xc0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30021": "EAS",
 	}
 
 	thisDir := getDirOfThisFile()
