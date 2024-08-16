@@ -127,7 +127,7 @@ jobs:
       - install-foundry
       - run:
           name: run validation checks on all chains
-          command: just validate ""
+          command: just validate "*"
       - notify-failures-on-main:
           channel: C07GQQZDW1G # to slack channel `notify-superchain-validation-failures`
   golang-promotion-test:

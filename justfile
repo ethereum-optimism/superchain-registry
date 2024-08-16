@@ -46,7 +46,7 @@ validate-modified-chains REF:
 
 # Run validation checks for chains with a name or chain ID matching the supplied regex, example: just validate 10
 validate CHAIN_ID:
-	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run=TestValidation/{{CHAIN_ID}} -count=1
+	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname -- -run='TestValidation/.+\({{CHAIN_ID}}\)$' -count=1
 
 promotion-test:
   TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format dots -- -run Promotion
