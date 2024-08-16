@@ -71,6 +71,10 @@ const (
 	AltDA DataAvailability = "alt-da"
 )
 
+type ValidationMetadata struct {
+	GenesisCreationCommit *string `toml:"genesis_creation_commit"` // in https://github.com/ethereum-optimism/optimism/
+}
+
 type ChainConfig struct {
 	Name         string `toml:"name"`
 	ChainID      uint64 `toml:"chain_id" json:"l2_chain_id"`
@@ -113,6 +117,8 @@ type ChainConfig struct {
 	Genesis ChainGenesis `toml:"genesis" json:"genesis"`
 
 	Addresses AddressList `toml:"addresses"`
+
+	ValidationMetadata ValidationMetadata `toml:"validation_metadata"`
 }
 
 func (c ChainConfig) Identifier() string {
