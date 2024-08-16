@@ -172,6 +172,13 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 			gotByteCode, err := LoadContractBytecode(account.CodeHash)
 			require.NoError(t, err)
 
+			wantByteCode, err := hexutil.Decode(wantByteCodeHex)
+			require.NoError(t, err)
+
+			if len(gotByteCode) != len(wantByteCode) {
+				t.Errorf("expected bytecode at %s to have length %d, but got bytecode with length %d", address, len(wantByteCode), len(gotByteCode))
+			}
+
 			// TODO check if this is already equal, in which case masking is not necessary
 			err = maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
 			if err != nil {
