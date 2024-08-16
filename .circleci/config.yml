@@ -79,7 +79,7 @@ commands:
       - run:
           name: Install gvm
           command: |
-            apt-get update && apt-get -yq install curl git mercurial make binutils bison gcc build-essential
+            apt-get update && apt-get -yq install curl git mercurial make binutils bison gcc build-essential hexdump
             bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
             source /root/.gvm/scripts/gvm
   validate-genesis:
