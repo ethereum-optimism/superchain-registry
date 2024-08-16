@@ -41,11 +41,13 @@ func TestGenesisPredeploys(t *testing.T) {
 // pnpm and yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
 func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	chainId := chain.ChainID
-	monorepoCommit := chain.ValidationMetadata.GenesisCreationCommit
+	vmd := chain.ValidationMetadata
 
-	if monorepoCommit == nil {
-		t.Skip("WARNING: cannot yet validate this chain (no genesis creation commit)")
+	if vmd == nil {
+		t.Skip("WARNING: cannot yet validate this chain (no validation metadata)")
 	}
+
+	monorepoCommit := vmd.GenesisCreationCommit
 
 	// This maps implementation address to contract name
 	// which is sufficient to load the relevant compilation artifact
@@ -79,7 +81,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 	// reset to appropriate commit, this is preferred to git checkout because it will
 	// blow away any leftover files from the previous run
-	executeCommandInDir(t, monorepoDir, exec.Command("git", "reset", "--hard", *monorepoCommit))
+	executeCommandInDir(t, monorepoDir, exec.Command("git", "reset", "--hard", monorepoCommit))
 
 	// TODO unskip these, I am skipping to save time in development since we
 	// are not validating multiple chains yet
@@ -94,7 +96,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	executeCommandInDir(t, contractsDir, exec.Command("pnpm", "install"))
 	executeCommandInDir(t, thisDir, exec.Command("cp", "foundry-config.patch", contractsDir))
 
-	if *monorepoCommit == "d80c145e0acf23a49c6a6588524f57e32e33b91" {
+	if monorepoCommit == "d80c145e0acf23a49c6a6588524f57e32e33b91" {
 		// apply a patch to get things working
 		// then compile the contracts
 		// TODO not sure why this is needed, it is likely coupled to the specific commit we are looking at
