@@ -82,13 +82,8 @@ func TestGenesisPredeploys(t *testing.T) {
 	executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "-R", "foundry-config.patch"))
 
 	// Generate a "synthetic" genesis.json state dump for OP mainnet at this monorepo commit.
-	executeCommandInDir(t, monorepoDir, exec.Command(
-		"go", "run", "op-node/cmd/main.go", "genesis", "l2",
-		"--deploy-config=./packages/contracts-bedrock/deploy-config/mainnet.json", // TODO if we have the deploy config for the chain we want to verify, the rest of the validation would be very easy
-		"--outfile.l2=expected-genesis.json",
-		"--outfile.rollup=rollup.json",
-		"--deployment-dir=./packages/contracts-bedrock/deployments/mainnet",
-		"--l1-rpc=https://ethereum-rpc.publicnode.com"))
+	executeCommandInDir(t, thisDir, exec.Command("sh", "monorepo-outputs.sh"))
+
 	data, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 	require.NoError(t, err)
 	syntheticOPMainnetGenesis := new(GenesisLite)

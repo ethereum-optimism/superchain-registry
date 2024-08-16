@@ -1,34 +1,17 @@
 #!/bin/bash
-
 set -e
-
-# Shell script input args
-monorepo_commit="d80c145e0acf23a49c6a6588524f57e32e33b91c"
-go_version="1.19"
 
 current_dir=$(pwd)
 monorepo_dir="${current_dir}/../../../optimism/"
 contract_dir="${monorepo_dir}/packages/contracts-bedrock/"
 
-git checkout $monorepoCommit
 
-#rm -rf ${monorepo_dir}node_modules
-#rm -rf ${contract_dir}node_modules
-
-cp ./foundry-config.patch ${contract_dir}foundry-config.patch
-
-cd ${contract_dir}
-echo $(pwd)
-pnpm install
-
-git apply foundry-config.patch
-forge build
-
-git apply -R foundry-config.patch
+go_version=$(grep -m 1 '^go ' ${monorepo_dir}/go.mod | awk '{print $2}')
 
 # Source the gvm script to load gvm functions into the shell
 set +e
 source ~/.gvm/scripts/gvm || exit 1
+gvm install go${go_version} || exit 1
 gvm use go${go_version} || exit 1
 cd ${monorepo_dir} || exit 1
 set -e
