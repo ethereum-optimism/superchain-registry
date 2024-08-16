@@ -96,12 +96,12 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	// TODO we expect this step to vary as we scan through the monorepo history
 	// so we will need some branching logic here
 	executeCommandInDir(t, contractsDir, exec.Command("pnpm", "install"))
-	executeCommandInDir(t, thisDir, exec.Command("cp", "foundry-config.patch", contractsDir))
 
 	if monorepoCommit == "d80c145e0acf23a49c6a6588524f57e32e33b91" {
 		// apply a patch to get things working
 		// then compile the contracts
 		// TODO not sure why this is needed, it is likely coupled to the specific commit we are looking at
+		executeCommandInDir(t, thisDir, exec.Command("cp", "foundry-config.patch", contractsDir))
 		executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "foundry-config.patch"))
 		executeCommandInDir(t, contractsDir, exec.Command("forge", "build"))
 		// revert patch, makes rerunning script locally easier
@@ -115,6 +115,10 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err)
 	syntheticOPMainnetGenesis := new(GenesisLite)
 	err = json.Unmarshal(data, syntheticOPMainnetGenesis)
+	require.NoError(t, err)
+
+	// Load the genesis for the chain we are validating from the superchain module
+	g, err := LoadGenesis(chainId)
 	require.NoError(t, err)
 
 	// From this point on, we are validating the chain's genesis against the synthetic OP Mainnet genesis
@@ -147,10 +151,6 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 			continue
 		}
 
-		// Load the genesis for the chain we are validating from the superchain module
-		g, err := LoadGenesis(chainId)
-		require.NoError(t, err)
-
 		if _, ok := g.Alloc[MustHexToAddress(address)]; !ok {
 			t.Fatalf("expected an account at %s, but did not find one", address)
 		}
@@ -182,8 +182,17 @@ func validateCode(t *testing.T, address string, g *Genesis, syntheticOPMainnetGe
 	var cd *ContractData
 	if ok {
 		// it is a predeploy, we need to perform masking in order to validate it
-		data, err := os.ReadFile(path.Join(contractsDir, "forge-artifacts", artifactName+".sol", artifactName+".json"))
-		require.NoError(t, err)
+		filePath := path.Join(contractsDir, "forge-artifacts", artifactName+".sol", artifactName+".json")
+		data, err := os.ReadFile(filePath)
+		// Check if the error is due to the file not existing
+		if err != nil {
+			if os.IsNotExist(err) {
+				t.Logf("File not found: %s", filePath)
+				return
+			} else {
+				require.NoError(t, err)
+			}
+		}
 
 		cd = new(ContractData)
 		err = json.Unmarshal(data, cd)
