@@ -73,7 +73,6 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	if vmd == nil {
 		t.Skip("WARNING: cannot yet validate this chain (no validation metadata)")
 	}
-
 	monorepoCommit := vmd.GenesisCreationCommit
 
 	// Setup some directory references
@@ -178,9 +177,9 @@ func validateCode(t *testing.T, address string, g *Genesis, syntheticOPMainnetGe
 	require.NoError(t, err)
 
 	var wantByteCodeHex string
-	artifactName, ok := predeployArtifactNames[address]
-	var cd *ContractData
-	if ok {
+	artifactName, isPredeploy := predeployArtifactNames[address]
+	cd := new(ContractData)
+	if isPredeploy {
 		// it is a predeploy, we need to perform masking in order to validate it
 		filePath := path.Join(contractsDir, "forge-artifacts", artifactName+".sol", artifactName+".json")
 		data, err := os.ReadFile(filePath)
@@ -194,17 +193,12 @@ func validateCode(t *testing.T, address string, g *Genesis, syntheticOPMainnetGe
 			}
 		}
 
-		cd = new(ContractData)
 		err = json.Unmarshal(data, cd)
 		require.NoError(t, err)
+
 		wantByteCodeHex = cd.DeployedBytecode.Object
-
-		require.NoError(t, err)
-
 		err = maskBytecode(gotByteCode, cd.DeployedBytecode.ImmutableReferences)
-		if err != nil {
-			t.Errorf("err masking bytecode for %s, %s", address, err)
-		}
+		require.NoError(t, err, "err masking bytecode for %s, %s", address, err)
 	} else {
 		// otherwise grab code from synthetic genesis
 		wantByteCodeHex = syntheticOPMainnetGenesis.Alloc[address].Code
@@ -218,15 +212,14 @@ func validateCode(t *testing.T, address string, g *Genesis, syntheticOPMainnetGe
 		return
 	}
 
-	gotByteCodeHex := hexutil.Encode(gotByteCode)
-
 	// Suppressing this because the output is very verbose. Sometimes useful to pipe into https://difff.jp/en/ though
 	if false {
+		gotByteCodeHex := hexutil.Encode(gotByteCode)
 		require.Equal(t, wantByteCodeHex, gotByteCodeHex, "address %s failed bytecode validation!", address)
 	}
 	require.Equal(t, crypto.Keccak256Hash(wantByteCode), crypto.Keccak256Hash(gotByteCode), "address %s failed bytecodehash validation!", address)
 
-	if ok {
+	if isPredeploy {
 		// Just realised that the Semver universal contract used immutables in the past, making immutables far more prolific (due the semver contract
 		// being inherited by many other contracts)
 		// These would not be security critical immutables, however, since they can't be changed without modifying the rest of the inherit_ing_ contracts bytecode
