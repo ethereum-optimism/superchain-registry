@@ -97,7 +97,7 @@ func getGlobalChains() (map[uint]*uniqueProperties, error) {
 				// one of the chains is now throwing the error
 				// parse "https://hk.p.bifrost-rpc.liebi.com, wss://hk.p.bifrost-rpc.liebi.com/ws": invalid character " " in host name
 				continue
-				//return nil, err
+				// return nil, err
 			}
 			chain.RPC[i] = normalizedURL
 		}

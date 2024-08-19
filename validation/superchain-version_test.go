@@ -23,27 +23,25 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-var (
-	// list of contracts to check for version/bytecode uniformity
-	// TODO - The list intentionally omits contracts which have immutables because the bytecode check needs
-	// to be enhanced to mask the immutable values in the bytecode (contracts related to fault proofs) so that any check against a hash
-	// of the bytecode can validate what's on-chain.
-	contractsToCheck = []string{
-		"L1CrossDomainMessengerProxy",
-		"L1ERC721BridgeProxy",
-		"L1StandardBridgeProxy",
-		"OptimismMintableERC20FactoryProxy",
-		"OptimismPortalProxy",
-		"SystemConfigProxy",
-		// "AnchorStateRegistryProxy",
-		// "DelayedWETHProxy",
-		// "DisputeGameFactoryProxy",
-		// "FaultDisputeGame",
-		// "MIPS",
-		"PermissionedDisputeGame",
-		"PreimageOracle",
-	}
-)
+// list of contracts to check for version/bytecode uniformity
+// TODO - The list intentionally omits contracts which have immutables because the bytecode check needs
+// to be enhanced to mask the immutable values in the bytecode (contracts related to fault proofs) so that any check against a hash
+// of the bytecode can validate what's on-chain.
+var contractsToCheck = []string{
+	"L1CrossDomainMessengerProxy",
+	"L1ERC721BridgeProxy",
+	"L1StandardBridgeProxy",
+	"OptimismMintableERC20FactoryProxy",
+	"OptimismPortalProxy",
+	"SystemConfigProxy",
+	// "AnchorStateRegistryProxy",
+	// "DelayedWETHProxy",
+	// "DisputeGameFactoryProxy",
+	// "FaultDisputeGame",
+	// "MIPS",
+	"PermissionedDisputeGame",
+	"PreimageOracle",
+}
 
 func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	skipIfExcluded(t, chain.ChainID)
@@ -68,7 +66,6 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 // getContractVersionsFromChain pulls the appropriate contract versions from chain
 // using the supplied client (calling the version() method for each contract). It does this concurrently.
 func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (ContractVersions, error) {
-
 	// Prepare a concurrency-safe object to store version information in, and
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
@@ -125,7 +122,6 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 // getContractBytecodeHashesFromChain pulls the appropriate bytecode from chain
 // using the supplied client (calling the version() method for each contract). It does this concurrently.
 func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (L1ContractBytecodeHashes, error) {
-
 	// Prepare a concurrency-safe object to store version information in, and
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
@@ -143,7 +139,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 
 	for _, contractName := range contractsToCheck {
 		contractAddress, err := list.AddressFor(contractName)
-		//log.Printf("contract address: %s", contractAddress)
+		// log.Printf("contract address: %s", contractAddress)
 		if err != nil {
 			// If the chain does not store this contractAddress
 			// we will continue ("storing" the empty string),
@@ -198,8 +194,8 @@ func getVersion(ctx context.Context, addr common.Address, client *ethclient.Clie
 func getContractImplAddr(
 	proxyAdminAddress common.Address,
 	targetContractAddr common.Address,
-	client *ethclient.Client) (common.Address, error) {
-
+	client *ethclient.Client,
+) (common.Address, error) {
 	// We need the ABI for ProxyAdmin contract's `getProxyImplementation()`
 	// to retrieve the implementation contract's address
 	proxyImplABIJson := `[{"inputs":[{"internalType":"address","name":"_proxy","type":"address"}],"name":"getProxyImplementation","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}]`
@@ -236,7 +232,6 @@ func getContractImplAddr(
 //   - at the proxy implementation contract's address, if the contract is a proxy contract (we currently use the name suffix to determine
 //     whether the contract is a proxy or not)
 func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, targetContractAddr common.Address, client *ethclient.Client) (string, error) {
-
 	addrToCheck := targetContractAddr
 	proxyContract := strings.Contains(strings.ToLower(contractName), "proxy")
 	if proxyContract {
