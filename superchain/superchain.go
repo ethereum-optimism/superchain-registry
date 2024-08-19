@@ -126,29 +126,6 @@ func (c ChainConfig) Identifier() string {
 	return c.Superchain + "/" + c.Chain
 }
 
-// Returns a shallow copy of the chain config with some fields mutated
-// to declare the chain a standard chain. No fields on the receiver
-// are mutated.
-func (c *ChainConfig) PromoteToStandard() (*ChainConfig, error) {
-	if !c.StandardChainCandidate {
-		return nil, errors.New("can only promote standard candidate chains")
-	}
-	if c.SuperchainLevel != Frontier {
-		return nil, errors.New("can only promote frontier chains")
-	}
-
-	// Note that any pointers in c are copied to d
-	// This is not problematic as long as we do
-	// not modify the values pointed to.
-	d := *c
-
-	d.StandardChainCandidate = false
-	d.SuperchainLevel = Standard
-	now := uint64(time.Now().Unix())
-	d.SuperchainTime = &now
-	return &d, nil
-}
-
 type AltDAConfig struct {
 	DAChallengeAddress *Address `json:"da_challenge_contract_address" toml:"da_challenge_contract_address"`
 	// DA challenge window value set on the DAC contract. Used in altDA mode
