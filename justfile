@@ -50,6 +50,10 @@ validate-modified-chains REF:
 validate CHAIN_ID:
 	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname -- -run='TestValidation/.+\({{CHAIN_ID}}\)$' -count=1
 
+# Run genesis validation (this is separated from other validation checks, because it is not a part of drift detection)
+validate-genesis CHAIN_ID:
+	TEST_DIRECTORY=./validation/genesis go run gotest.tools/gotestsum@latest --format testname -- -run='TestGenesisPredeploys/.+\({{CHAIN_ID}}\)$' -v
+
 promotion-test:
   TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format dots -- -run Promotion
 
