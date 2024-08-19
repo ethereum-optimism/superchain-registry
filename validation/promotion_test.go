@@ -18,12 +18,12 @@ func TestPromotion(t *testing.T) {
 				exclusions = nil
 				// promote the chain to standard
 				// by mutating the chainConfig
-				err := chain.PromoteToStandard()
+				copy, err := chain.PromoteToStandard()
 				if err != nil {
 					panic(err)
 				}
-				testStandardCandidate(t, chain)
-				testStandard(t, chain)
+				testStandardCandidate(t, copy)
+				testStandard(t, copy)
 			}
 		})
 	}

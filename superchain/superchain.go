@@ -119,21 +119,27 @@ func (c ChainConfig) Identifier() string {
 	return c.Superchain + "/" + c.Chain
 }
 
-// Mutates the chain config to declare the chain a standard chain.
-// NOTE: does not update any underlying files on disk.
-func (c *ChainConfig) PromoteToStandard() error {
+// Returns a shallow copy of the chain config with some fields mutated
+// to declare the chain a standard chain. No fields on the receiver
+// are mutated.
+func (c *ChainConfig) PromoteToStandard() (*ChainConfig, error) {
+
 	if !c.StandardChainCandidate {
-		return errors.New("can only promote standard candidate chains")
+		return nil, errors.New("can only promote standard candidate chains")
 	}
 	if c.SuperchainLevel != Frontier {
-		return errors.New("can only promote frontier chains")
+		return nil, errors.New("can only promote frontier chains")
 	}
 
-	c.StandardChainCandidate = false
-	c.SuperchainLevel = Standard
+	// Note that any pointers in c are copied to d
+	// This is not problematic
+	d := *c
+
+	d.StandardChainCandidate = false
+	d.SuperchainLevel = Standard
 	now := uint64(time.Now().Unix())
-	c.SuperchainTime = &now
-	return nil
+	d.SuperchainTime = &now
+	return &d, nil
 }
 
 type AltDAConfig struct {
