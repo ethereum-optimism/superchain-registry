@@ -123,7 +123,6 @@ func (c ChainConfig) Identifier() string {
 // to declare the chain a standard chain. No fields on the receiver
 // are mutated.
 func (c *ChainConfig) PromoteToStandard() (*ChainConfig, error) {
-
 	if !c.StandardChainCandidate {
 		return nil, errors.New("can only promote standard candidate chains")
 	}
