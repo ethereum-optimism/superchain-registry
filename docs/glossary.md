@@ -15,6 +15,6 @@ To help with clarity and a common understanding, here are some helpful terms and
 
 Chains in the superchain-registry are assigned a `superchain_level` (shown in individual config files as well as the `chainList.toml/json` summaries), depending on the set of validation checks that they pass.
 
-**Frontier** chains have `superchain_level = 1`.
+**Frontier** chains have `superchain_level = 0`.
 
-**Standard** chains have `superchain_level = 2`. Because they satisfy a much stricter set of validation checks (see the [Standard Rollup Blockspace Charter](https://gov.optimism.io/t/season-6-draft-standard-rollup-charter/8135)), they also qualify as [Stage 1](https://ethereum-magicians.org/t/proposed-milestones-for-rollups-taking-off-training-wheels/11571) rollups chains.
+**Standard** chains have `superchain_level = 1`. Because they satisfy a much stricter set of validation checks (see the [Standard Rollup Blockspace Charter](https://gov.optimism.io/t/season-6-draft-standard-rollup-charter/8135)), they also qualify as [Stage 1](https://ethereum-magicians.org/t/proposed-milestones-for-rollups-taking-off-training-wheels/11571) rollups chains.

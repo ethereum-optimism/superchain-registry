@@ -1,6 +1,6 @@
 # Standard Chain Config Parameters
 [rollup_config]
-# plasma must be nil
+# alt_da must be nil
 seq_window_size = [3600, 3600]
 block_time = [2, 2]
 

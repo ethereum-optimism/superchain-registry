@@ -119,7 +119,7 @@ mod tests {
                 granite_time: None,
                 holocene_time: None,
             },
-            plasma: None,
+            alt_da: None,
             addresses: Some(AddressList {
                 address_manager: address!("8EfB6B5c4767B09Dc9AA6Af4eAA89F749522BaE2"),
                 l1_cross_domain_messenger_proxy: address!(
