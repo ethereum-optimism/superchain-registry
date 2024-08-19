@@ -25,6 +25,9 @@ import (
 
 var (
 	// list of contracts to check for version/bytecode uniformity
+	// TODO - The list intentionally omits contracts which have immutables because the bytecode check needs
+	// to be enhanced to mask the immutable values in the bytecode (contracts related to fault proofs) so that any check against a hash
+	// of the bytecode can validate what's on-chain.
 	contractsToCheck = []string{
 		"L1CrossDomainMessengerProxy",
 		"L1ERC721BridgeProxy",
@@ -32,11 +35,11 @@ var (
 		"OptimismMintableERC20FactoryProxy",
 		"OptimismPortalProxy",
 		"SystemConfigProxy",
-		"AnchorStateRegistryProxy",
-		"DelayedWETHProxy",
-		"DisputeGameFactoryProxy",
-		"FaultDisputeGame",
-		"MIPS",
+		// "AnchorStateRegistryProxy",
+		// "DelayedWETHProxy",
+		// "DisputeGameFactoryProxy",
+		// "FaultDisputeGame",
+		// "MIPS",
 		"PermissionedDisputeGame",
 		"PreimageOracle",
 	}
@@ -56,34 +59,10 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	_, err = findOPContractTagInVersions(versions)
 	require.NoError(t, err)
 
-	_, err = findOPContractTagInByteCodeHashes(L1ContractBytecodeHashes(versions))
+	bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
 	require.NoError(t, err)
-}
-
-func TestValidationContractBytecodeHashes(t *testing.T) {
-	// Entry point for validation checks which run
-	// on each OP chain.
-
-	for _, chain := range OPChains {
-		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-		require.NotEmpty(t, rpcEndpoint)
-		client, err := ethclient.Dial(rpcEndpoint)
-		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-
-		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
-		if err != nil {
-			t.Logf("Chain name: %s, err: %s", chain.Name, err)
-		}
-
-		prettyBytecodeHashes, err := json.MarshalIndent(bytecodeHashes, "", "    ")
-		if err != nil {
-			t.Logf("Error formatting bytecode hash output: %s", err)
-		}
-		t.Logf("Chain name: %s, Bytecode hashes: %s", chain.Name, prettyBytecodeHashes)
-		require.NoError(t, err)
-		//_, err = findOPContractTagInByteCodeHashes(L1ContractBytecodeHashes(versions))
-		//require.NoError(t, err)
-	}
+	_, err = findOPContractTagInByteCodeHashes(L1ContractBytecodeHashes(bytecodeHashes))
+	require.NoError(t, err)
 }
 
 // getContractVersionsFromChain pulls the appropriate contract versions from chain
