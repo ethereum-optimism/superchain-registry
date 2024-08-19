@@ -94,7 +94,10 @@ func getGlobalChains() (map[uint]*uniqueProperties, error) {
 		for i, url := range chain.RPC {
 			normalizedURL, err := normalizeURL(url)
 			if err != nil {
-				return nil, err
+				// one of the chains is now throwing the error
+				// parse "https://hk.p.bifrost-rpc.liebi.com, wss://hk.p.bifrost-rpc.liebi.com/ws": invalid character " " in host name
+				continue
+				//return nil, err
 			}
 			chain.RPC[i] = normalizedURL
 		}
