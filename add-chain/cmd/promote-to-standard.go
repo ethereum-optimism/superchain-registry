@@ -23,10 +23,11 @@ var PromoteToStandardCmd = cli.Command{
 			panic(fmt.Sprintf("No chain found with id %d", chainId))
 		}
 
-		err := chain.PromoteToStandard()
+		copy, err := chain.PromoteToStandard()
 		if err != nil {
 			panic(err)
 		}
+		chain = copy
 
 		_, thisFile, _, ok := runtime.Caller(0)
 		if !ok {

@@ -16,8 +16,8 @@ func TestPromotion(t *testing.T) {
 			if chain.StandardChainCandidate {
 				// do not allow any test exclusions
 				exclusions = nil
-				// promote the chain to standard
-				// by mutating the chainConfig
+				// simulate promoting the chain to standard
+				// by mutating a copy of the chainConfig
 				copy, err := chain.PromoteToStandard()
 				if err != nil {
 					panic(err)

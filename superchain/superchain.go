@@ -132,7 +132,8 @@ func (c *ChainConfig) PromoteToStandard() (*ChainConfig, error) {
 	}
 
 	// Note that any pointers in c are copied to d
-	// This is not problematic
+	// This is not problematic as long as we do
+	// not modify the values pointed to.
 	d := *c
 
 	d.StandardChainCandidate = false
