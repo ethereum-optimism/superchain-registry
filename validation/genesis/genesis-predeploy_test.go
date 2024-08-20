@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"strconv"
 	"testing"
@@ -137,38 +136,42 @@ func writeDeploymentsLegacy(chainId uint64, directory string) error {
 	// Initialize your struct with some data
 	data := Addresses[chainId]
 
-	// Get the reflection value object
-	val := reflect.ValueOf(*data)
-	typ := reflect.TypeOf(*data)
+	type AddressList2 AddressList // use another type to prevent infinite recursion later on
+	b := AddressList2(*data)
 
-	// Iterate over the struct fields
-	for i := 0; i < val.NumField(); i++ {
-		fieldName := typ.Field(i).Name      // Get the field name
-		fieldValue := val.Field(i).String() // Get the field value (assuming it's a string)
+	o, err := json.Marshal(b)
+	if err != nil {
+		return err
+	}
 
+	out := make(map[string]Address)
+	err = json.Unmarshal(o, &out)
+	if err != nil {
+		return err
+	}
+
+	for k, v := range out {
 		// Define the JSON object
 		jsonData := map[string]string{
-			"address": fieldValue,
+			"address": v.String(),
 		}
 
-		// Convert the map to JSON
-		fileContent, err := json.MarshalIndent(jsonData, "", "  ")
+		raw, err := json.Marshal(jsonData)
 		if err != nil {
-			return fmt.Errorf("Failed to marshal JSON for field %s: %w", fieldName, err)
+			return err
 		}
 
-		// Create a file named after the field name
-		fileName := fmt.Sprintf("%s.json", fieldName)
+		fileName := fmt.Sprintf("%s.json", k)
 		file, err := os.Create(path.Join(directory, fileName))
 		if err != nil {
-			return fmt.Errorf("Failed to create file for field %s: %w", fieldName, err)
+			return fmt.Errorf("Failed to create file for field %s: %w", k, err)
 		}
 		defer file.Close()
 
 		// Write the JSON content to the file
-		_, err = file.Write(fileContent)
+		_, err = file.Write(raw)
 		if err != nil {
-			return fmt.Errorf("Failed to write JSON to file for field %s: %w", fieldName, err)
+			return fmt.Errorf("Failed to write JSON to file for field %s: %w", k, err)
 		}
 
 		fmt.Printf("Created file: %s\n", fileName)
