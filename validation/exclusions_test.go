@@ -61,7 +61,6 @@ var exclusions = map[string]map[uint64]bool{
 		999999999: true, // sepolia/zora         MCP (at time of writing)
 		11155421:  true, // sepolia-dev0/oplabs-devnet-0
 		11763072:  true, // sepolia-dev0/base-devnet-0
-		11155420:  true, // sepolia/op (contract versions upgraded with gov approval pending)
 	},
 	"Optimism_Portal_2_Params": {
 		8453:      true, // mainnet/base         MCP (at time of writing)

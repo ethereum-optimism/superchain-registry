@@ -23,37 +23,25 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-// list of contracts to check for version/bytecode uniformity
-// TODO - The list intentionally omits contracts which have immutables because the bytecode check needs
-// to be enhanced to mask the immutable values in the bytecode (contracts related to fault proofs) so that any check against a hash
-// of the bytecode can validate what's on-chain.
-var (
-	contractsToCheck = []string{
-		"L1CrossDomainMessengerProxy",
-		"L1ERC721BridgeProxy",
-		"L1StandardBridgeProxy",
-		"OptimismMintableERC20FactoryProxy",
-		"OptimismPortalProxy",
-		"SystemConfigProxy",
-		"AnchorStateRegistryProxy",
-		"DelayedWETHProxy",
-		"DisputeGameFactoryProxy",
-		"FaultDisputeGame",
-		"MIPS",
-		"PermissionedDisputeGame",
-		"PreimageOracle",
-	}
-
-	contractsToSkip = []string{
-		"AnchorStateRegistryProxy",
-		"DelayedWETHProxy",
-		"DisputeGameFactoryProxy",
-		"FaultDisputeGame",
-		"MIPS",
-	}
-)
+var contractsToCheckVersionAndBytecodeOf = []string{
+	"L1CrossDomainMessengerProxy",
+	"L1ERC721BridgeProxy",
+	"L1StandardBridgeProxy",
+	"OptimismMintableERC20FactoryProxy",
+	"OptimismPortalProxy",
+	"SystemConfigProxy",
+	"AnchorStateRegistryProxy",
+	"DelayedWETHProxy",
+	"DisputeGameFactoryProxy",
+	"FaultDisputeGame",
+	"MIPS",
+	"PermissionedDisputeGame",
+	"PreimageOracle",
+}
 
 func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
+	// list of contracts to check for version/bytecode uniformity
+
 	skipIfExcluded(t, chain.ChainID)
 
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
@@ -91,7 +79,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 
 	wg := new(sync.WaitGroup)
 
-	for _, contractAddress := range contractsToCheck {
+	for _, contractAddress := range contractsToCheckVersionAndBytecodeOf {
 		a, err := list.AddressFor(contractAddress)
 		if err != nil {
 			// If the chain does not store this contractAddress
@@ -129,7 +117,17 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 	return cv, nil
 }
 
-func shouldSkip(contractName string) bool {
+func shouldSkipBytecodeCheck(contractName string) bool {
+	// We omit some contracts which have immutables from the bytecode check.
+	// TODO https://github.com/ethereum-optimism/superchain-registry/issues/493
+	contractsToSkip := []string{
+		"AnchorStateRegistryProxy",
+		"DelayedWETHProxy",
+		"DisputeGameFactoryProxy",
+		"FaultDisputeGame",
+		"MIPS",
+	}
+
 	for _, contract := range contractsToSkip {
 		if contract == contractName {
 			return true
@@ -156,8 +154,8 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 
 	wg := new(sync.WaitGroup)
 
-	for _, contractName := range contractsToCheck {
-		if shouldSkip(contractName) {
+	for _, contractName := range contractsToCheckVersionAndBytecodeOf {
+		if shouldSkipBytecodeCheck(contractName) {
 			continue
 		}
 		contractAddress, err := list.AddressFor(contractName)
