@@ -6,15 +6,15 @@ use crate::SuperchainLevel;
 use alloc::string::String;
 use alloy_primitives::Address;
 
-/// Plasma configuration.
+/// AltDA configuration.
 #[derive(Debug, Clone, Default, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct PlasmaConfig {
-    /// Plasma DA challenge address
+pub struct AltDAConfig {
+    /// AltDA challenge address
     pub da_challenge_address: Option<Address>,
-    /// Plasma DA challenge window time (in seconds)
+    /// AltDA challenge window time (in seconds)
     pub da_challenge_window: Option<u64>,
-    /// Plasma DA resolution window time (in seconds)
+    /// AltDA resolution window time (in seconds)
     pub da_resolve_window: Option<u64>,
 }
 
@@ -74,8 +74,8 @@ pub struct ChainConfig {
     /// Hardfork Configuration. These values may override the superchain-wide defaults.
     #[cfg_attr(feature = "serde", serde(flatten))]
     pub hardfork_configuration: HardForkConfiguration,
-    /// Optional Plasma DA feature
-    pub plasma: Option<PlasmaConfig>,
+    /// Optional AltDA feature
+    pub alt_da: Option<AltDAConfig>,
     /// Addresses
     pub addresses: Option<AddressList>,
 }

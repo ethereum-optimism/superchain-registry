@@ -208,9 +208,9 @@ pub fn load_op_stack_rollup_config(chain_config: &ChainConfig) -> RollupConfig {
         superchain_config_address: None,
         blobs_enabled_l1_timestamp: None,
         da_challenge_address: chain_config
-            .plasma
+            .alt_da
             .as_ref()
-            .and_then(|plasma| plasma.da_challenge_address),
+            .and_then(|alt_da| alt_da.da_challenge_address),
 
         // The below chain parameters can be different per OP-Stack chain,
         // but since none of the superchain chains differ, it's not represented in the superchain-registry yet.
@@ -262,7 +262,7 @@ impl RollupConfig {
 
     /// Returns true if a DA Challenge proxy Address is provided in the rollup config and the
     /// address is not zero.
-    pub fn is_plasma_enabled(&self) -> bool {
+    pub fn is_alt_da_enabled(&self) -> bool {
         self.da_challenge_address
             .map_or(false, |addr| !addr.is_zero())
     }
@@ -365,7 +365,7 @@ pub const OP_MAINNET_CONFIG: RollupConfig = RollupConfig {
     delta_time: Some(1_708_560_000_u64),
     ecotone_time: Some(1_710_374_401_u64),
     fjord_time: Some(1_720_627_201_u64),
-    granite_time: None,
+    granite_time: Some(1_725_984_001_u64),
     holocene_time: None,
     batch_inbox_address: address!("ff00000000000000000000000000000000000010"),
     deposit_contract_address: address!("beb5fc579115071764c7423a4f12edde41f106ed"),
@@ -459,7 +459,7 @@ pub const BASE_MAINNET_CONFIG: RollupConfig = RollupConfig {
     delta_time: Some(1708560000),
     ecotone_time: Some(1710374401),
     fjord_time: Some(1720627201),
-    granite_time: None,
+    granite_time: Some(1_725_984_001_u64),
     holocene_time: None,
     batch_inbox_address: address!("ff00000000000000000000000000000000008453"),
     deposit_contract_address: address!("49048044d57e1c92a77f79988d21fa8faf74e97e"),
@@ -585,13 +585,13 @@ mod tests {
     }
 
     #[test]
-    fn test_plasma_enabled() {
+    fn test_alt_da_enabled() {
         let mut config = RollupConfig::default();
-        assert!(!config.is_plasma_enabled());
+        assert!(!config.is_alt_da_enabled());
         config.da_challenge_address = Some(Address::ZERO);
-        assert!(!config.is_plasma_enabled());
+        assert!(!config.is_alt_da_enabled());
         config.da_challenge_address = Some(address!("0000000000000000000000000000000000000001"));
-        assert!(config.is_plasma_enabled());
+        assert!(config.is_alt_da_enabled());
     }
 
     #[test]

@@ -116,10 +116,10 @@ mod tests {
                 delta_time: Some(1708560000),
                 ecotone_time: Some(1710374401),
                 fjord_time: Some(1720627201),
-                granite_time: None,
+                granite_time: Some(1725984001),
                 holocene_time: None,
             },
-            plasma: None,
+            alt_da: None,
             addresses: Some(AddressList {
                 address_manager: address!("8EfB6B5c4767B09Dc9AA6Af4eAA89F749522BaE2"),
                 l1_cross_domain_messenger_proxy: address!(
