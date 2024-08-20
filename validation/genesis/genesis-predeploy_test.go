@@ -92,13 +92,13 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	err = json.Unmarshal(expectedData, &gen)
 	require.NoError(t, err)
 
-	expectedData, err = json.Marshal(gen.Alloc)
+	expectedData, err = json.MarshalIndent(gen.Alloc, "", " ")
 	require.NoError(t, err)
 
 	g, err := core.LoadOPStackGenesis(chainId)
 	require.NoError(t, err)
 
-	gotData, err := json.Marshal(g.Alloc)
+	gotData, err := json.MarshalIndent(g.Alloc, "", " ")
 	require.NoError(t, err)
 
 	err = os.WriteFile(path.Join(monorepoDir, "want-alloc.json"), expectedData, 0o777)
