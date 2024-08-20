@@ -62,18 +62,9 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	// blow away any leftover files from the previous run
 	executeCommandInDir(t, monorepoDir, exec.Command("git", "reset", "--hard", monorepoCommit))
 
-	// TODO unskip these, I am skipping to save time in development since we
-	// are not validating multiple chains yet
-	if false {
-		executeCommandInDir(t, monorepoDir, exec.Command("rm", "-rf", "node_modules"))
-		executeCommandInDir(t, contractsDir, exec.Command("rm", "-rf", "node_modules"))
-	}
+	executeCommandInDir(t, monorepoDir, exec.Command("rm", "-rf", "node_modules"))
+	executeCommandInDir(t, contractsDir, exec.Command("rm", "-rf", "node_modules"))
 
-	// install dependencies
-	// TODO we expect this step to vary as we scan through the monorepo history
-	// so we will need some branching logic here
-	// executeCommandInDir(t, contractsDir, exec.Command("pnpm", "install", "--no-frozen-lockfile"))
-	executeCommandInDir(t, contractsDir, exec.Command("yarn", "install", "--no-frozen-lockfile"))
 
 	if monorepoCommit == "d80c145e0acf23a49c6a6588524f57e32e33b91" {
 		// apply a patch to get things working
@@ -101,7 +92,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 	// regenerate genesis.json at this monorepo commit.
 	executeCommandInDir(t, thisDir, exec.Command("cp", "./monorepo-outputs.sh", monorepoDir))
-	executeCommandInDir(t, monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.GenesisCreationCommand))
+	executeCommandInDir(t, monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.MonorepoBuildCommand, vis.GenesisCreationCommand))
 
 	expectedData, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 	require.NoError(t, err)
