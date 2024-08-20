@@ -11,7 +11,6 @@ import (
 	"reflect"
 	"runtime"
 	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
@@ -102,7 +101,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 	// regenerate genesis.json at this monorepo commit.
 	executeCommandInDir(t, thisDir, exec.Command("cp", "./monorepo-outputs.sh", monorepoDir))
-	executeCommandInDir(t, monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", strings.Join(vis.GenesisCreationCommand, " ")))
+	executeCommandInDir(t, monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.GenesisCreationCommand))
 
 	expectedData, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 	require.NoError(t, err)
