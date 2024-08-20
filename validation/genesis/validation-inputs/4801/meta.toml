@@ -5,9 +5,9 @@ genesis_creation_command = [
   "op-node/cmd/main.go",
   "genesis",
   "l2",
-  "--deploy-config=./packages/contracts-bedrock/deploy-config/34443.json",
+  "--deploy-config=./packages/contracts-bedrock/deploy-config/4801.json",
   "--outfile.l2=expected-genesis.json",
   "--outfile.rollup=rollup.json",
-  "--l1-deployments=./packages/contracts-bedrock/deployments/34443",
-  "--l1-rpc=https://ethereum.publicnode.com/",
+  "--l1-deployments=./packages/contracts-bedrock/deployments/4801",
+  "--l1-rpc=https://sepolia.publicnode.com/",
 ]

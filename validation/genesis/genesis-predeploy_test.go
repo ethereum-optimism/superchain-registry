@@ -94,11 +94,11 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	if err != nil {
 		log.Fatalf("Failed to create directory: %v", err)
 	}
-	// err = writeDeployments(chainId, path.Join(contractsDir, "deployments", chainIdString))
-	// if err != nil {
-	// 	log.Fatalf("Failed to write deployments: %v", err)
-	// }
-	writeDeploymentsLegacy(chainId, path.Join(contractsDir, "deployments", chainIdString))
+	err = writeDeployments(chainId, path.Join(contractsDir, "deployments", chainIdString))
+	if err != nil {
+		log.Fatalf("Failed to write deployments: %v", err)
+	}
+	// writeDeploymentsLegacy(chainId, path.Join(contractsDir, "deployments", chainIdString))
 
 	// regenerate genesis.json at this monorepo commit.
 	executeCommandInDir(t, thisDir, exec.Command("cp", "./monorepo-outputs.sh", monorepoDir))
