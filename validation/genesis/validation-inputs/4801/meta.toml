@@ -8,6 +8,6 @@ genesis_creation_command = """\
   --deploy-config=./packages/contracts-bedrock/deploy-config/4801.json \
   --outfile.l2=expected-genesis.json \
   --outfile.rollup=rollup.json \
-  --l1-deployments=./packages/contracts-bedrock/deployments/4801 \
-  --l1-rpc=https://sepolia.publicnode.com/ \
+  --l1-deployments=./packages/contracts-bedrock/deployments/4801/.deploy \
+  --l1-rpc=https://ethereum-sepolia.publicnode.com/ \
 """
