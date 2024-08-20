@@ -130,7 +130,6 @@ jobs:
     resource_class: medium
     steps:
       - checkout
-      - install-just
       - install-foundry
       - install-gvm
       - install-nvm
