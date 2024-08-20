@@ -52,5 +52,6 @@ func init() {
 
 type ValidationMetadata struct {
 	GenesisCreationCommit  string `toml:"genesis_creation_commit"` // in https://github.com/ethereum-optimism/optimism/
+	MonorepoBuildCommand   string `toml:"monorepo_build_command"`
 	GenesisCreationCommand string `toml:"genesis_creation_command"`
 }
