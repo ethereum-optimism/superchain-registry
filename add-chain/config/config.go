@@ -38,7 +38,7 @@ func ConstructChainConfig(
 
 	err = chainConfig.CheckDataAvailability()
 	if err != nil {
-		return superchain.ChainConfig{}, fmt.Errorf("error with json plasma config: %w", err)
+		return superchain.ChainConfig{}, fmt.Errorf("error with json altDA config: %w", err)
 	}
 
 	chainConfig.Name = chainName
@@ -58,7 +58,7 @@ func ConstructChainConfig(
 //   - general chain info/config
 //   - contract and role addresses
 //   - genesis system config
-//   - optional feature config info, if activated (e.g. plasma)
+//   - optional feature config info, if activated (e.g. altDA)
 func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

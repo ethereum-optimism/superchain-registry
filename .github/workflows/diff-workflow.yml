@@ -41,7 +41,7 @@ jobs:
         # Get the base branch revision
         base_rev=${{ github.event.pull_request.base.sha }}
         echo "Base branch revision: $base_rev"
-        git checkout $base_rev -- ../superchain
+        git checkout $base_rev
         go run ${{inputs.command}}/main.go base
 
     - name: compute diff

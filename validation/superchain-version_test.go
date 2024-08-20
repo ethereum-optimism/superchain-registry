@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 	"sync"
 	"testing"
 
@@ -13,13 +14,34 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
 
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/crypto"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+var contractsToCheckVersionAndBytecodeOf = []string{
+	"L1CrossDomainMessengerProxy",
+	"L1ERC721BridgeProxy",
+	"L1StandardBridgeProxy",
+	"OptimismMintableERC20FactoryProxy",
+	"OptimismPortalProxy",
+	"SystemConfigProxy",
+	"AnchorStateRegistryProxy",
+	"DelayedWETHProxy",
+	"DisputeGameFactoryProxy",
+	"FaultDisputeGame",
+	"MIPS",
+	"PermissionedDisputeGame",
+	"PreimageOracle",
+}
+
 func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
+	// list of contracts to check for version/bytecode uniformity
+
 	skipIfExcluded(t, chain.ChainID)
 
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
@@ -30,30 +52,18 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 
 	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client)
 	require.NoError(t, err)
-	_, err = findOPContractTag(versions)
+	_, err = findOPContractTagInVersions(versions)
+	require.NoError(t, err)
+
+	bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
+	require.NoError(t, err)
+	_, err = findOPContractTagInByteCodeHashes(bytecodeHashes)
 	require.NoError(t, err)
 }
 
 // getContractVersionsFromChain pulls the appropriate contract versions from chain
 // using the supplied client (calling the version() method for each contract). It does this concurrently.
 func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (ContractVersions, error) {
-	// build up list of contracts to check
-	contractsToCheck := []string{
-		"L1CrossDomainMessengerProxy",
-		"L1ERC721BridgeProxy",
-		"L1StandardBridgeProxy",
-		"OptimismMintableERC20FactoryProxy",
-		"OptimismPortalProxy",
-		"SystemConfigProxy",
-		"AnchorStateRegistryProxy",
-		"DelayedWETHProxy",
-		"DisputeGameFactoryProxy",
-		"FaultDisputeGame",
-		"MIPS",
-		"PermissionedDisputeGame",
-		"PreimageOracle",
-	}
-
 	// Prepare a concurrency-safe object to store version information in, and
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
@@ -69,7 +79,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 
 	wg := new(sync.WaitGroup)
 
-	for _, contractAddress := range contractsToCheck {
+	for _, contractAddress := range contractsToCheckVersionAndBytecodeOf {
 		a, err := list.AddressFor(contractAddress)
 		if err != nil {
 			// If the chain does not store this contractAddress
@@ -107,6 +117,83 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 	return cv, nil
 }
 
+func shouldSkipBytecodeCheck(contractName string) bool {
+	// We omit some contracts which have immutables from the bytecode check.
+	// TODO https://github.com/ethereum-optimism/superchain-registry/issues/493
+	contractsToSkip := []string{
+		"AnchorStateRegistryProxy",
+		"DelayedWETHProxy",
+		"DisputeGameFactoryProxy",
+		"FaultDisputeGame",
+		"MIPS",
+	}
+
+	for _, contract := range contractsToSkip {
+		if contract == contractName {
+			return true
+		}
+	}
+	return false
+}
+
+// getContractBytecodeHashesFromChain pulls the appropriate bytecode from chain
+// using the supplied client, concurrently.
+func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (L1ContractBytecodeHashes, error) {
+	// Prepare a concurrency-safe object to store version information in, and
+	// spin up a goroutine for each contract we are checking (to speed things up).
+	results := new(sync.Map)
+
+	getBytecodeHashAsync := func(chainID uint64, contractAddress Address, results *sync.Map, contractName string, wg *sync.WaitGroup) {
+		r, err := getBytecodeHash(context.Background(), chainID, contractName, common.Address(contractAddress), client)
+		if err != nil {
+			panic(err)
+		}
+		results.Store(contractName, r)
+		wg.Done()
+	}
+
+	wg := new(sync.WaitGroup)
+
+	for _, contractName := range contractsToCheckVersionAndBytecodeOf {
+		if shouldSkipBytecodeCheck(contractName) {
+			continue
+		}
+		contractAddress, err := list.AddressFor(contractName)
+		if err != nil {
+			// If the chain does not store this contractAddress
+			// we will continue ("storing" the empty string),
+			// so that the rest of the check can
+			// still take place. This results in a more useful
+			// error shown to the user.
+			continue
+		}
+		wg.Add(1)
+		go getBytecodeHashAsync(chainID, contractAddress, results, contractName, wg)
+	}
+
+	wg.Wait()
+
+	// use reflection to convert results mapping into a ContractVersions object
+	// without resorting to boilerplate code.
+	cbh := L1ContractBytecodeHashes{}
+	results.Range(func(k, v any) bool {
+		s := reflect.ValueOf(cbh)
+		for i := 0; i < s.NumField(); i++ {
+			// The keys of the results mapping come from the AddressList type,
+			// which includes both proxied and unproxied contracts.
+			// The cbh object (of type L1ContractBytecodeHashes), on the other hand,
+			// only lists implementation contract bytecode hashes. The next line accounts for
+			// this: we may get the bytecode hash directly from the implementation, or via a Proxy,
+			if s.Type().Field(i).Name == k || s.Type().Field(i).Name+"Proxy" == k {
+				reflect.ValueOf(&cbh).Elem().Field(i).SetString(v.(string))
+			}
+		}
+		return true
+	})
+
+	return cbh, nil
+}
+
 // getVersion will get the version of a contract at a given address, if it exposes a version() method.
 func getVersion(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
 	isemver, err := bindings.NewISemver(addr, client)
@@ -121,6 +208,67 @@ func getVersion(ctx context.Context, addr common.Address, client *ethclient.Clie
 	}
 
 	return version, nil
+}
+
+// getContractImplAddr gets the implementation contract's address from a deployment of `ProxyAdmin` contract
+func getContractImplAddr(
+	proxyAdminAddress common.Address,
+	targetContractAddr common.Address,
+	client *ethclient.Client,
+) (common.Address, error) {
+	// We need the ABI for ProxyAdmin contract's `getProxyImplementation()`
+	// to retrieve the implementation contract's address
+	proxyImplABIJson := `[{"inputs":[{"internalType":"address","name":"_proxy","type":"address"}],"name":"getProxyImplementation","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}]`
+
+	proxyABI, err := abi.JSON(strings.NewReader(proxyImplABIJson))
+	if err != nil {
+		return common.Address{}, fmt.Errorf("%s: %w", proxyAdminAddress, err)
+	}
+
+	var methodData []byte
+	if methodData, err = proxyABI.Pack("getProxyImplementation", targetContractAddr); err != nil {
+		return common.Address{}, fmt.Errorf("%s: %w", targetContractAddr, err)
+	}
+
+	callMsg := ethereum.CallMsg{
+		To:   &proxyAdminAddress,
+		Data: methodData,
+	}
+
+	// Make the call
+	callContract := func(msg ethereum.CallMsg) ([]byte, error) {
+		return client.CallContract(context.Background(), msg, nil)
+	}
+	result, err := Retry(callContract)(callMsg)
+	if err != nil {
+		return common.Address{}, err
+	}
+
+	return common.BytesToAddress(result), nil
+}
+
+// getBytecodeHash gets the hash of the bytecode of a contract
+//   - at a given address, if the contract is not a proxy contract
+//   - at the proxy implementation contract's address, if the contract is a proxy contract (we currently use the name suffix to determine
+//     whether the contract is a proxy or not)
+func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, targetContractAddr common.Address, client *ethclient.Client) (string, error) {
+	addrToCheck := targetContractAddr
+	proxyContract := strings.HasSuffix(strings.ToLower(contractName), "proxy")
+	if proxyContract {
+		proxyAdminAddr := Addresses[chainID].ProxyAdmin
+		implAddr, err := getContractImplAddr(common.Address(proxyAdminAddr), targetContractAddr, client)
+		if err != nil {
+			return "", fmt.Errorf("%s/%s: %w", contractName, proxyAdminAddr, err)
+		}
+		addrToCheck = implAddr
+	}
+
+	code, err := client.CodeAt(ctx, addrToCheck, nil)
+	if err != nil {
+		return "", fmt.Errorf("%s: %w", addrToCheck, err)
+	}
+
+	return crypto.Keccak256Hash(code).Hex(), nil
 }
 
 func TestFindOPContractTag(t *testing.T) {
@@ -143,7 +291,7 @@ func TestFindOPContractTag(t *testing.T) {
 		PreimageOracle:               "1.0.0",
 	}
 
-	got, err := findOPContractTag(shouldMatch)
+	got, err := findOPContractTagInVersions(shouldMatch)
 	require.NoError(t, err)
 	want := []standard.Tag{"op-contracts/v1.4.0"}
 	require.Equal(t, got, want)
@@ -158,13 +306,13 @@ func TestFindOPContractTag(t *testing.T) {
 		ProtocolVersions:             "1.0.0",
 		L2OutputOracle:               "1.0.0",
 	}
-	got, err = findOPContractTag(shouldNotMatch)
+	got, err = findOPContractTagInVersions(shouldNotMatch)
 	require.Error(t, err)
 	want = []standard.Tag{}
 	require.Equal(t, got, want)
 }
 
-func findOPContractTag(versions ContractVersions) ([]standard.Tag, error) {
+func findOPContractTagInVersions(versions ContractVersions) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
 	pretty, err := json.MarshalIndent(versions, "", " ")
 	if err != nil {
@@ -181,32 +329,7 @@ func findOPContractTag(versions ContractVersions) ([]standard.Tag, error) {
 	matchesTag := func(standard, candidate ContractVersions) bool {
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
-
-		// Iterate over each field of the standard struct
-		for i := 0; i < s.NumField(); i++ {
-
-			if s.Type().Field(i).Name == "ProtocolVersions" {
-				// We can't check this contract:
-				// (until this issue resolves https://github.com/ethereum-optimism/client-pod/issues/699#issuecomment-2150970346)
-				continue
-			}
-
-			field := s.Field(i)
-
-			if field.Kind() != reflect.String {
-				panic("versions must be strings")
-			}
-
-			if field.String() == "" {
-				// Ignore any empty strings, these are treated as "match anything"
-				continue
-			}
-
-			if field.String() != c.Field(i).String() {
-				return false
-			}
-		}
-		return true
+		return checkMatch(s, c)
 	}
 
 	for tag := range standard.Versions {
@@ -216,4 +339,61 @@ func findOPContractTag(versions ContractVersions) ([]standard.Tag, error) {
 		}
 	}
 	return matchingTags, err
+}
+
+func findOPContractTagInByteCodeHashes(hashes L1ContractBytecodeHashes) ([]standard.Tag, error) {
+	matchingTags := make([]standard.Tag, 0)
+	pretty, err := json.MarshalIndent(hashes, "", " ")
+	if err != nil {
+		return matchingTags, err
+	}
+
+	prettyStandard, err := json.MarshalIndent(standard.BytecodeHashes, "", " ")
+	if err != nil {
+		return matchingTags, err
+	}
+
+	err = fmt.Errorf("bytecode hashes %s do not match any standard op-contracts tag %s", pretty, prettyStandard)
+
+	matchesTag := func(standard, candidate L1ContractBytecodeHashes) bool {
+		s := reflect.ValueOf(standard)
+		c := reflect.ValueOf(candidate)
+		return checkMatch(s, c)
+	}
+
+	for tag := range standard.Versions {
+		if matchesTag(standard.BytecodeHashes[tag], hashes) {
+			matchingTags = append(matchingTags, tag)
+			err = nil
+		}
+	}
+	return matchingTags, err
+}
+
+func checkMatch(s, c reflect.Value) bool {
+	// Iterate over each field of the standard struct
+	for i := 0; i < s.NumField(); i++ {
+
+		if s.Type().Field(i).Name == "ProtocolVersions" {
+			// We can't check this contract:
+			// (until this issue resolves https://github.com/ethereum-optimism/client-pod/issues/699#issuecomment-2150970346)
+			continue
+		}
+
+		field := s.Field(i)
+
+		if field.Kind() != reflect.String {
+			panic("versions must be strings")
+		}
+
+		if field.String() == "" {
+			// Ignore any empty strings, these are treated as "match anything"
+			continue
+		}
+
+		if field.String() != c.Field(i).String() {
+			return false
+		}
+	}
+	return true
 }

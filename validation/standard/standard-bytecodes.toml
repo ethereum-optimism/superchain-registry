@@ -1,0 +1,8 @@
+["op-contracts/v1.4.0"] # Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.4.0
+address_manager = ""
+l1_cross_domain_messenger = "0xc919b535f7bbbaa57f32b602f26000e3997c22c933efbb92a36e053b20b2b4b1" # version 2.3.0
+l1_erc721_bridge = "0xa1a3ea3996797cf5035dafff9335386f8b00c58ff22aaa4c34b02c4ae7cf5e8a" # version 2.1.0
+l1_standard_bridge = "0x6894839591ba2aa1f6ba43526113e25fd795ec5c5a48202e664c931cd170aaee" # version 2.1.0
+optimism_mintable_erc20_factory = "0xb8ec72533005496795f8fc0c71f0312578ff626f7b94699984e1add6dc2f3b88" # version 1.9.0
+optimism_portal = "0x2b0610230634fccf9d05f4aaefceffef9e04aa99910798d42823e0068eb07eca" # version 3.10.0
+system_config = "0x1245886f18eada47816eba66ec353eb9a5dad795a5e36df78067f66657018e32" # version 2.2.0

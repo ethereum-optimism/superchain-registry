@@ -19,13 +19,14 @@
     public_rpc = "https://mainnet.optimism.io"
     sequencer_rpc = "https://mainnet-sequencer.optimism.io"
     explorer = "https://explorer.optimism.io"
-    superchain_level = 2
+    superchain_level = 1
     superchain_time = 0
     batch_inbox_addr = "0xFF00000000000000000000000000000000000010"
     canyon_time = 1704992401
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
+    granite_time = 1725984001
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -76,13 +77,14 @@
     public_rpc = "https://rpc.orderly.network"
     sequencer_rpc = "https://rpc.orderly.network"
     explorer = "https://explorer.orderly.network"
-    superchain_level = 1
+    superchain_level = 0
     superchain_time = 0
     batch_inbox_addr = "0x08aA34cC843CeEBcC88A627F18430294aA9780be"
     canyon_time = 1704992401
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
+    granite_time = 1725984001
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -133,7 +135,7 @@
     public_rpc = "https://rpc.zero.thebinaryholdings.com"
     sequencer_rpc = "https://sequencer.bnry.mainnet.zeeve.net"
     explorer = "https://explorer.thebinaryholdings.com/"
-    superchain_level = 1
+    superchain_level = 0
     batch_inbox_addr = "0xFF00000000000000000000000000000000000624"
     canyon_time = 0
     delta_time = 0
@@ -189,13 +191,14 @@
     public_rpc = "https://rpc.lyra.finance"
     sequencer_rpc = "https://rpc.lyra.finance"
     explorer = "https://explorer.lyra.finance"
-    superchain_level = 1
+    superchain_level = 0
     superchain_time = 0
     batch_inbox_addr = "0x5f7f7f6DB967F0ef10BdA0678964DBA185d16c50"
     canyon_time = 1704992401
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
+    granite_time = 1725984001
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -246,7 +249,7 @@
     public_rpc = "https://rpc.metall2.com"
     sequencer_rpc = "https://rpc.metall2.com"
     explorer = "https://explorer.metall2.com"
-    superchain_level = 1
+    superchain_level = 0
     standard_chain_candidate = true
     superchain_time = 0
     batch_inbox_addr = "0xc83f7D9F2D4A76E81145849381ABA02602373723"
@@ -254,6 +257,7 @@
     delta_time = 0
     ecotone_time = 0
     fjord_time = 1720627201
+    granite_time = 1725984001
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -304,7 +308,7 @@
     public_rpc = "https://racemainnet.io"
     sequencer_rpc = "https://racemainnet.io"
     explorer = "https://racescan.io/"
-    superchain_level = 1
+    superchain_level = 0
     batch_inbox_addr = "0xFF00000000000000000000000000000000006805"
     canyon_time = 0
     delta_time = 0
@@ -359,7 +363,7 @@
     public_rpc = "https://mainnet.base.org"
     sequencer_rpc = "https://mainnet-sequencer.base.org"
     explorer = "https://explorer.base.org"
-    superchain_level = 1
+    superchain_level = 0
     standard_chain_candidate = true
     superchain_time = 0
     batch_inbox_addr = "0xFf00000000000000000000000000000000008453"
@@ -367,6 +371,7 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
+    granite_time = 1725984001
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -417,7 +422,7 @@
     public_rpc = "https://mainnet.mode.network"
     sequencer_rpc = "https://mainnet-sequencer.mode.network"
     explorer = "https://explorer.mode.network"
-    superchain_level = 1
+    superchain_level = 0
     standard_chain_candidate = true
     superchain_time = 0
     batch_inbox_addr = "0x24E59d9d3Bd73ccC28Dc54062AF7EF7bFF58Bd67"
@@ -425,6 +430,7 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
+    granite_time = 1725984001
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -475,7 +481,7 @@
     public_rpc = "https://rpc.zora.energy"
     sequencer_rpc = "https://rpc.zora.energy"
     explorer = "https://explorer.zora.energy"
-    superchain_level = 1
+    superchain_level = 0
     standard_chain_candidate = true
     superchain_time = 0
     batch_inbox_addr = "0x6F54Ca6F6EdE96662024Ffd61BFd18f3f4e34DFf"
@@ -483,6 +489,7 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
+    granite_time = 1725984001
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -544,7 +551,7 @@
     public_rpc = "https://sepolia.mode.network"
     sequencer_rpc = "https://sepolia.mode.network"
     explorer = "https://sepolia.explorer.mode.network"
-    superchain_level = 1
+    superchain_level = 0
     standard_chain_candidate = true
     superchain_time = 1703203200
     batch_inbox_addr = "0xcDDaE6148dA1E003C230E4527f9baEdc8a204e7E"
@@ -603,7 +610,7 @@
     public_rpc = "https://testnet.rpc.metall2.com"
     sequencer_rpc = "https://testnet.rpc.metall2.com"
     explorer = "https://testnet.explorer.metall2.com"
-    superchain_level = 1
+    superchain_level = 0
     standard_chain_candidate = true
     batch_inbox_addr = "0x24567B64a86A4c966655fba6502a93dFb701E316"
     canyon_time = 1708129622
@@ -659,7 +666,7 @@
     public_rpc = "https://racetestnet.io"
     sequencer_rpc = "https://racetestnet.io"
     explorer = "https://testnet.racescan.io/"
-    superchain_level = 1
+    superchain_level = 0
     batch_inbox_addr = "0xff00000000000000000000000000000000006806"
     canyon_time = 0
     delta_time = 0
@@ -714,7 +721,7 @@
     public_rpc = "https://sepolia.base.org"
     sequencer_rpc = "https://sepolia-sequencer.base.org"
     explorer = "https://sepolia-explorer.base.org"
-    superchain_level = 1
+    superchain_level = 0
     standard_chain_candidate = true
     superchain_time = 0
     batch_inbox_addr = "0xfF00000000000000000000000000000000084532"
@@ -773,7 +780,7 @@
     public_rpc = "https://sepolia.optimism.io"
     sequencer_rpc = "https://sepolia-sequencer.optimism.io"
     explorer = "https://sepolia-optimistic.etherscan.io"
-    superchain_level = 2
+    superchain_level = 1
     superchain_time = 0
     batch_inbox_addr = "0xff00000000000000000000000000000011155420"
     canyon_time = 1699981200
@@ -831,7 +838,7 @@
     public_rpc = "https://sepolia.rpc.zora.energy"
     sequencer_rpc = "https://sepolia.rpc.zora.energy"
     explorer = "https://sepolia.explorer.zora.energy"
-    superchain_level = 1
+    superchain_level = 0
     standard_chain_candidate = true
     superchain_time = 0
     batch_inbox_addr = "0xCd734290E4bd0200dAC631c7D4b9E8a33234e91f"
@@ -901,7 +908,7 @@
     public_rpc = ""
     sequencer_rpc = ""
     explorer = ""
-    superchain_level = 1
+    superchain_level = 0
     superchain_time = 0
     batch_inbox_addr = "0xFf00000000000000000000000000000011155421"
     canyon_time = 0
@@ -959,7 +966,7 @@
     public_rpc = ""
     sequencer_rpc = ""
     explorer = ""
-    superchain_level = 1
+    superchain_level = 0
     superchain_time = 1706634000
     batch_inbox_addr = "0xfF00000000000000000000000000000011763072"
     canyon_time = 1698436800

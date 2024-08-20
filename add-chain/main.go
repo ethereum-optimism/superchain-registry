@@ -144,8 +144,8 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to read addresses from chain: %w", err)
 	}
 
-	if rollupConfig.Plasma != nil {
-		addresses.DAChallengeAddress = *rollupConfig.Plasma.DAChallengeAddress
+	if rollupConfig.AltDA != nil {
+		addresses.DAChallengeAddress = *rollupConfig.AltDA.DAChallengeAddress
 	}
 
 	rollupConfig.Addresses = addresses
