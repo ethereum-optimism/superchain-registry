@@ -1,5 +1,7 @@
-genesis_creation_commit = "3eda4cd594ba6409584eb6ef95c341d98419e392"
-monorepo_build_command = "yarn install --no-frozen-lockfile"
+genesis_creation_commit = "d80c145e0acf23a49c6a6588524f57e32e33b91"
+monorepo_build_command = "pnpm install --no-frozen-lockfile"
+legacy_deployments_format = true
+node_version = "18.12.1"
 genesis_creation_command = """\
   go \
   run \

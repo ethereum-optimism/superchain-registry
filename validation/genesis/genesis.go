@@ -53,6 +53,7 @@ func init() {
 type ValidationMetadata struct {
 	GenesisCreationCommit      string `toml:"genesis_creation_commit"` // in https://github.com/ethereum-optimism/optimism/
 	UseLegacyDeploymentsFormat bool   `toml:"use_legacy_deployments_format"`
+	NodeVersion                string `toml:"node_version"`
 	MonorepoBuildCommand       string `toml:"monorepo_build_command"`
 	GenesisCreationCommand     string `toml:"genesis_creation_command"`
 }

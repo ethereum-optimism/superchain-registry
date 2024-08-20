@@ -63,16 +63,6 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 	executeCommandInDir(t, monorepoDir, exec.Command("rm", "-rf", "node_modules"))
 	executeCommandInDir(t, contractsDir, exec.Command("rm", "-rf", "node_modules"))
-	if monorepoCommit == "d80c145e0acf23a49c6a6588524f57e32e33b91" {
-		// apply a patch to get things working
-		// then compile the contracts
-		// TODO not sure why this is needed, it is likely coupled to the specific commit we are looking at
-		executeCommandInDir(t, thisDir, exec.Command("cp", "foundry-config.patch", contractsDir))
-		executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "foundry-config.patch"))
-		executeCommandInDir(t, contractsDir, exec.Command("forge", "build"))
-		// revert patch, makes rerunning script locally easier
-		executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "-R", "foundry-config.patch"))
-	}
 
 	// copy genesis input files to monorepo
 	executeCommandInDir(t, validationInputsDir,
@@ -93,7 +83,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 	// regenerate genesis.json at this monorepo commit.
 	executeCommandInDir(t, thisDir, exec.Command("cp", "./monorepo-outputs.sh", monorepoDir))
-	executeCommandInDir(t, monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.MonorepoBuildCommand, vis.GenesisCreationCommand))
+	executeCommandInDir(t, monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.NodeVersion, vis.MonorepoBuildCommand, vis.GenesisCreationCommand))
 
 	expectedData, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 	require.NoError(t, err)
