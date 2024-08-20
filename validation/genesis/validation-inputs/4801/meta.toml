@@ -1,4 +1,5 @@
 genesis_creation_commit = "4a3d3fb444f50bed6a6991785ea5634e0efa07a4"
+monorepo_build_command = "pnpm install --no-frozen-lockfile"
 genesis_creation_command = """\
   go \
   run \

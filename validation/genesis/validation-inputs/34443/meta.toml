@@ -1,4 +1,5 @@
 genesis_creation_commit = "3eda4cd594ba6409584eb6ef95c341d98419e392"
+monorepo_build_command = "yarn install --no-frozen-lockfile"
 genesis_creation_command = """\
   go \
   run \
