@@ -46,7 +46,6 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 	if !ok {
 		t.Skip("WARNING: cannot yet validate this chain (no validation metadata)")
-
 	}
 
 	monorepoCommit := vis.GenesisCreationCommit
@@ -64,8 +63,6 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 	executeCommandInDir(t, monorepoDir, exec.Command("rm", "-rf", "node_modules"))
 	executeCommandInDir(t, contractsDir, exec.Command("rm", "-rf", "node_modules"))
-
-
 	if monorepoCommit == "d80c145e0acf23a49c6a6588524f57e32e33b91" {
 		// apply a patch to get things working
 		// then compile the contracts
@@ -111,8 +108,10 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	gotData, err := json.Marshal(g.Alloc)
 	require.NoError(t, err)
 
-	os.WriteFile(path.Join(monorepoDir, "want-alloc.json"), expectedData, 0777)
-	os.WriteFile(path.Join(monorepoDir, "got-alloc.json"), gotData, 0777)
+	err = os.WriteFile(path.Join(monorepoDir, "want-alloc.json"), expectedData, 0o777)
+	require.NoError(t, err)
+	err = os.WriteFile(path.Join(monorepoDir, "got-alloc.json"), gotData, 0o777)
+	require.NoError(t, err)
 
 	require.Equal(t, string(expectedData), string(gotData))
 }
@@ -133,7 +132,7 @@ func writeDeployments(chainId uint64, directory string) error {
 		return err
 	}
 
-	err = os.WriteFile(path.Join(directory, ".deploy"), data, 0777)
+	err = os.WriteFile(path.Join(directory, ".deploy"), data, 0o777)
 	if err != nil {
 		return err
 	}
@@ -141,7 +140,6 @@ func writeDeployments(chainId uint64, directory string) error {
 }
 
 func writeDeploymentsLegacy(chainId uint64, directory string) error {
-
 	// Initialize your struct with some data
 	data := Addresses[chainId]
 
@@ -162,21 +160,21 @@ func writeDeploymentsLegacy(chainId uint64, directory string) error {
 		// Convert the map to JSON
 		fileContent, err := json.MarshalIndent(jsonData, "", "  ")
 		if err != nil {
-			return fmt.Errorf("Failed to marshal JSON for field %s: %v", fieldName, err)
+			return fmt.Errorf("Failed to marshal JSON for field %s: %w", fieldName, err)
 		}
 
 		// Create a file named after the field name
 		fileName := fmt.Sprintf("%s.json", fieldName)
 		file, err := os.Create(path.Join(directory, fileName))
 		if err != nil {
-			return fmt.Errorf("Failed to create file for field %s: %v", fieldName, err)
+			return fmt.Errorf("Failed to create file for field %s: %w", fieldName, err)
 		}
 		defer file.Close()
 
 		// Write the JSON content to the file
 		_, err = file.Write(fileContent)
 		if err != nil {
-			return fmt.Errorf("Failed to write JSON to file for field %s: %v", fieldName, err)
+			return fmt.Errorf("Failed to write JSON to file for field %s: %w", fieldName, err)
 		}
 
 		fmt.Printf("Created file: %s\n", fileName)
