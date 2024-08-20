@@ -1,6 +1,6 @@
 genesis_creation_commit = "d80c145e0acf23a49c6a6588524f57e32e33b91"
 monorepo_build_command = "pnpm install --no-frozen-lockfile"
-legacy_deployments_format = true
+use_legacy_deployments_format = true
 node_version = "18.12.1"
 genesis_creation_command = """\
   go \
@@ -14,3 +14,7 @@ genesis_creation_command = """\
   --deployment-dir=./packages/contracts-bedrock/deployments/34443 \
   --l1-rpc=https://ethereum.publicnode.com/ \
 """
+
+# NOTE: our current validation approach is failing because the commit in question
+# relies on having full hardhat deployment artifacts which we don't have
+# one idea is to use the mainnet artifacts, and just overwrite the addresses
