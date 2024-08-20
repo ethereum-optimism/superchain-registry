@@ -68,7 +68,6 @@ commands:
             apt-get update
             apt-get -yq install curl git mercurial make binutils bison gcc build-essential bsdmainutils
             bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-            source /root/.gvm/scripts/gvm
   validate-genesis:
     description: "Runs genesis validation checks"
     steps:
