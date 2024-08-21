@@ -647,7 +647,7 @@ dependencies = [
 
 [[package]]
 name = "superchain-primitives"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "alloy-consensus",
  "alloy-eips",
@@ -661,7 +661,7 @@ dependencies = [
 
 [[package]]
 name = "superchain-registry"
-version = "0.2.3"
+version = "0.2.6"
 dependencies = [
  "alloy-primitives",
  "hashbrown",
