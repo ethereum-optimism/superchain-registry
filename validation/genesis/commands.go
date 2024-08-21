@@ -19,7 +19,8 @@ func opnode1(chainId uint64, l1rpcURL string) string {
 		" --outfile.l2=expected-genesis.json",
 		" --outfile.rollup=rollup.json",
 		fmt.Sprintf("--l1-deployments=./packages/contracts-bedrock/deployments/%d/.deploy", chainId),
-		fmt.Sprintf("--l1-rpc=%s", l1rpcURL)},
+		fmt.Sprintf("--l1-rpc=%s", l1rpcURL),
+	},
 		" ")
 }
 
@@ -30,7 +31,8 @@ func opnode2(chainId uint64, l1rpcURL string) string {
 		"--outfile.l2=expected-genesis.json",
 		"--outfile.rollup=rollup.json",
 		fmt.Sprintf("--deployment-dir=./packages/contracts-bedrock/deployments/%d", chainId),
-		fmt.Sprintf("--l1-rpc=%s", l1rpcURL)},
+		fmt.Sprintf("--l1-rpc=%s", l1rpcURL),
+	},
 		" ")
 }
 
