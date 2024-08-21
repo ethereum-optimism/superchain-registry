@@ -14,7 +14,3 @@ genesis_creation_command = """\
   --deployment-dir=./packages/contracts-bedrock/deployments/34443 \
   --l1-rpc=https://ethereum.publicnode.com/ \
 """
-
-# NOTE: our current validation approach is failing because the commit in question
-# relies on having full hardhat deployment artifacts which we don't have
-# one idea is to use the mainnet artifacts, and just overwrite the addresses
