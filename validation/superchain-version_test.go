@@ -117,25 +117,6 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 	return cv, nil
 }
 
-func shouldSkipBytecodeCheck(contractName string) bool {
-	// We omit some contracts which have immutables from the bytecode check.
-	// TODO https://github.com/ethereum-optimism/superchain-registry/issues/493
-	contractsToSkip := []string{
-		"AnchorStateRegistryProxy",
-		"DelayedWETHProxy",
-		"DisputeGameFactoryProxy",
-		"FaultDisputeGame",
-		"MIPS",
-	}
-
-	for _, contract := range contractsToSkip {
-		if contract == contractName {
-			return true
-		}
-	}
-	return false
-}
-
 // getContractBytecodeHashesFromChain pulls the appropriate bytecode from chain
 // using the supplied client, concurrently.
 func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (L1ContractBytecodeHashes, error) {
@@ -155,9 +136,6 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 	wg := new(sync.WaitGroup)
 
 	for _, contractName := range contractsToCheckVersionAndBytecodeOf {
-		if shouldSkipBytecodeCheck(contractName) {
-			continue
-		}
 		contractAddress, err := list.AddressFor(contractName)
 		if err != nil {
 			// If the chain does not store this contractAddress
@@ -268,7 +246,19 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 		return "", fmt.Errorf("%s: %w", addrToCheck, err)
 	}
 
-	return crypto.Keccak256Hash(code).Hex(), nil
+	// if the contract is known to have immutables, setup the filterer to mask the bytes which contain the variable's value
+	bytecodeImmutableFilterer, err := initBytecodeWithImmutables(code, contractName)
+	// the contract bytecode does not have immutables, use the deployed bytecode as-is to calculate hash
+	if err != nil {
+		return crypto.Keccak256Hash(code).Hex(), nil
+	}
+
+	// For any deployed contracts with immutable variables, ensure that the values in the bytecode are masked before hashing
+	err = bytecodeImmutableFilterer.maskBytecode()
+	if err != nil {
+		return "", fmt.Errorf("unable to retrieve bytecode without immutables: %w", err)
+	}
+	return crypto.Keccak256Hash(bytecodeImmutableFilterer.Bytecode).Hex(), nil
 }
 
 func TestFindOPContractTag(t *testing.T) {
