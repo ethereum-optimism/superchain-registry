@@ -1,14 +1,3 @@
 genesis_creation_commit = "4a3d3fb444f50bed6a6991785ea5634e0efa07a4"
 monorepo_build_command = "pnpm install --no-frozen-lockfile"
-genesis_creation_command = """\
-  go \
-  run \
-  op-node/cmd/main.go \
-  genesis \
-  l2 \
-  --deploy-config=./packages/contracts-bedrock/deploy-config/4801.json \
-  --outfile.l2=expected-genesis.json \
-  --outfile.rollup=rollup.json \
-  --l1-deployments=./packages/contracts-bedrock/deployments/4801/.deploy \
-  --l1-rpc=https://ethereum-sepolia.publicnode.com/ \
-"""
+genesis_creation_command = "opnode1"

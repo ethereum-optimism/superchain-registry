@@ -84,7 +84,8 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 	// regenerate genesis.json at this monorepo commit.
 	executeCommandInDir(t, thisDir, exec.Command("cp", "./monorepo-outputs.sh", monorepoDir))
-	executeCommandInDir(t, monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.NodeVersion, vis.MonorepoBuildCommand, vis.GenesisCreationCommand))
+	creationCommand := GenesisCreationCommand[vis.GenesisCreationCommand](chainId, Superchains[chain.Superchain].Config.L1.PublicRPC)
+	executeCommandInDir(t, monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.NodeVersion, vis.MonorepoBuildCommand, creationCommand))
 
 	expectedData, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 	require.NoError(t, err)
