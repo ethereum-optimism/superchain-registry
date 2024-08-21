@@ -133,6 +133,24 @@ func writeDeployments(chainId uint64, directory string) error {
 }
 
 func writeDeploymentsLegacy(chainId uint64, directory string) error {
+	// Prepare a HardHat Deployment type, we need this whole structure to make things
+	// work, although it is only the Address field which ends up getting used.
+	type Deployment struct {
+		Name             string
+		Abi              string          `json:"abi"`
+		Address          string          `json:"address"`
+		Args             []any           `json:"args"`
+		Bytecode         string          `json:"bytecode"`
+		DeployedBytecode string          `json:"deployedBytecode"`
+		Devdoc           json.RawMessage `json:"devdoc"`
+		Metadata         string          `json:"metadata"`
+		Receipt          json.RawMessage `json:"receipt"`
+		SolcInputHash    string          `json:"solcInputHash"`
+		StorageLayout    string          `json:"storageLayout"`
+		TransactionHash  string          `json:"transactionHash"`
+		Userdoc          json.RawMessage `json:"userdoc"`
+	}
+
 	// Initialize your struct with some data
 	data := Addresses[chainId]
 
@@ -151,10 +169,8 @@ func writeDeploymentsLegacy(chainId uint64, directory string) error {
 	}
 
 	for k, v := range out {
-		// Define the JSON object
-		jsonData := map[string]string{
-			"address": v.String(),
-		}
+		// Define the Deployment object, filling in only what we need
+		jsonData := Deployment{Address: v.String()}
 
 		raw, err := json.Marshal(jsonData)
 		if err != nil {
