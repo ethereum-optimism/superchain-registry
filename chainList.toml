@@ -96,6 +96,18 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "World Chain"
+  identifier = "mainnet/wc"
+  chain_id = 480
+  rpc = ["https://worldchain-mainnet-sequencer.g.alchemy.com"]
+  explorers = ["https://worldchain-mainnet-explorer.alchemy.com/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Zora"
   identifier = "mainnet/zora"
   chain_id = 7777777
@@ -161,6 +173,18 @@
   chain_id = 6806
   rpc = ["https://racetestnet.io"]
   explorers = ["https://testnet.racescan.io/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "World Chain Sepolia Testnet"
+  identifier = "sepolia/wc"
+  chain_id = 4801
+  rpc = [""]
+  explorers = ["https://worldchain-sepolia-explorer.alchemy.com/"]
   superchain_level = 0
   data_availability_type = "eth-da"
   [chains.parent]
