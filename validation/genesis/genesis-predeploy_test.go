@@ -73,7 +73,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 		log.Fatalf("Failed to create directory: %v", err)
 	}
 
-	if vis.UseLegacyDeploymentsFormat {
+	if vis.GenesisCreationCommand == "opnode2" {
 		err = writeDeploymentsLegacy(chainId, path.Join(contractsDir, "deployments", chainIdString))
 	} else {
 		err = writeDeployments(chainId, path.Join(contractsDir, "deployments", chainIdString))
