@@ -33,3 +33,8 @@ func opnode2(chainId uint64, l1rpcURL string) string {
 		fmt.Sprintf("--l1-rpc=%s", l1rpcURL)},
 		" ")
 }
+
+var BuildCommand = map[string]string{
+	"pnpm": "pnpm install --no-frozen-lockfile",
+	"yarn": "yarn install --no-frozen-lockfile",
+}
