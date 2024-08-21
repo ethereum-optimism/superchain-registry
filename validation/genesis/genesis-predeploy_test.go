@@ -10,10 +10,12 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/stretchr/testify/require"
 )
@@ -135,9 +137,29 @@ func writeDeployments(chainId uint64, directory string) error {
 func writeDeploymentsLegacy(chainId uint64, directory string) error {
 	// Prepare a HardHat Deployment type, we need this whole structure to make things
 	// work, although it is only the Address field which ends up getting used.
+	type StorageLayoutEntry struct {
+		AstId    uint   `json:"astId"`
+		Contract string `json:"contract"`
+		Label    string `json:"label"`
+		Offset   uint   `json:"offset"`
+		Slot     uint   `json:"slot,string"`
+		Type     string `json:"type"`
+	}
+	type StorageLayoutType struct {
+		Encoding      string `json:"encoding"`
+		Label         string `json:"label"`
+		NumberOfBytes uint   `json:"numberOfBytes,string"`
+		Key           string `json:"key,omitempty"`
+		Value         string `json:"value,omitempty"`
+		Base          string `json:"base,omitempty"`
+	}
+	type StorageLayout struct {
+		Storage []StorageLayoutEntry         `json:"storage"`
+		Types   map[string]StorageLayoutType `json:"types"`
+	}
 	type Deployment struct {
 		Name             string
-		Abi              string          `json:"abi"`
+		Abi              []string        `json:"abi"`
 		Address          string          `json:"address"`
 		Args             []any           `json:"args"`
 		Bytecode         string          `json:"bytecode"`
@@ -146,8 +168,8 @@ func writeDeploymentsLegacy(chainId uint64, directory string) error {
 		Metadata         string          `json:"metadata"`
 		Receipt          json.RawMessage `json:"receipt"`
 		SolcInputHash    string          `json:"solcInputHash"`
-		StorageLayout    string          `json:"storageLayout"`
-		TransactionHash  string          `json:"transactionHash"`
+		StorageLayout    StorageLayout   `json:"storageLayout"`
+		TransactionHash  common.Hash     `json:"transactionHash"`
 		Userdoc          json.RawMessage `json:"userdoc"`
 	}
 
@@ -169,10 +191,14 @@ func writeDeploymentsLegacy(chainId uint64, directory string) error {
 	}
 
 	for k, v := range out {
+		text, err := v.MarshalText()
+		if err != nil || !strings.HasPrefix(string(text), "0x") {
+			continue
+		}
 		// Define the Deployment object, filling in only what we need
-		jsonData := Deployment{Address: v.String()}
+		jsonData := Deployment{Address: v.String(), Name: k}
 
-		raw, err := json.Marshal(jsonData)
+		raw, err := json.MarshalIndent(jsonData, "", " ")
 		if err != nil {
 			return err
 		}
