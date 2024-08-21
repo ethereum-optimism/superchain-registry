@@ -26,7 +26,7 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1725984001
+    granite_time = 1726070401
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -84,7 +84,7 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1725984001
+    granite_time = 1726070401
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -198,7 +198,7 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1725984001
+    granite_time = 1726070401
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -257,7 +257,7 @@
     delta_time = 0
     ecotone_time = 0
     fjord_time = 1720627201
-    granite_time = 1725984001
+    granite_time = 1726070401
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -371,7 +371,7 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1725984001
+    granite_time = 1726070401
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -430,7 +430,7 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1725984001
+    granite_time = 1726070401
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
@@ -489,7 +489,7 @@
     delta_time = 1708560000
     ecotone_time = 1710374401
     fjord_time = 1720627201
-    granite_time = 1725984001
+    granite_time = 1726070401
     block_time = 2
     seq_window_size = 3600
     max_sequencer_drift = 600
