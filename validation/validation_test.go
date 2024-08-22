@@ -45,14 +45,9 @@ func testUniversal(t *testing.T, chain *ChainConfig) {
 
 // testStandardCandidate applies to Standard and Standard Candidate Chains.
 func testStandardCandidate(t *testing.T, chain *ChainConfig) {
-	// Standard Contract Versions
-	t.Run("Standard Contract Versions", func(t *testing.T) {
-		testContractsMatchATag(t, chain)
-	})
 	// Standard Config Params
 	t.Run("Rollup Config", func(t *testing.T) { testRollupConfig(t, chain) })
 	t.Run("Gas Token", (func(t *testing.T) { testGasToken(t, chain) }))
-	t.Run("Optimism Portal 2 Params", func(t *testing.T) { testOptimismPortal2Params(t, chain) })
 	t.Run("Resource Config", func(t *testing.T) { testResourceConfig(t, chain) })
 	t.Run("Gas Limit", func(t *testing.T) { testGasLimit(t, chain) })
 	t.Run("GPO Params", func(t *testing.T) { testGasPriceOracleParams(t, chain) })
@@ -68,5 +63,12 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 // testStandard should be applied only to a fully Standard Chain,
 // i.e. not to a Standard Candidate Chain.
 func testStandard(t *testing.T, chain *ChainConfig) {
+	// Standard Contract Versions
+	t.Run("Standard Contract Versions", func(t *testing.T) {
+		testContractsMatchATag(t, chain)
+	})
+	// Standard Config Params
+	t.Run("Optimism Portal 2 Params", func(t *testing.T) { testOptimismPortal2Params(t, chain) })
+	// Standard Config Roles
 	t.Run("Key Handover Check", func(t *testing.T) { testKeyHandover(t, chain.ChainID) })
 }
