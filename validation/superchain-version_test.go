@@ -117,28 +117,9 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 	return cv, nil
 }
 
-func shouldSkipBytecodeCheck(contractName string) bool {
-	// We omit some contracts which have immutables from the bytecode check.
-	// TODO https://github.com/ethereum-optimism/superchain-registry/issues/493
-	contractsToSkip := []string{
-		"AnchorStateRegistryProxy",
-		"DelayedWETHProxy",
-		"DisputeGameFactoryProxy",
-		"FaultDisputeGame",
-		"MIPS",
-	}
-
-	for _, contract := range contractsToSkip {
-		if contract == contractName {
-			return true
-		}
-	}
-	return false
-}
-
 // getContractBytecodeHashesFromChain pulls the appropriate bytecode from chain
 // using the supplied client, concurrently.
-func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (L1ContractBytecodeHashes, error) {
+func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (standard.L1ContractBytecodeHashes, error) {
 	// Prepare a concurrency-safe object to store version information in, and
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
@@ -155,9 +136,6 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 	wg := new(sync.WaitGroup)
 
 	for _, contractName := range contractsToCheckVersionAndBytecodeOf {
-		if shouldSkipBytecodeCheck(contractName) {
-			continue
-		}
 		contractAddress, err := list.AddressFor(contractName)
 		if err != nil {
 			// If the chain does not store this contractAddress
@@ -175,7 +153,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 
 	// use reflection to convert results mapping into a ContractVersions object
 	// without resorting to boilerplate code.
-	cbh := L1ContractBytecodeHashes{}
+	cbh := standard.L1ContractBytecodeHashes{}
 	results.Range(func(k, v any) bool {
 		s := reflect.ValueOf(cbh)
 		for i := 0; i < s.NumField(); i++ {
@@ -268,7 +246,19 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 		return "", fmt.Errorf("%s: %w", addrToCheck, err)
 	}
 
-	return crypto.Keccak256Hash(code).Hex(), nil
+	// if the contract is known to have immutables, setup the filterer to mask the bytes which contain the variable's value
+	bytecodeImmutableFilterer, err := initBytecodeImmutableMask(code, contractName)
+	// error indicates that the contract _does_ have immutables, but we weren't able to determine the coordinates of the immutables in the bytecode
+	if err != nil {
+		return "", fmt.Errorf("unable to check for presence of immutables in bytecode: %w", err)
+	}
+
+	// For any deployed contracts with immutable variables, the bytecode is masked inside maskBytecode(). If not, the bytecode is unaltered.
+	err = bytecodeImmutableFilterer.maskBytecode(contractName)
+	if err != nil {
+		return "", fmt.Errorf("unable to retrieve bytecode without immutables: %w", err)
+	}
+	return crypto.Keccak256Hash(bytecodeImmutableFilterer.Bytecode).Hex(), nil
 }
 
 func TestFindOPContractTag(t *testing.T) {
@@ -341,7 +331,7 @@ func findOPContractTagInVersions(versions ContractVersions) ([]standard.Tag, err
 	return matchingTags, err
 }
 
-func findOPContractTagInByteCodeHashes(hashes L1ContractBytecodeHashes) ([]standard.Tag, error) {
+func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
 	pretty, err := json.MarshalIndent(hashes, "", " ")
 	if err != nil {
@@ -355,7 +345,7 @@ func findOPContractTagInByteCodeHashes(hashes L1ContractBytecodeHashes) ([]stand
 
 	err = fmt.Errorf("bytecode hashes %s do not match any standard op-contracts tag %s", pretty, prettyStandard)
 
-	matchesTag := func(standard, candidate L1ContractBytecodeHashes) bool {
+	matchesTag := func(standard, candidate standard.L1ContractBytecodeHashes) bool {
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
 		return checkMatch(s, c)
