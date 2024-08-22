@@ -2,7 +2,7 @@
 
 use crate::rollup_config::RollupConfig;
 use alloy_consensus::{Eip658Value, Receipt};
-use alloy_primitives::{address, b256, Address, Log, B256, U256, U64};
+use alloy_primitives::{address, b256, Address, Log, B256, U64};
 use alloy_sol_types::{sol, SolType};
 use anyhow::{anyhow, bail, Result};
 
@@ -21,9 +21,9 @@ pub struct SystemConfig {
     /// Batcher address
     pub batcher_address: Address,
     /// Fee overhead value
-    pub overhead: U256,
+    pub overhead: B256,
     /// Fee scalar value
-    pub scalar: U256,
+    pub scalar: B256,
     /// Gas limit value
     pub gas_limit: u64,
     /// Base fee scalar value
@@ -178,12 +178,12 @@ impl SystemConfig {
                     }
 
                     // retain the scalar data in encoded form
-                    self.scalar = scalar;
+                    self.scalar = B256::from(scalar);
                     // zero out the overhead, it will not affect the state-transition after Ecotone
-                    self.overhead = U256::ZERO;
+                    self.overhead = B256::ZERO;
                 } else {
-                    self.scalar = scalar;
-                    self.overhead = overhead;
+                    self.scalar = B256::from(scalar);
+                    self.overhead = B256::from(overhead);
                 }
             }
             SystemConfigUpdateType::GasLimit => {
@@ -242,7 +242,7 @@ mod test {
     use super::*;
     use crate::ChainGenesis;
     use alloc::vec;
-    use alloy_primitives::{b256, hex, LogData, B256};
+    use alloy_primitives::{b256, hex, LogData, B256, U256};
 
     fn mock_rollup_config(system_config: SystemConfig) -> RollupConfig {
         RollupConfig {
@@ -322,8 +322,8 @@ mod test {
             .process_config_update_log(&update_log, &rollup_config, 0)
             .unwrap();
 
-        assert_eq!(system_config.overhead, U256::from(0xbabe));
-        assert_eq!(system_config.scalar, U256::from(0xbeef));
+        assert_eq!(system_config.overhead, B256::from(U256::from(0xbabe)));
+        assert_eq!(system_config.scalar, B256::from(U256::from(0xbeef)));
     }
 
     #[test]
@@ -351,8 +351,8 @@ mod test {
             .process_config_update_log(&update_log, &rollup_config, 10)
             .unwrap();
 
-        assert_eq!(system_config.overhead, U256::from(0));
-        assert_eq!(system_config.scalar, U256::from(0xbeef));
+        assert_eq!(system_config.overhead, B256::from(U256::from(0)));
+        assert_eq!(system_config.scalar, B256::from(U256::from(0xbeef)));
     }
 
     #[test]

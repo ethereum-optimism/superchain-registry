@@ -1,7 +1,7 @@
 //! Rollup Config Types
 
 use alloy_eips::eip1559::BaseFeeParams;
-use alloy_primitives::{address, b256, uint, Address};
+use alloy_primitives::{address, b256, Address};
 use anyhow::{anyhow, Result};
 
 use crate::block::BlockID;
@@ -343,8 +343,8 @@ pub const OP_MAINNET_CONFIG: RollupConfig = RollupConfig {
         l2_time: 1_686_068_903_u64,
         system_config: Some(SystemConfig {
             batcher_address: address!("6887246668a3b87f54deb3b94ba47a6f63f32985"),
-            overhead: uint!(0xbc_U256),
-            scalar: uint!(0xa6fe0_U256),
+            overhead: b256!("00000000000000000000000000000000000000000000000000000000000000bc"),
+            scalar: b256!("00000000000000000000000000000000000000000000000000000000000a6fe0"),
             gas_limit: 30_000_000_u64,
             base_fee_scalar: None,
             blob_base_fee_scalar: None,
@@ -390,8 +390,8 @@ pub const OP_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
         l2_time: 1691802540,
         system_config: Some(SystemConfig {
             batcher_address: address!("8f23bb38f531600e5d8fddaaec41f13fab46e98c"),
-            overhead: uint!(0xbc_U256),
-            scalar: uint!(0xa6fe0_U256),
+            overhead: b256!("00000000000000000000000000000000000000000000000000000000000000bc"),
+            scalar: b256!("00000000000000000000000000000000000000000000000000000000000a6fe0"),
             gas_limit: 30_000_000,
             base_fee_scalar: None,
             blob_base_fee_scalar: None,
@@ -437,8 +437,8 @@ pub const BASE_MAINNET_CONFIG: RollupConfig = RollupConfig {
         l2_time: 1686789347_u64,
         system_config: Some(SystemConfig {
             batcher_address: address!("5050f69a9786f081509234f1a7f4684b5e5b76c9"),
-            overhead: uint!(0xbc_U256),
-            scalar: uint!(0xa6fe0_U256),
+            overhead: b256!("00000000000000000000000000000000000000000000000000000000000000bc"),
+            scalar: b256!("00000000000000000000000000000000000000000000000000000000000a6fe0"),
             gas_limit: 30_000_000_u64,
             base_fee_scalar: None,
             blob_base_fee_scalar: None,
@@ -484,8 +484,8 @@ pub const BASE_SEPOLIA_CONFIG: RollupConfig = RollupConfig {
         l2_time: 1695768288,
         system_config: Some(SystemConfig {
             batcher_address: address!("6cdebe940bc0f26850285caca097c11c33103e47"),
-            overhead: uint!(0x834_U256),
-            scalar: uint!(0xf4240_U256),
+            overhead: b256!("0000000000000000000000000000000000000000000000000000000000000834"),
+            scalar: b256!("00000000000000000000000000000000000000000000000000000000000f4240"),
             gas_limit: 25000000,
             base_fee_scalar: None,
             blob_base_fee_scalar: None,

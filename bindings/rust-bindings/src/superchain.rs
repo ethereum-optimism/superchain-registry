@@ -71,7 +71,7 @@ impl Registry {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_primitives::{address, b256, uint};
+    use alloy_primitives::{address, b256};
     use superchain_primitives::{
         AddressList, BlockID, ChainGenesis, HardForkConfiguration, SuperchainLevel, SystemConfig,
     };
@@ -103,8 +103,12 @@ mod tests {
                 extra_data: None,
                 system_config: Some(SystemConfig {
                     batcher_address: address!("5050F69a9786F081509234F1a7F4684b5E5b76C9"),
-                    overhead: uint!(0xbc_U256),
-                    scalar: uint!(0xa6fe0_U256),
+                    overhead: b256!(
+                        "00000000000000000000000000000000000000000000000000000000000000bc"
+                    ),
+                    scalar: b256!(
+                        "00000000000000000000000000000000000000000000000000000000000a6fe0"
+                    ),
                     gas_limit: 30000000_u64,
                     ..Default::default()
                 }),
