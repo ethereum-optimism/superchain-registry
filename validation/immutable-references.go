@@ -3,19 +3,9 @@ package validation
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
 
-	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 )
-
-// ContractASTsWithImmutableReferences caches the `immutableReferences` after parsing it from the config file.
-//
-//	The config file is generated from the compiled contract AST (from the combined JSON
-//
-// artifact from the monorepo. We do this because the contracts and compiled artifacts are not available in the superchain
-// registry. Ex: ethereum-optimism/optimism/packages/contracts-bedrock/forge-artifacts/MIPS.sol/MIPS.json
-var ContractASTsWithImmutableReferences = map[string]string{}
 
 // ImmutableReference to store the start/length of a contract's immutable references. Immutables
 // are directly assigned values once or are initialized in a constructor. They are encoded in the contract bytecode,
@@ -31,31 +21,10 @@ type BytecodeAndImmutableReferences struct {
 	ImmutableReferences map[string][]ImmutableReference `json:"immutableReferences"`
 }
 
-// LoadImmutableReferences parses standard-immutables.toml and stores it in a map. Needs to be invoked one-time only.
-func LoadImmutableReferences() {
-	var bytecodeImmutables *ContractBytecodeImmutables
-	for tag := range standard.Versions {
-		for contractVersion, immutables := range standard.BytecodeImmutables {
-			if tag == contractVersion {
-				bytecodeImmutables = &immutables
-				break
-			}
-		}
-	}
-	if bytecodeImmutables != nil {
-		s := reflect.ValueOf(bytecodeImmutables).Elem()
-		for i := 0; i < s.NumField(); i++ {
-			name := s.Type().Field(i).Name
-			value := string(reflect.ValueOf(*bytecodeImmutables).Field(i).String())
-			ContractASTsWithImmutableReferences[name] = value
-		}
-	}
-}
-
 // initBytecodeImmutableMask returns the struct with coordinates of the immutable references in the deployed bytecode, if present
 func initBytecodeImmutableMask(bytecode []byte, contractName string) (*BytecodeAndImmutableReferences, error) {
 	parsedImmutables := map[string][]ImmutableReference{}
-	refs, exists := ContractASTsWithImmutableReferences[contractName]
+	refs, exists := standard.ContractASTsWithImmutableReferences[contractName]
 	if exists {
 		err := json.Unmarshal([]byte(refs), &parsedImmutables)
 		if err != nil {
@@ -68,7 +37,7 @@ func initBytecodeImmutableMask(bytecode []byte, contractName string) (*BytecodeA
 // maskBytecode checks for the presence of immutables in the contract, as indicated by the stored config and if present,
 // masks the sections of the bytecode where immutables are stored. If immutables aren't present, the stored bytecode in the receiver is unaltered
 func (deployed *BytecodeAndImmutableReferences) maskBytecode(contractName string) error {
-	_, exists := ContractASTsWithImmutableReferences[contractName]
+	_, exists := standard.ContractASTsWithImmutableReferences[contractName]
 	if exists {
 		for _, v := range deployed.ImmutableReferences {
 			for _, r := range v {

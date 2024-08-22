@@ -55,8 +55,6 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	_, err = findOPContractTagInVersions(versions)
 	require.NoError(t, err)
 
-	LoadImmutableReferences()
-
 	bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
 	require.NoError(t, err)
 	_, err = findOPContractTagInByteCodeHashes(bytecodeHashes)
@@ -121,7 +119,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 
 // getContractBytecodeHashesFromChain pulls the appropriate bytecode from chain
 // using the supplied client, concurrently.
-func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (L1ContractBytecodeHashes, error) {
+func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (standard.L1ContractBytecodeHashes, error) {
 	// Prepare a concurrency-safe object to store version information in, and
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
@@ -148,14 +146,14 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 			continue
 		}
 		wg.Add(1)
-		getBytecodeHashAsync(chainID, contractAddress, results, contractName, wg)
+		go getBytecodeHashAsync(chainID, contractAddress, results, contractName, wg)
 	}
 
 	wg.Wait()
 
 	// use reflection to convert results mapping into a ContractVersions object
 	// without resorting to boilerplate code.
-	cbh := L1ContractBytecodeHashes{}
+	cbh := standard.L1ContractBytecodeHashes{}
 	results.Range(func(k, v any) bool {
 		s := reflect.ValueOf(cbh)
 		for i := 0; i < s.NumField(); i++ {
@@ -333,7 +331,7 @@ func findOPContractTagInVersions(versions ContractVersions) ([]standard.Tag, err
 	return matchingTags, err
 }
 
-func findOPContractTagInByteCodeHashes(hashes L1ContractBytecodeHashes) ([]standard.Tag, error) {
+func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
 	pretty, err := json.MarshalIndent(hashes, "", " ")
 	if err != nil {
@@ -347,7 +345,7 @@ func findOPContractTagInByteCodeHashes(hashes L1ContractBytecodeHashes) ([]stand
 
 	err = fmt.Errorf("bytecode hashes %s do not match any standard op-contracts tag %s", pretty, prettyStandard)
 
-	matchesTag := func(standard, candidate L1ContractBytecodeHashes) bool {
+	matchesTag := func(standard, candidate standard.L1ContractBytecodeHashes) bool {
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
 		return checkMatch(s, c)

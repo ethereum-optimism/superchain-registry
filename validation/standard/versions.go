@@ -1,13 +1,15 @@
 package standard
 
-import "github.com/ethereum-optimism/superchain-registry/superchain"
+import (
+	"github.com/ethereum-optimism/superchain-registry/superchain"
+)
 
 type Tag string
 
 type (
 	VersionTags            = map[Tag]superchain.ContractVersions
-	BytecodeHashTags       = map[Tag]superchain.L1ContractBytecodeHashes
-	BytecodeImmutablesTags = map[Tag]superchain.ContractBytecodeImmutables
+	BytecodeHashTags       = map[Tag]L1ContractBytecodeHashes
+	BytecodeImmutablesTags = map[Tag]ContractBytecodeImmutables
 )
 
 var (

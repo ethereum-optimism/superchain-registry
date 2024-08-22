@@ -396,9 +396,6 @@ type ContractVersions struct {
 	PreimageOracle          string `toml:"preimage_oracle,omitempty"`
 }
 
-// L1ContractBytecodeHashes represents the hash of the contract bytecode (as a hex string) for each L1 contract
-type L1ContractBytecodeHashes ContractVersions
-
 // VersionFor returns the version for the supplied contract name, if it exits
 // (and an error otherwise). Useful for slicing into the struct using a string.
 func (c ContractVersions) VersionFor(contractName string) (string, error) {
@@ -477,13 +474,6 @@ func canonicalizeSemver(version string) string {
 		version = "v" + version
 	}
 	return version
-}
-
-type ContractBytecodeImmutables struct {
-	AnchorStateRegistry string `toml:"anchor_state_registry,omitempty"`
-	DelayedWETH         string `toml:"delayed_weth,omitempty"`
-	FaultDisputeGame    string `toml:"fault_dispute_game,omitempty"`
-	MIPS                string `toml:"mips,omitempty"`
 }
 
 type GenesisAccount struct {
