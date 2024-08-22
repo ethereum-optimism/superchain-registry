@@ -34,6 +34,23 @@
     }
   },
   {
+    "name": "Lisk",
+    "identifier": "mainnet/lisk",
+    "chainId": 1135,
+    "rpc": [
+      "https://rpc.api.lisk.com"
+    ],
+    "explorers": [
+      "https://blockscout.lisk.com"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Lyra Chain",
     "identifier": "mainnet/lyra",
     "chainId": 957,
