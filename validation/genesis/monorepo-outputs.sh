@@ -3,10 +3,10 @@ set -e
 echo "Inferring and selecting correct Node version"
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-nvm use
+nvm use $1
 
 echo "Running install command"
-eval $1
+eval $2
 
 echo "Inferring and selecting correct go version"
 
@@ -22,4 +22,4 @@ set -e
 
 echo "Running op-node genesis l2 command"
 
-eval "$2"
+eval "$3"

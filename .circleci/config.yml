@@ -54,11 +54,6 @@ commands:
             apt-get update
             apt-get -yq install curl git mercurial make binutils bison gcc build-essential bsdmainutils
             bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-  install-nvm:
-    description: "Installs nvm"
-    steps:
-      - run:
-          command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
   validate-genesis:
     description: "Runs genesis validation checks"
     steps:
@@ -118,7 +113,11 @@ jobs:
       - checkout
       - install-foundry
       - install-gvm
-      - install-nvm
+      - run:
+          name: Install NVM
+          command: |
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+            nvm --version
       - validate-genesis # TODO this should also be filtered on modified chains
   golang-validate-modified:
     shell: /bin/bash -eo pipefail

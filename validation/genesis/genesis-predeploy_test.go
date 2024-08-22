@@ -8,13 +8,14 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/stretchr/testify/require"
 )
@@ -59,30 +60,23 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 
 	// reset to appropriate commit, this is preferred to git checkout because it will
 	// blow away any leftover files from the previous run
-	executeCommandInDir(t, monorepoDir, exec.Command("git", "reset", "--hard", monorepoCommit))
+	mustExecuteCommandInDir(t, monorepoDir, exec.Command("git", "reset", "--hard", monorepoCommit))
+	mustExecuteCommandInDir(t, monorepoDir, exec.Command("rm", "-rf", "node_modules"))
+	mustExecuteCommandInDir(t, contractsDir, exec.Command("rm", "-rf", "node_modules"))
 
-	executeCommandInDir(t, monorepoDir, exec.Command("rm", "-rf", "node_modules"))
-	executeCommandInDir(t, contractsDir, exec.Command("rm", "-rf", "node_modules"))
-	if monorepoCommit == "d80c145e0acf23a49c6a6588524f57e32e33b91" {
-		// apply a patch to get things working
-		// then compile the contracts
-		// TODO not sure why this is needed, it is likely coupled to the specific commit we are looking at
-		executeCommandInDir(t, thisDir, exec.Command("cp", "foundry-config.patch", contractsDir))
-		executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "foundry-config.patch"))
-		executeCommandInDir(t, contractsDir, exec.Command("forge", "build"))
-		// revert patch, makes rerunning script locally easier
-		executeCommandInDir(t, contractsDir, exec.Command("git", "apply", "-R", "foundry-config.patch"))
-	}
+	// attempt to apply config.patch
+	mustExecuteCommandInDir(t, thisDir, exec.Command("cp", "config.patch", monorepoDir))
+	_ = executeCommandInDir(t, monorepoDir, exec.Command("git", "apply", "config.patch")) // continue on error
 
 	// copy genesis input files to monorepo
-	executeCommandInDir(t, validationInputsDir,
+	mustExecuteCommandInDir(t, validationInputsDir,
 		exec.Command("cp", "deploy-config.json", path.Join(contractsDir, "deploy-config", chainIdString+".json")))
 	err := os.MkdirAll(path.Join(contractsDir, "deployments", chainIdString), os.ModePerm)
 	if err != nil {
 		log.Fatalf("Failed to create directory: %v", err)
 	}
 
-	if vis.UseLegacyDeploymentsFormat {
+	if vis.GenesisCreationCommand == "opnode2" {
 		err = writeDeploymentsLegacy(chainId, path.Join(contractsDir, "deployments", chainIdString))
 	} else {
 		err = writeDeployments(chainId, path.Join(contractsDir, "deployments", chainIdString))
@@ -92,8 +86,13 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	}
 
 	// regenerate genesis.json at this monorepo commit.
-	executeCommandInDir(t, thisDir, exec.Command("cp", "./monorepo-outputs.sh", monorepoDir))
-	executeCommandInDir(t, monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.MonorepoBuildCommand, vis.GenesisCreationCommand))
+	mustExecuteCommandInDir(t, thisDir, exec.Command("cp", "./monorepo-outputs.sh", monorepoDir))
+	buildCommand := BuildCommand[vis.MonorepoBuildCommand]
+	if vis.NodeVersion == "" {
+		panic("must set node_version in meta.toml")
+	}
+	creationCommand := GenesisCreationCommand[vis.GenesisCreationCommand](chainId, Superchains[chain.Superchain].Config.L1.PublicRPC)
+	mustExecuteCommandInDir(t, monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.NodeVersion, buildCommand, creationCommand))
 
 	expectedData, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 	require.NoError(t, err)
@@ -103,13 +102,13 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	err = json.Unmarshal(expectedData, &gen)
 	require.NoError(t, err)
 
-	expectedData, err = json.Marshal(gen.Alloc)
+	expectedData, err = json.MarshalIndent(gen.Alloc, "", " ")
 	require.NoError(t, err)
 
 	g, err := core.LoadOPStackGenesis(chainId)
 	require.NoError(t, err)
 
-	gotData, err := json.Marshal(g.Alloc)
+	gotData, err := json.MarshalIndent(g.Alloc, "", " ")
 	require.NoError(t, err)
 
 	err = os.WriteFile(path.Join(monorepoDir, "want-alloc.json"), expectedData, 0o777)
@@ -144,41 +143,85 @@ func writeDeployments(chainId uint64, directory string) error {
 }
 
 func writeDeploymentsLegacy(chainId uint64, directory string) error {
+	// Prepare a HardHat Deployment type, we need this whole structure to make things
+	// work, although it is only the Address field which ends up getting used.
+	type StorageLayoutEntry struct {
+		AstId    uint   `json:"astId"`
+		Contract string `json:"contract"`
+		Label    string `json:"label"`
+		Offset   uint   `json:"offset"`
+		Slot     uint   `json:"slot,string"`
+		Type     string `json:"type"`
+	}
+	type StorageLayoutType struct {
+		Encoding      string `json:"encoding"`
+		Label         string `json:"label"`
+		NumberOfBytes uint   `json:"numberOfBytes,string"`
+		Key           string `json:"key,omitempty"`
+		Value         string `json:"value,omitempty"`
+		Base          string `json:"base,omitempty"`
+	}
+	type StorageLayout struct {
+		Storage []StorageLayoutEntry         `json:"storage"`
+		Types   map[string]StorageLayoutType `json:"types"`
+	}
+	type Deployment struct {
+		Name             string
+		Abi              []string        `json:"abi"`
+		Address          string          `json:"address"`
+		Args             []any           `json:"args"`
+		Bytecode         string          `json:"bytecode"`
+		DeployedBytecode string          `json:"deployedBytecode"`
+		Devdoc           json.RawMessage `json:"devdoc"`
+		Metadata         string          `json:"metadata"`
+		Receipt          json.RawMessage `json:"receipt"`
+		SolcInputHash    string          `json:"solcInputHash"`
+		StorageLayout    StorageLayout   `json:"storageLayout"`
+		TransactionHash  common.Hash     `json:"transactionHash"`
+		Userdoc          json.RawMessage `json:"userdoc"`
+	}
+
 	// Initialize your struct with some data
 	data := Addresses[chainId]
 
-	// Get the reflection value object
-	val := reflect.ValueOf(*data)
-	typ := reflect.TypeOf(*data)
+	type AddressList2 AddressList // use another type to prevent infinite recursion later on
+	b := AddressList2(*data)
 
-	// Iterate over the struct fields
-	for i := 0; i < val.NumField(); i++ {
-		fieldName := typ.Field(i).Name      // Get the field name
-		fieldValue := val.Field(i).String() // Get the field value (assuming it's a string)
+	o, err := json.Marshal(b)
+	if err != nil {
+		return err
+	}
 
-		// Define the JSON object
-		jsonData := map[string]string{
-			"address": fieldValue,
+	out := make(map[string]Address)
+	err = json.Unmarshal(o, &out)
+	if err != nil {
+		return err
+	}
+
+	for k, v := range out {
+		text, err := v.MarshalText()
+		if err != nil || !strings.HasPrefix(string(text), "0x") {
+			continue
 		}
+		// Define the Deployment object, filling in only what we need
+		jsonData := Deployment{Address: v.String(), Name: k}
 
-		// Convert the map to JSON
-		fileContent, err := json.MarshalIndent(jsonData, "", "  ")
+		raw, err := json.MarshalIndent(jsonData, "", " ")
 		if err != nil {
-			return fmt.Errorf("Failed to marshal JSON for field %s: %w", fieldName, err)
+			return err
 		}
 
-		// Create a file named after the field name
-		fileName := fmt.Sprintf("%s.json", fieldName)
+		fileName := fmt.Sprintf("%s.json", k)
 		file, err := os.Create(path.Join(directory, fileName))
 		if err != nil {
-			return fmt.Errorf("Failed to create file for field %s: %w", fieldName, err)
+			return fmt.Errorf("Failed to create file for field %s: %w", k, err)
 		}
 		defer file.Close()
 
 		// Write the JSON content to the file
-		_, err = file.Write(fileContent)
+		_, err = file.Write(raw)
 		if err != nil {
-			return fmt.Errorf("Failed to write JSON to file for field %s: %w", fieldName, err)
+			return fmt.Errorf("Failed to write JSON to file for field %s: %w", k, err)
 		}
 
 		fmt.Printf("Created file: %s\n", fileName)

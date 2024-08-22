@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func executeCommandInDir(t *testing.T, dir string, cmd *exec.Cmd) {
+func executeCommandInDir(t *testing.T, dir string, cmd *exec.Cmd) error {
 	t.Logf("executing %s", cmd.String())
 	cmd.Dir = dir
 	var outErr bytes.Buffer
@@ -18,6 +18,13 @@ func executeCommandInDir(t *testing.T, dir string, cmd *exec.Cmd) {
 	if err != nil {
 		// error case : status code of command is different from 0
 		fmt.Println(outErr.String())
+	}
+	return err
+}
+
+func mustExecuteCommandInDir(t *testing.T, dir string, cmd *exec.Cmd) {
+	err := executeCommandInDir(t, dir, cmd)
+	if err != nil {
 		t.Fatal(err)
 	}
 }
