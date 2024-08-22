@@ -55,6 +55,8 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	_, err = findOPContractTagInVersions(versions)
 	require.NoError(t, err)
 
+	LoadImmutableReferences()
+
 	bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
 	require.NoError(t, err)
 	_, err = findOPContractTagInByteCodeHashes(bytecodeHashes)

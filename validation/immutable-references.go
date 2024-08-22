@@ -26,13 +26,13 @@ type ImmutableReference struct {
 }
 
 // Define a struct to represent the structure of the JSON data
-type DeployedBytecode struct {
+type BytecodeAndImmutableReferences struct {
 	Bytecode            []byte                          `json:"object"`
 	ImmutableReferences map[string][]ImmutableReference `json:"immutableReferences"`
 }
 
-// loadImmutableReferences parses standard-immutables.toml and stores it in a map. Needs to be invoked one-time only.
-func loadImmutableReferences() {
+// LoadImmutableReferences parses standard-immutables.toml and stores it in a map. Needs to be invoked one-time only.
+func LoadImmutableReferences() {
 	var bytecodeImmutables *ContractBytecodeImmutables
 	for tag := range standard.Versions {
 		for contractVersion, immutables := range standard.BytecodeImmutables {
@@ -53,7 +53,7 @@ func loadImmutableReferences() {
 }
 
 // initBytecodeImmutableMask returns the struct with coordinates of the immutable references in the deployed bytecode, if present
-func initBytecodeImmutableMask(bytecode []byte, contractName string) (*DeployedBytecode, error) {
+func initBytecodeImmutableMask(bytecode []byte, contractName string) (*BytecodeAndImmutableReferences, error) {
 	parsedImmutables := map[string][]ImmutableReference{}
 	refs, exists := ContractASTsWithImmutableReferences[contractName]
 	if exists {
@@ -62,12 +62,12 @@ func initBytecodeImmutableMask(bytecode []byte, contractName string) (*DeployedB
 			return nil, fmt.Errorf("unable to parse immutable references for %s: %w", contractName, err)
 		}
 	}
-	return &DeployedBytecode{Bytecode: bytecode, ImmutableReferences: parsedImmutables}, nil
+	return &BytecodeAndImmutableReferences{Bytecode: bytecode, ImmutableReferences: parsedImmutables}, nil
 }
 
 // maskBytecode checks for the presence of immutables in the contract, as indicated by the stored config and if present,
 // masks the sections of the bytecode where immutables are stored. If immutables aren't present, the stored bytecode in the receiver is unaltered
-func (deployed *DeployedBytecode) maskBytecode(contractName string) error {
+func (deployed *BytecodeAndImmutableReferences) maskBytecode(contractName string) error {
 	_, exists := ContractASTsWithImmutableReferences[contractName]
 	if exists {
 		for _, v := range deployed.ImmutableReferences {
