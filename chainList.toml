@@ -23,6 +23,18 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Lisk"
+  identifier = "mainnet/lisk"
+  chain_id = 1135
+  rpc = ["https://rpc.api.lisk.com"]
+  explorers = ["https://blockscout.lisk.com"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Lyra Chain"
   identifier = "mainnet/lyra"
   chain_id = 957
