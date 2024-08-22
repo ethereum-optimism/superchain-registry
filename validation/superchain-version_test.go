@@ -61,6 +61,38 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err)
 }
 
+func TestValidationContractBytecodeHashes(t *testing.T) {
+	//      // Entry point for validation checks which run
+	//      // on each OP chain.
+
+	for _, chain := range OPChains {
+		if chain.Name != "OP Mainnet" {
+			continue
+		}
+		rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
+		require.NotEmpty(t, rpcEndpoint)
+		client, err := ethclient.Dial(rpcEndpoint)
+		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+
+		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
+		if err != nil {
+			t.Logf("Chain name: %s, err: %s", chain.Name, err)
+		}
+
+		prettyBytecodeHashes, err := json.MarshalIndent(bytecodeHashes, "", "    ")
+		if err != nil {
+			t.Logf("Error formatting bytecode hash output: %s", err)
+		}
+		t.Logf("Chain name: %s, Bytecode hashes: %s", chain.Name, prettyBytecodeHashes)
+		require.NoError(t, err)
+		_, err = findOPContractTagInByteCodeHashes(L1ContractBytecodeHashes(bytecodeHashes))
+		require.NoError(t, err)
+		if err != nil {
+			t.Logf("Chain name: %s, err: could not match bytecode hashes against a tag", chain.Name)
+		}
+	}
+}
+
 // getContractVersionsFromChain pulls the appropriate contract versions from chain
 // using the supplied client (calling the version() method for each contract). It does this concurrently.
 func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (ContractVersions, error) {
@@ -130,7 +162,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 			panic(err)
 		}
 		results.Store(contractName, r)
-		wg.Done()
+		//	wg.Done()
 	}
 
 	wg := new(sync.WaitGroup)
@@ -145,11 +177,11 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 			// error shown to the user.
 			continue
 		}
-		wg.Add(1)
-		go getBytecodeHashAsync(chainID, contractAddress, results, contractName, wg)
+		//wg.Add(1)
+		getBytecodeHashAsync(chainID, contractAddress, results, contractName, wg)
 	}
 
-	wg.Wait()
+	//wg.Wait()
 
 	// use reflection to convert results mapping into a ContractVersions object
 	// without resorting to boilerplate code.
@@ -247,14 +279,14 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 	}
 
 	// if the contract is known to have immutables, setup the filterer to mask the bytes which contain the variable's value
-	bytecodeImmutableFilterer, err := initBytecodeWithImmutables(code, contractName)
-	// the contract bytecode does not have immutables, use the deployed bytecode as-is to calculate hash
+	bytecodeImmutableFilterer, err := initBytecodeImmutableMask(code, contractName)
+	// error indicates that the contract _does_ have immutables, but we weren't able to determine the coordinates of the immutables in the bytecode
 	if err != nil {
-		return crypto.Keccak256Hash(code).Hex(), nil
+		return "", fmt.Errorf("unable to check for presence of immutables in bytecode: %w", err)
 	}
 
-	// For any deployed contracts with immutable variables, ensure that the values in the bytecode are masked before hashing
-	err = bytecodeImmutableFilterer.maskBytecode()
+	// For any deployed contracts with immutable variables, the bytecode is masked inside maskBytecode(). If not, the bytecode is unaltered.
+	err = bytecodeImmutableFilterer.maskBytecode(contractName)
 	if err != nil {
 		return "", fmt.Errorf("unable to retrieve bytecode without immutables: %w", err)
 	}
