@@ -176,13 +176,13 @@ func entrypoint(ctx *cli.Context) error {
 	fmt.Printf("✅ Wrote config for new chain with identifier %s", rollupConfig.Identifier())
 
 	genesisValidationInputsDir := filepath.Join(superchainRepoRoot, "validation", "genesis", "validation-inputs")
-	copyDeployConfigFile(rollupConfig.ChainID, deployConfigPath, genesisValidationInputsDir)
+	err = copyDeployConfigFile(rollupConfig.ChainID, deployConfigPath, genesisValidationInputsDir)
 	if err != nil {
 		return fmt.Errorf("error copying deploy-config json file: %w", err)
 	}
 	fmt.Printf("✅ Copied deploy-config json file to validation module")
 
-	writeGenesisValidationMetadata(rollupConfig.ChainID, genesisCreationCommit, genesisValidationInputsDir)
+	err = writeGenesisValidationMetadata(rollupConfig.ChainID, genesisCreationCommit, genesisValidationInputsDir)
 	if err != nil {
 		return fmt.Errorf("error writing genesis validation metadata file: %w", err)
 	}
@@ -254,7 +254,7 @@ func copyDeployConfigFile(chainId uint64, sourcePath string, targetDir string) e
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path.Join(targetDir, fmt.Sprintf("%d", chainId), "deploy-config.json"), data, 0777)
+	return os.WriteFile(path.Join(targetDir, fmt.Sprintf("%d", chainId), "deploy-config.json"), data, 0o777)
 }
 
 func writeGenesisValidationMetadata(chainId uint64, commit string, targetDir string) error {
@@ -268,5 +268,5 @@ func writeGenesisValidationMetadata(chainId uint64, commit string, targetDir str
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path.Join(targetDir, fmt.Sprintf("%d", chainId), "meta.toml"), data, 0777)
+	return os.WriteFile(path.Join(targetDir, fmt.Sprintf("%d", chainId), "meta.toml"), data, 0o777)
 }
