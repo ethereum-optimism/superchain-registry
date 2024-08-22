@@ -10,9 +10,8 @@ import (
 )
 
 const (
-	addressDir             = "../superchain/extra/addresses/sepolia/"
-	configDir              = "../superchain/configs/sepolia/"
-	genesisSystemConfigDir = "../superchain/extra/genesis-system-configs/sepolia/"
+	addressDir = "../superchain/extra/addresses/sepolia/"
+	configDir  = "../superchain/configs/sepolia/"
 )
 
 var tests = []struct {
@@ -171,7 +170,6 @@ func checkConfigTOML(t *testing.T, testName, chainShortName string) {
 func cleanupTestFiles(t *testing.T, chainShortName string) {
 	paths := []string{
 		addressDir + chainShortName + ".json",
-		genesisSystemConfigDir + chainShortName + ".json",
 		configDir + chainShortName + ".toml",
 	}
 
