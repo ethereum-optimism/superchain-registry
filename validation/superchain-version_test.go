@@ -146,7 +146,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 			continue
 		}
 		wg.Add(1)
-		go getBytecodeHashAsync(chainID, contractAddress, results, contractName, wg)
+		getBytecodeHashAsync(chainID, contractAddress, results, contractName, wg)
 	}
 
 	wg.Wait()
@@ -247,14 +247,14 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 	}
 
 	// if the contract is known to have immutables, setup the filterer to mask the bytes which contain the variable's value
-	bytecodeImmutableFilterer, err := initBytecodeWithImmutables(code, contractName)
-	// the contract bytecode does not have immutables, use the deployed bytecode as-is to calculate hash
+	bytecodeImmutableFilterer, err := initBytecodeImmutableMask(code, contractName)
+	// error indicates that the contract _does_ have immutables, but we weren't able to determine the coordinates of the immutables in the bytecode
 	if err != nil {
-		return crypto.Keccak256Hash(code).Hex(), nil
+		return "", fmt.Errorf("unable to check for presence of immutables in bytecode: %w", err)
 	}
 
-	// For any deployed contracts with immutable variables, ensure that the values in the bytecode are masked before hashing
-	err = bytecodeImmutableFilterer.maskBytecode()
+	// For any deployed contracts with immutable variables, the bytecode is masked inside maskBytecode(). If not, the bytecode is unaltered.
+	err = bytecodeImmutableFilterer.maskBytecode(contractName)
 	if err != nil {
 		return "", fmt.Errorf("unable to retrieve bytecode without immutables: %w", err)
 	}

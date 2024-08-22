@@ -30,9 +30,10 @@ func init() {
 
 	decodeTOMLFileIntoConfig("standard-versions.toml", &Versions)
 	decodeTOMLFileIntoConfig("standard-bytecodes.toml", &BytecodeHashes)
+	decodeTOMLFileIntoConfig("standard-immutables.toml", &BytecodeImmutables)
 }
 
-func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles | VersionTags | BytecodeHashTags](filename string, config *T) {
+func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles | VersionTags | BytecodeHashTags | BytecodeImmutablesTags](filename string, config *T) {
 	data, err := fs.ReadFile(standardConfigFile, filename)
 	if err != nil {
 		panic(err)

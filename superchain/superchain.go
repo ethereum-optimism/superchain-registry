@@ -479,6 +479,13 @@ func canonicalizeSemver(version string) string {
 	return version
 }
 
+type ContractBytecodeImmutables struct {
+	AnchorStateRegistry string `toml:"anchor_state_registry,omitempty"`
+	DelayedWETH         string `toml:"delayed_weth,omitempty"`
+	FaultDisputeGame    string `toml:"fault_dispute_game,omitempty"`
+	MIPS                string `toml:"mips,omitempty"`
+}
+
 type GenesisAccount struct {
 	CodeHash Hash          `json:"codeHash,omitempty"` // code hash only, to reduce overhead of duplicate bytecode
 	Storage  map[Hash]Hash `json:"storage,omitempty"`
