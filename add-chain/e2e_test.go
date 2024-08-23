@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/BurntSushi/toml"
@@ -18,79 +20,58 @@ const (
 
 var tests = []struct {
 	name                   string
-	chainID                uint64
 	chainName              string
 	chainShortName         string
 	rollupConfigFile       string
 	standardChainCandidate bool
 	chainType              string
 	deploymentsDir         string
-	deployConfigPath       string
-	genesisCreationCommit  string
 }{
 	{
-		name:                  "baseline",
-		chainID:               4206900,
-		chainName:             "testchain_baseline",
-		chainShortName:        "testchain_b",
-		rollupConfigFile:      "./testdata/monorepo/op-node/rollup_baseline.json",
-		deploymentsDir:        "./testdata/monorepo/deployments",
-		deployConfigPath:      "./testdata/monorepo/deploy-config/sepolia.json",
-		genesisCreationCommit: "somecommit",
+		name:             "baseline",
+		chainName:        "testchain_baseline",
+		chainShortName:   "testchain_b",
+		rollupConfigFile: "./testdata/monorepo/op-node/rollup_baseline.json",
+		deploymentsDir:   "./testdata/monorepo/deployments",
 	},
 	{
-		name:                  "baseline_legacy",
-		chainID:               4206901,
-		chainName:             "testchain_baseline_legacy",
-		chainShortName:        "testchain_bl",
-		rollupConfigFile:      "./testdata/monorepo/op-node/rollup_baseline_legacy.json",
-		deploymentsDir:        "./testdata/monorepo/deployments-legacy",
-		deployConfigPath:      "./testdata/monorepo/deploy-config/sepolia.json",
-		genesisCreationCommit: "somecommit",
+		name:             "baseline_legacy",
+		chainName:        "testchain_baseline_legacy",
+		chainShortName:   "testchain_bl",
+		rollupConfigFile: "./testdata/monorepo/op-node/rollup_baseline_legacy.json",
+		deploymentsDir:   "./testdata/monorepo/deployments-legacy",
 	},
 	{
 		name:                   "zorasep",
-		chainID:                4206902,
 		chainName:              "testchain_zorasep",
 		chainShortName:         "testchain_zs",
 		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_zorasep.json",
 		deploymentsDir:         "./testdata/monorepo/deployments",
 		standardChainCandidate: true,
-		deployConfigPath:       "./testdata/monorepo/deploy-config/sepolia.json",
-		genesisCreationCommit:  "somecommit",
 	},
 	{
 		name:                   "altda",
-		chainID:                4206903,
 		chainName:              "testchain_altda",
 		chainShortName:         "testchain_ad",
 		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_altda.json",
 		deploymentsDir:         "./testdata/monorepo/deployments",
 		standardChainCandidate: true,
-		deployConfigPath:       "./testdata/monorepo/deploy-config/sepolia.json",
-		genesisCreationCommit:  "somecommit",
 	},
 	{
 		name:                   "standard-candidate",
-		chainID:                4206904,
 		chainName:              "testchain_standard-candidate",
 		chainShortName:         "testchain_sc",
 		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_standard-candidate.json",
 		deploymentsDir:         "./testdata/monorepo/deployments",
 		standardChainCandidate: true,
-		deployConfigPath:       "./testdata/monorepo/deploy-config/sepolia.json",
-		genesisCreationCommit:  "somecommit",
 	},
 	{
 		name:                   "faultproofs",
-		chainID:                4206905,
 		chainName:              "testchain_faultproofs",
 		chainShortName:         "testchain_fp",
 		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_faultproofs.json",
 		deploymentsDir:         "./testdata/monorepo/deployments-faultproofs",
 		standardChainCandidate: true,
-		deployConfigPath:       "./testdata/monorepo/deploy-config/sepolia.json",
-		genesisCreationCommit:  "somecommit",
 	},
 }
 
@@ -100,7 +81,7 @@ func TestAddChain_Main(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			cleanupTestFiles(t, tt.chainShortName, tt.chainID)
+			cleanupTestFiles(t, tt.chainShortName)
 
 			err := os.Setenv("SCR_RUN_TESTS", "true")
 			require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
@@ -112,8 +93,6 @@ func TestAddChain_Main(t *testing.T) {
 				"--rollup-config=" + tt.rollupConfigFile,
 				"--deployments-dir=" + tt.deploymentsDir,
 				"--standard-chain-candidate=" + strconv.FormatBool(tt.standardChainCandidate),
-				"--deploy-config=" + tt.deployConfigPath,
-				"--genesis-creation-commit=" + tt.genesisCreationCommit,
 			}
 
 			err = runApp(args)
@@ -192,12 +171,10 @@ func checkConfigTOML(t *testing.T, testName, chainShortName string) {
 	require.Equal(t, string(expectedBytes), string(testBytes), "test .toml contents do not meet expectation")
 }
 
-func cleanupTestFiles(t *testing.T, chainShortName string, chainId uint64) {
+func cleanupTestFiles(t *testing.T, chainShortName string) {
 	paths := []string{
 		addressDir + chainShortName + ".json",
 		configDir + chainShortName + ".toml",
-		validtionInputsDir + fmt.Sprintf("%d", chainId) + "meta.toml",
-		validtionInputsDir + fmt.Sprintf("%d", chainId) + "deploy-config.json",
 	}
 
 	for _, path := range paths {
@@ -206,5 +183,23 @@ func cleanupTestFiles(t *testing.T, chainShortName string, chainId uint64) {
 			t.Logf("Error removing file %s: %v\n", path, err)
 		}
 	}
+
+	// Remove genesis validation input directories (and files within)
+	dirEntries, err := os.ReadDir(validtionInputsDir)
+	if err != nil {
+		fmt.Printf("Failed to read directory: %v\n", err)
+		return
+	}
+	for _, entry := range dirEntries {
+		if entry.IsDir() && strings.HasSuffix(entry.Name(), "-test") {
+			dirPath := filepath.Join(validtionInputsDir, entry.Name())
+			fmt.Printf("Removing directory: %s\n", dirPath)
+			err := os.RemoveAll(dirPath)
+			if err != nil {
+				fmt.Printf("Failed to remove directory %s: %v\n", dirPath, err)
+			}
+		}
+	}
+
 	t.Logf("Removed test artifacts for chain: %s", chainShortName)
 }

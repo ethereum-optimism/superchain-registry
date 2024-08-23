@@ -177,7 +177,11 @@ func entrypoint(ctx *cli.Context) error {
 
 	fmt.Printf("✅ Wrote config for new chain with identifier %s", rollupConfig.Identifier())
 
-	genesisValidationInputsDir := filepath.Join(superchainRepoRoot, "validation", "genesis", "validation-inputs", fmt.Sprintf("%d", rollupConfig.ChainID))
+	folderName := fmt.Sprintf("%d", rollupConfig.ChainID)
+	if runningTests := os.Getenv("SCR_RUN_TESTS"); runningTests == "true" {
+		folderName = folderName + "-test"
+	}
+	genesisValidationInputsDir := filepath.Join(superchainRepoRoot, "validation", "genesis", "validation-inputs", folderName)
 	err = os.MkdirAll(genesisValidationInputsDir, os.ModePerm)
 	if err != nil {
 		return err

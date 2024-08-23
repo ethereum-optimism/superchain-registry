@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path"
 	"strconv"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -38,6 +39,10 @@ func init() {
 		err = toml.Unmarshal(metadata, m)
 		if err != nil {
 			panic(fmt.Errorf("failed to decode metadata file: %w", err))
+		}
+
+		if strings.HasSuffix(s.Name(), "-test") {
+			continue
 		}
 
 		chainID, err := strconv.Atoi(s.Name())

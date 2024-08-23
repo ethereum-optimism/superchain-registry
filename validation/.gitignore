@@ -1,2 +1,7 @@
 generate-rollup-config/output-*
 generate-genesis/output-*
+
+
+# test output artifacts
+genesis/validation-inputs/*-test
+
