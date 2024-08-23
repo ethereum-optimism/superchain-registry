@@ -1,11 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/BurntSushi/toml"
@@ -181,23 +178,6 @@ func cleanupTestFiles(t *testing.T, chainShortName string) {
 		if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
 			// Log the error if it's something other than "file does not exist"
 			t.Logf("Error removing file %s: %v\n", path, err)
-		}
-	}
-
-	// Remove genesis validation input directories (and files within)
-	dirEntries, err := os.ReadDir(validtionInputsDir)
-	if err != nil {
-		fmt.Printf("Failed to read directory: %v\n", err)
-		return
-	}
-	for _, entry := range dirEntries {
-		if entry.IsDir() && strings.HasSuffix(entry.Name(), "-test") {
-			dirPath := filepath.Join(validtionInputsDir, entry.Name())
-			fmt.Printf("Removing directory: %s\n", dirPath)
-			err := os.RemoveAll(dirPath)
-			if err != nil {
-				fmt.Printf("Failed to remove directory %s: %v\n", dirPath, err)
-			}
 		}
 	}
 
