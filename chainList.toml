@@ -132,6 +132,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Lisk Sepolia Testnet"
+  identifier = "sepolia/lisk"
+  chain_id = 4202
+  rpc = ["https://rpc.sepolia-api.lisk.com"]
+  explorers = ["https://sepolia-blockscout.lisk.com"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Metal L2 Testnet"
   identifier = "sepolia/metal"
   chain_id = 1740
