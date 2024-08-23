@@ -222,6 +222,23 @@
     }
   },
   {
+    "name": "Lisk Sepolia Testnet",
+    "identifier": "sepolia/lisk",
+    "chainId": 4202,
+    "rpc": [
+      "https://rpc.sepolia-api.lisk.com"
+    ],
+    "explorers": [
+      "https://sepolia-blockscout.lisk.com"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Metal L2 Testnet",
     "identifier": "sepolia/metal",
     "chainId": 1740,
