@@ -180,6 +180,5 @@ func cleanupTestFiles(t *testing.T, chainShortName string) {
 			t.Logf("Error removing file %s: %v\n", path, err)
 		}
 	}
-
 	t.Logf("Removed test artifacts for chain: %s", chainShortName)
 }

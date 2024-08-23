@@ -61,7 +61,6 @@ clean-add-chain:
 	rm -f superchain/extra/sepolia/testchain_*.json.gz
 	rm -r -- validation/genesis/validation-inputs/*-test/
 
-
 # Tidying all go.mod files
 tidy-all: tidy-add-chain tidy-superchain tidy-validation
 
