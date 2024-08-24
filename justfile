@@ -61,6 +61,7 @@ promotion-test:
 clean-add-chain:
 	rm -f superchain/configs/sepolia/testchain_*.toml
 	rm -f superchain/extra/sepolia/testchain_*.json.gz
+	rm -rf -- validation/genesis/validation-inputs/*-test/
 
 # Tidying all go.mod files
 tidy-all: tidy-add-chain tidy-superchain tidy-validation

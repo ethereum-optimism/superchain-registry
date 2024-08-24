@@ -1,3 +1,6 @@
+# diff tool artifacts
 generate-rollup-config/output-*
 generate-genesis/output-*
-genesis/optimism-temporary
+
+# test output artifacts
+genesis/validation-inputs/*-test
