@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	spr "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
@@ -21,6 +22,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+
+	"golang.org/x/mod/semver"
 )
 
 var contractsToCheckVersionAndBytecodeOf = []string{
@@ -50,14 +53,18 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
+	// testnets and devnets are permitted to use newer contract versions
+	// than the versions specified in the standard config
+	isTestnet := (chain.Superchain == "sepolia" || chain.Superchain == "sepolia-dev-0")
+
 	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client)
 	require.NoError(t, err)
-	_, err = findOPContractTagInVersions(versions)
+	_, err = findOPContractTagInVersions(versions, isTestnet)
 	require.NoError(t, err)
 
 	bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
 	require.NoError(t, err)
-	_, err = findOPContractTagInByteCodeHashes(bytecodeHashes)
+	_, err = findOPContractTagInByteCodeHashes(bytecodeHashes, isTestnet)
 	require.NoError(t, err)
 }
 
@@ -281,7 +288,7 @@ func TestFindOPContractTag(t *testing.T) {
 		PreimageOracle:               "1.0.0",
 	}
 
-	got, err := findOPContractTagInVersions(shouldMatch)
+	got, err := findOPContractTagInVersions(shouldMatch, false)
 	require.NoError(t, err)
 	want := []standard.Tag{"op-contracts/v1.4.0"}
 	require.Equal(t, got, want)
@@ -296,13 +303,13 @@ func TestFindOPContractTag(t *testing.T) {
 		ProtocolVersions:             "1.0.0",
 		L2OutputOracle:               "1.0.0",
 	}
-	got, err = findOPContractTagInVersions(shouldNotMatch)
+	got, err = findOPContractTagInVersions(shouldNotMatch, false)
 	require.Error(t, err)
 	want = []standard.Tag{}
 	require.Equal(t, got, want)
 }
 
-func findOPContractTagInVersions(versions ContractVersions) ([]standard.Tag, error) {
+func findOPContractTagInVersions(versions ContractVersions, isTestnet bool) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
 	pretty, err := json.MarshalIndent(versions, "", " ")
 	if err != nil {
@@ -319,7 +326,7 @@ func findOPContractTagInVersions(versions ContractVersions) ([]standard.Tag, err
 	matchesTag := func(standard, candidate ContractVersions) bool {
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
-		return checkMatch(s, c)
+		return checkMatch(s, c, isTestnet)
 	}
 
 	for tag := range standard.Versions {
@@ -331,7 +338,7 @@ func findOPContractTagInVersions(versions ContractVersions) ([]standard.Tag, err
 	return matchingTags, err
 }
 
-func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes) ([]standard.Tag, error) {
+func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes, isTestnet bool) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
 	pretty, err := json.MarshalIndent(hashes, "", " ")
 	if err != nil {
@@ -348,7 +355,7 @@ func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes)
 	matchesTag := func(standard, candidate standard.L1ContractBytecodeHashes) bool {
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
-		return checkMatch(s, c)
+		return checkMatch(s, c, isTestnet)
 	}
 
 	for tag := range standard.Versions {
@@ -360,7 +367,7 @@ func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes)
 	return matchingTags, err
 }
 
-func checkMatch(s, c reflect.Value) bool {
+func checkMatch(s, c reflect.Value, isTestnet bool) bool {
 	// Iterate over each field of the standard struct
 	for i := 0; i < s.NumField(); i++ {
 
@@ -382,7 +389,18 @@ func checkMatch(s, c reflect.Value) bool {
 		}
 
 		if field.String() != c.Field(i).String() {
-			return false
+			if !isTestnet {
+				return false
+			}
+
+			// testnets are permitted to have contract versions that are newer than what's specified in the standard config
+			// testnets may NOT have contract versions that are older.
+			min := spr.CanonicalizeSemver(field.String())
+			current := spr.CanonicalizeSemver(c.Field(i).String())
+			if semver.Compare(min, current) > 0 {
+				return false
+			}
+
 		}
 	}
 	return true

@@ -458,7 +458,7 @@ func (c ContractVersions) Check(allowEmptyVersions bool) error {
 			}
 			return fmt.Errorf("empty version for field %s", val.Type().Field(i).Name)
 		}
-		str = canonicalizeSemver(str)
+		str = CanonicalizeSemver(str)
 		if !semver.IsValid(str) {
 			return fmt.Errorf("invalid semver %s for field %s", str, val.Type().Field(i).Name)
 		}
@@ -466,10 +466,10 @@ func (c ContractVersions) Check(allowEmptyVersions bool) error {
 	return nil
 }
 
-// canonicalizeSemver will ensure that the version string has a "v" prefix.
+// CanonicalizeSemver will ensure that the version string has a "v" prefix.
 // This is because the semver library being used requires the "v" prefix,
 // even though
-func canonicalizeSemver(version string) string {
+func CanonicalizeSemver(version string) string {
 	if !strings.HasPrefix(version, "v") {
 		version = "v" + version
 	}
