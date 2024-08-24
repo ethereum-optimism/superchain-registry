@@ -186,13 +186,13 @@ func entrypoint(ctx *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	err = copyDeployConfigFile(rollupConfig.ChainID, deployConfigPath, genesisValidationInputsDir)
+	err = copyDeployConfigFile(deployConfigPath, genesisValidationInputsDir)
 	if err != nil {
 		return fmt.Errorf("error copying deploy-config json file: %w", err)
 	}
 	fmt.Printf("✅ Copied deploy-config json file to validation module")
 
-	err = writeGenesisValidationMetadata(rollupConfig.ChainID, genesisCreationCommit, genesisValidationInputsDir)
+	err = writeGenesisValidationMetadata(genesisCreationCommit, genesisValidationInputsDir)
 	if err != nil {
 		return fmt.Errorf("error writing genesis validation metadata file: %w", err)
 	}
@@ -259,7 +259,7 @@ func getGasPayingToken(l1rpcURl string, SystemConfigAddress superchain.Address) 
 	return (*superchain.Address)(&result.Addr), nil
 }
 
-func copyDeployConfigFile(chainId uint64, sourcePath string, targetDir string) error {
+func copyDeployConfigFile(sourcePath string, targetDir string) error {
 	data, err := os.ReadFile(sourcePath)
 	if err != nil {
 		return err
@@ -267,7 +267,7 @@ func copyDeployConfigFile(chainId uint64, sourcePath string, targetDir string) e
 	return os.WriteFile(path.Join(targetDir, "deploy-config.json"), data, os.ModePerm)
 }
 
-func writeGenesisValidationMetadata(chainId uint64, commit string, targetDir string) error {
+func writeGenesisValidationMetadata(commit string, targetDir string) error {
 	vm := genesis.ValidationMetadata{
 		GenesisCreationCommit:  commit,
 		NodeVersion:            "18.12.1",
