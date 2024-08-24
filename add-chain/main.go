@@ -268,11 +268,18 @@ func copyDeployConfigFile(sourcePath string, targetDir string) error {
 }
 
 func writeGenesisValidationMetadata(commit string, targetDir string) error {
+	// Define default metadata params:
+	// These may not be sufficient to make the genesis validation work,
+	// but we address that with some manual trial-and-error intervention
+	// involving OPLabs engineers after the add-chain command runs.
+	const defaultNodeVersion = "18.12.1"
+	const defaultMonorepoBuildCommand = "pnpm"
+	const defaultGenesisCreationCommand = "opnode1"
 	vm := genesis.ValidationMetadata{
 		GenesisCreationCommit:  commit,
-		NodeVersion:            "18.12.1",
-		MonorepoBuildCommand:   "pnpm",
-		GenesisCreationCommand: "opnode1",
+		NodeVersion:            defaultNodeVersion,
+		MonorepoBuildCommand:   defaultMonorepoBuildCommand,
+		GenesisCreationCommand: defaultGenesisCreationCommand,
 	}
 	data, err := toml.Marshal(vm)
 	if err != nil {
