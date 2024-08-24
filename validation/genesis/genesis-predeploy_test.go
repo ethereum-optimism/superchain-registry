@@ -111,9 +111,9 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	gotData, err := json.MarshalIndent(g.Alloc, "", " ")
 	require.NoError(t, err)
 
-	err = os.WriteFile(path.Join(monorepoDir, "want-alloc.json"), expectedData, 0o777)
+	err = os.WriteFile(path.Join(monorepoDir, "want-alloc.json"), expectedData, os.ModePerm)
 	require.NoError(t, err)
-	err = os.WriteFile(path.Join(monorepoDir, "got-alloc.json"), gotData, 0o777)
+	err = os.WriteFile(path.Join(monorepoDir, "got-alloc.json"), gotData, os.ModePerm)
 	require.NoError(t, err)
 
 	require.Equal(t, string(expectedData), string(gotData))
@@ -135,7 +135,7 @@ func writeDeployments(chainId uint64, directory string) error {
 		return err
 	}
 
-	err = os.WriteFile(path.Join(directory, ".deploy"), data, 0o777)
+	err = os.WriteFile(path.Join(directory, ".deploy"), data, os.ModePerm)
 	if err != nil {
 		return err
 	}
