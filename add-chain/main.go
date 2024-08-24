@@ -264,7 +264,7 @@ func copyDeployConfigFile(chainId uint64, sourcePath string, targetDir string) e
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path.Join(targetDir, "deploy-config.json"), data, 0o777)
+	return os.WriteFile(path.Join(targetDir, "deploy-config.json"), data, os.ModePerm)
 }
 
 func writeGenesisValidationMetadata(chainId uint64, commit string, targetDir string) error {
@@ -278,5 +278,5 @@ func writeGenesisValidationMetadata(chainId uint64, commit string, targetDir str
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path.Join(targetDir, "meta.toml"), data, 0o777)
+	return os.WriteFile(path.Join(targetDir, "meta.toml"), data, os.ModePerm)
 }
