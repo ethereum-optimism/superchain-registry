@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	addressDir         = "../superchain/extra/addresses/sepolia/"
-	configDir          = "../superchain/configs/sepolia/"
-	validtionInputsDir = "../validation/genesis/validation-inputs"
+	addressDir          = "../superchain/extra/addresses/sepolia/"
+	configDir           = "../superchain/configs/sepolia/"
+	validationInputsDir = "../validation/genesis/validation-inputs"
 )
 
 var tests = []struct {
