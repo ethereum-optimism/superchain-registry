@@ -13,11 +13,11 @@ all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
-superchain-primitives = { path = "../rust-primitives", version = "0.2.6", default-features = false }
+superchain-primitives = { path = "../rust-primitives", version = "0.2.2", default-features = false }
 
 # `serde` is optional, but enabled by default
 # Since superchain-registry requires `serde`, we mark it as optional
-superchain-registry = { path = "../rust-bindings", version = "0.2.2", optional = true, default-feature = false }
+superchain-registry = { path = "../rust-bindings", version = "0.2.6", optional = true, default-feature = false }
 
 [features]
 default = ["serde", "std"]
