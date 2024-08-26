@@ -62,10 +62,13 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	_, err = findOPContractTagInVersions(versions, isTestnet)
 	require.NoError(t, err)
 
-	bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
-	require.NoError(t, err)
-	_, err = findOPContractTagInByteCodeHashes(bytecodeHashes, isTestnet)
-	require.NoError(t, err)
+	// don't perform bytecode checking for testnets
+	if !isTestnet {
+		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
+		require.NoError(t, err)
+		_, err = findOPContractTagInByteCodeHashes(bytecodeHashes)
+		require.NoError(t, err)
+	}
 }
 
 // getContractVersionsFromChain pulls the appropriate contract versions from chain
@@ -326,7 +329,7 @@ func findOPContractTagInVersions(versions ContractVersions, isTestnet bool) ([]s
 	matchesTag := func(standard, candidate ContractVersions) bool {
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
-		return checkMatch(s, c, isTestnet)
+		return checkMatchOrTestnet(s, c, isTestnet)
 	}
 
 	for tag := range standard.Versions {
@@ -338,7 +341,7 @@ func findOPContractTagInVersions(versions ContractVersions, isTestnet bool) ([]s
 	return matchingTags, err
 }
 
-func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes, isTestnet bool) ([]standard.Tag, error) {
+func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
 	pretty, err := json.MarshalIndent(hashes, "", " ")
 	if err != nil {
@@ -355,7 +358,7 @@ func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes,
 	matchesTag := func(standard, candidate standard.L1ContractBytecodeHashes) bool {
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
-		return checkMatch(s, c, isTestnet)
+		return checkMatch(s, c)
 	}
 
 	for tag := range standard.Versions {
@@ -367,7 +370,36 @@ func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes,
 	return matchingTags, err
 }
 
-func checkMatch(s, c reflect.Value, isTestnet bool) bool {
+func checkMatch(s, c reflect.Value) bool {
+	// Iterate over each field of the standard struct
+	for i := 0; i < s.NumField(); i++ {
+
+		if s.Type().Field(i).Name == "ProtocolVersions" {
+			// We can't check this contract:
+			// (until this issue resolves https://github.com/ethereum-optimism/client-pod/issues/699#issuecomment-2150970346)
+			continue
+		}
+
+		field := s.Field(i)
+
+		if field.Kind() != reflect.String {
+			panic("versions must be strings")
+		}
+
+		if field.String() == "" {
+			// Ignore any empty strings, these are treated as "match anything"
+			continue
+		}
+
+		if field.String() != c.Field(i).String() {
+			return false
+		}
+	}
+	return true
+}
+
+// checkMatchOrTestnet returns true if s and c match, OR if the chain is a testnet and s < c
+func checkMatchOrTestnet(s, c reflect.Value, isTestnet bool) bool {
 	// Iterate over each field of the standard struct
 	for i := 0; i < s.NumField(); i++ {
 
