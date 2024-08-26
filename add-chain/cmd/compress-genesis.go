@@ -73,7 +73,6 @@ var CompressGenesisCmd = cli.Command{
 				return errors.New("genesis-header based genesis must have no withdrawals")
 			}
 			out := Genesis{
-
 				Nonce:         genesisHeader.Nonce.Uint64(),
 				Timestamp:     genesisHeader.Time,
 				ExtraData:     genesisHeader.Extra,
@@ -118,7 +117,7 @@ var CompressGenesisCmd = cli.Command{
 
 		// convert into allocation data
 		out := Genesis{
-			Config:        &superchain.Config{(*superchain.OptimismConfig)(genesis.Config.Optimism)},
+			Config:        &superchain.GenesisConfig{Optimism: (*superchain.OptimismConfig)(genesis.Config.Optimism)},
 			Nonce:         genesis.Nonce,
 			Timestamp:     genesis.Timestamp,
 			ExtraData:     genesis.ExtraData,
