@@ -83,6 +83,18 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Redstone"
+  identifier = "mainnet/redstone"
+  chain_id = 690
+  rpc = ["https://rpc.redstonechain.com"]
+  explorers = ["https://explorer.redstone.xyz"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Binary Mainnet"
   identifier = "mainnet/tbn"
   chain_id = 624
