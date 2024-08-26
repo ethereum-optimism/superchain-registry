@@ -13,6 +13,7 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/flags"
+	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core"
@@ -117,7 +118,7 @@ var CompressGenesisCmd = cli.Command{
 
 		// convert into allocation data
 		out := Genesis{
-			Config:        &ChainConfig{(*OptimismConfig)(genesis.Config.Optimism)},
+			Config:        &superchain.Config{(*superchain.OptimismConfig)(genesis.Config.Optimism)},
 			Nonce:         genesis.Nonce,
 			Timestamp:     genesis.Timestamp,
 			ExtraData:     genesis.ExtraData,
@@ -201,31 +202,21 @@ type GenesisAccount struct {
 	Nonce    uint64                                               `json:"nonce,omitempty"`
 }
 
-// OptimismConfig is the optimism config.
-type OptimismConfig struct {
-	EIP1559Elasticity        uint64  `json:"eip1559Elasticity"`
-	EIP1559Denominator       uint64  `json:"eip1559Denominator"`
-	EIP1559DenominatorCanyon *uint64 `json:"eip1559DenominatorCanyon,omitempty"`
-}
-type ChainConfig struct {
-	// Optimism config, nil if not active
-	Optimism *OptimismConfig `json:"optimism,omitempty"`
-}
 type Genesis struct {
-	Config        *ChainConfig   `json:"config"`
-	Nonce         uint64         `json:"nonce"`
-	Timestamp     uint64         `json:"timestamp"`
-	ExtraData     []byte         `json:"extraData"`
-	GasLimit      uint64         `json:"gasLimit"`
-	Difficulty    *hexutil.Big   `json:"difficulty"`
-	Mixhash       common.Hash    `json:"mixHash"`
-	Coinbase      common.Address `json:"coinbase"`
-	Number        uint64         `json:"number"`
-	GasUsed       uint64         `json:"gasUsed"`
-	ParentHash    common.Hash    `json:"parentHash"`
-	BaseFee       *hexutil.Big   `json:"baseFeePerGas"`
-	ExcessBlobGas *uint64        `json:"excessBlobGas"` // EIP-4844
-	BlobGasUsed   *uint64        `json:"blobGasUsed"`   // EIP-4844
+	Config        *superchain.GenesisConfig `json:"config"`
+	Nonce         uint64                    `json:"nonce"`
+	Timestamp     uint64                    `json:"timestamp"`
+	ExtraData     []byte                    `json:"extraData"`
+	GasLimit      uint64                    `json:"gasLimit"`
+	Difficulty    *hexutil.Big              `json:"difficulty"`
+	Mixhash       common.Hash               `json:"mixHash"`
+	Coinbase      common.Address            `json:"coinbase"`
+	Number        uint64                    `json:"number"`
+	GasUsed       uint64                    `json:"gasUsed"`
+	ParentHash    common.Hash               `json:"parentHash"`
+	BaseFee       *hexutil.Big              `json:"baseFeePerGas"`
+	ExcessBlobGas *uint64                   `json:"excessBlobGas"` // EIP-4844
+	BlobGasUsed   *uint64                   `json:"blobGasUsed"`   // EIP-4844
 
 	Alloc jsonutil.LazySortedJsonMap[common.Address, GenesisAccount] `json:"alloc"`
 	// For genesis definitions without full state (OP-Mainnet, OP-Goerli)
