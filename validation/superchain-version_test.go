@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
-	spr "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
@@ -427,8 +426,8 @@ func checkMatchOrTestnet(s, c reflect.Value, isTestnet bool) bool {
 
 			// testnets are permitted to have contract versions that are newer than what's specified in the standard config
 			// testnets may NOT have contract versions that are older.
-			min := spr.CanonicalizeSemver(field.String())
-			current := spr.CanonicalizeSemver(c.Field(i).String())
+			min := CanonicalizeSemver(field.String())
+			current := CanonicalizeSemver(c.Field(i).String())
 			if semver.Compare(min, current) > 0 {
 				return false
 			}
