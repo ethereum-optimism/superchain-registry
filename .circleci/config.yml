@@ -142,7 +142,32 @@ jobs:
       - run:
           name: run validation checks
           command: just promotion-test
-      - notify-failures-on-main:
+      - slack/notify:
+          event: always
+          custom: |
+              {
+                "blocks": [
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": ":control_knobs: The daily report on standard candidate chains is ready!"
+                    }
+                  },
+                  {
+                    "type": "divider"
+                  },
+                  {
+                    "type": "context",
+                    "elements": [
+                      {
+                        "type": "mrkdwn",
+                        "text": "👀 Click the link to see what validation checks would fail if all candidate chains were promoted to standard (and exclusions removed)."
+                      }
+                    ]
+                  }
+                ]
+              }
           channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-failures`
   publish-bot:
     environment:
