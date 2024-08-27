@@ -4,12 +4,12 @@ go 1.21
 
 replace github.com/ethereum-optimism/superchain-registry/superchain => ../superchain
 
-replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240827105227-dbaa55d687de
+replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240827122556-f7ef5f48c436
 
 require (
 	github.com/BurntSushi/toml v1.4.0
 	github.com/ethereum-optimism/optimism v1.9.1-0.20240814195148-0bb2ff57c813
-	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240826202748-e91d8c1ce8cf
+	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240827115857-4de45bf05f5f
 	github.com/ethereum/go-ethereum v1.14.7
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/mod v0.20.0
