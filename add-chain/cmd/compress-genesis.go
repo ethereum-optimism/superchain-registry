@@ -117,7 +117,9 @@ var CompressGenesisCmd = cli.Command{
 
 		// convert into allocation data
 		out := Genesis{
-			Config:        &superchain.GenesisConfig{Optimism: (*superchain.OptimismConfig)(genesis.Config.Optimism)},
+			Config: &superchain.GenesisConfig{
+				Optimism: (*superchain.OptimismConfig)(genesis.Config.Optimism),
+			},
 			Nonce:         genesis.Nonce,
 			Timestamp:     genesis.Timestamp,
 			ExtraData:     genesis.ExtraData,
