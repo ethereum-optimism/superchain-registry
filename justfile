@@ -1,4 +1,8 @@
 set positional-arguments
+alias t := cargo-tests
+alias l := cargo-lint
+alias f := cargo-format
+alias b := cargo-build
 
 # Adding a chain
 add-chain:
@@ -82,6 +86,12 @@ cargo-tests:
   just bindings/rust-primitives/tests
   just bindings/rust-bindings/tests
   just bindings/superchain/tests
+
+# Run cargo format
+cargo-format:
+  just bindings/rust-primitives/fmt
+  just bindings/rust-bindings/fmt
+  just bindings/superchain/fmt
 
 # Run cargo lints
 cargo-lint:

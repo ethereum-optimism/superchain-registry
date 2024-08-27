@@ -667,7 +667,6 @@ dependencies = [
  "hashbrown",
  "lazy_static",
  "serde",
- "serde_repr",
  "superchain-primitives",
  "toml",
 ]
