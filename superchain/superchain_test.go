@@ -202,18 +202,38 @@ ecotone_time = 3
   chain_id = 314
   public_rpc = "https://disney.com"
   explorer = "https://disneyscan.io"
+
+[l1.ImplementationAddresses."op-contracts/v1.4.0"]
+  OptimismPortal = "0xbEb5Fc579115071764c7423A4f12eDde41f106Ed"
+  SystemConfig = "0x229047fed2591dbec1eF1118d64F7aF3dB9EB290"
+
+[l1.ImplementationAddresses."op-contracts/v1.3.0"]
+	AnchorStateRegistry = "0x44b5Fc579115071764c7423A4f12eDde41f10682"
+	AddressManager =      "0x339047fed2591dbec1eF1118d64F7aF3dB9EB281"
 `
 
 	s := SuperchainConfig{}
 	err := unMarshalSuperchainConfig([]byte(rawTOML), &s)
 	require.NoError(t, err)
 
-	require.Equal(t, "Mickey Mouse", s.Name)
-	require.Equal(t, SuperchainL1Info{
+	expectL1Info := SuperchainL1Info{
 		ChainID:   314,
 		PublicRPC: "https://disney.com",
 		Explorer:  "https://disneyscan.io",
-	}, s.L1)
+		ContractImplementations: map[string]StandardContractAddresses{
+			"op-contracts/v1.4.0": {
+				OptimismPortal: "0xbEb5Fc579115071764c7423A4f12eDde41f106Ed",
+				SystemConfig:   "0x229047fed2591dbec1eF1118d64F7aF3dB9EB290",
+			},
+			"op-contracts/v1.3.0": {
+				AnchorStateRegistry: "0x44b5Fc579115071764c7423A4f12eDde41f10682",
+				AddressManager:      "0x339047fed2591dbec1eF1118d64F7aF3dB9EB281",
+			},
+		},
+	}
+
+	require.Equal(t, "Mickey Mouse", s.Name)
+	require.Equal(t, expectL1Info, s.L1)
 
 	require.Equal(t, "0x252CbE9517F731C618961D890D534183822dcC8d", s.ProtocolVersionsAddr.String())
 	require.Equal(t, "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7", s.SuperchainConfigAddr.String())
