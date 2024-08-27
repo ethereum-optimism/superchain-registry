@@ -30,7 +30,7 @@ data_availability_type = "eth-da"
     gasLimit = 30000000
   [genesis.config]
     [genesis.config.optimism]
-      eip1559_elasticity = 10
+      eip1559_elasticity = 6
       eip1559_denominator = 50
       eip1559_denominator_canyon = 250
 
