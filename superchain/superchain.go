@@ -514,10 +514,33 @@ type Genesis struct {
 	// The chain-config is not included. This is derived from the chain and superchain definition instead.
 }
 
+// StandardContractAddresses has all implementation addresses of the standard contracts
+type StandardContractAddresses struct {
+	FaultDisputeGame             string `toml:"FaultDisputeGame"`
+	PermissionedDisputeGame      string `toml:"PermissionedDisputeGame"`
+	DisputeGameFactory           string `toml:"DisputeGameFactory"`
+	AnchorStateRegistry          string `toml:"AnchorStateRegistry"`
+	DelayedWETH                  string `toml:"DelayedWETH"`
+	MIPS                         string `toml:"MIPS"`
+	PreimageOracle               string `toml:"PreimageOracle"`
+	OptimismPortal               string `toml:"OptimismPortal"`
+	SystemConfig                 string `toml:"SystemConfig"`
+	AddressManager               string `toml:"AddressManager"`
+	L1CrossDomainMessenger       string `toml:"L1CrossDomainMessenger"`
+	L1ERC721Bridge               string `toml:"L1ERC721Bridge"`
+	L1StandardBridge             string `toml:"L1StandardBridge"`
+	L2OutputOracle               string `toml:"L2OutputOracle"`
+	OptimismMintableERC20Factory string `toml:"OptimismMintableERC20Factory"`
+	SuperchainConfig             string `toml:"SuperchainConfig"`
+	ProtocolVersions             string `toml:"ProtocolVersions"`
+}
+
 type SuperchainL1Info struct {
-	ChainID   uint64 `toml:"chain_id"`
-	PublicRPC string `toml:"public_rpc"`
-	Explorer  string `toml:"explorer"`
+	ChainID                 uint64                               `toml:"chain_id"`
+	PublicRPC               string                               `toml:"public_rpc"`
+	Explorer                string                               `toml:"explorer"`
+	ContractImplementations map[string]StandardContractAddresses `toml:"ImplementationAddresses"` // Implementation addresses for a release tag
+	Versions                map[string]ContractVersions          `toml:"ContractVersions"`
 }
 
 type SuperchainConfig struct {
