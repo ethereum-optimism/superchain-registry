@@ -32,6 +32,7 @@ var app = &cli.App{
 		flags.ChainNameFlag,
 		flags.ChainShortNameFlag,
 		flags.RollupConfigFlag,
+		flags.GenesisFlag,
 		flags.DeploymentsDirFlag,
 		flags.StandardChainCandidateFlag,
 	},
@@ -87,6 +88,7 @@ func entrypoint(ctx *cli.Context) error {
 
 	chainName := ctx.String(flags.ChainNameFlag.Name)
 	rollupConfigPath := ctx.String(flags.RollupConfigFlag.Name)
+	genesisPath := ctx.String(flags.GenesisFlag.Name)
 	deploymentsDir := ctx.String(flags.DeploymentsDirFlag.Name)
 	chainShortName := ctx.String(flags.ChainShortNameFlag.Name)
 	if chainShortName == "" {
@@ -107,6 +109,7 @@ func entrypoint(ctx *cli.Context) error {
 	fmt.Printf("Monorepo dir:                   %s\n", monorepoDir)
 	fmt.Printf("Deployments directory:          %s\n", deploymentsDir)
 	fmt.Printf("Rollup config filepath:         %s\n", rollupConfigPath)
+	fmt.Printf("Genesis filepath:               %s\n", genesisPath)
 	fmt.Printf("Public RPC endpoint:            %s\n", publicRPC)
 	fmt.Printf("Sequencer RPC endpoint:         %s\n", sequencerRPC)
 	fmt.Printf("Block Explorer:                 %s\n", explorer)
@@ -134,7 +137,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to infer fault proofs status of chain: %w", err)
 	}
 
-	rollupConfig, err := config.ConstructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate)
+	rollupConfig, err := config.ConstructChainConfig(rollupConfigPath, genesisPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
