@@ -3,6 +3,7 @@ package validation
 import (
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/stretchr/testify/require"
@@ -55,8 +56,15 @@ var exclusions = map[string]map[uint64]bool{
 		11763072: true, // sepolia-dev0/base-devnet-0
 	},
 	"Optimism_Portal_2_Params": {
+		10:       true, // mainnet/op (Permissioned Dispute Game enabled, silenced until )
 		11763072: true, // sepolia-dev0/base-devnet-0
 	},
+}
+
+func TestSilences(t *testing.T) {
+	if exclusions["Optimism_Portal_2_Params"][10] && time.Now().After(time.Unix(1726070401, 0)) {
+		t.Fatal("OP Mainnet exclusion expired")
+	}
 }
 
 func TestExclusions(t *testing.T) {
