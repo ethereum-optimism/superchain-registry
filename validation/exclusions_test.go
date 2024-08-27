@@ -56,7 +56,7 @@ var exclusions = map[string]map[uint64]bool{
 		11763072: true, // sepolia-dev0/base-devnet-0
 	},
 	"Optimism_Portal_2_Params": {
-		10:       true, // mainnet/op (Permissioned Dispute Game enabled, silenced until )
+		10:       true, // mainnet/op (Permissioned Dispute Game enabled, silenced until Tue 11 Sep 2024 16:00:01 UTC)
 		11763072: true, // sepolia-dev0/base-devnet-0
 	},
 }
