@@ -1,8 +1,8 @@
 set positional-arguments
-alias t := cargo-tests
-alias l := cargo-lint
-alias f := cargo-format
-alias b := cargo-build
+alias ct := cargo-tests
+alias cl := cargo-lint
+alias cf := cargo-format
+alias cb := cargo-build
 
 # Adding a chain
 add-chain:
