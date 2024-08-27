@@ -938,7 +938,6 @@
         [superchains.chains.genesis.config.optimism]
           eip1559_elasticity = 6
           eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C"
       ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
