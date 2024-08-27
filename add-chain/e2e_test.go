@@ -88,6 +88,7 @@ func TestAddChain_Main(t *testing.T) {
 				"--chain-name=" + tt.chainName,
 				"--chain-short-name=" + tt.chainShortName,
 				"--rollup-config=" + tt.rollupConfigFile,
+				"--genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
 				"--deployments-dir=" + tt.deploymentsDir,
 				"--standard-chain-candidate=" + strconv.FormatBool(tt.standardChainCandidate),
 			}

@@ -27,6 +27,10 @@ data_availability_type = "eth-da"
     gasLimit = 30000000
     baseFeeScalar = 0
     blobBaseFeeScalar = 0
+  [genesis.config]
+    [genesis.config.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
 
 [addresses]
   SystemConfigOwner = "0xe8D525b30dD4C406570d47396b5b237DB30F13F1"
