@@ -31,6 +31,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1686068903
       [superchains.chains.genesis.l1]
@@ -44,11 +48,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x847B5c174615B1B7fDF770882256e2D3E95b9D92"
       ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
@@ -94,6 +93,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1696608227
       [superchains.chains.genesis.l1]
@@ -107,11 +110,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
       ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
@@ -155,6 +153,10 @@
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
     gas_paying_token = "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1719397463
       [superchains.chains.genesis.l1]
@@ -168,11 +170,6 @@
         overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
         scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x25A6E7c6f3d0fE89A656Fcf065614B74E55099fF"
       ProxyAdminOwner = "0x48EC051349dDc7E8baBafCBfe27696ECF2A8a8B3"
@@ -218,6 +215,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1700021615
       [superchains.chains.genesis.l1]
@@ -231,11 +232,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
       ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
@@ -282,6 +278,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1711563515
       [superchains.chains.genesis.l1]
@@ -295,11 +295,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
       ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
@@ -342,6 +337,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1720421591
       [superchains.chains.genesis.l1]
@@ -355,11 +354,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0xBac1ad52745162c0aA3711fe88Df1Cc67034a3B9"
       ProxyAdminOwner = "0x5A669B2193718F189b0576c0cdcedfEd6f40F9Ea"
@@ -406,6 +400,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1686789347
       [superchains.chains.genesis.l1]
@@ -419,11 +417,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x14536667Cd30e52C0b458BaACcB9faDA7046E056"
       ProxyAdminOwner = "0x7bB41C3008B3f03FE483B28b8DB90e19Cf07595c"
@@ -470,6 +463,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1700167583
       [superchains.chains.genesis.l1]
@@ -483,11 +480,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
       ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
@@ -534,6 +526,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1686693839
       [superchains.chains.genesis.l1]
@@ -547,11 +543,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0xC72aE5c7cc9a332699305E29F68Be66c73b60542"
       ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
@@ -609,6 +600,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1687867932
       [superchains.chains.genesis.l1]
@@ -622,11 +617,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C"
       ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
@@ -670,6 +660,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1708129620
       [superchains.chains.genesis.l1]
@@ -683,11 +677,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C"
       ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
@@ -730,6 +719,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1719646560
       [superchains.chains.genesis.l1]
@@ -743,11 +736,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0xE6869aF6c871614df04902870Bb13d4505E1586c"
       ProxyAdminOwner = "0xAc78E9B3Aa9373AE4bE2Ba5Bc9F716d7A746A65E"
@@ -794,6 +782,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 10
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1695768288
       [superchains.chains.genesis.l1]
@@ -807,11 +799,6 @@
         overhead = "0x0000000000000000000000000000000000000000000000000000000000000834"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
         gasLimit = 25000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 10
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x0fe884546476dDd290eC46318785046ef68a0BA9"
       ProxyAdminOwner = "0x0fe884546476dDd290eC46318785046ef68a0BA9"
@@ -870,11 +857,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
       ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
@@ -921,6 +903,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1698080004
       [superchains.chains.genesis.l1]
@@ -934,10 +920,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
     [superchains.chains.addresses]
       SystemConfigOwner = "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C"
       ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
@@ -994,6 +976,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1706484048
       [superchains.chains.genesis.l1]
@@ -1007,11 +993,6 @@
         overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
       ProxyAdminOwner = "0x4377BB0F0103992b31eC12b4d796a8687B8dC8E9"
@@ -1057,6 +1038,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1695433056
       [superchains.chains.genesis.l1]
@@ -1070,11 +1055,6 @@
         overhead = "0x0000000000000000000000000000000000000000000000000000000000000834"
         scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
         gasLimit = 25000000
-      [superchains.chains.genesis.config]
-        [superchains.chains.genesis.config.optimism]
-          eip1559_elasticity = 6
-          eip1559_denominator = 50
-          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0xAf6E0E871f38c7B653700F7CbAEDafaa2784D430"
       ProxyAdminOwner = "0xAf6E0E871f38c7B653700F7CbAEDafaa2784D430"
