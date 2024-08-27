@@ -49,7 +49,7 @@ func ConstructChainConfig(
 		return superchain.ChainConfig{}, fmt.Errorf("failed to load L2 genesis: %w", err)
 	}
 
-	chainConfig.Genesis.Config.Optimism = (*superchain.OptimismConfig)(genesis.Config.Optimism)
+	chainConfig.Optimism = (*superchain.OptimismConfig)(genesis.Config.Optimism)
 
 	chainConfig.Name = chainName
 	chainConfig.PublicRPC = publicRPC

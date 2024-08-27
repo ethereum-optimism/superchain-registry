@@ -36,18 +36,13 @@ type OptimismConfig struct {
 	EIP1559Denominator       uint64  `toml:"eip1559_denominator" json:"eip1559Denominator"`
 	EIP1559DenominatorCanyon *uint64 `toml:"eip1559_denominator_canyon,omitempty" json:"eip1559DenominatorCanyon,omitempty"`
 }
-type GenesisChainConfig struct {
-	// Optimism config, nil if not active
-	Optimism *OptimismConfig `toml:"optimism,omitempty" json:"optimism,omitempty"`
-}
 
 type ChainGenesis struct {
-	L1           BlockID            `toml:"l1"`
-	L2           BlockID            `toml:"l2"`
-	L2Time       uint64             `toml:"l2_time" json:"l2_time"`
-	ExtraData    *HexBytes          `toml:"extra_data,omitempty"`
-	SystemConfig SystemConfig       `toml:"system_config" json:"system_config" `
-	Config       GenesisChainConfig `toml:"config" json:"config"`
+	L1           BlockID      `toml:"l1"`
+	L2           BlockID      `toml:"l2"`
+	L2Time       uint64       `toml:"l2_time" json:"l2_time"`
+	ExtraData    *HexBytes    `toml:"extra_data,omitempty"`
+	SystemConfig SystemConfig `toml:"system_config" json:"system_config" `
 }
 
 type SystemConfig struct {
@@ -115,6 +110,7 @@ type ChainConfig struct {
 	SequencerWindowSize  uint64           `toml:"seq_window_size" json:"seq_window_size"`
 	MaxSequencerDrift    uint64           `toml:"max_sequencer_drift" json:"max_sequencer_drift"`
 	DataAvailabilityType DataAvailability `toml:"data_availability_type"`
+	Optimism             *OptimismConfig  `toml:"optimism,omitempty" json:"optimism,omitempty"`
 
 	// Optional feature
 	AltDA *AltDAConfig `toml:"alt_da,omitempty" json:"alt_da,omitempty"`
