@@ -31,12 +31,23 @@ type BlockID struct {
 	Number uint64 `toml:"number"`
 }
 
+type OptimismConfig struct {
+	EIP1559Elasticity        uint64  `toml:"eip1559_elasticity" json:"eip1559Elasticity"`
+	EIP1559Denominator       uint64  `toml:"eip1559_denominator" json:"eip1559Denominator"`
+	EIP1559DenominatorCanyon *uint64 `toml:"eip1559_denominator_canyon,omitempty" json:"eip1559DenominatorCanyon,omitempty"`
+}
+type GenesisChainConfig struct {
+	// Optimism config, nil if not active
+	Optimism *OptimismConfig `toml:"optimism,omitempty" json:"optimism,omitempty"`
+}
+
 type ChainGenesis struct {
-	L1           BlockID      `toml:"l1"`
-	L2           BlockID      `toml:"l2"`
-	L2Time       uint64       `toml:"l2_time" json:"l2_time"`
-	ExtraData    *HexBytes    `toml:"extra_data,omitempty"`
-	SystemConfig SystemConfig `toml:"system_config" json:"system_config" `
+	L1           BlockID            `toml:"l1"`
+	L2           BlockID            `toml:"l2"`
+	L2Time       uint64             `toml:"l2_time" json:"l2_time"`
+	ExtraData    *HexBytes          `toml:"extra_data,omitempty"`
+	SystemConfig SystemConfig       `toml:"system_config" json:"system_config" `
+	Config       GenesisChainConfig `toml:"config" json:"config"`
 }
 
 type SystemConfig struct {
@@ -483,18 +494,7 @@ type GenesisAccount struct {
 	Nonce    uint64        `json:"nonce,omitempty"`
 }
 
-// OptimismConfig is the optimism config.
-type OptimismConfig struct {
-	EIP1559Elasticity        uint64  `json:"eip1559Elasticity"`
-	EIP1559Denominator       uint64  `json:"eip1559Denominator"`
-	EIP1559DenominatorCanyon *uint64 `json:"eip1559DenominatorCanyon,omitempty"`
-}
-type GenesisConfig struct {
-	// Optimism config, nil if not active
-	Optimism *OptimismConfig `json:"optimism,omitempty"`
-}
 type Genesis struct {
-	Config GenesisConfig `json:"config"`
 	// Block properties
 	Nonce         uint64  `json:"nonce"`
 	Timestamp     uint64  `json:"timestamp"`
