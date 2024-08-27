@@ -34,11 +34,6 @@ data_availability_type = "eth-da"
     overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
-  [genesis.config]
-    [genesis.config.optimism]
-      eip1559_elasticity = 6
-      eip1559_denominator = 50
-      eip1559_denominator_canyon = 250
 
 [addresses]
   SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
