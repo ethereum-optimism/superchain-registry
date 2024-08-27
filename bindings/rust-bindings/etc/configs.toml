@@ -1009,6 +1009,10 @@
         scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
         gasLimit = 30000000
       [superchains.chains.genesis.config]
+        [superchains.chains.genesis.config.optimism]
+          eip1559_elasticity = 6
+          eip1559_denominator = 50
+          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
       ProxyAdminOwner = "0x4377BB0F0103992b31eC12b4d796a8687B8dC8E9"
@@ -1068,6 +1072,10 @@
         scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
         gasLimit = 25000000
       [superchains.chains.genesis.config]
+        [superchains.chains.genesis.config.optimism]
+          eip1559_elasticity = 6
+          eip1559_denominator = 50
+          eip1559_denominator_canyon = 250
     [superchains.chains.addresses]
       SystemConfigOwner = "0xAf6E0E871f38c7B653700F7CbAEDafaa2784D430"
       ProxyAdminOwner = "0xAf6E0E871f38c7B653700F7CbAEDafaa2784D430"
