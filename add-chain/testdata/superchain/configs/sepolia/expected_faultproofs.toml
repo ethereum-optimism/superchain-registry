@@ -13,6 +13,10 @@ seq_window_size = 3600
 max_sequencer_drift = 600
 data_availability_type = "eth-da"
 
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+
 [genesis]
   l2_time = 1706484048
   [genesis.l1]
@@ -26,10 +30,6 @@ data_availability_type = "eth-da"
     overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
     scalar = "0x0100000000000000000000000000000000000000000000000000000000000000"
     gasLimit = 30000000
-  [genesis.config]
-    [genesis.config.optimism]
-      eip1559_elasticity = 6
-      eip1559_denominator = 50
 
 [addresses]
   SystemConfigOwner = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
