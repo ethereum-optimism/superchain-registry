@@ -33,7 +33,6 @@ data_availability_type = "eth-da"
     [genesis.config.optimism]
       eip1559_elasticity = 6
       eip1559_denominator = 50
-      eip1559_denominator_canyon = 250
 
 [addresses]
   SystemConfigOwner = "0x23BA22Dd7923F3a3f2495bB32a6f3c9b9CD1EC6C"
