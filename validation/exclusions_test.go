@@ -18,6 +18,9 @@ func skipIfExcluded(t *testing.T, chainID uint64) {
 		if matches && exclusions[pattern][chainID] {
 			t.Skip("Excluded!")
 		}
+		if matches && silences[pattern][chainID].After(time.Now()) {
+			t.Skipf("Silenced until %s", silences[pattern][chainID].String())
+		}
 	}
 }
 
@@ -56,15 +59,14 @@ var exclusions = map[string]map[uint64]bool{
 		11763072: true, // sepolia-dev0/base-devnet-0
 	},
 	"Optimism_Portal_2_Params": {
-		10:       true, // mainnet/op (Permissioned Dispute Game enabled, silenced until Tue 11 Sep 2024 16:00:01 UTC)
 		11763072: true, // sepolia-dev0/base-devnet-0
 	},
 }
 
-func TestSilences(t *testing.T) {
-	if exclusions["Optimism_Portal_2_Params"][10] && time.Now().After(time.Unix(1726070401, 0)) {
-		t.Fatal("OP Mainnet exclusion expired")
-	}
+var silences = map[string]map[uint64]time.Time{
+	"Optimism_Portal_2_Params": {
+		10: time.Unix(1726070401, 0), // mainnet/op silenced until Tue 11 Sep 2024 16:00:01 UTC
+	},
 }
 
 func TestExclusions(t *testing.T) {
