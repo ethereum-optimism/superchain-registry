@@ -81,18 +81,22 @@ remove-chain SUPERCHAIN_TARGET CHAIN:
 cargo-tests:
   just bindings/rust-primitives/tests
   just bindings/rust-bindings/tests
+  just bindings/superchain/tests
 
 # Run cargo lints
 cargo-lint:
   just bindings/rust-primitives/lint
   just bindings/rust-bindings/lint
+  just bindings/superchain/lint
 
 # Cargo build
 cargo-build:
   just bindings/rust-primitives/build
   just bindings/rust-bindings/build
+  just bindings/superchain/build
 
 # Release
 release:
   just bindings/rust-primitives/release
   just bindings/rust-bindings/release
+  just bindings/superchain/release
