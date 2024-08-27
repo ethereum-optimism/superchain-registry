@@ -19,7 +19,6 @@ superchain-primitives = { path = "../rust-primitives", version = "0.2.2", defaul
 # Serialization
 serde = { version = "1.0.203", default-features = false, features = ["derive", "alloc"] }
 toml = { version = "0.8.14" }
-serde_repr = "0.1"
 
 [dev-dependencies]
 alloy-primitives = { version = "0.7.1", default-features = false }

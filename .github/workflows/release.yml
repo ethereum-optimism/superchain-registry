@@ -23,3 +23,6 @@ jobs:
       - name: Release superchain-registry crate
         run: just bindings/rust-bindings/release
         continue-on-error: true
+      - name: Release superchain crate
+        run: just bindings/superchain/release
+        continue-on-error: true
