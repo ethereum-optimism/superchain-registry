@@ -119,6 +119,23 @@
     }
   },
   {
+    "name": "Redstone",
+    "identifier": "mainnet/redstone",
+    "chainId": 690,
+    "rpc": [
+      "https://rpc.redstonechain.com"
+    ],
+    "explorers": [
+      "https://explorer.redstone.xyz"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Binary Mainnet",
     "identifier": "mainnet/tbn",
     "chainId": 624,
