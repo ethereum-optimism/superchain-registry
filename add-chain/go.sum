@@ -61,8 +61,8 @@ github.com/decred/dcrd/crypto/blake256 v1.0.1 h1:7PltbUIQB7u/FfZ39+DGa/ShuMyJ5il
 github.com/decred/dcrd/crypto/blake256 v1.0.1/go.mod h1:2OfgNZ5wDpcsFmHmCK5gZTPcCXqlm2ArzUIkw9czNJo=
 github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 h1:rpfIENRNNilwHwZeG5+P150SMrnNEcHYvcCuK6dPZSg=
 github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0/go.mod h1:v57UDF4pDQJcEfFUCRop3lJL149eHGSe9Jvczhzjo/0=
-github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240827194518-1071ac1284b8 h1:herYQxIOCZzBNAIClH0BP/+1BAXIn5bz0vRYH9bdgug=
-github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240827194518-1071ac1284b8/go.mod h1:WBZxPjS4MTFLiFGEfBngof6KwdIU6zZ4t00B8zLJwDE=
+github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240828150145-60038121c757 h1:egacojEWb68ew7vq0eyeOhM7XI2Soit/Xv1jXhVzRho=
+github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240828150145-60038121c757/go.mod h1:boCyfYcCK/lDcL1JA5daLc2qgvULU1zKcVtUJ605eGc=
 github.com/ethereum-optimism/optimism v1.9.1-0.20240814195148-0bb2ff57c813 h1:g1eUt4iB+v+FGdO7WAI17SpVahsrC6S9HGO0ceAd8Ec=
 github.com/ethereum-optimism/optimism v1.9.1-0.20240814195148-0bb2ff57c813/go.mod h1:LTZIluX+26O0GHlwnFdPIUX04OUqcVDdThjRDsALYUY=
 github.com/ethereum/c-kzg-4844 v1.0.0 h1:0X1LBXxaEtYD9xsyj9B9ctQEZIpnvVDeoBx8aHEwTNA=
