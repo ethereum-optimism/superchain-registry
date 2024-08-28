@@ -92,7 +92,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 		panic("must set node_version in meta.toml")
 	}
 	creationCommand := GenesisCreationCommand[vis.GenesisCreationCommand](chainId, Superchains[chain.Superchain].Config.L1.PublicRPC)
-	mustExecuteCommandInDir(monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.NodeVersion, buildCommand, creationCommand))
+	mustExecuteCommandInDir(monorepoDir, exec.Command("bash", "./monorepo-outputs.sh", vis.NodeVersion, buildCommand, creationCommand))
 
 	expectedData, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 	require.NoError(t, err)
