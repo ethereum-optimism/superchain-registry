@@ -1,8 +1,6 @@
 set positional-arguments
-alias ct := cargo-tests
-alias cl := cargo-lint
-alias cf := cargo-format
-alias cb := cargo-build
+alias t := test-all
+alias l := lint-all
 
 # Adding a chain
 add-chain:
@@ -80,33 +78,3 @@ remove-chain SUPERCHAIN_TARGET CHAIN:
 	rm superchain/configs/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.toml
 	rm superchain/extra/genesis/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.json.gz
 	just codegen
-
-# Run cargo tests
-cargo-tests:
-  just bindings/rust-primitives/tests
-  just bindings/rust-bindings/tests
-  just bindings/superchain/tests
-
-# Run cargo format
-cargo-format:
-  just bindings/rust-primitives/fmt
-  just bindings/rust-bindings/fmt
-  just bindings/superchain/fmt
-
-# Run cargo lints
-cargo-lint:
-  just bindings/rust-primitives/lint
-  just bindings/rust-bindings/lint
-  just bindings/superchain/lint
-
-# Cargo build
-cargo-build:
-  just bindings/rust-primitives/build
-  just bindings/rust-bindings/build
-  just bindings/superchain/build
-
-# Release
-release:
-  just bindings/rust-primitives/release
-  just bindings/rust-bindings/release
-  just bindings/superchain/release
