@@ -10,7 +10,6 @@ import (
 )
 
 func skipIfExcluded(t *testing.T, chainID uint64) {
-
 	for pattern := range exclusions {
 		matches, err := regexp.Match(pattern, []byte(t.Name()))
 		if err != nil {
