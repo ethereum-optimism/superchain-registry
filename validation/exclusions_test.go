@@ -3,6 +3,7 @@ package validation
 import (
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/stretchr/testify/require"
@@ -16,6 +17,9 @@ func skipIfExcluded(t *testing.T, chainID uint64) {
 		}
 		if matches && exclusions[pattern][chainID] {
 			t.Skip("Excluded!")
+		}
+		if matches && silences[pattern][chainID].After(time.Now()) {
+			t.Skipf("Silenced until %s", silences[pattern][chainID].String())
 		}
 	}
 }
@@ -56,6 +60,12 @@ var exclusions = map[string]map[uint64]bool{
 	},
 	"Optimism_Portal_2_Params": {
 		11763072: true, // sepolia-dev0/base-devnet-0
+	},
+}
+
+var silences = map[string]map[uint64]time.Time{
+	"Optimism_Portal_2_Params": {
+		10: time.Unix(int64(*superchain.OPChains[10].HardForkConfiguration.GraniteTime), 0), // mainnet/op silenced until Granite activates
 	},
 }
 
