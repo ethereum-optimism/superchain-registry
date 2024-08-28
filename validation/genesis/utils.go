@@ -3,13 +3,13 @@ package genesis
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
-	"testing"
 )
 
-func executeCommandInDir(t *testing.T, dir string, cmd *exec.Cmd) error {
-	t.Logf("executing %s", cmd.String())
+func executeCommandInDir(dir string, cmd *exec.Cmd) error {
+	log.Printf("executing %s", cmd.String())
 	cmd.Dir = dir
 	var outErr bytes.Buffer
 	cmd.Stdout = os.Stdout
@@ -22,9 +22,9 @@ func executeCommandInDir(t *testing.T, dir string, cmd *exec.Cmd) error {
 	return err
 }
 
-func mustExecuteCommandInDir(t *testing.T, dir string, cmd *exec.Cmd) {
-	err := executeCommandInDir(t, dir, cmd)
+func mustExecuteCommandInDir(dir string, cmd *exec.Cmd) {
+	err := executeCommandInDir(dir, cmd)
 	if err != nil {
-		t.Fatal(err)
+		panic(err)
 	}
 }
