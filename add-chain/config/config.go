@@ -11,7 +11,9 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum/go-ethereum/core"
 
+	"github.com/ethereum-optimism/superchain-registry/add-chain/utils"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
@@ -19,6 +21,7 @@ import (
 // explicitly setting some additional fields to input argument values
 func ConstructChainConfig(
 	inputFilePath,
+	genesisPath,
 	chainName,
 	publicRPC,
 	sequencerRPC,
@@ -40,6 +43,13 @@ func ConstructChainConfig(
 	if err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error with json altDA config: %w", err)
 	}
+
+	genesis, err := utils.LoadJSON[core.Genesis](genesisPath)
+	if err != nil {
+		return superchain.ChainConfig{}, fmt.Errorf("failed to load L2 genesis: %w", err)
+	}
+
+	chainConfig.Optimism = (*superchain.OptimismConfig)(genesis.Config.Optimism)
 
 	chainConfig.Name = chainName
 	chainConfig.PublicRPC = publicRPC

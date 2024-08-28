@@ -31,6 +31,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1686068903
       [superchains.chains.genesis.l1]
@@ -89,6 +93,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1696608227
       [superchains.chains.genesis.l1]
@@ -145,6 +153,10 @@
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
     gas_paying_token = "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1719397463
       [superchains.chains.genesis.l1]
@@ -203,6 +215,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1700021615
       [superchains.chains.genesis.l1]
@@ -262,6 +278,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1711563515
       [superchains.chains.genesis.l1]
@@ -317,6 +337,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1720421591
       [superchains.chains.genesis.l1]
@@ -376,6 +400,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1686789347
       [superchains.chains.genesis.l1]
@@ -435,6 +463,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1700167583
       [superchains.chains.genesis.l1]
@@ -494,6 +526,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1686693839
       [superchains.chains.genesis.l1]
@@ -564,6 +600,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1687867932
       [superchains.chains.genesis.l1]
@@ -620,6 +660,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1708129620
       [superchains.chains.genesis.l1]
@@ -675,6 +719,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1719646560
       [superchains.chains.genesis.l1]
@@ -734,6 +782,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 10
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1695768288
       [superchains.chains.genesis.l1]
@@ -792,6 +844,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1691802540
       [superchains.chains.genesis.l1]
@@ -851,6 +907,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1698080004
       [superchains.chains.genesis.l1]
@@ -920,6 +980,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1706484048
       [superchains.chains.genesis.l1]
@@ -978,6 +1042,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1695433056
       [superchains.chains.genesis.l1]
