@@ -68,6 +68,12 @@ commands:
             sudo apt-get update
             sudo apt-get -yq install curl git mercurial make binutils bison gcc build-essential bsdmainutils
             bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+  install-pnpm:
+    description: "Installs pnpm"
+    steps:
+      - run:
+          command: |
+            sudo npm install -g pnpm
   validate-genesis:
     description: "Runs genesis validation checks"
     steps:
@@ -122,6 +128,7 @@ jobs:
     resource_class: medium
     steps:
       - checkout
+      - install-pnpm
       - install-just
       - install-foundry
       - install-gvm
