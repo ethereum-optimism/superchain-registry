@@ -55,21 +55,21 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	thisDir := getDirOfThisFile()
 	chainIdString := strconv.Itoa(int(chainId))
 	validationInputsDir := path.Join(thisDir, "validation-inputs", chainIdString)
-	monorepoDir := path.Join(thisDir, "../../../optimism-temporary")
+	monorepoDir := path.Join(thisDir, "optimism-temporary")
 	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
 
 	// reset to appropriate commit, this is preferred to git checkout because it will
 	// blow away any leftover files from the previous run
-	mustExecuteCommandInDir(t, monorepoDir, exec.Command("git", "reset", "--hard", monorepoCommit))
-	mustExecuteCommandInDir(t, monorepoDir, exec.Command("rm", "-rf", "node_modules"))
-	mustExecuteCommandInDir(t, contractsDir, exec.Command("rm", "-rf", "node_modules"))
+	mustExecuteCommandInDir(monorepoDir, exec.Command("git", "reset", "--hard", monorepoCommit))
+	mustExecuteCommandInDir(monorepoDir, exec.Command("rm", "-rf", "node_modules"))
+	mustExecuteCommandInDir(contractsDir, exec.Command("rm", "-rf", "node_modules"))
 
 	// attempt to apply config.patch
-	mustExecuteCommandInDir(t, thisDir, exec.Command("cp", "config.patch", monorepoDir))
-	_ = executeCommandInDir(t, monorepoDir, exec.Command("git", "apply", "config.patch")) // continue on error
+	mustExecuteCommandInDir(thisDir, exec.Command("cp", "config.patch", monorepoDir))
+	_ = executeCommandInDir(monorepoDir, exec.Command("git", "apply", "config.patch")) // continue on error
 
 	// copy genesis input files to monorepo
-	mustExecuteCommandInDir(t, validationInputsDir,
+	mustExecuteCommandInDir(validationInputsDir,
 		exec.Command("cp", "deploy-config.json", path.Join(contractsDir, "deploy-config", chainIdString+".json")))
 	err := os.MkdirAll(path.Join(contractsDir, "deployments", chainIdString), os.ModePerm)
 	if err != nil {
@@ -86,13 +86,13 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	}
 
 	// regenerate genesis.json at this monorepo commit.
-	mustExecuteCommandInDir(t, thisDir, exec.Command("cp", "./monorepo-outputs.sh", monorepoDir))
+	mustExecuteCommandInDir(thisDir, exec.Command("cp", "./monorepo-outputs.sh", monorepoDir))
 	buildCommand := BuildCommand[vis.MonorepoBuildCommand]
 	if vis.NodeVersion == "" {
 		panic("must set node_version in meta.toml")
 	}
 	creationCommand := GenesisCreationCommand[vis.GenesisCreationCommand](chainId, Superchains[chain.Superchain].Config.L1.PublicRPC)
-	mustExecuteCommandInDir(t, monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.NodeVersion, buildCommand, creationCommand))
+	mustExecuteCommandInDir(monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.NodeVersion, buildCommand, creationCommand))
 
 	expectedData, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 	require.NoError(t, err)
