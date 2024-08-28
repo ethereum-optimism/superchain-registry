@@ -10,6 +10,7 @@ import (
 )
 
 func skipIfExcluded(t *testing.T, chainID uint64) {
+
 	for pattern := range exclusions {
 		matches, err := regexp.Match(pattern, []byte(t.Name()))
 		if err != nil {
@@ -65,7 +66,7 @@ var exclusions = map[string]map[uint64]bool{
 
 var silences = map[string]map[uint64]time.Time{
 	"Optimism_Portal_2_Params": {
-		10: time.Unix(1726070401, 0), // mainnet/op silenced until Tue 11 Sep 2024 16:00:01 UTC
+		10: time.Unix(int64(*superchain.OPChains[10].HardForkConfiguration.GraniteTime), 0), // mainnet/op silenced until Granite activates
 	},
 }
 
