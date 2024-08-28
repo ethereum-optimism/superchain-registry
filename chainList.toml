@@ -132,6 +132,19 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Ethernity Testnet"
+  identifier = "sepolia/ethernity"
+  chain_id = 233
+  rpc = ["https://testnet.ethernitychain.io"]
+  explorers = ["https://testnet.ernscan.io"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  gas_paying_token = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Metal L2 Testnet"
   identifier = "sepolia/metal"
   chain_id = 1740
