@@ -51,13 +51,15 @@ commands:
     steps:
       - run:
           command: |
-            apt-get update
-            apt-get -yq install curl git mercurial make binutils bison gcc build-essential bsdmainutils
+            sudo apt-get update
+            sudo apt-get -yq install curl git mercurial make binutils bison gcc build-essential bsdmainutils
             bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-  validate-genesis:
-    description: "Runs genesis validation checks"
+  install-pnpm:
+    description: "Installs pnpm"
     steps:
-      - run: just validate-genesis "*"
+      - run:
+          command: |
+            sudo npm install -g pnpm
 
 jobs:
   golang-lint:
@@ -104,18 +106,27 @@ jobs:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
   golang-validate-genesis:
     docker:
-      - image: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.49.0
+      - image: cimg/go:1.22.6-node
     resource_class: medium
+    parameters:
+      chainid:
+        type: string
     steps:
       - checkout
+      - install-pnpm
+      - install-just
       - install-foundry
       - install-gvm
       - run:
           name: Install NVM
           command: |
             curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+            source ~/.bashrc
             nvm --version
-      - validate-genesis # TODO this should also be filtered on modified chains
+      - run: just validate-genesis <<parameters.chainid>>
+ # TODO this should also be filtered on modified chains
   golang-validate-modified:
     shell: /bin/bash -eo pipefail
     executor:
@@ -252,6 +263,9 @@ workflows:
       - golang-lint
       - golang-modules-tidy
       - golang-test
-      - golang-validate-genesis
+      - golang-validate-genesis:
+          matrix:
+            parameters:
+              chainid: ["7777777", "4801", "1750", "480","34443", "6806", "84532", "8453", "1135", "4202"]
       - golang-validate-modified
       - check-codegen

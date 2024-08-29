@@ -1,8 +1,10 @@
 package genesis
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -26,7 +28,23 @@ func perChainTestName(chain *superchain.ChainConfig) string {
 	return chain.Name + fmt.Sprintf(" (%d)", chain.ChainID)
 }
 
+var temporaryOptimismDir string
+
 func TestGenesisPredeploys(t *testing.T) {
+	// Clone optimism into gitignored temporary directory (if that directory does not yet exist)
+	// We avoid cloning under the superchain-registry tree, since this causes dependency resolution problems
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		panic("No caller information")
+	}
+	thisDir := filepath.Dir(filename)
+	temporaryOptimismDir = path.Join(thisDir, "../../../optimism-temporary")
+
+	if _, err := os.Stat(temporaryOptimismDir); os.IsNotExist(err) {
+		mustExecuteCommandInDir(thisDir,
+			exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git", temporaryOptimismDir))
+	}
+
 	for _, chain := range OPChains {
 		if chain.SuperchainLevel == Standard || chain.StandardChainCandidate {
 			t.Run(perChainTestName(chain), func(t *testing.T) {
@@ -35,6 +53,8 @@ func TestGenesisPredeploys(t *testing.T) {
 			})
 		}
 	}
+
+	// TODO cleanup temporaryOptimismDir
 }
 
 // Invoke this with go test -timeout 0 ./validation/genesis -run=TestGenesisPredeploys -v
@@ -55,7 +75,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	thisDir := getDirOfThisFile()
 	chainIdString := strconv.Itoa(int(chainId))
 	validationInputsDir := path.Join(thisDir, "validation-inputs", chainIdString)
-	monorepoDir := path.Join(thisDir, "optimism-temporary")
+	monorepoDir := temporaryOptimismDir
 	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
 
 	// reset to appropriate commit, this is preferred to git checkout because it will
@@ -92,7 +112,22 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 		panic("must set node_version in meta.toml")
 	}
 	creationCommand := GenesisCreationCommand[vis.GenesisCreationCommand](chainId, Superchains[chain.Superchain].Config.L1.PublicRPC)
-	mustExecuteCommandInDir(monorepoDir, exec.Command("sh", "./monorepo-outputs.sh", vis.NodeVersion, buildCommand, creationCommand))
+	cmd := exec.Command("bash", "./monorepo-outputs.sh", vis.NodeVersion, buildCommand, creationCommand)
+	// Create a pipe to read the command's output
+	stdoutPipe, err := cmd.StdoutPipe()
+	if err != nil {
+		t.Fatalf("Failed to get stdout pipe: %v", err)
+	}
+
+	stderrPipe, err := cmd.StderrPipe()
+	if err != nil {
+		t.Fatalf("Failed to get stderr pipe: %v", err)
+	}
+	// Stream the command's stdout and stderr to the test logger
+	go streamOutputToLogger(stdoutPipe, t)
+	go streamOutputToLogger(stderrPipe, t)
+
+	mustExecuteCommandInDir(monorepoDir, cmd)
 
 	expectedData, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 	require.NoError(t, err)
@@ -140,6 +175,16 @@ func writeDeployments(chainId uint64, directory string) error {
 		return err
 	}
 	return nil
+}
+
+func streamOutputToLogger(reader io.Reader, t *testing.T) {
+	scanner := bufio.NewScanner(reader)
+	for scanner.Scan() {
+		t.Log(scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		t.Errorf("Error reading command output: %v", err)
+	}
 }
 
 func writeDeploymentsLegacy(chainId uint64, directory string) error {
