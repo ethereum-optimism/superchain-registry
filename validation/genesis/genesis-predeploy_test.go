@@ -15,18 +15,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	. "github.com/ethereum-optimism/superchain-registry/validation/common"
 	"github.com/ethereum/go-ethereum/common"
+
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/stretchr/testify/require"
 )
-
-// TODO deduplicate this
-// perChainTestName ensures test can easily be filtered by chain name or chain id using the -run=regex testflag.
-func perChainTestName(chain *superchain.ChainConfig) string {
-	return chain.Name + fmt.Sprintf(" (%d)", chain.ChainID)
-}
 
 var temporaryOptimismDir string
 
@@ -47,7 +42,7 @@ func TestGenesisPredeploys(t *testing.T) {
 
 	for _, chain := range OPChains {
 		if chain.SuperchainLevel == Standard || chain.StandardChainCandidate {
-			t.Run(perChainTestName(chain), func(t *testing.T) {
+			t.Run(PerChainTestName(chain), func(t *testing.T) {
 				// Do not run in parallel
 				testGenesisPredeploys(t, chain)
 			})

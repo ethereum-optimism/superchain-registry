@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/common"
 )
 
 // Test names
@@ -33,7 +34,7 @@ func TestValidation(t *testing.T) {
 	// on each OP chain.
 	for _, chain := range OPChains {
 		chain := chain
-		t.Run(perChainTestName(chain), func(t *testing.T) {
+		t.Run(common.PerChainTestName(chain), func(t *testing.T) {
 			t.Parallel()
 			testValidation(t, chain)
 		})
