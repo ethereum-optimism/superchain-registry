@@ -18,7 +18,6 @@ commands:
           template: basic_fail_1
           branch_pattern: main
   install-just:
-    description: "Install just"
     steps:
       - run:
           name: "Install just"
@@ -28,7 +27,6 @@ commands:
             sudo apt update
             sudo apt install just
   install-foundry:
-    description: "Installs foundry"
     steps:
       - run:
           # need foundry to execute 'cast call' within add-chain script
@@ -47,9 +45,9 @@ commands:
             $HOME/.foundry/bin/foundryup
             forge --version
   install-gvm:
-    description: "Installs gvm"
     steps:
       - run:
+          name: install nvm
           command: |
             sudo apt-get update
             sudo apt-get -yq install curl git mercurial make binutils bison gcc build-essential bsdmainutils
@@ -58,8 +56,20 @@ commands:
     description: "Installs pnpm"
     steps:
       - run:
+          name: Install pnpm
           command: |
             sudo npm install -g pnpm
+  install-nvm:
+    description: "Installs nvm"
+    steps:
+      - run:
+          name: Install nvm
+          command: |
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+            source ~/.bashrc
+            nvm --version
 
 jobs:
   golang-lint:
@@ -117,14 +127,7 @@ jobs:
       - install-just
       - install-foundry
       - install-gvm
-      - run:
-          name: Install NVM
-          command: |
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-            source ~/.bashrc
-            nvm --version
+      - install-nvm
       - run: just validate-genesis <<parameters.chainid>>
  # TODO this should also be filtered on modified chains
   golang-validate-modified:
