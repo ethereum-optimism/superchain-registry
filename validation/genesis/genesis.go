@@ -70,7 +70,7 @@ func init() {
 			mustExecuteCommandInDir(clonePath,
 				exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git", cloneDir))
 		} else {
-			panic(fmt.Errorf("unable to create %s: %s", cloneDir, err))
+			panic(fmt.Errorf("unable to create %s: %w", cloneDir, err))
 		}
 	}
 }
