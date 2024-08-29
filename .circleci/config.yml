@@ -74,10 +74,6 @@ commands:
       - run:
           command: |
             sudo npm install -g pnpm
-  validate-genesis:
-    description: "Runs genesis validation checks"
-    steps:
-      - run: just validate-genesis "*"
 
 jobs:
   golang-lint:
@@ -126,6 +122,9 @@ jobs:
     docker:
       - image: cimg/go:1.22.6-node
     resource_class: medium
+    parameters:
+      chainid:
+        type: string
     steps:
       - checkout
       - install-pnpm
@@ -140,7 +139,8 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
             source ~/.bashrc
             nvm --version
-      - validate-genesis # TODO this should also be filtered on modified chains
+      - run: just validate-genesis <<parameters.chainid>>
+ # TODO this should also be filtered on modified chains
   golang-validate-modified:
     shell: /bin/bash -eo pipefail
     executor:
@@ -278,7 +278,10 @@ workflows:
       - golang-lint
       - golang-modules-tidy
       - golang-test
-      - golang-validate-genesis
+      - golang-validate-genesis:
+          matrix:
+            parameters:
+              chainid: ["7777777", "4801", "1750", "480","34443", "6806"]
       - golang-validate-modified
       - check-codegen
       - cargo-tests
