@@ -81,10 +81,10 @@ func getBool(method string, contractAddress Address, client *ethclient.Client) (
 		return false, err
 	}
 
-	switch string(result) {
-	case "0x1":
+	switch common.HexToHash(string(result)) {
+	case common.Hash{1}:
 		return true, nil
-	case "0x0":
+	case common.Hash{}:
 		return false, nil
 	default:
 		return false, errors.New("unexpected non-bool return value")
