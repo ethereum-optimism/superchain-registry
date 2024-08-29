@@ -4,7 +4,6 @@ orbs:
   go: circleci/go@1.8.0
   node: circleci/node@5.2.0
   slack: circleci/slack@4.10.1
-  rust: circleci/rust@1.6.1
 
 commands:
   notify-failures-on-main:
@@ -28,19 +27,6 @@ commands:
             echo "deb [arch=all,$(dpkg --print-architecture) signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
             sudo apt update
             sudo apt install just
-  install-nextest:
-    description: "Installs cargo nextest"
-    steps:
-      - run:
-          name: "Install nextest"
-          command: cargo install cargo-nextest --locked
-  install-rust-toolchain:
-    description: "Installs rust toolchain components"
-    steps:
-      - run:
-          name: "Install toolchain"
-          command: |
-            rustup install nightly-x86_64-unknown-linux-gnu
   install-foundry:
     description: "Installs foundry"
     steps:
@@ -179,7 +165,32 @@ jobs:
       - run:
           name: run validation checks
           command: just promotion-test
-      - notify-failures-on-main:
+      - slack/notify:
+          event: always
+          custom: |
+              {
+                "blocks": [
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": ":control_knobs: The daily report on standard candidate chains is ready!"
+                    }
+                  },
+                  {
+                    "type": "divider"
+                  },
+                  {
+                    "type": "context",
+                    "elements": [
+                      {
+                        "type": "mrkdwn",
+                        "text": "👀 Click the link to see what validation checks would fail if all candidate chains were promoted to standard (and exclusions removed)."
+                      }
+                    ]
+                  }
+                ]
+              }
           channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-failures`
   publish-bot:
     environment:
@@ -209,41 +220,6 @@ jobs:
       - run:
           name: check git tree is clean
           command: git diff --exit-code
-  cargo-tests:
-    docker:
-      - image: cimg/rust:1.79
-    steps:
-      - checkout
-      - install-just
-      - install-nextest
-      - run:
-          name: Cargo Tests
-          command: just cargo-tests
-      - notify-failures-on-main:
-          channel: C03N11M0BBN # to slack channel `notify-ci-failures`
-  cargo-lint:
-    docker:
-      - image: cimg/rust:1.79
-    steps:
-      - checkout
-      - install-just
-      - install-rust-toolchain
-      - run:
-          name: Cargo lints
-          command: just cargo-lint
-      - notify-failures-on-main:
-          channel: C03N11M0BBN # to slack channel `notify-ci-failures`
-  cargo-build:
-    docker:
-      - image: cimg/rust:1.79
-    steps:
-      - checkout
-      - install-just
-      - run:
-          name: Cargo build
-          command: just cargo-build
-      - notify-failures-on-main:
-          channel: C03N11M0BBN # to slack channel `notify-ci-failures`
 
 workflows:
   hourly:
@@ -284,6 +260,3 @@ workflows:
               chainid: ["7777777", "4801", "1750", "480","34443", "6806", "84532", "8453", "1135", "4202"]
       - golang-validate-modified
       - check-codegen
-      - cargo-tests
-      - cargo-lint
-      - cargo-build

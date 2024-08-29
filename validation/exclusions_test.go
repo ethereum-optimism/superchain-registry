@@ -3,6 +3,7 @@ package validation
 import (
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/stretchr/testify/require"
@@ -16,6 +17,9 @@ func skipIfExcluded(t *testing.T, chainID uint64) {
 		}
 		if matches && exclusions[pattern][chainID] {
 			t.Skip("Excluded!")
+		}
+		if matches && silences[pattern][chainID].After(time.Now()) {
+			t.Skipf("Silenced until %s", silences[pattern][chainID].String())
 		}
 	}
 }
@@ -51,27 +55,17 @@ var exclusions = map[string]map[uint64]bool{
 		1740:      true, // metal-sepolia
 	},
 	"Standard_Contract_Versions": {
-		8453:      true, // mainnet/base         MCP (at time of writing)
-		1750:      true, // mainnet/metal        MCP (at time of writing)
-		34443:     true, // mainnet/mode         MCP (at time of writing)
-		7777777:   true, // mainnet/zora         MCP (at time of writing)
-		84532:     true, // sepolia/base         MCP (at time of writing)
-		1740:      true, // sepolia/metal        MCP (at time of writing)
-		919:       true, // sepolia/mode         MCP (at time of writing)
-		999999999: true, // sepolia/zora         MCP (at time of writing)
-		11155421:  true, // sepolia-dev0/oplabs-devnet-0
-		11763072:  true, // sepolia-dev0/base-devnet-0
+		11155421: true, // sepolia-dev0/oplabs-devnet-0
+		11763072: true, // sepolia-dev0/base-devnet-0
 	},
 	"Optimism_Portal_2_Params": {
-		8453:      true, // mainnet/base         MCP (at time of writing)
-		1750:      true, // mainnet/metal        MCP (at time of writing)
-		34443:     true, // mainnet/mode         MCP (at time of writing)
-		7777777:   true, // mainnet/zora         MCP (at time of writing)
-		84532:     true, // sepolia/base         MCP (at time of writing)
-		1740:      true, // sepolia/metal        MCP (at time of writing)
-		919:       true, // sepolia/mode         MCP (at time of writing)
-		999999999: true, // sepolia/zora         MCP (at time of writing)
-		11763072:  true, // sepolia-dev0/base-devnet-0
+		11763072: true, // sepolia-dev0/base-devnet-0
+	},
+}
+
+var silences = map[string]map[uint64]time.Time{
+	"Optimism_Portal_2_Params": {
+		10: time.Unix(int64(*superchain.OPChains[10].HardForkConfiguration.GraniteTime), 0), // mainnet/op silenced until Granite activates
 	},
 }
 
