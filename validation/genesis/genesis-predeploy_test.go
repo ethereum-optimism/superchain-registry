@@ -1,10 +1,7 @@
 package genesis
 
 import (
-	"bufio"
 	"encoding/json"
-	"fmt"
-	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -12,12 +9,10 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
-	"strings"
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/validation/common"
-	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/stretchr/testify/require"
@@ -36,7 +31,10 @@ func TestMain(m *testing.M) {
 	thisDir := filepath.Dir(filename)
 	temporaryOptimismDir = path.Join(thisDir, "../../../optimism-temporary")
 
-	if _, err := os.Stat(temporaryOptimismDir); os.IsNotExist(err) {
+	// Clone the repo if it the folder doesn't exist
+	_, err := os.Stat(temporaryOptimismDir)
+	needToClone := os.IsNotExist(err)
+	if needToClone {
 		mustExecuteCommandInDir(thisDir,
 			exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git", temporaryOptimismDir))
 	}
@@ -44,9 +42,14 @@ func TestMain(m *testing.M) {
 	// Run tests
 	exitVal := m.Run()
 
-	// Teardown code: Clean up the temporary directory after tests have run
-	if err := os.RemoveAll(temporaryOptimismDir); err != nil {
-		panic("Failed to remove temp directory: " + err.Error())
+	// Teardown code:
+	// Only if we cloned the directory, now delete it
+	// This means during local development, one can clone the
+	// repo manually before running the test to speed up runs.
+	if needToClone {
+		if err := os.RemoveAll(temporaryOptimismDir); err != nil {
+			panic("Failed to remove temp directory: " + err.Error())
+		}
 	}
 
 	// Exit with the result of the tests
@@ -66,11 +69,10 @@ func TestGenesisPredeploys(t *testing.T) {
 
 func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	chainId := chain.ChainID
-
 	vis, ok := ValidationInputs[chainId]
 
 	if !ok {
-		t.Skip("WARNING: cannot yet validate this chain (no validation metadata)")
+		t.Fatalf("Could not validate the genesis of chain %d (no validation metadata)", chainId)
 	}
 
 	monorepoCommit := vis.GenesisCreationCommit
@@ -82,24 +84,26 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	monorepoDir := temporaryOptimismDir
 	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
 
-	// reset to appropriate commit, this is preferred to git checkout because it will
+	// This is preferred to git checkout because it will
 	// blow away any leftover files from the previous run
+	t.Logf("🛠️ Resetting monorepo to %s...", monorepoCommit)
 	mustExecuteCommandInDir(monorepoDir, exec.Command("git", "reset", "--hard", monorepoCommit))
+
+	t.Log("🛠️ Deleting node_modules...")
 	mustExecuteCommandInDir(monorepoDir, exec.Command("rm", "-rf", "node_modules"))
 	mustExecuteCommandInDir(contractsDir, exec.Command("rm", "-rf", "node_modules"))
 
-	// attempt to apply config.patch
+	t.Log("🛠️ Attempting to apply config.patch...")
 	mustExecuteCommandInDir(thisDir, exec.Command("cp", "config.patch", monorepoDir))
 	_ = executeCommandInDir(monorepoDir, exec.Command("git", "apply", "config.patch")) // continue on error
 
-	// copy genesis input files to monorepo
+	t.Log("🛠️ Copying deploy-config, deployments, and wrapper script to temporary dir...")
 	mustExecuteCommandInDir(validationInputsDir,
 		exec.Command("cp", "deploy-config.json", path.Join(contractsDir, "deploy-config", chainIdString+".json")))
 	err := os.MkdirAll(path.Join(contractsDir, "deployments", chainIdString), os.ModePerm)
 	if err != nil {
 		log.Fatalf("Failed to create directory: %v", err)
 	}
-
 	if vis.GenesisCreationCommand == "opnode2" {
 		err = writeDeploymentsLegacy(chainId, path.Join(contractsDir, "deployments", chainIdString))
 	} else {
@@ -109,7 +113,6 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 		log.Fatalf("Failed to write deployments: %v", err)
 	}
 
-	// regenerate genesis.json at this monorepo commit.
 	mustExecuteCommandInDir(thisDir, exec.Command("cp", "./monorepo-outputs.sh", monorepoDir))
 	buildCommand := BuildCommand[vis.MonorepoBuildCommand]
 	if vis.NodeVersion == "" {
@@ -117,12 +120,11 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	}
 	creationCommand := GenesisCreationCommand[vis.GenesisCreationCommand](chainId, Superchains[chain.Superchain].Config.L1.PublicRPC)
 	cmd := exec.Command("bash", "./monorepo-outputs.sh", vis.NodeVersion, buildCommand, creationCommand)
-	// Create a pipe to read the command's output
+
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {
 		t.Fatalf("Failed to get stdout pipe: %v", err)
 	}
-
 	stderrPipe, err := cmd.StderrPipe()
 	if err != nil {
 		t.Fatalf("Failed to get stderr pipe: %v", err)
@@ -131,8 +133,10 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	go streamOutputToLogger(stdoutPipe, t)
 	go streamOutputToLogger(stderrPipe, t)
 
+	t.Log("🛠️ Regenerating genesis...")
 	mustExecuteCommandInDir(monorepoDir, cmd)
 
+	t.Log("🛠️ Comparing registry genesis.alloc with regenerated genesis.alloc...")
 	expectedData, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 	require.NoError(t, err)
 
@@ -164,116 +168,4 @@ func getDirOfThisFile() string {
 		panic("No caller information")
 	}
 	return filepath.Dir(filename)
-}
-
-func writeDeployments(chainId uint64, directory string) error {
-	as := Addresses[chainId]
-
-	data, err := json.Marshal(as)
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile(path.Join(directory, ".deploy"), data, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func streamOutputToLogger(reader io.Reader, t *testing.T) {
-	scanner := bufio.NewScanner(reader)
-	for scanner.Scan() {
-		t.Log(scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		t.Errorf("Error reading command output: %v", err)
-	}
-}
-
-func writeDeploymentsLegacy(chainId uint64, directory string) error {
-	// Prepare a HardHat Deployment type, we need this whole structure to make things
-	// work, although it is only the Address field which ends up getting used.
-	type StorageLayoutEntry struct {
-		AstId    uint   `json:"astId"`
-		Contract string `json:"contract"`
-		Label    string `json:"label"`
-		Offset   uint   `json:"offset"`
-		Slot     uint   `json:"slot,string"`
-		Type     string `json:"type"`
-	}
-	type StorageLayoutType struct {
-		Encoding      string `json:"encoding"`
-		Label         string `json:"label"`
-		NumberOfBytes uint   `json:"numberOfBytes,string"`
-		Key           string `json:"key,omitempty"`
-		Value         string `json:"value,omitempty"`
-		Base          string `json:"base,omitempty"`
-	}
-	type StorageLayout struct {
-		Storage []StorageLayoutEntry         `json:"storage"`
-		Types   map[string]StorageLayoutType `json:"types"`
-	}
-	type Deployment struct {
-		Name             string
-		Abi              []string        `json:"abi"`
-		Address          string          `json:"address"`
-		Args             []any           `json:"args"`
-		Bytecode         string          `json:"bytecode"`
-		DeployedBytecode string          `json:"deployedBytecode"`
-		Devdoc           json.RawMessage `json:"devdoc"`
-		Metadata         string          `json:"metadata"`
-		Receipt          json.RawMessage `json:"receipt"`
-		SolcInputHash    string          `json:"solcInputHash"`
-		StorageLayout    StorageLayout   `json:"storageLayout"`
-		TransactionHash  common.Hash     `json:"transactionHash"`
-		Userdoc          json.RawMessage `json:"userdoc"`
-	}
-
-	// Initialize your struct with some data
-	data := Addresses[chainId]
-
-	type AddressList2 AddressList // use another type to prevent infinite recursion later on
-	b := AddressList2(*data)
-
-	o, err := json.Marshal(b)
-	if err != nil {
-		return err
-	}
-
-	out := make(map[string]Address)
-	err = json.Unmarshal(o, &out)
-	if err != nil {
-		return err
-	}
-
-	for k, v := range out {
-		text, err := v.MarshalText()
-		if err != nil || !strings.HasPrefix(string(text), "0x") {
-			continue
-		}
-		// Define the Deployment object, filling in only what we need
-		jsonData := Deployment{Address: v.String(), Name: k}
-
-		raw, err := json.MarshalIndent(jsonData, "", " ")
-		if err != nil {
-			return err
-		}
-
-		fileName := fmt.Sprintf("%s.json", k)
-		file, err := os.Create(path.Join(directory, fileName))
-		if err != nil {
-			return fmt.Errorf("Failed to create file for field %s: %w", k, err)
-		}
-		defer file.Close()
-
-		// Write the JSON content to the file
-		_, err = file.Write(raw)
-		if err != nil {
-			return fmt.Errorf("Failed to write JSON to file for field %s: %w", k, err)
-		}
-
-		fmt.Printf("Created file: %s\n", fileName)
-	}
-	return nil
 }
