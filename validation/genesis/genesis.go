@@ -68,7 +68,7 @@ func init() {
 
 		if err = os.MkdirAll(clonePath, 0750); err == nil {
 			mustExecuteCommandInDir(clonePath,
-				exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git", cloneDir))
+				exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git"))
 		} else {
 			panic(fmt.Errorf("unable to create %s: %w", cloneDir, err))
 		}
