@@ -6,8 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 
@@ -56,16 +54,21 @@ func init() {
 
 		ValidationInputs[uint64(chainID)] = *m
 
-		// Clone optimism into gitignored temporary directory (if that directory does not yet exist)
-		_, filename, _, ok := runtime.Caller(0)
-		if !ok {
-			panic("No caller information")
-		}
-		thisDir := filepath.Dir(filename)
+		// Clone optimism into:
+		// * $HOME/go/src/github.com/ethereum-optimism/optimism. The dir won't exist in CI builder machines, so clone will succeed.
+		//   When running on a laptop, this is likely going to fail as user will have cloned the directory.
 
-		if _, err := os.Stat(path.Join(thisDir, "optimism-temporary")); os.IsNotExist(err) {
-			mustExecuteCommandInDir(filepath.Dir(filename),
-				exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git", path.Join(thisDir, "optimism-temporary")))
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			panic(fmt.Errorf("home directory not set: %w", err))
+		}
+
+		clonePath := path.Join(homeDir, "go", "src", "github.com", "ethereum-optimism")
+		cloneDir := path.Join(clonePath, "optimism")
+
+		if _, err := os.Stat(cloneDir); os.IsNotExist(err) {
+			mustExecuteCommandInDir(clonePath,
+				exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git", cloneDir))
 		}
 	}
 }

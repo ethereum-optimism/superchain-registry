@@ -55,7 +55,11 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	thisDir := getDirOfThisFile()
 	chainIdString := strconv.Itoa(int(chainId))
 	validationInputsDir := path.Join(thisDir, "validation-inputs", chainIdString)
-	monorepoDir := path.Join(thisDir, "optimism-temporary")
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatalf("home directory not set: %v", err)
+	}
+	monorepoDir := path.Join(homeDir, "go", "src", "github.com", "ethereum-optimism", "optimism")
 	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
 
 	// reset to appropriate commit, this is preferred to git checkout because it will
@@ -71,7 +75,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	// copy genesis input files to monorepo
 	mustExecuteCommandInDir(validationInputsDir,
 		exec.Command("cp", "deploy-config.json", path.Join(contractsDir, "deploy-config", chainIdString+".json")))
-	err := os.MkdirAll(path.Join(contractsDir, "deployments", chainIdString), os.ModePerm)
+	err = os.MkdirAll(path.Join(contractsDir, "deployments", chainIdString), os.ModePerm)
 	if err != nil {
 		log.Fatalf("Failed to create directory: %v", err)
 	}
