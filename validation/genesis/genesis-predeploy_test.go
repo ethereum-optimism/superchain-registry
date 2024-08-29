@@ -25,7 +25,8 @@ import (
 
 var temporaryOptimismDir string
 
-func TestGenesisPredeploys(t *testing.T) {
+// TestMain is the entry point for testing in this package.
+func TestMain(m *testing.M) {
 	// Clone optimism into gitignored temporary directory (if that directory does not yet exist)
 	// We avoid cloning under the superchain-registry tree, since this causes dependency resolution problems
 	_, filename, _, ok := runtime.Caller(0)
@@ -40,6 +41,19 @@ func TestGenesisPredeploys(t *testing.T) {
 			exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git", temporaryOptimismDir))
 	}
 
+	// Run tests
+	exitVal := m.Run()
+
+	// Teardown code: Clean up the temporary directory after tests have run
+	if err := os.RemoveAll(temporaryOptimismDir); err != nil {
+		panic("Failed to remove temp directory: " + err.Error())
+	}
+
+	// Exit with the result of the tests
+	os.Exit(exitVal)
+}
+
+func TestGenesisPredeploys(t *testing.T) {
 	for _, chain := range OPChains {
 		if chain.SuperchainLevel == Standard || chain.StandardChainCandidate {
 			t.Run(PerChainTestName(chain), func(t *testing.T) {
@@ -48,13 +62,8 @@ func TestGenesisPredeploys(t *testing.T) {
 			})
 		}
 	}
-
-	// TODO cleanup temporaryOptimismDir
 }
 
-// Invoke this with go test -timeout 0 ./validation/genesis -run=TestGenesisPredeploys -v
-// REQUIREMENTS:
-// pnpm and yarn, so we can prepare https://codeload.github.com/Saw-mon-and-Natalie/clones-with-immutable-args/tar.gz/105efee1b9127ed7f6fedf139e1fc796ce8791f2
 func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	chainId := chain.ChainID
 
