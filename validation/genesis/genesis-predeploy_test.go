@@ -26,7 +26,24 @@ func perChainTestName(chain *superchain.ChainConfig) string {
 	return chain.Name + fmt.Sprintf(" (%d)", chain.ChainID)
 }
 
+var temporaryOptimismDir string
+
 func TestGenesisPredeploys(t *testing.T) {
+
+	//
+	// Clone optimism into gitignored temporary directory (if that directory does not yet exist)
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		panic("No caller information")
+	}
+	thisDir := filepath.Dir(filename)
+	temporaryOptimismDir = path.Join(thisDir, "../../../optimism-temporary")
+
+	if _, err := os.Stat(temporaryOptimismDir); os.IsNotExist(err) {
+		mustExecuteCommandInDir(thisDir,
+			exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git", temporaryOptimismDir))
+	}
+
 	for _, chain := range OPChains {
 		if chain.SuperchainLevel == Standard || chain.StandardChainCandidate {
 			t.Run(perChainTestName(chain), func(t *testing.T) {
@@ -35,6 +52,8 @@ func TestGenesisPredeploys(t *testing.T) {
 			})
 		}
 	}
+
+	// TODO cleanup temporaryOptimismDir
 }
 
 // Invoke this with go test -timeout 0 ./validation/genesis -run=TestGenesisPredeploys -v
@@ -55,7 +74,7 @@ func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
 	thisDir := getDirOfThisFile()
 	chainIdString := strconv.Itoa(int(chainId))
 	validationInputsDir := path.Join(thisDir, "validation-inputs", chainIdString)
-	monorepoDir := path.Join(thisDir, "optimism-temporary")
+	monorepoDir := temporaryOptimismDir
 	contractsDir := path.Join(monorepoDir, "packages/contracts-bedrock")
 
 	// reset to appropriate commit, this is preferred to git checkout because it will

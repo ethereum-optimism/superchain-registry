@@ -3,11 +3,7 @@ package genesis
 import (
 	"embed"
 	"fmt"
-	"os"
-	"os/exec"
 	"path"
-	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 
@@ -56,17 +52,6 @@ func init() {
 
 		ValidationInputs[uint64(chainID)] = *m
 
-		// Clone optimism into gitignored temporary directory (if that directory does not yet exist)
-		_, filename, _, ok := runtime.Caller(0)
-		if !ok {
-			panic("No caller information")
-		}
-		thisDir := filepath.Dir(filename)
-
-		if _, err := os.Stat(path.Join(thisDir, "optimism-temporary")); os.IsNotExist(err) {
-			mustExecuteCommandInDir(filepath.Dir(filename),
-				exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git", path.Join(thisDir, "optimism-temporary")))
-		}
 	}
 }
 
