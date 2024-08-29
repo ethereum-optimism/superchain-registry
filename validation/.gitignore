@@ -4,6 +4,3 @@ generate-genesis/output-*
 
 # test output artifacts
 genesis/validation-inputs/*-test
-
-# optimism monorepo used for genesis validation
-genesis/optimism-temporary

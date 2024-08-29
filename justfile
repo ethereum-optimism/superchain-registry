@@ -45,14 +45,13 @@ test-validation: clean-add-chain
 validate-modified-chains REF:
   # Running validation checks only for chains whose config has changed:
   git diff --merge-base {{REF}} --name-only 'superchain/configs/*.toml' ':(exclude)superchain/**/superchain.toml' | xargs -r awk '/chain_id/ {print $3}' | xargs -I {} just validate {}
-
 # Run validation checks for chains with a name or chain ID matching the supplied regex, example: just validate 10
 validate CHAIN_ID:
 	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname -- -run='TestValidation/.+\({{CHAIN_ID}}\)$' -count=1
 
 # Run genesis validation (this is separated from other validation checks, because it is not a part of drift detection)
 validate-genesis CHAIN_ID:
-	TEST_DIRECTORY=./validation/genesis go run gotest.tools/gotestsum@latest --format testname -- -run='TestGenesisPredeploys/.+\({{CHAIN_ID}}\)$' -v
+	TEST_DIRECTORY=./validation/genesis go run gotest.tools/gotestsum@latest --format standard-verbose -- -run='TestGenesisPredeploys/.+\({{CHAIN_ID}}\)$' -timeout 0
 
 promotion-test:
   TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format dots -- -run Promotion
