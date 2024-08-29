@@ -29,7 +29,6 @@ func perChainTestName(chain *superchain.ChainConfig) string {
 var temporaryOptimismDir string
 
 func TestGenesisPredeploys(t *testing.T) {
-
 	//
 	// Clone optimism into gitignored temporary directory (if that directory does not yet exist)
 	_, filename, _, ok := runtime.Caller(0)
