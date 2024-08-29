@@ -281,7 +281,7 @@ workflows:
       - golang-validate-genesis:
           matrix:
             parameters:
-              chainid: ["7777777", "4801", "1750", "480","34443", "6806", "84532", "8453", "1135, "4202"]
+              chainid: ["7777777", "4801", "1750", "480","34443", "6806", "84532", "8453", "1135", "4202"]
       - golang-validate-modified
       - check-codegen
       - cargo-tests
