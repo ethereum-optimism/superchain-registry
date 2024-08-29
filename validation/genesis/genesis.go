@@ -66,7 +66,7 @@ func init() {
 		clonePath := path.Join(homeDir, "go", "src", "github.com", "ethereum-optimism")
 		cloneDir := path.Join(clonePath, "optimism")
 
-		if err = os.MkdirAll(cloneDir, 0750); err == nil {
+		if err = os.MkdirAll(clonePath, 0750); err == nil {
 			mustExecuteCommandInDir(clonePath,
 				exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git", cloneDir))
 		} else {
