@@ -137,23 +137,6 @@
     "gasPayingToken": "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
   },
   {
-    "name": "World Chain",
-    "identifier": "mainnet/wc",
-    "chainId": 480,
-    "rpc": [
-      "https://worldchain-mainnet-sequencer.g.alchemy.com"
-    ],
-    "explorers": [
-      "https://worldchain-mainnet-explorer.alchemy.com/"
-    ],
-    "superchainLevel": 0,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    }
-  },
-  {
     "name": "Zora",
     "identifier": "mainnet/zora",
     "chainId": 7777777,
@@ -247,23 +230,6 @@
     ],
     "explorers": [
       "https://testnet.racescan.io/"
-    ],
-    "superchainLevel": 0,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
-    "name": "World Chain Sepolia Testnet",
-    "identifier": "sepolia/wc",
-    "chainId": 4801,
-    "rpc": [
-      ""
-    ],
-    "explorers": [
-      "https://worldchain-sepolia-explorer.alchemy.com/"
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
