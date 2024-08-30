@@ -230,17 +230,9 @@ workflows:
       - golang-validate-genesis-allocs:
           matrix:
             parameters:
-              # This value will be replaced by the generate_test_config.sh script
-              chainid:
-                - "1135"
-                - "1750"
-                - "34443"
-                - "4202"
-                - "480"
-                - "4801"
-                - "7777777"
-                - "8453"
-                - "84532"
+              chainid: [] # defaults to an empty list.
+                            # This list will be replaced by the generate_test_config.sh script
+
       - golang-lint
       - golang-modules-tidy
       - golang-test
