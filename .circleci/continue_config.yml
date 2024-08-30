@@ -1,10 +1,8 @@
 version: 2.1
-
 orbs:
   go: circleci/go@1.8.0
   node: circleci/node@5.2.0
   slack: circleci/slack@4.10.1
-
 commands:
   notify-failures-on-main:
     description: "Notify Slack for CI job failures"
@@ -70,11 +68,10 @@ commands:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
             source ~/.bashrc
             nvm --version
-
 jobs:
   golang-lint:
     executor:
-      name: go/default  # is based on cimg/go
+      name: go/default # is based on cimg/go
       tag: '1.21'
     steps:
       - checkout
@@ -85,7 +82,7 @@ jobs:
           command: git diff --exit-code
   golang-modules-tidy:
     executor:
-      name: go/default  # is based on cimg/go
+      name: go/default # is based on cimg/go
       tag: '1.21'
     steps:
       - checkout
@@ -97,7 +94,7 @@ jobs:
   golang-test:
     shell: /bin/bash -eo pipefail
     executor:
-      name: go/default  # is based on cimg/go
+      name: go/default # is based on cimg/go
       tag: '1.21'
     steps:
       - checkout
@@ -114,7 +111,78 @@ jobs:
           command: just test-add-chain
       - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
-  golang-validate-allocs:
+          # TODO this should also be filtered on modified chains
+  golang-validate-modified:
+    shell: /bin/bash -eo pipefail
+    executor:
+      name: go/default # is based on cimg/go
+      tag: '1.21'
+    steps:
+      - checkout
+      - install-just
+      - install-foundry
+      - run:
+          name: run validation checks
+          command: just validate-modified-chains main # TODO ideally this is the base branch
+  golang-validate-all:
+    shell: /bin/bash -eo pipefail
+    executor:
+      name: go/default # is based on cimg/go
+      tag: '1.21'
+    steps:
+      - checkout
+      - install-just
+      - install-foundry
+      - run:
+          name: run validation checks on all chains
+          command: just validate "*"
+      - notify-failures-on-main:
+          channel: C07GQQZDW1G # to slack channel `notify-superchain-validation-failures`
+  golang-promotion-test:
+    shell: /bin/bash -eo pipefail
+    executor:
+      name: go/default # is based on cimg/go
+      tag: '1.21'
+    steps:
+      - checkout
+      - install-just
+      - install-foundry
+      - run:
+          name: run validation checks
+          command: just promotion-test
+      - slack/notify:
+          event: always
+          custom: "{\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":control_knobs: The daily report on standard candidate chains is ready!\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"\U0001F440 Click the link to see what validation checks would fail if all candidate chains were promoted to standard (and exclusions removed).\"\n        }\n      ]\n    }\n  ]\n}\n"
+          channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-reports`
+  publish-bot:
+    environment:
+      NODE_AUTH_TOKEN: $NPM_TOKEN # Use NPM_TOKEN as the auth token
+    docker:
+      - image: cimg/node:18 # Use Node.js 18
+    steps:
+      - checkout
+      - run:
+          name: Set deployment token
+          command: npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+      - env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run:
+          name: "Build and publish package on NPM \U0001F4E6"
+          command: pnpm release
+  check-codegen:
+    executor:
+      name: go/default # is based on cimg/go
+      tag: '1.21'
+    steps:
+      - checkout
+      - install-just
+      - run:
+          name: Run codegen
+          command: just codegen
+      - run:
+          name: check git tree is clean
+          command: git diff --exit-code
+  golang-validate-genesis-allocs:
     docker:
       - image: cimg/go:1.22.6-node
     resource_class: medium
@@ -129,110 +197,13 @@ jobs:
       - install-gvm
       - install-nvm
       - run: just validate-genesis-allocs <<parameters.chainid>>
- # TODO this should also be filtered on modified chains
-  golang-validate-modified:
-    shell: /bin/bash -eo pipefail
-    executor:
-      name: go/default  # is based on cimg/go
-      tag: '1.21'
-    steps:
-      - checkout
-      - install-just
-      - install-foundry
-      - run:
-          name: run validation checks
-          command: just validate-modified-chains main # TODO ideally this is the base branch
-  golang-validate-all:
-    shell: /bin/bash -eo pipefail
-    executor:
-      name: go/default  # is based on cimg/go
-      tag: '1.21'
-    steps:
-      - checkout
-      - install-just
-      - install-foundry
-      - run:
-          name: run validation checks on all chains
-          command: just validate "*"
-      - notify-failures-on-main:
-          channel: C07GQQZDW1G # to slack channel `notify-superchain-validation-failures`
-  golang-promotion-test:
-    shell: /bin/bash -eo pipefail
-    executor:
-      name: go/default  # is based on cimg/go
-      tag: '1.21'
-    steps:
-      - checkout
-      - install-just
-      - install-foundry
-      - run:
-          name: run validation checks
-          command: just promotion-test
-      - slack/notify:
-          event: always
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ":control_knobs: The daily report on standard candidate chains is ready!"
-                  },
-                  "accessory": {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "👀 View Report",
-                      "emoji": true
-                    },
-                    "url": "${CIRCLE_BUILD_URL}"
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "Click the link to see what validation checks would fail if all candidate chains were promoted to standard (and exclusions removed)."
-                    }
-                  ]
-                }
-              ]
-            }
-          channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-failures`
-  publish-bot:
-    environment:
-      NODE_AUTH_TOKEN: $NPM_TOKEN  # Use NPM_TOKEN as the auth token
+  genesis-allocs-all-ok:
     docker:
-      - image: cimg/node:18  # Use Node.js 18
+      - image: cimg/go:1.22.6-node
+    resource_class: medium
     steps:
       - checkout
-      - run:
-          name: Set deployment token
-          command: npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-      - env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run:
-          name: Build and publish package on NPM 📦
-          command: pnpm release
-  check-codegen:
-    executor:
-      name: go/default  # is based on cimg/go
-      tag: '1.21'
-    steps:
-      - checkout
-      - install-just
-      - run:
-          name: Run codegen
-          command: just codegen
-      - run:
-          name: check git tree is clean
-          command: git diff --exit-code
-
+      - run: echo "Job 1 is running"
 workflows:
   hourly:
     jobs:
@@ -263,12 +234,14 @@ workflows:
                 - main
   pr-checks:
     jobs:
-      - golang-lint
-      - golang-modules-tidy
-      - golang-test
       - golang-validate-genesis-allocs:
           matrix:
             parameters:
-              chainid: ["7777777", "4801", "1750", "480","34443", "6806", "84532", "8453", "1135", "4202"]
+              chainid: [] # This list will be replaced by the generate_test_config.sh script
+      - genesis-allocs-all-ok:
+          requires: [] # This list will be replaced by the generate_test_config.sh script
+      - golang-lint
+      - golang-modules-tidy
+      - golang-test
       - golang-validate-modified
       - check-codegen
