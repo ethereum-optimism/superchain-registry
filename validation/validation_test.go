@@ -37,10 +37,11 @@ func testValidation(t *testing.T, chain *ChainConfig) {
 // designed to protect downstream software or
 // sanity checking basic consistency conditions.
 func testUniversal(t *testing.T, chain *ChainConfig) {
-	t.Run("Genesis Hash Check", func(t *testing.T) { testGenesisHash(t, chain.ChainID) })
-	t.Run("Genesis RPC Check", func(t *testing.T) { testGenesisHashAgainstRPC(t, chain) })
-	t.Run("Uniqueness Check", func(t *testing.T) { testIsGloballyUnique(t, chain) })
-	t.Run("ChainID RPC Check", func(t *testing.T) { testChainIDFromRPC(t, chain) })
+	t.Run("Genesis Hash", func(t *testing.T) { testGenesisHash(t, chain.ChainID) })
+	t.Run("Genesis RPC", func(t *testing.T) { testGenesisHashAgainstRPC(t, chain) })
+	t.Run("Uniqueness", func(t *testing.T) { testIsGloballyUnique(t, chain) })
+	t.Run("ChainID RPC", func(t *testing.T) { testChainIDFromRPC(t, chain) })
+	t.Run("Optimism Config", func(t *testing.T) { testOptimismConfig(t, chain) })
 }
 
 // testStandardCandidate applies to Standard and Standard Candidate Chains.
@@ -51,7 +52,7 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	t.Run("Resource Config", func(t *testing.T) { testResourceConfig(t, chain) })
 	t.Run("Gas Limit", func(t *testing.T) { testGasLimit(t, chain) })
 	t.Run("GPO Params", func(t *testing.T) { testGasPriceOracleParams(t, chain) })
-	t.Run("Start Block RPC Check", func(t *testing.T) { testStartBlock(t, chain) })
+	t.Run("Start Block RPC", func(t *testing.T) { testStartBlock(t, chain) })
 	t.Run("Superchain Config", func(t *testing.T) { testSuperchainConfig(t, chain) })
 	// Standard Config Roles
 	t.Run("L1 Security Config", func(t *testing.T) { testL1SecurityConfig(t, chain.ChainID) })
@@ -70,5 +71,5 @@ func testStandard(t *testing.T, chain *ChainConfig) {
 	// Standard Config Params
 	t.Run("Optimism Portal 2 Params", func(t *testing.T) { testOptimismPortal2Params(t, chain) })
 	// Standard Config Roles
-	t.Run("Key Handover Check", func(t *testing.T) { testKeyHandover(t, chain.ChainID) })
+	t.Run("Key Handover", func(t *testing.T) { testKeyHandover(t, chain.ChainID) })
 }
