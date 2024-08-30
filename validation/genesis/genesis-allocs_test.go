@@ -56,18 +56,18 @@ func TestMain(m *testing.M) {
 	os.Exit(exitVal)
 }
 
-func TestGenesisPredeploys(t *testing.T) {
+func TestGenesisAllocs(t *testing.T) {
 	for _, chain := range OPChains {
 		if chain.SuperchainLevel == Standard || chain.StandardChainCandidate {
 			t.Run(PerChainTestName(chain), func(t *testing.T) {
 				// Do not run in parallel
-				testGenesisPredeploys(t, chain)
+				testGenesisAllocs(t, chain)
 			})
 		}
 	}
 }
 
-func testGenesisPredeploys(t *testing.T, chain *ChainConfig) {
+func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	chainId := chain.ChainID
 	vis, ok := ValidationInputs[chainId]
 
