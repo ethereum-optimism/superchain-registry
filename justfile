@@ -50,7 +50,7 @@ validate CHAIN_ID:
 	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname -- -run='TestValidation/.+\({{CHAIN_ID}}\)$' -count=1
 
 # Run genesis validation (this is separated from other validation checks, because it is not a part of drift detection)
-validate-genesis CHAIN_ID:
+validate-genesis-allocs CHAIN_ID:
 	TEST_DIRECTORY=./validation/genesis go run gotest.tools/gotestsum@latest --format standard-verbose -- -run='TestGenesisAllocs/.+\({{CHAIN_ID}}\)$' -timeout 0
 
 promotion-test:
