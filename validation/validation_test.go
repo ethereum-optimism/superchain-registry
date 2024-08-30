@@ -59,6 +59,7 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	t.Run("L2 Security Config", func(t *testing.T) { testL2SecurityConfig(t, chain) })
 	// Other
 	t.Run("Data Availability Type", func(t *testing.T) { testDataAvailabilityType(t, chain) })
+	t.Run("Genesis Allocs (Metadata)", func(t *testing.T) { testGenesisAllocsMetadata(t, chain) })
 }
 
 // testStandard should be applied only to a fully Standard Chain,
