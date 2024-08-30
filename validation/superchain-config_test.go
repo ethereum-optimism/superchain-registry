@@ -24,6 +24,6 @@ func testSuperchainConfig(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err)
 
 	if *expected != got {
-		t.Errorf("incorrect OptimismPortal.superchainConfig() address: got %s, wanted %s",  got, *expected)
+		t.Errorf("incorrect OptimismPortal.superchainConfig() address: got %s, wanted %s", got, *expected)
 	}
 }
