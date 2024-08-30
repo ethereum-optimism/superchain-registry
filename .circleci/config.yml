@@ -92,10 +92,10 @@ jobs:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
   hold-approval:
     type: approval
-    #filters:
-      #branches:
-        #only:
-          #- /pull\/[0-9]+/ # Forked pull requests have CIRCLE_BRANCH set to pull/XXX
+    filters:
+      branches:
+        only:
+          - /pull\/[0-9]+/ # Forked pull requests have CIRCLE_BRANCH set to pull/XXX
   golang-validate-modified:
     shell: /bin/bash -eo pipefail
     executor:
