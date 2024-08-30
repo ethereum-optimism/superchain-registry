@@ -90,6 +90,12 @@ jobs:
           command: just test-add-chain
       - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
+  hold-approval:
+    type: approval
+    #filters:
+      #branches:
+        #only:
+          #- /pull\/[0-9]+/ # Forked pull requests have CIRCLE_BRANCH set to pull/XXX
   golang-validate-modified:
     shell: /bin/bash -eo pipefail
     executor:
@@ -102,6 +108,7 @@ jobs:
       - run:
           name: run validation checks
           command: just validate-modified-chains main # TODO ideally this is the base branch
+          context: oplabs-rpc-urls
   golang-validate-all:
     shell: /bin/bash -eo pipefail
     executor:
@@ -226,5 +233,8 @@ workflows:
       - golang-lint
       - golang-modules-tidy
       - golang-test
+      - hold-approval
       - golang-validate-modified
+          requires:
+            - hold-approval
       - check-codegen
