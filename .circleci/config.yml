@@ -234,7 +234,7 @@ workflows:
       - golang-modules-tidy
       - golang-test
       - hold-approval
-      - golang-validate-modified
+      - golang-validate-modified:
           requires:
             - hold-approval
       - check-codegen
