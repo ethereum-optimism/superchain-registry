@@ -25,8 +25,18 @@ targets="[$targets]"
 
 echo "Will run genesis allocs validation on chains with ids $targets"
 
+# Now build another array, each element prepended with "golang-validate-genesis-allocs-"
+prependedTargets=$(echo "$targetList" | sed 's/.*/"golang-validate-genesis-allocs-&"/' | tr '\n' ',')
+
+# Remove the trailing comma
+prependedTargets=${prependedTargets%,}
+
+# Wrap in square brackets
+prependedTargets="[$prependedTargets]"
+
 # Install yq
 brew install yq
 
 # Use yq to replace the target-version   key
 yq e ".workflows.pr-checks.jobs[0].golang-validate-genesis-allocs.matrix.parameters.\"chainid\" = $targets" -i .circleci/continue_config.yml
+yq e ".workflows.pr-checks.jobs[0].genesis-allocs-all-ok.requires = $prependedTargets" -i .circleci/continue_config.yml

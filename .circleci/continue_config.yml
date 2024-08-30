@@ -197,6 +197,11 @@ jobs:
       - install-gvm
       - install-nvm
       - run: just validate-genesis-allocs <<parameters.chainid>>
+  genesis-allocs-all-ok:
+    docker:
+      - image: cimg/go:1.22.6-node
+    resource_class: medium
+    run: echo "all ok"
 workflows:
   hourly:
     jobs:
@@ -230,9 +235,10 @@ workflows:
       - golang-validate-genesis-allocs:
           matrix:
             parameters:
-              chainid: [] # defaults to an empty list.
-                            # This list will be replaced by the generate_test_config.sh script
+              chainid: [] # This list will be replaced by the generate_test_config.sh script
 
+        genesis-allocs-all-ok:
+          requires: [] # This list will be replaced by the generate_test_config.sh script
       - golang-lint
       - golang-modules-tidy
       - golang-test
