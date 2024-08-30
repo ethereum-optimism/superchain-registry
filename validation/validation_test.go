@@ -27,6 +27,7 @@ const (
 	StandardContractVersionsTest = "Standard_Contract_Versions"
 	OptimismPortal2ParamsTest    = "Optimism_Portal_2_Params"
 	KeyHandoverTest              = "Key_Handover"
+	GenesisAllocsTest            = "Genesis_Allocs_Metadata"
 )
 
 func TestValidation(t *testing.T) {
@@ -82,6 +83,7 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	t.Run(L2SecurityConfigTest, func(t *testing.T) { testL2SecurityConfig(t, chain) })
 	// Other
 	t.Run(DataAvailabilityTypeTest, func(t *testing.T) { testDataAvailabilityType(t, chain) })
+	t.Run(GenesisAllocsTest, func(t *testing.T) { testGenesisAllocsMetadata(t, chain) })
 }
 
 // testStandard should be applied only to a fully Standard Chain,
