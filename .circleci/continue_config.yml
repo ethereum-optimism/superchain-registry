@@ -201,7 +201,9 @@ jobs:
     docker:
       - image: cimg/go:1.22.6-node
     resource_class: medium
-    run: echo "all ok"
+    steps:
+      - checkout
+      - run: echo "Job 1 is running"
 workflows:
   hourly:
     jobs:
@@ -236,8 +238,7 @@ workflows:
           matrix:
             parameters:
               chainid: [] # This list will be replaced by the generate_test_config.sh script
-
-        genesis-allocs-all-ok:
+      - genesis-allocs-all-ok:
           requires: [] # This list will be replaced by the generate_test_config.sh script
       - golang-lint
       - golang-modules-tidy
