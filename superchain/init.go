@@ -75,8 +75,8 @@ func init() {
 
 		// Impute endpoints only if we're not in codegen mode.
 		if os.Getenv("CODEGEN") == "" {
-			ciMainnetRPC := os.Getenv("CIRCLE_CI_MAINNET_RPC")
-			ciSepoliaRPC := os.Getenv("CIRCLE_CI_SEPOLIA_RPC")
+			ciMainnetRPC := os.Getenv("CIRCLECI_MAINNET_RPC")
+			ciSepoliaRPC := os.Getenv("CIRCLECI_SEPOLIA_RPC")
 
 			switch superchainEntry.Superchain {
 			case "mainnet":
