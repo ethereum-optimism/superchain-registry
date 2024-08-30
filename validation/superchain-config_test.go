@@ -23,5 +23,7 @@ func testSuperchainConfig(t *testing.T, chain *ChainConfig) {
 	got, err := getAddress("superchainConfig()", opp, client)
 	require.NoError(t, err)
 
-	require.Equal(t, *expected, got)
+	if *expected != got {
+		t.Errorf("incorrect OptimismPortal.superchainConfig() address: got %s, wanted %s", *expected, got)
+	}
 }
