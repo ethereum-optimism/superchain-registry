@@ -108,7 +108,6 @@ jobs:
       - run:
           name: run validation checks
           command: just validate-modified-chains main # TODO ideally this is the base branch
-          context: oplabs-rpc-urls
   golang-validate-all:
     shell: /bin/bash -eo pipefail
     executor:
@@ -206,6 +205,7 @@ workflows:
       - golang-validate-all:
           context:
             - slack
+            - oplabs-rpc-urls
       - golang-test:
           context:
             - slack
@@ -221,6 +221,7 @@ workflows:
       - golang-promotion-test:
           context:
             - slack
+            - oplabs-rpc-urls
     triggers:
       - schedule:
           cron: "0 0 * * *"
@@ -235,6 +236,8 @@ workflows:
       - golang-test
       - hold-approval
       - golang-validate-modified:
+          context:
+            - oplabs-rpc-urls
           requires:
             - hold-approval
       - check-codegen
