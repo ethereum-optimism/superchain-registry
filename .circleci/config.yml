@@ -1,0 +1,27 @@
+version: 2.1
+
+# this allows us to use CircleCI's dynamic configuration feature
+setup: true
+
+orbs:
+  continuation: circleci/continuation@0.3.1
+
+jobs:
+  setup-genesis-allocs-validation:
+    macos:
+      xcode: 14.2.0
+    resource_class: macos.m1.medium.gen1
+    steps:
+      - checkout
+      - run:
+          name: Generate list of chainids and insert into  continue_config.yml file
+          command: |
+            bash validation/genesis/validation-inputs/generate-test-config.sh
+      - continuation/continue:
+          configuration_path: .circleci/continue_config.yml
+          parameters: '{}'
+
+workflows:
+  setup:
+    jobs:
+       - setup-genesis-allocs-validation
