@@ -153,7 +153,7 @@ jobs:
       - slack/notify:
           event: always
           custom: "{\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":control_knobs: The daily report on standard candidate chains is ready!\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"\U0001F440 Click the link to see what validation checks would fail if all candidate chains were promoted to standard (and exclusions removed).\"\n        }\n      ]\n    }\n  ]\n}\n"
-          channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-failures`
+          channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-reports`
   publish-bot:
     environment:
       NODE_AUTH_TOKEN: $NPM_TOKEN # Use NPM_TOKEN as the auth token
