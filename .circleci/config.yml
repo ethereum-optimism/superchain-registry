@@ -114,7 +114,7 @@ jobs:
           command: just test-add-chain
       - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
-  golang-validate-genesis:
+  golang-validate-allocs:
     docker:
       - image: cimg/go:1.22.6-node
     resource_class: medium
@@ -128,7 +128,7 @@ jobs:
       - install-foundry
       - install-gvm
       - install-nvm
-      - run: just validate-genesis <<parameters.chainid>>
+      - run: just validate-genesis-allocs <<parameters.chainid>>
  # TODO this should also be filtered on modified chains
   golang-validate-modified:
     shell: /bin/bash -eo pipefail
@@ -266,7 +266,7 @@ workflows:
       - golang-lint
       - golang-modules-tidy
       - golang-test
-      - golang-validate-genesis:
+      - golang-validate-genesis-allocs:
           matrix:
             parameters:
               chainid: ["7777777", "4801", "1750", "480","34443", "6806", "84532", "8453", "1135", "4202"]
