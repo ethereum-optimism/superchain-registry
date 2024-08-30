@@ -111,7 +111,6 @@ jobs:
           command: just test-add-chain
       - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
-          # TODO this should also be filtered on modified chains
   golang-validate-modified:
     shell: /bin/bash -eo pipefail
     executor:
@@ -152,7 +151,39 @@ jobs:
           command: just promotion-test
       - slack/notify:
           event: always
-          custom: "{\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":control_knobs: The daily report on standard candidate chains is ready!\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"\U0001F440 Click the link to see what validation checks would fail if all candidate chains were promoted to standard (and exclusions removed).\"\n        }\n      ]\n    }\n  ]\n}\n"
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":control_knobs: The daily report on standard candidate chains is ready!"
+                  },
+                  "accessory": {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "👀 View Report",
+                      "emoji": true
+                    },
+                    "url": "${CIRCLE_BUILD_URL}"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "Click the link to see what validation checks would fail if all candidate chains were promoted to standard (and exclusions removed)."
+                    }
+                  ]
+                }
+              ]
+            }
           channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-reports`
   publish-bot:
     environment:
