@@ -232,11 +232,19 @@ workflows:
           type: approval
           filters:
             branches:
-              only:
-                - /pull\/[0-9]+/ # Forked pull requests have CIRCLE_BRANCH set to pull/XXX
+              only: /pull\/[0-9]+/ # Forked pull requests have CIRCLE_BRANCH set to pull/XXX
       - golang-validate-modified:
           context:
             - oplabs-rpc-urls
           requires:
             - hold-approval
+          filters:
+            branches:
+              only: /pull\/[0-9]+/ # Forked pull requests have CIRCLE_BRANCH set to pull/XXX
+      - golang-validate-modified:
+          context:
+            - oplabs-rpc-urls
+          filters:
+            branches:
+              ignore: /pull\/[0-9]+/ # Forked pull requests have CIRCLE_BRANCH set to pull/XXX
       - check-codegen
