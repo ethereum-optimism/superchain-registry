@@ -60,7 +60,10 @@ func TestGenesisAllocs(t *testing.T) {
 	for _, chain := range OPChains {
 		if chain.SuperchainLevel == Standard || chain.StandardChainCandidate {
 			t.Run(PerChainTestName(chain), func(t *testing.T) {
-				// Do not run in parallel
+				// Do not run in parallel, because
+				// the sub tests share the temporaryOptimismDir
+				// as a resource in a concurrency unsafe way.
+				// Parallelism is handled by the CI configuration.
 				testGenesisAllocs(t, chain)
 			})
 		}
