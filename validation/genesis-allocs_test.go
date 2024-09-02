@@ -17,5 +17,7 @@ func testGenesisAllocsMetadata(t *testing.T, chain *ChainConfig) {
 	// Therefore the presence of a genesis creation commit ensures that full genesis
 	// validation has been performed on this chain.
 	// This test is lightweight and can be run continually.
+	// The test tries to ensure that the information necessary
+	// for validating the genesis of the chain continues to exist over time.
 	require.NotEmpty(t, genesis.ValidationInputs[chain.ChainID].GenesisCreationCommit)
 }
