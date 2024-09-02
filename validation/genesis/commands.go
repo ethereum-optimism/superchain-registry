@@ -20,31 +20,31 @@ var GenesisCreationCommand = map[string]GeneratorFn{
 	"forge1":  forge1,
 }
 
-func opnode1(chainId uint64, l1rpcURL string) string {
+func opnode1(chainId uint64, l1rpcURL string) string { // runs from monorepo root
 	return strings.Join([]string{
 		"go run op-node/cmd/main.go genesis l2",
-		fmt.Sprintf("--deploy-config=./deploy-config/%d.json", chainId),
+		fmt.Sprintf("--deploy-config=./packages/contracts-bedrock/deploy-config/%d.json", chainId),
 		"--outfile.l2=expected-genesis.json",
 		"--outfile.rollup=rollup.json",
-		fmt.Sprintf("--deployment-dir=./deployments/%d", chainId),
+		fmt.Sprintf("--deployment-dir=./packages/contracts-bedrock/deployments/%d", chainId),
 		fmt.Sprintf("--l1-rpc=%s", l1rpcURL),
 	},
 		" ")
 }
 
-func opnode2(chainId uint64, l1rpcURL string) string {
+func opnode2(chainId uint64, l1rpcURL string) string { // runs from monorepo root
 	return strings.Join([]string{
 		"go run op-node/cmd/main.go genesis l2",
-		fmt.Sprintf(" --deploy-config=./deploy-config/%d.json", chainId),
+		fmt.Sprintf(" --deploy-config=./packages/contracts-bedrock/deploy-config/%d.json", chainId),
 		"--outfile.l2=expected-genesis.json",
 		"--outfile.rollup=rollup.json",
-		fmt.Sprintf("--l1-deployments=./deployments/%d/.deploy", chainId),
+		fmt.Sprintf("--l1-deployments=/packages/contracts-bedrock/%d/.deploy", chainId),
 		fmt.Sprintf("--l1-rpc=%s", l1rpcURL),
 	},
 		" ")
 }
 
-func forge1(chainId uint64, l1rpcURL string) string {
+func forge1(chainId uint64, l1rpcURL string) string { // runs from packages/contracts-bedrock directory
 	return strings.Join([]string{
 		fmt.Sprintf("CONTRACT_ADDRESSES_PATH=./deployments/%d/.deploy", chainId),
 		fmt.Sprintf("DEPLOY_CONFIG_PATH=./deploy-config/%d.json", chainId),

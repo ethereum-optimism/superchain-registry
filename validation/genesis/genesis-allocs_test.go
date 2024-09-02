@@ -118,7 +118,14 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 		log.Fatalf("Failed to write deployments: %v", err)
 	}
 
-	mustExecuteCommandInDir(thisDir, exec.Command("cp", "./monorepo-outputs.sh", contractsDir))
+	var runDir string
+	if strings.HasPrefix(vis.GenesisCreationCommand, "forge") {
+		runDir = contractsDir
+	} else {
+		runDir = monorepoDir
+	}
+
+	mustExecuteCommandInDir(thisDir, exec.Command("cp", "./monorepo-outputs.sh", runDir))
 	buildCommand := BuildCommand[vis.MonorepoBuildCommand]
 	if vis.NodeVersion == "" {
 		panic("must set node_version in meta.toml")
@@ -139,7 +146,7 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	go streamOutputToLogger(stderrPipe, t)
 
 	t.Log("🛠️ Regenerating genesis...")
-	mustExecuteCommandInDir(contractsDir, cmd)
+	mustExecuteCommandInDir(runDir, cmd)
 
 	t.Log("🛠️ Comparing registry genesis.alloc with regenerated genesis.alloc...")
 	var expectedData []byte
