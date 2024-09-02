@@ -235,7 +235,7 @@ jobs:
     resource_class: medium
     steps:
       - checkout
-      - run: echo "Job 1 is running"
+      - run: echo "All golang-validate-genesis-allocs jobs suceeded"
 workflows:
   hourly:
     jobs:
