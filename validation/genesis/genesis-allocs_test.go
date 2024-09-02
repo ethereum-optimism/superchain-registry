@@ -107,7 +107,7 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	if err != nil {
 		log.Fatalf("Failed to create directory: %v", err)
 	}
-	if vis.GenesisCreationCommand == "opnode2" {
+	if vis.GenesisCreationCommand == "opnode1" {
 		err = writeDeploymentsLegacy(chainId, path.Join(contractsDir, "deployments", chainIdString))
 	} else {
 		err = writeDeployments(chainId, path.Join(contractsDir, "deployments", chainIdString))
