@@ -50,7 +50,8 @@ func forge1(chainId uint64, l1rpcURL string) string {
 		fmt.Sprintf("DEPLOY_CONFIG_PATH=./deploy-config/%d.json", chainId),
 		"STATE_DUMP_PATH=statedump.json",
 		"forge script ./scripts/L2Genesis.s.sol:L2Genesis",
-		"--sig 'runWithStateDump()'"},
+		"--sig 'runWithStateDump()'",
+	},
 		" ")
 }
 
