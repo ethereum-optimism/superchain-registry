@@ -226,7 +226,6 @@ jobs:
       - install-pnpm
       - install-just
       - install-foundry
-      - install-gvm
       - install-nvm
       - run: just validate-genesis-allocs <<parameters.chainid>>
   genesis-allocs-all-ok:
