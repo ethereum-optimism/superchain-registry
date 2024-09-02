@@ -216,7 +216,7 @@ jobs:
           command: git diff --exit-code
   golang-validate-genesis-allocs:
     docker:
-      - image: cimg/go:1.22.6-node
+      - image: cimg/go:1.21.12-node
     resource_class: medium
     parameters:
       chainid:
