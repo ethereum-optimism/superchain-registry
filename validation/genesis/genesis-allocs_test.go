@@ -9,12 +9,14 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/validation/common"
 
 	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -36,7 +38,7 @@ func TestMain(m *testing.M) {
 	needToClone := os.IsNotExist(err)
 	if needToClone {
 		mustExecuteCommandInDir(thisDir,
-			exec.Command("git", "clone", "https://github.com/ethereum-optimism/optimism.git", temporaryOptimismDir))
+			exec.Command("git", "clone", "--recurse-submodules", "https://github.com/ethereum-optimism/optimism.git", temporaryOptimismDir))
 	}
 
 	// Run tests
@@ -116,7 +118,14 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 		log.Fatalf("Failed to write deployments: %v", err)
 	}
 
-	mustExecuteCommandInDir(thisDir, exec.Command("cp", "./monorepo-outputs.sh", monorepoDir))
+	var runDir string
+	if strings.HasPrefix(vis.GenesisCreationCommand, "forge") {
+		runDir = contractsDir
+	} else {
+		runDir = monorepoDir
+	}
+
+	mustExecuteCommandInDir(thisDir, exec.Command("cp", "./monorepo-outputs.sh", runDir))
 	buildCommand := BuildCommand[vis.MonorepoBuildCommand]
 	if vis.NodeVersion == "" {
 		panic("must set node_version in meta.toml")
@@ -137,19 +146,28 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	go streamOutputToLogger(stderrPipe, t)
 
 	t.Log("🛠️ Regenerating genesis...")
-	mustExecuteCommandInDir(monorepoDir, cmd)
+	mustExecuteCommandInDir(runDir, cmd)
 
 	t.Log("🛠️ Comparing registry genesis.alloc with regenerated genesis.alloc...")
-	expectedData, err := os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
-	require.NoError(t, err)
+	var expectedData []byte
 
-	gen := core.Genesis{}
-
-	err = json.Unmarshal(expectedData, &gen)
-	require.NoError(t, err)
-
-	expectedData, err = json.MarshalIndent(gen.Alloc, "", " ")
-	require.NoError(t, err)
+	if strings.HasPrefix(vis.GenesisCreationCommand, "forge") {
+		expectedData, err = os.ReadFile(path.Join(contractsDir, "statedump.json"))
+		require.NoError(t, err)
+		allocs := types.GenesisAlloc{}
+		err = json.Unmarshal(expectedData, &allocs)
+		require.NoError(t, err)
+		expectedData, err = json.MarshalIndent(allocs, "", " ")
+		require.NoError(t, err)
+	} else {
+		expectedData, err = os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
+		require.NoError(t, err)
+		gen := core.Genesis{}
+		err = json.Unmarshal(expectedData, &gen)
+		require.NoError(t, err)
+		expectedData, err = json.MarshalIndent(gen.Alloc, "", " ")
+		require.NoError(t, err)
+	}
 
 	g, err := core.LoadOPStackGenesis(chainId)
 	require.NoError(t, err)

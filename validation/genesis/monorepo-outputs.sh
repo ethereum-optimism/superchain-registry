@@ -9,7 +9,7 @@ echo "Running install command"
 eval $2
 
 echo "Installing and selecting correct go version"
-go_version=$(grep -m 1 '^go ' go.mod | awk '{print $2}')
+go_version=$(go mod edit -print | grep -m 1 '^go ' | awk '{print $2}')
 
 # Source the gvm script to load gvm functions into the shell
 # NOTE gvm is necessary because older versions of op-node used a
