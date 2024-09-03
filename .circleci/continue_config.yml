@@ -242,6 +242,7 @@ workflows:
       - golang-validate-all:
           context:
             - slack
+            - oplabs-rpc-urls
       - golang-test:
           context:
             - slack
@@ -257,6 +258,7 @@ workflows:
       - golang-promotion-test:
           context:
             - slack
+            - oplabs-rpc-urls
     triggers:
       - schedule:
           cron: "0 0 * * *"
