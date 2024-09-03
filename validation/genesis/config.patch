@@ -1,0 +1,13 @@
+diff --git a/op-chain-ops/genesis/config.go b/op-chain-ops/genesis/config.go
+index 4c813acd4..42aa795ed 100644
+--- a/op-chain-ops/genesis/config.go
++++ b/op-chain-ops/genesis/config.go
+@@ -588,7 +588,7 @@ func NewDeployConfig(path string) (*DeployConfig, error) {
+ 	}
+ 
+ 	dec := json.NewDecoder(bytes.NewReader(file))
+-	dec.DisallowUnknownFields()
++	// dec.DisallowUnknownFields()
+ 
+ 	var config DeployConfig
+ 	if err := dec.Decode(&config); err != nil {

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/common"
 )
 
 // Test names
@@ -26,6 +27,7 @@ const (
 	StandardContractVersionsTest = "Standard_Contract_Versions"
 	OptimismPortal2ParamsTest    = "Optimism_Portal_2_Params"
 	KeyHandoverTest              = "Key_Handover"
+	GenesisAllocsMetadataTest    = "Genesis_Allocs_Metadata"
 )
 
 func TestValidation(t *testing.T) {
@@ -33,7 +35,7 @@ func TestValidation(t *testing.T) {
 	// on each OP chain.
 	for _, chain := range OPChains {
 		chain := chain
-		t.Run(perChainTestName(chain), func(t *testing.T) {
+		t.Run(common.PerChainTestName(chain), func(t *testing.T) {
 			t.Parallel()
 			testValidation(t, chain)
 		})
@@ -81,6 +83,7 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	t.Run(L2SecurityConfigTest, func(t *testing.T) { testL2SecurityConfig(t, chain) })
 	// Other
 	t.Run(DataAvailabilityTypeTest, func(t *testing.T) { testDataAvailabilityType(t, chain) })
+	t.Run(GenesisAllocsMetadataTest, func(t *testing.T) { testGenesisAllocsMetadata(t, chain) })
 }
 
 // testStandard should be applied only to a fully Standard Chain,
