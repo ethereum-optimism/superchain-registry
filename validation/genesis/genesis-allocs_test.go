@@ -93,6 +93,7 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	// blow away any leftover files from the previous run
 	t.Logf("🛠️ Resetting monorepo to %s...", monorepoCommit)
 	mustExecuteCommandInDir(monorepoDir, exec.Command("git", "reset", "--hard", monorepoCommit))
+	mustExecuteCommandInDir(monorepoDir, exec.Command("git", "submodule", "update"))
 
 	t.Log("🛠️ Deleting node_modules...")
 	mustExecuteCommandInDir(monorepoDir, exec.Command("rm", "-rf", "node_modules"))
@@ -175,9 +176,9 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	gotData, err := json.MarshalIndent(g.Alloc, "", " ")
 	require.NoError(t, err)
 
-	err = os.WriteFile(path.Join(monorepoDir, "want-alloc.json"), expectedData, os.ModePerm)
+	err = os.WriteFile(path.Join(monorepoDir, "want-alloc.json"), expectedData, os.ModePerm) // regenerated
 	require.NoError(t, err)
-	err = os.WriteFile(path.Join(monorepoDir, "got-alloc.json"), gotData, os.ModePerm)
+	err = os.WriteFile(path.Join(monorepoDir, "got-alloc.json"), gotData, os.ModePerm) // read from registry
 	require.NoError(t, err)
 
 	require.Equal(t, string(expectedData), string(gotData))

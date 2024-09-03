@@ -3,7 +3,7 @@ set -o errexit -o pipefail
 set -x
 
 # Get the list of changed files
-targetList=$(git diff --name-only --merge-base main -- validation/genesis/*.toml)
+targetList=$(git diff --name-only --merge-base main -- "validation/genesis/*.toml" "validation/genesis/*.json")
 
 # Check if targetList is empty
 if [ -z "$targetList" ]; then
@@ -12,7 +12,7 @@ if [ -z "$targetList" ]; then
 fi
 
 # Process the targetList to extract directory names and then the base names
-targetList=$(echo "$targetList" | xargs dirname | xargs basename)
+targetList=$(echo "$targetList" | xargs dirname | xargs basename | sort -u)
 
 # Join the array elements with commas and wrap each element in quotes
 targets=$(echo "$targetList" | sed 's/.*/"&"/' | tr '\n' ',')
