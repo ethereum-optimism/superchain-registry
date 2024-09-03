@@ -228,16 +228,16 @@ workflows:
       - golang-lint
       - golang-modules-tidy
       - golang-test
-      - hold-approval:
+      - hold:
           type: approval
           filters:
             branches:
               only: /pull\/[0-9]+/ # Forked pull requests have CIRCLE_BRANCH set to pull/XXX
-      - golang-validate-modified:
+      - golang-validate-modified-fork:
           context:
             - oplabs-rpc-urls
           requires:
-            - hold-approval
+            - hold
           filters:
             branches:
               only: /pull\/[0-9]+/ # Forked pull requests have CIRCLE_BRANCH set to pull/XXX
