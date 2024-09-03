@@ -120,19 +120,6 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "Arena Z Testnet"
-  identifier = "sepolia/arena-z"
-  chain_id = 9897
-  rpc = ["https://rpc.arena-z.tr.raas.gelato.cloud"]
-  explorers = [""]
-  superchain_level = 0
-  data_availability_type = "eth-da"
-  gas_paying_token = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-
-[[chains]]
   name = "Base Sepolia Testnet"
   identifier = "sepolia/base"
   chain_id = 84532

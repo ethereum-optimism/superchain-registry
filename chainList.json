@@ -171,24 +171,6 @@
     }
   },
   {
-    "name": "Arena Z Testnet",
-    "identifier": "sepolia/arena-z",
-    "chainId": 9897,
-    "rpc": [
-      "https://rpc.arena-z.tr.raas.gelato.cloud"
-    ],
-    "explorers": [
-      ""
-    ],
-    "superchainLevel": 0,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    },
-    "gasPayingToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-  },
-  {
     "name": "Base Sepolia Testnet",
     "identifier": "sepolia/base",
     "chainId": 84532,
