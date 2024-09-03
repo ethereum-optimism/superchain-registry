@@ -1,14 +1,14 @@
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
-echo "Installing and selecting correct Node version"
+echo "Installing and selecting correct Node version..."
 nvm install $1
 nvm use $1
 
-echo "Running install command"
+echo "Running install command..."
 eval $2
 
-echo "Installing and selecting correct go version"
+echo "Installing and selecting correct go version..."
 go_version=$(go mod edit -print | grep -m 1 '^go ' | awk '{print $2}')
 
 # Source the gvm script to load gvm functions into the shell
@@ -20,5 +20,5 @@ go_version=$(go mod edit -print | grep -m 1 '^go ' | awk '{print $2}')
 gvm install go${go_version}
 gvm use go${go_version}
 
-echo "Running op-node genesis l2 command"
+echo "Running l2 genesis creation command..."
 eval "$3"
