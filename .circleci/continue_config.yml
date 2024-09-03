@@ -270,10 +270,16 @@ workflows:
           matrix:
             parameters:
               chainid: [] # This list will be replaced by the generate_test_config.sh script
+          context:
+            - oplabs-rpc-urls
       - genesis-allocs-all-ok:
           requires: [] # This list will be replaced by the generate_test_config.sh script
+          context:
+            - oplabs-rpc-urls
       - golang-lint
       - golang-modules-tidy
       - golang-test
-      - golang-validate-modified
+      - golang-validate-modified:
+          context:
+            - oplabs-rpc-urls
       - check-codegen
