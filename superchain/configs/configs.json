@@ -216,6 +216,74 @@
           }
         },
         {
+          "Name": "Redstone",
+          "l2_chain_id": 690,
+          "PublicRPC": "https://rpc.redstonechain.com",
+          "SequencerRPC": "https://rpc.redstonechain.com",
+          "Explorer": "https://explorer.redstone.xyz",
+          "SuperchainLevel": 0,
+          "StandardChainCandidate": false,
+          "SuperchainTime": null,
+          "batch_inbox_address": "0xff00000000000000000000000000000000000690",
+          "Superchain": "mainnet",
+          "Chain": "redstone",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "block_time": 2,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 6,
+            "eip1559Denominator": 50,
+            "eip1559DenominatorCanyon": 250
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "L1": {
+              "Hash": "0xb9ec694afdde2e2ed661ed8ec56dace5cf8723801342fa1229e693f2a98af672",
+              "Number": 19578374
+            },
+            "L2": {
+              "Hash": "0xa4f55631013577464810893a05b18f07fe483885a6ef93e0060e7128bdf4ca3b",
+              "Number": 0
+            },
+            "l2_time": 1712185091,
+            "ExtraData": null,
+            "system_config": {
+              "batcherAddr": "0xA31cb9Bc414601171D4537580f98F66C03aECd43",
+              "overhead": "0x0000000000000000000000000000000000000000000000000000000000000001",
+              "scalar": "0x0000000000000000000000000000000000000000000000000000000000001def",
+              "gasLimit": 100000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0xFe27f187A9E46104a932189dDF229871E06B22F8",
+            "AnchorStateRegistryProxy": "0xc51ac31BcEFB64D999AF10129Cb7693EeE7c1179",
+            "BatchSubmitter": "0xA31cb9Bc414601171D4537580f98F66C03aECd43",
+            "Challenger": "0xb356B146F1629c49C44344464F69BCDAfb4bb664",
+            "DelayedWETHProxy": "0xa130523fD22e2a9D78F8aB232b01ff552845B4A9",
+            "DisputeGameFactoryProxy": "0x8f68E849eaf8EB943536F9d1D49Ea9C9b5868b98",
+            "Guardian": "0xb356B146F1629c49C44344464F69BCDAfb4bb664",
+            "L1CrossDomainMessengerProxy": "0x592C1299e0F8331D81A28C0FC7352Da24eDB444a",
+            "L1ERC721BridgeProxy": "0x4FFB98dBC3086bA85d5E626a6EbC3D0d08533fF4",
+            "L1StandardBridgeProxy": "0xc473ca7E02af24c129c2eEf51F2aDf0411c1Df69",
+            "L2OutputOracleProxy": "0xa426A052f657AEEefc298b3B5c35a470e4739d69",
+            "MIPS": "0x66D6be83984e3F026B4a9e2D8Fb082ecDBd43648",
+            "OptimismMintableERC20FactoryProxy": "0x5f962474834Cf1981Df6232e4b6431d3d10cb71D",
+            "OptimismPortalProxy": "0xC7bCb0e8839a28A1cFadd1CF716de9016CdA51ae",
+            "PreimageOracle": "0xE7d0fE72637B3C949cd81c63A4Ff1fb23feeF3b2",
+            "Proposer": "0x4c465E58946145bb2BFC38833154f5A3B5728CF7",
+            "ProxyAdmin": "0xCC53b447aFe07926423aB96D5496b1af30485ED2",
+            "ProxyAdminOwner": "0x70FdbCb066eD3621647Ddf61A1f40aaC6058Bc89",
+            "SuperchainConfig": "0x4b5b41c240173191425F5928bc6bdd0d439331BB",
+            "SystemConfigOwner": "0xb356B146F1629c49C44344464F69BCDAfb4bb664",
+            "SystemConfigProxy": "0x8f2428F7189c0d92D1c4a5358903A8c80Ec6a69D",
+            "UnsafeBlockSigner": "0xA5bdf717af725a47Fd7378d3D9C833776951efa0"
+          }
+        },
+        {
           "Name": "Lyra Chain",
           "l2_chain_id": 957,
           "PublicRPC": "https://rpc.lyra.finance",
