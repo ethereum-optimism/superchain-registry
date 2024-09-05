@@ -3,16 +3,19 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
 
+	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/optimism/op-e2e/bindings"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/cmd"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/config"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/flags"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/genesis"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -32,8 +35,11 @@ var app = &cli.App{
 		flags.ChainNameFlag,
 		flags.ChainShortNameFlag,
 		flags.RollupConfigFlag,
+		flags.GenesisFlag,
 		flags.DeploymentsDirFlag,
 		flags.StandardChainCandidateFlag,
+		flags.GenesisCreationCommit,
+		flags.DeployConfigFlag,
 	},
 	Action: entrypoint,
 	Commands: []*cli.Command{
@@ -87,6 +93,9 @@ func entrypoint(ctx *cli.Context) error {
 
 	chainName := ctx.String(flags.ChainNameFlag.Name)
 	rollupConfigPath := ctx.String(flags.RollupConfigFlag.Name)
+	genesisPath := ctx.String(flags.GenesisFlag.Name)
+	deployConfigPath := ctx.String(flags.DeployConfigFlag.Name)
+	genesisCreationCommit := ctx.String(flags.GenesisCreationCommit.Name)
 	deploymentsDir := ctx.String(flags.DeploymentsDirFlag.Name)
 	chainShortName := ctx.String(flags.ChainShortNameFlag.Name)
 	if chainShortName == "" {
@@ -107,6 +116,9 @@ func entrypoint(ctx *cli.Context) error {
 	fmt.Printf("Monorepo dir:                   %s\n", monorepoDir)
 	fmt.Printf("Deployments directory:          %s\n", deploymentsDir)
 	fmt.Printf("Rollup config filepath:         %s\n", rollupConfigPath)
+	fmt.Printf("Genesis filepath:               %s\n", genesisPath)
+	fmt.Printf("Deploy config filepath:         %s\n", deployConfigPath)
+	fmt.Printf("Genesis creation commit:        %s\n", genesisCreationCommit)
 	fmt.Printf("Public RPC endpoint:            %s\n", publicRPC)
 	fmt.Printf("Sequencer RPC endpoint:         %s\n", sequencerRPC)
 	fmt.Printf("Block Explorer:                 %s\n", explorer)
@@ -134,7 +146,7 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to infer fault proofs status of chain: %w", err)
 	}
 
-	rollupConfig, err := config.ConstructChainConfig(rollupConfigPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate)
+	rollupConfig, err := config.ConstructChainConfig(rollupConfigPath, genesisPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate)
 	if err != nil {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
@@ -166,7 +178,29 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("error generating chain config .yaml file: %w", err)
 	}
 
-	fmt.Printf("Wrote config for new chain with identifier %s", rollupConfig.Identifier())
+	fmt.Printf("✅ Wrote config for new chain with identifier %s", rollupConfig.Identifier())
+
+	folderName := fmt.Sprintf("%d", rollupConfig.ChainID)
+	if runningTests := os.Getenv("SCR_RUN_TESTS"); runningTests == "true" {
+		folderName = folderName + "-test"
+	}
+	genesisValidationInputsDir := filepath.Join(superchainRepoRoot, "validation", "genesis", "validation-inputs", folderName)
+	err = os.MkdirAll(genesisValidationInputsDir, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	err = copyDeployConfigFile(deployConfigPath, genesisValidationInputsDir)
+	if err != nil {
+		return fmt.Errorf("error copying deploy-config json file: %w", err)
+	}
+	fmt.Printf("✅ Copied deploy-config json file to validation module")
+
+	err = writeGenesisValidationMetadata(genesisCreationCommit, genesisValidationInputsDir)
+	if err != nil {
+		return fmt.Errorf("error writing genesis validation metadata file: %w", err)
+	}
+	fmt.Printf("✅ Wrote genesis validation metadata file")
+
 	return nil
 }
 
@@ -226,4 +260,33 @@ func getGasPayingToken(l1rpcURl string, SystemConfigAddress superchain.Address) 
 	}
 
 	return (*superchain.Address)(&result.Addr), nil
+}
+
+func copyDeployConfigFile(sourcePath string, targetDir string) error {
+	data, err := os.ReadFile(sourcePath)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path.Join(targetDir, "deploy-config.json"), data, os.ModePerm)
+}
+
+func writeGenesisValidationMetadata(commit string, targetDir string) error {
+	// Define default metadata params:
+	// These may not be sufficient to make the genesis validation work,
+	// but we address that with some manual trial-and-error intervention
+	// involving OPLabs engineers after the add-chain command runs.
+	const defaultNodeVersion = "18.12.1"
+	const defaultMonorepoBuildCommand = "pnpm"
+	const defaultGenesisCreationCommand = "opnode2" // See validation/genesis/commands.go
+	vm := genesis.ValidationMetadata{
+		GenesisCreationCommit:  commit,
+		NodeVersion:            defaultNodeVersion,
+		MonorepoBuildCommand:   defaultMonorepoBuildCommand,
+		GenesisCreationCommand: defaultGenesisCreationCommand,
+	}
+	data, err := toml.Marshal(vm)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path.Join(targetDir, "meta.toml"), data, os.ModePerm)
 }
