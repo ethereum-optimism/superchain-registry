@@ -21,7 +21,7 @@ var standardConfigFile embed.FS
 var ContractASTsWithImmutableReferences = map[string]string{}
 
 // L1ContractBytecodeHashes represents the hash of the contract bytecode (as a hex string) for each L1 contract
-type L1ContractBytecodeHashes superchain.ContractVersions
+type L1ContractBytecodeHashes superchain.ContractBytecodeHashes
 
 // ContractBytecodeImmutables stores the immutable references as a raw stringified JSON string in a TOML config.
 // it is stored this way because it can be plucked out of the contract compilation output as is and pasted into the TOML config file.

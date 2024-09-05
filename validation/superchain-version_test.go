@@ -111,10 +111,11 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 			// which includes both proxied and unproxied contracts.
 			// The cv object (of type ContractVersions), on the other hand,
 			// only lists implementation contract versions. The next line accounts for
-			// this: we may get the version directly from the implemntation, or via a Proxy,
+			// this: we may get the version directly from the implementation, or via a Proxy,
 			// but we store it against the implementation name in either case.
 			if s.Type().Field(i).Name == k || s.Type().Field(i).Name+"Proxy" == k {
-				reflect.ValueOf(&cv).Elem().Field(i).SetString(v.(string))
+				// there is an inner struct, a VersionedContract - set the `Version`
+				reflect.ValueOf(&cv).Elem().Field(i).FieldByName("Version").SetString(v.(string))
 			}
 		}
 		return true
@@ -269,22 +270,22 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 
 func TestFindOPContractTag(t *testing.T) {
 	shouldMatch := ContractVersions{
-		L1CrossDomainMessenger:       "2.3.0",
-		L1ERC721Bridge:               "2.1.0",
-		L1StandardBridge:             "2.1.0",
-		L2OutputOracle:               "",
-		OptimismMintableERC20Factory: "1.9.0",
-		OptimismPortal:               "3.10.0",
-		SystemConfig:                 "2.2.0",
-		ProtocolVersions:             "",
-		SuperchainConfig:             "",
-		AnchorStateRegistry:          "1.0.0",
-		DelayedWETH:                  "1.0.0",
-		DisputeGameFactory:           "1.0.0",
-		FaultDisputeGame:             "1.2.0",
-		MIPS:                         "1.0.1",
-		PermissionedDisputeGame:      "1.2.0",
-		PreimageOracle:               "1.0.0",
+		L1CrossDomainMessenger:       VersionedContract{Version: "2.3.0"},
+		L1ERC721Bridge:               VersionedContract{Version: "2.1.0"},
+		L1StandardBridge:             VersionedContract{Version: "2.1.0"},
+		L2OutputOracle:               VersionedContract{Version: ""},
+		OptimismMintableERC20Factory: VersionedContract{Version: "1.9.0"},
+		OptimismPortal:               VersionedContract{Version: "3.10.0"},
+		SystemConfig:                 VersionedContract{Version: "2.2.0"},
+		ProtocolVersions:             VersionedContract{Version: "1.0.0"},
+		SuperchainConfig:             VersionedContract{Version: ""},
+		AnchorStateRegistry:          VersionedContract{Version: "1.0.0"},
+		DelayedWETH:                  VersionedContract{Version: "1.0.0"},
+		DisputeGameFactory:           VersionedContract{Version: "1.0.0"},
+		FaultDisputeGame:             VersionedContract{Version: "1.2.0"},
+		MIPS:                         VersionedContract{Version: "1.0.1"},
+		PermissionedDisputeGame:      VersionedContract{Version: "1.2.0"},
+		PreimageOracle:               VersionedContract{Version: "1.0.0"},
 	}
 
 	got, err := findOPContractTagInVersions(shouldMatch, false)
@@ -293,14 +294,14 @@ func TestFindOPContractTag(t *testing.T) {
 	require.Equal(t, got, want)
 
 	shouldNotMatch := ContractVersions{
-		L1CrossDomainMessenger:       "2.3.0",
-		L1ERC721Bridge:               "2.1.0",
-		L1StandardBridge:             "2.1.0",
-		OptimismMintableERC20Factory: "1.9.0",
-		OptimismPortal:               "2.5.0",
-		SystemConfig:                 "1.12.0",
-		ProtocolVersions:             "1.0.0",
-		L2OutputOracle:               "1.0.0",
+		L1CrossDomainMessenger:       VersionedContract{Version: "2.3.0"},
+		L1ERC721Bridge:               VersionedContract{Version: "2.1.0"},
+		L1StandardBridge:             VersionedContract{Version: "2.1.0"},
+		OptimismMintableERC20Factory: VersionedContract{Version: "1.9.0"},
+		OptimismPortal:               VersionedContract{Version: "2.5.0"},
+		SystemConfig:                 VersionedContract{Version: "1.12.0"},
+		ProtocolVersions:             VersionedContract{Version: "1.0.0"},
+		L2OutputOracle:               VersionedContract{Version: "1.0.0"},
 	}
 	got, err = findOPContractTagInVersions(shouldNotMatch, false)
 	require.Error(t, err)
@@ -405,26 +406,29 @@ func checkMatchOrTestnet(s, c reflect.Value, isTestnet bool) bool {
 			continue
 		}
 
-		field := s.Field(i)
+		innerStStd := s.Field(i).Interface().(VersionedContract)
+		innerFieldS := reflect.ValueOf(innerStStd).FieldByName("Version")
+		innerStCand := c.Field(i).Interface().(VersionedContract)
+		innerFieldC := reflect.ValueOf(innerStCand).FieldByName("Version")
 
-		if field.Kind() != reflect.String {
+		if innerFieldS.Kind() != reflect.String {
 			panic("versions must be strings")
 		}
 
-		if field.String() == "" {
+		if innerFieldS.String() == "" {
 			// Ignore any empty strings, these are treated as "match anything"
 			continue
 		}
 
-		if field.String() != c.Field(i).String() {
+		if innerFieldS.String() != innerFieldC.String() {
 			if !isTestnet {
 				return false
 			}
 
 			// testnets are permitted to have contract versions that are newer than what's specified in the standard config
 			// testnets may NOT have contract versions that are older.
-			min := CanonicalizeSemver(field.String())
-			current := CanonicalizeSemver(c.Field(i).String())
+			min := CanonicalizeSemver(innerFieldS.String())
+			current := CanonicalizeSemver(innerFieldC.String())
 			if semver.Compare(min, current) > 0 {
 				return false
 			}

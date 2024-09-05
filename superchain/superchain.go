@@ -374,16 +374,10 @@ func (a AddressList) AddressFor(name string) (Address, error) {
 // contract. They are keyed by the semantic version.
 type AddressSet map[string]Address
 
-// VersionedContract represents a contract that has a semantic version.
-type VersionedContract struct {
-	Version string  `json:"version" toml:"version"`
-	Address Address `json:"address" toml:"address"`
-}
-
 // ContractVersions represents the desired semantic version of the contracts
 // in the superchain. This currently only supports L1 contracts but could
 // represent L2 predeploys in the future.
-type ContractVersions struct {
+type ContractBytecodeHashes struct {
 	L1CrossDomainMessenger       string `toml:"l1_cross_domain_messenger"`
 	L1ERC721Bridge               string `toml:"l1_erc721_bridge"`
 	L1StandardBridge             string `toml:"l1_standard_bridge"`
@@ -404,43 +398,73 @@ type ContractVersions struct {
 	PreimageOracle          string `toml:"preimage_oracle,omitempty"`
 }
 
+// VersionedContract represents a contract that has a semantic version.
+type VersionedContract struct {
+	Version string  `toml:"version"`
+	Address Address `toml:"address,omitempty"`
+}
+
+// ContractVersions represents the desired semantic version of the contracts
+// in the superchain. This currently only supports L1 contracts but could
+// represent L2 predeploys in the future.
+type ContractVersions struct {
+	L1CrossDomainMessenger       VersionedContract `toml:"l1_cross_domain_messenger"`
+	L1ERC721Bridge               VersionedContract `toml:"l1_erc721_bridge"`
+	L1StandardBridge             VersionedContract `toml:"l1_standard_bridge"`
+	L2OutputOracle               VersionedContract `toml:"l2_output_oracle,omitempty"`
+	OptimismMintableERC20Factory VersionedContract `toml:"optimism_mintable_erc20_factory"`
+	OptimismPortal               VersionedContract `toml:"optimism_portal"`
+	SystemConfig                 VersionedContract `toml:"system_config"`
+	// Superchain-wide contracts:
+	ProtocolVersions VersionedContract `toml:"protocol_versions"`
+	SuperchainConfig VersionedContract `toml:"superchain_config,omitempty"`
+	// Fault Proof contracts:
+	AnchorStateRegistry     VersionedContract `toml:"anchor_state_registry,omitempty"`
+	DelayedWETH             VersionedContract `toml:"delayed_weth,omitempty"`
+	DisputeGameFactory      VersionedContract `toml:"dispute_game_factory,omitempty"`
+	FaultDisputeGame        VersionedContract `toml:"fault_dispute_game,omitempty"`
+	MIPS                    VersionedContract `toml:"mips,omitempty"`
+	PermissionedDisputeGame VersionedContract `toml:"permissioned_dispute_game,omitempty"`
+	PreimageOracle          VersionedContract `toml:"preimage_oracle,omitempty"`
+}
+
 // VersionFor returns the version for the supplied contract name, if it exits
 // (and an error otherwise). Useful for slicing into the struct using a string.
 func (c ContractVersions) VersionFor(contractName string) (string, error) {
 	var version string
 	switch contractName {
 	case "L1CrossDomainMessenger":
-		version = c.L1CrossDomainMessenger
+		version = c.L1CrossDomainMessenger.Version
 	case "L1ERC721Bridge":
-		version = c.L1ERC721Bridge
+		version = c.L1ERC721Bridge.Version
 	case "L1StandardBridge":
-		version = c.L1StandardBridge
+		version = c.L1StandardBridge.Version
 	case "L2OutputOracle":
-		version = c.L2OutputOracle
+		version = c.L2OutputOracle.Version
 	case "OptimismMintableERC20Factory":
-		version = c.OptimismMintableERC20Factory
+		version = c.OptimismMintableERC20Factory.Version
 	case "OptimismPortal":
-		version = c.OptimismPortal
+		version = c.OptimismPortal.Version
 	case "SystemConfig":
-		version = c.SystemConfig
+		version = c.SystemConfig.Version
 	case "AnchorStateRegistry":
-		version = c.AnchorStateRegistry
+		version = c.AnchorStateRegistry.Version
 	case "DelayedWETH":
-		version = c.DelayedWETH
+		version = c.DelayedWETH.Version
 	case "DisputeGameFactory":
-		version = c.DisputeGameFactory
+		version = c.DisputeGameFactory.Version
 	case "FaultDisputeGame":
-		version = c.FaultDisputeGame
+		version = c.FaultDisputeGame.Version
 	case "MIPS":
-		version = c.MIPS
+		version = c.MIPS.Version
 	case "PermissionedDisputeGame":
-		version = c.PermissionedDisputeGame
+		version = c.PermissionedDisputeGame.Version
 	case "PreimageOracle":
-		version = c.PreimageOracle
+		version = c.PreimageOracle.Version
 	case "ProtocolVersions":
-		version = c.ProtocolVersions
+		version = c.ProtocolVersions.Version
 	case "SuperchainConfig":
-		version = c.SuperchainConfig
+		version = c.SuperchainConfig.Version
 	default:
 		return "", errors.New("no such contract name")
 	}
@@ -456,19 +480,19 @@ func (c ContractVersions) Check(allowEmptyVersions bool) error {
 	val := reflect.ValueOf(c)
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
-		str, ok := field.Interface().(string)
+		vC, ok := field.Interface().(VersionedContract)
 		if !ok {
 			return fmt.Errorf("invalid type for field %s", val.Type().Field(i).Name)
 		}
-		if str == "" {
+		if vC.Version == "" {
 			if allowEmptyVersions {
 				continue // we allow empty strings and rely on tests to assert (or except) a nonempty version
 			}
 			return fmt.Errorf("empty version for field %s", val.Type().Field(i).Name)
 		}
-		str = CanonicalizeSemver(str)
-		if !semver.IsValid(str) {
-			return fmt.Errorf("invalid semver %s for field %s", str, val.Type().Field(i).Name)
+		vC.Version = CanonicalizeSemver(vC.Version)
+		if !semver.IsValid(vC.Version) {
+			return fmt.Errorf("invalid semver %s for field %s", vC.Version, val.Type().Field(i).Name)
 		}
 	}
 	return nil
@@ -515,38 +539,17 @@ type Genesis struct {
 	// The chain-config is not included. This is derived from the chain and superchain definition instead.
 }
 
-// StandardContractAddresses has all implementation addresses of the standard contracts
-type StandardContractAddresses struct {
-	FaultDisputeGame             string `toml:"FaultDisputeGame"`
-	PermissionedDisputeGame      string `toml:"PermissionedDisputeGame"`
-	DisputeGameFactory           string `toml:"DisputeGameFactory"`
-	AnchorStateRegistry          string `toml:"AnchorStateRegistry"`
-	DelayedWETH                  string `toml:"DelayedWETH"`
-	MIPS                         string `toml:"MIPS"`
-	PreimageOracle               string `toml:"PreimageOracle"`
-	OptimismPortal               string `toml:"OptimismPortal"`
-	SystemConfig                 string `toml:"SystemConfig"`
-	AddressManager               string `toml:"AddressManager"`
-	L1CrossDomainMessenger       string `toml:"L1CrossDomainMessenger"`
-	L1ERC721Bridge               string `toml:"L1ERC721Bridge"`
-	L1StandardBridge             string `toml:"L1StandardBridge"`
-	L2OutputOracle               string `toml:"L2OutputOracle"`
-	OptimismMintableERC20Factory string `toml:"OptimismMintableERC20Factory"`
-	SuperchainConfig             string `toml:"SuperchainConfig"`
-	ProtocolVersions             string `toml:"ProtocolVersions"`
-}
-
 type SuperchainL1Info struct {
-	ChainID                 uint64                               `toml:"chain_id"`
-	PublicRPC               string                               `toml:"public_rpc"`
-	Explorer                string                               `toml:"explorer"`
-	ContractImplementations map[string]StandardContractAddresses `toml:"ImplementationAddresses"` // Implementation addresses for a release tag
-	Versions                map[string]ContractVersions          `toml:"ContractVersions"`
+	ChainID   uint64                      `toml:"chain_id"`
+	PublicRPC string                      `toml:"public_rpc"`
+	Explorer  string                      `toml:"explorer"`
+	Versions  map[string]ContractVersions `toml:"ContractVersions"`
 }
 
 type SuperchainConfig struct {
-	Name string           `toml:"name"`
-	L1   SuperchainL1Info `toml:"l1"`
+	Name             string           `toml:"name"`
+	L1               SuperchainL1Info `toml:"l1"`
+	ContractsRelease string           `toml:"op_contracts_release"`
 
 	ProtocolVersionsAddr *Address `toml:"protocol_versions_addr,omitempty"`
 	SuperchainConfigAddr *Address `toml:"superchain_config_addr,omitempty"`
