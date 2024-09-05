@@ -30,6 +30,10 @@ var exclusions = map[string]map[uint64]bool{
 		// OP Mainnet has a pre-bedrock genesis (with an empty allocs object stored in the registry), so we exclude it from this check.")
 		10: true,
 	},
+	GenesisAllocsMetadataTest: {
+		10:       true, // op-mainnet
+		11155420: true, // op-sepolia
+	},
 	ChainIDRPCTest: {
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared

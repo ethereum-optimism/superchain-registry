@@ -9,6 +9,7 @@ import (
 )
 
 func testGenesisAllocsMetadata(t *testing.T, chain *ChainConfig) {
+	skipIfExcluded(t, chain.ChainID)
 	// This tests asserts that the a genesis creation commit is stored for
 	// the chain. It does not perform full genesis allocs validation.
 	// Full genesis allocs validation is run as a one-off requirement when
