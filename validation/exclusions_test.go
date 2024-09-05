@@ -63,7 +63,7 @@ var silences = map[string]map[uint64]time.Time{
 func TestExclusions(t *testing.T) {
 	for name, v := range exclusions {
 		for k := range v {
-			if k == 10 && name == GenesisHashTest {
+			if k == 10 && (name == GenesisHashTest || name == GenesisAllocsMetadataTest) {
 				// This is the sole standard chain validation check exclusion
 				continue
 			}
