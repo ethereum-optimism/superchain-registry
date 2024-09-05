@@ -13,6 +13,10 @@ seq_window_size = 3600
 max_sequencer_drift = 600
 data_availability_type = "alt-da"
 
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+
 [alt_da]
   da_challenge_contract_address = "0x3333333333333333333300000000000000000000"
   da_challenge_window = 5555555

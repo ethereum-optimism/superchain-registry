@@ -21,6 +21,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+
+	"golang.org/x/mod/semver"
 )
 
 var contractsToCheckVersionAndBytecodeOf = []string{
@@ -50,15 +52,22 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
+	// testnets and devnets are permitted to use newer contract versions
+	// than the versions specified in the standard config
+	isTestnet := (chain.Superchain == "sepolia" || chain.Superchain == "sepolia-dev-0")
+
 	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client)
 	require.NoError(t, err)
-	_, err = findOPContractTagInVersions(versions)
+	_, err = findOPContractTagInVersions(versions, isTestnet)
 	require.NoError(t, err)
 
-	bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
-	require.NoError(t, err)
-	_, err = findOPContractTagInByteCodeHashes(bytecodeHashes)
-	require.NoError(t, err)
+	// don't perform bytecode checking for testnets
+	if !isTestnet {
+		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
+		require.NoError(t, err)
+		_, err = findOPContractTagInByteCodeHashes(bytecodeHashes)
+		require.NoError(t, err)
+	}
 }
 
 // getContractVersionsFromChain pulls the appropriate contract versions from chain
@@ -281,7 +290,7 @@ func TestFindOPContractTag(t *testing.T) {
 		PreimageOracle:               "1.0.0",
 	}
 
-	got, err := findOPContractTagInVersions(shouldMatch)
+	got, err := findOPContractTagInVersions(shouldMatch, false)
 	require.NoError(t, err)
 	want := []standard.Tag{"op-contracts/v1.4.0"}
 	require.Equal(t, got, want)
@@ -296,13 +305,13 @@ func TestFindOPContractTag(t *testing.T) {
 		ProtocolVersions:             "1.0.0",
 		L2OutputOracle:               "1.0.0",
 	}
-	got, err = findOPContractTagInVersions(shouldNotMatch)
+	got, err = findOPContractTagInVersions(shouldNotMatch, false)
 	require.Error(t, err)
 	want = []standard.Tag{}
 	require.Equal(t, got, want)
 }
 
-func findOPContractTagInVersions(versions ContractVersions) ([]standard.Tag, error) {
+func findOPContractTagInVersions(versions ContractVersions, isTestnet bool) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
 	pretty, err := json.MarshalIndent(versions, "", " ")
 	if err != nil {
@@ -319,7 +328,7 @@ func findOPContractTagInVersions(versions ContractVersions) ([]standard.Tag, err
 	matchesTag := func(standard, candidate ContractVersions) bool {
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
-		return checkMatch(s, c)
+		return checkMatchOrTestnet(s, c, isTestnet)
 	}
 
 	for tag := range standard.Versions {
@@ -383,6 +392,46 @@ func checkMatch(s, c reflect.Value) bool {
 
 		if field.String() != c.Field(i).String() {
 			return false
+		}
+	}
+	return true
+}
+
+// checkMatchOrTestnet returns true if s and c match, OR if the chain is a testnet and s < c
+func checkMatchOrTestnet(s, c reflect.Value, isTestnet bool) bool {
+	// Iterate over each field of the standard struct
+	for i := 0; i < s.NumField(); i++ {
+
+		if s.Type().Field(i).Name == "ProtocolVersions" {
+			// We can't check this contract:
+			// (until this issue resolves https://github.com/ethereum-optimism/client-pod/issues/699#issuecomment-2150970346)
+			continue
+		}
+
+		field := s.Field(i)
+
+		if field.Kind() != reflect.String {
+			panic("versions must be strings")
+		}
+
+		if field.String() == "" {
+			// Ignore any empty strings, these are treated as "match anything"
+			continue
+		}
+
+		if field.String() != c.Field(i).String() {
+			if !isTestnet {
+				return false
+			}
+
+			// testnets are permitted to have contract versions that are newer than what's specified in the standard config
+			// testnets may NOT have contract versions that are older.
+			min := CanonicalizeSemver(field.String())
+			current := CanonicalizeSemver(c.Field(i).String())
+			if semver.Compare(min, current) > 0 {
+				return false
+			}
+
 		}
 	}
 	return true
