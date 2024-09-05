@@ -758,6 +758,11 @@
           "seq_window_size": 3600,
           "max_sequencer_drift": 600,
           "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 10,
+            "eip1559Denominator": 50,
+            "eip1559DenominatorCanyon": 250
+          },
           "GasPayingToken": null,
           "genesis": {
             "L1": {
