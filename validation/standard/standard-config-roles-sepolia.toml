@@ -1,6 +1,6 @@
 [l1.nonFaultProofs]
-OptimismPortalProxy."GUARDIAN()" = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
-L2OutputOracleProxy."CHALLENGER()" = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
+OptimismPortalProxy."guardian()" = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
+L2OutputOracleProxy."challenger()" = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
 
 [l1.FaultProofs]
 OptimismPortalProxy."guardian()" = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"

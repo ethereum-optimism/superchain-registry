@@ -31,6 +31,12 @@ type BlockID struct {
 	Number uint64 `toml:"number"`
 }
 
+type OptimismConfig struct {
+	EIP1559Elasticity        uint64  `toml:"eip1559_elasticity" json:"eip1559Elasticity"`
+	EIP1559Denominator       uint64  `toml:"eip1559_denominator" json:"eip1559Denominator"`
+	EIP1559DenominatorCanyon *uint64 `toml:"eip1559_denominator_canyon,omitempty" json:"eip1559DenominatorCanyon,omitempty"`
+}
+
 type ChainGenesis struct {
 	L1           BlockID      `toml:"l1"`
 	L2           BlockID      `toml:"l2"`
@@ -104,6 +110,7 @@ type ChainConfig struct {
 	SequencerWindowSize  uint64           `toml:"seq_window_size" json:"seq_window_size"`
 	MaxSequencerDrift    uint64           `toml:"max_sequencer_drift" json:"max_sequencer_drift"`
 	DataAvailabilityType DataAvailability `toml:"data_availability_type"`
+	Optimism             *OptimismConfig  `toml:"optimism,omitempty" json:"optimism,omitempty"`
 
 	// Optional feature
 	AltDA *AltDAConfig `toml:"alt_da,omitempty" json:"alt_da,omitempty"`

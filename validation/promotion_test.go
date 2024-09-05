@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/common"
 )
 
 // WARNING: this test must not run along side any other tests, because it mutates global objects.
@@ -11,7 +12,7 @@ import (
 func TestPromotion(t *testing.T) {
 	for _, chain := range OPChains {
 		chain := chain
-		t.Run(perChainTestName(chain), func(t *testing.T) {
+		t.Run(common.PerChainTestName(chain), func(t *testing.T) {
 			t.Parallel()
 			if chain.StandardChainCandidate {
 				// do not allow any test exclusions

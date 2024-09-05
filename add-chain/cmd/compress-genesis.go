@@ -13,6 +13,7 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/flags"
+	"github.com/ethereum-optimism/superchain-registry/add-chain/utils"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core"
@@ -55,7 +56,7 @@ var CompressGenesisCmd = cli.Command{
 			// Archive nodes that depend on this historical state should instantiate the chain from a full genesis dump
 			// with allocation data, or datadir.
 			genesisHeaderPath := ctx.Path(flags.L2GenesisHeaderFlag.Name)
-			genesisHeader, err := loadJSON[types.Header](genesisHeaderPath)
+			genesisHeader, err := utils.LoadJSON[types.Header](genesisHeaderPath)
 			if err != nil {
 				return fmt.Errorf("genesis-header %q failed to load: %w", genesisHeaderPath, err)
 			}
@@ -94,7 +95,7 @@ var CompressGenesisCmd = cli.Command{
 			return nil
 		}
 
-		genesis, err := loadJSON[core.Genesis](genesisPath)
+		genesis, err := utils.LoadJSON[core.Genesis](genesisPath)
 		if err != nil {
 			return fmt.Errorf("failed to load L2 genesis: %w", err)
 		}
@@ -217,22 +218,6 @@ type Genesis struct {
 	Alloc jsonutil.LazySortedJsonMap[common.Address, GenesisAccount] `json:"alloc"`
 	// For genesis definitions without full state (OP-Mainnet, OP-Goerli)
 	StateHash *common.Hash `json:"stateHash,omitempty"`
-}
-
-func loadJSON[X any](inputPath string) (*X, error) {
-	if inputPath == "" {
-		return nil, errors.New("no path specified")
-	}
-	f, err := os.OpenFile(inputPath, os.O_RDONLY, 0)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open file %q: %w", inputPath, err)
-	}
-	defer f.Close()
-	var obj X
-	if err := json.NewDecoder(f).Decode(&obj); err != nil {
-		return nil, fmt.Errorf("failed to decode file %q: %w", inputPath, err)
-	}
-	return &obj, nil
 }
 
 func writeGzipJSON(outputPath string, value any) error {

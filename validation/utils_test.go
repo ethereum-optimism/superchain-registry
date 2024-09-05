@@ -5,15 +5,9 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-// perChainTestName ensures test can easily be filtered by chain name or chain id using the -run=regex testflag.
-func perChainTestName(chain *superchain.ChainConfig) string {
-	return chain.Name + fmt.Sprintf(" (%d)", chain.ChainID)
-}
 
 // isBigIntWithinBounds returns true if actual is within bounds, where the bounds are [lower bound, upper bound] and are inclusive.
 var isBigIntWithinBounds = func(actual *big.Int, bounds [2]*big.Int) bool {

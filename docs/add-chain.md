@@ -11,6 +11,8 @@ The following are the steps you need to take to add a chain to the registry:
 ### 0. Fork this repository
 You will be raising a Pull Request from your fork to the upstream repo.
 
+We recommend only adding one chain at a time, and starting with a fresh branch of this repo for every chain. 
+
 ### 1. Install dependencies
 
 Install the following dependencies
@@ -30,7 +32,7 @@ Make a copy of `.env.example` named `.env`, and alter the variables to appropria
 > [!IMPORTANT]
 > Adding a standard chain is a two-step process. For your initial PR, ensure
 > `SCR_STANDARD_CHAIN_CANDIDATE=true` in the `.env` file. After you've met all
-> of the Standard chain requirements, you'll open a new PR following the
+> of the [Standard chain requirements](./glossary.md), you'll open a new PR following the
 > [Promote a chain to standard](#promote-a-chain-to-standard) process.
 
 ### 3. Run script
@@ -88,6 +90,7 @@ just codegen
 When opening a PR:
 - Open it from a non-protected branch in your fork (e.g. avoid the `main` branch). This allows maintainers to push to your branch if needed, which streamlines the review and merge process.
 - Open one PR per chain you would like to add. This ensures the merge of one chain is not blocked by unexpected issues.
+- Once the PR is opened, please check the box to [allow edits from maintainers](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork). 
 
 Once the PR is opened, the same automated checks you've run locally will then run on your PR, and your PR will be reviewed in due course. Once these checks pass, the PR will be merged.
 

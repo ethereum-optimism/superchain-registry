@@ -70,6 +70,18 @@ var (
 		Usage:    "Filepath to rollup.json input file",
 		Required: true,
 	}
+	DeployConfigFlag = &cli.StringFlag{
+		Name:     "deploy-config",
+		EnvVars:  prefixEnvVars("DEPLOY_CONFIG"),
+		Usage:    "Filepath to deploy-config json input file",
+		Required: true,
+	}
+	GenesisCreationCommit = &cli.StringFlag{
+		Name:     "genesis-creation-commit",
+		EnvVars:  prefixEnvVars("GENESIS_CREATION_COMMIT"),
+		Usage:    "Commit in the https://github.com/ethereum-optimism/optimism/ repo at which the chain's genesis was created",
+		Required: true,
+	}
 	GenesisFlag = &cli.StringFlag{
 		Name:     "genesis",
 		EnvVars:  prefixEnvVars("GENESIS"),

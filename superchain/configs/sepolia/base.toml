@@ -16,6 +16,11 @@ seq_window_size = 3600
 max_sequencer_drift = 600
 data_availability_type = "eth-da"
 
+[optimism]
+  eip1559_elasticity = 10
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
 [genesis]
   l2_time = 1695768288
   [genesis.l1]
@@ -37,7 +42,7 @@ data_availability_type = "eth-da"
   Challenger = "0xDa3037Ff70Ac92CD867c683BD807e5A484857405"
   Proposer = "0x20044a0d104E9e788A0C984A2B7eAe615afD046b"
   UnsafeBlockSigner = "0xb830b99c95Ea32300039624Cb567d324D4b1D83C"
-  BatchSubmitter = "0x6CDEbe940BC0F26850285cacA097C11c33103E47"
+  BatchSubmitter = "0xfc56E7272EEBBBA5bC6c544e159483C4a38f8bA3"
   AddressManager = "0x709c2B8ef4A9feFc629A8a2C1AF424Dc5BD6ad1B"
   L1CrossDomainMessengerProxy = "0xC34855F4De64F1840e5686e64278da901e261f20"
   L1ERC721BridgeProxy = "0x21eFD066e581FA55Ef105170Cc04d74386a09190"
