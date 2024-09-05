@@ -15,6 +15,11 @@ seq_window_size = 3600
 max_sequencer_drift = 600
 data_availability_type = "eth-da"
 
+[optimism]
+  eip1559_elasticity = 20
+  eip1559_denominator = 1000
+  eip1559_denominator_canyon = 1000
+
 [genesis]
   l2_time = 1714728791
   [genesis.l1]
