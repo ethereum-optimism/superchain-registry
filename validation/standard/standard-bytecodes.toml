@@ -6,3 +6,11 @@ l1_standard_bridge = "0x6894839591ba2aa1f6ba43526113e25fd795ec5c5a48202e664c931c
 optimism_mintable_erc20_factory = "0xb8ec72533005496795f8fc0c71f0312578ff626f7b94699984e1add6dc2f3b88" # version 1.9.0
 optimism_portal = "0x2b0610230634fccf9d05f4aaefceffef9e04aa99910798d42823e0068eb07eca" # version 3.10.0
 system_config = "0x1245886f18eada47816eba66ec353eb9a5dad795a5e36df78067f66657018e32" # version 2.2.0
+preimage_oracle= "0x8b26e228dfe0bb4d7dee801d50756792a7f2d63ea5da42ddb120873dfe47f875" # version "1.0.0"
+permissioned_dispute_game = "0xb0a3aed0fb964b33445061d604e5fcfb952fb99dbff4d6f0c59aa1f24fdfd30f" # version "1.2.0"
+# for the contracts below which contain immutables, the hash is calculated from the masked bytecode (not the deployed bytecode as-is).
+# sections of the bytecode that contain the immutables are masked (set to 0) before computing the hash
+anchor_state_registry = "0x07a466697584157d8926768fd99d30499dddc52aec7e2e620f430f3498b26dee" # version "1.0.0"
+delayed_weth = "0x430b15595a625dc821f34b42c354676de32c2f112fbd89978b8196cf66d823d5" # version "1.0.0"
+mips = "0xce7e7ce9dc98d151ecbbb02a548534ab33a59aa4091ad52be0a703dc6c4f3d39" # version "1.0.0"
+fault_dispute_game = "0x875e36fd4039b580b20051d25336a7db1ea982613edcc7b83f9d6406f8c84959" # version "1.2.0"

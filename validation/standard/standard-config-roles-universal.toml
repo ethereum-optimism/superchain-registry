@@ -19,12 +19,12 @@ SystemConfigProxy."batcherHash()" = "BatchSubmitter"
 
 
 [l1.nonFaultProofs]
-OptimismPortalProxy."GUARDIAN()" = "Guardian"
-OptimismPortalProxy."SYSTEM_CONFIG()" = "SystemConfigProxy"
-OptimismPortalProxy."L2_ORACLE()" = "L2OutputOracleProxy"
+OptimismPortalProxy."guardian()" = "Guardian"
+OptimismPortalProxy."systemConfig()" = "SystemConfigProxy"
+OptimismPortalProxy."l2Oracle()" = "L2OutputOracleProxy"
 L2OutputOracleProxy."admin()" = "ProxyAdmin"
-L2OutputOracleProxy."CHALLENGER()" = "Challenger"
-L2OutputOracleProxy."PROPOSER()" = "Proposer"
+L2OutputOracleProxy."challenger()" = "Challenger"
+L2OutputOracleProxy."proposer()" = "Proposer"
 
 [l1.FaultProofs]
 DisputeGameFactoryProxy."admin()" = "ProxyAdmin"

@@ -31,6 +31,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1686068903
       [superchains.chains.genesis.l1]
@@ -89,6 +93,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1696608227
       [superchains.chains.genesis.l1]
@@ -130,6 +138,62 @@
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
 
   [[superchains.chains]]
+    name = "World Chain"
+    chain_id = 480
+    public_rpc = "https://worldchain-mainnet-sequencer.g.alchemy.com"
+    sequencer_rpc = "https://worldchain-mainnet-sequencer.g.alchemy.com"
+    explorer = "https://worldchain-mainnet-explorer.alchemy.com/"
+    superchain_level = 0
+    standard_chain_candidate = true
+    batch_inbox_addr = "0xff00000000000000000000000000000000000480"
+    canyon_time = 0
+    delta_time = 0
+    ecotone_time = 0
+    block_time = 2
+    seq_window_size = 3600
+    max_sequencer_drift = 1800
+    data_availability_type = "eth-da"
+    [superchains.chains.genesis]
+      l2_time = 1719335639
+      [superchains.chains.genesis.l1]
+        hash = "0x793daed4743301e00143be5533cd1dce0a741519e9e9c96588a9ad7dbb4d8db4"
+        number = 20170118
+      [superchains.chains.genesis.l2]
+        hash = "0x70d316d2e0973b62332ba2e9768dd7854298d7ffe77f0409ffdb8d859f2d3fa3"
+        number = 0
+      [superchains.chains.genesis.system_config]
+        batcherAddress = "0xdBBE3D8c2d2b22A2611c5A94A9a12C2fCD49Eb29"
+        overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
+        scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
+        gasLimit = 100000000
+    [superchains.chains.addresses]
+      SystemConfigOwner = "0xB2aa0C2C4fD6BFCBF699d4c787CD6Cc0dC461a9d"
+      ProxyAdminOwner = "0xA4fB12D15Eb85dc9284a7df0AdBC8B696EdbbF1d"
+      Guardian = "0xB2aa0C2C4fD6BFCBF699d4c787CD6Cc0dC461a9d"
+      Challenger = "0xB2aa0C2C4fD6BFCBF699d4c787CD6Cc0dC461a9d"
+      Proposer = "0x2307278fC8aB0005974A6DeD2FA6d1187333a223"
+      UnsafeBlockSigner = "0x2270d6eC8E760daA317DD978cFB98C8f144B1f3A"
+      BatchSubmitter = "0xdBBE3D8c2d2b22A2611c5A94A9a12C2fCD49Eb29"
+      AddressManager = "0x5891090d5085679714cb0e62f74950a3c19146a8"
+      L1CrossDomainMessengerProxy = "0xf931a81D18B1766d15695ffc7c1920a62b7e710a"
+      L1ERC721BridgeProxy = "0x1Df436AfDb2fBB40F1fE8bEd4Fc89A0D0990a8E9"
+      L1StandardBridgeProxy = "0x470458C91978D2d929704489Ad730DC3E3001113"
+      L2OutputOracleProxy = "0x19A6d1E9034596196295CF148509796978343c5D"
+      OptimismMintableERC20FactoryProxy = "0x82Cb528466cF22412d89bdBE9bCF04856790dD0e"
+      OptimismPortalProxy = "0xd5ec14a83B7d95BE1E2Ac12523e2dEE12Cbeea6C"
+      SystemConfigProxy = "0x6ab0777fD0e609CE58F939a7F70Fe41F5Aa6300A"
+      ProxyAdmin = "0xd7405BE7f3e63b094Af6C7C23D5eE33Fd82F872D"
+      SuperchainConfig = "0xa231f8be37e583f276f93dF516D88a043bfe47E3"
+      AnchorStateRegistryProxy = "0x1325C4966d17038C5592fb38416AeE85EE73c0cb"
+      DelayedWETHProxy = "0xF9adF7c9502C5C60352C20a4d22683422DbD061F"
+      DisputeGameFactoryProxy = "0x0E90dCAFBC242D2C861A20Bb20EC8E7182965a52"
+      FaultDisputeGame = "0x0000000000000000000000000000000000000000"
+      MIPS = "0x267b2FFfA613c246Ef995390Ea0a2BaAA16a80Ba"
+      PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
+      PreimageOracle = "0x3941778243E3E80a6a46D149F083825dEdc534BB"
+      DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+
+  [[superchains.chains]]
     name = "Binary Mainnet"
     chain_id = 624
     public_rpc = "https://rpc.zero.thebinaryholdings.com"
@@ -145,6 +209,10 @@
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
     gas_paying_token = "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1719397463
       [superchains.chains.genesis.l1]
@@ -203,6 +271,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1700021615
       [superchains.chains.genesis.l1]
@@ -319,6 +391,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1711563515
       [superchains.chains.genesis.l1]
@@ -374,6 +450,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1720421591
       [superchains.chains.genesis.l1]
@@ -433,6 +513,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1686789347
       [superchains.chains.genesis.l1]
@@ -492,6 +576,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1700167583
       [superchains.chains.genesis.l1]
@@ -551,6 +639,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1686693839
       [superchains.chains.genesis.l1]
@@ -621,6 +713,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1687867932
       [superchains.chains.genesis.l1]
@@ -677,6 +773,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1708129620
       [superchains.chains.genesis.l1]
@@ -718,6 +818,62 @@
       DAChallengeAddress = "0x0000000000000000000000000000000000000000"
 
   [[superchains.chains]]
+    name = "World Chain Sepolia Testnet"
+    chain_id = 4801
+    public_rpc = ""
+    sequencer_rpc = "https://worldchain-sepolia-sequencer.g.alchemy.com"
+    explorer = "https://worldchain-sepolia-explorer.alchemy.com/"
+    superchain_level = 0
+    standard_chain_candidate = true
+    batch_inbox_addr = "0xFf00000000000000000000000000000000484752"
+    canyon_time = 0
+    delta_time = 0
+    ecotone_time = 0
+    block_time = 2
+    seq_window_size = 3600
+    max_sequencer_drift = 1800
+    data_availability_type = "eth-da"
+    [superchains.chains.genesis]
+      l2_time = 1720547424
+      [superchains.chains.genesis.l1]
+        hash = "0xd220bbdf24df6d1611f4ece1d08c64feae914ce6299ab2806c864e30a5289201"
+        number = 6278018
+      [superchains.chains.genesis.l2]
+        hash = "0xf1deb67ee953f94d8545d2647918687fa8ba1f30fa6103771f11b7c483984070"
+        number = 0
+      [superchains.chains.genesis.system_config]
+        batcherAddress = "0x0f3ff4731D7a10B89ED79AD1Fd97844d7F66B96d"
+        overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
+        scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
+        gasLimit = 100000000
+    [superchains.chains.addresses]
+      SystemConfigOwner = "0xe78a0A96C5D6aE6C606418ED4A9Ced378cb030A0"
+      ProxyAdminOwner = "0x945185C01fb641bA3E63a9bdF66575e35a407837"
+      Guardian = "0xe78a0A96C5D6aE6C606418ED4A9Ced378cb030A0"
+      Challenger = "0xe78a0A96C5D6aE6C606418ED4A9Ced378cb030A0"
+      Proposer = "0x77a95104e4025fC8B88A6a0F5FB7Fae20851E414"
+      UnsafeBlockSigner = "0x3241A7D28eA74E807A5087BA637fB58D8dDcd078"
+      BatchSubmitter = "0x0f3ff4731D7a10B89ED79AD1Fd97844d7F66B96d"
+      AddressManager = "0xc50Ba0767A1c0Ef69Cf1D9cd44De52b08589F691"
+      L1CrossDomainMessengerProxy = "0x7768c821200554d8F359A8902905Ba9eDe5659a9"
+      L1ERC721BridgeProxy = "0x3580505c56f8560E3777E92Fb27f70fD20c5B493"
+      L1StandardBridgeProxy = "0xd7DF54b3989855eb66497301a4aAEc33Dbb3F8DE"
+      L2OutputOracleProxy = "0xc8886f8BAb6Eaeb215aDB5f1c686BF699248300e"
+      OptimismMintableERC20FactoryProxy = "0x2D272eF54Ee8EF5c2Ff3523559186580b158cd57"
+      OptimismPortalProxy = "0xFf6EBa109271fe6d4237EeeD4bAb1dD9A77dD1A4"
+      SystemConfigProxy = "0x166F9406e79A656f12F05247fb8F5DfA6155bCBF"
+      ProxyAdmin = "0x3a987FE1cb587B0A1808cf9bB7Cbe0E341838319"
+      SuperchainConfig = "0x4642C5eD3B1568e0F05d73B10d02e6Fb2595aF9a"
+      AnchorStateRegistryProxy = "0x1517FDD5A31B35f790eA8a3c6cC2F595B1BD4742"
+      DelayedWETHProxy = "0x4F4B8Adf1af4b61bb62F68b7aF1c37f8A6311663"
+      DisputeGameFactoryProxy = "0x8cF97Ee616C986a070F5020d973b456D0120C253"
+      FaultDisputeGame = "0x0000000000000000000000000000000000000000"
+      MIPS = "0xCEd5c6ca2f32dE7bf43DB981E1cac398D7A978F2"
+      PermissionedDisputeGame = "0x0000000000000000000000000000000000000000"
+      PreimageOracle = "0x954C0Fb8083047f37c8Fe954c114f8138614131C"
+      DAChallengeAddress = "0x0000000000000000000000000000000000000000"
+
+  [[superchains.chains]]
     name = "RACE Testnet"
     chain_id = 6806
     public_rpc = "https://racetestnet.io"
@@ -732,6 +888,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1719646560
       [superchains.chains.genesis.l1]
@@ -791,6 +951,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 10
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1695768288
       [superchains.chains.genesis.l1]
@@ -849,6 +1013,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1691802540
       [superchains.chains.genesis.l1]
@@ -908,6 +1076,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1698080004
       [superchains.chains.genesis.l1]
@@ -977,6 +1149,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1706484048
       [superchains.chains.genesis.l1]
@@ -1035,6 +1211,10 @@
     seq_window_size = 3600
     max_sequencer_drift = 600
     data_availability_type = "eth-da"
+    [superchains.chains.optimism]
+      eip1559_elasticity = 6
+      eip1559_denominator = 50
+      eip1559_denominator_canyon = 250
     [superchains.chains.genesis]
       l2_time = 1695433056
       [superchains.chains.genesis.l1]

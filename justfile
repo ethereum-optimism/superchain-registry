@@ -1,4 +1,6 @@
 set positional-arguments
+alias t := test-all
+alias l := lint-all
 
 # Adding a chain
 add-chain:
@@ -43,10 +45,13 @@ test-validation: clean-add-chain
 validate-modified-chains REF:
   # Running validation checks only for chains whose config has changed:
   git diff --merge-base {{REF}} --name-only 'superchain/configs/*.toml' ':(exclude)superchain/**/superchain.toml' | xargs -r awk '/chain_id/ {print $3}' | xargs -I {} just validate {}
-
 # Run validation checks for chains with a name or chain ID matching the supplied regex, example: just validate 10
 validate CHAIN_ID:
 	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname -- -run='TestValidation/.+\({{CHAIN_ID}}\)$' -count=1
+
+# Run genesis validation (this is separated from other validation checks, because it is not a part of drift detection)
+validate-genesis-allocs CHAIN_ID:
+	TEST_DIRECTORY=./validation/genesis go run gotest.tools/gotestsum@latest --format standard-verbose -- -run='TestGenesisAllocs/.+\({{CHAIN_ID}}\)$' -timeout 0
 
 promotion-test:
   TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format dots -- -run Promotion
@@ -55,6 +60,7 @@ promotion-test:
 clean-add-chain:
 	rm -f superchain/configs/sepolia/testchain_*.toml
 	rm -f superchain/extra/sepolia/testchain_*.json.gz
+	rm -rf -- validation/genesis/validation-inputs/*-test/
 
 # Tidying all go.mod files
 tidy-all: tidy-add-chain tidy-superchain tidy-validation
@@ -76,23 +82,3 @@ remove-chain SUPERCHAIN_TARGET CHAIN:
 	rm superchain/configs/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.toml
 	rm superchain/extra/genesis/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.json.gz
 	just codegen
-
-# Run cargo tests
-cargo-tests:
-  just bindings/rust-primitives/tests
-  just bindings/rust-bindings/tests
-
-# Run cargo lints
-cargo-lint:
-  just bindings/rust-primitives/lint
-  just bindings/rust-bindings/lint
-
-# Cargo build
-cargo-build:
-  just bindings/rust-primitives/build
-  just bindings/rust-bindings/build
-
-# Release
-release:
-  just bindings/rust-primitives/release
-  just bindings/rust-bindings/release

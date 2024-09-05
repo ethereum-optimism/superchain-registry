@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"testing"
 
@@ -10,14 +12,15 @@ import (
 )
 
 const (
-	addressDir             = "../superchain/extra/addresses/sepolia/"
-	configDir              = "../superchain/configs/sepolia/"
-	genesisSystemConfigDir = "../superchain/extra/genesis-system-configs/sepolia/"
+	addressDir          = "../superchain/extra/addresses/sepolia/"
+	configDir           = "../superchain/configs/sepolia/"
+	validationInputsDir = "../validation/genesis/validation-inputs"
 )
 
 var tests = []struct {
 	name                   string
 	chainName              string
+	chainId                uint64
 	chainShortName         string
 	rollupConfigFile       string
 	standardChainCandidate bool
@@ -27,6 +30,7 @@ var tests = []struct {
 	{
 		name:             "baseline",
 		chainName:        "testchain_baseline",
+		chainId:          4206900,
 		chainShortName:   "testchain_b",
 		rollupConfigFile: "./testdata/monorepo/op-node/rollup_baseline.json",
 		deploymentsDir:   "./testdata/monorepo/deployments",
@@ -34,6 +38,7 @@ var tests = []struct {
 	{
 		name:             "baseline_legacy",
 		chainName:        "testchain_baseline_legacy",
+		chainId:          4206905,
 		chainShortName:   "testchain_bl",
 		rollupConfigFile: "./testdata/monorepo/op-node/rollup_baseline_legacy.json",
 		deploymentsDir:   "./testdata/monorepo/deployments-legacy",
@@ -41,6 +46,7 @@ var tests = []struct {
 	{
 		name:                   "zorasep",
 		chainName:              "testchain_zorasep",
+		chainId:                4206904,
 		chainShortName:         "testchain_zs",
 		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_zorasep.json",
 		deploymentsDir:         "./testdata/monorepo/deployments",
@@ -49,6 +55,7 @@ var tests = []struct {
 	{
 		name:                   "altda",
 		chainName:              "testchain_altda",
+		chainId:                4206901,
 		chainShortName:         "testchain_ad",
 		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_altda.json",
 		deploymentsDir:         "./testdata/monorepo/deployments",
@@ -57,6 +64,7 @@ var tests = []struct {
 	{
 		name:                   "standard-candidate",
 		chainName:              "testchain_standard-candidate",
+		chainId:                4206902,
 		chainShortName:         "testchain_sc",
 		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_standard-candidate.json",
 		deploymentsDir:         "./testdata/monorepo/deployments",
@@ -65,6 +73,7 @@ var tests = []struct {
 	{
 		name:                   "faultproofs",
 		chainName:              "testchain_faultproofs",
+		chainId:                4206903,
 		chainShortName:         "testchain_fp",
 		rollupConfigFile:       "./testdata/monorepo/op-node/rollup_faultproofs.json",
 		deploymentsDir:         "./testdata/monorepo/deployments-faultproofs",
@@ -78,7 +87,7 @@ func TestAddChain_Main(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			cleanupTestFiles(t, tt.chainShortName)
+			cleanupTestFiles(t, tt.chainShortName, tt.chainId)
 
 			err := os.Setenv("SCR_RUN_TESTS", "true")
 			require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
@@ -88,6 +97,7 @@ func TestAddChain_Main(t *testing.T) {
 				"--chain-name=" + tt.chainName,
 				"--chain-short-name=" + tt.chainShortName,
 				"--rollup-config=" + tt.rollupConfigFile,
+				"--genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
 				"--deployments-dir=" + tt.deploymentsDir,
 				"--standard-chain-candidate=" + strconv.FormatBool(tt.standardChainCandidate),
 			}
@@ -168,10 +178,9 @@ func checkConfigTOML(t *testing.T, testName, chainShortName string) {
 	require.Equal(t, string(expectedBytes), string(testBytes), "test .toml contents do not meet expectation")
 }
 
-func cleanupTestFiles(t *testing.T, chainShortName string) {
+func cleanupTestFiles(t *testing.T, chainShortName string, chainId uint64) {
 	paths := []string{
 		addressDir + chainShortName + ".json",
-		genesisSystemConfigDir + chainShortName + ".json",
 		configDir + chainShortName + ".toml",
 	}
 
@@ -180,6 +189,14 @@ func cleanupTestFiles(t *testing.T, chainShortName string) {
 			// Log the error if it's something other than "file does not exist"
 			t.Logf("Error removing file %s: %v\n", path, err)
 		}
+	}
+
+	folderName := fmt.Sprintf("%d", chainId)
+	folderName = folderName + "-test"
+	genesisValidationInputs := filepath.Join(validationInputsDir, folderName)
+	err := os.RemoveAll(genesisValidationInputs)
+	if err != nil {
+		t.Logf("Error removing genesis validation inputs %s: %v\n", genesisValidationInputs, err)
 	}
 	t.Logf("Removed test artifacts for chain: %s", chainShortName)
 }

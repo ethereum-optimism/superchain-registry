@@ -21,6 +21,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+
+	"golang.org/x/mod/semver"
 )
 
 var contractsToCheckVersionAndBytecodeOf = []string{
@@ -50,15 +52,22 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
+	// testnets and devnets are permitted to use newer contract versions
+	// than the versions specified in the standard config
+	isTestnet := (chain.Superchain == "sepolia" || chain.Superchain == "sepolia-dev-0")
+
 	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client)
 	require.NoError(t, err)
-	_, err = findOPContractTagInVersions(versions)
+	_, err = findOPContractTagInVersions(versions, isTestnet)
 	require.NoError(t, err)
 
-	bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
-	require.NoError(t, err)
-	_, err = findOPContractTagInByteCodeHashes(bytecodeHashes)
-	require.NoError(t, err)
+	// don't perform bytecode checking for testnets
+	if !isTestnet {
+		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
+		require.NoError(t, err)
+		_, err = findOPContractTagInByteCodeHashes(bytecodeHashes)
+		require.NoError(t, err)
+	}
 }
 
 // getContractVersionsFromChain pulls the appropriate contract versions from chain
@@ -117,28 +126,9 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 	return cv, nil
 }
 
-func shouldSkipBytecodeCheck(contractName string) bool {
-	// We omit some contracts which have immutables from the bytecode check.
-	// TODO https://github.com/ethereum-optimism/superchain-registry/issues/493
-	contractsToSkip := []string{
-		"AnchorStateRegistryProxy",
-		"DelayedWETHProxy",
-		"DisputeGameFactoryProxy",
-		"FaultDisputeGame",
-		"MIPS",
-	}
-
-	for _, contract := range contractsToSkip {
-		if contract == contractName {
-			return true
-		}
-	}
-	return false
-}
-
 // getContractBytecodeHashesFromChain pulls the appropriate bytecode from chain
 // using the supplied client, concurrently.
-func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (L1ContractBytecodeHashes, error) {
+func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (standard.L1ContractBytecodeHashes, error) {
 	// Prepare a concurrency-safe object to store version information in, and
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
@@ -155,9 +145,6 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 	wg := new(sync.WaitGroup)
 
 	for _, contractName := range contractsToCheckVersionAndBytecodeOf {
-		if shouldSkipBytecodeCheck(contractName) {
-			continue
-		}
 		contractAddress, err := list.AddressFor(contractName)
 		if err != nil {
 			// If the chain does not store this contractAddress
@@ -175,7 +162,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 
 	// use reflection to convert results mapping into a ContractVersions object
 	// without resorting to boilerplate code.
-	cbh := L1ContractBytecodeHashes{}
+	cbh := standard.L1ContractBytecodeHashes{}
 	results.Range(func(k, v any) bool {
 		s := reflect.ValueOf(cbh)
 		for i := 0; i < s.NumField(); i++ {
@@ -268,7 +255,19 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 		return "", fmt.Errorf("%s: %w", addrToCheck, err)
 	}
 
-	return crypto.Keccak256Hash(code).Hex(), nil
+	// if the contract is known to have immutables, setup the filterer to mask the bytes which contain the variable's value
+	bytecodeImmutableFilterer, err := initBytecodeImmutableMask(code, contractName)
+	// error indicates that the contract _does_ have immutables, but we weren't able to determine the coordinates of the immutables in the bytecode
+	if err != nil {
+		return "", fmt.Errorf("unable to check for presence of immutables in bytecode: %w", err)
+	}
+
+	// For any deployed contracts with immutable variables, the bytecode is masked inside maskBytecode(). If not, the bytecode is unaltered.
+	err = bytecodeImmutableFilterer.maskBytecode(contractName)
+	if err != nil {
+		return "", fmt.Errorf("unable to retrieve bytecode without immutables: %w", err)
+	}
+	return crypto.Keccak256Hash(bytecodeImmutableFilterer.Bytecode).Hex(), nil
 }
 
 func TestFindOPContractTag(t *testing.T) {
@@ -291,7 +290,7 @@ func TestFindOPContractTag(t *testing.T) {
 		PreimageOracle:               "1.0.0",
 	}
 
-	got, err := findOPContractTagInVersions(shouldMatch)
+	got, err := findOPContractTagInVersions(shouldMatch, false)
 	require.NoError(t, err)
 	want := []standard.Tag{"op-contracts/v1.4.0"}
 	require.Equal(t, got, want)
@@ -306,13 +305,13 @@ func TestFindOPContractTag(t *testing.T) {
 		ProtocolVersions:             "1.0.0",
 		L2OutputOracle:               "1.0.0",
 	}
-	got, err = findOPContractTagInVersions(shouldNotMatch)
+	got, err = findOPContractTagInVersions(shouldNotMatch, false)
 	require.Error(t, err)
 	want = []standard.Tag{}
 	require.Equal(t, got, want)
 }
 
-func findOPContractTagInVersions(versions ContractVersions) ([]standard.Tag, error) {
+func findOPContractTagInVersions(versions ContractVersions, isTestnet bool) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
 	pretty, err := json.MarshalIndent(versions, "", " ")
 	if err != nil {
@@ -329,7 +328,7 @@ func findOPContractTagInVersions(versions ContractVersions) ([]standard.Tag, err
 	matchesTag := func(standard, candidate ContractVersions) bool {
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
-		return checkMatch(s, c)
+		return checkMatchOrTestnet(s, c, isTestnet)
 	}
 
 	for tag := range standard.Versions {
@@ -341,7 +340,7 @@ func findOPContractTagInVersions(versions ContractVersions) ([]standard.Tag, err
 	return matchingTags, err
 }
 
-func findOPContractTagInByteCodeHashes(hashes L1ContractBytecodeHashes) ([]standard.Tag, error) {
+func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
 	pretty, err := json.MarshalIndent(hashes, "", " ")
 	if err != nil {
@@ -355,7 +354,7 @@ func findOPContractTagInByteCodeHashes(hashes L1ContractBytecodeHashes) ([]stand
 
 	err = fmt.Errorf("bytecode hashes %s do not match any standard op-contracts tag %s", pretty, prettyStandard)
 
-	matchesTag := func(standard, candidate L1ContractBytecodeHashes) bool {
+	matchesTag := func(standard, candidate standard.L1ContractBytecodeHashes) bool {
 		s := reflect.ValueOf(standard)
 		c := reflect.ValueOf(candidate)
 		return checkMatch(s, c)
@@ -393,6 +392,46 @@ func checkMatch(s, c reflect.Value) bool {
 
 		if field.String() != c.Field(i).String() {
 			return false
+		}
+	}
+	return true
+}
+
+// checkMatchOrTestnet returns true if s and c match, OR if the chain is a testnet and s < c
+func checkMatchOrTestnet(s, c reflect.Value, isTestnet bool) bool {
+	// Iterate over each field of the standard struct
+	for i := 0; i < s.NumField(); i++ {
+
+		if s.Type().Field(i).Name == "ProtocolVersions" {
+			// We can't check this contract:
+			// (until this issue resolves https://github.com/ethereum-optimism/client-pod/issues/699#issuecomment-2150970346)
+			continue
+		}
+
+		field := s.Field(i)
+
+		if field.Kind() != reflect.String {
+			panic("versions must be strings")
+		}
+
+		if field.String() == "" {
+			// Ignore any empty strings, these are treated as "match anything"
+			continue
+		}
+
+		if field.String() != c.Field(i).String() {
+			if !isTestnet {
+				return false
+			}
+
+			// testnets are permitted to have contract versions that are newer than what's specified in the standard config
+			// testnets may NOT have contract versions that are older.
+			min := CanonicalizeSemver(field.String())
+			current := CanonicalizeSemver(c.Field(i).String())
+			if semver.Compare(min, current) > 0 {
+				return false
+			}
+
 		}
 	}
 	return true
