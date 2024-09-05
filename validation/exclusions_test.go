@@ -32,6 +32,7 @@ var exclusions = map[string]map[uint64]bool{
 	},
 	GenesisAllocsMetadataTest: {
 		10:       true, // op-mainnet
+		1740:     true, // metal-sepolia
 		11155420: true, // op-sepolia
 	},
 	ChainIDRPCTest: {
