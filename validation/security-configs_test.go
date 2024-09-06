@@ -53,10 +53,11 @@ var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64
 	}
 }
 
-func testL1SecurityConfig(t *testing.T, chainID uint64) {
+func testL1SecurityConfig(t *testing.T, chain *ChainConfig) {
+	chainID := chain.ChainID
 	skipIfExcluded(t, chainID)
 
-	rpcEndpoint := Superchains[OPChains[chainID].Superchain].Config.L1.PublicRPC
+	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
 
 	client, err := ethclient.Dial(rpcEndpoint)

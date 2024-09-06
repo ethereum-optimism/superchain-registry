@@ -79,7 +79,7 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	t.Run(StartBlockRPCTest, func(t *testing.T) { testStartBlock(t, chain) })
 	t.Run(SuperchainConfigTest, func(t *testing.T) { testSuperchainConfig(t, chain) })
 	// Standard Config Roles
-	t.Run(L1SecurityConfigTest, func(t *testing.T) { testL1SecurityConfig(t, chain.ChainID) })
+	t.Run(L1SecurityConfigTest, func(t *testing.T) { testL1SecurityConfig(t, chain) })
 	t.Run(L2SecurityConfigTest, func(t *testing.T) { testL2SecurityConfig(t, chain) })
 	// Other
 	t.Run(DataAvailabilityTypeTest, func(t *testing.T) { testDataAvailabilityType(t, chain) })
