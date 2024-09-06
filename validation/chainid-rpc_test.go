@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var testChainIDFromRPC SubTestForChain = func(t *testing.T, chain *ChainConfig) {
+func testChainIDFromRPC(t *testing.T, chain *ChainConfig) {
 	// Create an ethclient connection to the specified RPC URL
 	client, err := ethclient.Dial(chain.PublicRPC)
 	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)

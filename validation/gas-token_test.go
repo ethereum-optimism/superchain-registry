@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var testGasToken SubTestForChain = func(t *testing.T, chain *ChainConfig) {
+func testGasToken(t *testing.T, chain *ChainConfig) {
 	client, err := ethclient.Dial(chain.PublicRPC)
 	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
 	defer client.Close()

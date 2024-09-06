@@ -31,12 +31,12 @@ const (
 )
 
 type (
-	SubTest         = func(t *testing.T)
-	SubTestForChain = func(t *testing.T, chain *ChainConfig)
+	subTest         = func(t *testing.T)
+	subTestForChain = func(t *testing.T, chain *ChainConfig)
 )
 
 // applyExclusions is a higher order function which returns a subtest function with exclusions applied
-func applyExclusions(chain *ChainConfig, f SubTestForChain) SubTest {
+func applyExclusions(chain *ChainConfig, f subTestForChain) subTest {
 	return func(t *testing.T) {
 		skipIfExcluded(t, chain.ChainID)
 		f(t, chain)
