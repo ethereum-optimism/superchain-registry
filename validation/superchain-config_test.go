@@ -9,7 +9,6 @@ import (
 )
 
 func testSuperchainConfig(t *testing.T, chain *ChainConfig) {
-	skipIfExcluded(t, chain.ChainID)
 	expected := Superchains[chain.Superchain].Config.SuperchainConfigAddr
 	require.NotNil(t, expected, "Superchain does not declare a superchain_config_addr")
 
