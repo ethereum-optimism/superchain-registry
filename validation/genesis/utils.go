@@ -40,6 +40,15 @@ func mustExecuteCommandInDir(dir string, cmd *exec.Cmd) {
 
 func streamOutputToLogger(reader io.Reader, t *testing.T) {
 	scanner := bufio.NewScanner(reader)
+
+	// default scan buffer in bufio is 64k, which limits the max token size that
+	// can be scanned. Since we are handling allocs which contain large hex strings,
+	// the output of a diff must handle large tokens.
+	// Provide our own buffer per recommendation in bufio before calling Scan()
+	// ref: https://github.com/golang/go/blob/release-branch.go1.22/src/bufio/scan.go#L78-L82
+	buf := [bufio.MaxScanTokenSize * 1000]byte{}
+	scanner.Buffer(buf[:], bufio.MaxScanTokenSize*1000)
+
 	for scanner.Scan() {
 		t.Log(scanner.Text())
 	}
