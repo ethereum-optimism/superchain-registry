@@ -155,6 +155,7 @@
     "Proposer": "0x674F64D64Ddc198db83cd9047dF54BF89cCD0ddB",
     "ProxyAdmin": "0x470d87b1dae09a454A43D1fD772A561a03276aB7",
     "ProxyAdminOwner": "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A",
+    "SuperchainConfig": "0x95703e0982140D16f8ebA6d158FccEde42f04a4C",
     "SystemConfigOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
     "SystemConfigProxy": "0x5e6432F18Bc5d497B1Ab2288a025Fbf9D69E2221",
     "UnsafeBlockSigner": "0xa7fA9CA4ac88686A542C0f830d7378eAB4A0278F"
