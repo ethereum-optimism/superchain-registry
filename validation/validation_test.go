@@ -77,9 +77,7 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	t.Run(GasLimitTest, func(t *testing.T) { testGasLimit(t, chain) })
 	t.Run(GPOParamsTest, func(t *testing.T) { testGasPriceOracleParams(t, chain) })
 	t.Run(StartBlockRPCTest, func(t *testing.T) { testStartBlock(t, chain) })
-	t.Run(SuperchainConfigTest, func(t *testing.T) { testSuperchainConfig(t, chain) })
 	// Standard Config Roles
-	t.Run(L1SecurityConfigTest, func(t *testing.T) { testL1SecurityConfig(t, chain) })
 	t.Run(L2SecurityConfigTest, func(t *testing.T) { testL2SecurityConfig(t, chain) })
 	// Other
 	t.Run(DataAvailabilityTypeTest, func(t *testing.T) { testDataAvailabilityType(t, chain) })
@@ -89,10 +87,12 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 // testStandard should be applied only to a fully Standard Chain,
 // i.e. not to a Standard Candidate Chain.
 func testStandard(t *testing.T, chain *ChainConfig) {
+	// Standard Config Params
+	t.Run(SuperchainConfigTest, func(t *testing.T) { testSuperchainConfig(t, chain) })
 	// Standard Contract Versions
-	t.Run(StandardContractVersionsTest, func(t *testing.T) {
-		testContractsMatchATag(t, chain)
-	})
+	t.Run(StandardContractVersionsTest, func(t *testing.T) { testContractsMatchATag(t, chain) })
+	// Standard Config Roles
+	t.Run(L1SecurityConfigTest, func(t *testing.T) { testL1SecurityConfig(t, chain) })
 	// Standard Config Params
 	t.Run(OptimismPortal2ParamsTest, func(t *testing.T) { testOptimismPortal2Params(t, chain) })
 	// Standard Config Roles

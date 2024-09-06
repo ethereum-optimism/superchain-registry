@@ -39,21 +39,11 @@ var exclusions = map[string]map[uint64]bool{
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
 	},
 	UniquenessTest: {
-		11155421: true, // oplabs devnet 0, not in upstream repo
-		11763072: true, // base devnet 0, not in upstream repo}
+		11155421: true, // sepolia-dev-0/oplabs-devnet-0   Not in https://github.com/ethereum-lists/chains
+		11763072: true, // sepolia-dev-0/base-devnet-0     Not in https://github.com/ethereum-lists/chains
 	},
 
 	// Standard Checks
-	L1SecurityConfigTest: {
-		8453:      true, // base (incorrect challenger, incorrect guardian)
-		84532:     true, // base-sepolia (incorrect challenger)
-		7777777:   true, // zora (incorrect challenger)
-		1750:      true, // metal (incorrect challenger)
-		919:       true, // mode sepolia (incorrect challenger)
-		999999999: true, // zora sepolia (incorrect challenger)
-		34443:     true, // mode (incorrect challenger)
-		1740:      true, // metal-sepolia
-	},
 	StandardContractVersionsTest: {
 		11155421: true, // sepolia-dev0/oplabs-devnet-0
 		11763072: true, // sepolia-dev0/base-devnet-0
