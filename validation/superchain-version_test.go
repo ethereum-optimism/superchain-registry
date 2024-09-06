@@ -43,9 +43,6 @@ var contractsToCheckVersionAndBytecodeOf = []string{
 
 func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 	// list of contracts to check for version/bytecode uniformity
-
-	skipIfExcluded(t, chain.ChainID)
-
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint)
 
