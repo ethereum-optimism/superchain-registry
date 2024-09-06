@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var testGenesisHash SubTestForChain = func(t *testing.T, chain *ChainConfig) {
+func testGenesisHash(t *testing.T, chain *ChainConfig) {
 	chainID := chain.ChainID
 	chainConfig, ok := OPChains[chainID]
 	if !ok {

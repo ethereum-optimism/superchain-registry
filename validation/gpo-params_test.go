@@ -17,7 +17,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-var testGasPriceOracleParams SubTestForChain = func(t *testing.T, chain *ChainConfig) {
+func testGasPriceOracleParams(t *testing.T, chain *ChainConfig) {
 	gasPriceOraclAddr := common.HexToAddress("0x420000000000000000000000000000000000000F")
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {

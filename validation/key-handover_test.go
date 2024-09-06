@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var testKeyHandover SubTestForChain = func(t *testing.T, chain *ChainConfig) {
+func testKeyHandover(t *testing.T, chain *ChainConfig) {
 	chainID := chain.ChainID
 	superchain := OPChains[chainID].Superchain
 	rpcEndpoint := Superchains[superchain].Config.L1.PublicRPC

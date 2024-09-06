@@ -15,7 +15,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-var testResourceConfig SubTestForChain = func(t *testing.T, chain *ChainConfig) {
+func testResourceConfig(t *testing.T, chain *ChainConfig) {
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
 	require.NotEmpty(t, rpcEndpoint)
