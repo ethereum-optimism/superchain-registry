@@ -30,8 +30,10 @@ const (
 	GenesisAllocsMetadataTest    = "Genesis_Allocs_Metadata"
 )
 
-type SubTest func(t *testing.T)
-type SubTestForChain func(t *testing.T, chain *ChainConfig)
+type (
+	SubTest         func(t *testing.T)
+	SubTestForChain func(t *testing.T, chain *ChainConfig)
+)
 
 // applyExclusions is a higher order function which returns a subtest function with exclusions applied
 func applyExclusions(chain *ChainConfig, f SubTestForChain) SubTest {
