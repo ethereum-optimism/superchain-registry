@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func testGasLimit(t *testing.T, chain *ChainConfig) {
+var testGasLimit SubTestForChain = func(t *testing.T, chain *ChainConfig) {
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
 	require.NotEmpty(t, rpcEndpoint)

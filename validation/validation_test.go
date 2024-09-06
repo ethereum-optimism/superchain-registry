@@ -30,6 +30,17 @@ const (
 	GenesisAllocsMetadataTest    = "Genesis_Allocs_Metadata"
 )
 
+type SubTest func(t *testing.T)
+type SubTestForChain func(t *testing.T, chain *ChainConfig)
+
+// applyExclusions is a higher order function which returns a subtest function with exclusions applied
+func applyExclusions(chain *ChainConfig, f SubTestForChain) SubTest {
+	return func(t *testing.T) {
+		skipIfExcluded(t, chain.ChainID)
+		f(t, chain)
+	}
+}
+
 func TestValidation(t *testing.T) {
 	// Entry point for validation checks which run
 	// on each OP chain.
@@ -61,40 +72,40 @@ func testValidation(t *testing.T, chain *ChainConfig) {
 // designed to protect downstream software or
 // sanity checking basic consistency conditions.
 func testUniversal(t *testing.T, chain *ChainConfig) {
-	t.Run(GenesisHashTest, func(t *testing.T) { testGenesisHash(t, chain.ChainID) })
-	t.Run(GenesisRPCTest, func(t *testing.T) { testGenesisHashAgainstRPC(t, chain) })
-	t.Run(UniquenessTest, func(t *testing.T) { testIsGloballyUnique(t, chain) })
-	t.Run(ChainIDRPCTest, func(t *testing.T) { testChainIDFromRPC(t, chain) })
-	t.Run(OptimismConfigTest, func(t *testing.T) { testOptimismConfig(t, chain) })
+	t.Run(GenesisHashTest, applyExclusions(chain, testGenesisHash))
+	t.Run(GenesisRPCTest, applyExclusions(chain, testGenesisHashAgainstRPC))
+	t.Run(UniquenessTest, applyExclusions(chain, testIsGloballyUnique))
+	t.Run(ChainIDRPCTest, applyExclusions(chain, testChainIDFromRPC))
+	t.Run(OptimismConfigTest, applyExclusions(chain, testOptimismConfig))
 }
 
 // testStandardCandidate applies to Standard and Standard Candidate Chains.
 func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	// Standard Config Params
-	t.Run(RollupConfigTest, func(t *testing.T) { testRollupConfig(t, chain) })
-	t.Run(GasTokenTest, func(t *testing.T) { testGasToken(t, chain) })
-	t.Run(ResourceConfigTest, func(t *testing.T) { testResourceConfig(t, chain) })
-	t.Run(GasLimitTest, func(t *testing.T) { testGasLimit(t, chain) })
-	t.Run(GPOParamsTest, func(t *testing.T) { testGasPriceOracleParams(t, chain) })
-	t.Run(StartBlockRPCTest, func(t *testing.T) { testStartBlock(t, chain) })
+	t.Run(RollupConfigTest, applyExclusions(chain, testRollupConfig))
+	t.Run(GasTokenTest, applyExclusions(chain, testGasToken))
+	t.Run(ResourceConfigTest, applyExclusions(chain, testResourceConfig))
+	t.Run(GasLimitTest, applyExclusions(chain, testGasLimit))
+	t.Run(GPOParamsTest, applyExclusions(chain, testGasPriceOracleParams))
+	t.Run(StartBlockRPCTest, applyExclusions(chain, testStartBlock))
 	// Standard Config Roles
-	t.Run(L2SecurityConfigTest, func(t *testing.T) { testL2SecurityConfig(t, chain) })
+	t.Run(L2SecurityConfigTest, applyExclusions(chain, testL2SecurityConfig))
 	// Other
-	t.Run(DataAvailabilityTypeTest, func(t *testing.T) { testDataAvailabilityType(t, chain) })
-	t.Run(GenesisAllocsMetadataTest, func(t *testing.T) { testGenesisAllocsMetadata(t, chain) })
+	t.Run(DataAvailabilityTypeTest, applyExclusions(chain, testDataAvailabilityType))
+	t.Run(GenesisAllocsMetadataTest, applyExclusions(chain, testGenesisAllocsMetadata))
 }
 
 // testStandard should be applied only to a fully Standard Chain,
 // i.e. not to a Standard Candidate Chain.
 func testStandard(t *testing.T, chain *ChainConfig) {
 	// Standard Config Params
-	t.Run(SuperchainConfigTest, func(t *testing.T) { testSuperchainConfig(t, chain) })
+	t.Run(SuperchainConfigTest, applyExclusions(chain, testSuperchainConfig))
 	// Standard Contract Versions
-	t.Run(StandardContractVersionsTest, func(t *testing.T) { testContractsMatchATag(t, chain) })
+	t.Run(StandardContractVersionsTest, applyExclusions(chain, testContractsMatchATag))
 	// Standard Config Roles
-	t.Run(L1SecurityConfigTest, func(t *testing.T) { testL1SecurityConfig(t, chain) })
+	t.Run(L1SecurityConfigTest, applyExclusions(chain, testL1SecurityConfig))
 	// Standard Config Params
-	t.Run(OptimismPortal2ParamsTest, func(t *testing.T) { testOptimismPortal2Params(t, chain) })
+	t.Run(OptimismPortal2ParamsTest, applyExclusions(chain, testOptimismPortal2Params))
 	// Standard Config Roles
-	t.Run(KeyHandoverTest, func(t *testing.T) { testKeyHandover(t, chain.ChainID) })
+	t.Run(KeyHandoverTest, applyExclusions(chain, testKeyHandover))
 }

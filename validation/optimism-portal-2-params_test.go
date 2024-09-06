@@ -15,8 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func testOptimismPortal2Params(t *testing.T, chain *ChainConfig) {
-	skipIfExcluded(t, chain.ChainID)
+var testOptimismPortal2Params SubTestForChain = func(t *testing.T, chain *ChainConfig) {
 	opAddr, err := Addresses[chain.ChainID].AddressFor("OptimismPortalProxy")
 	require.NoError(t, err)
 
