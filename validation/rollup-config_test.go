@@ -22,7 +22,7 @@ func testOptimismConfig(t *testing.T, chain *ChainConfig) {
 	require.NotEmpty(t, chain.Optimism, "Optimism config cannot be nil")
 	require.NotEmpty(t, chain.Optimism.EIP1559Elasticity, "EIP1559Elasticity cannot be 0")
 	require.NotEmpty(t, chain.Optimism.EIP1559Denominator, "EIP1559Denominator cannot be 0")
-	if chain.CanyonTime != nil {
-		require.NotEmpty(t, chain.Optimism.EIP1559DenominatorCanyon, "EIP1559DenominatorCanyon cannot be 0 if canyon time is set")
+	if chain.CanyonTime != nil && *chain.CanyonTime == 0 {
+		require.NotEmpty(t, chain.Optimism.EIP1559DenominatorCanyon, "EIP1559DenominatorCanyon cannot be 0 if canyon was activated at genesis")
 	}
 }
