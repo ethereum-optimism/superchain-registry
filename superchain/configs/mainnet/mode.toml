@@ -5,12 +5,7 @@ sequencer_rpc = "https://mainnet-sequencer.mode.network"
 explorer = "https://explorer.mode.network"
 superchain_level = 0
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
-superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
 batch_inbox_addr = "0x24E59d9d3Bd73ccC28Dc54062AF7EF7bFF58Bd67"
-canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
-delta_time = 1708560000 # Thu 22 Feb 2024 00:00:00 UTC
-ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
-fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
@@ -19,7 +14,6 @@ data_availability_type = "eth-da"
 [optimism]
   eip1559_elasticity = 6
   eip1559_denominator = 50
-  eip1559_denominator_canyon = 250
 
 [genesis]
   l2_time = 1700167583
@@ -52,3 +46,4 @@ data_availability_type = "eth-da"
   OptimismPortalProxy = "0x8B34b14c7c7123459Cf3076b8Cb929BE097d0C07"
   SystemConfigProxy = "0x5e6432F18Bc5d497B1Ab2288a025Fbf9D69E2221"
   ProxyAdmin = "0x470d87b1dae09a454A43D1fD772A561a03276aB7"
+  SuperchainConfig = "0x95703e0982140D16f8ebA6d158FccEde42f04a4C"
