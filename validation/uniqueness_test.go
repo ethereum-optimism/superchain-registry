@@ -118,8 +118,6 @@ func init() {
 }
 
 func testIsGloballyUnique(t *testing.T, chain *ChainConfig) {
-	skipIfExcluded(t, chain.ChainID)
-
 	props := globalChainIds[uint(chain.ChainID)]
 	require.NotNil(t, props, "chain ID is not listed at chainid.network")
 	globalChainName := props.Name

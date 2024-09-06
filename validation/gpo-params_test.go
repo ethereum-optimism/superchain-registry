@@ -18,8 +18,6 @@ import (
 )
 
 func testGasPriceOracleParams(t *testing.T, chain *ChainConfig) {
-	skipIfExcluded(t, chain.ChainID)
-
 	gasPriceOraclAddr := common.HexToAddress("0x420000000000000000000000000000000000000F")
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
