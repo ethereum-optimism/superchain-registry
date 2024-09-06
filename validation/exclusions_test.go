@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum-optimism/superchain-registry/superchain"
+	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/stretchr/testify/require"
 )
 
@@ -44,10 +44,6 @@ var exclusions = map[string]map[uint64]bool{
 	},
 
 	// Standard Checks
-	StandardContractVersionsTest: {
-		11155421: true, // sepolia-dev0/oplabs-devnet-0
-		11763072: true, // sepolia-dev0/base-devnet-0
-	},
 	OptimismPortal2ParamsTest: {
 		11763072: true, // sepolia-dev0/base-devnet-0
 	},
@@ -55,7 +51,7 @@ var exclusions = map[string]map[uint64]bool{
 
 var silences = map[string]map[uint64]time.Time{
 	OptimismPortal2ParamsTest: {
-		10: time.Unix(int64(*superchain.OPChains[10].HardForkConfiguration.GraniteTime), 0), // mainnet/op silenced until Granite activates
+		10: time.Unix(int64(*OPChains[10].HardForkConfiguration.GraniteTime), 0), // mainnet/op silenced until Granite activates
 	},
 }
 
@@ -67,8 +63,8 @@ func TestExclusions(t *testing.T) {
 				continue
 			}
 			if v[k] {
-				require.NotNil(t, superchain.OPChains[k], k)
-				require.False(t, superchain.OPChains[k].SuperchainLevel == superchain.Standard, "Standard Chain %d may not be excluded from any check", k)
+				require.NotNil(t, OPChains[k], k)
+				require.False(t, OPChains[k].SuperchainLevel == Standard, "Standard Chain %d may not be excluded from any check", k)
 			}
 		}
 	}
