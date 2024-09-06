@@ -59,7 +59,6 @@ func ConstructChainConfig(
 	chainConfig.StandardChainCandidate = standardChainCandidate
 	chainConfig.SuperchainTime = nil
 
-	fmt.Printf("Rollup config successfully constructed\n")
 	return chainConfig, nil
 }
 
@@ -108,8 +107,6 @@ func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory s
 	if err := os.WriteFile(filename, []byte(finalContent.String()), 0o644); err != nil {
 		return fmt.Errorf("failed to write toml file: %w", err)
 	}
-
-	fmt.Printf("Rollup config written to: %s\n", filename)
 	return nil
 }
 

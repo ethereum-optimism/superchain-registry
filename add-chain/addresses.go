@@ -90,8 +90,6 @@ func readAddressesFromChain(addresses *superchain.AddressList, l1RpcUrl string, 
 		}
 		addresses.Challenger = superchain.MustHexToAddress(address)
 	}
-
-	fmt.Printf("Addresses read from chain\n")
 	return nil
 }
 

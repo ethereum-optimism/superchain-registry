@@ -151,10 +151,14 @@ func entrypoint(ctx *cli.Context) error {
 		return fmt.Errorf("failed to construct rollup config: %w", err)
 	}
 
+	fmt.Printf("✅ Rollup config successfully constructed\n")
+
 	err = readAddressesFromChain(&addresses, l1RpcUrl, isFaultProofs)
 	if err != nil {
 		return fmt.Errorf("failed to read addresses from chain: %w", err)
 	}
+
+	fmt.Printf("✅ Addresses read from chain\n")
 
 	if rollupConfig.AltDA != nil {
 		addresses.DAChallengeAddress = *rollupConfig.AltDA.DAChallengeAddress
@@ -175,10 +179,10 @@ func entrypoint(ctx *cli.Context) error {
 	targetFilePath := filepath.Join(targetDir, chainShortName+".toml")
 	err = config.WriteChainConfigTOML(rollupConfig, targetFilePath)
 	if err != nil {
-		return fmt.Errorf("error generating chain config .yaml file: %w", err)
+		return fmt.Errorf("error generating chain config .toml file: %w", err)
 	}
 
-	fmt.Printf("✅ Wrote config for new chain with identifier %s", rollupConfig.Identifier())
+	fmt.Printf("✅ Wrote config for new chain to %s\n", targetFilePath)
 
 	folderName := fmt.Sprintf("%d", rollupConfig.ChainID)
 	if runningTests := os.Getenv("SCR_RUN_TESTS"); runningTests == "true" {
@@ -193,13 +197,13 @@ func entrypoint(ctx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("error copying deploy-config json file: %w", err)
 	}
-	fmt.Printf("✅ Copied deploy-config json file to validation module")
+	fmt.Printf("✅ Copied deploy-config json file to validation module\n")
 
 	err = writeGenesisValidationMetadata(genesisCreationCommit, genesisValidationInputsDir)
 	if err != nil {
 		return fmt.Errorf("error writing genesis validation metadata file: %w", err)
 	}
-	fmt.Printf("✅ Wrote genesis validation metadata file")
+	fmt.Printf("✅ Wrote genesis validation metadata file\n")
 
 	return nil
 }
