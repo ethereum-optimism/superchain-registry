@@ -179,7 +179,7 @@ func entrypoint(ctx *cli.Context) error {
 	targetFilePath := filepath.Join(targetDir, chainShortName+".toml")
 	err = config.WriteChainConfigTOML(rollupConfig, targetFilePath)
 	if err != nil {
-		return fmt.Errorf("error generating chain config .toml file: %w", err)
+		return fmt.Errorf("error generating chain config %s.toml file: %w", chainShortName, err)
 	}
 
 	fmt.Printf("✅ Wrote config for new chain to %s\n", targetFilePath)
