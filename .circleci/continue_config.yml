@@ -238,6 +238,11 @@ jobs:
       - run: echo "All golang-validate-genesis-allocs jobs suceeded"
 workflows:
   hourly:
+    # run workflow only when the hourly_build pipeline is triggered
+    when:
+      and:
+        - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+        - equal: [ hourly_build, << pipeline.schedule.name >> ]
     jobs:
       - golang-validate-all:
           context:
@@ -246,26 +251,17 @@ workflows:
       - golang-test:
           context:
             - slack
-    triggers:
-      - schedule:
-          cron: "0 * * * *"
-          filters:
-            branches:
-              only:
-                - main
   nightly:
+    # run workflow only when the nightly_build pipeline is triggered
+    when:
+      and:
+        - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+        - equal: [ nightly_build, << pipeline.schedule.name >> ]
     jobs:
       - golang-promotion-test:
           context:
             - slack
             - oplabs-rpc-urls
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - main
   pr-checks:
     jobs:
       - golang-validate-genesis-allocs:

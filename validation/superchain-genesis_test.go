@@ -14,9 +14,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func testGenesisHash(t *testing.T, chainID uint64) {
-	skipIfExcluded(t, chainID)
-
+func testGenesisHash(t *testing.T, chain *ChainConfig) {
+	chainID := chain.ChainID
 	chainConfig, ok := OPChains[chainID]
 	if !ok {
 		t.Fatalf("no chain with ID %d found", chainID)
@@ -37,8 +36,6 @@ func testGenesisHash(t *testing.T, chainID uint64) {
 }
 
 func testGenesisHashAgainstRPC(t *testing.T, chain *ChainConfig) {
-	skipIfExcluded(t, chain.ChainID)
-
 	declaredGenesisHash := chain.Genesis.L2.Hash
 	rpcEndpoint := chain.PublicRPC
 
