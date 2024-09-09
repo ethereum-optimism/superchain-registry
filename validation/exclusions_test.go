@@ -30,6 +30,11 @@ var exclusions = map[string]map[uint64]bool{
 		// OP Mainnet has a pre-bedrock genesis (with an empty allocs object stored in the registry), so we exclude it from this check.")
 		10: true,
 	},
+	GenesisAllocsMetadataTest: {
+		10:       true, // op-mainnet
+		1740:     true, // metal-sepolia
+		11155420: true, // op-sepolia
+	},
 	ChainIDRPCTest: {
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
@@ -58,8 +63,8 @@ var silences = map[string]map[uint64]time.Time{
 func TestExclusions(t *testing.T) {
 	for name, v := range exclusions {
 		for k := range v {
-			if k == 10 && name == GenesisHashTest {
-				// This is the sole standard chain validation check exclusion
+			if (k == 10 || k == 11155420) && (name == GenesisHashTest || name == GenesisAllocsMetadataTest) {
+				// These are the sole standard chain validation check exclusions
 				continue
 			}
 			if v[k] {
