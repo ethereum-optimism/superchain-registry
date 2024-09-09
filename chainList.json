@@ -129,7 +129,7 @@
       "https://explorer.redstone.xyz"
     ],
     "superchainLevel": 0,
-    "dataAvailabilityType": "eth-da",
+    "dataAvailabilityType": "alt-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"

@@ -233,11 +233,16 @@
           "block_time": 2,
           "seq_window_size": 3600,
           "max_sequencer_drift": 600,
-          "DataAvailabilityType": "eth-da",
+          "DataAvailabilityType": "alt-da",
           "optimism": {
-            "eip1559Elasticity": 6,
+            "eip1559Elasticity": 2,
             "eip1559Denominator": 50,
-            "eip1559DenominatorCanyon": 250
+            "eip1559DenominatorCanyon": 50
+          },
+          "alt_da": {
+            "da_challenge_contract_address": "0x97A2dA87d3439b172e6DD027220e01c9Cb565B80",
+            "da_challenge_window": 3600,
+            "da_resolve_window": 3600
           },
           "GasPayingToken": null,
           "genesis": {
@@ -263,6 +268,7 @@
             "AnchorStateRegistryProxy": "0xc51ac31BcEFB64D999AF10129Cb7693EeE7c1179",
             "BatchSubmitter": "0xA31cb9Bc414601171D4537580f98F66C03aECd43",
             "Challenger": "0xb356B146F1629c49C44344464F69BCDAfb4bb664",
+            "DAChallengeAddress": "0x97A2dA87d3439b172e6DD027220e01c9Cb565B80",
             "DelayedWETHProxy": "0xa130523fD22e2a9D78F8aB232b01ff552845B4A9",
             "DisputeGameFactoryProxy": "0x8f68E849eaf8EB943536F9d1D49Ea9C9b5868b98",
             "Guardian": "0xb356B146F1629c49C44344464F69BCDAfb4bb664",
