@@ -64,7 +64,7 @@ func TestExclusions(t *testing.T) {
 	for name, v := range exclusions {
 		for k := range v {
 			if (k == 10 || k == 11155420) && (name == GenesisHashTest || name == GenesisAllocsMetadataTest) {
-				// This are the sole standard chain validation check exclusions
+				// These are the sole standard chain validation check exclusions
 				continue
 			}
 			if v[k] {
