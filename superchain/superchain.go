@@ -27,8 +27,8 @@ var superchainFS embed.FS
 var extraFS embed.FS
 
 type BlockID struct {
-	Hash   Hash   `toml:"hash"`
-	Number uint64 `toml:"number"`
+	Hash   Hash   `json:"hash" toml:"hash"`
+	Number uint64 `json:"number" toml:"number"`
 }
 
 type OptimismConfig struct {
@@ -38,11 +38,11 @@ type OptimismConfig struct {
 }
 
 type ChainGenesis struct {
-	L1           BlockID      `toml:"l1"`
-	L2           BlockID      `toml:"l2"`
-	L2Time       uint64       `toml:"l2_time" json:"l2_time"`
-	ExtraData    *HexBytes    `toml:"extra_data,omitempty"`
-	SystemConfig SystemConfig `toml:"system_config" json:"system_config" `
+	L1           BlockID      `json:"l1" toml:"l1"`
+	L2           BlockID      `json:"l2" toml:"l2"`
+	L2Time       uint64       `json:"l2_time" toml:"l2_time"`
+	ExtraData    *HexBytes    `json:"extra_data,omitempty" toml:"extra_data,omitempty"`
+	SystemConfig SystemConfig `json:"system_config" toml:"system_config"`
 }
 
 type SystemConfig struct {
