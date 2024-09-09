@@ -4,14 +4,51 @@ import (
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/common"
 )
+
+// Test names
+const (
+	GenesisHashTest              = "Genesis_Hash"
+	GenesisRPCTest               = "Genesis_RPC"
+	UniquenessTest               = "Uniqueness"
+	ChainIDRPCTest               = "ChainID_RPC"
+	OptimismConfigTest           = "Optimism_Config"
+	RollupConfigTest             = "Rollup_Config"
+	GasTokenTest                 = "Gas_Token"
+	ResourceConfigTest           = "Resource_Config"
+	GasLimitTest                 = "Gas_Limit"
+	GPOParamsTest                = "GPO_Params"
+	StartBlockRPCTest            = "Start_Block_RPC"
+	SuperchainConfigTest         = "Superchain_Config"
+	L1SecurityConfigTest         = "L1_Security_Config"
+	L2SecurityConfigTest         = "L2_Security_Config"
+	DataAvailabilityTypeTest     = "Data_Availability_Type"
+	StandardContractVersionsTest = "Standard_Contract_Versions"
+	OptimismPortal2ParamsTest    = "Optimism_Portal_2_Params"
+	KeyHandoverTest              = "Key_Handover"
+	GenesisAllocsMetadataTest    = "Genesis_Allocs_Metadata"
+)
+
+type (
+	subTest         = func(t *testing.T)
+	subTestForChain = func(t *testing.T, chain *ChainConfig)
+)
+
+// applyExclusions is a higher order function which returns a subtest function with exclusions applied
+func applyExclusions(chain *ChainConfig, f subTestForChain) subTest {
+	return func(t *testing.T) {
+		skipIfExcluded(t, chain.ChainID)
+		f(t, chain)
+	}
+}
 
 func TestValidation(t *testing.T) {
 	// Entry point for validation checks which run
 	// on each OP chain.
 	for _, chain := range OPChains {
 		chain := chain
-		t.Run(perChainTestName(chain), func(t *testing.T) {
+		t.Run(common.PerChainTestName(chain), func(t *testing.T) {
 			t.Parallel()
 			testValidation(t, chain)
 		})
@@ -37,38 +74,40 @@ func testValidation(t *testing.T, chain *ChainConfig) {
 // designed to protect downstream software or
 // sanity checking basic consistency conditions.
 func testUniversal(t *testing.T, chain *ChainConfig) {
-	t.Run("Genesis Hash Check", func(t *testing.T) { testGenesisHash(t, chain.ChainID) })
-	t.Run("Genesis RPC Check", func(t *testing.T) { testGenesisHashAgainstRPC(t, chain) })
-	t.Run("Uniqueness Check", func(t *testing.T) { testIsGloballyUnique(t, chain) })
-	t.Run("ChainID RPC Check", func(t *testing.T) { testChainIDFromRPC(t, chain) })
+	t.Run(GenesisHashTest, applyExclusions(chain, testGenesisHash))
+	t.Run(GenesisRPCTest, applyExclusions(chain, testGenesisHashAgainstRPC))
+	t.Run(UniquenessTest, applyExclusions(chain, testIsGloballyUnique))
+	t.Run(ChainIDRPCTest, applyExclusions(chain, testChainIDFromRPC))
+	t.Run(OptimismConfigTest, applyExclusions(chain, testOptimismConfig))
 }
 
 // testStandardCandidate applies to Standard and Standard Candidate Chains.
 func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	// Standard Config Params
-	t.Run("Rollup Config", func(t *testing.T) { testRollupConfig(t, chain) })
-	t.Run("Gas Token", (func(t *testing.T) { testGasToken(t, chain) }))
-	t.Run("Resource Config", func(t *testing.T) { testResourceConfig(t, chain) })
-	t.Run("Gas Limit", func(t *testing.T) { testGasLimit(t, chain) })
-	t.Run("GPO Params", func(t *testing.T) { testGasPriceOracleParams(t, chain) })
-	t.Run("Start Block RPC Check", func(t *testing.T) { testStartBlock(t, chain) })
-	t.Run("Superchain Config", func(t *testing.T) { testSuperchainConfig(t, chain) })
+	t.Run(RollupConfigTest, applyExclusions(chain, testRollupConfig))
+	t.Run(GasTokenTest, applyExclusions(chain, testGasToken))
+	t.Run(ResourceConfigTest, applyExclusions(chain, testResourceConfig))
+	t.Run(GasLimitTest, applyExclusions(chain, testGasLimit))
+	t.Run(GPOParamsTest, applyExclusions(chain, testGasPriceOracleParams))
+	t.Run(StartBlockRPCTest, applyExclusions(chain, testStartBlock))
 	// Standard Config Roles
-	t.Run("L1 Security Config", func(t *testing.T) { testL1SecurityConfig(t, chain.ChainID) })
-	t.Run("L2 Security Config", func(t *testing.T) { testL2SecurityConfig(t, chain) })
+	t.Run(L2SecurityConfigTest, applyExclusions(chain, testL2SecurityConfig))
 	// Other
-	t.Run("Data Availability Type", func(t *testing.T) { testDataAvailabilityType(t, chain) })
+	t.Run(DataAvailabilityTypeTest, applyExclusions(chain, testDataAvailabilityType))
+	t.Run(GenesisAllocsMetadataTest, applyExclusions(chain, testGenesisAllocsMetadata))
 }
 
 // testStandard should be applied only to a fully Standard Chain,
 // i.e. not to a Standard Candidate Chain.
 func testStandard(t *testing.T, chain *ChainConfig) {
-	// Standard Contract Versions
-	t.Run("Standard Contract Versions", func(t *testing.T) {
-		testContractsMatchATag(t, chain)
-	})
 	// Standard Config Params
-	t.Run("Optimism Portal 2 Params", func(t *testing.T) { testOptimismPortal2Params(t, chain) })
+	t.Run(SuperchainConfigTest, applyExclusions(chain, testSuperchainConfig))
+	// Standard Contract Versions
+	t.Run(StandardContractVersionsTest, applyExclusions(chain, testContractsMatchATag))
 	// Standard Config Roles
-	t.Run("Key Handover Check", func(t *testing.T) { testKeyHandover(t, chain.ChainID) })
+	t.Run(L1SecurityConfigTest, applyExclusions(chain, testL1SecurityConfig))
+	// Standard Config Params
+	t.Run(OptimismPortal2ParamsTest, applyExclusions(chain, testOptimismPortal2Params))
+	// Standard Config Roles
+	t.Run(KeyHandoverTest, applyExclusions(chain, testKeyHandover))
 }

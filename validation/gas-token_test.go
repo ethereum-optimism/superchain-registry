@@ -14,8 +14,6 @@ import (
 )
 
 func testGasToken(t *testing.T, chain *ChainConfig) {
-	skipIfExcluded(t, chain.ChainID)
-
 	client, err := ethclient.Dial(chain.PublicRPC)
 	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
 	defer client.Close()
@@ -81,10 +79,10 @@ func getBool(method string, contractAddress Address, client *ethclient.Client) (
 		return false, err
 	}
 
-	switch string(result) {
-	case "0x1":
+	switch common.HexToHash(string(result)) {
+	case common.Hash{1}:
 		return true, nil
-	case "0x0":
+	case common.Hash{}:
 		return false, nil
 	default:
 		return false, errors.New("unexpected non-bool return value")
