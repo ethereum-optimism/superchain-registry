@@ -7,8 +7,10 @@
         "L1": {
           "ChainID": 1,
           "PublicRPC": "https://ethereum-rpc.publicnode.com",
-          "Explorer": "https://etherscan.io"
+          "Explorer": "https://etherscan.io",
+          "Versions": null
         },
+        "ContractsRelease": "op-contracts/v1.4.0",
         "ProtocolVersionsAddr": "0x8062AbC286f5e7D9428a0Ccb9AbD71e50d93b935",
         "SuperchainConfigAddr": "0x95703e0982140D16f8ebA6d158FccEde42f04a4C"
       },
@@ -600,8 +602,10 @@
         "L1": {
           "ChainID": 11155111,
           "PublicRPC": "https://ethereum-sepolia-rpc.publicnode.com",
-          "Explorer": "https://sepolia.etherscan.io"
+          "Explorer": "https://sepolia.etherscan.io",
+          "Versions": null
         },
+        "ContractsRelease": "op-contracts/v1.4.0",
         "ProtocolVersionsAddr": "0x79ADD5713B383DAa0a138d3C4780C7A1804a8090",
         "SuperchainConfigAddr": "0xC2Be75506d5724086DEB7245bd260Cc9753911Be"
       },
@@ -1000,8 +1004,10 @@
         "L1": {
           "ChainID": 11155111,
           "PublicRPC": "https://ethereum-sepolia-rpc.publicnode.com",
-          "Explorer": "https://sepolia.etherscan.io"
+          "Explorer": "https://sepolia.etherscan.io",
+          "Versions": null
         },
+        "ContractsRelease": "",
         "ProtocolVersionsAddr": "0x252CbE9517F731C618961D890D534183822dcC8d",
         "SuperchainConfigAddr": "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
       },
