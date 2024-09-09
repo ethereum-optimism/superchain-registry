@@ -31,7 +31,7 @@ test-add-chain:
 	# We separate the first test from the rest because it generates artifacts
 	# Which need to exist before the remaining tests run.
 	TEST_DIRECTORY=./add-chain go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run TestAddChain_Main
-	TEST_DIRECTORY=./add-chain go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run '[^TestAddChain_Main]'
+	TEST_DIRECTORY=./add-chain/... go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run '[^TestAddChain_Main]'
 
 # Test all Go code in the superchain module
 test-superchain: clean-add-chain
