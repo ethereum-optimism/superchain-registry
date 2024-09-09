@@ -156,7 +156,8 @@ type AltDAConfig struct {
 	DAChallengeWindow *uint64 `json:"da_challenge_window" toml:"da_challenge_window"`
 	// DA resolve window value set on the DAC contract. Used in altDA mode
 	// to compute when a challenge expires and trigger a reorg if needed.
-	DAResolveWindow *uint64 `json:"da_resolve_window" toml:"da_resolve_window"`
+	DAResolveWindow  *uint64 `json:"da_resolve_window" toml:"da_resolve_window"`
+	DACommitmentType *string `json:"da_commitment_type" toml:"da_commitment_type"`
 }
 
 func (c *ChainConfig) CheckDataAvailability() error {
