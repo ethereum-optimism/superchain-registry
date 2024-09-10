@@ -19,13 +19,13 @@ type LegacyPlasma struct {
 
 func (lp *LegacyPlasma) CheckNonNilFields() error {
 	v := reflect.ValueOf(*lp)
-	typeOfT := v.Type()
+	typeOfV := v.Type()
 
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
 
 		if field.Kind() == reflect.Ptr && !field.IsNil() {
-			fieldName := typeOfT.Field(i).Name
+			fieldName := typeOfV.Field(i).Name
 			return fmt.Errorf("field %s is non-nil", fieldName)
 		}
 	}
