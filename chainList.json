@@ -119,6 +119,24 @@
     }
   },
   {
+    "name": "Binary Mainnet",
+    "identifier": "mainnet/tbn",
+    "chainId": 624,
+    "rpc": [
+      "https://rpc.zero.thebinaryholdings.com"
+    ],
+    "explorers": [
+      "https://explorer.thebinaryholdings.com/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    },
+    "gasPayingToken": "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
+  },
+  {
     "name": "Zora",
     "identifier": "mainnet/zora",
     "chainId": 7777777,
