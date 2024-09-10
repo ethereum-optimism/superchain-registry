@@ -198,8 +198,6 @@ canyon_time = 1
 delta_time = 2
 ecotone_time = 3
 
-op_contracts_release = "op-contracts/v1.4.0"
-
 [l1]
   chain_id = 314
   public_rpc = "https://disney.com"
@@ -221,7 +219,6 @@ op_contracts_release = "op-contracts/v1.4.0"
 
 	require.Equal(t, "0x252CbE9517F731C618961D890D534183822dcC8d", s.ProtocolVersionsAddr.String())
 	require.Equal(t, "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7", s.SuperchainConfigAddr.String())
-	require.Equal(t, "op-contracts/v1.4.0", s.ContractsRelease)
 	require.Equal(t, uint64Ptr(uint64(1)), s.hardForkDefaults.CanyonTime)
 	require.Equal(t, uint64Ptr(uint64(2)), s.hardForkDefaults.DeltaTime)
 	require.Equal(t, uint64Ptr(uint64(3)), s.hardForkDefaults.EcotoneTime)

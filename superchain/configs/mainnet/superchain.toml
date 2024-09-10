@@ -8,8 +8,6 @@ ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
 fjord_time =   1720627201 # Wed 10 Jul 2024 16:00:01 UTC
 granite_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC
 
-op_contracts_release = "op-contracts/v1.4.0"
-
 [l1]
   chain_id = 1
   public_rpc = "https://ethereum-rpc.publicnode.com"

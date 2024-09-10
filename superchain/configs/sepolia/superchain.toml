@@ -8,8 +8,6 @@ ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
 fjord_time =   1716998400 # Wed 29 May 2024 16:00:00 UTC
 granite_time = 1723478400 # Mon Aug 12 16:00:00 UTC
 
-op_contracts_release = "op-contracts/v1.4.0"
-
 [l1]
   chain_id = 11155111
   public_rpc = "https://ethereum-sepolia-rpc.publicnode.com"

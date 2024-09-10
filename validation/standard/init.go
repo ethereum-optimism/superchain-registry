@@ -71,7 +71,7 @@ func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles | VersionTags | B
 // LoadImmutableReferences parses standard-immutables.toml and stores it in a map. Needs to be invoked one-time only.
 func LoadImmutableReferences() {
 	var bytecodeImmutables *ContractBytecodeImmutables
-	for tag := range Versions {
+	for tag := range Versions.Tags {
 		for contractVersion, immutables := range BytecodeImmutables {
 			if tag == contractVersion {
 				bytecodeImmutables = &immutables

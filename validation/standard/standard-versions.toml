@@ -1,5 +1,9 @@
+op_contracts_release = "op-contracts/v1.4.0"
+
+[contract_tag]
+
 # Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.4.0
-["op-contracts/v1.4.0"]
+[contract_tag."op-contracts/v1.4.0"]
 address_manager = { version = "" }
 l1_cross_domain_messenger = { version = "2.3.0" }
 l1_erc721_bridge = { version = "2.1.0" }
@@ -16,8 +20,8 @@ permissioned_dispute_game = { version = "1.2.0" }
 mips = { version = "1.0.1" }
 preimage_oracle = { version = "1.0.0" }
 
-# Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.4.0
-["op-contracts/v1.3.0"]
+# Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.3.0
+[contract_tag."op-contracts/v1.3.0"]
 address_manager = { version = "1.0.0", address = "0xdE1FCfB0851916CA5101820A69b13a4E276bd81F" }
 l1_cross_domain_messenger = { version = "2.3.0", address = "0xD3494713A5cfaD3F5359379DfA074E2Ac8C6Fd65" }
 l1_erc721_bridge = { version = "2.1.0", address = "0xAE2AF01232a6c4a4d3012C5eC5b1b35059caF10d" }

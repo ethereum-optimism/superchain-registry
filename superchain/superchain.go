@@ -540,16 +540,14 @@ type Genesis struct {
 }
 
 type SuperchainL1Info struct {
-	ChainID   uint64                      `toml:"chain_id"`
-	PublicRPC string                      `toml:"public_rpc"`
-	Explorer  string                      `toml:"explorer"`
-	Versions  map[string]ContractVersions `toml:"ContractVersions"`
+	ChainID   uint64 `toml:"chain_id"`
+	PublicRPC string `toml:"public_rpc"`
+	Explorer  string `toml:"explorer"`
 }
 
 type SuperchainConfig struct {
-	Name             string           `toml:"name"`
-	L1               SuperchainL1Info `toml:"l1"`
-	ContractsRelease string           `toml:"op_contracts_release"`
+	Name string           `toml:"name"`
+	L1   SuperchainL1Info `toml:"l1"`
 
 	ProtocolVersionsAddr *Address `toml:"protocol_versions_addr,omitempty"`
 	SuperchainConfigAddr *Address `toml:"superchain_config_addr,omitempty"`
