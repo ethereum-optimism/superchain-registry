@@ -3,7 +3,7 @@ chain_id = 34443
 public_rpc = "https://mainnet.mode.network"
 sequencer_rpc = "https://mainnet-sequencer.mode.network"
 explorer = "https://explorer.mode.network"
-superchain_level = 1
+superchain_level = 0
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
 batch_inbox_addr = "0x24E59d9d3Bd73ccC28Dc54062AF7EF7bFF58Bd67"
@@ -13,7 +13,13 @@ ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
 fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
 block_time = 2
 seq_window_size = 3600
+max_sequencer_drift = 600
 data_availability_type = "eth-da"
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
 
 [genesis]
   l2_time = 1700167583

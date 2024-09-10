@@ -11,7 +11,9 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum/go-ethereum/core"
 
+	"github.com/ethereum-optimism/superchain-registry/add-chain/utils"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
@@ -19,6 +21,7 @@ import (
 // explicitly setting some additional fields to input argument values
 func ConstructChainConfig(
 	inputFilePath,
+	genesisPath,
 	chainName,
 	publicRPC,
 	sequencerRPC,
@@ -31,40 +34,31 @@ func ConstructChainConfig(
 	if err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error reading file: %w", err)
 	}
-	var jsonConfig superchain.ChainConfig
-	if err = json.Unmarshal(file, &jsonConfig); err != nil {
+	var chainConfig superchain.ChainConfig
+	if err = json.Unmarshal(file, &chainConfig); err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %w", err)
 	}
 
-	err = jsonConfig.CheckDataAvailability()
+	err = chainConfig.CheckDataAvailability()
 	if err != nil {
-		return superchain.ChainConfig{}, fmt.Errorf("error with json plasma config: %w", err)
+		return superchain.ChainConfig{}, fmt.Errorf("error with json altDA config: %w", err)
 	}
 
-	chainConfig := superchain.ChainConfig{
-		Name:                   chainName,
-		ChainID:                jsonConfig.ChainID,
-		PublicRPC:              publicRPC,
-		SequencerRPC:           sequencerRPC,
-		Explorer:               explorer,
-		BatchInboxAddr:         jsonConfig.BatchInboxAddr,
-		Genesis:                jsonConfig.Genesis,
-		SuperchainLevel:        superchainLevel,
-		StandardChainCandidate: standardChainCandidate,
-		SuperchainTime:         nil,
-		Plasma:                 jsonConfig.Plasma,
-		HardForkConfiguration: superchain.HardForkConfiguration{
-			CanyonTime:  jsonConfig.CanyonTime,
-			DeltaTime:   jsonConfig.DeltaTime,
-			EcotoneTime: jsonConfig.EcotoneTime,
-			FjordTime:   jsonConfig.FjordTime,
-		},
-		BlockTime:            jsonConfig.BlockTime,
-		SequencerWindowSize:  jsonConfig.SequencerWindowSize,
-		DataAvailabilityType: jsonConfig.DataAvailabilityType,
+	genesis, err := utils.LoadJSON[core.Genesis](genesisPath)
+	if err != nil {
+		return superchain.ChainConfig{}, fmt.Errorf("failed to load L2 genesis: %w", err)
 	}
 
-	fmt.Printf("Rollup config successfully constructed\n")
+	chainConfig.Optimism = (*superchain.OptimismConfig)(genesis.Config.Optimism)
+
+	chainConfig.Name = chainName
+	chainConfig.PublicRPC = publicRPC
+	chainConfig.SequencerRPC = sequencerRPC
+	chainConfig.Explorer = explorer
+	chainConfig.SuperchainLevel = superchainLevel
+	chainConfig.StandardChainCandidate = standardChainCandidate
+	chainConfig.SuperchainTime = nil
+
 	return chainConfig, nil
 }
 
@@ -73,7 +67,7 @@ func ConstructChainConfig(
 //   - general chain info/config
 //   - contract and role addresses
 //   - genesis system config
-//   - optional feature config info, if activated (e.g. plasma)
+//   - optional feature config info, if activated (e.g. altDA)
 func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -113,8 +107,6 @@ func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory s
 	if err := os.WriteFile(filename, []byte(finalContent.String()), 0o644); err != nil {
 		return fmt.Errorf("failed to write toml file: %w", err)
 	}
-
-	fmt.Printf("Rollup config written to: %s\n", filename)
 	return nil
 }
 

@@ -3,7 +3,7 @@ chain_id = 957
 public_rpc = "https://rpc.lyra.finance"
 sequencer_rpc = "https://rpc.lyra.finance"
 explorer = "https://explorer.lyra.finance"
-superchain_level = 1
+superchain_level = 0
 superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
 batch_inbox_addr = "0x5f7f7f6DB967F0ef10BdA0678964DBA185d16c50"
 canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
@@ -12,7 +12,13 @@ ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
 fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
 block_time = 2
 seq_window_size = 3600
+max_sequencer_drift = 600
 data_availability_type = "eth-da"
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
 
 [genesis]
   l2_time = 1700021615

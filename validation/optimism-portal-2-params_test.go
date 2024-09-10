@@ -16,7 +16,6 @@ import (
 )
 
 func testOptimismPortal2Params(t *testing.T, chain *ChainConfig) {
-	skipIfExcluded(t, chain.ChainID)
 	opAddr, err := Addresses[chain.ChainID].AddressFor("OptimismPortalProxy")
 	require.NoError(t, err)
 

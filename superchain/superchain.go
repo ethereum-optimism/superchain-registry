@@ -27,16 +27,22 @@ var superchainFS embed.FS
 var extraFS embed.FS
 
 type BlockID struct {
-	Hash   Hash   `toml:"hash"`
-	Number uint64 `toml:"number"`
+	Hash   Hash   `json:"hash" toml:"hash"`
+	Number uint64 `json:"number" toml:"number"`
+}
+
+type OptimismConfig struct {
+	EIP1559Elasticity        uint64  `toml:"eip1559_elasticity" json:"eip1559Elasticity"`
+	EIP1559Denominator       uint64  `toml:"eip1559_denominator" json:"eip1559Denominator"`
+	EIP1559DenominatorCanyon *uint64 `toml:"eip1559_denominator_canyon,omitempty" json:"eip1559DenominatorCanyon,omitempty"`
 }
 
 type ChainGenesis struct {
-	L1           BlockID      `toml:"l1"`
-	L2           BlockID      `toml:"l2"`
-	L2Time       uint64       `toml:"l2_time" json:"l2_time"`
-	ExtraData    *HexBytes    `toml:"extra_data,omitempty"`
-	SystemConfig SystemConfig `toml:"system_config" json:"system_config" `
+	L1           BlockID      `json:"l1" toml:"l1"`
+	L2           BlockID      `json:"l2" toml:"l2"`
+	L2Time       uint64       `json:"l2_time" toml:"l2_time"`
+	ExtraData    *HexBytes    `json:"extra_data,omitempty" toml:"extra_data,omitempty"`
+	SystemConfig SystemConfig `json:"system_config" toml:"system_config"`
 }
 
 type SystemConfig struct {
@@ -60,8 +66,8 @@ type HardForkConfiguration struct {
 type SuperchainLevel uint
 
 const (
-	Standard SuperchainLevel = 2
-	Frontier SuperchainLevel = 1
+	Standard SuperchainLevel = 1
+	Frontier SuperchainLevel = 0
 )
 
 type DataAvailability string
@@ -102,14 +108,12 @@ type ChainConfig struct {
 
 	BlockTime            uint64           `toml:"block_time" json:"block_time"`
 	SequencerWindowSize  uint64           `toml:"seq_window_size" json:"seq_window_size"`
+	MaxSequencerDrift    uint64           `toml:"max_sequencer_drift" json:"max_sequencer_drift"`
 	DataAvailabilityType DataAvailability `toml:"data_availability_type"`
+	Optimism             *OptimismConfig  `toml:"optimism,omitempty" json:"optimism,omitempty"`
 
 	// Optional feature
-	LegacyUsePlasma          bool          `toml:"-,omitempty" json:"use_plasma,omitempty"`
-	LegacyDAChallengeAddress *Address      `toml:"-,omitempty" json:"da_challenge_contract_address,omitempty"`
-	LegacyDAChallengeWindow  *uint64       `toml:"-,omitempty" json:"da_challenge_window,omitempty"`
-	LegacyDAResolveWindow    *uint64       `toml:"-,omitempty" json:"da_resolve_window,omitempty"`
-	Plasma                   *PlasmaConfig `toml:"plasma,omitempty" json:"plasma_config,omitempty"`
+	AltDA *AltDAConfig `toml:"alt_da,omitempty" json:"alt_da,omitempty"`
 
 	GasPayingToken *Address `toml:"gas_paying_token,omitempty"` // Just metadata, not consumed by downstream OPStack software
 
@@ -122,38 +126,45 @@ func (c ChainConfig) Identifier() string {
 	return c.Superchain + "/" + c.Chain
 }
 
-type PlasmaConfig struct {
+// Returns a shallow copy of the chain config with some fields mutated
+// to declare the chain a standard chain. No fields on the receiver
+// are mutated.
+func (c *ChainConfig) PromoteToStandard() (*ChainConfig, error) {
+	if !c.StandardChainCandidate {
+		return nil, errors.New("can only promote standard candidate chains")
+	}
+	if c.SuperchainLevel != Frontier {
+		return nil, errors.New("can only promote frontier chains")
+	}
+
+	// Note that any pointers in c are copied to d
+	// This is not problematic as long as we do
+	// not modify the values pointed to.
+	d := *c
+
+	d.StandardChainCandidate = false
+	d.SuperchainLevel = Standard
+	now := uint64(time.Now().Unix())
+	d.SuperchainTime = &now
+	return &d, nil
+}
+
+type AltDAConfig struct {
 	DAChallengeAddress *Address `json:"da_challenge_contract_address" toml:"da_challenge_contract_address"`
-	// DA challenge window value set on the DAC contract. Used in plasma mode
+	// DA challenge window value set on the DAC contract. Used in altDA mode
 	// to compute when a commitment can no longer be challenged.
 	DAChallengeWindow *uint64 `json:"da_challenge_window" toml:"da_challenge_window"`
-	// DA resolve window value set on the DAC contract. Used in plasma mode
+	// DA resolve window value set on the DAC contract. Used in altDA mode
 	// to compute when a challenge expires and trigger a reorg if needed.
 	DAResolveWindow *uint64 `json:"da_resolve_window" toml:"da_resolve_window"`
 }
 
 func (c *ChainConfig) CheckDataAvailability() error {
 	c.DataAvailabilityType = EthDA
-
-	if c.LegacyUsePlasma {
-		// Check for legacy plasma config first
-		if c.LegacyDAChallengeAddress == nil {
-			return fmt.Errorf("missing required plasma field: da_challenge_contract_address")
-		}
-		plasmaConfig := PlasmaConfig{
-			DAChallengeAddress: c.LegacyDAChallengeAddress,
-			DAChallengeWindow:  c.LegacyDAChallengeWindow,
-			DAResolveWindow:    c.LegacyDAResolveWindow,
-		}
-		c.Plasma = &plasmaConfig
+	if c.AltDA != nil {
 		c.DataAvailabilityType = AltDA
-		return nil
-	}
-
-	if c.Plasma != nil {
-		c.DataAvailabilityType = AltDA
-		if c.Plasma.DAChallengeAddress == nil {
-			return fmt.Errorf("missing required plasma field: da_challenge_contract_address")
+		if c.AltDA.DAChallengeAddress == nil {
+			return fmt.Errorf("missing required altDA field: da_challenge_contract_address")
 		}
 	}
 
@@ -294,7 +305,7 @@ type AddressList struct {
 	PermissionedDisputeGame  Address `json:"PermissionedDisputeGame,omitempty" toml:"PermissionedDisputeGame,omitempty"`
 	PreimageOracle           Address `json:"PreimageOracle,omitempty" toml:"PreimageOracle,omitempty"`
 
-	// Plasma contracts:
+	// AltDA contracts:
 	DAChallengeAddress Address `json:"DAChallengeAddress,omitempty" toml:"DAChallengeAddress,omitempty"`
 }
 
@@ -454,7 +465,7 @@ func (c ContractVersions) Check(allowEmptyVersions bool) error {
 			}
 			return fmt.Errorf("empty version for field %s", val.Type().Field(i).Name)
 		}
-		str = canonicalizeSemver(str)
+		str = CanonicalizeSemver(str)
 		if !semver.IsValid(str) {
 			return fmt.Errorf("invalid semver %s for field %s", str, val.Type().Field(i).Name)
 		}
@@ -462,10 +473,10 @@ func (c ContractVersions) Check(allowEmptyVersions bool) error {
 	return nil
 }
 
-// canonicalizeSemver will ensure that the version string has a "v" prefix.
+// CanonicalizeSemver will ensure that the version string has a "v" prefix.
 // This is because the semver library being used requires the "v" prefix,
 // even though
-func canonicalizeSemver(version string) string {
+func CanonicalizeSemver(version string) string {
 	if !strings.HasPrefix(version, "v") {
 		version = "v" + version
 	}
