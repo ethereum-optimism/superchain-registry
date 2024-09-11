@@ -1,0 +1,43 @@
+name: Validate modified chains
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  golang-validate-modified:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: "Install just"
+      run: |
+        wget -qO - 'https://proget.makedeb.org/debian-feeds/prebuilt-mpr.pub' | gpg --dearmor | sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1> /dev/null
+        echo "deb [arch=all,$(dpkg --print-architecture) signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
+        sudo apt update
+        sudo apt install just
+
+    - name: Install foundry
+      run: |
+        echo "SHELL=$SHELL"
+        # Set up directory structure
+        mkdir -p $HOME/.foundry/bin
+        echo 'export PATH="$HOME/.foundry/bin:$PATH"' >> $BASH_ENV
+        source $BASH_ENV
+
+        # Download foundryup and make it executable
+        curl -sSL "https://raw.githubusercontent.com/foundry-rs/foundry/master/foundryup/foundryup" -o $HOME/.foundry/bin/foundryup
+        chmod +x $HOME/.foundry/bin/foundryup
+
+        $HOME/.foundry/bin/foundryup
+        forge --version
+
+    - name: Run validation checks
+      env:
+        CI_MAINNET_RPC: ${{ secrets.CI_MAINNET_RPC }}
+        CI_SEPOLIA_RPC: ${{ secrets.CI_SEPOLIA_RPC }}
+      run: |
+        just validate-modified-chains main # TODO ideally use the base branch
