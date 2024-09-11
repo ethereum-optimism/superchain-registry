@@ -54,11 +54,7 @@ var exclusions = map[string]map[uint64]bool{
 	},
 }
 
-var silences = map[string]map[uint64]time.Time{
-	OptimismPortal2ParamsTest: {
-		10: time.Unix(int64(*OPChains[10].HardForkConfiguration.GraniteTime), 0), // mainnet/op silenced until Granite activates
-	},
-}
+var silences = map[string]map[uint64]time.Time{}
 
 func TestExclusions(t *testing.T) {
 	for name, v := range exclusions {
