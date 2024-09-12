@@ -20,9 +20,8 @@ jobs:
         sudo apt update
         sudo apt install just
 
-    - name: Install foundry
-      run: |
-        curl -L https://foundry.paradigm.xyz | bash
+    - name: Install Foundry
+      uses: foundry-rs/foundry-toolchain@v1
 
     - name: Run validation checks
       env:

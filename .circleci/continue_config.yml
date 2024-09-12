@@ -35,7 +35,13 @@ commands:
             mkdir -p $HOME/.foundry/bin
             echo 'export PATH="$HOME/.foundry/bin:$PATH"' >> $BASH_ENV
             source $BASH_ENV
-            curl -L https://foundry.paradigm.xyz | bash
+
+            # Download foundryup and make it executable
+            curl -sSL "https://raw.githubusercontent.com/foundry-rs/foundry/master/foundryup/foundryup" -o $HOME/.foundry/bin/foundryup
+            chmod +x $HOME/.foundry/bin/foundryup
+
+            $HOME/.foundry/bin/foundryup
+            forge --version
   install-gvm:
     steps:
       - run:
