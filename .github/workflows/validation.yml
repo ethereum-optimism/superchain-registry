@@ -3,7 +3,6 @@ name: Validate modified chains
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
-  workflow_dispatch:  # This enables manual triggering
 
 jobs:
   golang-validate-modified:
@@ -17,7 +16,7 @@ jobs:
 
     - name: Fetch base branch
       run: |
-        git fetch origin ${{ github.event.pull_request.base.sha }} --depth=0
+        git fetch origin ${{ github.event.pull_request.base.sha }}
 
     - name: "Install just"
       run: |
