@@ -13,10 +13,11 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
+        fetch-depth: 0  # Ensure the full history is fetched
 
     - name: Fetch base branch
       run: |
-        git fetch origin ${{ github.event.pull_request.base.sha }} --depth=1
+        git fetch origin ${{ github.event.pull_request.base.sha }} --depth=0
 
     - name: "Install just"
       run: |
