@@ -103,9 +103,10 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	mustExecuteCommandInDir(thisDir, exec.Command("cp", "config.patch", monorepoDir))
 	_ = executeCommandInDir(monorepoDir, exec.Command("git", "apply", "config.patch")) // continue on error
 
-	t.Log("🛠️ Attempting to apply runs.patch...")
-	mustExecuteCommandInDir(thisDir, exec.Command("cp", "runs.patch", monorepoDir))
-	_ = executeCommandInDir(monorepoDir, exec.Command("git", "apply", "runs.patch")) // continue on error
+	if chainId == 11155420 {
+		t.Log("🛠️ Attempting to modify solc settings in foundry.toml...")
+		_ = executeCommandInDir(contractsDir, exec.Command("perl", "-pi", "-e", `s/optimizer_runs = \d+/optimizer_runs = 10000/`, "foundry.toml")) // continue on error
+	}
 
 	t.Log("🛠️ Copying deploy-config, deployments, and wrapper script to temporary dir...")
 	mustExecuteCommandInDir(validationInputsDir,
