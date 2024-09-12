@@ -278,18 +278,18 @@ func TestFindOPContractTag(t *testing.T) {
 		SystemConfig:                 "2.2.0",
 		ProtocolVersions:             "",
 		SuperchainConfig:             "",
-		AnchorStateRegistry:          "1.0.0",
-		DelayedWETH:                  "1.0.0",
+		AnchorStateRegistry:          "2.0.0",
+		DelayedWETH:                  "1.1.0",
 		DisputeGameFactory:           "1.0.0",
-		FaultDisputeGame:             "1.2.0",
-		MIPS:                         "1.0.1",
-		PermissionedDisputeGame:      "1.2.0",
-		PreimageOracle:               "1.0.0",
+		FaultDisputeGame:             "1.3.0",
+		MIPS:                         "1.1.0",
+		PermissionedDisputeGame:      "1.3.0",
+		PreimageOracle:               "1.1.2",
 	}
 
 	got, err := findOPContractTagInVersions(shouldMatch, false)
 	require.NoError(t, err)
-	want := []standard.Tag{"op-contracts/v1.4.0"}
+	want := []standard.Tag{"op-contracts/v1.6.0"}
 	require.Equal(t, got, want)
 
 	shouldNotMatch := ContractVersions{
