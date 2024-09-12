@@ -20,5 +20,7 @@ go_version=$(go mod edit -print | grep -m 1 '^go ' | awk '{print $2}')
 gvm install go${go_version}
 gvm use go${go_version}
 
+make op-bindings
+
 echo "Running l2 genesis creation command..."
 eval "$3"

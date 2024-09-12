@@ -95,13 +95,17 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	mustExecuteCommandInDir(monorepoDir, exec.Command("git", "reset", "--hard", monorepoCommit))
 	mustExecuteCommandInDir(monorepoDir, exec.Command("git", "submodule", "update", "--init", "--recursive"))
 
-	t.Log("🛠️ Deleting node_modules...")
-	mustExecuteCommandInDir(monorepoDir, exec.Command("rm", "-rf", "node_modules"))
-	mustExecuteCommandInDir(contractsDir, exec.Command("rm", "-rf", "node_modules"))
+	// t.Log("🛠️ Deleting node_modules...")
+	// mustExecuteCommandInDir(monorepoDir, exec.Command("rm", "-rf", "node_modules"))
+	// mustExecuteCommandInDir(contractsDir, exec.Command("rm", "-rf", "node_modules"))
 
 	t.Log("🛠️ Attempting to apply config.patch...")
 	mustExecuteCommandInDir(thisDir, exec.Command("cp", "config.patch", monorepoDir))
 	_ = executeCommandInDir(monorepoDir, exec.Command("git", "apply", "config.patch")) // continue on error
+
+	t.Log("🛠️ Attempting to apply runs.patch...")
+	mustExecuteCommandInDir(thisDir, exec.Command("cp", "runs.patch", monorepoDir))
+	_ = executeCommandInDir(monorepoDir, exec.Command("git", "apply", "runs.patch")) // continue on error
 
 	t.Log("🛠️ Copying deploy-config, deployments, and wrapper script to temporary dir...")
 	mustExecuteCommandInDir(validationInputsDir,
