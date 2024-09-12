@@ -16,7 +16,7 @@ jobs:
 
     - name: Fetch base branch
       run: |
-        git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
+        git fetch origin ${{ github.event.pull_request.base.sha }} --depth=1
 
     - name: "Install just"
       run: |
@@ -33,4 +33,4 @@ jobs:
         CI_MAINNET_RPC: ${{ secrets.CI_MAINNET_RPC }}
         CI_SEPOLIA_RPC: ${{ secrets.CI_SEPOLIA_RPC }}
       run: |
-        just validate-modified-chains ${{ github.event.pull_request.base.ref }} # TODO ideally use the base branch
+        just validate-modified-chains ${{ github.event.pull_request.base.sha }} # TODO ideally use the base branch
