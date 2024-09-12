@@ -126,7 +126,7 @@
       "https://rpc.zero.thebinaryholdings.com"
     ],
     "explorers": [
-      "https://explorer.thebinaryholdings.com/"
+      "https://explorer.thebinaryholdings.com"
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
