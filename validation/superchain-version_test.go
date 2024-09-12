@@ -329,8 +329,8 @@ func findOPContractTagInVersions(versions ContractVersions, isTestnet bool) ([]s
 		return checkMatchOrTestnet(s, c, isTestnet)
 	}
 
-	for tag := range standard.Versions.Tags {
-		if matchesTag(standard.Versions.Tags[tag], versions) {
+	for tag := range standard.Versions.Releases {
+		if matchesTag(standard.Versions.Releases[tag], versions) {
 			matchingTags = append(matchingTags, tag)
 			err = nil
 		}
@@ -358,7 +358,7 @@ func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes)
 		return checkMatch(s, c)
 	}
 
-	for tag := range standard.Versions.Tags {
+	for tag := range standard.Versions.Releases {
 		if matchesTag(standard.BytecodeHashes[tag], hashes) {
 			matchingTags = append(matchingTags, tag)
 			err = nil

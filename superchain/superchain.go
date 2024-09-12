@@ -408,15 +408,16 @@ type VersionedContract struct {
 // in the superchain. This currently only supports L1 contracts but could
 // represent L2 predeploys in the future.
 type ContractVersions struct {
-	L1CrossDomainMessenger       VersionedContract `toml:"l1_cross_domain_messenger"`
-	L1ERC721Bridge               VersionedContract `toml:"l1_erc721_bridge"`
-	L1StandardBridge             VersionedContract `toml:"l1_standard_bridge"`
+	L1CrossDomainMessenger       VersionedContract `toml:"l1_cross_domain_messenger,omitempty"`
+	L1ERC721Bridge               VersionedContract `toml:"l1_erc721_bridge,omitempty"`
+	L1StandardBridge             VersionedContract `toml:"l1_standard_bridge,omitempty"`
 	L2OutputOracle               VersionedContract `toml:"l2_output_oracle,omitempty"`
-	OptimismMintableERC20Factory VersionedContract `toml:"optimism_mintable_erc20_factory"`
-	OptimismPortal               VersionedContract `toml:"optimism_portal"`
-	SystemConfig                 VersionedContract `toml:"system_config"`
+	OptimismMintableERC20Factory VersionedContract `toml:"optimism_mintable_erc20_factory,omitempty"`
+	OptimismPortal               VersionedContract `toml:"optimism_portal,omitempty"`
+	OptimismPortal2              VersionedContract `toml:"optimism_portal2,omitempty"`
+	SystemConfig                 VersionedContract `toml:"system_config,omitempty"`
 	// Superchain-wide contracts:
-	ProtocolVersions VersionedContract `toml:"protocol_versions"`
+	ProtocolVersions VersionedContract `toml:"protocol_versions,omitempty"`
 	SuperchainConfig VersionedContract `toml:"superchain_config,omitempty"`
 	// Fault Proof contracts:
 	AnchorStateRegistry     VersionedContract `toml:"anchor_state_registry,omitempty"`
@@ -426,6 +427,7 @@ type ContractVersions struct {
 	MIPS                    VersionedContract `toml:"mips,omitempty"`
 	PermissionedDisputeGame VersionedContract `toml:"permissioned_dispute_game,omitempty"`
 	PreimageOracle          VersionedContract `toml:"preimage_oracle,omitempty"`
+	CannonFaultDisputeGame  VersionedContract `toml:"cannon_fault_dispute_game,omitempty"`
 }
 
 // VersionFor returns the version for the supplied contract name, if it exits
@@ -445,6 +447,8 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 		version = c.OptimismMintableERC20Factory.Version
 	case "OptimismPortal":
 		version = c.OptimismPortal.Version
+	case "OptimismPortal2":
+		version = c.OptimismPortal2.Version
 	case "SystemConfig":
 		version = c.SystemConfig.Version
 	case "AnchorStateRegistry":
@@ -465,6 +469,8 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 		version = c.ProtocolVersions.Version
 	case "SuperchainConfig":
 		version = c.SuperchainConfig.Version
+	case "CannonFaultDisputeGame":
+		version = c.CannonFaultDisputeGame.Version
 	default:
 		return "", errors.New("no such contract name")
 	}
