@@ -3,7 +3,6 @@ name: Validate modified chains
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
-  workflow_dispatch:  # This enables manual triggering
 
 jobs:
   golang-validate-modified:
