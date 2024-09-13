@@ -1,0 +1,10 @@
+name: Maintainer Approval
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  hold-for-approval:
+    runs-on: ubuntu-latest
+    steps: []
