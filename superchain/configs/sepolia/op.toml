@@ -13,7 +13,7 @@ fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+data_availability_type = "eth-da" # Temp trigger
 
 [optimism]
   eip1559_elasticity = 6
