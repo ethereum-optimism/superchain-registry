@@ -402,9 +402,9 @@ type ContractBytecodeHashes struct {
 type VersionedContract struct {
 	Version string `toml:"version"`
 	// If the contract is a superchain singleton, it will have a static address
-	Address Address `toml:"implementation_address,omitempty"`
+	Address *Address `toml:"implementation_address,omitempty"`
 	// If the contract is proxied, the implementation will have a static address
-	ImplementationAddress Address `toml:"address,omitempty"`
+	ImplementationAddress *Address `toml:"address,omitempty"`
 }
 
 // ContractVersions represents the desired semantic version of the contracts
