@@ -1,0 +1,51 @@
+# Workflow 1: requires maintainer approval on fork prs
+name: Pre-check Validate Modified Chains
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  hold-for-approval:
+    runs-on: ubuntu-latest
+    steps: []
+
+# Workflow 2: can access secrets even on fork prs
+name: Validate Modified Chains
+
+on:
+  workflow_run:
+    workflows: ["Pre-check Validate Modified Chains"]
+    types:
+      - completed
+
+jobs:
+  validate-modified:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.workflow_run.head_commit.id }}
+        fetch-depth: 0  # Ensure the full history is fetched
+
+    - name: Fetch base branch
+      run: |
+        git fetch origin ${{ github.event.workflow_run.base_sha }}
+
+    - name: "Install just"
+      run: |
+        wget -qO - 'https://proget.makedeb.org/debian-feeds/prebuilt-mpr.pub' | gpg --dearmor | sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1> /dev/null
+        echo "deb [arch=all,$(dpkg --print-architecture) signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
+        sudo apt update
+        sudo apt install just
+
+    - name: Install Foundry
+      uses: foundry-rs/foundry-toolchain@v1
+
+    - name: Run validation checks
+      env:
+        CI_MAINNET_RPC: ${{ secrets.CI_MAINNET_RPC }}
+        CI_SEPOLIA_RPC: ${{ secrets.CI_SEPOLIA_RPC }}
+      run: |
+        just validate-modified-chains ${{ github.event.workflow_run.base_sha }}
