@@ -1,21 +1,8 @@
-# Workflow 1: requires maintainer approval on fork prs
-name: Pre-check Validate Modified Chains
-
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-
-jobs:
-  hold-for-approval:
-    runs-on: ubuntu-latest
-    steps: []
-
-# Workflow 2: can access secrets even on fork prs
 name: Validate Modified Chains
 
 on:
   workflow_run:
-    workflows: ["Pre-check Validate Modified Chains"]
+    workflows: ["Maintainer Approval"]
     types:
       - completed
 
