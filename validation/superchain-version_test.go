@@ -12,6 +12,7 @@ import (
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
+	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum/go-ethereum"
@@ -55,8 +56,18 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 
 	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client)
 	require.NoError(t, err)
-	_, err = findOPContractTagInVersions(versions, isTestnet)
+	tag, _ := findOPContractTagInVersions(versions, isTestnet)
+
+	standardRelease := standard.Versions.StandardRelease
+	standardVersions := standard.Versions.Releases[standardRelease]
+
+	v, err := json.MarshalIndent(versions, "", " ")
 	require.NoError(t, err)
+	sv, err := json.MarshalIndent(standardVersions, "", " ")
+	require.NoError(t, err)
+	diff := cmp.Diff(v, sv)
+
+	require.Equalf(t, standardRelease, tag, "did not match standard release %s: (-removed from standard / +added to actual) %s", standardRelease, diff)
 
 	// don't perform bytecode checking for testnets
 	if !isTestnet {
@@ -311,17 +322,7 @@ func TestFindOPContractTag(t *testing.T) {
 
 func findOPContractTagInVersions(versions ContractVersions, isTestnet bool) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
-	pretty, err := json.MarshalIndent(versions, "", " ")
-	if err != nil {
-		return matchingTags, err
-	}
-
-	prettyStandard, err := json.MarshalIndent(standard.Versions, "", " ")
-	if err != nil {
-		return matchingTags, err
-	}
-
-	err = fmt.Errorf("contract versions %s do not match any standard op-contracts tag %s", pretty, prettyStandard)
+	err := fmt.Errorf("contract versions do not match any standard op-contracts tag")
 
 	matchesTag := func(standard, candidate ContractVersions) bool {
 		s := reflect.ValueOf(standard)
