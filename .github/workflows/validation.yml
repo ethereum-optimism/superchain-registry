@@ -1,22 +1,24 @@
-name: Validate modified chains
+name: Validate Modified Chains
 
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
+  workflow_run:
+    workflows: ["Maintainer Approval"]
+    types:
+      - completed
 
 jobs:
-  golang-validate-modified:
+  validate-modified:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        ref: ${{ github.event.pull_request.head.sha }}
+        ref: ${{ github.event.workflow_run.head_commit.id }}
         fetch-depth: 0  # Ensure the full history is fetched
 
     - name: Fetch base branch
       run: |
-        git fetch origin ${{ github.event.pull_request.base.sha }}
+        git fetch origin ${{ github.event.workflow_run.base_sha }}
 
     - name: "Install just"
       run: |
@@ -33,4 +35,4 @@ jobs:
         CI_MAINNET_RPC: ${{ secrets.CI_MAINNET_RPC }}
         CI_SEPOLIA_RPC: ${{ secrets.CI_SEPOLIA_RPC }}
       run: |
-        just validate-modified-chains ${{ github.event.pull_request.base.sha }} # TODO ideally use the base branch
+        just validate-modified-chains ${{ github.event.workflow_run.base_sha }}
