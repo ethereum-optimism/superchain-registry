@@ -31,9 +31,8 @@ var exclusions = map[string]map[uint64]bool{
 		10: true,
 	},
 	GenesisAllocsMetadataTest: {
-		10:       true, // op-mainnet
-		1740:     true, // metal-sepolia
-		11155420: true, // op-sepolia
+		10:   true, // op-mainnet
+		1740: true, // metal-sepolia
 	},
 	ChainIDRPCTest: {
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared

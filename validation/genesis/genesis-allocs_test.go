@@ -2,6 +2,7 @@ package genesis
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -176,12 +177,69 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	gotData, err := json.MarshalIndent(g.Alloc, "", " ")
 	require.NoError(t, err)
 
+	// special handling of weth9 for op-sepolia at the validated commit
+	// We've observed that the contract [metadata hash](https://docs.soliditylang.org/en/latest/metadata.html)
+	// does not match for the bytecode that is generated and what's in the superchain-registry.
+	// The issue is likely a difference in compiler settings when the contract artifacts were generated and
+	// stored in the superchain registry. To account for this, we trim the metadata hash portion of the
+	// weth9 contract bytecode before writing to file/comparing the outputs
+	// For extra safety, we allow this type of check only at the commit hash we know has this issue.
+	// In other instances, the metadata may have optionally been excluded from the bytecode in the registry,
+	// in which case we ought to check for a complete match.
+	if chainId == uint64(11155420) && monorepoCommit == "ba493e94a25df0f646a040c0899bfd0f4d237c06" {
+		t.Log("✂️️ Trimming WETH9 bytecode CBOR hash for OP-Sepolia...")
+		expectedData, err = trimWeth9BytecodeMetadataHash(expectedData)
+		if err != nil {
+			err = fmt.Errorf("Regenerated alloc: %w", err)
+		}
+		require.NoError(t, err)
+		gotData, err = trimWeth9BytecodeMetadataHash(gotData)
+		if err != nil {
+			err = fmt.Errorf("Registry alloc: %w", err)
+		}
+		require.NoError(t, err)
+	}
+
 	err = os.WriteFile(path.Join(monorepoDir, "regenerated-alloc.json"), expectedData, os.ModePerm) // regenerated
 	require.NoError(t, err)
 	err = os.WriteFile(path.Join(monorepoDir, "registry-alloc.json"), gotData, os.ModePerm) // read from registry
 	require.NoError(t, err)
 
 	require.Equal(t, string(expectedData), string(gotData))
+}
+
+// trim the CBOR octets from the bytecode of a weth9 contract
+func trimWeth9BytecodeMetadataHash(data []byte) ([]byte, error) {
+	var weth9Data map[string]interface{}
+
+	err := json.Unmarshal(data, &weth9Data)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing alloc: %w", err)
+	}
+
+	// https://specs.optimism.io/protocol/predeploys.html#weth9
+	key := "0x4200000000000000000000000000000000000006"
+	if entry, ok := weth9Data[key].(map[string]interface{}); ok {
+		if code, ok := entry["code"].(string); ok {
+			// Trim the last 100 characters (50 bytes) which is the CBOR length in octets
+			if len(code) > 100 {
+				entry["code"] = code[:len(code)-100]
+			} else {
+				return nil, fmt.Errorf("The length is less than 100 characters; no trimming performed.")
+			}
+		} else {
+			return nil, fmt.Errorf("Field 'code' not found or is not a string: %s", key)
+		}
+	} else {
+		return nil, fmt.Errorf("Key %s not found", key)
+	}
+
+	data, err = json.Marshal(weth9Data)
+	if err != nil {
+		return nil, fmt.Errorf("error marshalling: %w", err)
+	}
+
+	return data, nil
 }
 
 func getDirOfThisFile() string {
