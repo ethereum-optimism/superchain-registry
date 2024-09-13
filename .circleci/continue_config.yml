@@ -112,6 +112,18 @@ jobs:
       - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
           # TODO this should also be filtered on modified chains
+  golang-validate-modified:
+    shell: /bin/bash -eo pipefail
+    executor:
+      name: go/default # is based on cimg/go
+      tag: '1.21'
+    steps:
+      - checkout
+      - install-just
+      - install-foundry
+      - run:
+          name: run validation checks
+          command: just validate-modified-chains main # TODO ideally this is the base branch
   golang-validate-all:
     shell: /bin/bash -eo pipefail
     executor:
@@ -265,4 +277,7 @@ workflows:
       - golang-lint
       - golang-modules-tidy
       - golang-test
+      - golang-validate-modified:
+          context:
+            - oplabs-rpc-urls
       - check-codegen
