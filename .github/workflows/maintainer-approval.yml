@@ -7,4 +7,6 @@ on:
 jobs:
   hold-for-approval:
     runs-on: ubuntu-latest
-    steps: []
+    steps:
+      - name: Echo message
+        run: echo "Received required maintainer approval. Proceeding to subsequent workflows..."
