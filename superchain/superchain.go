@@ -398,10 +398,43 @@ type ContractBytecodeHashes struct {
 	PreimageOracle          string `toml:"preimage_oracle,omitempty"`
 }
 
+const (
+	Implementation Kind = iota + 1
+	Singleton
+)
+
+type Kind uint
+
+// Custom marshaler for the Kind type
+func (k Kind) MarshalText() ([]byte, error) {
+	var kindStr string
+	switch k {
+	case Implementation:
+		kindStr = "implementation"
+	case Singleton:
+		kindStr = "singleton"
+	default:
+		kindStr = "unknown"
+	}
+	return []byte(kindStr), nil
+}
+
+// Custom unmarshaler for the Kind type
+func (k *Kind) UnmarshalText(text []byte) error {
+	switch strings.ToLower(string(text)) {
+	case "implementation":
+		*k = Implementation
+	case "singleton":
+		*k = Singleton
+	}
+	return nil
+}
+
 // VersionedContract represents a contract that has a semantic version.
 type VersionedContract struct {
 	Version string  `toml:"version"`
 	Address Address `toml:"address,omitempty"`
+	Kind    Kind    `toml:"kind,omitempty"`
 }
 
 // ContractVersions represents the desired semantic version of the contracts

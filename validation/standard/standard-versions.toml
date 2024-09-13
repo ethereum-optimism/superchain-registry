@@ -4,33 +4,33 @@ standard_release = "op-contracts/v1.6.0"
 
 # Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.6.0
 [releases."op-contracts/v1.6.0"]
-optimism_portal = { version = "3.10.0", address = "0xe2F826324b2faf99E513D16D266c3F80aE87832B" }
+optimism_portal = { version = "3.10.0", address = "0xe2F826324b2faf99E513D16D266c3F80aE87832B", kind = "implementation" }
 system_config = { version = "2.2.0", address = "0xF56D96B2535B932656d3c04Ebf51baBff241D886" }
 # anchor state registry has a unique address per chain
 anchor_state_registry = { version = "2.0.0" }
-delayed_weth = { version = "1.1.0", address = "0x71e966Ae981d1ce531a7b6d23DC0f27B38409087" }
-dispute_game_factory = { version = "1.0.0", address = "0xc641A33cab81C559F2bd4b21EA34C290E2440C2B" }
+delayed_weth = { version = "1.1.0", address = "0x71e966Ae981d1ce531a7b6d23DC0f27B38409087", kind = "implementation" }
+dispute_game_factory = { version = "1.0.0", address = "0xc641A33cab81C559F2bd4b21EA34C290E2440C2B", kind = "implementation" }
 # fault dispute game has a unique address per chain
 fault_dispute_game = { version = "1.3.0" }
 # permissioned dispute game has a unique address per chain
 permissioned_dispute_game = { version = "1.3.0" }
-mips = { version = "1.1.0", address = "0x16e83cE5Ce29BF90AD9Da06D2fE6a15d5f344ce4" }
-preimage_oracle = { version = "1.1.2", address = "0x9c065e11870B891D214Bc2Da7EF1f9DDFA1BE277" }
+mips = { version = "1.1.0", address = "0x16e83cE5Ce29BF90AD9Da06D2fE6a15d5f344ce4", kind = "singleton" }
+preimage_oracle = { version = "1.1.2", address = "0x9c065e11870B891D214Bc2Da7EF1f9DDFA1BE277", kind = "singleton" }
 
 # Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.4.0
 [releases."op-contracts/v1.4.0"]
-optimism_portal = { version = "3.10.0", address = "0xe2F826324b2faf99E513D16D266c3F80aE87832B" }
+optimism_portal = { version = "3.10.0", address = "0xe2F826324b2faf99E513D16D266c3F80aE87832B", kind = "implementation" }
 system_config = { version = "2.2.0", address = "0xF56D96B2535B932656d3c04Ebf51baBff241D886" }
 # anchor state registry has a unique address per chain
 anchor_state_registry = { version = "1.0.0" }
-delayed_weth = { version = "1.0.0", address = "0x97988d5624F1ba266E1da305117BCf20713bee08" }
-dispute_game_factory = { version = "1.0.0", address = "0xc641A33cab81C559F2bd4b21EA34C290E2440C2B" }
+delayed_weth = { version = "1.0.0", address = "0x97988d5624F1ba266E1da305117BCf20713bee08", kind = "implementation" }
+dispute_game_factory = { version = "1.0.0", address = "0xc641A33cab81C559F2bd4b21EA34C290E2440C2B", kind = "implementation" }
 # fault dispute game has a unique address per chain
 fault_dispute_game = { version = "1.2.0" }
 # permissioned dispute game has a unique address per chain
 permissioned_dispute_game = { version = "1.2.0" }
-mips = { version = "1.0.1", address = "0x0f8EdFbDdD3c0256A80AD8C0F2560B1807873C9c" }
-preimage_oracle = { version = "1.0.0", address = "0xD326E10B8186e90F4E2adc5c13a2d0C137ee8b34" }
+mips = { version = "1.0.1", address = "0x0f8EdFbDdD3c0256A80AD8C0F2560B1807873C9c", kind = "singleton" }
+preimage_oracle = { version = "1.0.0", address = "0xD326E10B8186e90F4E2adc5c13a2d0C137ee8b34", kind = "singleton" }
 
 # MCP https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.3.0
 [releases."op-contracts/v1.3.0"]
