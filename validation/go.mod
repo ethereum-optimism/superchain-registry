@@ -11,6 +11,7 @@ require (
 	github.com/ethereum-optimism/optimism v1.9.1-0.20240814195148-0bb2ff57c813
 	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240828144951-4e6edcb7d36c
 	github.com/ethereum/go-ethereum v1.14.7
+	github.com/google/go-cmp v0.6.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/mod v0.20.0
 )
