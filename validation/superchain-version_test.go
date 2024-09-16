@@ -2,7 +2,6 @@ package validation
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -62,8 +61,7 @@ func checkForStandardVersions(t *testing.T, chain *ChainConfig) {
 	if !isTestnet {
 		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
 		require.NoError(t, err)
-		_, err = checkForStandardByteCodeHashes(bytecodeHashes)
-		require.NoError(t, err)
+		requireStandardByteCodeHashes(t, bytecodeHashes)
 	}
 }
 
@@ -275,44 +273,27 @@ func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet b
 	matches := checkMatchOrTestnet(s, c, isTestnet)
 
 	if !matches {
-		v, err := json.MarshalIndent(versions, "", " ")
-		require.NoError(t, err)
-		sv, err := json.MarshalIndent(standardVersions, "", " ")
-		require.NoError(t, err)
-		diff := cmp.Diff(v, sv)
+		diff := cmp.Diff(versions, standardVersions, cmp.FilterPath(func(p cmp.Path) bool {
+			return p.Last().String() == ".Address" || p.Last().String() == ".ImplementationAddress"
+		}, cmp.Ignore()))
 		require.Truef(t, matches,
 			"contract versions do not match the standard versions for the %s release \n (-removed from standard / +added to actual):\n %s",
 			standard.Versions.StandardRelease, diff)
 	}
 }
 
-func checkForStandardByteCodeHashes(hashes standard.L1ContractBytecodeHashes) ([]standard.Tag, error) {
-	matchingTags := make([]standard.Tag, 0)
-	pretty, err := json.MarshalIndent(hashes, "", " ")
-	if err != nil {
-		return matchingTags, err
-	}
+func requireStandardByteCodeHashes(t *testing.T, hashes standard.L1ContractBytecodeHashes) {
+	standardHashes := standard.Versions.Releases[standard.Versions.StandardRelease]
+	s := reflect.ValueOf(standardHashes)
+	c := reflect.ValueOf(hashes)
+	matches := checkMatch(s, c)
 
-	prettyStandard, err := json.MarshalIndent(standard.BytecodeHashes, "", " ")
-	if err != nil {
-		return matchingTags, err
+	if !matches {
+		diff := cmp.Diff(hashes, standardHashes)
+		require.Truef(t, matches,
+			"contract bytecode hashes do not match the standard bytecode hashes for the %s release \n (-removed from standard / +added to actual):\n %s",
+			standard.Versions.StandardRelease, diff)
 	}
-
-	err = fmt.Errorf("bytecode hashes %s do not match any standard op-contracts tag %s", pretty, prettyStandard)
-
-	matchesTag := func(standard, candidate standard.L1ContractBytecodeHashes) bool {
-		s := reflect.ValueOf(standard)
-		c := reflect.ValueOf(candidate)
-		return checkMatch(s, c)
-	}
-
-	for tag := range standard.Versions.Releases {
-		if matchesTag(standard.BytecodeHashes[tag], hashes) {
-			matchingTags = append(matchingTags, tag)
-			err = nil
-		}
-	}
-	return matchingTags, err
 }
 
 func checkMatch(s, c reflect.Value) bool {
