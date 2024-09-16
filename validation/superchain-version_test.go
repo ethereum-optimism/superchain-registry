@@ -130,7 +130,6 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 	wg := new(sync.WaitGroup)
 
 	var contractsToCheckVersionOf = getNonEmptyVersionContracts(standard.Versions.Releases[standard.Versions.StandardRelease])
-	fmt.Print(contractsToCheckVersionOf)
 
 	for _, contractAddress := range contractsToCheckVersionOf {
 		a, err := list.AddressFor(contractAddress)
@@ -194,7 +193,6 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 	wg := new(sync.WaitGroup)
 
 	var contractsToCheckBytecodeOf = getNonEmptyBytecodeHashes(standard.BytecodeHashes[standard.Versions.StandardRelease])
-	fmt.Println(contractsToCheckBytecodeOf)
 
 	for _, contractName := range contractsToCheckBytecodeOf {
 		contractAddress, err := list.AddressFor(contractName)
@@ -207,7 +205,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 			// still take place. This results in a more useful
 			// error shown to the user.
 			if err != nil {
-				continue
+				panic("could not find address for contract")
 			}
 			contractName = contractName + "Proxy"
 		}
@@ -324,6 +322,7 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 	if err != nil {
 		return "", fmt.Errorf("unable to retrieve bytecode without immutables: %w", err)
 	}
+
 	return crypto.Keccak256Hash(bytecodeImmutableFilterer.Bytecode).Hex(), nil
 }
 
