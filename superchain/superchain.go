@@ -438,7 +438,7 @@ type ContractVersions struct {
 func (c ContractVersions) GetNonEmpty() []string {
 	// Get the value and type of the struct
 	v := reflect.ValueOf(c)
-	t := reflect.TypeOf(v)
+	t := reflect.TypeOf(c)
 
 	// Ensure the input is a struct
 	if t.Kind() != reflect.Struct {
