@@ -433,6 +433,40 @@ type ContractVersions struct {
 	CannonFaultDisputeGame  VersionedContract `toml:"cannon_fault_dispute_game,omitempty"`
 }
 
+// GetNonEmpty returns a slice of contract names, with an entry for each contract
+// in the receiver with a non empty Version property.
+func (c ContractVersions) GetNonEmpty() []string {
+	// Get the value and type of the struct
+	v := reflect.ValueOf(c)
+	t := reflect.TypeOf(v)
+
+	// Ensure the input is a struct
+	if t.Kind() != reflect.Struct {
+		return nil
+	}
+
+	var fieldNames []string
+
+	// Iterate through the struct fields
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		fieldType := t.Field(i)
+
+		// Ensure the field is of type VersionedContract
+		if field.Type() == reflect.TypeOf(VersionedContract{}) {
+			// Get the Version field from the VersionedContract
+			versionField := field.FieldByName("Version")
+
+			// Check if the Version is non-empty
+			if versionField.IsValid() && versionField.String() != "" {
+				fieldNames = append(fieldNames, fieldType.Name)
+			}
+		}
+	}
+
+	return fieldNames
+}
+
 // VersionFor returns the version for the supplied contract name, if it exits
 // (and an error otherwise). Useful for slicing into the struct using a string.
 func (c ContractVersions) VersionFor(contractName string) (string, error) {

@@ -25,69 +25,6 @@ import (
 	"golang.org/x/mod/semver"
 )
 
-// Function to get the field names of VersionedContract fields with non-empty Version
-func getNonEmptyVersionContracts(inputStruct ContractVersions) []string {
-	// Get the value and type of the struct
-	v := reflect.ValueOf(inputStruct)
-	t := reflect.TypeOf(inputStruct)
-
-	// Ensure the input is a struct
-	if t.Kind() != reflect.Struct {
-		return nil
-	}
-
-	var fieldNames []string
-
-	// Iterate through the struct fields
-	for i := 0; i < v.NumField(); i++ {
-		field := v.Field(i)
-		fieldType := t.Field(i)
-
-		// Ensure the field is of type VersionedContract
-		if field.Type() == reflect.TypeOf(VersionedContract{}) {
-			// Get the Version field from the VersionedContract
-			versionField := field.FieldByName("Version")
-
-			// Check if the Version is non-empty
-			if versionField.IsValid() && versionField.String() != "" {
-				fieldNames = append(fieldNames, fieldType.Name)
-			}
-		}
-	}
-
-	return fieldNames
-}
-
-// Function to get the field names of ContractBytecodeHashes fields with non-empty strings
-func getNonEmptyBytecodeHashes(inputStruct standard.L1ContractBytecodeHashes) []string {
-	// Get the value and type of the struct
-	v := reflect.ValueOf(inputStruct)
-	t := reflect.TypeOf(inputStruct)
-
-	// Ensure the input is a struct
-	if t.Kind() != reflect.Struct {
-		return nil
-	}
-
-	var fieldNames []string
-
-	// Iterate through the struct fields
-	for i := 0; i < v.NumField(); i++ {
-		field := v.Field(i)
-		fieldType := t.Field(i)
-
-		// Ensure the field is of type string
-		if field.Kind() == reflect.String {
-			// Check if the string field is non-empty
-			if field.String() != "" {
-				fieldNames = append(fieldNames, fieldType.Name)
-			}
-		}
-	}
-
-	return fieldNames
-}
-
 func checkForStandardVersions(t *testing.T, chain *ChainConfig) {
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint)
@@ -129,7 +66,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 
 	wg := new(sync.WaitGroup)
 
-	var contractsToCheckVersionOf = getNonEmptyVersionContracts(standard.Versions.Releases[standard.Versions.StandardRelease])
+	var contractsToCheckVersionOf = standard.Versions.Releases[standard.Versions.StandardRelease].GetNonEmpty()
 
 	for _, contractAddress := range contractsToCheckVersionOf {
 		a, err := list.AddressFor(contractAddress)
@@ -192,7 +129,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 
 	wg := new(sync.WaitGroup)
 
-	var contractsToCheckBytecodeOf = getNonEmptyBytecodeHashes(standard.BytecodeHashes[standard.Versions.StandardRelease])
+	var contractsToCheckBytecodeOf = standard.BytecodeHashes[standard.Versions.StandardRelease].GetNonEmpty()
 
 	for _, contractName := range contractsToCheckBytecodeOf {
 		contractAddress, err := list.AddressFor(contractName)
