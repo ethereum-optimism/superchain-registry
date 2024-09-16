@@ -68,22 +68,17 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 
 	contractsToCheckVersionOf := standard.Versions.Releases[standard.Versions.StandardRelease].GetNonEmpty()
 
-	for _, contractAddress := range contractsToCheckVersionOf {
-		a, err := list.AddressFor(contractAddress)
+	for _, contractName := range contractsToCheckVersionOf {
+		a, err := list.AddressFor(contractName)
 		if err != nil {
 			// This could be a proxied contract:
-			a, err = list.AddressFor(contractAddress + "Proxy")
-			// If the chain does not store this contractAddress
-			// we will continue ("storing" the empty string),
-			// so that the rest of the check can
-			// still take place. This results in a more useful
-			// error shown to the user.
+			a, err = list.AddressFor(contractName + "Proxy")
 			if err != nil {
-				continue
+				panic(fmt.Sprintf("could not find address for %s", contractName))
 			}
 		}
 		wg.Add(1)
-		go getVersionAsync(a, results, contractAddress, wg)
+		go getVersionAsync(a, results, contractName, wg)
 	}
 
 	wg.Wait()
@@ -136,13 +131,8 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 		if err != nil {
 			// This could be a proxied contract:
 			contractAddress, err = list.AddressFor(contractName + "Proxy")
-			// If the chain does not store this contractAddress
-			// we will continue ("storing" the empty string),
-			// so that the rest of the check can
-			// still take place. This results in a more useful
-			// error shown to the user.
 			if err != nil {
-				panic("could not find address for contract")
+				panic(fmt.Sprintf("could not find address for %s", contractName))
 			}
 			contractName = contractName + "Proxy"
 		}
