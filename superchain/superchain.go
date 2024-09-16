@@ -311,62 +311,28 @@ type AddressList struct {
 }
 
 // AddressFor returns a nonzero address for the supplied name, if it has been specified
-// (and an error otherwise). Useful for slicing into the struct using a string.
+// (and an error otherwise).
 func (a AddressList) AddressFor(name string) (Address, error) {
-	var address Address
-	switch name {
-	case "AddressManager":
-		address = a.AddressManager
-	case "ProxyAdmin":
-		address = a.ProxyAdmin
-	case "L1CrossDomainMessengerProxy":
-		address = a.L1CrossDomainMessengerProxy
-	case "L1ERC721BridgeProxy":
-		address = a.L1ERC721BridgeProxy
-	case "L1StandardBridgeProxy":
-		address = a.L1StandardBridgeProxy
-	case "L2OutputOracleProxy":
-		address = a.L2OutputOracleProxy
-	case "OptimismMintableERC20FactoryProxy":
-		address = a.OptimismMintableERC20FactoryProxy
-	case "OptimismPortalProxy":
-		address = a.OptimismPortalProxy
-	case "SystemConfigProxy":
-		address = a.SystemConfigProxy
-	case "AnchorStateRegistryProxy":
-		address = a.AnchorStateRegistryProxy
-	case "DelayedWETHProxy":
-		address = a.DelayedWETHProxy
-	case "DisputeGameFactoryProxy":
-		address = a.DisputeGameFactoryProxy
-	case "FaultDisputeGame":
-		address = a.FaultDisputeGame
-	case "MIPS":
-		address = a.MIPS
-	case "PermissionedDisputeGame":
-		address = a.PermissionedDisputeGame
-	case "PreimageOracle":
-		address = a.PreimageOracle
-	case "SystemConfigOwner":
-		address = a.SystemConfigOwner
-	case "ProxyAdminOwner":
-		address = a.ProxyAdminOwner
-	case "Guardian":
-		address = a.Guardian
-	case "Challenger":
-		address = a.Challenger
-	case "BatchSubmitter":
-		address = a.BatchSubmitter
-	case "UnsafeBlockSigner":
-		address = a.UnsafeBlockSigner
-	case "Proposer":
-		address = a.Proposer
-	default:
-		return address, fmt.Errorf("no such name %s", name)
+	// Use reflection to get the struct value and type
+	v := reflect.ValueOf(a)
+
+	// Try to find the field by name
+	field := v.FieldByName(name)
+	if !field.IsValid() {
+		return Address{}, fmt.Errorf("no such name %s", name)
 	}
+
+	// Check if the field is of type Address
+	if field.Type() != reflect.TypeOf(Address{}) {
+		return Address{}, fmt.Errorf("field %s is not of type Address", name)
+	}
+
+	// Check if the address is a non-zero value
+	address := field.Interface().(Address)
 	if address == (Address{}) {
-		return address, fmt.Errorf("no address or zero address specified for  %s", name)
+		return Address{}, fmt.Errorf("no address or zero address specified for %s", name)
 	}
+
 	return address, nil
 }
 
