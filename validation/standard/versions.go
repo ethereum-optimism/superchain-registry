@@ -7,13 +7,19 @@ import (
 type Tag string
 
 type (
-	VersionTags            = map[Tag]superchain.ContractVersions
 	BytecodeHashTags       = map[Tag]L1ContractBytecodeHashes
 	BytecodeImmutablesTags = map[Tag]ContractBytecodeImmutables
 )
 
+type VersionTags struct {
+	Releases        map[Tag]superchain.ContractVersions `toml:"releases"`
+	StandardRelease Tag                                 `toml:"standard_release,omitempty"`
+}
+
 var (
-	Versions           VersionTags            = make(VersionTags, 0)
+	Versions VersionTags = VersionTags{
+		Releases: make(map[Tag]superchain.ContractVersions, 0),
+	}
 	BytecodeHashes     BytecodeHashTags       = make(BytecodeHashTags, 0)
 	BytecodeImmutables BytecodeImmutablesTags = make(BytecodeImmutablesTags, 0)
 )

@@ -26,8 +26,8 @@ func TestAddressFor(t *testing.T) {
 
 func TestVersionFor(t *testing.T) {
 	cl := ContractVersions{
-		L1CrossDomainMessenger: "1.9.9",
-		OptimismPortal:         "",
+		L1CrossDomainMessenger: VersionedContract{Version: "1.9.9"},
+		OptimismPortal:         VersionedContract{Version: ""},
 	}
 	want := "1.9.9"
 	got, err := cl.VersionFor("L1CrossDomainMessenger")
@@ -208,12 +208,14 @@ ecotone_time = 3
 	err := unMarshalSuperchainConfig([]byte(rawTOML), &s)
 	require.NoError(t, err)
 
-	require.Equal(t, "Mickey Mouse", s.Name)
-	require.Equal(t, SuperchainL1Info{
+	expectL1Info := SuperchainL1Info{
 		ChainID:   314,
 		PublicRPC: "https://disney.com",
 		Explorer:  "https://disneyscan.io",
-	}, s.L1)
+	}
+
+	require.Equal(t, "Mickey Mouse", s.Name)
+	require.Equal(t, expectL1Info, s.L1)
 
 	require.Equal(t, "0x252CbE9517F731C618961D890D534183822dcC8d", s.ProtocolVersionsAddr.String())
 	require.Equal(t, "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7", s.SuperchainConfigAddr.String())
