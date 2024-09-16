@@ -43,7 +43,7 @@ func (deployed *BytecodeAndImmutableReferences) maskBytecode(contractName string
 			for _, r := range v {
 				for i := r.Start; i < r.Start+r.Length; i++ {
 					if i >= len(deployed.Bytecode) {
-						return fmt.Errorf("immutable reference [start:%d, length: %d] extends beyond bytecode", r.Start, r.Length)
+						return fmt.Errorf("immutable reference for contract %s [start:%d, length: %d] extends beyond bytecode", contractName, r.Start, r.Length)
 					}
 					deployed.Bytecode[i] = 0
 				}

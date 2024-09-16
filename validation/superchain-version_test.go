@@ -2,7 +2,6 @@ package validation
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -26,24 +25,7 @@ import (
 	"golang.org/x/mod/semver"
 )
 
-var contractsToCheckVersionAndBytecodeOf = []string{
-	"L1CrossDomainMessengerProxy",
-	"L1ERC721BridgeProxy",
-	"L1StandardBridgeProxy",
-	"OptimismMintableERC20FactoryProxy",
-	"OptimismPortalProxy",
-	"SystemConfigProxy",
-	"AnchorStateRegistryProxy",
-	"DelayedWETHProxy",
-	"DisputeGameFactoryProxy",
-	"FaultDisputeGame",
-	"MIPS",
-	"PermissionedDisputeGame",
-	"PreimageOracle",
-}
-
-func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
-	// list of contracts to check for version/bytecode uniformity
+func checkForStandardVersions(t *testing.T, chain *ChainConfig) {
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint)
 
@@ -56,25 +38,13 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 
 	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client)
 	require.NoError(t, err)
-	tag, _ := findOPContractTagInVersions(versions, isTestnet)
-
-	standardRelease := standard.Versions.StandardRelease
-	standardVersions := standard.Versions.Releases[standardRelease]
-
-	v, err := json.MarshalIndent(versions, "", " ")
-	require.NoError(t, err)
-	sv, err := json.MarshalIndent(standardVersions, "", " ")
-	require.NoError(t, err)
-	diff := cmp.Diff(v, sv)
-
-	require.Equalf(t, standardRelease, tag, "did not match standard release %s: (-removed from standard / +added to actual) %s", standardRelease, diff)
+	requireStandardSemvers(t, versions, isTestnet)
 
 	// don't perform bytecode checking for testnets
 	if !isTestnet {
 		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
 		require.NoError(t, err)
-		_, err = findOPContractTagInByteCodeHashes(bytecodeHashes)
-		require.NoError(t, err)
+		requireStandardByteCodeHashes(t, bytecodeHashes)
 	}
 }
 
@@ -96,18 +66,19 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 
 	wg := new(sync.WaitGroup)
 
-	for _, contractAddress := range contractsToCheckVersionAndBytecodeOf {
-		a, err := list.AddressFor(contractAddress)
+	contractsToCheckVersionOf := standard.Versions.Releases[standard.Versions.StandardRelease].GetNonEmpty()
+
+	for _, contractName := range contractsToCheckVersionOf {
+		a, err := list.AddressFor(contractName)
 		if err != nil {
-			// If the chain does not store this contractAddress
-			// we will continue ("storing" the empty string),
-			// so that the rest of the check can
-			// still take place. This results in a more useful
-			// error shown to the user.
-			continue
+			// This could be a proxied contract:
+			a, err = list.AddressFor(contractName + "Proxy")
+			if err != nil {
+				panic(fmt.Sprintf("could not find address for %s", contractName))
+			}
 		}
 		wg.Add(1)
-		go getVersionAsync(a, results, contractAddress, wg)
+		go getVersionAsync(a, results, contractName, wg)
 	}
 
 	wg.Wait()
@@ -138,7 +109,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 // getContractBytecodeHashesFromChain pulls the appropriate bytecode from chain
 // using the supplied client, concurrently.
 func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (standard.L1ContractBytecodeHashes, error) {
-	// Prepare a concurrency-safe object to store version information in, and
+	// Prepare a concurrency-safe object to store bytecode information in, and
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
 
@@ -153,15 +124,17 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 
 	wg := new(sync.WaitGroup)
 
-	for _, contractName := range contractsToCheckVersionAndBytecodeOf {
+	contractsToCheckBytecodeOf := standard.BytecodeHashes[standard.Versions.StandardRelease].GetNonEmpty()
+
+	for _, contractName := range contractsToCheckBytecodeOf {
 		contractAddress, err := list.AddressFor(contractName)
 		if err != nil {
-			// If the chain does not store this contractAddress
-			// we will continue ("storing" the empty string),
-			// so that the rest of the check can
-			// still take place. This results in a more useful
-			// error shown to the user.
-			continue
+			// This could be a proxied contract:
+			contractAddress, err = list.AddressFor(contractName + "Proxy")
+			if err != nil {
+				panic(fmt.Sprintf("could not find address for %s", contractName))
+			}
+			contractName = contractName + "Proxy"
 		}
 		wg.Add(1)
 		go getBytecodeHashAsync(chainID, contractAddress, results, contractName, wg)
@@ -276,96 +249,38 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 	if err != nil {
 		return "", fmt.Errorf("unable to retrieve bytecode without immutables: %w", err)
 	}
+
 	return crypto.Keccak256Hash(bytecodeImmutableFilterer.Bytecode).Hex(), nil
 }
 
-func TestFindOPContractTag(t *testing.T) {
-	shouldMatch := ContractVersions{
-		L1CrossDomainMessenger:       VersionedContract{Version: "2.3.0"},
-		L1ERC721Bridge:               VersionedContract{Version: "2.1.0"},
-		L1StandardBridge:             VersionedContract{Version: "2.1.0"},
-		L2OutputOracle:               VersionedContract{Version: ""},
-		OptimismMintableERC20Factory: VersionedContract{Version: "1.9.0"},
-		OptimismPortal:               VersionedContract{Version: "3.10.0"},
-		SystemConfig:                 VersionedContract{Version: "2.2.0"},
-		ProtocolVersions:             VersionedContract{Version: "1.0.0"},
-		SuperchainConfig:             VersionedContract{Version: ""},
-		AnchorStateRegistry:          VersionedContract{Version: "1.0.0"},
-		DelayedWETH:                  VersionedContract{Version: "1.0.0"},
-		DisputeGameFactory:           VersionedContract{Version: "1.0.0"},
-		FaultDisputeGame:             VersionedContract{Version: "1.2.0"},
-		MIPS:                         VersionedContract{Version: "1.0.1"},
-		PermissionedDisputeGame:      VersionedContract{Version: "1.2.0"},
-		PreimageOracle:               VersionedContract{Version: "1.0.0"},
-	}
+func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet bool) {
+	standardVersions := standard.Versions.Releases[standard.Versions.StandardRelease]
+	s := reflect.ValueOf(standardVersions)
+	c := reflect.ValueOf(versions)
+	matches := checkMatchOrTestnet(s, c, isTestnet)
 
-	got, err := findOPContractTagInVersions(shouldMatch, false)
-	require.NoError(t, err)
-	want := []standard.Tag{"op-contracts/v1.4.0"}
-	require.Equal(t, got, want)
-
-	shouldNotMatch := ContractVersions{
-		L1CrossDomainMessenger:       VersionedContract{Version: "2.3.0"},
-		L1ERC721Bridge:               VersionedContract{Version: "2.1.0"},
-		L1StandardBridge:             VersionedContract{Version: "2.1.0"},
-		OptimismMintableERC20Factory: VersionedContract{Version: "1.9.0"},
-		OptimismPortal:               VersionedContract{Version: "2.5.0"},
-		SystemConfig:                 VersionedContract{Version: "1.12.0"},
-		ProtocolVersions:             VersionedContract{Version: "1.0.0"},
-		L2OutputOracle:               VersionedContract{Version: "1.0.0"},
+	if !matches {
+		diff := cmp.Diff(standardVersions, versions, cmp.FilterPath(func(p cmp.Path) bool {
+			return p.Last().String() == ".Address" || p.Last().String() == ".ImplementationAddress"
+		}, cmp.Ignore()))
+		require.Truef(t, matches,
+			"contract versions do not match the standard versions for the %s release \n (-removed from standard / +added to actual):\n %s",
+			standard.Versions.StandardRelease, diff)
 	}
-	got, err = findOPContractTagInVersions(shouldNotMatch, false)
-	require.Error(t, err)
-	want = []standard.Tag{}
-	require.Equal(t, got, want)
 }
 
-func findOPContractTagInVersions(versions ContractVersions, isTestnet bool) ([]standard.Tag, error) {
-	matchingTags := make([]standard.Tag, 0)
-	err := fmt.Errorf("contract versions do not match any standard op-contracts tag")
+func requireStandardByteCodeHashes(t *testing.T, hashes standard.L1ContractBytecodeHashes) {
+	standardHashes := standard.BytecodeHashes[standard.Versions.StandardRelease]
+	s := reflect.ValueOf(standardHashes)
+	c := reflect.ValueOf(hashes)
+	matches := checkMatch(s, c)
 
-	matchesTag := func(standard, candidate ContractVersions) bool {
-		s := reflect.ValueOf(standard)
-		c := reflect.ValueOf(candidate)
-		return checkMatchOrTestnet(s, c, isTestnet)
+	if !matches {
+		diff := cmp.Diff(standardHashes, hashes)
+		require.Truef(t, matches,
+			"contract bytecode hashes do not match the standard bytecode hashes for the %s release \n (-removed from standard / +added to actual):\n %s",
+			standard.Versions.StandardRelease, diff)
 	}
-
-	for tag := range standard.Versions.Releases {
-		if matchesTag(standard.Versions.Releases[tag], versions) {
-			matchingTags = append(matchingTags, tag)
-			err = nil
-		}
-	}
-	return matchingTags, err
-}
-
-func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes) ([]standard.Tag, error) {
-	matchingTags := make([]standard.Tag, 0)
-	pretty, err := json.MarshalIndent(hashes, "", " ")
-	if err != nil {
-		return matchingTags, err
-	}
-
-	prettyStandard, err := json.MarshalIndent(standard.BytecodeHashes, "", " ")
-	if err != nil {
-		return matchingTags, err
-	}
-
-	err = fmt.Errorf("bytecode hashes %s do not match any standard op-contracts tag %s", pretty, prettyStandard)
-
-	matchesTag := func(standard, candidate standard.L1ContractBytecodeHashes) bool {
-		s := reflect.ValueOf(standard)
-		c := reflect.ValueOf(candidate)
-		return checkMatch(s, c)
-	}
-
-	for tag := range standard.Versions.Releases {
-		if matchesTag(standard.BytecodeHashes[tag], hashes) {
-			matchingTags = append(matchingTags, tag)
-			err = nil
-		}
-	}
-	return matchingTags, err
 }
 
 func checkMatch(s, c reflect.Value) bool {
