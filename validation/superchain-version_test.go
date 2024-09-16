@@ -25,20 +25,26 @@ import (
 	"golang.org/x/mod/semver"
 )
 
-var contractsToCheckVersionAndBytecodeOf = []string{
-	"L1CrossDomainMessengerProxy",
-	"L1ERC721BridgeProxy",
-	"L1StandardBridgeProxy",
-	"OptimismMintableERC20FactoryProxy",
-	"OptimismPortalProxy",
-	"SystemConfigProxy",
-	"AnchorStateRegistryProxy",
-	"DelayedWETHProxy",
-	"DisputeGameFactoryProxy",
-	"FaultDisputeGame",
-	"MIPS",
-	"PermissionedDisputeGame",
-	"PreimageOracle",
+// Function to get a slice of field names of a struct
+func getFieldNames(inputStruct interface{}) []string {
+	// Get the type of the struct
+	structType := reflect.TypeOf(inputStruct)
+
+	// Ensure the input is a struct
+	if structType.Kind() != reflect.Struct {
+		return nil
+	}
+
+	// Create a slice to store the field names
+	var fieldNames []string
+
+	// Iterate through the struct fields
+	for i := 0; i < structType.NumField(); i++ {
+		field := structType.Field(i)
+		fieldNames = append(fieldNames, field.Name)
+	}
+
+	return fieldNames
 }
 
 func checkForStandardVersions(t *testing.T, chain *ChainConfig) {
@@ -83,7 +89,9 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 
 	wg := new(sync.WaitGroup)
 
-	for _, contractAddress := range contractsToCheckVersionAndBytecodeOf {
+	var contractsToCheckVersionOf = getFieldNames(standard.Versions.Releases[standard.Versions.StandardRelease])
+
+	for _, contractAddress := range contractsToCheckVersionOf {
 		a, err := list.AddressFor(contractAddress)
 		if err != nil {
 			// If the chain does not store this contractAddress
@@ -140,7 +148,9 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 
 	wg := new(sync.WaitGroup)
 
-	for _, contractName := range contractsToCheckVersionAndBytecodeOf {
+	var contractsToCheckBytecodeOf = getFieldNames(standard.BytecodeHashes)
+
+	for _, contractName := range contractsToCheckBytecodeOf {
 		contractAddress, err := list.AddressFor(contractName)
 		if err != nil {
 			// If the chain does not store this contractAddress
