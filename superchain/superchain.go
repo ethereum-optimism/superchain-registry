@@ -440,11 +440,6 @@ func (c ContractVersions) GetNonEmpty() []string {
 	v := reflect.ValueOf(c)
 	t := reflect.TypeOf(c)
 
-	// Ensure the input is a struct
-	if t.Kind() != reflect.Struct {
-		return nil
-	}
-
 	var fieldNames []string
 
 	// Iterate through the struct fields

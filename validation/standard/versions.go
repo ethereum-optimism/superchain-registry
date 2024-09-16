@@ -36,11 +36,6 @@ func (bch L1ContractBytecodeHashes) GetNonEmpty() []string {
 	v := reflect.ValueOf(bch)
 	t := reflect.TypeOf(bch)
 
-	// Ensure the input is a struct
-	if t.Kind() != reflect.Struct {
-		return nil
-	}
-
 	var fieldNames []string
 
 	// Iterate through the struct fields
