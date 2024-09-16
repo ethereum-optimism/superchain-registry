@@ -66,7 +66,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 
 	wg := new(sync.WaitGroup)
 
-	var contractsToCheckVersionOf = standard.Versions.Releases[standard.Versions.StandardRelease].GetNonEmpty()
+	contractsToCheckVersionOf := standard.Versions.Releases[standard.Versions.StandardRelease].GetNonEmpty()
 
 	for _, contractAddress := range contractsToCheckVersionOf {
 		a, err := list.AddressFor(contractAddress)
@@ -129,7 +129,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 
 	wg := new(sync.WaitGroup)
 
-	var contractsToCheckBytecodeOf = standard.BytecodeHashes[standard.Versions.StandardRelease].GetNonEmpty()
+	contractsToCheckBytecodeOf := standard.BytecodeHashes[standard.Versions.StandardRelease].GetNonEmpty()
 
 	for _, contractName := range contractsToCheckBytecodeOf {
 		contractAddress, err := list.AddressFor(contractName)
