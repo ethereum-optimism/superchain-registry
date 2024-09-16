@@ -103,7 +103,7 @@ func testStandard(t *testing.T, chain *ChainConfig) {
 	// Standard Config Params
 	t.Run(SuperchainConfigTest, applyExclusions(chain, testSuperchainConfig))
 	// Standard Contract Versions
-	t.Run(StandardContractVersionsTest, applyExclusions(chain, testContractsMatchATag))
+	t.Run(StandardContractVersionsTest, applyExclusions(chain, checkForStandardVersions))
 	// Standard Config Roles
 	t.Run(L1SecurityConfigTest, applyExclusions(chain, testL1SecurityConfig))
 	// Standard Config Params

@@ -42,7 +42,7 @@ var contractsToCheckVersionAndBytecodeOf = []string{
 	"PreimageOracle",
 }
 
-func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
+func checkForStandardVersions(t *testing.T, chain *ChainConfig) {
 	// list of contracts to check for version/bytecode uniformity
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint)
@@ -56,24 +56,13 @@ func testContractsMatchATag(t *testing.T, chain *ChainConfig) {
 
 	versions, err := getContractVersionsFromChain(*Addresses[chain.ChainID], client)
 	require.NoError(t, err)
-	tag, _ := findOPContractTagInVersions(versions, isTestnet)
-
-	standardRelease := standard.Versions.StandardRelease
-	standardVersions := standard.Versions.Releases[standardRelease]
-
-	v, err := json.MarshalIndent(versions, "", " ")
-	require.NoError(t, err)
-	sv, err := json.MarshalIndent(standardVersions, "", " ")
-	require.NoError(t, err)
-	diff := cmp.Diff(v, sv)
-
-	require.Equalf(t, standardRelease, tag, "did not match standard release %s: (-removed from standard / +added to actual) %s", standardRelease, diff)
+	requireStandardSemvers(t, versions, isTestnet)
 
 	// don't perform bytecode checking for testnets
 	if !isTestnet {
 		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
 		require.NoError(t, err)
-		_, err = findOPContractTagInByteCodeHashes(bytecodeHashes)
+		_, err = checkForStandardByteCodeHashes(bytecodeHashes)
 		require.NoError(t, err)
 	}
 }
@@ -279,67 +268,25 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 	return crypto.Keccak256Hash(bytecodeImmutableFilterer.Bytecode).Hex(), nil
 }
 
-func TestFindOPContractTag(t *testing.T) {
-	shouldMatch := ContractVersions{
-		L1CrossDomainMessenger:       VersionedContract{Version: "2.3.0"},
-		L1ERC721Bridge:               VersionedContract{Version: "2.1.0"},
-		L1StandardBridge:             VersionedContract{Version: "2.1.0"},
-		L2OutputOracle:               VersionedContract{Version: ""},
-		OptimismMintableERC20Factory: VersionedContract{Version: "1.9.0"},
-		OptimismPortal:               VersionedContract{Version: "3.10.0"},
-		SystemConfig:                 VersionedContract{Version: "2.2.0"},
-		ProtocolVersions:             VersionedContract{Version: "1.0.0"},
-		SuperchainConfig:             VersionedContract{Version: ""},
-		AnchorStateRegistry:          VersionedContract{Version: "1.0.0"},
-		DelayedWETH:                  VersionedContract{Version: "1.0.0"},
-		DisputeGameFactory:           VersionedContract{Version: "1.0.0"},
-		FaultDisputeGame:             VersionedContract{Version: "1.2.0"},
-		MIPS:                         VersionedContract{Version: "1.0.1"},
-		PermissionedDisputeGame:      VersionedContract{Version: "1.2.0"},
-		PreimageOracle:               VersionedContract{Version: "1.0.0"},
-	}
+func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet bool) {
+	standardVersions := standard.Versions.Releases[standard.Versions.StandardRelease]
+	s := reflect.ValueOf(standardVersions)
+	c := reflect.ValueOf(versions)
+	matches := checkMatchOrTestnet(s, c, isTestnet)
 
-	got, err := findOPContractTagInVersions(shouldMatch, false)
-	require.NoError(t, err)
-	want := []standard.Tag{"op-contracts/v1.4.0"}
-	require.Equal(t, got, want)
-
-	shouldNotMatch := ContractVersions{
-		L1CrossDomainMessenger:       VersionedContract{Version: "2.3.0"},
-		L1ERC721Bridge:               VersionedContract{Version: "2.1.0"},
-		L1StandardBridge:             VersionedContract{Version: "2.1.0"},
-		OptimismMintableERC20Factory: VersionedContract{Version: "1.9.0"},
-		OptimismPortal:               VersionedContract{Version: "2.5.0"},
-		SystemConfig:                 VersionedContract{Version: "1.12.0"},
-		ProtocolVersions:             VersionedContract{Version: "1.0.0"},
-		L2OutputOracle:               VersionedContract{Version: "1.0.0"},
+	if !matches {
+		v, err := json.MarshalIndent(versions, "", " ")
+		require.NoError(t, err)
+		sv, err := json.MarshalIndent(standardVersions, "", " ")
+		require.NoError(t, err)
+		diff := cmp.Diff(v, sv)
+		require.Truef(t, matches,
+			"contract versions do not match the standard versions for the %s release \n (-removed from standard / +added to actual):\n %s",
+			standard.Versions.StandardRelease, diff)
 	}
-	got, err = findOPContractTagInVersions(shouldNotMatch, false)
-	require.Error(t, err)
-	want = []standard.Tag{}
-	require.Equal(t, got, want)
 }
 
-func findOPContractTagInVersions(versions ContractVersions, isTestnet bool) ([]standard.Tag, error) {
-	matchingTags := make([]standard.Tag, 0)
-	err := fmt.Errorf("contract versions do not match any standard op-contracts tag")
-
-	matchesTag := func(standard, candidate ContractVersions) bool {
-		s := reflect.ValueOf(standard)
-		c := reflect.ValueOf(candidate)
-		return checkMatchOrTestnet(s, c, isTestnet)
-	}
-
-	for tag := range standard.Versions.Releases {
-		if matchesTag(standard.Versions.Releases[tag], versions) {
-			matchingTags = append(matchingTags, tag)
-			err = nil
-		}
-	}
-	return matchingTags, err
-}
-
-func findOPContractTagInByteCodeHashes(hashes standard.L1ContractBytecodeHashes) ([]standard.Tag, error) {
+func checkForStandardByteCodeHashes(hashes standard.L1ContractBytecodeHashes) ([]standard.Tag, error) {
 	matchingTags := make([]standard.Tag, 0)
 	pretty, err := json.MarshalIndent(hashes, "", " ")
 	if err != nil {
