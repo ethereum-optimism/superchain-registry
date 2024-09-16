@@ -25,30 +25,70 @@ import (
 	"golang.org/x/mod/semver"
 )
 
-// Function to get a slice of field names of a struct
-func getFieldNames(inputStruct interface{}) []string {
-	// Get the type of the struct
-	structType := reflect.TypeOf(inputStruct)
+// Function to get the field names of VersionedContract fields with non-empty Version
+func getNonEmptyVersionContracts(inputStruct ContractVersions) []string {
+	// Get the value and type of the struct
+	v := reflect.ValueOf(inputStruct)
+	t := reflect.TypeOf(inputStruct)
 
 	// Ensure the input is a struct
-	if structType.Kind() != reflect.Struct {
+	if t.Kind() != reflect.Struct {
 		return nil
 	}
 
-	// Create a slice to store the field names
 	var fieldNames []string
 
 	// Iterate through the struct fields
-	for i := 0; i < structType.NumField(); i++ {
-		field := structType.Field(i)
-		fieldNames = append(fieldNames, field.Name)
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		fieldType := t.Field(i)
+
+		// Ensure the field is of type VersionedContract
+		if field.Type() == reflect.TypeOf(VersionedContract{}) {
+			// Get the Version field from the VersionedContract
+			versionField := field.FieldByName("Version")
+
+			// Check if the Version is non-empty
+			if versionField.IsValid() && versionField.String() != "" {
+				fieldNames = append(fieldNames, fieldType.Name)
+			}
+		}
+	}
+
+	return fieldNames
+}
+
+// Function to get the field names of ContractBytecodeHashes fields with non-empty strings
+func getNonEmptyBytecodeHashes(inputStruct standard.L1ContractBytecodeHashes) []string {
+	// Get the value and type of the struct
+	v := reflect.ValueOf(inputStruct)
+	t := reflect.TypeOf(inputStruct)
+
+	// Ensure the input is a struct
+	if t.Kind() != reflect.Struct {
+		return nil
+	}
+
+	var fieldNames []string
+
+	// Iterate through the struct fields
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		fieldType := t.Field(i)
+
+		// Ensure the field is of type string
+		if field.Kind() == reflect.String {
+			// Check if the string field is non-empty
+			if field.String() != "" {
+				fieldNames = append(fieldNames, fieldType.Name)
+			}
+		}
 	}
 
 	return fieldNames
 }
 
 func checkForStandardVersions(t *testing.T, chain *ChainConfig) {
-	// list of contracts to check for version/bytecode uniformity
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint)
 
@@ -89,17 +129,22 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 
 	wg := new(sync.WaitGroup)
 
-	var contractsToCheckVersionOf = getFieldNames(standard.Versions.Releases[standard.Versions.StandardRelease])
+	var contractsToCheckVersionOf = getNonEmptyVersionContracts(standard.Versions.Releases[standard.Versions.StandardRelease])
+	fmt.Print(contractsToCheckVersionOf)
 
 	for _, contractAddress := range contractsToCheckVersionOf {
 		a, err := list.AddressFor(contractAddress)
 		if err != nil {
+			// This could be a proxied contract:
+			a, err = list.AddressFor(contractAddress + "Proxy")
 			// If the chain does not store this contractAddress
 			// we will continue ("storing" the empty string),
 			// so that the rest of the check can
 			// still take place. This results in a more useful
 			// error shown to the user.
-			continue
+			if err != nil {
+				continue
+			}
 		}
 		wg.Add(1)
 		go getVersionAsync(a, results, contractAddress, wg)
@@ -133,7 +178,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 // getContractBytecodeHashesFromChain pulls the appropriate bytecode from chain
 // using the supplied client, concurrently.
 func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (standard.L1ContractBytecodeHashes, error) {
-	// Prepare a concurrency-safe object to store version information in, and
+	// Prepare a concurrency-safe object to store bytecode information in, and
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
 
@@ -148,17 +193,23 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 
 	wg := new(sync.WaitGroup)
 
-	var contractsToCheckBytecodeOf = getFieldNames(standard.BytecodeHashes)
+	var contractsToCheckBytecodeOf = getNonEmptyBytecodeHashes(standard.BytecodeHashes[standard.Versions.StandardRelease])
+	fmt.Println(contractsToCheckBytecodeOf)
 
 	for _, contractName := range contractsToCheckBytecodeOf {
 		contractAddress, err := list.AddressFor(contractName)
 		if err != nil {
+			// This could be a proxied contract:
+			contractAddress, err = list.AddressFor(contractName + "Proxy")
 			// If the chain does not store this contractAddress
 			// we will continue ("storing" the empty string),
 			// so that the rest of the check can
 			// still take place. This results in a more useful
 			// error shown to the user.
-			continue
+			if err != nil {
+				continue
+			}
+			contractName = contractName + "Proxy"
 		}
 		wg.Add(1)
 		go getBytecodeHashAsync(chainID, contractAddress, results, contractName, wg)
@@ -283,7 +334,7 @@ func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet b
 	matches := checkMatchOrTestnet(s, c, isTestnet)
 
 	if !matches {
-		diff := cmp.Diff(versions, standardVersions, cmp.FilterPath(func(p cmp.Path) bool {
+		diff := cmp.Diff(standardVersions, versions, cmp.FilterPath(func(p cmp.Path) bool {
 			return p.Last().String() == ".Address" || p.Last().String() == ".ImplementationAddress"
 		}, cmp.Ignore()))
 		require.Truef(t, matches,
@@ -293,13 +344,13 @@ func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet b
 }
 
 func requireStandardByteCodeHashes(t *testing.T, hashes standard.L1ContractBytecodeHashes) {
-	standardHashes := standard.Versions.Releases[standard.Versions.StandardRelease]
+	standardHashes := standard.BytecodeHashes[standard.Versions.StandardRelease]
 	s := reflect.ValueOf(standardHashes)
 	c := reflect.ValueOf(hashes)
 	matches := checkMatch(s, c)
 
 	if !matches {
-		diff := cmp.Diff(hashes, standardHashes)
+		diff := cmp.Diff(standardHashes, hashes)
 		require.Truef(t, matches,
 			"contract bytecode hashes do not match the standard bytecode hashes for the %s release \n (-removed from standard / +added to actual):\n %s",
 			standard.Versions.StandardRelease, diff)
