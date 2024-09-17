@@ -96,6 +96,18 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "World Chain"
+  identifier = "mainnet/worldchainmainnet"
+  chain_id = 480
+  rpc = ["https://worldchain-mainnet.g.alchemy.com/public"]
+  explorers = ["https://worldchain-mainnet.explorer.alchemy.com/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Zora"
   identifier = "mainnet/zora"
   chain_id = 7777777
