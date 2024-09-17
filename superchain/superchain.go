@@ -412,51 +412,28 @@ func (c ContractVersions) GetNonEmpty() []string {
 // VersionFor returns the version for the supplied contract name, if it exits
 // (and an error otherwise). Useful for slicing into the struct using a string.
 func (c ContractVersions) VersionFor(contractName string) (string, error) {
-	var version string
-	switch contractName {
-	case "L1CrossDomainMessenger":
-		version = c.L1CrossDomainMessenger.Version
-	case "L1ERC721Bridge":
-		version = c.L1ERC721Bridge.Version
-	case "L1StandardBridge":
-		version = c.L1StandardBridge.Version
-	case "L2OutputOracle":
-		version = c.L2OutputOracle.Version
-	case "OptimismMintableERC20Factory":
-		version = c.OptimismMintableERC20Factory.Version
-	case "OptimismPortal":
-		version = c.OptimismPortal.Version
-	case "OptimismPortal2":
-		version = c.OptimismPortal2.Version
-	case "SystemConfig":
-		version = c.SystemConfig.Version
-	case "AnchorStateRegistry":
-		version = c.AnchorStateRegistry.Version
-	case "DelayedWETH":
-		version = c.DelayedWETH.Version
-	case "DisputeGameFactory":
-		version = c.DisputeGameFactory.Version
-	case "FaultDisputeGame":
-		version = c.FaultDisputeGame.Version
-	case "MIPS":
-		version = c.MIPS.Version
-	case "PermissionedDisputeGame":
-		version = c.PermissionedDisputeGame.Version
-	case "PreimageOracle":
-		version = c.PreimageOracle.Version
-	case "ProtocolVersions":
-		version = c.ProtocolVersions.Version
-	case "SuperchainConfig":
-		version = c.SuperchainConfig.Version
-	case "CannonFaultDisputeGame":
-		version = c.CannonFaultDisputeGame.Version
-	default:
+	// Use reflection to get the value of the struct
+	val := reflect.ValueOf(c)
+	// Get the field by name (contractName)
+	field := val.FieldByName(contractName)
+
+	// Check if the field exists and is a struct
+	if !field.IsValid() {
 		return "", errors.New("no such contract name")
 	}
-	if version == "" {
+
+	// Check if the struct contains the "Version" field
+	versionField := field.FieldByName("Version")
+	if !versionField.IsValid() {
 		return "", errors.New("no version specified")
 	}
-	return version, nil
+
+	// Return the version if it's a string
+	if versionField.Kind() == reflect.String {
+		return versionField.String(), nil
+	}
+
+	return "", errors.New("version is not a string")
 }
 
 // Check will sanity check the validity of the semantic version strings
