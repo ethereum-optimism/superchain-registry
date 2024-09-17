@@ -744,6 +744,7 @@
           "delta_time": 0,
           "ecotone_time": 0,
           "fjord_time": 1721739600,
+          "granite_time": 1726570800,
           "block_time": 2,
           "seq_window_size": 3600,
           "max_sequencer_drift": 1800,
