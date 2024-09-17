@@ -239,6 +239,23 @@
     }
   },
   {
+    "name": "World Chain Sepolia Testnet",
+    "identifier": "sepolia/worldchainsepolia",
+    "chainId": 4801,
+    "rpc": [
+      "https://worldchain-sepolia.g.alchemy.com/public"
+    ],
+    "explorers": [
+      "https://worldchain-sepolia.explorer.alchemy.com/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Zora Sepolia Testnet",
     "identifier": "sepolia/zora",
     "chainId": 999999999,

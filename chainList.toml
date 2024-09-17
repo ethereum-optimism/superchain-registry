@@ -168,6 +168,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "World Chain Sepolia Testnet"
+  identifier = "sepolia/worldchainsepolia"
+  chain_id = 4801
+  rpc = ["https://worldchain-sepolia.g.alchemy.com/public"]
+  explorers = ["https://worldchain-sepolia.explorer.alchemy.com/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Zora Sepolia Testnet"
   identifier = "sepolia/zora"
   chain_id = 999999999
