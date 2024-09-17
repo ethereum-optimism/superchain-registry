@@ -220,7 +220,7 @@
   identifier = "sepolia/shape"
   chain_id = 11011
   rpc = ["https://sepolia.shape.network/"]
-  explorers = ["https://shape-sepolia-explorer.alchemy.com/"]
+  explorers = ["https://shape-sepolia.explorer.alchemy.com/"]
   superchain_level = 0
   data_availability_type = "eth-da"
   [chains.parent]
