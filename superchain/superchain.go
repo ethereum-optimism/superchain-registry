@@ -424,7 +424,7 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 
 	// Check if the struct contains the "Version" field
 	versionField := field.FieldByName("Version")
-	if !versionField.IsValid() {
+	if !versionField.IsValid() || versionField.String() == "" {
 		return "", errors.New("no version specified")
 	}
 
