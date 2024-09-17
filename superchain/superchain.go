@@ -340,29 +340,31 @@ func (a AddressList) AddressFor(name string) (Address, error) {
 // contract. They are keyed by the semantic version.
 type AddressSet map[string]Address
 
-// ContractVersions represents the desired semantic version of the contracts
-// in the superchain. This currently only supports L1 contracts but could
-// represent L2 predeploys in the future.
-type ContractBytecodeHashes struct {
-	L1CrossDomainMessenger       string `toml:"l1_cross_domain_messenger"`
-	L1ERC721Bridge               string `toml:"l1_erc721_bridge"`
-	L1StandardBridge             string `toml:"l1_standard_bridge"`
-	L2OutputOracle               string `toml:"l2_output_oracle,omitempty"`
-	OptimismMintableERC20Factory string `toml:"optimism_mintable_erc20_factory"`
-	OptimismPortal               string `toml:"optimism_portal"`
-	SystemConfig                 string `toml:"system_config"`
+type MappedContractProperties[T string | VersionedContract] struct {
+	L1CrossDomainMessenger       T `toml:"l1_cross_domain_messenger,omitempty"`
+	L1ERC721Bridge               T `toml:"l1_erc721_bridge,omitempty"`
+	L1StandardBridge             T `toml:"l1_standard_bridge,omitempty"`
+	L2OutputOracle               T `toml:"l2_output_oracle,omitempty"`
+	OptimismMintableERC20Factory T `toml:"optimism_mintable_erc20_factory,omitempty"`
+	OptimismPortal               T `toml:"optimism_portal,omitempty"`
+	OptimismPortal2              T `toml:"optimism_portal2,omitempty"`
+	SystemConfig                 T `toml:"system_config,omitempty"`
 	// Superchain-wide contracts:
-	ProtocolVersions string `toml:"protocol_versions"`
-	SuperchainConfig string `toml:"superchain_config,omitempty"`
+	ProtocolVersions T `toml:"protocol_versions,omitempty"`
+	SuperchainConfig T `toml:"superchain_config,omitempty"`
 	// Fault Proof contracts:
-	AnchorStateRegistry     string `toml:"anchor_state_registry,omitempty"`
-	DelayedWETH             string `toml:"delayed_weth,omitempty"`
-	DisputeGameFactory      string `toml:"dispute_game_factory,omitempty"`
-	FaultDisputeGame        string `toml:"fault_dispute_game,omitempty"`
-	MIPS                    string `toml:"mips,omitempty"`
-	PermissionedDisputeGame string `toml:"permissioned_dispute_game,omitempty"`
-	PreimageOracle          string `toml:"preimage_oracle,omitempty"`
+	AnchorStateRegistry     T `toml:"anchor_state_registry,omitempty"`
+	DelayedWETH             T `toml:"delayed_weth,omitempty"`
+	DisputeGameFactory      T `toml:"dispute_game_factory,omitempty"`
+	FaultDisputeGame        T `toml:"fault_dispute_game,omitempty"`
+	MIPS                    T `toml:"mips,omitempty"`
+	PermissionedDisputeGame T `toml:"permissioned_dispute_game,omitempty"`
+	PreimageOracle          T `toml:"preimage_oracle,omitempty"`
+	CannonFaultDisputeGame  T `toml:"cannon_fault_dispute_game,omitempty"`
 }
+
+// ContractBytecodeHashes stores a bytecode hash against each contract
+type ContractBytecodeHashes MappedContractProperties[string]
 
 // VersionedContract represents a contract that has a semantic version.
 type VersionedContract struct {
@@ -376,28 +378,7 @@ type VersionedContract struct {
 // ContractVersions represents the desired semantic version of the contracts
 // in the superchain. This currently only supports L1 contracts but could
 // represent L2 predeploys in the future.
-type ContractVersions struct {
-	L1CrossDomainMessenger       VersionedContract `toml:"l1_cross_domain_messenger,omitempty"`
-	L1ERC721Bridge               VersionedContract `toml:"l1_erc721_bridge,omitempty"`
-	L1StandardBridge             VersionedContract `toml:"l1_standard_bridge,omitempty"`
-	L2OutputOracle               VersionedContract `toml:"l2_output_oracle,omitempty"`
-	OptimismMintableERC20Factory VersionedContract `toml:"optimism_mintable_erc20_factory,omitempty"`
-	OptimismPortal               VersionedContract `toml:"optimism_portal,omitempty"`
-	OptimismPortal2              VersionedContract `toml:"optimism_portal2,omitempty"`
-	SystemConfig                 VersionedContract `toml:"system_config,omitempty"`
-	// Superchain-wide contracts:
-	ProtocolVersions VersionedContract `toml:"protocol_versions,omitempty"`
-	SuperchainConfig VersionedContract `toml:"superchain_config,omitempty"`
-	// Fault Proof contracts:
-	AnchorStateRegistry     VersionedContract `toml:"anchor_state_registry,omitempty"`
-	DelayedWETH             VersionedContract `toml:"delayed_weth,omitempty"`
-	DisputeGameFactory      VersionedContract `toml:"dispute_game_factory,omitempty"`
-	FaultDisputeGame        VersionedContract `toml:"fault_dispute_game,omitempty"`
-	MIPS                    VersionedContract `toml:"mips,omitempty"`
-	PermissionedDisputeGame VersionedContract `toml:"permissioned_dispute_game,omitempty"`
-	PreimageOracle          VersionedContract `toml:"preimage_oracle,omitempty"`
-	CannonFaultDisputeGame  VersionedContract `toml:"cannon_fault_dispute_game,omitempty"`
-}
+type ContractVersions MappedContractProperties[VersionedContract]
 
 // GetNonEmpty returns a slice of contract names, with an entry for each contract
 // in the receiver with a non empty Version property.
