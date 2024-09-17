@@ -7,12 +7,16 @@ on:
 jobs:
   compute-genesis-diff:
     uses: ./.github/workflows/diff-workflow.yml
+    permissions:
+      pull-requests: write
     with:
       command: generate-genesis
       directory: generate-genesis
       message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
   compute-rollup-config-diff:
     uses: ./.github/workflows/diff-workflow.yml
+    permissions:
+      pull-requests: write
     with:
       command: generate-rollup-config
       directory: generate-rollup-config
