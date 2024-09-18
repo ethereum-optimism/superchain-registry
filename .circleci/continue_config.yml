@@ -92,6 +92,7 @@ jobs:
           name: check git tree is clean
           command: git diff --exit-code
   golang-test:
+    circleci_ip_ranges: true
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
