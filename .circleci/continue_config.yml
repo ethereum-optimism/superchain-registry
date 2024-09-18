@@ -114,6 +114,7 @@ jobs:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
           # TODO this should also be filtered on modified chains
   golang-validate-modified:
+    circleci_ip_ranges: true
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
@@ -126,6 +127,7 @@ jobs:
           name: run validation checks
           command: just validate-modified-chains main # TODO ideally this is the base branch
   golang-validate-all:
+    circleci_ip_ranges: true
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
@@ -140,6 +142,7 @@ jobs:
       - notify-failures-on-main:
           channel: C07GQQZDW1G # to slack channel `notify-superchain-validation-failures`
   golang-promotion-test:
+    circleci_ip_ranges: true
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
@@ -216,6 +219,7 @@ jobs:
           name: check git tree is clean
           command: git diff --exit-code
   golang-validate-genesis-allocs:
+    circleci_ip_ranges: true
     docker:
       - image: cimg/go:1.21.12-node
     resource_class: medium
