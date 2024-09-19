@@ -155,7 +155,7 @@
   },
   {
     "name": "World Chain",
-    "identifier": "mainnet/worldchainmainnet",
+    "identifier": "mainnet/worldchain",
     "chainId": 480,
     "rpc": [
       "https://worldchain-mainnet.g.alchemy.com/public"
@@ -291,7 +291,7 @@
   },
   {
     "name": "World Chain Sepolia Testnet",
-    "identifier": "sepolia/worldchainsepolia",
+    "identifier": "sepolia/worldchain",
     "chainId": 4801,
     "rpc": [
       "https://worldchain-sepolia.g.alchemy.com/public"
