@@ -109,7 +109,7 @@
 
 [[chains]]
   name = "World Chain"
-  identifier = "mainnet/worldchainmainnet"
+  identifier = "mainnet/worldchain"
   chain_id = 480
   rpc = ["https://worldchain-mainnet.g.alchemy.com/public"]
   explorers = ["https://worldchain-mainnet.explorer.alchemy.com/"]
@@ -205,7 +205,7 @@
 
 [[chains]]
   name = "World Chain Sepolia Testnet"
-  identifier = "sepolia/worldchainsepolia"
+  identifier = "sepolia/worldchain"
   chain_id = 4801
   rpc = ["https://worldchain-sepolia.g.alchemy.com/public"]
   explorers = ["https://worldchain-sepolia.explorer.alchemy.com/"]
