@@ -79,12 +79,10 @@ func init() {
 			switch superchainEntry.Superchain {
 			case "mainnet":
 				if runningInCI == "true" {
-					fmt.Println("Using ci mainnet rpc")
 					superchainEntry.Config.L1.PublicRPC = "https://ci-mainnet-l1-archive.optimism.io"
 				}
 			case "sepolia", "sepolia-dev-0":
 				if runningInCI == "true" {
-					fmt.Println("Using ci sepolia rpc")
 					superchainEntry.Config.L1.PublicRPC = "https://ci-sepolia-l1-archive.optimism.io"
 				}
 			}
