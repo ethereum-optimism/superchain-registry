@@ -6,7 +6,6 @@ import (
 	"reflect"
 
 	"github.com/BurntSushi/toml"
-	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
 //go:embed *.toml
@@ -19,9 +18,6 @@ var standardConfigFile embed.FS
 // artifact from the monorepo. We do this because the contracts and compiled artifacts are not available in the superchain
 // registry. Ex: ethereum-optimism/optimism/packages/contracts-bedrock/forge-artifacts/MIPS.sol/MIPS.json
 var ContractASTsWithImmutableReferences = map[string]string{}
-
-// L1ContractBytecodeHashes represents the hash of the contract bytecode (as a hex string) for each L1 contract
-type L1ContractBytecodeHashes superchain.ContractVersions
 
 // ContractBytecodeImmutables stores the immutable references as a raw stringified JSON string in a TOML config.
 // it is stored this way because it can be plucked out of the contract compilation output as is and pasted into the TOML config file.
@@ -71,7 +67,7 @@ func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles | VersionTags | B
 // LoadImmutableReferences parses standard-immutables.toml and stores it in a map. Needs to be invoked one-time only.
 func LoadImmutableReferences() {
 	var bytecodeImmutables *ContractBytecodeImmutables
-	for tag := range Versions {
+	for tag := range Versions.Releases {
 		for contractVersion, immutables := range BytecodeImmutables {
 			if tag == contractVersion {
 				bytecodeImmutables = &immutables

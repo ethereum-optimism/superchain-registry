@@ -75,19 +75,17 @@ func init() {
 
 		// Impute endpoints only if we're not in codegen mode.
 		if os.Getenv("CODEGEN") == "" {
-			ciMainnetRPC := os.Getenv("CIRCLE_CI_MAINNET_RPC")
-			ciSepoliaRPC := os.Getenv("CIRCLE_CI_SEPOLIA_RPC")
-
+			runningInCI := os.Getenv("CI")
 			switch superchainEntry.Superchain {
 			case "mainnet":
-				if ciMainnetRPC != "" {
-					fmt.Println("Using env var for mainnet rpc")
-					superchainEntry.Config.L1.PublicRPC = ciMainnetRPC
+				if runningInCI == "true" {
+					fmt.Println("Using ci mainnet rpc")
+					superchainEntry.Config.L1.PublicRPC = "https://ci-mainnet-l1-archive.optimism.io"
 				}
 			case "sepolia", "sepolia-dev-0":
-				if ciSepoliaRPC != "" {
-					fmt.Println("Using env var for sepolia rpc")
-					superchainEntry.Config.L1.PublicRPC = ciSepoliaRPC
+				if runningInCI == "true" {
+					fmt.Println("Using ci sepolia rpc")
+					superchainEntry.Config.L1.PublicRPC = "https://ci-sepolia-l1-archive.optimism.io"
 				}
 			}
 		}

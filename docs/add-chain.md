@@ -47,7 +47,7 @@ The remaining steps should then be followed to merge the config data into the re
 
 ### 4. Understand output
 The tool will write the following data:
-- The main configuration source, with genesis data, and address of onchain system configuration. These are written to `uperchain/configs/<superchain-target>/<chain-short-name>.toml`.
+- The main configuration source, with genesis data, and address of onchain system configuration. These are written to `superchain/configs/<superchain-target>/<chain-short-name>.toml`.
 - Hardfork override times, where they have been set, will be included. If and when a chain becomes a standard chain, a `superchain_time` is set in the chain config. From that time on, future hardfork activation times which are missing from the chain config will be inherited from superchain-wide values in the neighboring `superchain.toml` file.
 - Genesis system config data
 - Compressed `genesis.json` definitions (in the `extra/genesis` directory) which pull in the bytecode by hash

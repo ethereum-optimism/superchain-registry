@@ -34,6 +34,23 @@
     }
   },
   {
+    "name": "Lisk",
+    "identifier": "mainnet/lisk",
+    "chainId": 1135,
+    "rpc": [
+      "https://rpc.api.lisk.com"
+    ],
+    "explorers": [
+      "https://blockscout.lisk.com"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Lyra Chain",
     "identifier": "mainnet/lyra",
     "chainId": 957,
@@ -126,7 +143,7 @@
       "https://rpc.zero.thebinaryholdings.com"
     ],
     "explorers": [
-      "https://explorer.thebinaryholdings.com/"
+      "https://explorer.thebinaryholdings.com"
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
@@ -135,6 +152,23 @@
       "chain": "mainnet"
     },
     "gasPayingToken": "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
+  },
+  {
+    "name": "World Chain",
+    "identifier": "mainnet/worldchain",
+    "chainId": 480,
+    "rpc": [
+      "https://worldchain-mainnet.g.alchemy.com/public"
+    ],
+    "explorers": [
+      "https://worldchain-mainnet.explorer.alchemy.com/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
   },
   {
     "name": "Zora",
@@ -188,6 +222,23 @@
     }
   },
   {
+    "name": "Lisk Sepolia Testnet",
+    "identifier": "sepolia/lisk",
+    "chainId": 4202,
+    "rpc": [
+      "https://rpc.sepolia-api.lisk.com"
+    ],
+    "explorers": [
+      "https://sepolia-blockscout.lisk.com"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Metal L2 Testnet",
     "identifier": "sepolia/metal",
     "chainId": 1740,
@@ -230,6 +281,23 @@
     ],
     "explorers": [
       "https://testnet.racescan.io/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "World Chain Sepolia Testnet",
+    "identifier": "sepolia/worldchain",
+    "chainId": 4801,
+    "rpc": [
+      "https://worldchain-sepolia.g.alchemy.com/public"
+    ],
+    "explorers": [
+      "https://worldchain-sepolia.explorer.alchemy.com/"
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",

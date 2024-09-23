@@ -20,6 +20,8 @@ on:
 jobs:
   compute-config-diff-and-report-with-pr-comment:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
 
     steps:
     - name: Checkout repository
