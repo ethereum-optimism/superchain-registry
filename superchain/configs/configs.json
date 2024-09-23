@@ -230,7 +230,7 @@
           "delta_time": 0,
           "ecotone_time": 0,
           "fjord_time": 0,
-          "granite_time": 1727197200,
+          "granite_time": 1727370000,
           "block_time": 2,
           "seq_window_size": 3600,
           "max_sequencer_drift": 1800,
