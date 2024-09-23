@@ -290,6 +290,24 @@
     }
   },
   {
+    "name": "Binary Sepolia",
+    "identifier": "sepolia/tbn",
+    "chainId": 625,
+    "rpc": [
+      "https://rpc.testnet.thebinaryholdings.com"
+    ],
+    "explorers": [
+      "https://explorer.sepolia.thebinaryholdings.com"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    },
+    "gasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
+  },
+  {
     "name": "World Chain Sepolia Testnet",
     "identifier": "sepolia/worldchain",
     "chainId": 4801,

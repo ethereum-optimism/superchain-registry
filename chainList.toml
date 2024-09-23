@@ -204,6 +204,19 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Binary Sepolia"
+  identifier = "sepolia/tbn"
+  chain_id = 625
+  rpc = ["https://rpc.testnet.thebinaryholdings.com"]
+  explorers = ["https://explorer.sepolia.thebinaryholdings.com"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  gas_paying_token = "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "World Chain Sepolia Testnet"
   identifier = "sepolia/worldchain"
   chain_id = 4801
