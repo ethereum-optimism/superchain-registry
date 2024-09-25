@@ -6,6 +6,7 @@ import (
 	"reflect"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
 //go:embed *.toml
@@ -34,7 +35,6 @@ func init() {
 		Roles:         new(Roles),
 		MultisigRoles: make(map[string]*MultisigRoles),
 	}
-	var NetworkVersions map[string]VersionTags = make(map[string]VersionTags)
 
 	decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
 
@@ -46,8 +46,12 @@ func init() {
 		Config.Params[network] = new(Params)
 		decodeTOMLFileIntoConfig("standard-config-params-"+network+".toml", Config.Params[network])
 
-		decodeTOMLFileIntoConfig("standard-versions-"+network+".toml", &Versions)
-		NetworkVersions[network] = Versions
+		var versions VersionTags = VersionTags{
+			Releases: make(map[Tag]superchain.ContractVersions, 0),
+		}
+
+		decodeTOMLFileIntoConfig("standard-versions-"+network+".toml", &versions)
+		NetworkVersions[network] = versions
 	}
 
 	decodeTOMLFileIntoConfig("standard-bytecodes.toml", &BytecodeHashes)
@@ -70,7 +74,7 @@ func decodeTOMLFileIntoConfig[T Params | Roles | MultisigRoles | VersionTags | B
 // LoadImmutableReferences parses standard-immutables.toml and stores it in a map. Needs to be invoked one-time only.
 func LoadImmutableReferences() {
 	var bytecodeImmutables *ContractBytecodeImmutables
-	for tag := range Versions.Releases {
+	for tag := range NetworkVersions["mainnet"].Releases {
 		for contractVersion, immutables := range BytecodeImmutables {
 			if tag == contractVersion {
 				bytecodeImmutables = &immutables

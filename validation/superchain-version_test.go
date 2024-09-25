@@ -66,7 +66,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client) (C
 
 	wg := new(sync.WaitGroup)
 
-	contractsToCheckVersionOf := standard.Versions.Releases[standard.Versions.StandardRelease].GetNonEmpty()
+	contractsToCheckVersionOf := standard.NetworkVersions["mainnet"].Releases[standard.NetworkVersions["mainnet"].StandardRelease].GetNonEmpty()
 
 	for _, contractName := range contractsToCheckVersionOf {
 		a, err := list.AddressFor(contractName)
@@ -124,7 +124,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 
 	wg := new(sync.WaitGroup)
 
-	contractsToCheckBytecodeOf := standard.BytecodeHashes[standard.Versions.StandardRelease].GetNonEmpty()
+	contractsToCheckBytecodeOf := standard.BytecodeHashes[standard.NetworkVersions["mainnet"].StandardRelease].GetNonEmpty()
 
 	for _, contractName := range contractsToCheckBytecodeOf {
 		contractAddress, err := list.AddressFor(contractName)
@@ -254,7 +254,7 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 }
 
 func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet bool) {
-	standardVersions := standard.Versions.Releases[standard.Versions.StandardRelease]
+	standardVersions := standard.NetworkVersions["mainnet"].Releases[standard.NetworkVersions["mainnet"].StandardRelease]
 	s := reflect.ValueOf(standardVersions)
 	c := reflect.ValueOf(versions)
 	matches := checkMatchOrTestnet(s, c, isTestnet)
@@ -265,12 +265,12 @@ func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet b
 		}, cmp.Ignore()))
 		require.Truef(t, matches,
 			"contract versions do not match the standard versions for the %s release \n (-removed from standard / +added to actual):\n %s",
-			standard.Versions.StandardRelease, diff)
+			standard.NetworkVersions["mainnet"].StandardRelease, diff)
 	}
 }
 
 func requireStandardByteCodeHashes(t *testing.T, hashes standard.L1ContractBytecodeHashes) {
-	standardHashes := standard.BytecodeHashes[standard.Versions.StandardRelease]
+	standardHashes := standard.BytecodeHashes[standard.NetworkVersions["mainnet"].StandardRelease]
 	s := reflect.ValueOf(standardHashes)
 	c := reflect.ValueOf(hashes)
 	matches := checkMatch(s, c)
@@ -279,7 +279,7 @@ func requireStandardByteCodeHashes(t *testing.T, hashes standard.L1ContractBytec
 		diff := cmp.Diff(standardHashes, hashes)
 		require.Truef(t, matches,
 			"contract bytecode hashes do not match the standard bytecode hashes for the %s release \n (-removed from standard / +added to actual):\n %s",
-			standard.Versions.StandardRelease, diff)
+			standard.NetworkVersions["mainnet"].StandardRelease, diff)
 	}
 }
 

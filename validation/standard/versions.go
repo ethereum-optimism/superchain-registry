@@ -19,9 +19,7 @@ type VersionTags struct {
 }
 
 var (
-	Versions VersionTags = VersionTags{
-		Releases: make(map[Tag]superchain.ContractVersions, 0),
-	}
+	NetworkVersions                           = make(map[string]VersionTags)
 	BytecodeHashes     BytecodeHashTags       = make(BytecodeHashTags, 0)
 	BytecodeImmutables BytecodeImmutablesTags = make(BytecodeImmutablesTags, 0)
 )
