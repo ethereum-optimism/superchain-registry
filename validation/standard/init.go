@@ -34,6 +34,7 @@ func init() {
 		Roles:         new(Roles),
 		MultisigRoles: make(map[string]*MultisigRoles),
 	}
+	var NetworkVersions map[string]VersionTags = make(map[string]VersionTags)
 
 	decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
 
@@ -44,9 +45,11 @@ func init() {
 
 		Config.Params[network] = new(Params)
 		decodeTOMLFileIntoConfig("standard-config-params-"+network+".toml", Config.Params[network])
+
+		decodeTOMLFileIntoConfig("standard-versions-"+network+".toml", &Versions)
+		NetworkVersions[network] = Versions
 	}
 
-	decodeTOMLFileIntoConfig("standard-versions.toml", &Versions)
 	decodeTOMLFileIntoConfig("standard-bytecodes.toml", &BytecodeHashes)
 	decodeTOMLFileIntoConfig("standard-immutables.toml", &BytecodeImmutables)
 
