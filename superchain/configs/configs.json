@@ -108,7 +108,7 @@
             "eip1559Denominator": 1000,
             "eip1559DenominatorCanyon": 1000
           },
-          "GasPayingToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+          "GasPayingToken": null,
           "genesis": {
             "l1": {
               "hash": "0xbb7ad201b0ab296465865642878e9256e0fa4a3f8d06bca1f3e5c5b54be6be90",
