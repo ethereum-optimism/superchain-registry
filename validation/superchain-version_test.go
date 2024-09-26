@@ -66,7 +66,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, ch
 
 	wg := new(sync.WaitGroup)
 
-	contractsToCheckVersionOf := standard.NetworkVersions[chain.Superchain].Releases[standard.NetworkVersions[chain.Superchain].StandardRelease].GetNonEmpty()
+	contractsToCheckVersionOf := standard.NetworkVersions[chain.Superchain].Releases[standard.Release].GetNonEmpty()
 
 	for _, contractName := range contractsToCheckVersionOf {
 		a, err := list.AddressFor(contractName)
@@ -124,7 +124,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 
 	wg := new(sync.WaitGroup)
 
-	contractsToCheckBytecodeOf := standard.BytecodeHashes[standard.NetworkVersions[chain.Superchain].StandardRelease].GetNonEmpty()
+	contractsToCheckBytecodeOf := standard.BytecodeHashes[standard.Release].GetNonEmpty()
 
 	for _, contractName := range contractsToCheckBytecodeOf {
 		contractAddress, err := list.AddressFor(contractName)
@@ -238,7 +238,8 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 	}
 
 	// if the contract is known to have immutables, setup the filterer to mask the bytes which contain the variable's value
-	bytecodeImmutableFilterer, err := initBytecodeImmutableMask(code, contractName)
+	tag := standard.Release
+	bytecodeImmutableFilterer, err := initBytecodeImmutableMask(code, tag, contractName)
 	// error indicates that the contract _does_ have immutables, but we weren't able to determine the coordinates of the immutables in the bytecode
 	if err != nil {
 		return "", fmt.Errorf("unable to check for presence of immutables in bytecode: %w", err)
@@ -254,7 +255,7 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 }
 
 func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet bool, chain *ChainConfig) {
-	standardVersions := standard.NetworkVersions[chain.Superchain].Releases[standard.NetworkVersions[chain.Superchain].StandardRelease]
+	standardVersions := standard.NetworkVersions[chain.Superchain].Releases[standard.Release]
 	s := reflect.ValueOf(standardVersions)
 	c := reflect.ValueOf(versions)
 	matches := checkMatchOrTestnet(s, c, isTestnet)
@@ -265,12 +266,12 @@ func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet b
 		}, cmp.Ignore()))
 		require.Truef(t, matches,
 			"contract versions do not match the standard versions for the %s release \n (-removed from standard / +added to actual):\n %s",
-			standard.NetworkVersions[chain.Superchain].StandardRelease, diff)
+			standard.Release, diff)
 	}
 }
 
 func requireStandardByteCodeHashes(t *testing.T, hashes standard.L1ContractBytecodeHashes, chain *ChainConfig) {
-	standardHashes := standard.BytecodeHashes[standard.NetworkVersions[chain.Superchain].StandardRelease]
+	standardHashes := standard.BytecodeHashes[standard.Release]
 	s := reflect.ValueOf(standardHashes)
 	c := reflect.ValueOf(hashes)
 	matches := checkMatch(s, c)
@@ -279,7 +280,7 @@ func requireStandardByteCodeHashes(t *testing.T, hashes standard.L1ContractBytec
 		diff := cmp.Diff(standardHashes, hashes)
 		require.Truef(t, matches,
 			"contract bytecode hashes do not match the standard bytecode hashes for the %s release \n (-removed from standard / +added to actual):\n %s",
-			standard.NetworkVersions[chain.Superchain].StandardRelease, diff)
+			standard.Release, diff)
 	}
 }
 
