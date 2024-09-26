@@ -35,7 +35,7 @@ func initBytecodeImmutableMask(bytecode []byte, tag standard.Tag, contractName s
 	return &BytecodeAndImmutableReferences{Bytecode: bytecode, ImmutableReferences: parsedImmutables}, nil
 }
 
-// maskBytecode// masks the sections of the bytecode where immutables are stored.
+// maskBytecode masks the sections of the bytecode where immutables are stored.
 // If immutables aren't present, the stored bytecode in the receiver is unaltered
 func (deployed *BytecodeAndImmutableReferences) maskBytecode(contractName string) error {
 	for _, v := range deployed.ImmutableReferences {
