@@ -83,6 +83,75 @@
           }
         },
         {
+          "Name": "Ethernity Mainnet",
+          "l2_chain_id": 183,
+          "PublicRPC": "https://mainnet.ethernitychain.io",
+          "SequencerRPC": "https://mainnet.ethernitychain.io",
+          "Explorer": "https://ernscan.io",
+          "SuperchainLevel": 0,
+          "StandardChainCandidate": true,
+          "SuperchainTime": null,
+          "batch_inbox_address": "0xfF00000000000000000000000000000000000183",
+          "Superchain": "mainnet",
+          "Chain": "ethernity",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "fjord_time": 0,
+          "granite_time": 1726070401,
+          "block_time": 2,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 20,
+            "eip1559Denominator": 1000,
+            "eip1559DenominatorCanyon": 1000
+          },
+          "GasPayingToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+          "genesis": {
+            "l1": {
+              "hash": "0xbb7ad201b0ab296465865642878e9256e0fa4a3f8d06bca1f3e5c5b54be6be90",
+              "number": 20519340
+            },
+            "l2": {
+              "hash": "0xa5e974a6ace39285b42f92316a9e040e58f8ffc24e3aac124ff6243c28323607",
+              "number": 0
+            },
+            "l2_time": 1723547735,
+            "system_config": {
+              "batcherAddr": "0x43Ca061Ea80FBB4A2b5515F4be4e953b191147aF",
+              "overhead": "0x00000000000000000000000000000000000000000000000000000000000000bc",
+              "scalar": "0x00000000000000000000000000000000000000000000000000000000000f4240",
+              "gasLimit": 30000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0x464Ca56D40f94E8A50eFa7F5b90c59D956a0efC9",
+            "AnchorStateRegistryProxy": "0x31EE18F4dbCa6A9C8599508Ec70aB98cb1118e9e",
+            "BatchSubmitter": "0x43Ca061Ea80FBB4A2b5515F4be4e953b191147aF",
+            "Challenger": "0xBeA2Bc852a160B8547273660E22F4F08C2fa9Bbb",
+            "DelayedWETHProxy": "0xde1999df1f225D638ad3ca2C9EB5b2E52730D950",
+            "DisputeGameFactoryProxy": "0xFcdb270B674911D321F1014c347EaBB1c55134FB",
+            "Guardian": "0xBeA2Bc852a160B8547273660E22F4F08C2fa9Bbb",
+            "L1CrossDomainMessengerProxy": "0x226A1e4A3D8e64A9De8423F9344348c179C72CB2",
+            "L1ERC721BridgeProxy": "0x00050ae93fBFaf5823A4ae229E4651F7F7A02FfA",
+            "L1StandardBridgeProxy": "0x908C324c35fF36F64236A7CDa4D50f3003E9C5C3",
+            "L2OutputOracleProxy": "0x0eB331B615030819464225Ecd373e5FFBE502DC4",
+            "MIPS": "0x94cE3d0B2243250d3f33dF45FAaEac273CA945fE",
+            "OptimismMintableERC20FactoryProxy": "0x45BEaf3Bd26b76796692b1Ef1E67469B84ADB914",
+            "OptimismPortalProxy": "0xDA29f0B4da6c23f6c1aF273945c290C0268c4ea9",
+            "PreimageOracle": "0xA0455F010561671c640d80f51851D51318aC32aB",
+            "Proposer": "0xF49212F977986347b73345D382a811e148751eED",
+            "ProxyAdmin": "0x0bc380347A0B7aF5453492CAF20e1E38bc0Abc2f",
+            "ProxyAdminOwner": "0xB68361AAac2Bc8a4b8BFe36B8C6d0B429b5930ea",
+            "SuperchainConfig": "0x14B768F93f256Ad8D2d018930DBdAe61306c4752",
+            "SystemConfigOwner": "0xBeA2Bc852a160B8547273660E22F4F08C2fa9Bbb",
+            "SystemConfigProxy": "0x20c3035C92bdB4C461242571EeAc59EeD03Df931",
+            "UnsafeBlockSigner": "0xD1705B4FFFc540EDeD73046ee1F3A8Db10d143f8"
+          }
+        },
+        {
           "Name": "Orderly Mainnet",
           "l2_chain_id": 291,
           "PublicRPC": "https://rpc.orderly.network",
@@ -161,7 +230,7 @@
           "delta_time": 0,
           "ecotone_time": 0,
           "fjord_time": 1721826000,
-          "granite_time": 1726830000,
+          "granite_time": 1727780400,
           "block_time": 2,
           "seq_window_size": 3600,
           "max_sequencer_drift": 1800,

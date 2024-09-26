@@ -34,6 +34,24 @@
     }
   },
   {
+    "name": "Ethernity Mainnet",
+    "identifier": "mainnet/ethernity",
+    "chainId": 183,
+    "rpc": [
+      "https://mainnet.ethernitychain.io"
+    ],
+    "explorers": [
+      "https://ernscan.io"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    },
+    "gasPayingToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+  },
+  {
     "name": "Lisk",
     "identifier": "mainnet/lisk",
     "chainId": 1135,
