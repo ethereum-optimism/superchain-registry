@@ -45,6 +45,7 @@ type (
 	BytecodeHashTags       = map[Tag]L1ContractBytecodeHashes
 	BytecodeImmutablesTags = map[Tag]ContractBytecodeImmutables
 )
+
 type VersionTags struct {
 	Releases map[Tag]superchain.ContractVersions `toml:"releases"`
 }
