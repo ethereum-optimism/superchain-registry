@@ -30,7 +30,6 @@
   explorers = ["https://ernscan.io"]
   superchain_level = 0
   data_availability_type = "eth-da"
-  gas_paying_token = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
