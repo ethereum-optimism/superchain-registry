@@ -290,9 +290,9 @@
     }
   },
   {
-    "name": "",
+    "name": "OPCM Sepolia Test deployment",
     "identifier": "sepolia/opcm-test",
-    "chainId": 0,
+    "chainId": 111222333444555666,
     "rpc": [
       ""
     ],

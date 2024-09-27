@@ -24,32 +24,58 @@ func skipIfExcluded(t *testing.T, chainID uint64) {
 	}
 }
 
+var opcmTestChainId = uint64(111222333444555666)
+
 var exclusions = map[string]map[uint64]bool{
 	// Universal Checks
 	GenesisHashTest: {
+		opcmTestChainId: true,
 		// OP Mainnet has a pre-bedrock genesis (with an empty allocs object stored in the registry), so we exclude it from this check.")
 		10: true,
 	},
 	GenesisAllocsMetadataTest: {
-		10:   true, // op-mainnet
-		1740: true, // metal-sepolia
+		opcmTestChainId: true,
+		10:              true, // op-mainnet
+		1740:            true, // metal-sepolia
 	},
 	ChainIDRPCTest: {
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
-		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
+		opcmTestChainId: true,
+		11155421:        true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
+		11763072:        true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
 	},
 	GenesisRPCTest: {
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
-		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
+		opcmTestChainId: true,
+		11155421:        true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
+		11763072:        true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
 	},
 	UniquenessTest: {
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0   Not in https://github.com/ethereum-lists/chains
-		11763072: true, // sepolia-dev-0/base-devnet-0     Not in https://github.com/ethereum-lists/chains
+		opcmTestChainId: true,
+		11155421:        true, // sepolia-dev-0/oplabs-devnet-0   Not in https://github.com/ethereum-lists/chains
+		11763072:        true, // sepolia-dev-0/base-devnet-0     Not in https://github.com/ethereum-lists/chains
 	},
 
 	// Standard Checks
 	OptimismPortal2ParamsTest: {
 		11763072: true, // sepolia-dev0/base-devnet-0
+	},
+
+	OptimismConfigTest: {
+		opcmTestChainId: true,
+	},
+	RollupConfigTest: {
+		opcmTestChainId: true,
+	},
+	GasTokenTest: {
+		opcmTestChainId: true,
+	},
+	GPOParamsTest: {
+		opcmTestChainId: true,
+	},
+	L2SecurityConfigTest: {
+		opcmTestChainId: true,
+	},
+	DataAvailabilityTypeTest: {
+		opcmTestChainId: true,
 	},
 }
 
@@ -62,7 +88,7 @@ var silences = map[string]map[uint64]time.Time{
 func TestExclusions(t *testing.T) {
 	for name, v := range exclusions {
 		for k := range v {
-			if (k == 10 || k == 11155420) && (name == GenesisHashTest || name == GenesisAllocsMetadataTest) {
+			if (k == 10 || k == 11155420 || k == opcmTestChainId) && (name == GenesisHashTest || name == GenesisAllocsMetadataTest) {
 				// These are the sole standard chain validation check exclusions
 				continue
 			}
