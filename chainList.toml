@@ -204,9 +204,9 @@
     chain = "sepolia"
 
 [[chains]]
-  name = ""
+  name = "OPCM Sepolia Test deployment"
   identifier = "sepolia/opcm-test"
-  chain_id = 0
+  chain_id = 111222333444555666
   rpc = [""]
   explorers = [""]
   superchain_level = 0

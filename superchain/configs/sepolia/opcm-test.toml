@@ -1,6 +1,7 @@
 name = "OPCM Sepolia Test deployment"
 chain_id = 111222333444555666
-superchain_level = 1
+superchain_level = 0
+standard_chain_candidate = true       # This is a temporary field which causes most of the standard validation checks to run on this chain
 
 [addresses]
 AddressManager = "0x66F2B015388e1Efc687D914AD5883937a9402F3B"
