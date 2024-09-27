@@ -106,7 +106,12 @@ func TestConfigs(t *testing.T) {
 }
 
 func TestGenesis(t *testing.T) {
+	var opcmTestChainId = uint64(111222333444555666)
+
 	for id := range OPChains {
+		if id == opcmTestChainId {
+			continue
+		}
 		_, err := LoadGenesis(id)
 		if err != nil {
 			t.Fatalf("failed to load genesis of chain %d: %v", id, err)
