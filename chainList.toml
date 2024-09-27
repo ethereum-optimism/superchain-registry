@@ -204,6 +204,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = ""
+  identifier = "sepolia/opcm-test"
+  chain_id = 0
+  rpc = [""]
+  explorers = [""]
+  superchain_level = 0
+  data_availability_type = ""
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "RACE Testnet"
   identifier = "sepolia/race"
   chain_id = 6806

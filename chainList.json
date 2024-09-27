@@ -290,6 +290,23 @@
     }
   },
   {
+    "name": "",
+    "identifier": "sepolia/opcm-test",
+    "chainId": 0,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "RACE Testnet",
     "identifier": "sepolia/race",
     "chainId": 6806,
