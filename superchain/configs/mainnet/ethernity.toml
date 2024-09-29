@@ -15,7 +15,6 @@ block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
 data_availability_type = "eth-da"
-gas_paying_token = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 
 [optimism]
   eip1559_elasticity = 20

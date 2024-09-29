@@ -48,8 +48,7 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
-    },
-    "gasPayingToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+    }
   },
   {
     "name": "Lisk",

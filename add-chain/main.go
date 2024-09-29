@@ -244,8 +244,21 @@ func getGasPayingToken(l1rpcURl string, SystemConfigAddress superchain.Address) 
 	if err != nil {
 		return nil, err
 	}
-
 	opts := bind.CallOpts{}
+
+	usingCustomGasToken, err := sc.IsCustomGasToken(&opts)
+	if err != nil {
+		if strings.Contains(err.Error(), "execution reverted") {
+			// This happens when the SystemConfig contract
+			// does not yet have the CGT functionality.
+			return nil, nil
+		}
+		return nil, err
+	}
+	if !usingCustomGasToken {
+		return nil, nil
+	}
+
 	result, err := sc.GasPayingToken(&opts)
 	if err != nil {
 		if strings.Contains(err.Error(), "execution reverted") {
@@ -255,7 +268,6 @@ func getGasPayingToken(l1rpcURl string, SystemConfigAddress superchain.Address) 
 		}
 		return nil, err
 	}
-
 	if (result.Addr == common.Address{}) {
 		// This happens with the SystemConfig contract
 		// does have the CGT functionality, but it has
