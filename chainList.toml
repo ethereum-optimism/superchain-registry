@@ -107,6 +107,18 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Shape"
+  identifier = "mainnet/shape"
+  chain_id = 360
+  rpc = ["https://mainnet.shape.network/"]
+  explorers = ["https://shape-mainnet.explorer.alchemy.com/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Binary Mainnet"
   identifier = "mainnet/tbn"
   chain_id = 624
