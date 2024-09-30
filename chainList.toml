@@ -216,6 +216,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Shape Sepolia Testnet"
+  identifier = "sepolia/shape"
+  chain_id = 11011
+  rpc = ["https://sepolia.shape.network/"]
+  explorers = ["https://shape-sepolia.explorer.alchemy.com/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "World Chain Sepolia Testnet"
   identifier = "sepolia/worldchain"
   chain_id = 4801
