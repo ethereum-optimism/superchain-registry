@@ -44,5 +44,5 @@ func testOptimismPortal2Params(t *testing.T, chain *ChainConfig) {
 
 	rgt, err := op.RespectedGameType(callOpts)
 	require.NoError(t, err)
-	assert.Equal(t, rgt, std.RespectedGameType)
+	assert.Equal(t, std.RespectedGameType, rgt)
 }
