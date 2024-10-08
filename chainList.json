@@ -34,6 +34,23 @@
     }
   },
   {
+    "name": "Cyber Mainnet",
+    "identifier": "mainnet/cyber",
+    "chainId": 7560,
+    "rpc": [
+      "https://rpc.cyber.co"
+    ],
+    "explorers": [
+      "https://cyberscan.co/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Ethernity",
     "identifier": "mainnet/ethernity",
     "chainId": 183,

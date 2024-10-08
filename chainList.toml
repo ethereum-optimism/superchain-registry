@@ -23,6 +23,18 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Cyber Mainnet"
+  identifier = "mainnet/cyber"
+  chain_id = 7560
+  rpc = ["https://rpc.cyber.co"]
+  explorers = ["https://cyberscan.co/"]
+  superchain_level = 0
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Ethernity"
   identifier = "mainnet/ethernity"
   chain_id = 183
