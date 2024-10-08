@@ -9,8 +9,8 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
-func castCall(contractAddress, calldata, l1RpcUrl string) (string, error) {
-	cmd := exec.Command("cast", "call", contractAddress, calldata, "-r", l1RpcUrl)
+func castCall(contractAddress superchain.Address, calldata, l1RpcUrl string) (string, error) {
+	cmd := exec.Command("cast", "call", contractAddress.String(), calldata, "-r", l1RpcUrl)
 	var out bytes.Buffer
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
@@ -25,17 +25,4 @@ func castCall(contractAddress, calldata, l1RpcUrl string) (string, error) {
 	}
 
 	return address, nil
-}
-
-func getSuperchainLevel(chainType string) (superchain.SuperchainLevel, error) {
-	switch chainType {
-	case "standard":
-		fmt.Printf("Adding standard chain to superchain-registry...\n\n")
-		return superchain.Standard, nil
-	case "frontier":
-		fmt.Printf("Adding frontier chain to superchain-registry...\n\n")
-		return superchain.Frontier, nil
-	}
-
-	return 0, fmt.Errorf("invalid chain type: %s", chainType)
 }

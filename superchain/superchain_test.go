@@ -5,16 +5,16 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/BurntSushi/toml"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/yaml.v3"
 )
 
 func TestAddressFor(t *testing.T) {
 	al := AddressList{
-		ProxyAdmin:     HexToAddress("0xD98bD7a1F2384D890d0D6153CbCFcCF6F813ab6c"),
+		ProxyAdmin:     MustHexToAddress("0xD98bd7A1F2384D890D0d6153cBcfCcF6F813Ab6c"),
 		AddressManager: Address{},
 	}
-	want := HexToAddress("0xD98bD7a1F2384D890d0D6153CbCFcCF6F813ab6c")
+	want := MustHexToAddress("0xD98bd7A1F2384D890D0d6153cBcfCcF6F813Ab6c")
 	got, err := al.AddressFor("ProxyAdmin")
 	require.NoError(t, err)
 	require.Equal(t, want, got)
@@ -26,8 +26,8 @@ func TestAddressFor(t *testing.T) {
 
 func TestVersionFor(t *testing.T) {
 	cl := ContractVersions{
-		L1CrossDomainMessenger: "1.9.9",
-		OptimismPortal:         "",
+		L1CrossDomainMessenger: VersionedContract{Version: "1.9.9"},
+		OptimismPortal:         VersionedContract{Version: ""},
 	}
 	want := "1.9.9"
 	got, err := cl.VersionFor("L1CrossDomainMessenger")
@@ -64,7 +64,7 @@ func TestChainIds(t *testing.T) {
 				require.NoError(t, err)
 				var chainConfig ChainConfig
 
-				require.NoError(t, yaml.Unmarshal(configBytes, &chainConfig))
+				require.NoError(t, toml.Unmarshal(configBytes, &chainConfig))
 
 				storeIfUnique(chainConfig.ChainID)
 			}
@@ -111,214 +111,6 @@ func TestGenesis(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to load genesis of chain %d: %v", id, err)
 		}
-	}
-}
-
-// TestImplementations ensures that the global Implementations
-// map is populated.
-func TestImplementations(t *testing.T) {
-	if len(Implementations) == 0 {
-		t.Fatal("no implementations found")
-	}
-}
-
-// TestContractImplementations tests specific contracts implementations are set
-// correctly.
-func TestContractImplementations(t *testing.T) {
-	impls, err := newContractImplementations("")
-	if err != nil {
-		t.Fatalf("failed to load contract implementations: %v", err)
-	}
-	if impls.L1CrossDomainMessenger.Get("1.6.0") != HexToAddress("0xf4d5682dA3ad1820ea83E1cEE5Fd92a3A7BabC30") {
-		t.Fatal("wrong L1CrossDomainMessenger address")
-	}
-	if impls.L1ERC721Bridge.Get("1.3.0") != HexToAddress("0x8ADd7FB53A242e827373519d260EE3B8F7612Ba1") {
-		t.Fatal("wrong L1ERC721Bridge address")
-	}
-	if impls.L1StandardBridge.Get("1.3.0") != HexToAddress("0x9c540e769B9453d174EdB683a90D9170e6559F16") {
-		t.Fatal("wrong L1StandardBridge address")
-	}
-	if impls.L2OutputOracle.Get("1.5.0") != HexToAddress("0x7a811C9862ab54E677EEdA7e6F075aC86a1f551e") {
-		t.Fatal("wrong L2OutputOracle address")
-	}
-	if impls.OptimismMintableERC20Factory.Get("1.4.0") != HexToAddress("0x135B9097A0e1e56190251c62f111B676Fb4Ec494") {
-		t.Fatal("wrong OptimismMintableERC20 address")
-	}
-	if impls.OptimismPortal.Get("1.9.0") != HexToAddress("0x8Cfa294bD0c6F63cD65d492bdB754eAcf684D871") {
-		t.Fatal("wrong OptimismPortal address")
-	}
-	if impls.SystemConfig.Get("1.7.0") != HexToAddress("0x09323D05868393c7EBa8190BAc173f843b82030a") {
-		t.Fatal("wrong SystemConfig address")
-	}
-}
-
-// TestContractVersionsCheck will fail if the superchain semver file
-// is not read correctly.
-func TestContractVersionsCheck(t *testing.T) {
-	for _, versions := range SuperchainSemver {
-		if err := versions.Check(true); err != nil {
-			t.Fatal(err)
-		}
-	}
-}
-
-// TestContractVersionsResolve will test that the high lever interface used works.
-func TestContractVersionsResolve(t *testing.T) {
-	impls, err := newContractImplementations("sepolia")
-	if err != nil {
-		t.Fatalf("failed to load contract implementations: %v", err)
-	}
-
-	if impls.L1CrossDomainMessenger.Get("1.6.0") == (Address{}) {
-		t.Fatal("wrong L1CrossDomainMessenger address")
-	}
-	if impls.L1ERC721Bridge.Get("1.3.0") == (Address{}) {
-		t.Fatal("wrong L1ERC721Bridge address")
-	}
-	if impls.L1StandardBridge.Get("1.3.0") == (Address{}) {
-		t.Fatal("wrong L1StandardBridge address")
-	}
-	if impls.L2OutputOracle.Get("1.5.0") == (Address{}) {
-		t.Fatal("wrong L2OutputOracle address")
-	}
-	if impls.OptimismMintableERC20Factory.Get("1.4.0") == (Address{}) {
-		t.Fatal("wrong OptimismMintableERC20 address")
-	}
-	if impls.OptimismPortal.Get("1.9.0") == (Address{}) {
-		t.Fatal("wrong OptimismPortal address")
-	}
-	if impls.SystemConfig.Get("1.7.0") == (Address{}) {
-		t.Fatal("wrong SystemConfig address")
-	}
-
-	versions := ContractVersions{
-		L1CrossDomainMessenger:       "1.6.0",
-		L1ERC721Bridge:               "1.3.0",
-		L1StandardBridge:             "1.3.0",
-		L2OutputOracle:               "1.5.0",
-		OptimismMintableERC20Factory: "1.4.0",
-		OptimismPortal:               "1.9.0",
-		SystemConfig:                 "1.7.0",
-	}
-
-	list, err := impls.Resolve(versions)
-	if err != nil {
-		t.Fatalf("unable to resolve: %s", err)
-	}
-
-	if list.L1CrossDomainMessenger.Version != "v1.6.0" {
-		t.Fatalf("wrong L1CrossDomainMessenger version: %s", list.L1CrossDomainMessenger.Version)
-	}
-	if list.L1ERC721Bridge.Version != "v1.3.0" {
-		t.Fatalf("wrong L1ERC721Bridge version: %s", list.L1ERC721Bridge.Version)
-	}
-	if list.L1StandardBridge.Version != "v1.3.0" {
-		t.Fatalf("wrong L1StandardBridge version: %s", list.L1StandardBridge.Version)
-	}
-	if list.L2OutputOracle.Version != "v1.5.0" {
-		t.Fatalf("wrong L2OutputOracle version: %s", list.L2OutputOracle.Version)
-	}
-	if list.OptimismMintableERC20Factory.Version != "v1.4.0" {
-		t.Fatalf("wrong OptimismMintableERC20Factory version: %s", list.OptimismMintableERC20Factory.Version)
-	}
-	if list.OptimismPortal.Version != "v1.9.0" {
-		t.Fatalf("wrong OptimismPortal version: %s", list.OptimismPortal.Version)
-	}
-	if list.SystemConfig.Version != "v1.7.0" {
-		t.Fatalf("wrong SystemConfig version: %s", list.SystemConfig.Version)
-	}
-}
-
-// TestResolve ensures that the low level resolve function works on semantic
-// versioning correctly. It will return the highest version that matches the
-// given semver string.
-func TestResolve(t *testing.T) {
-	cases := []struct {
-		name    string
-		set     AddressSet
-		version string
-		expect  string
-	}{
-		{
-			name: "exact",
-			set: AddressSet{
-				"v1.0.0": HexToAddress("0x123"),
-			},
-			version: "v1.0.0",
-			expect:  "v1.0.0",
-		},
-		{
-			name: "largest-minor",
-			set: AddressSet{
-				"v1.2.0": HexToAddress("0x123"),
-				"v1.1.0": HexToAddress("0x234"),
-			},
-			version: "^1.0.0",
-			expect:  "v1.2.0",
-		},
-		{
-			name: "largest-patch",
-			set: AddressSet{
-				"v1.0.2": HexToAddress("0x123"),
-				"v1.0.1": HexToAddress("0x234"),
-			},
-			version: "^1.0.0",
-			expect:  "v1.0.2",
-		},
-		{
-			name: "x-patch",
-			set: AddressSet{
-				"v3.0.5": HexToAddress("0x123"),
-				"v3.0.2": HexToAddress("0x234"),
-			},
-			version: "v3.0.x",
-			expect:  "v3.0.5",
-		},
-		{
-			name: "x-minor",
-			set: AddressSet{
-				"v2.5.1": HexToAddress("0x456"),
-				"v2.5.0": HexToAddress("0x123"),
-				"v2.2.2": HexToAddress("0x234"),
-			},
-			version: "v2.x",
-			expect:  "v2.5.1",
-		},
-	}
-
-	for _, test := range cases {
-		t.Run(test.name, func(t *testing.T) {
-			resolved, err := resolve(test.set, test.version)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if resolved.Version != test.expect {
-				t.Fatalf("wrong version: %s", resolved.Version)
-			}
-		})
-	}
-}
-
-// TestAddressSet ensures that the AddressSet.Get method works with
-// both the "v" prefix and without the "v" prefix.
-func TestAddressSet(t *testing.T) {
-	set := AddressSet{
-		"v1.0.0": HexToAddress("0x123"),
-		"1.1.0":  HexToAddress("0x234"),
-	}
-
-	if set.Get("v1.0.0") != HexToAddress("0x123") {
-		t.Fatal("wrong address")
-	}
-	if set.Get("1.0.0") != HexToAddress("0x123") {
-		t.Fatal("wrong address")
-	}
-
-	if set.Get("v1.1.0") != HexToAddress("0x234") {
-		t.Fatal("wrong address")
-	}
-	if set.Get("1.1.0") != HexToAddress("0x234") {
-		t.Fatal("wrong address")
 	}
 }
 
@@ -397,34 +189,36 @@ func testNetworkUpgradeTimestampOffset(l2GenesisTime uint64, blockTime uint64, u
 }
 
 func TestSuperchainConfigUnmarshaling(t *testing.T) {
-	rawYAML := `
-name: Mickey Mouse
-l1:
-  chain_id: 314
-  public_rpc: https://disney.com
-  explorer: https://disneyscan.io
+	rawTOML := `
+name = "Mickey Mouse"
+protocol_versions_addr = "0x252CbE9517F731C618961D890D534183822dcC8d"
+superchain_config_addr = "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
 
-protocol_versions_addr: "0x252CbE9517F731C618961D890D534183822dcC8d"
-superchain_config_addr: "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
+canyon_time = 1
+delta_time = 2
+ecotone_time = 3
 
-canyon_time: 1
-delta_time: 2
-ecotone_time: 3
-fjord_time:
+[l1]
+  chain_id = 314
+  public_rpc = "https://disney.com"
+  explorer = "https://disneyscan.io"
 `
 
 	s := SuperchainConfig{}
-	err := unMarshalSuperchainConfig([]byte(rawYAML), &s)
+	err := unMarshalSuperchainConfig([]byte(rawTOML), &s)
 	require.NoError(t, err)
 
-	require.Equal(t, "Mickey Mouse", s.Name)
-	require.Equal(t, SuperchainL1Info{
+	expectL1Info := SuperchainL1Info{
 		ChainID:   314,
 		PublicRPC: "https://disney.com",
 		Explorer:  "https://disneyscan.io",
-	}, s.L1)
-	require.Equal(t, "0x252cbe9517f731c618961d890d534183822dcc8d", s.ProtocolVersionsAddr.String())
-	require.Equal(t, "0x02d91cf852423640d93920be0cadcec0e7a00fa7", s.SuperchainConfigAddr.String())
+	}
+
+	require.Equal(t, "Mickey Mouse", s.Name)
+	require.Equal(t, expectL1Info, s.L1)
+
+	require.Equal(t, "0x252CbE9517F731C618961D890D534183822dcC8d", s.ProtocolVersionsAddr.String())
+	require.Equal(t, "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7", s.SuperchainConfigAddr.String())
 	require.Equal(t, uint64Ptr(uint64(1)), s.hardForkDefaults.CanyonTime)
 	require.Equal(t, uint64Ptr(uint64(2)), s.hardForkDefaults.DeltaTime)
 	require.Equal(t, uint64Ptr(uint64(3)), s.hardForkDefaults.EcotoneTime)
@@ -445,39 +239,39 @@ func TestHardForkOverridesAndDefaults(t *testing.T) {
 	}
 
 	overridenCanyonTime := uint64Ptr(uint64(8))
-	override := []byte(`canyon_time: 8`)
-	nilOverride := []byte(`canyon_time:`)
-	nilOverride2 := []byte(``)
-	nilOverride3 := []byte(`superchain_time: 2`)
-	nilOverride4 := []byte(`superchain_time: 0`)
-	nilOverride5 := []byte(`superchain_time: 10`)
+	override := []byte(`canyon_time = 8`)
+	nilOverride1 := []byte(`superchain_time = 2`)
+	nilOverride2 := []byte(`superchain_time = 0`)
+	nilOverride3 := []byte(`superchain_time = 10`)
+	nilOverride4 := []byte(`
+superchain_time = 1
+[genesis]
+  l2_time = 4
+`)
 
 	type testCase struct {
 		name               string
 		scConfig           SuperchainConfig
-		rawYAML            []byte
+		rawTOML            []byte
 		expectedCanyonTime *uint64
 	}
 
 	testCases := []testCase{
 		{"default + override  (nil superchain_time)= override", defaultSuperchainConfig, override, overridenCanyonTime},
-		{"default + nil override (nil superchain_time) = nil", defaultSuperchainConfig, nilOverride, nil},
-		{"default + no override (nil superchain_time )= nil", defaultSuperchainConfig, nilOverride2, nil},
 		{"nil default + override = override", nilDefaultSuperchainConfig, override, overridenCanyonTime},
-		{"nil default + nil override = nil", nilDefaultSuperchainConfig, nilOverride, nil},
-		{"nil default + no override = nil", nilDefaultSuperchainConfig, nilOverride2, nil},
-		{"default + nil override (default after superchain_time) = nil", defaultSuperchainConfig, nilOverride3, &defaultCanyonTime},
-		{"default + nil override (default after zero superchain_time) = nil", defaultSuperchainConfig, nilOverride4, &defaultCanyonTime},
-		{"default + nil override (default before superchain_time) = nil", defaultSuperchainConfig, nilOverride5, nil},
+		{"default + nil override (default after superchain_time) = default", defaultSuperchainConfig, nilOverride1, &defaultCanyonTime},
+		{"default + nil override (default after zero superchain_time) = default", defaultSuperchainConfig, nilOverride2, &defaultCanyonTime},
+		{"default + nil override (default before superchain_time) = nil", defaultSuperchainConfig, nilOverride3, nil},
+		{"default + nil override (default after zero superchain_time but before genesis) = 0", defaultSuperchainConfig, nilOverride4, uint64Ptr(0)},
 	}
 
 	executeTestCase := func(t *testing.T, tt testCase) {
 		c := ChainConfig{}
 
-		err := yaml.Unmarshal([]byte(tt.rawYAML), &c)
+		err := toml.Unmarshal([]byte(tt.rawTOML), &c)
 		require.NoError(t, err)
 
-		c.setNilHardforkTimestampsToDefault(&tt.scConfig)
+		c.setNilHardforkTimestampsToDefaultOrZero(&tt.scConfig)
 
 		require.Equal(t, tt.expectedCanyonTime, c.CanyonTime)
 	}
@@ -497,15 +291,15 @@ func TestHardForkOverridesAndDefaults2(t *testing.T) {
 
 	c := ChainConfig{}
 
-	rawYAML := `
-ecotone_time: 2
-fjord_time: 3
+	rawTOML := `
+ecotone_time = 2
+fjord_time = 3
 `
 
-	err := yaml.Unmarshal([]byte(rawYAML), &c)
+	err := toml.Unmarshal([]byte(rawTOML), &c)
 	require.NoError(t, err)
 
-	c.setNilHardforkTimestampsToDefault(&defaultSuperchainConfig)
+	c.setNilHardforkTimestampsToDefaultOrZero(&defaultSuperchainConfig)
 
 	var nil64 *uint64
 

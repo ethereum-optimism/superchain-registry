@@ -5,15 +5,9 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-// perChainTestName ensures test can easily be filtered by chain name or chain id using the -run=regex testflag.
-func perChainTestName(chain *superchain.ChainConfig) string {
-	return chain.Name + fmt.Sprintf(" (%d)", chain.ChainID)
-}
 
 // isBigIntWithinBounds returns true if actual is within bounds, where the bounds are [lower bound, upper bound] and are inclusive.
 var isBigIntWithinBounds = func(actual *big.Int, bounds [2]*big.Int) bool {
@@ -29,13 +23,6 @@ func isIntWithinBounds[T uint32 | uint64](actual T, bounds [2]T) bool {
 		panic("bounds are in wrong order")
 	}
 	return (actual >= bounds[0] && actual <= bounds[1])
-}
-
-// assertBigIntInBounds fails the test (but not immediately) if the passed param is outside of the passed bounds.
-var assertBigIntInBounds = func(t *testing.T, name string, got *big.Int, want [2]*big.Int) {
-	assert.True(t,
-		isBigIntWithinBounds(got, want),
-		fmt.Sprintf("Incorrect %s, %d is not within bounds %d", name, got, want))
 }
 
 // assertInBounds fails the test (but not immediately) if the passed param is outside of the passed bounds.
@@ -66,11 +53,5 @@ func TestIsIntWithinBounds(t *testing.T) {
 			result := isIntWithinBounds(test.actual, test.bounds)
 			require.Equal(t, test.expectation, result)
 		})
-	}
-}
-
-func SkipCheckIfFrontierChain(t *testing.T, chain superchain.ChainConfig) {
-	if chain.SuperchainLevel == superchain.Frontier {
-		t.Skip("Frontier chain excluded from this check")
 	}
 }

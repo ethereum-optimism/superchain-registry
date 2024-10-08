@@ -1,13 +1,12 @@
 package superchain
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path"
 	"strings"
 
-	"gopkg.in/yaml.v3"
+	"github.com/BurntSushi/toml"
 )
 
 func init() {
@@ -25,13 +24,8 @@ func init() {
 			continue // ignore files, e.g. a readme
 		}
 
-		SuperchainSemver[s.Name()], err = newContractVersions(s.Name())
-		if err != nil {
-			panic(fmt.Errorf("failed to read semver.yaml: %w", err))
-		}
-
 		// Load superchain-target config
-		superchainConfigData, err := superchainFS.ReadFile(path.Join("configs", s.Name(), "superchain.yaml"))
+		superchainConfigData, err := superchainFS.ReadFile(path.Join("configs", s.Name(), "superchain.toml"))
 		if err != nil {
 			panic(fmt.Errorf("failed to read superchain config: %w", err))
 		}
@@ -57,33 +51,14 @@ func init() {
 			}
 			var chainConfig ChainConfig
 
-			if err := yaml.Unmarshal(chainConfigData, &chainConfig); err != nil {
+			if err := toml.Unmarshal(chainConfigData, &chainConfig); err != nil {
 				panic(fmt.Errorf("failed to decode chain config %s/%s: %w", s.Name(), c.Name(), err))
 			}
-			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".yaml")
+			chainConfig.Chain = strings.TrimSuffix(c.Name(), ".toml")
 
-			(&chainConfig).setNilHardforkTimestampsToDefault(&superchainEntry.Config)
+			(&chainConfig).setNilHardforkTimestampsToDefaultOrZero(&superchainEntry.Config)
 
 			MustBeValidSuperchainLevel(chainConfig)
-
-			jsonName := chainConfig.Chain + ".json"
-			addressesData, err := extraFS.ReadFile(path.Join("extra", "addresses", s.Name(), jsonName))
-			if err != nil {
-				panic(fmt.Errorf("failed to read addresses data of chain %s/%s: %w", s.Name(), jsonName, err))
-			}
-			var addrs AddressList
-			if err := json.Unmarshal(addressesData, &addrs); err != nil {
-				panic(fmt.Errorf("failed to decode addresses %s/%s: %w", s.Name(), jsonName, err))
-			}
-
-			genesisSysCfgData, err := extraFS.ReadFile(path.Join("extra", "genesis-system-configs", s.Name(), jsonName))
-			if err != nil {
-				panic(fmt.Errorf("failed to read genesis system config data of chain %s/%s: %w", s.Name(), jsonName, err))
-			}
-			var genesisSysCfg GenesisSystemConfig
-			if err := json.Unmarshal(genesisSysCfgData, &genesisSysCfg); err != nil {
-				panic(fmt.Errorf("failed to decode genesis system config %s/%s: %w", s.Name(), jsonName, err))
-			}
 
 			chainConfig.Superchain = s.Name()
 			if other, ok := OPChains[chainConfig.ChainID]; ok {
@@ -94,35 +69,26 @@ func init() {
 			}
 			superchainEntry.ChainIDs = append(superchainEntry.ChainIDs, chainConfig.ChainID)
 			OPChains[chainConfig.ChainID] = &chainConfig
-			Addresses[chainConfig.ChainID] = &addrs
-			GenesisSystemConfigs[chainConfig.ChainID] = &genesisSysCfg
-
+			Addresses[chainConfig.ChainID] = &chainConfig.Addresses
+			GenesisSystemConfigs[chainConfig.ChainID] = &chainConfig.Genesis.SystemConfig
 		}
 
-		ciMainnetRPC := os.Getenv("CIRCLE_CI_MAINNET_RPC")
-		ciSepoliaRPC := os.Getenv("CIRCLE_CI_SEPOLIA_RPC")
-
-		switch superchainEntry.Superchain {
-		case "mainnet":
-			if ciMainnetRPC != "" {
-				fmt.Println("Using env var for mainnet rpc")
-				superchainEntry.Config.L1.PublicRPC = ciMainnetRPC
-			}
-		case "sepolia", "sepolia-dev-0":
-			if ciSepoliaRPC != "" {
-				fmt.Println("Using env var for sepolia rpc")
-				superchainEntry.Config.L1.PublicRPC = ciSepoliaRPC
+		// Impute endpoints only if we're not in codegen mode.
+		if os.Getenv("CODEGEN") == "" {
+			runningInCI := os.Getenv("CI")
+			switch superchainEntry.Superchain {
+			case "mainnet":
+				if runningInCI == "true" {
+					superchainEntry.Config.L1.PublicRPC = "https://ci-mainnet-l1-archive.optimism.io"
+				}
+			case "sepolia", "sepolia-dev-0":
+				if runningInCI == "true" {
+					superchainEntry.Config.L1.PublicRPC = "https://ci-sepolia-l1-archive.optimism.io"
+				}
 			}
 		}
 
 		Superchains[superchainEntry.Superchain] = &superchainEntry
-
-		implementations, err := newContractImplementations(s.Name())
-		if err != nil {
-			panic(fmt.Errorf("failed to read implementations of superchain target %s: %w", s.Name(), err))
-		}
-
-		Implementations[s.Name()] = implementations
 	}
 }
 

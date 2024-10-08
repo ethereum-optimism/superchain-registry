@@ -6,10 +6,8 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
-	"github.com/ethereum-optimism/optimism/op-bindings/predeploys"
-	"github.com/ethereum-optimism/optimism/op-service/retry"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,16 +17,11 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func TestGasPriceOracleParams(t *testing.T) {
-	isExcluded := map[uint64]bool{
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0   (no public endpoint)
-		11763072: true, // sepolia-dev-0/base-devnet-0     (no public endpoint)
-	}
-
-	gasPriceOraclAddr := predeploys.GasPriceOracleAddr
+func testGasPriceOracleParams(t *testing.T, chain *ChainConfig) {
+	gasPriceOraclAddr := common.HexToAddress("0x420000000000000000000000000000000000000F")
 
 	checkPreEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		desiredParams := standard.Config[chain.Superchain].GPOParams.PreEcotone
+		desiredParams := standard.Config.Params[chain.Superchain].GPOParams.PreEcotone
 
 		actualParams, err := getPreEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
@@ -42,7 +35,7 @@ func TestGasPriceOracleParams(t *testing.T) {
 	}
 
 	checkEcotoneResourceConfig := func(t *testing.T, chain *ChainConfig, client *ethclient.Client) {
-		desiredParams := standard.Config[chain.Superchain].GPOParams.Ecotone
+		desiredParams := standard.Config.Params[chain.Superchain].GPOParams.Ecotone
 
 		actualParams, err := getEcotoneGasPriceOracleParams(context.Background(), gasPriceOraclAddr, client)
 		require.NoError(t, err)
@@ -63,19 +56,11 @@ func TestGasPriceOracleParams(t *testing.T) {
 		}
 	}
 
-	for chainID, chain := range OPChains {
-		t.Run(perChainTestName(chain), func(t *testing.T) {
-			if isExcluded[chainID] {
-				t.Skip()
-			}
-			SkipCheckIfFrontierChain(t, *chain)
-			rpcEndpoint := chain.PublicRPC
-			require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
-			client, err := ethclient.Dial(rpcEndpoint)
-			require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-			checkResourceConfig(t, chain, client)
-		})
-	}
+	rpcEndpoint := chain.PublicRPC
+	require.NotEmpty(t, rpcEndpoint, "no public endpoint for chain")
+	client, err := ethclient.Dial(rpcEndpoint)
+	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	checkResourceConfig(t, chain, client)
 }
 
 type PreEcotoneGasPriceOracleParams struct {
@@ -92,27 +77,23 @@ type EcotoneGasPriceOracleParams struct {
 
 // getPreEcotoneGasPriceOracleParams gets the params by calling getters on the contract at addr. Will retry up to 3 times for each getter.
 func getPreEcotoneGasPriceOracleParams(ctx context.Context, addr common.Address, client *ethclient.Client) (PreEcotoneGasPriceOracleParams, error) {
-	maxAttempts := 3
 	callOpts := &bind.CallOpts{Context: ctx}
 	gasPriceOracle, err := bindings.NewGasPriceOracle(addr, client)
 	if err != nil {
 		return PreEcotoneGasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
 	}
 
-	decimals, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) { return gasPriceOracle.Decimals(callOpts) })
+	decimals, err := Retry(gasPriceOracle.Decimals)(callOpts)
 	if err != nil {
 		return PreEcotoneGasPriceOracleParams{}, fmt.Errorf("%s.Decimals(): %w", addr, err)
 	}
 
-	overhead, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) { return gasPriceOracle.Overhead(callOpts) })
+	overhead, err := Retry(gasPriceOracle.Overhead)(callOpts)
 	if err != nil {
 		return PreEcotoneGasPriceOracleParams{}, fmt.Errorf("%s.Overhead(): %w", addr, err)
 	}
 
-	scalar, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) { return gasPriceOracle.Scalar(callOpts) })
+	scalar, err := Retry(gasPriceOracle.Scalar)(callOpts)
 	if err != nil {
 		return PreEcotoneGasPriceOracleParams{}, fmt.Errorf("%s.Scalar(): %w", addr, err)
 	}
@@ -122,29 +103,25 @@ func getPreEcotoneGasPriceOracleParams(ctx context.Context, addr common.Address,
 	}, nil
 }
 
-// getEcotoneGasPriceOracleParams gets the params by calling getters on the contract at addr. Will retry up to 3 times for each getter.
+// getEcotoneGasPriceOracleParams gets the params by calling getters on the contract at addr. Will perform retries.
 func getEcotoneGasPriceOracleParams(ctx context.Context, addr common.Address, client *ethclient.Client) (EcotoneGasPriceOracleParams, error) {
-	maxAttempts := 3
 	callOpts := &bind.CallOpts{Context: ctx}
 	gasPriceOracle, err := bindings.NewGasPriceOracle(addr, client)
 	if err != nil {
 		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s: %w", addr, err)
 	}
 
-	decimals, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (*big.Int, error) { return gasPriceOracle.Decimals(callOpts) })
+	decimals, err := Retry(gasPriceOracle.Decimals)(callOpts)
 	if err != nil {
 		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s.Decimals(): %w", addr, err)
 	}
 
-	blobBaseFeeScalar, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (uint32, error) { return gasPriceOracle.BlobBaseFeeScalar(callOpts) })
+	blobBaseFeeScalar, err := Retry(gasPriceOracle.BlobBaseFeeScalar)(callOpts)
 	if err != nil {
 		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s.BlobBaseFeeScalar(): %w", addr, err)
 	}
 
-	baseFeeScalar, err := retry.Do(ctx, maxAttempts, retry.Exponential(),
-		func() (uint32, error) { return gasPriceOracle.BaseFeeScalar(callOpts) })
+	baseFeeScalar, err := Retry(gasPriceOracle.BaseFeeScalar)(callOpts)
 	if err != nil {
 		return EcotoneGasPriceOracleParams{}, fmt.Errorf("%s.BaseFeeScalar(): %w", addr, err)
 	}

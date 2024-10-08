@@ -5,38 +5,57 @@ import (
 	"io/fs"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
-//go:embed standard-config-mainnet.toml standard-config-sepolia.toml standard-config-sepolia-dev-0.toml
+//go:embed *.toml
 var standardConfigFile embed.FS
 
 func init() {
-	Config = make(map[string]*ConfigType)
-
-	Config["mainnet"] = new(ConfigType)
-	var err error
-	err = decodeTOMLFileIntoConfig("standard-config-mainnet.toml", Config["mainnet"])
-	if err != nil {
-		panic(err)
+	Config = ConfigType{
+		Params:        make(map[string]*Params),
+		Roles:         new(Roles),
+		MultisigRoles: make(map[string]*MultisigRoles),
 	}
 
-	Config["sepolia"] = new(ConfigType)
-	err = decodeTOMLFileIntoConfig("standard-config-sepolia.toml", Config["sepolia"])
-	if err != nil {
-		panic(err)
+	decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
+
+	networks := []string{"mainnet", "sepolia"}
+	for _, network := range networks {
+		Config.MultisigRoles[network] = new(MultisigRoles)
+		decodeTOMLFileIntoConfig("standard-config-roles-"+network+".toml", Config.MultisigRoles[network])
+
+		Config.Params[network] = new(Params)
+		decodeTOMLFileIntoConfig("standard-config-params-"+network+".toml", Config.Params[network])
+
+		var versions VersionTags = VersionTags{
+			Releases: make(map[Tag]superchain.ContractVersions, 0),
+		}
+
+		decodeTOMLFileIntoConfig("standard-versions-"+network+".toml", &versions)
+		NetworkVersions[network] = versions
 	}
 
-	Config["sepolia-dev-0"] = new(ConfigType)
-	err = decodeTOMLFileIntoConfig("standard-config-sepolia-dev-0.toml", Config["sepolia-dev-0"])
-	if err != nil {
-		panic(err)
-	}
+	decodeTOMLFileIntoConfig("standard-bytecodes.toml", &BytecodeHashes)
+	decodeTOMLFileIntoConfig("standard-immutables.toml", &BytecodeImmutables)
+
+	// Get the single standard release Tag (universal across superchain targets)
+	// and store in the standard.Release
+	temp := new(struct {
+		sr Tag `toml:"standard_release,omitempty"`
+	})
+	decodeTOMLFileIntoConfig("standard-releases.toml", temp)
+	Release = temp.sr
 }
 
-func decodeTOMLFileIntoConfig(filename string, config *ConfigType) error {
+func decodeTOMLFileIntoConfig[
+	T any](filename string, config *T) {
 	data, err := fs.ReadFile(standardConfigFile, filename)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	return toml.Unmarshal(data, config)
+	err = toml.Unmarshal(data, config)
+	if err != nil {
+		panic(err)
+	}
 }

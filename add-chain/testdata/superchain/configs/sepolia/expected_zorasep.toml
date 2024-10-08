@@ -1,0 +1,49 @@
+name = "testchain_zorasep"
+chain_id = 4206904
+public_rpc = "http://awe.some.rpc"
+sequencer_rpc = "http://awe.some.seq.rpc"
+explorer = "https://awesomescan.org"
+superchain_level = 0
+standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+batch_inbox_addr = "0xCd734290E4bd0200dAC631c7D4b9E8a33234e91f"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+data_availability_type = "eth-da"
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+
+[genesis]
+  l2_time = 1698080004
+  [genesis.l1]
+    hash = "0xf782446a2487d900addb5d466a8597c7c543b59fa9aaa154d413830238f8798a"
+    number = 4548041
+  [genesis.l2]
+    hash = "0x8b17d2d52564a5a90079d9c860e1386272579e87b17ea27a3868513f53facd74"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x3Cd868E221A3be64B161D596A7482257a99D857f"
+    overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
+    scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
+    gasLimit = 30000000
+
+[addresses]
+  SystemConfigOwner = "0xe8D525b30dD4C406570d47396b5b237DB30F13F1"
+  ProxyAdminOwner = "0x9663FF52F1666954551460FcF190b4E3DaECab37"
+  Guardian = "0xe8D525b30dD4C406570d47396b5b237DB30F13F1"
+  Challenger = "0xe8D525b30dD4C406570d47396b5b237DB30F13F1"
+  Proposer = "0x1F191527d46E4F8FE7BFdBb74b442941C1305E44"
+  UnsafeBlockSigner = "0x9431B143448A60A374ab196d0d7C0683c5369006"
+  BatchSubmitter = "0x5e80C486D66f51F4933EF04D61b8c4429eA01DB3"
+  AddressManager = "0xBBCfC68f590ae60Feb1551F4C639E3Eab5ea7BA9"
+  L1CrossDomainMessengerProxy = "0x6b95418119Aa1bc41D521377D98E6c367817A755"
+  L1ERC721BridgeProxy = "0x460Cb843a61CeB6cFB3BC3373FC405744f5be4ee"
+  L1StandardBridgeProxy = "0xC4Ed1Ae4671B38A44B3cea27E1F7462cFe6B1A87"
+  L2OutputOracleProxy = "0x3F8A862E63E759a77DA22d384027D21BF096bA9E"
+  OptimismMintableERC20FactoryProxy = "0x39f10A94B969587A2f1739b4AbE3b223814D2A07"
+  OptimismPortalProxy = "0x6C84AE91901CE8a4897187c33A0094a6e790f34d"
+  SystemConfigProxy = "0x8787D3382F60d4e072b4276BBda065959195dB33"
+  ProxyAdmin = "0xd3fE61dd95c1e148A6ef540e1D4983d62726661C"
+  SuperchainConfig = "0xdf69B06cEB4A4b4Db3CC288840435e673ac4d893"
