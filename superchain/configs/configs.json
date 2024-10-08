@@ -1407,7 +1407,7 @@
           "Name": "Cyber Testnet",
           "l2_chain_id": 111557560,
           "PublicRPC": "https://rpc.testnet.cyber.co",
-          "SequencerRPC": "https://cyber.alt.technology/",
+          "SequencerRPC": "https://cyber-testnet.alt.technology/",
           "Explorer": "https://testnet.cyberscan.co/",
           "SuperchainLevel": 0,
           "StandardChainCandidate": false,
