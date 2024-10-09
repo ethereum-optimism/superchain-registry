@@ -180,6 +180,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Funki Sepolia Sandbox"
+  identifier = "sepolia/funki"
+  chain_id = 3397901
+  rpc = ["https://funki-testnet.alt.technology"]
+  explorers = ["https://sepolia-sandbox.funkichain.com/"]
+  superchain_level = 0
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Lisk Sepolia Testnet"
   identifier = "sepolia/lisk"
   chain_id = 4202
