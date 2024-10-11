@@ -83,7 +83,7 @@
           }
         },
         {
-          "Name": "Ethernity Mainnet",
+          "Name": "Ethernity",
           "l2_chain_id": 183,
           "PublicRPC": "https://mainnet.ethernitychain.io",
           "SequencerRPC": "https://mainnet.ethernitychain.io",

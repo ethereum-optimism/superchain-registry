@@ -34,7 +34,7 @@
     }
   },
   {
-    "name": "Ethernity Mainnet",
+    "name": "Ethernity",
     "identifier": "mainnet/ethernity",
     "chainId": 183,
     "rpc": [

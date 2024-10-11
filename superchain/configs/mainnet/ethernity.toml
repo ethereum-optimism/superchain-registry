@@ -1,4 +1,4 @@
-name = "Ethernity Mainnet"
+name = "Ethernity"
 chain_id = 183
 public_rpc = "https://mainnet.ethernitychain.io"
 sequencer_rpc = "https://mainnet.ethernitychain.io"
