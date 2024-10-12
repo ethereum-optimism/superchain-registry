@@ -1,0 +1,34 @@
+rootProject.name = 'superchain-bindings'
+include 'superchain-registry'
+include 'superchain-primitives'
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        libs{
+            version('besu', '24.6.0')
+            version('jackson', '2.17.1')
+            version('tuweni', '2.4.2')
+            version('guava', '33.2.1-jre')
+            version('vertx', '4.5.8')
+
+            library('besu-datatypes', 'org.hyperledger.besu', 'besu-datatypes').versionRef('besu')
+            library('jackson-datatype-jdk8', 'com.fasterxml.jackson.datatype', 'jackson-datatype-jdk8').versionRef('jackson')
+            library('jackson-dataformat-yaml', 'com.fasterxml.jackson.dataformat', 'jackson-dataformat-yaml').versionRef('jackson')
+            library('jackson-dataformat-toml', 'com.fasterxml.jackson.dataformat', 'jackson-dataformat-toml').versionRef('jackson')
+            library('tuweni-bytes', 'io.tmio', 'tuweni-bytes').versionRef('tuweni')
+            library('guava', 'com.google.guava', 'guava').versionRef('guava')
+            library('vertx-core', 'io.vertx', 'vertx-core').versionRef('vertx')
+
+            bundle('jackson', ['jackson-datatype-jdk8', 'jackson-dataformat-yaml', 'jackson-dataformat-toml'])
+        }
+
+        testLibs {
+            def junit5 = version('junit5', '5.10.0')
+            library('junit-bom', 'org.junit', 'junit-bom').versionRef(junit5)
+            library('junit-api', 'org.junit.jupiter', 'junit-jupiter-api').versionRef(junit5)
+            library('junit-engine', 'org.junit.jupiter', 'junit-jupiter-engine').versionRef(junit5)
+
+            bundle('junit', ['junit-api', 'junit-engine'])
+        }
+    }
+}

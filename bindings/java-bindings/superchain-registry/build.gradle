@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+}
+
+group = 'me.grapebaba'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url "https://hyperledger.jfrog.io/artifactory/besu-maven/"
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            exclude('**/*.go', '**/go.mod', '**/go.sum')
+            srcDirs+=['../../../superchain']
+        }
+    }
+
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+dependencies {
+    implementation project(':superchain-primitives')
+    implementation libs.guava
+    implementation libs.besu.datatypes
+    implementation libs.bundles.jackson
+    implementation libs.jackson.datatype.jdk8
+    implementation libs.tuweni.bytes
+    testImplementation platform(testLibs.junit.bom)
+    testImplementation testLibs.bundles.junit
+}
+
+test {
+    useJUnitPlatform()
+}
