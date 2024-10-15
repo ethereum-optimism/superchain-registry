@@ -17,6 +17,24 @@
     }
   },
   {
+    "name": "Automata Mainnet",
+    "identifier": "mainnet/automata",
+    "chainId": 65536,
+    "rpc": [
+      "https://rpc.ata.network"
+    ],
+    "explorers": [
+      "https://explorer.ata.network"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    },
+    "gasPayingToken": "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
+  },
+  {
     "name": "Base",
     "identifier": "mainnet/base",
     "chainId": 8453,
