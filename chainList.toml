@@ -23,7 +23,7 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "Ethernity Mainnet"
+  name = "Ethernity"
   identifier = "mainnet/ethernity"
   chain_id = 183
   rpc = ["https://mainnet.ethernitychain.io"]
