@@ -256,6 +256,23 @@
     }
   },
   {
+    "name": "Funki Sepolia Sandbox",
+    "identifier": "sepolia/funki",
+    "chainId": 3397901,
+    "rpc": [
+      "https://funki-testnet.alt.technology"
+    ],
+    "explorers": [
+      "https://sepolia-sandbox.funkichain.com/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Lisk Sepolia Testnet",
     "identifier": "sepolia/lisk",
     "chainId": 4202,
