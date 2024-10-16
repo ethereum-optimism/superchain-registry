@@ -9,6 +9,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation"
 )
 
 type AddressData struct {
@@ -17,15 +18,15 @@ type AddressData struct {
 
 func readAddressesFromChain(addresses *superchain.AddressList, l1RpcUrl string, isFaultProofs bool) error {
 	// SuperchainConfig
-	address, err := superchain.CastCall(addresses.OptimismPortalProxy, "superchainConfig()(address)", nil, l1RpcUrl)
+	address, err := validation.CastCall(addresses.OptimismPortalProxy, "superchainConfig()(address)", nil, l1RpcUrl)
 	if err == nil {
 		addresses.SuperchainConfig = superchain.MustHexToAddress(address[0])
 	}
 
 	// Guardian
-	address, err = superchain.CastCall(addresses.SuperchainConfig, "guardian()(address)", nil, l1RpcUrl)
+	address, err = validation.CastCall(addresses.SuperchainConfig, "guardian()(address)", nil, l1RpcUrl)
 	if err != nil {
-		address, err = superchain.CastCall(addresses.OptimismPortalProxy, "guardian()(address)", nil, l1RpcUrl)
+		address, err = validation.CastCall(addresses.OptimismPortalProxy, "guardian()(address)", nil, l1RpcUrl)
 		if err != nil {
 			return fmt.Errorf("could not retrieve address for Guardian %w", err)
 		}
@@ -33,28 +34,28 @@ func readAddressesFromChain(addresses *superchain.AddressList, l1RpcUrl string, 
 	addresses.Guardian = superchain.MustHexToAddress(address[0])
 
 	// ProxyAdminOwner
-	address, err = superchain.CastCall(addresses.ProxyAdmin, "owner()(address)", nil, l1RpcUrl)
+	address, err = validation.CastCall(addresses.ProxyAdmin, "owner()(address)", nil, l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("could not retrieve address for ProxyAdminOwner")
 	}
 	addresses.ProxyAdminOwner = superchain.MustHexToAddress(address[0])
 
 	// SystemConfigOwner
-	address, err = superchain.CastCall(addresses.SystemConfigProxy, "owner()(address)", nil, l1RpcUrl)
+	address, err = validation.CastCall(addresses.SystemConfigProxy, "owner()(address)", nil, l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("could not retrieve address for SystemConfigOwner")
 	}
 	addresses.SystemConfigOwner = superchain.MustHexToAddress(address[0])
 
 	// UnsafeBlockSigner
-	address, err = superchain.CastCall(addresses.SystemConfigProxy, "unsafeBlockSigner()(address)", nil, l1RpcUrl)
+	address, err = validation.CastCall(addresses.SystemConfigProxy, "unsafeBlockSigner()(address)", nil, l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("could not retrieve address for UnsafeBlockSigner")
 	}
 	addresses.UnsafeBlockSigner = superchain.MustHexToAddress(address[0])
 
 	// BatchSubmitter
-	hash, err := superchain.CastCall(addresses.SystemConfigProxy, "batcherHash()(bytes32)", nil, l1RpcUrl)
+	hash, err := validation.CastCall(addresses.SystemConfigProxy, "batcherHash()(bytes32)", nil, l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("could not retrieve batcherHash")
 	}
@@ -63,28 +64,28 @@ func readAddressesFromChain(addresses *superchain.AddressList, l1RpcUrl string, 
 
 	if isFaultProofs {
 		// Proposer
-		address, err = superchain.CastCall(addresses.PermissionedDisputeGame, "proposer()(address)", nil, l1RpcUrl)
+		address, err = validation.CastCall(addresses.PermissionedDisputeGame, "proposer()(address)", nil, l1RpcUrl)
 		if err != nil {
 			return fmt.Errorf("could not retrieve address for Proposer")
 		}
 		addresses.Proposer = superchain.MustHexToAddress(address[0])
 
 		// Challenger
-		address, err = superchain.CastCall(addresses.PermissionedDisputeGame, "challenger()(address)", nil, l1RpcUrl)
+		address, err = validation.CastCall(addresses.PermissionedDisputeGame, "challenger()(address)", nil, l1RpcUrl)
 		if err != nil {
 			return fmt.Errorf("could not retrieve address for Challenger")
 		}
 		addresses.Challenger = superchain.MustHexToAddress(address[0])
 	} else {
 		// Proposer
-		address, err = superchain.CastCall(addresses.L2OutputOracleProxy, "PROPOSER()(address)", nil, l1RpcUrl)
+		address, err = validation.CastCall(addresses.L2OutputOracleProxy, "PROPOSER()(address)", nil, l1RpcUrl)
 		if err != nil {
 			return fmt.Errorf("could not retrieve address for Proposer")
 		}
 		addresses.Proposer = superchain.MustHexToAddress(address[0])
 
 		// Challenger
-		address, err = superchain.CastCall(addresses.L2OutputOracleProxy, "CHALLENGER()(address)", nil, l1RpcUrl)
+		address, err = validation.CastCall(addresses.L2OutputOracleProxy, "CHALLENGER()(address)", nil, l1RpcUrl)
 		if err != nil {
 			return fmt.Errorf("could not retrieve address for Challenger")
 		}

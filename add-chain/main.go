@@ -15,6 +15,7 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/add-chain/config"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/flags"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/ethereum-optimism/superchain-registry/validation/genesis"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -218,7 +219,7 @@ func inferIsFaultProofs(systemConfigProxyAddress, optimismPortalProxyAddress sup
 	}
 
 	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
-	castResult, err := superchain.CastCall(optimismPortalProxyAddress, "version()(string)", nil, l1RpcUrl)
+	castResult, err := validation.CastCall(optimismPortalProxyAddress, "version()(string)", nil, l1RpcUrl)
 	if err != nil {
 		return false, fmt.Errorf("failed to get OptimismPortalProxy.version(): %w", err)
 	}
