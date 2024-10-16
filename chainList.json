@@ -34,7 +34,7 @@
     }
   },
   {
-    "name": "Ethernity Mainnet",
+    "name": "Ethernity",
     "identifier": "mainnet/ethernity",
     "chainId": 183,
     "rpc": [
@@ -144,6 +144,23 @@
     ],
     "explorers": [
       "https://racescan.io/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Shape",
+    "identifier": "mainnet/shape",
+    "chainId": 360,
+    "rpc": [
+      "https://mainnet.shape.network/"
+    ],
+    "explorers": [
+      "https://shape-mainnet.explorer.alchemy.com/"
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
@@ -318,11 +335,28 @@
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
+    "gasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e",
     "parent": {
       "type": "L2",
       "chain": "sepolia"
-    },
-    "gasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
+    }
+  },
+  {
+    "name": "Shape Sepolia Testnet",
+    "identifier": "sepolia/shape",
+    "chainId": 11011,
+    "rpc": [
+      "https://sepolia.shape.network/"
+    ],
+    "explorers": [
+      "https://shape-sepolia.explorer.alchemy.com/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
   },
   {
     "name": "World Chain Sepolia Testnet",
