@@ -218,12 +218,12 @@ func inferIsFaultProofs(systemConfigProxyAddress, optimismPortalProxyAddress sup
 	}
 
 	// Portal version `3` is the first version of the `OptimismPortal` that supported the fault proof system.
-	version, err := castCall(optimismPortalProxyAddress, "version()(string)", l1RpcUrl)
+	castResult, err := superchain.CastCall(optimismPortalProxyAddress, "version()(string)", nil, l1RpcUrl)
 	if err != nil {
 		return false, fmt.Errorf("failed to get OptimismPortalProxy.version(): %w", err)
 	}
 
-	version, err = strconv.Unquote(version)
+	version, err := strconv.Unquote(castResult[0])
 	if err != nil {
 		return false, fmt.Errorf("failed to parse OptimismPortalProxy.version(): %w", err)
 	}
