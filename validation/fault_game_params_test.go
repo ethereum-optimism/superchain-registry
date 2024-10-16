@@ -105,7 +105,7 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 
 func findOpProgramRelease(hash string) bool {
 	for _, element := range standard.OpProgramReleases.Releases {
-		if strings.ToLower(element.Hash) == strings.ToLower(hash) {
+		if strings.EqualFold(element.Hash, hash) {
 			return true
 		}
 	}
