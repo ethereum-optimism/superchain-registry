@@ -28,6 +28,7 @@ const (
 	OptimismPortal2ParamsTest    = "Optimism_Portal_2_Params"
 	KeyHandoverTest              = "Key_Handover"
 	GenesisAllocsMetadataTest    = "Genesis_Allocs_Metadata"
+	FaultGameParamsTest          = "Fault_Game_Params"
 )
 
 type (
@@ -95,6 +96,7 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 	// Other
 	t.Run(DataAvailabilityTypeTest, applyExclusions(chain, testDataAvailabilityType))
 	t.Run(GenesisAllocsMetadataTest, applyExclusions(chain, testGenesisAllocsMetadata))
+	t.Run(FaultGameParamsTest, applyExclusions(chain, testFaultGameParams))
 }
 
 // testStandard should be applied only to a fully Standard Chain,
