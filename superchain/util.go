@@ -1,12 +1,9 @@
 package superchain
 
 import (
-	"bytes"
 	"encoding/hex"
 	"fmt"
 	"math/big"
-	"os/exec"
-	"strings"
 
 	"golang.org/x/crypto/sha3"
 )
@@ -151,26 +148,4 @@ func keccak256(v []byte) Hash {
 	st := sha3.NewLegacyKeccak256()
 	st.Write(v)
 	return *(*[32]byte)(st.Sum(nil))
-}
-
-func CastCall(contractAddress Address, calldata string, args []string, l1RpcUrl string) ([]string, error) {
-	cmdArgs := []string{"call", contractAddress.String(), calldata}
-	cmdArgs = append(cmdArgs, args...)
-	cmdArgs = append(cmdArgs, "-r", l1RpcUrl)
-
-	cmd := exec.Command("cast", cmdArgs...)
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		return nil, fmt.Errorf("%s, %w", &stderr, err)
-	}
-
-	results := strings.Fields(out.String())
-	if results == nil {
-		return nil, fmt.Errorf("cast call returned empty address")
-	}
-
-	return results, nil
 }
