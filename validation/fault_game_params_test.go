@@ -1,9 +1,11 @@
 package validation
 
 import (
+	"context"
 	"strings"
 	"testing"
 
+	"github.com/ethereum-optimism/optimism/op-service/eth"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -14,9 +16,13 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no public endpoint for L1 chain")
 
-	client, err := ethclient.Dial(rpcEndpoint)
+	clientL1, err := ethclient.Dial(rpcEndpoint)
 	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", rpcEndpoint)
-	defer client.Close()
+	defer clientL1.Close()
+
+	clientL2, err := ethclient.Dial(chain.PublicRPC)
+	require.NoError(t, err, "Failed to connect to the l2 client at RPC url %s", chain.PublicRPC)
+	defer clientL2.Close()
 
 	permissionedDisputeGameAddr, err := Addresses[chain.ChainID].AddressFor("PermissionedDisputeGame")
 	require.NoError(t, err)
@@ -90,17 +96,18 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 	require.Equal(t, "0x0000000000000000000000000000000000000000000000000000000000093a80", wethDelay[0], "DelayedWETH: bond withdrawal delay") // 12600
 
 	// AnchorStateRegistry
+	var anchors []string
 	if isPermissionless {
-		anchors, err := CastCall(anchorStateRegistryAddr, "anchors(uint32)(bytes32,uint256)", []string{"0"}, rpcEndpoint)
-		require.NoError(t, err)
-		require.Equal(t, "0xdead000000000000000000000000000000000000000000000000000000000000", anchors[0], "AnchorStateRegistry: output root hash") // 12600
-		// require.Equal(t, "0xdead000000000000000000000000000000000000000000000000000000000000", anchors[1], "AnchorStateRegistry: block number")     // 12600
+		anchors, err = CastCall(anchorStateRegistryAddr, "anchors(uint32)(bytes32,uint256)", []string{"0"}, rpcEndpoint)
 	} else {
-		anchors, err := CastCall(anchorStateRegistryAddr, "anchors(uint32)(bytes32,uint256)", []string{"1"}, rpcEndpoint)
-		require.NoError(t, err)
-		require.Equal(t, "0xdead000000000000000000000000000000000000000000000000000000000000", anchors[0], "AnchorStateRegistry: output root hash") // 12600
-		// require.Equal(t, "0xdead000000000000000000000000000000000000000000000000000000000000", anchors[1], "AnchorStateRegistry: block number")     // 12600
+		anchors, err = CastCall(anchorStateRegistryAddr, "anchors(uint32)(bytes32,uint256)", []string{"1"}, rpcEndpoint)
 	}
+	require.NoError(t, err)
+
+	var out *eth.OutputResponse
+	err = clientL2.Client().CallContext(context.Background(), &out, "optimism_outputAtBlock", anchors[1])
+	require.NoError(t, err)
+	require.Equal(t, out.OutputRoot.String(), anchors[0], "AnchorStateRegistry: output root hash") // 12600
 }
 
 func findOpProgramRelease(hash string) bool {
