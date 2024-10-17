@@ -119,6 +119,18 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Swan Chain Mainnet"
+  identifier = "mainnet/swan"
+  chain_id = 254
+  rpc = ["https://mainnet-rpc.swanchain.org"]
+  explorers = ["https://swanscan.io"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Binary Mainnet"
   identifier = "mainnet/tbn"
   chain_id = 624
