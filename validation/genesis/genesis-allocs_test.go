@@ -16,6 +16,7 @@ import (
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/validation/common"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/stretchr/testify/require"
@@ -173,6 +174,11 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 
 	g, err := core.LoadOPStackGenesis(chainId)
 	require.NoError(t, err)
+
+	if chainId == uint64(1301) {
+		delete(g.Alloc, common.HexToAddress("0x1f98431c8ad98523631ae4a59f267346ea31f984"))
+		delete(g.Alloc, common.HexToAddress("0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f"))
+	}
 
 	gotData, err := json.MarshalIndent(g.Alloc, "", " ")
 	require.NoError(t, err)

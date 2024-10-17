@@ -376,6 +376,23 @@
     "gasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
   },
   {
+    "name": "Unichain Sepolia Testnet",
+    "identifier": "sepolia/unichain",
+    "chainId": 1301,
+    "rpc": [
+      "https://sepolia.unichain.org"
+    ],
+    "explorers": [
+      "https://sepolia.uniscan.xyz"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "World Chain Sepolia Testnet",
     "identifier": "sepolia/worldchain",
     "chainId": 4801,

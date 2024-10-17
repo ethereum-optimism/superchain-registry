@@ -1,0 +1,78 @@
+{
+
+  "finalSystemOwner": "0xB6185370E3db2472EC7Ec4A2826954D2d4923B9f",
+  "proxyAdminOwner":  "0xe474339ee47775888df411a163c586a8bdeaaed0",
+  "superchainConfigGuardian": "0xD032D9E1F3b3ca6362EC56FbC9d689565F759825",
+
+  "l1StartingBlockTag": "safe",
+  "l1ChainID": 11155111,
+  "l2ChainID": 1301,
+  "l1BlockTime": 12,
+
+  "l2BlockTime": 1,
+  "maxSequencerDrift": 600,
+  "channelTimeout": 300,
+  "sequencerWindowSize": 3600,
+  "l2GenesisBlockGasLimit": "0x1c9c380",
+  "l2GenesisBlockBaseFeePerGas": "0x3b9aca00",
+  "eip1559Denominator": 50,
+  "eip1559DenominatorCanyon": 250,
+  "eip1559Elasticity": 6,
+  "gasPriceOracleBaseFeeScalar": 2000,
+  "gasPriceOracleBlobBaseFeeScalar": 900000,
+  "systemConfigStartBlock": 0,
+
+  "p2pSequencerAddress": "0x565B71025Ab4de80AcA33c62E51439af56301493",
+  "batchSenderAddress": "0x4AB3387810eF500bfe05a49dc53A44C222cbab3e",
+  "batchInboxAddress":  "0xff00000000000000000000000000000000001301",
+
+  "l2OutputOracleSubmissionInterval": 3600,
+  "l2OutputOracleStartingBlockNumber": 0,
+  "l2OutputOracleStartingTimestamp": -1,
+  "l2OutputOracleProposer": "0xA25B0eF1CC3ee12a0a167B5BF44dB1a9c166474e",
+  "l2OutputOracleChallenger": "0x921D59f383E9B86b3161a356013b6F8b40CF43C4",
+  "finalizationPeriodSeconds": 604800,
+
+  "baseFeeVaultRecipient": "0x3da2f6a418060ad902b4c44d5d967bdd45e37f7f",
+  "l1FeeVaultRecipient": "0x3da2f6a418060ad902b4c44d5d967bdd45e37f7f",
+  "sequencerFeeVaultRecipient": "0x3da2f6a418060ad902b4c44d5d967bdd45e37f7f",
+
+  "baseFeeVaultMinimumWithdrawalAmount": "0x8ac7230489e80000",
+  "l1FeeVaultMinimumWithdrawalAmount": "0x8ac7230489e80000",
+  "sequencerFeeVaultMinimumWithdrawalAmount": "0x8ac7230489e80000",
+  "baseFeeVaultWithdrawalNetwork": 1,
+  "l1FeeVaultWithdrawalNetwork": 1,
+  "sequencerFeeVaultWithdrawalNetwork": 1,
+
+  "enableGovernance": false,
+  "governanceTokenName": "Optimism",
+  "governanceTokenSymbol": "OP",
+  "governanceTokenOwner": "0x2FC3ffc903729a0f03966b917003800B145F67F3",
+
+  "requiredProtocolVersion": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "recommendedProtocolVersion": "0x0000000000000000000000000000000000000000000000000000000000000000",
+
+  "useFaultProofs": true,
+  "respectedGameType": 1,
+  "faultGameAbsolutePrestate": "0x00000000deaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddead",
+  "faultGameGenesisOutputRoot": "0x00000000deaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddead",
+  "faultGameMaxDepth": 73,
+  "faultGameClockExtension": 10800,
+  "faultGameMaxClockDuration": 302400,
+  "faultGameGenesisBlock": 0,
+  "faultGameSplitDepth": 30,
+  "faultGameWithdrawalDelay": 604800,
+  "preimageOracleMinProposalSize": 126000,
+  "preimageOracleChallengePeriod": 86400,
+  "proofMaturityDelaySeconds": 604800,
+  "disputeGameFinalityDelaySeconds": 302400,
+
+  "l2GenesisRegolithTimeOffset": "0x0",
+  "l2GenesisCanyonTimeOffset": "0x0",
+  "l2GenesisDeltaTimeOffset": "0x0",
+  "l2GenesisEcotoneTimeOffset": "0x0",
+  "l2GenesisFjordTimeOffset": "0x0",
+  "l2GenesisGraniteTimeOffset": "0x0",
+
+  "fundDevAccounts": false
+}
