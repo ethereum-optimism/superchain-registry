@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ethereum-optimism/optimism/op-program/prestates"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
-	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/require"
 )
@@ -74,7 +74,7 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 
 	absolutePrestate, err := CastCall(permissionedDisputeGameAddr, "absolutePrestate()", nil, rpcEndpoint)
 	require.NoError(t, err)
-	require.Truef(t, findOpProgramRelease(absolutePrestate[0]), "onchain op-program prestate hash is not from a standard version: %v", absolutePrestate[0])
+	require.Truef(t, findOpProgramRelease(t, absolutePrestate[0]), "onchain op-program prestate hash is not from a standard version: %v", absolutePrestate[0])
 
 	l2BlockNumber, err := CastCall(permissionedDisputeGameAddr, "l2BlockNumber()", nil, rpcEndpoint)
 	require.NoError(t, err)
@@ -110,9 +110,12 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 	require.Equal(t, out.OutputRoot.String(), anchors[0], "AnchorStateRegistry: output root hash")
 }
 
-func findOpProgramRelease(hash string) bool {
-	for _, element := range standard.OpProgramReleases.Releases {
-		if strings.EqualFold(element.Hash, hash) {
+func findOpProgramRelease(t *testing.T, hash string) bool {
+	releases, err := prestates.GetStandardReleases()
+	t.Logf("op-program releases: %v", releases)
+	require.NoError(t, err)
+	for _, release := range releases {
+		if strings.EqualFold(release.Hash, hash) {
 			return true
 		}
 	}

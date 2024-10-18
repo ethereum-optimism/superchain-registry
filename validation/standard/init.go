@@ -11,25 +11,12 @@ import (
 //go:embed *.toml
 var standardConfigFile embed.FS
 
-type OpProgramRelease struct {
-	Version string
-	Hash    string
-}
-
-type OpProgramReleasesType struct {
-	Releases []OpProgramRelease
-}
-
-var OpProgramReleases OpProgramReleasesType
-
 func init() {
 	Config = ConfigType{
 		Params:        make(map[string]*Params),
 		Roles:         new(Roles),
 		MultisigRoles: make(map[string]*MultisigRoles),
 	}
-
-	decodeTOMLFileIntoConfig("op-program-releases.toml", &OpProgramReleases)
 
 	decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
 
