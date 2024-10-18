@@ -256,6 +256,23 @@
     }
   },
   {
+    "name": "Cyber Testnet",
+    "identifier": "sepolia/cyber",
+    "chainId": 111557560,
+    "rpc": [
+      "https://rpc.testnet.cyber.co"
+    ],
+    "explorers": [
+      "https://testnet.cyberscan.co/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Funki Sepolia Sandbox",
     "identifier": "sepolia/funki",
     "chainId": 3397901,
