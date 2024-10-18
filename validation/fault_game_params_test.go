@@ -46,11 +46,11 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 	var isPermissionless bool
 	switch respectedGameType[0] {
 	case "0x0000000000000000000000000000000000000000000000000000000000000000":
-		isPermissionless = false
-		t.Log("detected Permissioned game type")
-	case "0x0000000000000000000000000000000000000000000000000000000000000001":
 		isPermissionless = true
 		t.Log("detected Permissionless game type")
+	case "0x0000000000000000000000000000000000000000000000000000000000000001":
+		isPermissionless = false
+		t.Log("detected Permissioned game type")
 	default:
 		require.Fail(t, "unexpected return value from OptimismPortalProxy.respectedGameType()")
 	}
@@ -88,12 +88,12 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 
 	minProposalSize, err := CastCall(preimageOracleAddr, "minProposalSize()", nil, rpcEndpoint)
 	require.NoError(t, err)
-	require.Equal(t, "0x000000000000000000000000000000000000000000000000000000000001ec30", minProposalSize[0], "PreimageOracle: minimum large preimage proposal size") // 12600
+	require.Equal(t, "0x000000000000000000000000000000000000000000000000000000000001ec30", minProposalSize[0], "PreimageOracle: minimum large preimage proposal size") // 126000 bytes
 
 	// DelayedWETH
 	wethDelay, err := CastCall(delayedWethAddr, "delay()", nil, rpcEndpoint)
 	require.NoError(t, err)
-	require.Equal(t, "0x0000000000000000000000000000000000000000000000000000000000093a80", wethDelay[0], "DelayedWETH: bond withdrawal delay") // 12600
+	require.Equal(t, "0x0000000000000000000000000000000000000000000000000000000000093a80", wethDelay[0], "DelayedWETH: bond withdrawal delay") // 604800 sec = 7 days
 
 	// AnchorStateRegistry
 	var anchors []string
@@ -107,7 +107,7 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 	var out *eth.OutputResponse
 	err = clientL2.Client().CallContext(context.Background(), &out, "optimism_outputAtBlock", anchors[1])
 	require.NoError(t, err)
-	require.Equal(t, out.OutputRoot.String(), anchors[0], "AnchorStateRegistry: output root hash") // 12600
+	require.Equal(t, out.OutputRoot.String(), anchors[0], "AnchorStateRegistry: output root hash")
 }
 
 func findOpProgramRelease(hash string) bool {
