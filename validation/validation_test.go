@@ -28,6 +28,7 @@ const (
 	OptimismPortal2ParamsTest    = "Optimism_Portal_2_Params"
 	KeyHandoverTest              = "Key_Handover"
 	GenesisAllocsMetadataTest    = "Genesis_Allocs_Metadata"
+	FaultGameParamsTest          = "Fault_Game_Params"
 )
 
 type (
@@ -100,14 +101,10 @@ func testStandardCandidate(t *testing.T, chain *ChainConfig) {
 // testStandard should be applied only to a fully Standard Chain,
 // i.e. not to a Standard Candidate Chain.
 func testStandard(t *testing.T, chain *ChainConfig) {
-	// Standard Config Params
 	t.Run(SuperchainConfigTest, applyExclusions(chain, testSuperchainConfig))
-	// Standard Contract Versions
 	t.Run(StandardContractVersionsTest, applyExclusions(chain, checkForStandardVersions))
-	// Standard Config Roles
+	t.Run(FaultGameParamsTest, applyExclusions(chain, testFaultGameParams))
 	t.Run(L1SecurityConfigTest, applyExclusions(chain, testL1SecurityConfig))
-	// Standard Config Params
 	t.Run(OptimismPortal2ParamsTest, applyExclusions(chain, testOptimismPortal2Params))
-	// Standard Config Roles
 	t.Run(KeyHandoverTest, applyExclusions(chain, testKeyHandover))
 }
