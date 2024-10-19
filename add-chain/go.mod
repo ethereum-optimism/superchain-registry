@@ -1,18 +1,16 @@
 module github.com/ethereum-optimism/superchain-registry/add-chain
 
-go 1.21
+go 1.22
 
-replace github.com/ethereum-optimism/superchain-registry/superchain => ../superchain
+toolchain go1.22.7
 
 replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240828150145-60038121c757
-
-replace github.com/ethereum-optimism/superchain-registry/validation => ../validation
 
 require (
 	github.com/BurntSushi/toml v1.4.0
 	github.com/ethereum-optimism/optimism v1.9.2-0.20240917150108-e7758b25fe3c
 	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240910145426-b3905c89e8ac
-	github.com/ethereum-optimism/superchain-registry/validation v0.0.0-00010101000000-000000000000
+	github.com/ethereum-optimism/superchain-registry/validation v0.0.0-20240910145426-b3905c89e8ac
 	github.com/ethereum/go-ethereum v1.14.8
 	github.com/google/go-cmp v0.6.0
 	github.com/joho/godotenv v1.5.1
