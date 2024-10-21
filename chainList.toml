@@ -180,6 +180,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Cyber Testnet"
+  identifier = "sepolia/cyber"
+  chain_id = 111557560
+  rpc = ["https://rpc.testnet.cyber.co"]
+  explorers = ["https://testnet.cyberscan.co/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Funki Sepolia Sandbox"
   identifier = "sepolia/funki"
   chain_id = 3397901
