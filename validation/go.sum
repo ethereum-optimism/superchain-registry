@@ -63,8 +63,6 @@ github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 h1:rpfIENRNNilwHwZeG5+P150SMrnN
 github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0/go.mod h1:v57UDF4pDQJcEfFUCRop3lJL149eHGSe9Jvczhzjo/0=
 github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240828150145-60038121c757 h1:egacojEWb68ew7vq0eyeOhM7XI2Soit/Xv1jXhVzRho=
 github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240828150145-60038121c757/go.mod h1:boCyfYcCK/lDcL1JA5daLc2qgvULU1zKcVtUJ605eGc=
-github.com/ethereum-optimism/optimism v1.9.4-0.20241018172321-943cd1db3f8e h1:q8z/xe7MVPJ3NAriBuNPWsDqQlmBFGzupFrWD7p165c=
-github.com/ethereum-optimism/optimism v1.9.4-0.20241018172321-943cd1db3f8e/go.mod h1:Xghe72cmK8ehQipbTp2TZSaiaKNIFKz2LWxKccAu5bg=
 github.com/ethereum-optimism/optimism v1.9.5-0.20241021140921-50de20d2eb0a h1:DBhSrQTKCOSLCGktUGr7XgzUNllqqu/QuK830mjqRds=
 github.com/ethereum-optimism/optimism v1.9.5-0.20241021140921-50de20d2eb0a/go.mod h1:Xghe72cmK8ehQipbTp2TZSaiaKNIFKz2LWxKccAu5bg=
 github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240910145426-b3905c89e8ac h1:hCIrLuOPV3FJfMDvXeOhCC3uQNvFoMIIlkT2mN2cfeg=
