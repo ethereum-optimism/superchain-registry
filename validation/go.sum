@@ -63,8 +63,6 @@ github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 h1:rpfIENRNNilwHwZeG5+P150SMrnN
 github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0/go.mod h1:v57UDF4pDQJcEfFUCRop3lJL149eHGSe9Jvczhzjo/0=
 github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240828150145-60038121c757 h1:egacojEWb68ew7vq0eyeOhM7XI2Soit/Xv1jXhVzRho=
 github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240828150145-60038121c757/go.mod h1:boCyfYcCK/lDcL1JA5daLc2qgvULU1zKcVtUJ605eGc=
-github.com/ethereum-optimism/optimism v1.9.5-0.20241021140921-50de20d2eb0a h1:DBhSrQTKCOSLCGktUGr7XgzUNllqqu/QuK830mjqRds=
-github.com/ethereum-optimism/optimism v1.9.5-0.20241021140921-50de20d2eb0a/go.mod h1:Xghe72cmK8ehQipbTp2TZSaiaKNIFKz2LWxKccAu5bg=
 github.com/ethereum-optimism/optimism v1.9.5-0.20241021150032-1e59d08322f8 h1:bhG/9dttuyOPZZUhMb3e5zApDunSAE5a8sy42P/V7sw=
 github.com/ethereum-optimism/optimism v1.9.5-0.20241021150032-1e59d08322f8/go.mod h1:5vH0W+a+76TjhxA//o8jr5d/zouHQaFtspVu0N2jumk=
 github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240910145426-b3905c89e8ac h1:hCIrLuOPV3FJfMDvXeOhCC3uQNvFoMIIlkT2mN2cfeg=
@@ -188,8 +186,6 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/prometheus/client_golang v1.20.4 h1:Tgh3Yr67PaOv/uTqloMsCEdeuFTatm5zIq5+qNN23vI=
-github.com/prometheus/client_golang v1.20.4/go.mod h1:PIEt8X02hGcP8JWbeHyeZ53Y/jReSnHgO035n//V5WE=
 github.com/prometheus/client_golang v1.20.5 h1:cxppBPuYhUnsO6yo/aoRol4L7q7UFfdm+bR9r+8l63Y=
 github.com/prometheus/client_golang v1.20.5/go.mod h1:PIEt8X02hGcP8JWbeHyeZ53Y/jReSnHgO035n//V5WE=
 github.com/prometheus/client_model v0.6.1 h1:ZKSh/rekM+n3CeS952MLRAdFwIKqeY8b62p8ais2e9E=
