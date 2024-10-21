@@ -68,7 +68,7 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 
 	absolutePrestate, err := CastCall(permissionedDisputeGameAddr, "absolutePrestate()", nil, rpcEndpoint)
 	require.NoError(t, err)
-	require.Truef(t, findOpProgramRelease(t, absolutePrestate[0]), "onchain op-program prestate hash is not from a standard version: %v", absolutePrestate[0])
+	require.Truef(t, findOpProgramRelease(t, absolutePrestate[0], chain.Superchain), "onchain op-program prestate hash is not from a standard version: %v", absolutePrestate[0])
 
 	// PreimageOracle
 	challengePeriod, err := CastCall(preimageOracleAddr, "challengePeriod()", nil, rpcEndpoint)
@@ -85,13 +85,18 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 	require.Equal(t, "0x0000000000000000000000000000000000000000000000000000000000093a80", wethDelay[0], "DelayedWETH: bond withdrawal delay") // 604800 sec = 7 days
 }
 
-func findOpProgramRelease(t *testing.T, hash string) bool {
-	releases, err := prestates.GetStandardReleases()
-	t.Logf("op-program releases: %v", releases)
+func findOpProgramRelease(t *testing.T, hash string, superchain string) bool {
+	isMainnet := superchain == "mainnet"
+	releases, err := prestates.GetReleases()
 	require.NoError(t, err)
 	for _, release := range releases {
 		if strings.EqualFold(release.Hash, hash) {
-			return true
+			if !isMainnet {
+				return true // testnets don't need GovernanceApproved releases
+			}
+			if release.GovernanceApproved {
+				return true
+			}
 		}
 	}
 	return false
