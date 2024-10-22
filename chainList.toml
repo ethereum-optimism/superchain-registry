@@ -289,6 +289,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "op-deploy-sepolia-test"
+  identifier = "sepolia/opdeployer"
+  chain_id = 12345
+  rpc = ["http://awe.some.rpc"]
+  explorers = ["https://awesomescan.org"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "RACE Testnet"
   identifier = "sepolia/race"
   chain_id = 6806
