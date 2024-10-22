@@ -51,6 +51,23 @@
     }
   },
   {
+    "name": "Funki",
+    "identifier": "mainnet/funki",
+    "chainId": 33979,
+    "rpc": [
+      "https://rpc-mainnet.funkichain.com"
+    ],
+    "explorers": [
+      "https://funki.superscan.network"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Lisk",
     "identifier": "mainnet/lisk",
     "chainId": 1135,
