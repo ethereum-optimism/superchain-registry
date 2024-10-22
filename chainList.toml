@@ -229,6 +229,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "bm Sepolia Test deployment"
+  identifier = "sepolia/bm-sepolia-test"
+  chain_id = 111222333444555666
+  rpc = [""]
+  explorers = [""]
+  superchain_level = 0
+  data_availability_type = ""
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Cyber Testnet"
   identifier = "sepolia/cyber"
   chain_id = 111557560

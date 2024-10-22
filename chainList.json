@@ -325,6 +325,23 @@
     }
   },
   {
+    "name": "bm Sepolia Test deployment",
+    "identifier": "sepolia/bm-sepolia-test",
+    "chainId": 111222333444555666,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Cyber Testnet",
     "identifier": "sepolia/cyber",
     "chainId": 111557560,
