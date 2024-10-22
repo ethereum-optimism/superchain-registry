@@ -235,7 +235,7 @@
   rpc = [""]
   explorers = [""]
   superchain_level = 0
-  data_availability_type = ""
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
