@@ -90,7 +90,7 @@
   rpc = ["https://rpc.lyra.finance"]
   explorers = ["https://explorer.lyra.finance"]
   superchain_level = 0
-  data_availability_type = "eth-da"
+  data_availability_type = "alt-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
