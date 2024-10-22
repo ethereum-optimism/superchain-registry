@@ -6,7 +6,7 @@ standard_chain_candidate = true       # This is a temporary field which causes m
 [addresses]
 AddressManager = "0xe400cD3d55b0a08929a2215483B55d5302665794"
 AnchorStateRegistryProxy = "0xcB671ca771Df1357C29B29bFDC335428CcfF8823"
-BatchSubmitter = "0x0e9c62712ab826e06b16b2236ce542f711eaffaf"
+BatchSubmitter = "0x0E9c62712ab826E06b16B2236ce542f711EafFaF"
 Challenger = "0xf1658da627dd0738c555f9572f658617511c49d5"
 DelayedWETHProxy = "0x099A20fF853F415Dd0aD20C6998F8c167d5f8b3E"                  # Permissioned game WETH proxy.
 DisputeGameFactoryProxy = "0x66626d277ab70a8f1c5446F4f161Cb25c73F97af"
