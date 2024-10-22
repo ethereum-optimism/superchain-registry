@@ -2027,7 +2027,7 @@
           }
         },
         {
-          "Name": "OPCM Sepolia Test deployment",
+          "Name": "bm Sepolia Test deployment",
           "l2_chain_id": 111222333444555666,
           "PublicRPC": "",
           "SequencerRPC": "",
