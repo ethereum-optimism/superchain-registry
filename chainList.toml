@@ -47,6 +47,18 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Funki"
+  identifier = "mainnet/funki"
+  chain_id = 33979
+  rpc = ["https://rpc-mainnet.funkichain.com"]
+  explorers = ["https://funki.superscan.network"]
+  superchain_level = 0
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Lisk"
   identifier = "mainnet/lisk"
   chain_id = 1135
