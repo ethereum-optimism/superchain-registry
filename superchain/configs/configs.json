@@ -2041,7 +2041,7 @@
           "block_time": 0,
           "seq_window_size": 0,
           "max_sequencer_drift": 0,
-          "DataAvailabilityType": "eth-da",
+          "DataAvailabilityType": "",
           "GasPayingToken": null,
           "genesis": {
             "l1": {
