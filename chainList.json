@@ -329,13 +329,13 @@
     "identifier": "sepolia/bm-sepolia-test",
     "chainId": 111222333444555666,
     "rpc": [
-      ""
+      "https://sepolia.blaine.energy"
     ],
     "explorers": [
-      ""
+      "https://sepolia.blaine.energy"
     ],
     "superchainLevel": 0,
-    "dataAvailabilityType": "",
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia"

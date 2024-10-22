@@ -232,10 +232,10 @@
   name = "bm Sepolia Test deployment"
   identifier = "sepolia/bm-sepolia-test"
   chain_id = 111222333444555666
-  rpc = [""]
-  explorers = [""]
+  rpc = ["https://sepolia.blaine.energy"]
+  explorers = ["https://sepolia.blaine.energy"]
   superchain_level = 0
-  data_availability_type = ""
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
