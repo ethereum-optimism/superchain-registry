@@ -126,7 +126,7 @@
   rpc = ["https://rpc.orderly.network"]
   explorers = ["https://explorer.orderly.network"]
   superchain_level = 0
-  data_availability_type = "eth-da"
+  data_availability_type = "alt-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
