@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -116,18 +117,18 @@ func init() {
 	}
 }
 
-// func testIsGloballyUnique(t *testing.T, chain *ChainConfig) {
-// 	props := globalChainIds[uint(chain.ChainID)]
-// 	require.NotNil(t, props, "chain ID is not listed at chainid.network")
-// 	globalChainName := props.Name
-// 	assert.Equal(t, globalChainName, chain.Name,
-// 		"Local chain name for %d does not match name from chainid.network", chain.ChainID)
-// 	assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
-// 	assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
-// 	normalizedURL, err := normalizeURL(chain.PublicRPC)
-// 	require.NoError(t, err)
-// 	assert.Contains(t, props.RPC, normalizedURL, "Specified RPC not specified in chainid.network")
-// }
+func testIsGloballyUnique(t *testing.T, chain *ChainConfig) {
+	props := globalChainIds[uint(chain.ChainID)]
+	require.NotNil(t, props, "chain ID is not listed at chainid.network")
+	globalChainName := props.Name
+	assert.Equal(t, globalChainName, chain.Name,
+		"Local chain name for %d does not match name from chainid.network", chain.ChainID)
+	assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
+	assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
+	normalizedURL, err := normalizeURL(chain.PublicRPC)
+	require.NoError(t, err)
+	assert.Contains(t, props.RPC, normalizedURL, "Specified RPC not specified in chainid.network")
+}
 
 func normalizeURL(rawURL string) (string, error) {
 	// Parse the URL
