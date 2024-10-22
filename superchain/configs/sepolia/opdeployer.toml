@@ -1,0 +1,60 @@
+name = "op-deploy-sepolia-test"
+chain_id = 12345
+public_rpc = "http://awe.some.rpc"
+sequencer_rpc = "http://awe.some.seq.rpc"
+explorer = "https://awesomescan.org"
+superchain_level = 0
+standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+batch_inbox_addr = "0x00E546b0a52c2879744f6dEf0fb483D581dC6D20"
+canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+block_time = 1
+seq_window_size = 3600
+max_sequencer_drift = 600
+data_availability_type = "eth-da"
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1729624716
+  [genesis.l1]
+    hash = "0xabc98cee278bc12de537d8c1d4413ff45ed4ff087358f09f0ac98df5c7c10cd8"
+    number = 6924501
+  [genesis.l2]
+    hash = "0x60c1c9f1958a95b5ccb777c9f95ae5f32838a7d1076b42ee8b3c924537e71490"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x058158b9D7db00fdA60aA71df0bEA7596F4db5C6"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
+    gasLimit = 60000000
+
+[addresses]
+  SystemConfigOwner = "0x87204a6141B79F214000c826A8911e69E84a217f"
+  ProxyAdminOwner = "0x22C454399ece66F5412ED16AD14fE583814449D8"
+  Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
+  Challenger = "0x84536c558Ce86d0F1937bA621304b6964933f05f"
+  Proposer = "0x658c42BBd4802CBE4E8b509e94ff521c5C05d137"
+  UnsafeBlockSigner = "0x5bcdd0F7f4729F139055A996DEFD27a47fAC9E72"
+  BatchSubmitter = "0x058158b9D7db00fdA60aA71df0bEA7596F4db5C6"
+  AddressManager = "0x12642E3c216aa9e878aF876d2bDBb54D8a44Acdd"
+  L1CrossDomainMessengerProxy = "0x63DB557e6C2Cc1149B9da5136DB01A831a52A81A"
+  L1ERC721BridgeProxy = "0x9a16862CCc6C27404EEF56A872414f9152c81a18"
+  L1StandardBridgeProxy = "0x1beA2dcb2abc239901d836E00867B4f597881556"
+  OptimismMintableERC20FactoryProxy = "0xA3Bd78adca5969E27Cfdc370F7E73cd17Bf9D9E5"
+  OptimismPortalProxy = "0xB274E074C39E54CA4db707f48E6338A40c092bd6"
+  SystemConfigProxy = "0xbC7B155DbFc0cA022C766419529c0ed80Ab81821"
+  ProxyAdmin = "0x95688e594f16E553D5C71dA43a83cA64987C3340"
+  SuperchainConfig = "0xC2Be75506d5724086DEB7245bd260Cc9753911Be"
+  AnchorStateRegistryProxy = "0x6B5732A8d074d555c24188decd32ee5383aCeD98"
+  DelayedWETHProxy = "0x47124f9608640ac741e1F9d999d54b3b991ebd44"
+  DisputeGameFactoryProxy = "0xba3b9B27074455bfF135b7Fff9929ed8f539AA76"
+  MIPS = "0x47B0E34C1054009e696BaBAAd56165e1e994144d"
+  PermissionedDisputeGame = "0xf7D488829e0197707822cE2cD9fF00db4Ffc5618"
+  PreimageOracle = "0x92240135b46fc1142dA181f550aE8f595B858854"

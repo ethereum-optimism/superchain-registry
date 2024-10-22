@@ -1,0 +1,23 @@
+{
+    "AddressManager": "0x12642e3c216aa9e878af876d2bdbb54d8a44acdd",
+    "AnchorStateRegistryProxy": "0x6b5732a8d074d555c24188decd32ee5383aced98",
+    "BatchSubmitter": "0x058158b9d7db00fda60aa71df0bea7596f4db5c6",
+    "Challenger": "0x84536c558ce86d0f1937ba621304b6964933f05f",
+    "DelayedWETHProxy": "0x47124f9608640ac741e1f9d999d54b3b991ebd44",
+    "DisputeGameFactoryProxy": "0xba3b9b27074455bff135b7fff9929ed8f539aa76",
+    "Guardian": "0x8c7e4a51acb17719d225bd17598b8a94b46c8767",
+    "L1CrossDomainMessengerProxy": "0x63db557e6c2cc1149b9da5136db01a831a52a81a",
+    "L1ERC721BridgeProxy": "0x9a16862ccc6c27404eef56a872414f9152c81a18",
+    "L1StandardBridgeProxy": "0x1bea2dcb2abc239901d836e00867b4f597881556",
+    "MIPS": "0x47b0e34c1054009e696babaad56165e1e994144d",
+    "OptimismMintableERC20FactoryProxy": "0xa3bd78adca5969e27cfdc370f7e73cd17bf9d9e5",
+    "OptimismPortalProxy": "0xb274e074c39e54ca4db707f48e6338a40c092bd6",
+    "PermissionedDisputeGame": "0xf7d488829e0197707822ce2cd9ff00db4ffc5618",
+    "PreimageOracle": "0x92240135b46fc1142da181f550ae8f595b858854",
+    "Proposer": "0x658c42bbd4802cbe4e8b509e94ff521c5c05d137",
+    "ProxyAdmin": "0x95688e594f16e553d5c71da43a83ca64987c3340",
+    "ProxyAdminOwner": "0x22c454399ece66f5412ed16ad14fe583814449d8",
+    "SystemConfigOwner": "0x87204a6141b79f214000c826a8911e69e84a217f",
+    "SystemConfigProxy": "0xbc7b155dbfc0ca022c766419529c0ed80ab81821",
+    "UnsafeBlockSigner": "0x5bcdd0f7f4729f139055a996defd27a47fac9e72"
+}
