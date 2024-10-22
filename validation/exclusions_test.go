@@ -64,6 +64,9 @@ var exclusions = map[string]map[uint64]bool{
 	DataAvailabilityTypeTest: {
 		12345: true, // sepolia/opdeployer
 	},
+	GPOParamsTest: {
+		12345: true, // sepolia/opdeployer
+	},
 }
 
 var silences = map[string]map[uint64]time.Time{
