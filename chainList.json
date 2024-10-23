@@ -171,6 +171,23 @@
     }
   },
   {
+    "name": "op-deployer-mainnet-test",
+    "identifier": "mainnet/opdeployer",
+    "chainId": 10041994,
+    "rpc": [
+      "http://awe.some.rpc"
+    ],
+    "explorers": [
+      "https://awesomescan.org"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Orderly Mainnet",
     "identifier": "mainnet/orderly",
     "chainId": 291,
