@@ -160,7 +160,6 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 		allocs := types.GenesisAlloc{}
 		err = json.Unmarshal(expectedData, &allocs)
 		removeEmptyStorageSlots(allocs, t)
-
 		require.NoError(t, err)
 		expectedData, err = json.MarshalIndent(allocs, "", " ")
 		require.NoError(t, err)
