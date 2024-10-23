@@ -1688,6 +1688,75 @@
           }
         },
         {
+          "Name": "op-deployer-sepolia-test",
+          "l2_chain_id": 12345,
+          "PublicRPC": "http://awe.some.rpc",
+          "SequencerRPC": "http://awe.some.seq.rpc",
+          "Explorer": "https://awesomescan.org",
+          "SuperchainLevel": 0,
+          "StandardChainCandidate": true,
+          "SuperchainTime": null,
+          "batch_inbox_address": "0x00E546b0a52c2879744f6dEf0fb483D581dC6D20",
+          "Superchain": "sepolia",
+          "Chain": "opdeployer",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "fjord_time": 0,
+          "granite_time": 0,
+          "block_time": 1,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 6,
+            "eip1559Denominator": 50,
+            "eip1559DenominatorCanyon": 250
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "l1": {
+              "hash": "0x5b20e778bba69fe28afa671de8bfb6d26aa2ca3ded8ea41b324a37008aa16e45",
+              "number": 6926325
+            },
+            "l2": {
+              "hash": "0x547450975472310dcebaa4e702d1eda1051ecb41bfb8013332a991c8b4f373a2",
+              "number": 0
+            },
+            "l2_time": 1729649400,
+            "system_config": {
+              "batcherAddr": "0x058158b9D7db00fdA60aA71df0bEA7596F4db5C6",
+              "overhead": "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "scalar": "0x010000000000000000000000000000000000000000000000000c5fc500000558",
+              "gasLimit": 60000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0x2Ee926FBCC6a5640cd449959109fDb24a0033ef7",
+            "AnchorStateRegistryProxy": "0x9D90032367F707D2Eb5Fc50AB56d0aCDcE1044E9",
+            "BatchSubmitter": "0x058158b9D7db00fdA60aA71df0bEA7596F4db5C6",
+            "Challenger": "0x84536c558Ce86d0F1937bA621304b6964933f05f",
+            "DelayedWETHProxy": "0x738bd793C0f4D3fE156397a655D77c21b92cDD2f",
+            "DisputeGameFactoryProxy": "0x024DcA8b680a7F0DdE06F8551832b5b5B93D6876",
+            "Guardian": "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E",
+            "L1CrossDomainMessengerProxy": "0xa331d31b1E5df5D9C363429Cf4667022A8b11896",
+            "L1ERC721BridgeProxy": "0x7cC15700968350a0EA6F65662E7A8363215DF2Ca",
+            "L1StandardBridgeProxy": "0x0202c473f5866Ca064857FE4A8BF366d0B970160",
+            "MIPS": "0x47B0E34C1054009e696BaBAAd56165e1e994144d",
+            "OptimismMintableERC20FactoryProxy": "0x5E89332674127Cb6B61fA3CADC45C5073c417B1d",
+            "OptimismPortalProxy": "0x5B5f60fE5Ab35978D906Dd258b9F86FD337b8C79",
+            "PermissionedDisputeGame": "0xC1528bB0a6582F0Eb51649C246E06EeCdF50627A",
+            "PreimageOracle": "0x92240135b46fc1142dA181f550aE8f595B858854",
+            "Proposer": "0x658c42BBd4802CBE4E8b509e94ff521c5C05d137",
+            "ProxyAdmin": "0xeb221F4e8CAe1524101751b17256b41BCd0c0e03",
+            "ProxyAdminOwner": "0x22C454399ece66F5412ED16AD14fE583814449D8",
+            "SuperchainConfig": "0xC2Be75506d5724086DEB7245bd260Cc9753911Be",
+            "SystemConfigOwner": "0x87204a6141B79F214000c826A8911e69E84a217f",
+            "SystemConfigProxy": "0x90ee9048203FCFeC3b06004aA505CC44deF00eb2",
+            "UnsafeBlockSigner": "0x5bcdd0F7f4729F139055A996DEFD27a47fAC9E72"
+          }
+        },
+        {
           "Name": "Base Sepolia Testnet",
           "l2_chain_id": 84532,
           "PublicRPC": "https://sepolia.base.org",

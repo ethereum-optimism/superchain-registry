@@ -37,19 +37,35 @@ var exclusions = map[string]map[uint64]bool{
 	ChainIDRPCTest: {
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
+		12345:    true, // sepolia/opdeployer
 	},
 	GenesisRPCTest: {
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
+		12345:    true, // sepolia/opdeployer
 	},
 	UniquenessTest: {
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   Not in https://github.com/ethereum-lists/chains
 		11763072: true, // sepolia-dev-0/base-devnet-0     Not in https://github.com/ethereum-lists/chains
+		12345:    true, // sepolia/opdeployer
 	},
 
 	// Standard Checks
 	OptimismPortal2ParamsTest: {
 		11763072: true, // sepolia-dev0/base-devnet-0
+	},
+
+	GasTokenTest: {
+		12345: true, // sepolia/opdeployer
+	},
+	L2SecurityConfigTest: {
+		12345: true, // sepolia/opdeployer
+	},
+	DataAvailabilityTypeTest: {
+		12345: true, // sepolia/opdeployer
+	},
+	GPOParamsTest: {
+		12345: true, // sepolia/opdeployer
 	},
 }
 
