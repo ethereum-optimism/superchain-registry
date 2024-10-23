@@ -221,17 +221,11 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 // This function removes empty storage slots as we know declaring empty slots is functionally equivalent to not declaring them.
 func removeEmptyStorageSlots(allocs types.GenesisAlloc, t *testing.T) {
 	for _, account := range allocs {
-		toDelete := make([]common.Hash, 0)
-
 		for slot, value := range account.Storage {
 			if value == (common.Hash{}) {
-				toDelete = append(toDelete, slot)
+				delete(account.Storage, slot)
+				t.Log("Removed empty storage slot: ", slot.Hex())
 			}
-		}
-
-		for _, slot := range toDelete {
-			delete(account.Storage, slot)
-			t.Log("Removed empty storage slot: ", slot.Hex())
 		}
 	}
 }
