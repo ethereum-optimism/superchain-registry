@@ -410,6 +410,23 @@
     }
   },
   {
+    "name": "op-deployer-sepolia-test",
+    "identifier": "sepolia/opdeployer",
+    "chainId": 12345,
+    "rpc": [
+      "http://awe.some.rpc"
+    ],
+    "explorers": [
+      "https://awesomescan.org"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "RACE Testnet",
     "identifier": "sepolia/race",
     "chainId": 6806,
