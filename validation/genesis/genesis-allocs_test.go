@@ -159,20 +159,7 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 		require.NoError(t, err)
 		allocs := types.GenesisAlloc{}
 		err = json.Unmarshal(expectedData, &allocs)
-		for _, account := range allocs {
-			toDelete := make([]common.Hash, 0)
-
-			for slot, value := range account.Storage {
-				if value == (common.Hash{}) {
-					toDelete = append(toDelete, slot)
-				}
-			}
-
-			for _, slot := range toDelete {
-				delete(account.Storage, slot)
-				t.Log("Removed empty storage slot: ", slot.Hex())
-			}
-		}
+		removeEmptyStorageSlots(allocs, t)
 
 		require.NoError(t, err)
 		expectedData, err = json.MarshalIndent(allocs, "", " ")
@@ -182,12 +169,14 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 		require.NoError(t, err)
 		gen := core.Genesis{}
 		err = json.Unmarshal(expectedData, &gen)
+		removeEmptyStorageSlots(gen.Alloc, t)
 		require.NoError(t, err)
 		expectedData, err = json.MarshalIndent(gen.Alloc, "", " ")
 		require.NoError(t, err)
 	}
 
 	g, err := core.LoadOPStackGenesis(chainId)
+	removeEmptyStorageSlots(g.Alloc, t)
 	require.NoError(t, err)
 
 	if chainId == uint64(1301) {
@@ -227,6 +216,24 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err)
 
 	require.Equal(t, string(expectedData), string(gotData))
+}
+
+// This function removes empty storage slots as we know declaring empty slots is functionally equivalent to not declaring them.
+func removeEmptyStorageSlots(allocs types.GenesisAlloc, t *testing.T) {
+	for _, account := range allocs {
+		toDelete := make([]common.Hash, 0)
+
+		for slot, value := range account.Storage {
+			if value == (common.Hash{}) {
+				toDelete = append(toDelete, slot)
+			}
+		}
+
+		for _, slot := range toDelete {
+			delete(account.Storage, slot)
+			t.Log("Removed empty storage slot: ", slot.Hex())
+		}
+	}
 }
 
 // trim the CBOR octets from the bytecode of a weth9 contract
