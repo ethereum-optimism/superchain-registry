@@ -120,6 +120,18 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "op-deployer-mainnet-test"
+  identifier = "mainnet/opdeployer"
+  chain_id = 10041994
+  rpc = ["http://awe.some.rpc"]
+  explorers = ["https://awesomescan.org"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Orderly Mainnet"
   identifier = "mainnet/orderly"
   chain_id = 291
