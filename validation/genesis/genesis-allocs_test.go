@@ -159,6 +159,21 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 		require.NoError(t, err)
 		allocs := types.GenesisAlloc{}
 		err = json.Unmarshal(expectedData, &allocs)
+		for _, account := range allocs {
+			toDelete := make([]common.Hash, 0)
+
+			for slot, value := range account.Storage {
+				if value == (common.Hash{}) {
+					toDelete = append(toDelete, slot)
+				}
+			}
+
+			for _, slot := range toDelete {
+				delete(account.Storage, slot)
+				t.Log("Removed empty storage slot: ", slot.Hex())
+			}
+		}
+
 		require.NoError(t, err)
 		expectedData, err = json.MarshalIndent(allocs, "", " ")
 		require.NoError(t, err)
