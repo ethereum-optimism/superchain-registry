@@ -8,7 +8,7 @@ replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth 
 
 require (
 	github.com/BurntSushi/toml v1.4.0
-	github.com/ethereum-optimism/optimism v1.9.5-0.20241021150032-1e59d08322f8
+	github.com/ethereum-optimism/optimism v1.9.5-0.20241023091529-83117192d461
 	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240910145426-b3905c89e8ac
 	github.com/ethereum/go-ethereum v1.14.11
 	github.com/google/go-cmp v0.6.0
