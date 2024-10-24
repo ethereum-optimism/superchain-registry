@@ -130,7 +130,7 @@
       "https://explorer.lyra.finance"
     ],
     "superchainLevel": 0,
-    "dataAvailabilityType": "eth-da",
+    "dataAvailabilityType": "alt-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -181,7 +181,7 @@
       "https://explorer.orderly.network"
     ],
     "superchainLevel": 0,
-    "dataAvailabilityType": "eth-da",
+    "dataAvailabilityType": "alt-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
