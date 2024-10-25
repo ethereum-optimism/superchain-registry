@@ -21,7 +21,7 @@ At the time of writing, this is implemented for
 * [op-geth](https://docs.optimism.io/builders/node-operators/configuration/base-config#initialization-via-network-flags)
 * [op-node](https://docs.optimism.io/builders/node-operators/configuration/base-config#configuring-op-node)
 
-These components load configuration via a sofware dependency on the Go bindings in the `superchain` module. See this [init-time code](../superchain/superchain.go#L163-L205) and [tests](../superchain/superchain_test.go#L226-L308).
+These components load configuration via a software dependency on the Go bindings in the `superchain` module. See this [init-time code](../superchain/superchain.go#L163-L205) and [tests](../superchain/superchain_test.go#L226-L308).
 
 This implies some more conditions which need to hold for a chain to receive the superchain-wide hardfork activation:
 * They must be running the above OP Stack software which supports this feature, with the relevant initialization invocations to trigger it
