@@ -229,21 +229,23 @@
     chain = "sepolia"
 
 [[chains]]
-<<<<<<< HEAD
-  name = "Ethernity Testnet"
-  identifier = "sepolia/ethernity"
-  chain_id = 233
-  rpc = ["https://testnet.ethernitychain.io"]
-  explorers = ["https://testnet.ernscan.io"]
-  superchain_level = 0
-  data_availability_type = "eth-da"
-  gas_paying_token = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-=======
   name = "Cyber Testnet"
   identifier = "sepolia/cyber"
   chain_id = 111557560
   rpc = ["https://rpc.testnet.cyber.co"]
   explorers = ["https://testnet.cyberscan.co/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Ethernity Testnet"
+  identifier = "sepolia/ethernity"
+  chain_id = 233
+  rpc = ["https://testnet.ethernitychain.io"]
+  explorers = ["https://testnet.ernscan.io"]
   superchain_level = 0
   data_availability_type = "eth-da"
   [chains.parent]
@@ -270,7 +272,6 @@
   explorers = ["https://sepolia-blockscout.lisk.com"]
   superchain_level = 0
   data_availability_type = "eth-da"
->>>>>>> main
   [chains.parent]
     type = "L2"
     chain = "sepolia"

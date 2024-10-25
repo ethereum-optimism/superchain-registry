@@ -1187,22 +1187,6 @@
           "ecotone_time": 0,
           "fjord_time": 0,
           "granite_time": 1723478400,
-          "Name": "Binary Sepolia",
-          "l2_chain_id": 625,
-          "PublicRPC": "https://rpc.testnet.thebinaryholdings.com",
-          "SequencerRPC": "https://sequencer.rpc.bnry.testnet.zeeve.net",
-          "Explorer": "https://explorer.sepolia.thebinaryholdings.com",
-          "SuperchainLevel": 0,
-          "StandardChainCandidate": false,
-          "SuperchainTime": null,
-          "batch_inbox_address": "0xFf00000000000000000000000000000000042069",
-          "Superchain": "sepolia",
-          "Chain": "tbn",
-          "canyon_time": 0,
-          "delta_time": 0,
-          "ecotone_time": 0,
-          "fjord_time": 1723204838,
-          "granite_time": 1723545055,
           "block_time": 2,
           "seq_window_size": 3600,
           "max_sequencer_drift": 600,
@@ -1212,37 +1196,21 @@
             "eip1559Denominator": 50,
             "eip1559DenominatorCanyon": 250
           },
-          "GasPayingToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+          "GasPayingToken": null,
           "genesis": {
-            "L1": {
-              "Hash": "0x2d9c0b883cfc901f509bd94953c283c477adc57c8a20e234029244e68f00142a",
-              "Number": 6037466
+            "l1": {
+              "hash": "0x2d9c0b883cfc901f509bd94953c283c477adc57c8a20e234029244e68f00142a",
+              "number": 6037466
             },
-            "L2": {
-              "Hash": "0x4715665848c513c54d71a3e60700743f2b37ec21df9b9d0b8eefee4c30cd557a",
-              "Number": 0
+            "l2": {
+              "hash": "0x4715665848c513c54d71a3e60700743f2b37ec21df9b9d0b8eefee4c30cd557a",
+              "number": 0
             },
             "l2_time": 1717499232,
-            "ExtraData": null,
             "system_config": {
               "batcherAddr": "0x973A9E30D6D11355A459A69E7CbFBa61C7627736",
               "overhead": "0x00000000000000000000000000000000000000000000000000000000000000bc",
               "scalar": "0x00000000000000000000000000000000000000000000000000000000000f4240",
-          "GasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e",
-          "genesis": {
-            "l1": {
-              "hash": "0x8d457519705ad17cf812d7cd4cfe5726eca8249f9e5f40a1d19992b07c2521ce",
-              "number": 6092340
-            },
-            "l2": {
-              "hash": "0xf1c38d92222758e1ea0c9c7ae1f7f2dfd0e3e747609f1c2d5a41ecfc5e84aba9",
-              "number": 0
-            },
-            "l2_time": 1718195040,
-            "system_config": {
-              "batcherAddr": "0x9CF89F8cB7cC94C579426f967d9517cd2e9adf29",
-              "overhead": "0x0000000000000000000000000000000000000000000000000000000000000000",
-              "scalar": "0x010000000000000000000000000000000000000000000000000c5fc500000558",
               "gasLimit": 30000000
             }
           },
@@ -1269,6 +1237,53 @@
             "SystemConfigOwner": "0x097955A7aa7966d55D781688Aa1493493AB513Af",
             "SystemConfigProxy": "0x7C957fec1F6B3d1024442E989cB08b8f2285686C",
             "UnsafeBlockSigner": "0xdb0C6821a033eb9Dc152bB008f42ebad0EAdDcA3"
+          }
+        },
+        {
+          "Name": "Binary Sepolia",
+          "l2_chain_id": 625,
+          "PublicRPC": "https://rpc.testnet.thebinaryholdings.com",
+          "SequencerRPC": "https://sequencer.rpc.bnry.testnet.zeeve.net",
+          "Explorer": "https://explorer.sepolia.thebinaryholdings.com",
+          "SuperchainLevel": 0,
+          "StandardChainCandidate": false,
+          "SuperchainTime": null,
+          "batch_inbox_address": "0xFf00000000000000000000000000000000042069",
+          "Superchain": "sepolia",
+          "Chain": "tbn",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "fjord_time": 1723204838,
+          "granite_time": 1723545055,
+          "block_time": 2,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 6,
+            "eip1559Denominator": 50,
+            "eip1559DenominatorCanyon": 250
+          },
+          "GasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e",
+          "genesis": {
+            "l1": {
+              "hash": "0x8d457519705ad17cf812d7cd4cfe5726eca8249f9e5f40a1d19992b07c2521ce",
+              "number": 6092340
+            },
+            "l2": {
+              "hash": "0xf1c38d92222758e1ea0c9c7ae1f7f2dfd0e3e747609f1c2d5a41ecfc5e84aba9",
+              "number": 0
+            },
+            "l2_time": 1718195040,
+            "system_config": {
+              "batcherAddr": "0x9CF89F8cB7cC94C579426f967d9517cd2e9adf29",
+              "overhead": "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "scalar": "0x010000000000000000000000000000000000000000000000000c5fc500000558",
+              "gasLimit": 30000000
+            }
+          },
+          "Addresses": {
             "AddressManager": "0xd1d82d6FC94962fe25912C181375352D4A10c6f0",
             "AnchorStateRegistryProxy": "0xb86eC23019C6c3f2FbC38502D26b7009d2A300Be",
             "BatchSubmitter": "0x9CF89F8cB7cC94C579426f967d9517cd2e9adf29",

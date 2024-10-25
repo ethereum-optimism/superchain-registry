@@ -325,16 +325,6 @@
     }
   },
   {
-<<<<<<< HEAD
-    "name": "Ethernity Testnet",
-    "identifier": "sepolia/ethernity",
-    "chainId": 233,
-    "rpc": [
-      "https://testnet.ethernitychain.io"
-    ],
-    "explorers": [
-      "https://testnet.ernscan.io"
-=======
     "name": "Cyber Testnet",
     "identifier": "sepolia/cyber",
     "chainId": 111557560,
@@ -343,17 +333,29 @@
     ],
     "explorers": [
       "https://testnet.cyberscan.co/"
->>>>>>> main
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia"
-<<<<<<< HEAD
-    },
-    "gasPayingToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-=======
+    }
+  },
+  {
+    "name": "Ethernity Testnet",
+    "identifier": "sepolia/ethernity",
+    "chainId": 233,
+    "rpc": [
+      "https://testnet.ethernitychain.io"
+    ],
+    "explorers": [
+      "https://testnet.ernscan.io"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
     }
   },
   {
@@ -389,7 +391,6 @@
       "type": "L2",
       "chain": "sepolia"
     }
->>>>>>> main
   },
   {
     "name": "Metal L2 Testnet",
