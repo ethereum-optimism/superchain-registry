@@ -34,6 +34,21 @@ func ConstructChainConfig(
 	if err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error reading file: %w", err)
 	}
+
+	// Detect any legacy "plasma" config fields and alert user to adjust their config to match
+	// the new "altda" format
+	var plasmaConfig LegacyPlasma
+	if err = json.Unmarshal(file, &plasmaConfig); err != nil {
+		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling legacy plasma json: %w", err)
+	}
+	if err = plasmaConfig.CheckNonNilFields(); err != nil {
+		fmt.Printf(
+			"❌ Detected legacy plasma configuration fields in rollup json file.\n" +
+				"❌   - Please follow the guide at the following url to migrate to the new altda format:\n" +
+				"❌   - https://docs.optimism.io/builders/chain-operators/features/alt-da-mode#breaking-changes-renaming-plasma-mode-to-alt-da-mode\n")
+		return superchain.ChainConfig{}, err
+	}
+
 	var chainConfig superchain.ChainConfig
 	if err = json.Unmarshal(file, &chainConfig); err != nil {
 		return superchain.ChainConfig{}, fmt.Errorf("error unmarshaling json: %w", err)
@@ -41,7 +56,7 @@ func ConstructChainConfig(
 
 	err = chainConfig.CheckDataAvailability()
 	if err != nil {
-		return superchain.ChainConfig{}, fmt.Errorf("error with json altDA config: %w", err)
+		return superchain.ChainConfig{}, fmt.Errorf("error with json altda config: %w", err)
 	}
 
 	genesis, err := utils.LoadJSON[core.Genesis](genesisPath)
@@ -59,7 +74,6 @@ func ConstructChainConfig(
 	chainConfig.StandardChainCandidate = standardChainCandidate
 	chainConfig.SuperchainTime = nil
 
-	fmt.Printf("Rollup config successfully constructed\n")
 	return chainConfig, nil
 }
 
@@ -108,8 +122,6 @@ func WriteChainConfigTOML(rollupConfig superchain.ChainConfig, targetDirectory s
 	if err := os.WriteFile(filename, []byte(finalContent.String()), 0o644); err != nil {
 		return fmt.Errorf("failed to write toml file: %w", err)
 	}
-
-	fmt.Printf("Rollup config written to: %s\n", filename)
 	return nil
 }
 

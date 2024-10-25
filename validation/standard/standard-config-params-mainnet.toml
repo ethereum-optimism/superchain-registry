@@ -2,7 +2,7 @@
 [rollup_config]
 # alt_da must be nil
 seq_window_size = [3600, 3600]
-block_time = [2, 2]
+block_time = [1, 2]
 
 [optimism_portal_2]
 proof_maturity_delay_seconds = [604800, 604800]        # 7 days

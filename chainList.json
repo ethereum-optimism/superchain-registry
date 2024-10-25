@@ -17,6 +17,24 @@
     }
   },
   {
+    "name": "Automata Mainnet",
+    "identifier": "mainnet/automata",
+    "chainId": 65536,
+    "rpc": [
+      "https://rpc.ata.network"
+    ],
+    "explorers": [
+      "https://explorer.ata.network"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    },
+    "gasPayingToken": "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
+  },
+  {
     "name": "Base",
     "identifier": "mainnet/base",
     "chainId": 8453,
@@ -25,6 +43,74 @@
     ],
     "explorers": [
       "https://explorer.base.org"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Cyber Mainnet",
+    "identifier": "mainnet/cyber",
+    "chainId": 7560,
+    "rpc": [
+      "https://rpc.cyber.co"
+    ],
+    "explorers": [
+      "https://cyberscan.co/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Ethernity",
+    "identifier": "mainnet/ethernity",
+    "chainId": 183,
+    "rpc": [
+      "https://mainnet.ethernitychain.io"
+    ],
+    "explorers": [
+      "https://ernscan.io"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Funki",
+    "identifier": "mainnet/funki",
+    "chainId": 33979,
+    "rpc": [
+      "https://rpc-mainnet.funkichain.com"
+    ],
+    "explorers": [
+      "https://funki.superscan.network"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Lisk",
+    "identifier": "mainnet/lisk",
+    "chainId": 1135,
+    "rpc": [
+      "https://rpc.api.lisk.com"
+    ],
+    "explorers": [
+      "https://blockscout.lisk.com"
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
@@ -119,6 +205,40 @@
     }
   },
   {
+    "name": "Shape",
+    "identifier": "mainnet/shape",
+    "chainId": 360,
+    "rpc": [
+      "https://mainnet.shape.network/"
+    ],
+    "explorers": [
+      "https://shape-mainnet.explorer.alchemy.com/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Swan Chain Mainnet",
+    "identifier": "mainnet/swan",
+    "chainId": 254,
+    "rpc": [
+      "https://mainnet-rpc.swanchain.org"
+    ],
+    "explorers": [
+      "https://swanscan.io"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Binary Mainnet",
     "identifier": "mainnet/tbn",
     "chainId": 624,
@@ -126,7 +246,7 @@
       "https://rpc.zero.thebinaryholdings.com"
     ],
     "explorers": [
-      "https://explorer.thebinaryholdings.com/"
+      "https://explorer.thebinaryholdings.com"
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
@@ -135,6 +255,23 @@
       "chain": "mainnet"
     },
     "gasPayingToken": "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
+  },
+  {
+    "name": "World Chain",
+    "identifier": "mainnet/worldchain",
+    "chainId": 480,
+    "rpc": [
+      "https://worldchain-mainnet.g.alchemy.com/public"
+    ],
+    "explorers": [
+      "https://worldchain-mainnet.explorer.alchemy.com/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
   },
   {
     "name": "Zora",
@@ -188,6 +325,7 @@
     }
   },
   {
+<<<<<<< HEAD
     "name": "Ethernity Testnet",
     "identifier": "sepolia/ethernity",
     "chainId": 233,
@@ -196,14 +334,62 @@
     ],
     "explorers": [
       "https://testnet.ernscan.io"
+=======
+    "name": "Cyber Testnet",
+    "identifier": "sepolia/cyber",
+    "chainId": 111557560,
+    "rpc": [
+      "https://rpc.testnet.cyber.co"
+    ],
+    "explorers": [
+      "https://testnet.cyberscan.co/"
+>>>>>>> main
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+<<<<<<< HEAD
     },
     "gasPayingToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+=======
+    }
+  },
+  {
+    "name": "Funki Sepolia Sandbox",
+    "identifier": "sepolia/funki",
+    "chainId": 3397901,
+    "rpc": [
+      "https://funki-testnet.alt.technology"
+    ],
+    "explorers": [
+      "https://sepolia-sandbox.funkichain.com/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Lisk Sepolia Testnet",
+    "identifier": "sepolia/lisk",
+    "chainId": 4202,
+    "rpc": [
+      "https://rpc.sepolia-api.lisk.com"
+    ],
+    "explorers": [
+      "https://sepolia-blockscout.lisk.com"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+>>>>>>> main
   },
   {
     "name": "Metal L2 Testnet",
@@ -248,6 +434,75 @@
     ],
     "explorers": [
       "https://testnet.racescan.io/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Shape Sepolia Testnet",
+    "identifier": "sepolia/shape",
+    "chainId": 11011,
+    "rpc": [
+      "https://sepolia.shape.network/"
+    ],
+    "explorers": [
+      "https://shape-sepolia.explorer.alchemy.com/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Binary Sepolia",
+    "identifier": "sepolia/tbn",
+    "chainId": 625,
+    "rpc": [
+      "https://rpc.testnet.thebinaryholdings.com"
+    ],
+    "explorers": [
+      "https://explorer.sepolia.thebinaryholdings.com"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    },
+    "gasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
+  },
+  {
+    "name": "Unichain Sepolia Testnet",
+    "identifier": "sepolia/unichain",
+    "chainId": 1301,
+    "rpc": [
+      "https://sepolia.unichain.org"
+    ],
+    "explorers": [
+      "https://sepolia.uniscan.xyz"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "World Chain Sepolia Testnet",
+    "identifier": "sepolia/worldchain",
+    "chainId": 4801,
+    "rpc": [
+      "https://worldchain-sepolia.g.alchemy.com/public"
+    ],
+    "explorers": [
+      "https://worldchain-sepolia.explorer.alchemy.com/"
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",

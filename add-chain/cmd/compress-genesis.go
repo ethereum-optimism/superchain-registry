@@ -115,6 +115,8 @@ var CompressGenesisCmd = cli.Command{
 			}
 		}
 
+		fmt.Printf("✅ Inserted bytecodes to hash->code database %s\n", zipOutputDir)
+
 		// convert into allocation data
 		out := Genesis{
 			Nonce:         genesis.Nonce,
@@ -159,6 +161,8 @@ var CompressGenesisCmd = cli.Command{
 		if err := writeGzipJSON(zipOutputDir, out); err != nil {
 			return fmt.Errorf("failed to write output: %w", err)
 		}
+
+		fmt.Printf("✅ Wrote compressed genesis file to %s\n", zipOutputDir)
 		return nil
 	},
 }

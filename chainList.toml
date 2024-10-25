@@ -11,11 +11,72 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Automata Mainnet"
+  identifier = "mainnet/automata"
+  chain_id = 65536
+  rpc = ["https://rpc.ata.network"]
+  explorers = ["https://explorer.ata.network"]
+  superchain_level = 0
+  data_availability_type = "alt-da"
+  gas_paying_token = "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Base"
   identifier = "mainnet/base"
   chain_id = 8453
   rpc = ["https://mainnet.base.org"]
   explorers = ["https://explorer.base.org"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Cyber Mainnet"
+  identifier = "mainnet/cyber"
+  chain_id = 7560
+  rpc = ["https://rpc.cyber.co"]
+  explorers = ["https://cyberscan.co/"]
+  superchain_level = 0
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Ethernity"
+  identifier = "mainnet/ethernity"
+  chain_id = 183
+  rpc = ["https://mainnet.ethernitychain.io"]
+  explorers = ["https://ernscan.io"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Funki"
+  identifier = "mainnet/funki"
+  chain_id = 33979
+  rpc = ["https://rpc-mainnet.funkichain.com"]
+  explorers = ["https://funki.superscan.network"]
+  superchain_level = 0
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Lisk"
+  identifier = "mainnet/lisk"
+  chain_id = 1135
+  rpc = ["https://rpc.api.lisk.com"]
+  explorers = ["https://blockscout.lisk.com"]
   superchain_level = 0
   data_availability_type = "eth-da"
   [chains.parent]
@@ -83,14 +144,50 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Shape"
+  identifier = "mainnet/shape"
+  chain_id = 360
+  rpc = ["https://mainnet.shape.network/"]
+  explorers = ["https://shape-mainnet.explorer.alchemy.com/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Swan Chain Mainnet"
+  identifier = "mainnet/swan"
+  chain_id = 254
+  rpc = ["https://mainnet-rpc.swanchain.org"]
+  explorers = ["https://swanscan.io"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Binary Mainnet"
   identifier = "mainnet/tbn"
   chain_id = 624
   rpc = ["https://rpc.zero.thebinaryholdings.com"]
-  explorers = ["https://explorer.thebinaryholdings.com/"]
+  explorers = ["https://explorer.thebinaryholdings.com"]
   superchain_level = 0
   data_availability_type = "eth-da"
   gas_paying_token = "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "World Chain"
+  identifier = "mainnet/worldchain"
+  chain_id = 480
+  rpc = ["https://worldchain-mainnet.g.alchemy.com/public"]
+  explorers = ["https://worldchain-mainnet.explorer.alchemy.com/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -132,6 +229,7 @@
     chain = "sepolia"
 
 [[chains]]
+<<<<<<< HEAD
   name = "Ethernity Testnet"
   identifier = "sepolia/ethernity"
   chain_id = 233
@@ -140,6 +238,39 @@
   superchain_level = 0
   data_availability_type = "eth-da"
   gas_paying_token = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+=======
+  name = "Cyber Testnet"
+  identifier = "sepolia/cyber"
+  chain_id = 111557560
+  rpc = ["https://rpc.testnet.cyber.co"]
+  explorers = ["https://testnet.cyberscan.co/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Funki Sepolia Sandbox"
+  identifier = "sepolia/funki"
+  chain_id = 3397901
+  rpc = ["https://funki-testnet.alt.technology"]
+  explorers = ["https://sepolia-sandbox.funkichain.com/"]
+  superchain_level = 0
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Lisk Sepolia Testnet"
+  identifier = "sepolia/lisk"
+  chain_id = 4202
+  rpc = ["https://rpc.sepolia-api.lisk.com"]
+  explorers = ["https://sepolia-blockscout.lisk.com"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+>>>>>>> main
   [chains.parent]
     type = "L2"
     chain = "sepolia"
@@ -174,6 +305,55 @@
   chain_id = 6806
   rpc = ["https://racetestnet.io"]
   explorers = ["https://testnet.racescan.io/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Shape Sepolia Testnet"
+  identifier = "sepolia/shape"
+  chain_id = 11011
+  rpc = ["https://sepolia.shape.network/"]
+  explorers = ["https://shape-sepolia.explorer.alchemy.com/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Binary Sepolia"
+  identifier = "sepolia/tbn"
+  chain_id = 625
+  rpc = ["https://rpc.testnet.thebinaryholdings.com"]
+  explorers = ["https://explorer.sepolia.thebinaryholdings.com"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  gas_paying_token = "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Unichain Sepolia Testnet"
+  identifier = "sepolia/unichain"
+  chain_id = 1301
+  rpc = ["https://sepolia.unichain.org"]
+  explorers = ["https://sepolia.uniscan.xyz"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "World Chain Sepolia Testnet"
+  identifier = "sepolia/worldchain"
+  chain_id = 4801
+  rpc = ["https://worldchain-sepolia.g.alchemy.com/public"]
+  explorers = ["https://worldchain-sepolia.explorer.alchemy.com/"]
   superchain_level = 0
   data_availability_type = "eth-da"
   [chains.parent]

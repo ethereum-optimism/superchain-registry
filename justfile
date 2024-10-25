@@ -31,7 +31,7 @@ test-add-chain:
 	# We separate the first test from the rest because it generates artifacts
 	# Which need to exist before the remaining tests run.
 	TEST_DIRECTORY=./add-chain go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run TestAddChain_Main
-	TEST_DIRECTORY=./add-chain go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run '[^TestAddChain_Main]'
+	TEST_DIRECTORY=./add-chain/... go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run '[^TestAddChain_Main]'
 
 # Test all Go code in the superchain module
 test-superchain: clean-add-chain
@@ -43,8 +43,12 @@ test-validation: clean-add-chain
 
 # Runs validation checks for any chain whose config changed
 validate-modified-chains REF:
-  # Running validation checks only for chains whose config has changed:
-  git diff --merge-base {{REF}} --name-only 'superchain/configs/*.toml' ':(exclude)superchain/**/superchain.toml' | xargs -r awk '/chain_id/ {print $3}' | xargs -I {} just validate {}
+  #!/usr/bin/env bash
+  set -e
+  diff_output=$(git diff --merge-base {{REF}} --name-only 'superchain/configs/*.toml' ':(exclude)superchain/**/superchain.toml')
+  echo $diff_output
+  echo $diff_output | xargs -r awk '/chain_id/ {print $3}' | xargs -I {} just validate {}
+
 # Run validation checks for chains with a name or chain ID matching the supplied regex, example: just validate 10
 validate CHAIN_ID:
 	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname -- -run='TestValidation/.+\({{CHAIN_ID}}\)$' -count=1

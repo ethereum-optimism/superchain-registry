@@ -22,9 +22,10 @@ type BytecodeAndImmutableReferences struct {
 }
 
 // initBytecodeImmutableMask returns the struct with coordinates of the immutable references in the deployed bytecode, if present
-func initBytecodeImmutableMask(bytecode []byte, contractName string) (*BytecodeAndImmutableReferences, error) {
+func initBytecodeImmutableMask(bytecode []byte, tag standard.Tag, contractName string) (*BytecodeAndImmutableReferences, error) {
 	parsedImmutables := map[string][]ImmutableReference{}
-	refs, exists := standard.ContractASTsWithImmutableReferences[contractName]
+
+	refs, exists := standard.BytecodeImmutables[tag].ForContractWithName(contractName)
 	if exists {
 		err := json.Unmarshal([]byte(refs), &parsedImmutables)
 		if err != nil {
@@ -34,19 +35,16 @@ func initBytecodeImmutableMask(bytecode []byte, contractName string) (*BytecodeA
 	return &BytecodeAndImmutableReferences{Bytecode: bytecode, ImmutableReferences: parsedImmutables}, nil
 }
 
-// maskBytecode checks for the presence of immutables in the contract, as indicated by the stored config and if present,
-// masks the sections of the bytecode where immutables are stored. If immutables aren't present, the stored bytecode in the receiver is unaltered
+// maskBytecode masks the sections of the bytecode where immutables are stored.
+// If immutables aren't present, the stored bytecode in the receiver is unaltered
 func (deployed *BytecodeAndImmutableReferences) maskBytecode(contractName string) error {
-	_, exists := standard.ContractASTsWithImmutableReferences[contractName]
-	if exists {
-		for _, v := range deployed.ImmutableReferences {
-			for _, r := range v {
-				for i := r.Start; i < r.Start+r.Length; i++ {
-					if i >= len(deployed.Bytecode) {
-						return fmt.Errorf("immutable reference [start:%d, length: %d] extends beyond bytecode", r.Start, r.Length)
-					}
-					deployed.Bytecode[i] = 0
+	for _, v := range deployed.ImmutableReferences {
+		for _, r := range v {
+			for i := r.Start; i < r.Start+r.Length; i++ {
+				if i >= len(deployed.Bytecode) {
+					return fmt.Errorf("immutable reference for contract %s [start:%d, length: %d] extends beyond bytecode", contractName, r.Start, r.Length)
 				}
+				deployed.Bytecode[i] = 0
 			}
 		}
 	}
