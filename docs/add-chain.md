@@ -6,7 +6,7 @@ The following are the steps you need to take to add a chain to the registry:
 > Ensure your chain is listed at [ethereum-lists/chains](https://github.com/ethereum-lists/chains).
 > This is to ensure your chain has a unique chain ID. Our validation suite will
 > check against this repository. This is a mandatory prerequisite before being
-> added to the registy.
+> added to the registry.
 
 ### 0. Fork this repository
 You will be raising a Pull Request from your fork to the upstream repo.
