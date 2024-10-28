@@ -241,6 +241,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Ethernity Testnet"
+  identifier = "sepolia/ethernity"
+  chain_id = 233
+  rpc = ["https://testnet.ethernitychain.io"]
+  explorers = ["https://testnet.ernscan.io"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Funki Sepolia Sandbox"
   identifier = "sepolia/funki"
   chain_id = 3397901

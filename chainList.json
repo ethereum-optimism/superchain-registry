@@ -342,6 +342,23 @@
     }
   },
   {
+    "name": "Ethernity Testnet",
+    "identifier": "sepolia/ethernity",
+    "chainId": 233,
+    "rpc": [
+      "https://testnet.ethernitychain.io"
+    ],
+    "explorers": [
+      "https://testnet.ernscan.io"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Funki Sepolia Sandbox",
     "identifier": "sepolia/funki",
     "chainId": 3397901,
