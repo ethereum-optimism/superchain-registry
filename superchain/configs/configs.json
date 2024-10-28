@@ -10,7 +10,8 @@
           "Explorer": "https://etherscan.io"
         },
         "ProtocolVersionsAddr": "0x8062AbC286f5e7D9428a0Ccb9AbD71e50d93b935",
-        "SuperchainConfigAddr": "0x95703e0982140D16f8ebA6d158FccEde42f04a4C"
+        "SuperchainConfigAddr": "0x95703e0982140D16f8ebA6d158FccEde42f04a4C",
+        "OPContractsManagerProxyAddr": "0x18CeC91779995AD14c880e4095456B9147160790"
       },
       "chains": [
         {
@@ -1167,7 +1168,8 @@
           "Explorer": "https://sepolia.etherscan.io"
         },
         "ProtocolVersionsAddr": "0x79ADD5713B383DAa0a138d3C4780C7A1804a8090",
-        "SuperchainConfigAddr": "0xC2Be75506d5724086DEB7245bd260Cc9753911Be"
+        "SuperchainConfigAddr": "0xC2Be75506d5724086DEB7245bd260Cc9753911Be",
+        "OPContractsManagerProxyAddr": "0xF564eEA7960EA244bfEbCBbB17858748606147bf"
       },
       "chains": [
         {
@@ -2045,7 +2047,8 @@
           "Explorer": "https://sepolia.etherscan.io"
         },
         "ProtocolVersionsAddr": "0x252CbE9517F731C618961D890D534183822dcC8d",
-        "SuperchainConfigAddr": "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
+        "SuperchainConfigAddr": "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7",
+        "OPContractsManagerProxyAddr": null
       },
       "chains": [
         {
