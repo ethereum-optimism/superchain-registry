@@ -511,8 +511,9 @@ type SuperchainConfig struct {
 	Name string           `toml:"name"`
 	L1   SuperchainL1Info `toml:"l1"`
 
-	ProtocolVersionsAddr *Address `toml:"protocol_versions_addr,omitempty"`
-	SuperchainConfigAddr *Address `toml:"superchain_config_addr,omitempty"`
+	ProtocolVersionsAddr        *Address `toml:"protocol_versions_addr,omitempty"`
+	SuperchainConfigAddr        *Address `toml:"superchain_config_addr,omitempty"`
+	OPContractsManagerProxyAddr *Address `toml:"op_contracts_manager_proxy_addr,omitempty"`
 
 	// Hardfork Configuration. These values may be overridden by individual chains.
 	hardForkDefaults HardForkConfiguration

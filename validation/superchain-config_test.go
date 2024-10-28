@@ -12,6 +12,9 @@ func testSuperchainConfig(t *testing.T, chain *ChainConfig) {
 	expected := Superchains[chain.Superchain].Config.SuperchainConfigAddr
 	require.NotNil(t, expected, "Superchain does not declare a superchain_config_addr")
 
+	opcm := Superchains[chain.Superchain].Config.OPContractsManagerProxyAddr
+	require.NotNil(t, opcm, "Superchain does not declare a op_contracts_manager_proxy_addr")
+
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
 

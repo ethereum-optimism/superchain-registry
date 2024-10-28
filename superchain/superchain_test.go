@@ -193,6 +193,7 @@ func TestSuperchainConfigUnmarshaling(t *testing.T) {
 name = "Mickey Mouse"
 protocol_versions_addr = "0x252CbE9517F731C618961D890D534183822dcC8d"
 superchain_config_addr = "0x02d91Cf852423640d93920BE0CAdceC0E7A00FA7"
+op_contracts_manager_proxy_addr = "0xF564eEA7960EA244bfEbCBbB17858748606147bf"
 
 canyon_time = 1
 delta_time = 2
