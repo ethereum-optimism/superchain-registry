@@ -61,7 +61,7 @@ validate-genesis-allocs CHAIN_ID:
 promotion-test:
   TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format dots -- -run Promotion
 
-  # Run the promotion tests for chains with a name or chain ID matching the supplied regex, example: just promote-test 10
+# Run the promotion tests for chains with a name or chain ID matching the supplied regex, example: just promote-test 10
 validate-standard-candidate CHAIN_ID:
 	TEST_DIRECTORY=./validation go run gotest.tools/gotestsum@latest --format testname -- -run='Promotion/.+\({{CHAIN_ID}}\)$' -count=1	
 
