@@ -90,7 +90,6 @@ func entrypoint(ctx *cli.Context) error {
 	sequencerRPC := ctx.String(flags.SequencerRpcFlag.Name)
 	explorer := ctx.String(flags.ExplorerFlag.Name)
 	superchainTarget := ctx.String(flags.SuperchainTargetFlag.Name)
-	monorepoDir := ctx.String(flags.MonorepoDirFlag.Name)
 
 	chainName := ctx.String(flags.ChainNameFlag.Name)
 	rollupConfigPath := ctx.String(flags.RollupConfigFlag.Name)
@@ -114,7 +113,6 @@ func entrypoint(ctx *cli.Context) error {
 	fmt.Printf("Chain Short Name:               %s\n", chainShortName)
 	fmt.Printf("Superchain target:              %s\n", superchainTarget)
 	fmt.Printf("Superchain-registry repo dir:   %s\n", superchainRepoRoot)
-	fmt.Printf("Monorepo dir:                   %s\n", monorepoDir)
 	fmt.Printf("Deployments directory:          %s\n", deploymentsDir)
 	fmt.Printf("Rollup config filepath:         %s\n", rollupConfigPath)
 	fmt.Printf("Genesis filepath:               %s\n", genesisPath)
