@@ -21,38 +21,21 @@ type uniqueProperties struct {
 	RPC       []string
 }
 
-type (
-	chainIDSet   map[uint64]bool
-	chainNameSet map[string]bool
-)
-
 type chainInfo struct {
-	localChainIds   chainIDSet
-	localChainNames chainNameSet
-	chainIDMutex    sync.RWMutex
-	chainNameMutex  sync.RWMutex
+	localChainIds   sync.Map
+	localChainNames sync.Map
 }
 
 func (c *chainInfo) AddIfUnique(chainId uint64, chainName string) error {
 	// Check if chainId is unique
-	c.chainIDMutex.RLock()
-	if c.localChainIds[chainId] {
-		c.chainIDMutex.RUnlock()
+	if _, exists := c.localChainIds.LoadOrStore(chainId, true); exists {
 		return fmt.Errorf("Chain with ID %d is duplicated", chainId)
 	}
-	c.chainIDMutex.RUnlock()
 
 	// Check if chainName is unique
-	c.chainNameMutex.RLock()
-	if c.localChainIds[chainId] {
-		c.chainNameMutex.RUnlock()
+	if _, exists := c.localChainNames.LoadOrStore(chainName, true); exists {
 		return fmt.Errorf("Chain with name %s is duplicated", chainName)
 	}
-	c.chainNameMutex.RUnlock()
-
-	c.chainNameMutex.Lock()
-	c.localChainNames[chainName] = true
-	c.chainNameMutex.Unlock()
 
 	return nil
 }
@@ -131,10 +114,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	localChains = &chainInfo{
-		localChainIds:   make(chainIDSet),
-		localChainNames: make(chainNameSet),
-	}
+	localChains = &chainInfo{}
 }
 
 func testIsGloballyUnique(t *testing.T, chain *ChainConfig) {
