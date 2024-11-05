@@ -128,35 +128,35 @@ func entrypoint(ctx *cli.Context) error {
 	// Check if superchain target directory exists
 	targetDir := filepath.Join(superchainRepoRoot, "superchain", "configs", superchainTarget)
 	if _, err := os.Stat(targetDir); os.IsNotExist(err) {
-		return fmt.Errorf("superchain target directory not found. Please follow instructions to add a superchain target in CONTRIBUTING.md: %s", targetDir)
+		return fmt.Errorf("superchain target directory not found: %s. Please add the target in CONTRIBUTING.md", targetDir)
 	}
 
 	l1RpcUrl, err := config.GetL1RpcUrl(superchainTarget)
 	if err != nil {
-		return fmt.Errorf("failed to retrieve L1 rpc url: %w", err)
+		return fmt.Errorf("failed to retrieve L1 rpc URL for superchain target %s: %w", superchainTarget, err)
 	}
 
 	var addresses superchain.AddressList
 	err = readAddressesFromJSON(&addresses, deploymentsDir)
 	if err != nil {
-		return fmt.Errorf("failed to read addresses from JSON files: %w", err)
+		return fmt.Errorf("failed to read addresses from JSON files in directory %s: %w", deploymentsDir, err)
 	}
 
 	isFaultProofs, err := inferIsFaultProofs(addresses.SystemConfigProxy, addresses.OptimismPortalProxy, l1RpcUrl)
 	if err != nil {
-		return fmt.Errorf("failed to infer fault proofs status of chain: %w", err)
+		return fmt.Errorf("failed to infer fault proofs status of chain using SystemConfigProxy (%s) and OptimismPortalProxy (%s): %w", addresses.SystemConfigProxy, addresses.OptimismPortalProxy, err)
 	}
 
 	rollupConfig, err := config.ConstructChainConfig(rollupConfigPath, genesisPath, chainName, publicRPC, sequencerRPC, explorer, superchainLevel, standardChainCandidate)
 	if err != nil {
-		return fmt.Errorf("failed to construct rollup config: %w", err)
+		return fmt.Errorf("failed to construct rollup config from path %s: %w", rollupConfigPath, err)
 	}
 
 	fmt.Printf("✅ Rollup config successfully constructed\n")
 
 	err = readAddressesFromChain(&addresses, l1RpcUrl, isFaultProofs)
 	if err != nil {
-		return fmt.Errorf("failed to read addresses from chain: %w", err)
+		return fmt.Errorf("failed to read addresses from chain at %s: %w", l1RpcUrl, err)
 	}
 
 	fmt.Printf("✅ Addresses read from chain\n")
@@ -169,18 +169,18 @@ func entrypoint(ctx *cli.Context) error {
 
 	l1RpcUrl, err = config.GetL1RpcUrl(superchainTarget)
 	if err != nil {
-		return fmt.Errorf("error getting l1RpcUrl: %w", err)
+		return fmt.Errorf("error retrieving L1 RPC URL for superchain target %s: %w", superchainTarget, err)
 	}
 	gpt, err := getGasPayingToken(l1RpcUrl, addresses.SystemConfigProxy)
 	if err != nil {
-		return fmt.Errorf("error inferring gas paying token: %w", err)
+		return fmt.Errorf("error inferring gas paying token using SystemConfigProxy address %s: %w", addresses.SystemConfigProxy, err)
 	}
 	rollupConfig.GasPayingToken = gpt
 
 	targetFilePath := filepath.Join(targetDir, chainShortName+".toml")
 	err = config.WriteChainConfigTOML(rollupConfig, targetFilePath)
 	if err != nil {
-		return fmt.Errorf("error generating chain config %s.toml file: %w", chainShortName, err)
+		return fmt.Errorf("error generating chain config file (%s.toml): %w", chainShortName, err)
 	}
 
 	fmt.Printf("✅ Wrote config for new chain to %s\n", targetFilePath)
@@ -192,17 +192,17 @@ func entrypoint(ctx *cli.Context) error {
 	genesisValidationInputsDir := filepath.Join(superchainRepoRoot, "validation", "genesis", "validation-inputs", folderName)
 	err = os.MkdirAll(genesisValidationInputsDir, os.ModePerm)
 	if err != nil {
-		return err
+		return fmt.Errorf("error creating directory for genesis validation inputs at %s: %w", genesisValidationInputsDir, err)
 	}
 	err = copyDeployConfigFile(deployConfigPath, genesisValidationInputsDir)
 	if err != nil {
-		return fmt.Errorf("error copying deploy-config json file: %w", err)
+		return fmt.Errorf("error copying deploy-config file from %s to validation inputs directory %s: %w", deployConfigPath, genesisValidationInputsDir, err)
 	}
-	fmt.Printf("✅ Copied deploy-config json file to validation module\n")
+	fmt.Printf("✅ Copied deploy-config JSON file to validation module\n")
 
 	err = writeGenesisValidationMetadata(genesisCreationCommit, genesisValidationInputsDir)
 	if err != nil {
-		return fmt.Errorf("error writing genesis validation metadata file: %w", err)
+		return fmt.Errorf("error writing genesis validation metadata file in directory %s: %w", genesisValidationInputsDir, err)
 	}
 	fmt.Printf("✅ Wrote genesis validation metadata file\n")
 
