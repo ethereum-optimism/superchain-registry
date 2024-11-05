@@ -1515,6 +1515,8 @@
           "canyon_time": 0,
           "delta_time": 0,
           "ecotone_time": 0,
+          "fjord_time": 1730106000,
+          "granite_time": 1730106000,
           "block_time": 2,
           "seq_window_size": 3600,
           "max_sequencer_drift": 1800,
