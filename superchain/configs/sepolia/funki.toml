@@ -1,4 +1,4 @@
-name = "Funki Sepolia Sandbox"
+name = "Funki Sepolia Testnet"
 chain_id = 3397901
 public_rpc = "https://funki-testnet.alt.technology"
 sequencer_rpc = "https://funki-testnet.alt.technology"

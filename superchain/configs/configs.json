@@ -1835,7 +1835,7 @@
           }
         },
         {
-          "Name": "Funki Sepolia Sandbox",
+          "Name": "Funki Sepolia Testnet",
           "l2_chain_id": 3397901,
           "PublicRPC": "https://funki-testnet.alt.technology",
           "SequencerRPC": "https://funki-testnet.alt.technology",
