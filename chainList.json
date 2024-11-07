@@ -427,6 +427,23 @@
     }
   },
   {
+    "name": "Pivotal Sepolia",
+    "identifier": "sepolia/pivotal",
+    "chainId": 16481,
+    "rpc": [
+      "https://sepolia.pivotalprotocol.com/"
+    ],
+    "explorers": [
+      "https://sepolia.pivotalscan.org/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "RACE Testnet",
     "identifier": "sepolia/race",
     "chainId": 6806,
