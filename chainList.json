@@ -359,7 +359,7 @@
     }
   },
   {
-    "name": "Funki Sepolia Sandbox",
+    "name": "Funki Sepolia Testnet",
     "identifier": "sepolia/funki",
     "chainId": 3397901,
     "rpc": [

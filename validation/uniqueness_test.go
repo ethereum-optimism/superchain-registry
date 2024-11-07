@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
@@ -20,23 +21,22 @@ type uniqueProperties struct {
 	RPC       []string
 }
 
-type chainIDSet map[uint64]bool
-
-func (s chainIDSet) AddIfUnique(id uint64) error {
-	if s[id] {
-		return fmt.Errorf("Chain with ID %d is duplicated", id)
-	}
-	s[id] = true
-	return nil
+type chainInfo struct {
+	localChainIds   sync.Map
+	localChainNames sync.Map
 }
 
-type chainNameSet map[string]bool
-
-func (s chainNameSet) AddIfUnique(name string) error {
-	if s[name] {
-		return fmt.Errorf("Chain with name %s is duplicated", name)
+func (c *chainInfo) AddIfUnique(chainId uint64, chainName string) error {
+	// Check if chainId is unique
+	if _, exists := c.localChainIds.LoadOrStore(chainId, true); exists {
+		return fmt.Errorf("Chain with ID %d is duplicated", chainId)
 	}
-	s[name] = true
+
+	// Check if chainName is unique
+	if _, exists := c.localChainNames.LoadOrStore(chainName, true); exists {
+		return fmt.Errorf("Chain with name %s is duplicated", chainName)
+	}
+
 	return nil
 }
 
@@ -104,9 +104,8 @@ func getGlobalChains() (map[uint]*uniqueProperties, error) {
 }
 
 var (
-	globalChainIds  map[uint]*uniqueProperties
-	localChainIds   = make(chainIDSet)
-	localChainNames = make(chainNameSet)
+	globalChainIds map[uint]*uniqueProperties
+	localChains    *chainInfo
 )
 
 func init() {
@@ -115,6 +114,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	localChains = &chainInfo{}
 }
 
 func testIsGloballyUnique(t *testing.T, chain *ChainConfig) {
@@ -123,8 +123,7 @@ func testIsGloballyUnique(t *testing.T, chain *ChainConfig) {
 	globalChainName := props.Name
 	assert.Equal(t, globalChainName, chain.Name,
 		"Local chain name for %d does not match name from chainid.network", chain.ChainID)
-	assert.NoError(t, localChainIds.AddIfUnique(chain.ChainID))
-	assert.NoError(t, localChainNames.AddIfUnique(chain.Name))
+	assert.NoError(t, localChains.AddIfUnique(chain.ChainID, chain.Name))
 	normalizedURL, err := normalizeURL(chain.PublicRPC)
 	require.NoError(t, err)
 	assert.Contains(t, props.RPC, normalizedURL, "Specified RPC not specified in chainid.network")
