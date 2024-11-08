@@ -253,7 +253,7 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "Funki Sepolia Sandbox"
+  name = "Funki Sepolia Testnet"
   identifier = "sepolia/funki"
   chain_id = 3397901
   rpc = ["https://funki-testnet.alt.technology"]
