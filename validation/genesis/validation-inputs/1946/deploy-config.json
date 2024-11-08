@@ -69,6 +69,9 @@
     "faultGameGenesisBlock": 0,
     "faultGameGenesisOutputRoot": "0x2694ac14dcf54b7a77363e3f60e6462dc78da0d43d1e2f058dbb6a1488814977",
     "preimageOracleMinProposalSize": 126000,
-    "preimageOracleChallengePeriod": 86400
+    "preimageOracleChallengePeriod": 86400,
+    "faultGameClockExtension": 10800,
+    "faultGameMaxClockDuration": 302400,
+    "faultGameWithdrawalDelay": 604800
 }
   
