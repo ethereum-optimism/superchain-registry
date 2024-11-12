@@ -265,7 +265,7 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "Funki Sepolia Sandbox"
+  name = "Funki Sepolia Testnet"
   identifier = "sepolia/funki"
   chain_id = 3397901
   rpc = ["https://funki-testnet.alt.technology"]
@@ -294,6 +294,18 @@
   chain_id = 1740
   rpc = ["https://testnet.rpc.metall2.com"]
   explorers = ["https://testnet.explorer.metall2.com"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Minato"
+  identifier = "sepolia/minato"
+  chain_id = 1946
+  rpc = ["https://rpc.minato.soneium.org"]
+  explorers = ["https://soneium-minato.blockscout.com/"]
   superchain_level = 0
   data_availability_type = "eth-da"
   [chains.parent]

@@ -376,7 +376,7 @@
     }
   },
   {
-    "name": "Funki Sepolia Sandbox",
+    "name": "Funki Sepolia Testnet",
     "identifier": "sepolia/funki",
     "chainId": 3397901,
     "rpc": [
@@ -418,6 +418,23 @@
     ],
     "explorers": [
       "https://testnet.explorer.metall2.com"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Minato",
+    "identifier": "sepolia/minato",
+    "chainId": 1946,
+    "rpc": [
+      "https://rpc.minato.soneium.org"
+    ],
+    "explorers": [
+      "https://soneium-minato.blockscout.com/"
     ],
     "superchainLevel": 0,
     "dataAvailabilityType": "eth-da",

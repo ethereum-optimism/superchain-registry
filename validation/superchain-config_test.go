@@ -20,12 +20,27 @@ func testSuperchainConfig(t *testing.T, chain *ChainConfig) {
 
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
-	opp := Addresses[chain.ChainID].OptimismPortalProxy
 
-	got, err := getAddress("superchainConfig()", opp, client)
+	checkSuperchainConfig(t, client, Addresses[chain.ChainID].OptimismPortalProxy, *expected)
+	checkSuperchainConfig(t, client, Addresses[chain.ChainID].AnchorStateRegistryProxy, *expected)
+	checkSuperchainConfig(t, client, Addresses[chain.ChainID].L1CrossDomainMessengerProxy, *expected)
+	checkSuperchainConfig(t, client, Addresses[chain.ChainID].L1ERC721BridgeProxy, *expected)
+	checkSuperchainConfig(t, client, Addresses[chain.ChainID].L1StandardBridgeProxy, *expected)
+
+	// DelayedWETHProxy uses a different method name, so it is broken out here
+	delayedWETHAddress := Addresses[chain.ChainID].DelayedWETHProxy
+	got, err := getAddress("config()", delayedWETHAddress, client)
+	require.NoError(t, err)
+	if *expected != got {
+		t.Errorf("incorrect config() address: got %s, wanted %s (queried %s)", got, expected, delayedWETHAddress)
+	}
+}
+
+func checkSuperchainConfig(t *testing.T, client *ethclient.Client, targetContract Address, expected Address) {
+	got, err := getAddress("superchainConfig()", targetContract, client)
 	require.NoError(t, err)
 
-	if *expected != got {
-		t.Errorf("incorrect OptimismPortal.superchainConfig() address: got %s, wanted %s", got, *expected)
+	if expected != got {
+		t.Errorf("incorrect superchainConfig() address: got %s, wanted %s (queried %s)", got, expected, targetContract)
 	}
 }
