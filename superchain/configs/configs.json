@@ -1501,6 +1501,75 @@
           }
         },
         {
+          "Name": "Minato",
+          "l2_chain_id": 1946,
+          "PublicRPC": "https://rpc.minato.soneium.org",
+          "SequencerRPC": "https://rpc.minato.soneium.org",
+          "Explorer": "https://soneium-minato.blockscout.com/",
+          "SuperchainLevel": 0,
+          "StandardChainCandidate": true,
+          "SuperchainTime": null,
+          "batch_inbox_address": "0x00Ca81E019a5312d404aE7fe8367D30DE4c11365",
+          "Superchain": "sepolia",
+          "Chain": "minato",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "fjord_time": 1730106000,
+          "granite_time": 1730106000,
+          "block_time": 2,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 1800,
+          "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 6,
+            "eip1559Denominator": 50,
+            "eip1559DenominatorCanyon": 250
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "l1": {
+              "hash": "0x87e648e8d219737526cbcbc03dc914256d4f8e13ae13dc0a2ad377d831cd6473",
+              "number": 6465975
+            },
+            "l2": {
+              "hash": "0x7ec49d93fa8f47c00e98cc5965cd3903a8faa9238743d2eba0e0550ab4c45c43",
+              "number": 0
+            },
+            "l2_time": 1723194336,
+            "system_config": {
+              "batcherAddr": "0xF0AB0441c8f4B89b561aE685B98c6aD5175e0CAB",
+              "overhead": "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "scalar": "0x00000000000000000000000000000000000000000000000000000000000a6fe0",
+              "gasLimit": 30000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0x6e8A77673109783001150DFA770E6c662f473DA9",
+            "AnchorStateRegistryProxy": "0xa4AbebA1612Cf731843460791e1A925c84d0991C",
+            "BatchSubmitter": "0xF0AB0441c8f4B89b561aE685B98c6aD5175e0CAB",
+            "Challenger": "0xB278818732E5BEbb742dc4Aa0617ccd1Dec76b65",
+            "DisputeGameFactoryProxy": "0xB3Ad2c38E6e0640d7ce6aA952AB3A60E81bf7a01",
+            "Guardian": "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E",
+            "L1CrossDomainMessengerProxy": "0x0184245D202724dc28a2b688952Cb56C882c226F",
+            "L1ERC721BridgeProxy": "0x2bfb22cd534a462028771a1cA9D6240166e450c4",
+            "L1StandardBridgeProxy": "0x5f5a404A5edabcDD80DB05E8e54A78c9EBF000C2",
+            "L2OutputOracleProxy": "0x710e5286C746eC38beeB7538d0146f60D27be343",
+            "MIPS": "0x4e3Db3fa21566FF2AD6E11D1ADC129ECf649e47F",
+            "OptimismMintableERC20FactoryProxy": "0x6069BC38c6185f2db0d161f08eC8d1657F6078Df",
+            "OptimismPortalProxy": "0x65ea1489741A5D72fFdD8e6485B216bBdcC15Af3",
+            "PermissionedDisputeGame": "0x55bC868c07c8Cd48446A76966894F4d87844839C",
+            "PreimageOracle": "0xBFEbcF9b8855C3E1d01b2AD28DB9F59BC6CB6965",
+            "Proposer": "0xa759A2C80Ec4C6421829862da30dD34436114502",
+            "ProxyAdmin": "0xff9d236641962Cebf9DBFb54E7b8e91F99f10Db0",
+            "ProxyAdminOwner": "0x4d59CccA765E1211Bd32Aa6F2A037fD37E519a25",
+            "SuperchainConfig": "0xC2Be75506d5724086DEB7245bd260Cc9753911Be",
+            "SystemConfigOwner": "0xB278818732E5BEbb742dc4Aa0617ccd1Dec76b65",
+            "SystemConfigProxy": "0x4Ca9608Fef202216bc21D543798ec854539bAAd3",
+            "UnsafeBlockSigner": "0x55930859CD7003F32A2ba171297408476532E535"
+          }
+        },
+        {
           "Name": "Lisk Sepolia Testnet",
           "l2_chain_id": 4202,
           "PublicRPC": "https://rpc.sepolia-api.lisk.com",
