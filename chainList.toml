@@ -11,6 +11,18 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Superseed"
+  identifier = "mainnet/Superseed"
+  chain_id = 5330
+  rpc = ["https://mainnet.superseed.xyz"]
+  explorers = ["https://explorer.superseed.xyz/"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Automata Mainnet"
   identifier = "mainnet/automata"
   chain_id = 65536
