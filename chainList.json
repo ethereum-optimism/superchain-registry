@@ -17,6 +17,23 @@
     }
   },
   {
+    "name": "Superseed",
+    "identifier": "mainnet/Superseed",
+    "chainId": 5330,
+    "rpc": [
+      "https://mainnet.superseed.xyz"
+    ],
+    "explorers": [
+      "https://explorer.superseed.xyz/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Automata Mainnet",
     "identifier": "mainnet/automata",
     "chainId": 65536,
