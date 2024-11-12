@@ -2,7 +2,7 @@ module github.com/ethereum-optimism/superchain-registry/add-chain
 
 go 1.22
 
-toolchain go1.22.7
+toolchain go1.23.2
 
 replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240828150145-60038121c757
 

@@ -1,8 +1,8 @@
 module github.com/ethereum-optimism/superchain-registry/validation
 
-go 1.22
+go 1.23.0
 
-toolchain go1.22.7
+toolchain go1.23.2
 
 replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101411.1
 
