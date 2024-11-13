@@ -3,6 +3,10 @@ orbs:
   go: circleci/go@1.8.0
   node: circleci/node@5.2.0
   slack: circleci/slack@4.10.1
+parameters:
+  go_version:
+    type: string
+    default: 1.22.7 # update CI Go version here
 commands:
   notify-failures-on-main:
     description: "Notify Slack for CI job failures"
@@ -72,7 +76,7 @@ jobs:
   golang-lint:
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: <<pipeline.parameters.go_version>>
     steps:
       - checkout
       - install-just
@@ -83,7 +87,7 @@ jobs:
   golang-modules-tidy:
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: <<pipeline.parameters.go_version>>
     steps:
       - checkout
       - install-just
@@ -96,7 +100,7 @@ jobs:
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: <<pipeline.parameters.go_version>>
     steps:
       - checkout
       - install-just
@@ -118,7 +122,7 @@ jobs:
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: <<pipeline.parameters.go_version>>
     steps:
       - checkout
       - install-just
@@ -131,7 +135,7 @@ jobs:
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: <<pipeline.parameters.go_version>>
     steps:
       - checkout
       - install-just
@@ -146,7 +150,7 @@ jobs:
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: <<pipeline.parameters.go_version>>
     steps:
       - checkout
       - install-just
@@ -208,7 +212,7 @@ jobs:
   check-codegen:
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: <<pipeline.parameters.go_version>>
     steps:
       - checkout
       - install-just
@@ -221,7 +225,7 @@ jobs:
   golang-validate-genesis-allocs:
     circleci_ip_ranges: true
     docker:
-      - image: cimg/go:1.23.3-node
+      - image: cimg/go:<<pipeline.parameters.go_version>>-node
     resource_class: medium
     parameters:
       chainid:
@@ -236,7 +240,7 @@ jobs:
       - run: just validate-genesis-allocs <<parameters.chainid>>
   genesis-allocs-all-ok:
     docker:
-      - image: cimg/go:1.23.3-node
+      - image: cimg/go:<<pipeline.parameters.go_version>>-node
     resource_class: medium
     steps:
       - checkout

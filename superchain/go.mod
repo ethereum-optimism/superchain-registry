@@ -1,14 +1,14 @@
 module github.com/ethereum-optimism/superchain-registry/superchain
 
-go 1.23
+go 1.22.0
 
-toolchain go1.23.2
+toolchain go1.22.7
 
 require (
 	github.com/BurntSushi/toml v1.4.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.28.0
-	golang.org/x/mod v0.20.0
+	golang.org/x/mod v0.21.0
 )
 
 require (
