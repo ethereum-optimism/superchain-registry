@@ -72,7 +72,7 @@ jobs:
   golang-lint:
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: '1.22'
     steps:
       - checkout
       - install-just
@@ -83,7 +83,7 @@ jobs:
   golang-modules-tidy:
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: '1.22'
     steps:
       - checkout
       - install-just
@@ -96,7 +96,7 @@ jobs:
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: '1.22'
     steps:
       - checkout
       - install-just
@@ -118,7 +118,7 @@ jobs:
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: '1.22'
     steps:
       - checkout
       - install-just
@@ -131,7 +131,7 @@ jobs:
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: '1.22'
     steps:
       - checkout
       - install-just
@@ -146,7 +146,7 @@ jobs:
     shell: /bin/bash -eo pipefail
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: '1.22'
     steps:
       - checkout
       - install-just
@@ -208,7 +208,7 @@ jobs:
   check-codegen:
     executor:
       name: go/default # is based on cimg/go
-      tag: '1.23'
+      tag: '1.22'
     steps:
       - checkout
       - install-just
@@ -221,7 +221,7 @@ jobs:
   golang-validate-genesis-allocs:
     circleci_ip_ranges: true
     docker:
-      - image: cimg/go:1.23.3-node
+      - image: cimg/go:1.22.7-node
     resource_class: medium
     parameters:
       chainid:
@@ -236,7 +236,7 @@ jobs:
       - run: just validate-genesis-allocs <<parameters.chainid>>
   genesis-allocs-all-ok:
     docker:
-      - image: cimg/go:1.23.3-node
+      - image: cimg/go:1.22.7-node
     resource_class: medium
     steps:
       - checkout

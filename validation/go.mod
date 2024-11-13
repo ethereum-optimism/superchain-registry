@@ -1,10 +1,6 @@
 module github.com/ethereum-optimism/superchain-registry/validation
 
-go 1.23.0
-
-toolchain go1.23.2
-
-replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101411.1
+go 1.22
 
 require (
 	github.com/BurntSushi/toml v1.4.0
@@ -64,7 +60,9 @@ require (
 	github.com/mitchellh/pointerstructure v1.2.1 // indirect
 	github.com/mmcloughlin/addchain v0.4.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
+	github.com/onsi/gomega v1.34.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.20.5 // indirect
