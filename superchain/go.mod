@@ -1,8 +1,8 @@
 module github.com/ethereum-optimism/superchain-registry/superchain
 
-go 1.22
+go 1.23
 
-toolchain go1.22.7
+toolchain go1.23.2
 
 require (
 	github.com/BurntSushi/toml v1.4.0
