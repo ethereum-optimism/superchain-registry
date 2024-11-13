@@ -1,10 +1,10 @@
 module github.com/ethereum-optimism/superchain-registry/add-chain
 
-go 1.22
+go 1.23
 
 toolchain go1.23.2
 
-replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101408.0-rc.4.0.20240828150145-60038121c757
+replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101411.1
 
 require (
 	github.com/BurntSushi/toml v1.4.0
