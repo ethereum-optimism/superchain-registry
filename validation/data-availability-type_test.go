@@ -51,7 +51,7 @@ func testDataAvailabilityType(t *testing.T, chain *ChainConfig) {
 			blockNum, found, err = eth.CheckRecentTxs(ctx, client, int(depth), common.Address(batchSubmitterAddress))
 		}
 
-		return blockNum, found, nil
+		return blockNum, found, err
 	})
 	require.NoErrorf(t, err, "failed when checking chain for recent batcher txs from %s", batchSubmitterAddress)
 	require.True(t, found, "failed to find recent batcher tx")
