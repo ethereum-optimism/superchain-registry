@@ -42,10 +42,13 @@ func init() {
 	// Get the single standard release Tag (universal across superchain targets)
 	// and store in the standard.Release
 	temp := new(struct {
-		sr Tag `toml:"standard_release,omitempty"`
+		Sr string `toml:"standard_release"`
 	})
 	decodeTOMLFileIntoConfig("standard-releases.toml", temp)
-	Release = temp.sr
+	Release = Tag(temp.Sr)
+	if Release == "" {
+		panic("empty standard release")
+	}
 }
 
 func decodeTOMLFileIntoConfig[
