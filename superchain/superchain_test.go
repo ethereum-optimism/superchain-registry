@@ -198,6 +198,10 @@ op_contracts_manager_proxy_addr = "0xF564eEA7960EA244bfEbCBbB17858748606147bf"
 canyon_time = 1
 delta_time = 2
 ecotone_time = 3
+fjord_time = 4
+granite_time = 5
+holocene_time = 6
+isthmus_time = 7
 
 [l1]
   chain_id = 314
@@ -223,7 +227,10 @@ ecotone_time = 3
 	require.Equal(t, uint64Ptr(uint64(1)), s.hardForkDefaults.CanyonTime)
 	require.Equal(t, uint64Ptr(uint64(2)), s.hardForkDefaults.DeltaTime)
 	require.Equal(t, uint64Ptr(uint64(3)), s.hardForkDefaults.EcotoneTime)
-	require.Nil(t, s.hardForkDefaults.FjordTime)
+	require.Equal(t, uint64Ptr(uint64(4)), s.hardForkDefaults.FjordTime)
+	require.Equal(t, uint64Ptr(uint64(5)), s.hardForkDefaults.GraniteTime)
+	require.Equal(t, uint64Ptr(uint64(6)), s.hardForkDefaults.HoloceneTime)
+	require.Equal(t, uint64Ptr(uint64(7)), s.hardForkDefaults.IsthmusTime)
 }
 
 func TestHardForkOverridesAndDefaults(t *testing.T) {
