@@ -7,7 +7,7 @@ delta_time = 0
 ecotone_time = 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
 fjord_time = 1715961600   # Fri May 17 2024 16:00:00 UTC
 granite_time = 1723046400 # Wed Aug 7 16:00:00 UTC 2024
-holocene_time = 1731682800 # Fri Nov 15 15:00:00 UTC 2024
+holocene_time = 666 # TESTING ONLY DO NOT MERGE
 
 [l1]
   chain_id = 11155111
