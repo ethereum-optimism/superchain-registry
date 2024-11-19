@@ -28,7 +28,7 @@ A new Superchain Target can be added by creating a new superchain config directo
 with a `superchain.yaml` config file.
 
 > **Note**
-> This is an infrequent operation and unecessary if you are just looking to add a chain to an existing superchain.
+> This is an infrequent operation and unnecessary if you are just looking to add a chain to an existing superchain.
 
 Here's an example:
 
@@ -106,7 +106,7 @@ the following privilege grants and role designations:
       from. TODO(issues/37): add checks for the `ResourceMetering`
       contract.
 3. Optimism privileged operational roles:
-   1. Guardians. This is the role that can pause withdraws in the
+   1. Guardians. This is the role that can pause withdrawals in the
       Optimism protocol.
       1. After the Fault Proofs upgrade, the `Guardian` can also blacklist dispute games and change the respected game type
          in the `OptimismPortal`.

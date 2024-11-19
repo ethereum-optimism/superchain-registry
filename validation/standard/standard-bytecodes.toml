@@ -12,7 +12,7 @@ permissioned_dispute_game = "0x666d50416294caefc6a0a9c7c3803d75dbb76e9b85384c4aa
 # sections of the bytecode that contain the immutables are masked (set to 0) before computing the hash
 anchor_state_registry = "0x0498c48f921116ae0b4e1f8cb2e7aadff89f232a8ee0b636592d4520c1a12608" # version "1.0.0"
 delayed_weth = "0x673e70f6894b78f8c9b53937860851d56984d4d19d073a1325fb1634a80f458f"          # version "1.0.0"
-mips = "0xea26525ec1efbe84dd1596137c22eceefc7c0a79d6fb3d198e74145135448e12"                  # version "1.0.0"
+mips = "0x8f1cb311156fdc848bd99f26b08d88f0bec2c419bbca97533049907794390b4b"                  # version "1.1.0"
 fault_dispute_game = "0x94ded5b66802fe6287d2105fad9ab6c4c8f25275db55d997e07e2284c830595a"    # version "1.2.0"
 
 
