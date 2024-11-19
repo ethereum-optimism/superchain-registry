@@ -1,6 +1,6 @@
 # Hardfork activation inheritance behavior
 
-This documents specifies how hardfork activations are coordinated between _standard_ chains via the superchain-registry.
+This document specifies how hardfork activations are coordinated between _standard_ chains via the superchain-registry.
 
 Frontier chains can freely choose when to activate hardforks.
 
