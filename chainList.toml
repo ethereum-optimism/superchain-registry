@@ -229,6 +229,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Boba Sepolia"
+  identifier = "sepolia/boba"
+  chain_id = 28882
+  rpc = ["https://sepolia.boba.network"]
+  explorers = ["https://testnet.bobascan.com"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Cyber Testnet"
   identifier = "sepolia/cyber"
   chain_id = 111557560
