@@ -265,6 +265,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Ink Sepolia"
+  identifier = "sepolia/ink"
+  chain_id = 763373
+  rpc = ["https://rpc-gel-sepolia.inkonchain.com"]
+  explorers = ["https://explorer-sepolia.inkonchain.com"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Lisk Sepolia Testnet"
   identifier = "sepolia/lisk"
   chain_id = 4202
