@@ -6,10 +6,11 @@ import (
 	"github.com/ethereum-optimism/optimism/op-service/retry"
 )
 
+const DefaultMaxRetries = 3
+
 func Retry[S, T any](fn func(S) (T, error)) func(S) (T, error) {
-	const maxAttempts = 3
 	return func(s S) (T, error) {
-		return retry.Do(context.Background(), maxAttempts, retry.Exponential(), func() (T, error) {
+		return retry.Do(context.Background(), DefaultMaxRetries, retry.Exponential(), func() (T, error) {
 			return fn(s)
 		})
 	}

@@ -37,7 +37,7 @@ func testDataAvailabilityType(t *testing.T, chain *ChainConfig) {
 	depth := chain.SequencerWindowSize
 	require.NotZero(t, depth)
 
-	blockNum, found, err := retry.Do2(context.Background(), 3, retry.Exponential(), func() (uint64, bool, error) {
+	blockNum, found, err := retry.Do2(context.Background(), DefaultMaxRetries, retry.Exponential(), func() (uint64, bool, error) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 		defer cancel()
 		// First attempt without needing an archive node
