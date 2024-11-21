@@ -34,8 +34,6 @@ jobs:
       message:
         description: "PR comment body prefixed message"
         type: string
-    environment:
-      GITHUB_TOKEN: $GITHUB_TOKEN # Ensure this is set in CircleCI project settings
     steps:
       - checkout
 
@@ -72,7 +70,7 @@ jobs:
             cd $GITHUB_CLI_PATH
             PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
             RES=$( poetry run github-cli get-pr-base-sha \
-              --github-token "${GITHUB_TOKEN}" \
+              --github-token "${STALE_GITHUB_TOKEN}" \
               --repo "${REPO}" \
               --pr-number "${PR_NUMBER}" )
             #check if RES does not contain error, continue otherwise exit
@@ -107,22 +105,22 @@ jobs:
 
             cd $GITHUB_CLI_PATH
             COMMENT_ID=$( poetry run github-cli get-pr-comments \
-              --github-token "${GITHUB_TOKEN}" \
+              --github-token "${STALE_GITHUB_TOKEN}" \
               --repo "${REPO}" \
               --pr-number "${PR_NUMBER}" \
               --message-substring "${COMMENT_BODY}" \
-              ----user-type "Bot" )
+              --user-type "Bot" )
 
             if [ -n "$COMMENT_ID" ]; then
               poetry run github-cli post-pr-comment \
-                --github-token "${GITHUB_TOKEN}" \
+                --github-token "${STALE_GITHUB_TOKEN}" \
                 --repo "${REPO}" \
                 --pr-number "${PR_NUMBER}" \
                 --comment-body "${COMMENT_BODY}" \
                 --comment-id $COMMENT_ID
             else
               poetry run github-cli post-pr-comment \
-                --github-token "${GITHUB_TOKEN}" \
+                --github-token "${STALE_GITHUB_TOKEN}" \
                 --repo "${REPO}" \
                 --pr-number "${PR_NUMBER}" \
                 --comment-body "${COMMENT_BODY}"
@@ -145,8 +143,10 @@ workflows:
           command: "generate-genesis"
           directory: "generate-genesis"
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
+          context: github-token-stale-check
       - compute-config-diff-and-report-with-pr-comment:
           name: compute-rollup-config-diff
           command: "generate-rollup-config"
           directory: "generate-rollup-config"
           message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
+          context: github-token-stale-check
