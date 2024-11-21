@@ -1,6 +1,6 @@
 version: 2.1
 
-# this allows us to use CircleCI's dynamic configuration feature
+# This allows us to use CircleCI's dynamic configuration feature
 setup: true
 
 orbs:
@@ -14,14 +14,132 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Generate list of chainids and insert into  continue_config.yml file
+          name: Generate list of chain IDs and insert into continue_config.yml file
           command: |
             bash validation/genesis/validation-inputs/generate-test-config.sh
       - continuation/continue:
           configuration_path: .circleci/continue_config.yml
-          parameters: '{}'
+          parameters: "{}"
+
+  compute-config-diff-and-report-with-pr-comment:
+    docker:
+      - image: cimg/go:1.18 # Use the appropriate Go version
+      - image: python:3.9
+    parameters:
+      command:
+        description: "Command to run to generate config files"
+        type: string
+      directory:
+        description: "Directory where config files are stored"
+        type: string
+      message:
+        description: "PR comment body prefixed message"
+        type: string
+    environment:
+      GITHUB_TOKEN: $GITHUB_TOKEN # Ensure this is set in CircleCI project settings
+    steps:
+      - checkout
+      - run:
+          name: Get circleci tools
+          command: |
+            git clone --branch main --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
+            export GITHUB_CLI_PATH=/tmp/circleci-utils/github_utility/github_cli
+            cd $GITHUB_CLI_PATH
+            poetry install
+      - run:
+          name: Fetch all branches
+          command: |
+            git fetch --all
+      - run:
+          name: Generate configs at HEAD
+          working_directory: validation
+          command: |
+            go run <<parameters.command>>/main.go HEAD
+      - run:
+          name: Generate configs on base branch
+          command: |
+            cd $GITHUB_CLI_PATH
+            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            RES=$( poetry run github-cli get-pr-base-sha \
+              --github-token "${GITHUB_TOKEN}" \
+              --repo "${REPO}" \
+              --pr-number "${PR_NUMBER}" )
+            #check if RES does not contain error, continue otherwise exit
+            if [[ $RES == *"error"* ]]; then
+              echo "Error: $RES"
+              exit 1
+            fi
+            export BASE_REV=$RES
+      - run:
+          name: Generate configs on base branch
+          working_directory: validation
+          command: |
+            echo "Base branch revision: $BASE_REV"
+            git checkout $BASE_REV
+            go run <<parameters.command>>/main.go base
+      - run:
+          name: Compute diff
+          working_directory: validation
+          command: |
+            ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
+          when: always
+      - run:
+          name: If command failed, create or update comment on PR
+          when: on_fail
+          command: |
+            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            RUN_ID=${CIRCLE_WORKFLOW_ID}
+            REPO=${CIRCLE_PROJECT_REPONAME}
+            OWNER=${CIRCLE_PROJECT_USERNAME}
+            RUN_URL="https://app.circleci.com/pipelines/workflows/$RUN_ID"
+            BODY="<<parameters.message>>. You can see the detail [here]($RUN_URL)."
+
+            cd $GITHUB_CLI_PATH
+            COMMENT_ID=$( poetry run github-cli get-pr-comments \
+              --github-token "${GITHUB_TOKEN}" \
+              --repo "${REPO}" \
+              --pr-number "${PR_NUMBER}" \
+              --message-substring "${COMMENT_BODY}" \
+              ----user-type "Bot" )
+
+            if [ -n "$COMMENT_ID" ]; then
+              poetry run github-cli post-pr-comment \
+                --github-token "${GITHUB_TOKEN}" \
+                --repo "${REPO}" \
+                --pr-number "${PR_NUMBER}" \
+                --comment-body "${COMMENT_BODY}" \
+                --comment-id $COMMENT_ID
+            else
+              poetry run github-cli post-pr-comment \
+                --github-token "${GITHUB_TOKEN}" \
+                --repo "${REPO}" \
+                --pr-number "${PR_NUMBER}" \
+                --comment-body "${COMMENT_BODY}"
+            fi
+      - run:
+          name: If command passed, remove a comment on the PR if it exists
+          when: on_success
+          command: |
+            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            REPO=${CIRCLE_PROJECT_REPONAME}
+            OWNER=${CIRCLE_PROJECT_USERNAME}
+            # Delete the comment
 
 workflows:
   setup:
     jobs:
-       - setup-genesis-allocs-validation
+      - setup-genesis-allocs-validation
+
+  rollup-config-and-genesis-diff:
+    jobs:
+      - compute-config-diff-and-report-with-pr-comment:
+          name: compute-genesis-diff
+          command: "generate-genesis"
+          directory: "generate-genesis"
+          message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
+
+      - compute-config-diff-and-report-with-pr-comment:
+          name: compute-rollup-config-diff
+          command: "generate-rollup-config"
+          directory: "generate-rollup-config"
+          message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
