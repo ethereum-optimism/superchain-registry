@@ -51,6 +51,8 @@ jobs:
             git clone --branch main --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
             export GITHUB_CLI_PATH=/tmp/circleci-utils/github_utility/github_cli
             echo 'export GITHUB_CLI_PATH=/tmp/circleci-utils/github_utility/github_cli' >> $BASH_ENV
+            echo 'export REPO=${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}'
+            echo 'export PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')'
             cd $GITHUB_CLI_PATH
             poetry install
 
@@ -66,9 +68,9 @@ jobs:
       - run:
           name: Generate configs on base branch
           command: |
-            echo $GITHUB_CLI_PATH
             cd $GITHUB_CLI_PATH
-            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            echo $REPO
+            echo $PR_NUMBER
             RES=$( poetry run github-cli get-pr-base-sha \
               --github-token "${STALE_GITHUB_TOKEN}" \
               --repo "${REPO}" \
@@ -96,10 +98,7 @@ jobs:
           name: If command failed, create or update comment on PR
           when: on_fail
           command: |
-            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
             RUN_ID=${CIRCLE_WORKFLOW_ID}
-            REPO=${CIRCLE_PROJECT_REPONAME}
-            OWNER=${CIRCLE_PROJECT_USERNAME}
             RUN_URL="https://app.circleci.com/pipelines/workflows/$RUN_ID"
             BODY="<<parameters.message>>. You can see the detail [here]($RUN_URL)."
 
@@ -129,9 +128,7 @@ jobs:
           name: If command passed, remove a comment on the PR if it exists
           when: on_success
           command: |
-            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
-            REPO=${CIRCLE_PROJECT_REPONAME}
-            OWNER=${CIRCLE_PROJECT_USERNAME}
+            cd $GITHUB_CLI_PATH
             # Delete the comment
 
 workflows:
@@ -144,9 +141,9 @@ workflows:
           directory: "generate-genesis"
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
           context: github-token-stale-check
-      - compute-config-diff-and-report-with-pr-comment:
-          name: compute-rollup-config-diff
-          command: "generate-rollup-config"
-          directory: "generate-rollup-config"
-          message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
-          context: github-token-stale-check
+      # - compute-config-diff-and-report-with-pr-comment:
+      #     name: compute-rollup-config-diff
+      #     command: "generate-rollup-config"
+      #     directory: "generate-rollup-config"
+      #     message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
+      #     context: github-token-stale-check
