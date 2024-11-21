@@ -97,20 +97,8 @@ jobs:
             set +e
 
             # Run the script and capture its output and exit code
-            OUTPUT=$(./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD)
-            EXIT_CODE=$?
-
-            echo $OUTPUT
-            # Check if the output contains "panic"
-            if echo "$OUTPUT" | grep -q "panic"; then
-              echo "Error: The script output contains 'panic'"
-              exit 1
-            else
-              # Assign 0 or 1 to DIFF based on whether there was a difference
-              DIFF=$((EXIT_CODE == 0 ? 0 : 1))
-              echo "DIFF=$DIFF"
-            fi
-
+            ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
+            DIFF=$?
             echo "export DIFF=$DIFF" >> $BASH_ENV
 
             # Restore error handling
@@ -119,13 +107,7 @@ jobs:
       - run:
           name: Handle PR Comment Based on DIFF
           command: |
-            RUN_URL="https://app.circleci.com/pipelines/workflows/${CIRCLE_WORKFLOW_ID}/jobs/${CIRCLE_BUILD_NUM}"
-            echo "$RUN_URL"
-            RUN_URL="https://app.circleci.com/pipelines/github/$REPO/9863/workflows/${CIRCLE_WORKFLOW_ID}/jobs/${CIRCLE_BUILD_NUM}"
-            echo "$RUN_URL"
             RUN_URL="${CIRCLE_BUILD_URL}"
-            echo "$RUN_URL"
-            echo $CIRCLE_PIPELINE_ID
 
             MESSAGE="<<parameters.message>>"
             COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
