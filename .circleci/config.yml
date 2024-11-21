@@ -111,7 +111,7 @@ jobs:
               --pr-number "${PR_NUMBER}" \
               --message-substring "${COMMENT_BODY}" \
               --user-type "Bot" )
-
+            echo $COMMENT_ID
             if [ -n "$COMMENT_ID" ]; then
               poetry run github-cli post-pr-comment \
                 --github-token "${STALE_GITHUB_TOKEN}" \
