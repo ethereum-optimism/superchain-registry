@@ -49,10 +49,12 @@ jobs:
           name: Get circleci tools
           command: |
             git clone --branch main --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
-            export GITHUB_CLI_PATH=/tmp/circleci-utils/github_utility/github_cli
-            echo 'export GITHUB_CLI_PATH=/tmp/circleci-utils/github_utility/github_cli' >> $BASH_ENV
-            echo 'export REPO=${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}'
-            echo 'export PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')'
+            GITHUB_CLI_PATH=/tmp/circleci-utils/github_utility/github_cli
+            echo "export GITHUB_CLI_PATH=$GITHUB_CLI_PATH" >> $BASH_ENV
+            REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+            echo "export REPO=$REPO" >> $BASH_ENV
+            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
             cd $GITHUB_CLI_PATH
             poetry install
 
