@@ -100,6 +100,7 @@ jobs:
             OUTPUT=$(./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD)
             EXIT_CODE=$?
 
+            echo $OUTPUT
             # Check if the output contains "panic"
             if echo "$OUTPUT" | grep -q "panic"; then
               echo "Error: The script output contains 'panic'"
