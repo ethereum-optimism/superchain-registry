@@ -110,7 +110,7 @@ jobs:
               --repo "${REPO}" \
               --pr-number "${PR_NUMBER}" \
               --message-substring "${COMMENT_BODY}" \
-              --user-type "Bot" )
+              --user-type "User" )
 
             COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
             echo "--repo ${REPO} --pr-number ${PR_NUMBER} --comment-body ${COMMENT_BODY} --comment-id $COMMENT_ID"
