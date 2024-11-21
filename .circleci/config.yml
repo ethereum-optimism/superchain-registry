@@ -114,7 +114,6 @@ jobs:
               --user-type "User" )
 
             COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
-            echo "--repo ${REPO} --pr-number ${PR_NUMBER} --comment-body ${COMMENT_BODY} --comment-id $COMMENT_ID"
 
             if [ -n "$COMMENT_ID" ]; then
               poetry run github-cli post-pr-comment \
@@ -134,9 +133,25 @@ jobs:
           name: If command passed, remove a comment on the PR if it exists
           when: on_success
           command: |
+            MESSAGE="<<parameters.message>>"
+
             cd $GITHUB_CLI_PATH
-            # testing again
-            # Delete the comment
+            COMMENT_ID=$( poetry run github-cli get-pr-comments \
+              --github-token "${STALE_GITHUB_TOKEN}" \
+              --repo "${REPO}" \
+              --pr-number "${PR_NUMBER}" \
+              --message-substring "${MESSAGE}" \
+              --user-type "User" )
+
+            COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
+
+            if [ -n "$COMMENT_ID" ]; then
+              poetry run github-cli delete-pr-comment \
+                --github-token "${STALE_GITHUB_TOKEN}" \
+                --repo "${REPO}" \
+                --pr-number "${PR_NUMBER}" \
+                --comment-id $COMMENT_ID
+            fi
 
 workflows:
   setup:
