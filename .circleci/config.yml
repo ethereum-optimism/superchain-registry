@@ -66,6 +66,7 @@ jobs:
       - run:
           name: Generate configs on base branch
           command: |
+            echo $GITHUB_CLI_PATH
             cd $GITHUB_CLI_PATH
             PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
             RES=$( poetry run github-cli get-pr-base-sha \
