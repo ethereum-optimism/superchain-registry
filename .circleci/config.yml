@@ -52,8 +52,10 @@ jobs:
           command: |
             git clone --branch main --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
             export GITHUB_CLI_PATH=/tmp/circleci-utils/github_utility/github_cli
+            echo 'export GITHUB_CLI_PATH=/tmp/circleci-utils/github_utility/github_cli' >> $BASH_ENV
             cd $GITHUB_CLI_PATH
             poetry install
+
       - run:
           name: Fetch all branches
           command: |
