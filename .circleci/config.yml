@@ -64,6 +64,7 @@ jobs:
 
       - run:
           name: Generate configs at HEAD
+          working_directory: validation
           command: |
             HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
               "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.head.sha')
@@ -75,6 +76,7 @@ jobs:
             go run <<parameters.command>>/main.go HEAD
       - run:
           name: Generate configs on base branch
+          working_directory: validation
           command: |
             # Fetch PR details using GitHub API
             BASE_BRANCH=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
