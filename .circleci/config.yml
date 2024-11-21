@@ -24,7 +24,6 @@ jobs:
   compute-config-diff-and-report-with-pr-comment:
     docker:
       - image: cimg/go:1.18 # Use the appropriate Go version
-      - image: cimg/python:3.9
     parameters:
       command:
         description: "Command to run to generate config files"
@@ -41,10 +40,12 @@ jobs:
       - checkout
 
       - run:
-          name: Install Poetry
+          name: Install Python and Poetry
           command: |
-            python -m pip install --upgrade pip
-            pip install poetry
+            sudo apt-get update
+            sudo apt-get install -y python3 python3-pip
+            python3 -m pip install --upgrade pip
+            pip3 install poetry
 
       - run:
           name: Get circleci tools
