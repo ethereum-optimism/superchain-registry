@@ -297,7 +297,6 @@ type AddressList struct {
 	OptimismPortalProxy               Address `json:"OptimismPortalProxy,omitempty" toml:"OptimismPortalProxy,omitempty"`
 	SystemConfigProxy                 Address `json:"SystemConfigProxy" toml:"SystemConfigProxy"`
 	ProxyAdmin                        Address `json:"ProxyAdmin" toml:"ProxyAdmin"`
-	SuperchainConfig                  Address `json:"SuperchainConfig,omitempty" toml:"SuperchainConfig,omitempty"`
 
 	// Fault Proof contracts:
 	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty" toml:"AnchorStateRegistryProxy,omitempty"`

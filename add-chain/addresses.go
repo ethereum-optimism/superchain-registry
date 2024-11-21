@@ -17,14 +17,13 @@ type AddressData struct {
 }
 
 func readAddressesFromChain(addresses *superchain.AddressList, l1RpcUrl string, isFaultProofs bool) error {
-	// SuperchainConfig
-	address, err := validation.CastCall(addresses.OptimismPortalProxy, "superchainConfig()(address)", nil, l1RpcUrl)
-	if err == nil {
-		addresses.SuperchainConfig = superchain.MustHexToAddress(address[0])
+	superchainConfigAddress, err := validation.CastCall(addresses.OptimismPortalProxy, "superchainConfig()(address)", nil, l1RpcUrl)
+	if err != nil {
+		return fmt.Errorf("could not retrieve address for SuperchainConfig %w", err)
 	}
 
 	// Guardian
-	address, err = validation.CastCall(addresses.SuperchainConfig, "guardian()(address)", nil, l1RpcUrl)
+	address, err := validation.CastCall(superchain.MustHexToAddress(superchainConfigAddress[0]), "guardian()(address)", nil, l1RpcUrl)
 	if err != nil {
 		address, err = validation.CastCall(addresses.OptimismPortalProxy, "guardian()(address)", nil, l1RpcUrl)
 		if err != nil {
