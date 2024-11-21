@@ -120,6 +120,12 @@ jobs:
           name: Handle PR Comment Based on DIFF
           command: |
             RUN_URL="https://app.circleci.com/pipelines/workflows/${CIRCLE_WORKFLOW_ID}/jobs/${CIRCLE_BUILD_NUM}"
+            echo "$RUN_URL"
+            RUN_URL="https://app.circleci.com/pipelines/github/$REPO/9863/workflows/${CIRCLE_WORKFLOW_ID}/jobs/${CIRCLE_BUILD_NUM}"
+            echo "$RUN_URL"
+            RUN_URL="${CIRCLE_BUILD_URL}"
+            echo "$RUN_URL"
+            echo $CIRCLE_PIPELINE_ID
 
             MESSAGE="<<parameters.message>>"
             COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
