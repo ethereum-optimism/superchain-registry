@@ -39,6 +39,13 @@ jobs:
       GITHUB_TOKEN: $GITHUB_TOKEN # Ensure this is set in CircleCI project settings
     steps:
       - checkout
+
+      - run:
+          name: Install Poetry
+          command: |
+            python -m pip install --upgrade pip
+            pip install poetry
+
       - run:
           name: Get circleci tools
           command: |
