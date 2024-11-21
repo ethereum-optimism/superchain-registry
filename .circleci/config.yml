@@ -102,14 +102,15 @@ jobs:
           command: |
             RUN_ID=${CIRCLE_WORKFLOW_ID}
             RUN_URL="https://app.circleci.com/pipelines/workflows/$RUN_ID"
-            COMMENT_BODY="<<parameters.message>>. You can see the detail [here]($RUN_URL)."
+            MESSAGE="<<parameters.message>>"
+            COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
 
             cd $GITHUB_CLI_PATH
             COMMENT_ID=$( poetry run github-cli get-pr-comments \
               --github-token "${STALE_GITHUB_TOKEN}" \
               --repo "${REPO}" \
               --pr-number "${PR_NUMBER}" \
-              --message-substring "${COMMENT_BODY}" \
+              --message-substring "${MESSAGE}" \
               --user-type "User" )
 
             COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
