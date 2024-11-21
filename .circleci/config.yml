@@ -46,17 +46,19 @@ jobs:
             pip3 install poetry
 
       - run:
-          name: Get circleci tools
+          name: Get circleci tools and set initial environment variables
           command: |
             git clone --branch main --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
             GITHUB_CLI_PATH=/tmp/circleci-utils/github_utility/github_cli
+            cd $GITHUB_CLI_PATH
+            poetry install
+
             echo "export GITHUB_CLI_PATH=$GITHUB_CLI_PATH" >> $BASH_ENV
             REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
             echo "export REPO=$REPO" >> $BASH_ENV
             PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
             echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
             cd $GITHUB_CLI_PATH
-            poetry install
 
       - run:
           name: Fetch all branches
@@ -71,8 +73,6 @@ jobs:
           name: Generate configs on base branch
           command: |
             cd $GITHUB_CLI_PATH
-            echo $REPO
-            echo $PR_NUMBER
             RES=$( poetry run github-cli get-pr-base-sha \
               --github-token "${STALE_GITHUB_TOKEN}" \
               --repo "${REPO}" \
@@ -82,7 +82,7 @@ jobs:
               echo "Error: $RES"
               exit 1
             fi
-            export BASE_REV=$RES
+            echo "export BASE_REV=$RES" >> $BASH_ENV
       - run:
           name: Generate configs on base branch
           working_directory: validation
