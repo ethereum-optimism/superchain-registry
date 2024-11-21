@@ -23,7 +23,7 @@ jobs:
 
   compute-config-diff-and-report-with-pr-comment:
     docker:
-      - image: cimg/go:1.18 # Use the appropriate Go version
+      - image: cimg/go:1.22
     parameters:
       command:
         description: "Command to run to generate config files"
