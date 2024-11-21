@@ -129,15 +129,11 @@ workflows:
   setup:
     jobs:
       - setup-genesis-allocs-validation
-
-  rollup-config-and-genesis-diff:
-    jobs:
       - compute-config-diff-and-report-with-pr-comment:
           name: compute-genesis-diff
           command: "generate-genesis"
           directory: "generate-genesis"
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
-
       - compute-config-diff-and-report-with-pr-comment:
           name: compute-rollup-config-diff
           command: "generate-rollup-config"
