@@ -60,8 +60,6 @@ jobs:
             echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
             cd $GITHUB_CLI_PATH
 
-            echo "export GITHUB_TOKEN=$STALE_GITHUB_TOKEN" >> $BASH_ENV
-
       - run:
           name: Generate configs at HEAD
           working_directory: validation
@@ -157,10 +155,10 @@ workflows:
           command: "generate-genesis"
           directory: "generate-genesis"
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
-          context: github-token-stale-check
+          context: circleci-superchain-registry
       - compute-config-diff-and-report-with-pr-comment:
           name: compute-rollup-config-diff
           command: "generate-rollup-config"
           directory: "generate-rollup-config"
           message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
-          context: github-token-stale-check
+          context: circleci-superchain-registry
