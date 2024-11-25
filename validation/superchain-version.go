@@ -40,12 +40,9 @@ func checkForStandardVersions(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err)
 	requireStandardSemvers(t, versions, isTestnet, chain)
 
-	// don't perform bytecode checking for testnets
-	if !isTestnet {
-		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client, chain)
-		require.NoError(t, err)
-		requireStandardByteCodeHashes(t, bytecodeHashes, chain)
-	}
+	bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client, chain)
+	require.NoError(t, err)
+	requireStandardByteCodeHashes(t, bytecodeHashes, chain)
 }
 
 // getContractVersionsFromChain pulls the appropriate contract versions from chain
