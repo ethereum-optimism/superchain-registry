@@ -3,6 +3,7 @@ package validation
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 )
@@ -24,7 +25,10 @@ type BytecodeAndImmutableReferences struct {
 // initBytecodeImmutableMask returns the struct with coordinates of the immutable references in the deployed bytecode, if present
 func initBytecodeImmutableMask(bytecode []byte, tag standard.Tag, contractName string) (*BytecodeAndImmutableReferences, error) {
 	parsedImmutables := map[string][]ImmutableReference{}
-
+	proxyContract := strings.HasSuffix(contractName, "Proxy")
+	if proxyContract {
+		contractName = strings.TrimSuffix(contractName, "Proxy")
+	}
 	refs, exists := standard.BytecodeImmutables[tag].ForContractWithName(contractName)
 	if exists {
 		err := json.Unmarshal([]byte(refs), &parsedImmutables)
