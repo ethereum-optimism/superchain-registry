@@ -316,7 +316,7 @@ func writeGenesisValidationMetadata(commit string, targetDir string) error {
 	// involving OPLabs engineers after the add-chain command runs.
 	const defaultNodeVersion = "18.12.1"
 	const defaultMonorepoBuildCommand = "pnpm"
-	const defaultGenesisCreationCommand = "opnode2" // See validation/genesis/commands.go
+	const defaultGenesisCreationCommand = "forge1" // See validation/genesis/commands.go
 	vm := genesis.ValidationMetadata{
 		GenesisCreationCommit:  commit,
 		NodeVersion:            defaultNodeVersion,
