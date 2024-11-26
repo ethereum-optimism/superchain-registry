@@ -35,13 +35,22 @@ var (
 	ErrChainPublicRpcNotListed = errors.New("chain public RPC not listed in chainid.network")
 )
 
+func init() {
+	var err error
+	globalChainIds, err = getGlobalChains()
+	if err != nil {
+		panic(err)
+	}
+	localChains = &chainInfo{}
+}
+
 func testIsGloballyUnique(t *testing.T, chain *ChainConfig) {
 	err := checkIsGloballyUnique(globalChainIds, localChains, chain)
 	require.NoError(t, err)
 }
 
-func checkIsGloballyUnique(gcids map[uint]*uniqueProperties, lcs *chainInfo, chain *ChainConfig) error {
-	props := gcids[uint(chain.ChainID)]
+func checkIsGloballyUnique(globalIds map[uint]*uniqueProperties, chains *chainInfo, chain *ChainConfig) error {
+	props := globalIds[uint(chain.ChainID)]
 	if props == nil {
 		return ErrChainIdNotListed
 	}
@@ -60,7 +69,7 @@ func checkIsGloballyUnique(gcids map[uint]*uniqueProperties, lcs *chainInfo, cha
 		return ErrChainPublicRpcNotListed
 	}
 
-	if err := lcs.AddIfUnique(chain.ChainID, chain.Name); err != nil {
+	if err := chains.AddIfUnique(chain.ChainID, chain.Name); err != nil {
 		return err
 	}
 
@@ -148,15 +157,6 @@ var (
 	globalChainIds map[uint]*uniqueProperties
 	localChains    *chainInfo
 )
-
-func init() {
-	var err error
-	globalChainIds, err = getGlobalChains()
-	if err != nil {
-		panic(err)
-	}
-	localChains = &chainInfo{}
-}
 
 func normalizeURL(rawURL string) (string, error) {
 	// Parse the URL
