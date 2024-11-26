@@ -11,7 +11,7 @@
 system_config = { version = "2.3.0", implementation_address = "0x29d06Ed7105c7552EFD9f29f3e0d250e5df412CD" } # UPDATED IN THIS RELEASE
 fault_dispute_game = { version = "1.3.1" }                                                                   # UPDATED IN THIS RELEASE
 permissioned_dispute_game = { version = "1.3.1" }                                                            # UPDATED IN THIS RELEASE
-mips = { version = "1.2.1", address = "0x47B0E34C1054009e696BaBAAd56165e1e994144d" }                         # UPDATED IN THIS RELEASE
+mips = { version = "1.2.1", address = "0x69470D6970Cd2A006b84B1d4d70179c892cFCE01" }                         # UPDATED IN THIS RELEASE
 # Unchanged in this release
 optimism_portal = { version = "3.10.0", implementation_address = "0x35028bae87d71cbc192d545d38f960ba30b4b233" }
 anchor_state_registry = { version = "2.0.0" }
