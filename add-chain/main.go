@@ -72,13 +72,14 @@ func runApp(args []string) error {
 		fmt.Println("Loading .env.test")
 		err = godotenv.Load("./testdata/.env.test")
 	} else {
-		fmt.Println("Loading .env")
+        err = godotenv.Load()
 		err = godotenv.Load()
 	}
 
-	if err != nil {
-		panic("error loading .env file")
-	}
+    if err != nil && !os.IsNotExist(err) {
+        panic("error loading .env file")
+        fmt.Println(err)
+    }
 
 	return app.Run(args)
 }
