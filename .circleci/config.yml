@@ -119,7 +119,6 @@ jobs:
       - run:
           name: Handle PR Comment Based on DIFF
           command: |
-            set +e
             RUN_URL="${CIRCLE_BUILD_URL}"
 
             MESSAGE="<<parameters.message>>"
@@ -133,27 +132,16 @@ jobs:
               --message-substring "${MESSAGE}" \
               --user-type "User" )
 
-            echo "COMMENT_ID: $COMMENT_ID"
-            echo 1 --repo "${REPO}" \
-              --pr-number "${PR_NUMBER}" \
-              --message-substring "${MESSAGE}" \
-              --user-type "User"
-
             COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
             COMMENT_OPTION=""
             if [ -n "$COMMENT_ID" ]; then
               COMMENT_OPTION="--comment-id $COMMENT_ID"
             fi
-            echo $COMMENT_OPTION
 
             if [ "$DIFF" -eq 1 ]; then
                 poetry run github-cli post-pr-comment \
                   --github-token "${GITHUB_TOKEN}" \
                   --repo "${REPO}" \
-                  --pr-number "${PR_NUMBER}" \
-                  --comment-body "${COMMENT_BODY}" \
-                  $COMMENT_OPTION
-                  echo 2 --repo "${REPO}" \
                   --pr-number "${PR_NUMBER}" \
                   --comment-body "${COMMENT_BODY}" \
                   $COMMENT_OPTION
@@ -164,12 +152,8 @@ jobs:
                   --repo "${REPO}" \
                   --pr-number "${PR_NUMBER}" \
                   --comment-id $COMMENT_ID
-                  echo 3  --repo "${REPO}" \
-                  --pr-number "${PR_NUMBER}" \
-                  --comment-id $COMMENT_ID
               fi
             fi
-            set -e
 workflows:
   setup:
     jobs:
