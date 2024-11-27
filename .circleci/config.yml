@@ -133,6 +133,7 @@ jobs:
               --message-substring "${MESSAGE}" \
               --user-type "User" )
 
+            echo "COMMENT_ID: $COMMENT_ID"
             echo 1 --repo "${REPO}" \
               --pr-number "${PR_NUMBER}" \
               --message-substring "${MESSAGE}" \
