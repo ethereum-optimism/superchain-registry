@@ -144,6 +144,7 @@ jobs:
             if [ -n "$COMMENT_ID" ]; then
               COMMENT_OPTION="--comment-id $COMMENT_ID"
             fi
+            echo $COMMENT_OPTION
 
             if [ "$DIFF" -eq 1 ]; then
                 poetry run github-cli post-pr-comment \
