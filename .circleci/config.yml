@@ -51,41 +51,26 @@ jobs:
     steps:
       - checkout
 
-      # Restore cache
-      - restore_cache:
-          keys:
-            - python-poetry-cache-{{ checksum "requirements.txt" }}
-            - python-poetry-cache-
-
       - run:
           name: Install Python and Poetry
           command: |
             sudo apt-get update
             sudo apt-get install -y python3 python3-pip
             python3 -m pip install --upgrade pip
-            pip3 install poetry
-
-      # Save cache
-      - save_cache:
-          paths:
-            - ~/.cache/pip
-            - ~/.poetry
-          key: python-poetry-cache-{{ checksum "requirements.txt" }}
 
       - run:
           name: Get circleci tools and set initial environment variables
           command: |
             git clone --branch main --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
             GITHUB_CLI_PATH=/tmp/circleci-utils/github_utility/github_cli
-            cd $GITHUB_CLI_PATH
-            poetry install
+            pip install -r $GITHUB_CLI_PATH/requirements.txt
+            COMMAND="python3 $GITHUB_CLI_PATH/main.py"
+            echo "export COMMAND=$COMMAND" >> $BASH_ENV
 
-            echo "export GITHUB_CLI_PATH=$GITHUB_CLI_PATH" >> $BASH_ENV
             REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
             echo "export REPO=$REPO" >> $BASH_ENV
             PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
             echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
-            cd $GITHUB_CLI_PATH
 
       - run:
           name: Generate configs at HEAD
@@ -136,9 +121,8 @@ jobs:
 
             MESSAGE="<<parameters.message>>"
             COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
-            cd $GITHUB_CLI_PATH
 
-            COMMENT_ID=$( poetry run github-cli get-pr-comments \
+            COMMENT_ID=$( $COMMAND github-cli get-pr-comments \
               --github-token "${GITHUB_TOKEN}" \
               --repo "${REPO}" \
               --pr-number "${PR_NUMBER}" \
@@ -152,7 +136,7 @@ jobs:
             fi
 
             if [ "$DIFF" -eq 1 ]; then
-                poetry run github-cli post-pr-comment \
+                $COMMAND github-cli post-pr-comment \
                   --github-token "${GITHUB_TOKEN}" \
                   --repo "${REPO}" \
                   --pr-number "${PR_NUMBER}" \
@@ -160,7 +144,7 @@ jobs:
                   $COMMENT_OPTION
             else
               if [ -n "$COMMENT_ID" ]; then
-                poetry run github-cli delete-pr-comment \
+                $COMMAND github-cli delete-pr-comment \
                   --github-token "${GITHUB_TOKEN}" \
                   --repo "${REPO}" \
                   --pr-number "${PR_NUMBER}" \
