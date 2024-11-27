@@ -51,6 +51,12 @@ jobs:
     steps:
       - checkout
 
+      # Restore cache
+      - restore_cache:
+          keys:
+            - python-poetry-cache-{{ checksum "requirements.txt" }}
+            - python-poetry-cache-
+
       - run:
           name: Install Python and Poetry
           command: |
@@ -58,6 +64,13 @@ jobs:
             sudo apt-get install -y python3 python3-pip
             python3 -m pip install --upgrade pip
             pip3 install poetry
+
+      # Save cache
+      - save_cache:
+          paths:
+            - ~/.cache/pip
+            - ~/.poetry
+          key: python-poetry-cache-{{ checksum "requirements.txt" }}
 
       - run:
           name: Get circleci tools and set initial environment variables
