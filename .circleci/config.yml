@@ -133,6 +133,11 @@ jobs:
               --message-substring "${MESSAGE}" \
               --user-type "User" )
 
+            echo 1 --repo "${REPO}" \
+              --pr-number "${PR_NUMBER}" \
+              --message-substring "${MESSAGE}" \
+              --user-type "User"
+
             COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
             COMMENT_OPTION=""
             if [ -n "$COMMENT_ID" ]; then
@@ -146,11 +151,18 @@ jobs:
                   --pr-number "${PR_NUMBER}" \
                   --comment-body "${COMMENT_BODY}" \
                   $COMMENT_OPTION
+                  echo 2 --repo "${REPO}" \
+                  --pr-number "${PR_NUMBER}" \
+                  --comment-body "${COMMENT_BODY}" \
+                  $COMMENT_OPTION
             else
               if [ -n "$COMMENT_ID" ]; then
                 poetry run github-cli delete-pr-comment \
                   --github-token "${STALE_GITHUB_TOKEN}" \
                   --repo "${REPO}" \
+                  --pr-number "${PR_NUMBER}" \
+                  --comment-id $COMMENT_ID
+                  echo 3  --repo "${REPO}" \
                   --pr-number "${PR_NUMBER}" \
                   --comment-id $COMMENT_ID
               fi
