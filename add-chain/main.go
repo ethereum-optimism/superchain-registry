@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 
@@ -13,9 +12,8 @@ import (
 var app = &cli.App{
 	Name:   "add-chain",
 	Usage:  "Utilities for working with the superchain-registry",
-	Action: entrypoint,
 	Commands: []*cli.Command{
-		&cmd.AddChainCmd,
+		&cmd.AddNewChainCmd,
 		&cmd.PromoteToStandardCmd,
 		&cmd.CheckRollupConfigCmd,
 		&cmd.CompressGenesisCmd,
@@ -51,29 +49,4 @@ func runApp(args []string) error {
 	}
 
 	return app.Run(args)
-}
-
-// call default command (AddChainCmd) if no subcommand is provided
-func entrypoint(c *cli.Context) error {
-	if c.Args().Present() {
-		// Unknown command or arguments were provided
-		return cli.ShowAppHelp(c)
-	}
-
-	// No subcommand provided; invoke the default command
-
-	// Create a new flag set for the default command
-	set := flag.NewFlagSet(cmd.AddChainCmd.Name, flag.ExitOnError)
-	for _, f := range cmd.AddChainCmd.Flags {
-		_ = f.Apply(set)
-	}
-
-	// Create a new context with the new flag set
-	ctx := cli.NewContext(c.App, set, c)
-
-	// Set the command to the default command
-	ctx.Command = &cmd.AddChainCmd
-
-	// Invoke the default command's Run method
-	return cmd.AddChainCmd.Run(ctx)
 }

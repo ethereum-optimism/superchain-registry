@@ -4,7 +4,7 @@ alias l := lint-all
 
 # Adding a chain
 add-chain:
-	go run ./add-chain
+	go run ./add-chain add-new-chain
 	go run ./add-chain check-rollup-config
 	go run ./add-chain compress-genesis
 	go run ./add-chain check-genesis

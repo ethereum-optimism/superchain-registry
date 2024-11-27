@@ -25,8 +25,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var AddChainCmd = cli.Command{
-	Name:  "add-chain",
+var AddNewChainCmd = cli.Command{
+	Name:  "add-new-chain",
 	Usage: "Add a new chain to the superchain-registry",
 	Flags: []cli.Flag{
 		flags.PublicRpcFlag,
@@ -43,7 +43,6 @@ var AddChainCmd = cli.Command{
 		flags.GenesisCreationCommit,
 		flags.DeployConfigFlag,
 	},
-	Hidden: true,
 	Action: func(c *cli.Context) error {
 		standardChainCandidate := c.Bool(flags.StandardChainCandidateFlag.Name)
 
