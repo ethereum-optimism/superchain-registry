@@ -57,21 +57,19 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y python3 python3-pip
             python3 -m pip install --upgrade pip
-
-      - run:
-          name: Get circleci tools and set initial environment variables
-          command: |
             git clone --branch main --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
             GITHUB_CLI_PATH=/tmp/circleci-utils/github_utility/github_cli
             pip install -r $GITHUB_CLI_PATH/requirements.txt
             COMMAND="python3 $GITHUB_CLI_PATH/main.py"
             echo "export COMMAND=$COMMAND" >> $BASH_ENV
 
-            REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-            echo "export REPO=$REPO" >> $BASH_ENV
+      - run:
+          name: Get circleci tools and set initial environment variables
+          command: |
+            echo $CIRCLE_PULL_REQUEST
             PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            echo $PR_NUMBER
             echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
-
       - run:
           name: Generate configs at HEAD
           working_directory: validation
@@ -117,6 +115,8 @@ jobs:
       - run:
           name: Handle PR Comment Based on DIFF
           command: |
+            REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+
             RUN_URL="${CIRCLE_BUILD_URL}"
 
             MESSAGE="<<parameters.message>>"
