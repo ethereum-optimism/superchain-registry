@@ -86,6 +86,7 @@ type ChainConfig struct {
 	Explorer     string `toml:"explorer"`
 
 	SuperchainLevel SuperchainLevel `toml:"superchain_level"`
+	GovernedByOptimism bool `toml:"governed_by_optimism"`
 
 	// If StandardChainCandidate is true, standard chain validation checks will
 	// run on this chain even if it is a frontier chain.
