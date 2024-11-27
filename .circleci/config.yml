@@ -35,7 +35,7 @@ jobs:
           configuration_path: .circleci/continue_config.yml
           parameters: "{}"
 
-  compute-config-diff:
+  compute-config-diff-and-report-with-pr-comment:
     docker:
       - image: cimg/go:1.22
     parameters:
@@ -44,6 +44,9 @@ jobs:
         type: string
       directory:
         description: "Directory where config files are stored"
+        type: string
+      message:
+        description: "PR comment body prefixed message"
         type: string
     steps:
       - checkout
@@ -62,8 +65,9 @@ jobs:
             # Checkout the HEAD SHA
             git fetch origin $HEAD_SHA
             git checkout $HEAD_SHA
+            go build <<parameters.command>>/main.go ./out
 
-            go run <<parameters.command>>/main.go HEAD
+            ./out HEAD
 
             # Fetch PR details using GitHub API
             BASE_BRANCH=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
@@ -75,7 +79,7 @@ jobs:
             # Checkout the base branch
             git checkout $BASE_BRANCH
 
-            go run <<parameters.command>>/main.go base
+            ./out base
       - run:
           name: Compute diff
           working_directory: validation
@@ -91,31 +95,17 @@ jobs:
             # Restore error handling
             set -e
           when: always
-      - run: |
-          cp $BASH_ENV bash.env
-      - persist_to_workspace:
-          root: .
-          paths:
-            - bash.env
-  report-with-pr-comment:
-    docker:
-      - image: cimg/python:3.11
-    parameters:
-      message:
-        description: "PR comment body prefixed message"
-        type: string
-    steps:
-      - attach_workspace:
-          at: .
-      - run: |
-          cat bash.env >> $BASH_ENV
       - run:
           name: Handle PR Comment Based on DIFF
           command: |
+            sudo apt-get update
+            sudo apt-get install -y python3 python3-pip
+            python3 -m pip install --upgrade pip
             git clone --branch main --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
             GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
             pip install -r $GITHUB_CLI_PATH/requirements.txt
             MAIN_PATH=$GITHUB_CLI_PATH/main.py
+            echo "export MAIN_PATH=$MAIN_PATH" >> $BASH_ENV
 
             REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
 
@@ -157,20 +147,15 @@ workflows:
   setup:
     jobs:
       - setup-genesis-allocs-validation
-      - compute-config-diff:
+      - compute-config-diff-and-report-with-pr-comment:
           name: compute-genesis-diff
           command: "generate-genesis"
           directory: "generate-genesis"
-          context: circleci-superchain-registry
-      - report-with-pr-comment:
-          name: genesis-diff-report-with-pr-comment
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
           context: circleci-superchain-registry
-          requires:
-            - compute-genesis-diff
-      # - compute-config-diff-and-report-with-pr-comment:
-      #     name: compute-rollup-config-diff
-      #     command: "generate-rollup-config"
-      #     directory: "generate-rollup-config"
-      #     message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
-      #     context: circleci-superchain-registry
+      - compute-config-diff-and-report-with-pr-comment:
+          name: compute-rollup-config-diff
+          command: "generate-rollup-config"
+          directory: "generate-rollup-config"
+          message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
+          context: circleci-superchain-registry
