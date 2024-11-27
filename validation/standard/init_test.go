@@ -8,7 +8,20 @@ import (
 )
 
 func TestConfigInitialization(t *testing.T) {
-	// Ensure Config is initialized
+	t.Run("Release", func(t *testing.T) {
+		require.NotEmpty(t, Release, "Release should not be empty")
+	})
+
+	t.Run("BytecodeHashes", func(t *testing.T) {
+		require.NotNil(t, BytecodeHashes[Release], "BytecodeHashes should not be nil")
+		require.NotZero(t, len(BytecodeHashes), "BytecodeHashes should not be empty")
+	})
+
+	t.Run("BytecodeImmutables", func(t *testing.T) {
+		require.NotNil(t, BytecodeImmutables[Release], "BytecodeImmutables should not be nil")
+		require.NotZero(t, len(BytecodeImmutables), "BytecodeImmutables should not be empty")
+	})
+
 	require.NotNil(t, Config, "Config should not be nil")
 	require.NotNil(t, Config.Params, "Config.Params should not be nil")
 	require.NotNil(t, Config.Roles, "Config.Roles should not be nil")
@@ -35,20 +48,7 @@ func TestConfigInitialization(t *testing.T) {
 			require.True(t, ok, "NetworkVersions[%s] should exist", network)
 			require.NotNil(t, versions, "NetworkVersions[%s] should not be nil", network)
 			require.NotZero(t, len(versions.Releases), "NetworkVersions[%s].Releases should not be empty", network)
+			require.NotZero(t, versions.Releases[Release], "NetworkVersions[%s].Releases should not be empty", network)
 		})
 	}
-
-	t.Run("Release", func(t *testing.T) {
-		require.NotEmpty(t, Release, "Release should not be empty")
-	})
-
-	t.Run("BytecodeHashes", func(t *testing.T) {
-		require.NotNil(t, BytecodeHashes[Release], "BytecodeHashes should not be nil")
-		require.NotZero(t, len(BytecodeHashes), "BytecodeHashes should not be empty")
-	})
-
-	t.Run("BytecodeImmutables", func(t *testing.T) {
-		require.NotNil(t, BytecodeImmutables[Release], "BytecodeImmutables should not be nil")
-		require.NotZero(t, len(BytecodeImmutables), "BytecodeImmutables should not be empty")
-	})
 }
