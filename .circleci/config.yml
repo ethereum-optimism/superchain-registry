@@ -60,8 +60,8 @@ jobs:
             git clone --branch main --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
             GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
             pip install -r $GITHUB_CLI_PATH/requirements.txt
-            COMMAND="python3 $GITHUB_CLI_PATH/main.py"
-            echo "export COMMAND=$COMMAND" >> $BASH_ENV
+            MAIN_PATH=$GITHUB_CLI_PATH/main.py
+            echo "export MAIN_PATH=$MAIN_PATH" >> $BASH_ENV
 
       - run:
           name: Get circleci tools and set initial environment variables
@@ -69,7 +69,7 @@ jobs:
             PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
             echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
       - run:
-          name: Generate configs at HEAD
+          name: Generate configs
           working_directory: validation
           command: |
             HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
@@ -80,10 +80,7 @@ jobs:
             git checkout $HEAD_SHA
 
             go run <<parameters.command>>/main.go HEAD
-      - run:
-          name: Generate configs on base branch
-          working_directory: validation
-          command: |
+
             # Fetch PR details using GitHub API
             BASE_BRANCH=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
               "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.base.ref')
@@ -120,7 +117,7 @@ jobs:
             MESSAGE="<<parameters.message>>"
             COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
             echo $COMMAND
-            COMMENT_ID=$( $COMMAND get-pr-comments \
+            COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
               --github-token "${GITHUB_TOKEN}" \
               --repo "${REPO}" \
               --pr-number "${PR_NUMBER}" \
@@ -134,7 +131,7 @@ jobs:
             fi
 
             if [ "$DIFF" -eq 1 ]; then
-                $COMMAND post-pr-comment \
+                python $MAIN_PATH post-pr-comment \
                   --github-token "${GITHUB_TOKEN}" \
                   --repo "${REPO}" \
                   --pr-number "${PR_NUMBER}" \
@@ -142,7 +139,7 @@ jobs:
                   $COMMENT_OPTION
             else
               if [ -n "$COMMENT_ID" ]; then
-                $COMMAND delete-pr-comment \
+                python $MAIN_PATH delete-pr-comment \
                   --github-token "${GITHUB_TOKEN}" \
                   --repo "${REPO}" \
                   --pr-number "${PR_NUMBER}" \
