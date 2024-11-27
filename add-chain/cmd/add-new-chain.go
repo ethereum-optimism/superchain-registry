@@ -67,7 +67,7 @@ var AddNewChainCmd = cli.Command{
 		if !ok {
 			panic("error getting current filepath")
 		}
-		superchainRepoRoot := filepath.Dir(filepath.Dir(thisFile))
+		superchainRepoRoot := filepath.Dir(filepath.Dir(filepath.Dir(thisFile)))
 
 		fmt.Printf("Chain Name:                     %s\n", chainName)
 		fmt.Printf("Chain Short Name:               %s\n", chainShortName)
