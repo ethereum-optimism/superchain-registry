@@ -48,7 +48,12 @@ func TestConfigInitialization(t *testing.T) {
 			require.True(t, ok, "NetworkVersions[%s] should exist", network)
 			require.NotNil(t, versions, "NetworkVersions[%s] should not be nil", network)
 			require.NotZero(t, len(versions.Releases), "NetworkVersions[%s].Releases should not be empty", network)
-			require.NotZero(t, versions.Releases[Release], "NetworkVersions[%s].Releases should not be empty", network)
+
+			_, ok = versions.Releases[Release]
+			require.True(t, ok, "NetworkVersions[%s].Releases[%s] should exist", network, Release)
+
+			_, ok = versions.Releases["fake-release"]
+			require.False(t, ok, "NetworkVersions[%s].Releases[%s] should not exist", network, Release)
 		})
 	}
 }
