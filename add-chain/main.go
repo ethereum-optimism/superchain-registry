@@ -10,8 +10,8 @@ import (
 )
 
 var app = &cli.App{
-	Name:   "add-chain",
-	Usage:  "Utilities for working with the superchain-registry",
+	Name:  "add-chain",
+	Usage: "Utilities for working with the superchain-registry",
 	Commands: []*cli.Command{
 		&cmd.AddNewChainCmd,
 		&cmd.PromoteToStandardCmd,
