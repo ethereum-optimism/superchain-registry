@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/optimism/op-e2e/bindings"
+	"github.com/ethereum-optimism/optimism/op-service/retry"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/cmd"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/config"
 	"github.com/ethereum-optimism/superchain-registry/add-chain/flags"
@@ -247,26 +249,46 @@ func getGasPayingToken(l1rpcURl string, SystemConfigAddress superchain.Address) 
 	}
 	opts := bind.CallOpts{}
 
-	usingCustomGasToken, err := sc.IsCustomGasToken(&opts)
-	if err != nil {
-		if strings.Contains(err.Error(), "execution reverted") {
-			// This happens when the SystemConfig contract
-			// does not yet have the CGT functionality.
-			return nil, nil
+	usingCustomGasToken, err := retry.Do(context.Background(), 3, retry.Exponential(), func() (bool, error) {
+		usingCustomGasToken, err := sc.IsCustomGasToken(&opts)
+		if err != nil {
+			if strings.Contains(err.Error(), "execution reverted") {
+				// This happens when the SystemConfig contract
+				// does not yet have the CGT functionality.
+				return false, nil
+			}
+			return false, err
 		}
+		return usingCustomGasToken, nil
+	})
+	if err != nil {
 		return nil, err
 	}
 	if !usingCustomGasToken {
 		return nil, nil
 	}
 
-	result, err := sc.GasPayingToken(&opts)
-	if err != nil {
-		if strings.Contains(err.Error(), "execution reverted") {
-			// This happens when the SystemConfig contract
-			// does not yet have the CGT functionality.
-			return nil, nil
+	result, err := retry.Do(context.Background(), 3, retry.Exponential(), func() (struct {
+		Addr     common.Address
+		Decimals uint8
+	}, error,
+	) {
+		var zeroVal struct {
+			Addr     common.Address
+			Decimals uint8
 		}
+		result, err := sc.GasPayingToken(&opts)
+		if err != nil {
+			if strings.Contains(err.Error(), "execution reverted") {
+				// This happens when the SystemConfig contract
+				// does not yet have the CGT functionality.
+				return zeroVal, nil
+			}
+			return zeroVal, err
+		}
+		return result, nil
+	})
+	if err != nil {
 		return nil, err
 	}
 	if (result.Addr == common.Address{}) {
@@ -294,7 +316,7 @@ func writeGenesisValidationMetadata(commit string, targetDir string) error {
 	// involving OPLabs engineers after the add-chain command runs.
 	const defaultNodeVersion = "18.12.1"
 	const defaultMonorepoBuildCommand = "pnpm"
-	const defaultGenesisCreationCommand = "opnode2" // See validation/genesis/commands.go
+	const defaultGenesisCreationCommand = "forge1" // See validation/genesis/commands.go
 	vm := genesis.ValidationMetadata{
 		GenesisCreationCommit:  commit,
 		NodeVersion:            defaultNodeVersion,

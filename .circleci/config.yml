@@ -8,15 +8,29 @@ orbs:
 
 jobs:
   setup-genesis-allocs-validation:
-    macos:
-      xcode: 14.2.0
-    resource_class: macos.m1.medium.gen1
+    docker:
+      - image: alpine:latest
     steps:
       - checkout
       - run:
-          name: Generate list of chain IDs and insert into continue_config.yml file
+          name: Install Git, yq, and jq
           command: |
-            bash validation/genesis/validation-inputs/generate-test-config.sh
+            apk add --no-cache git jq curl
+            curl -sLo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+            chmod +x /usr/local/bin/yq
+      - run:
+          name: Verify Git
+          command: git --version
+      - run:
+          name: Verify yq
+          command: yq --version
+      - run:
+          name: Verify jq
+          command: jq --version
+      - run:
+          name: Generate list of chainids and insert into  continue_config.yml file
+          command: |
+            sh validation/genesis/validation-inputs/generate-test-config.sh
       - continuation/continue:
           configuration_path: .circleci/continue_config.yml
           parameters: "{}"
