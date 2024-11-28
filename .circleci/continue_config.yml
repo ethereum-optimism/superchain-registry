@@ -11,7 +11,7 @@ parameters:
     default: 1.22.7 # update CI Go version here
   chain:
     type: string
-    default: "ethernity-sepolia"
+    default: "__required__"
 
 commands:
   gcp-oidc-authenticate:
@@ -401,6 +401,14 @@ jobs:
     machine:
       image: ubuntu-2004:current
     steps:
+      - run:
+          name: Verify Chain Parameter
+          command: |
+            if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
+              echo "Error: The 'chain' parameter is required but was not provided."
+              exit 1
+            fi
+            echo "export CHAIN=<< pipeline.parameters.chain >>" >> $BASH_ENV
       - checkout
       - gcp-cli/install
       - gcp-oidc-authenticate
