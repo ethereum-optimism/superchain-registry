@@ -82,7 +82,7 @@ jobs:
 
   compute-config-diff-and-report-with-pr-comment:
     docker:
-      - image: alpine:latest
+      - image: cimg/go:1.22
     parameters:
       command:
         description: "Command to run to generate config files"
