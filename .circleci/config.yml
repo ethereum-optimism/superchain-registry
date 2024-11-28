@@ -80,6 +80,7 @@ jobs:
             git checkout $BASE_BRANCH
 
             ./out base
+            ls -la
       - run:
           name: Compute diff
           working_directory: validation
