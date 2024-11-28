@@ -53,8 +53,8 @@ commands:
             echo "export GOOGLE_APPLICATION_CREDENTIALS='<< parameters.gcp_cred_config_file_path >>'" | tee -a "$BASH_ENV"
 jobs:
   setup-genesis-allocs-validation:
-    machine:
-      image: ubuntu-2004:current
+    docker:
+      - image: alpine:latest
     steps:
       - checkout
       - run:
@@ -81,8 +81,8 @@ jobs:
           parameters: "{}"
 
   compute-config-diff-and-report-with-pr-comment:
-    docker:
-      - image: cimg/go:1.22
+    machine:
+      image: ubuntu-2004:current
     parameters:
       command:
         description: "Command to run to generate config files"
