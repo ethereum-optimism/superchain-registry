@@ -3,6 +3,11 @@ version: 2.1
 # This allows us to use CircleCI's dynamic configuration feature
 setup: true
 
+parameters:
+  chain:
+    type: string
+    default: "__required__"
+
 orbs:
   continuation: circleci/continuation@0.3.1
 
