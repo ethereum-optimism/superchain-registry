@@ -424,18 +424,17 @@ jobs:
             FOLDER="chains"
             FOLDER="ci-test-chains"
 
-            echo "Uploading artifacts to gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>"
 
-            # gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-            #   gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/genesis.json
-            # gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-            #   gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/rollup.json
+            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+              gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/genesis.json
+            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+              gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/rollup.json
 
-            # # Upload with commit hash for historical records
-            # gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-            #   gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/${COMMIT_HASH}/genesis.json
-            # gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-            #   gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/${COMMIT_HASH}/rollup.json
+            # Upload with commit hash for historical records
+            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+              gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/${COMMIT_HASH}/genesis.json
+            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+              gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/${COMMIT_HASH}/rollup.json
 
 workflows:
   hourly:
