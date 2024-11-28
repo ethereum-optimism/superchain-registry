@@ -53,8 +53,8 @@ commands:
             echo "export GOOGLE_APPLICATION_CREDENTIALS='<< parameters.gcp_cred_config_file_path >>'" | tee -a "$BASH_ENV"
 jobs:
   setup-genesis-allocs-validation:
-    docker:
-      - image: alpine:latest
+    machine:
+      image: ubuntu-2004:current
     steps:
       - checkout
       - run:
