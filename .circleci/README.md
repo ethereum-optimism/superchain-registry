@@ -31,14 +31,17 @@ Before using the script, ensure you have the following:
 If you haven't installed the CircleCI CLI, follow these steps:
 
 1. Install via Homebrew (macOS):
+```bash
    brew install circleci
-
+```
 2. Install via Script (Linux):
+```bash
    curl -fLSs https://circle.ci/cli | bash
-
+```
 3. Verify Installation:
+```bash
    circleci version
-
+```
    You should see the version of the CircleCI CLI installed.
 
 Refer to the [CircleCI CLI Installation Guide](https://circleci.com/docs/local-cli/#installation) for detailed instructions.
@@ -46,8 +49,9 @@ Refer to the [CircleCI CLI Installation Guide](https://circleci.com/docs/local-c
 ### Configure the CircleCI CLI
 
 1. Run CircleCI Setup:
+```bash
    circleci setup
-
+```
 2. Enter Your CircleCI API Token:
    - Log in to CircleCI.
    - Go to [Personal API Tokens](https://app.circleci.com/settings/user/tokens).
@@ -67,17 +71,21 @@ chmod +x circleci-upload-chain-artifacts.sh
 
 ### Syntax
 
+```bash
 ./circleci-upload-chain-artifacts.sh <chain> [branch]
-
+```
 - `<chain>`: **(Required)** The name of the target chain (e.g., `op-mainnet`).
 - `[branch]`: **(Optional)** The branch to trigger the pipeline on. Defaults to `main`.
 
 ### Examples
 
 Trigger Pipeline on Default Branch:
+```bash
 ./circleci-upload-chain-artifacts.sh op-mainnet
+```
 
 Trigger Pipeline on Specific Branch:
+```bash
 ./circleci-upload-chain-artifacts.sh op-mainnet develop
 
 Interactive Chain Input:
@@ -89,10 +97,10 @@ Output:
 Usage: ./circleci-upload-chain-artifacts.sh <chain> [branch]
 Error: The 'chain' parameter is required.
 Enter the chain name:
-
+```
 ### Default Branch Override
 
-By default, the script is set to trigger the pipeline on the `migrate-github-actions-to-circleci` branch.
+By default, the script is set to trigger the pipeline on the `main` branch.
 To change this, modify the `BRANCH` variable in the script or provide a branch name as an argument.
 
 ## Notes
