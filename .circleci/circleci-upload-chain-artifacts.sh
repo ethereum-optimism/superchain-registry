@@ -40,7 +40,7 @@ if [ -z "$CHAIN" ]; then
 fi
 
 BRANCH=${2:-main}  # Default to 'main' branch if not provided
-BRANCH="migrate-github-actions-to-circleci"
+
 # Define the API endpoint
 API_ENDPOINT="https://circleci.com/api/v2/project/gh/ethereum-optimism/superchain-registry/pipeline"
 
