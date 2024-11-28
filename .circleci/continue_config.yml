@@ -1,13 +1,59 @@
 version: 2.1
 orbs:
-  go: circleci/go@1.8.0
+  go: circleci/go@2.1.0
   node: circleci/node@5.2.0
   slack: circleci/slack@4.10.1
+  gcp-cli: circleci/gcp-cli@3.0.1
+  python: circleci/python@1.1.0
 parameters:
   go_version:
     type: string
     default: 1.22.7 # update CI Go version here
+  chain:
+    type: string
+    default: "op-mainnet"
+
 commands:
+  gcp-oidc-authenticate:
+    description: "Authenticate with GCP using a CircleCI OIDC token."
+    parameters:
+      project_id:
+        type: env_var_name
+        default: GCP_PROJECT_ID
+      workload_identity_pool_id:
+        type: env_var_name
+        default: GCP_WIP_ID
+      workload_identity_pool_provider_id:
+        type: env_var_name
+        default: GCP_WIP_PROVIDER_ID
+      service_account_email:
+        type: env_var_name
+        default: GCP_SERVICE_ACCOUNT_EMAIL
+      gcp_cred_config_file_path:
+        type: string
+        default: /home/circleci/gcp_cred_config.json
+      oidc_token_file_path:
+        type: string
+        default: /home/circleci/oidc_token.json
+    steps:
+      - run:
+          name: "Create OIDC credential configuration"
+          command: |
+            # Store OIDC token in temp file
+            echo $CIRCLE_OIDC_TOKEN > << parameters.oidc_token_file_path >>
+            # Create a credential configuration for the generated OIDC ID Token
+            gcloud iam workload-identity-pools create-cred-config \
+                "projects/${<< parameters.project_id >>}/locations/global/workloadIdentityPools/${<< parameters.workload_identity_pool_id >>}/providers/${<< parameters.workload_identity_pool_provider_id >>}"\
+                --output-file="<< parameters.gcp_cred_config_file_path >>" \
+                --service-account="${<< parameters.service_account_email >>}" \
+                --credential-source-file=<< parameters.oidc_token_file_path >>
+      - run:
+          name: "Authenticate with GCP using OIDC"
+          command: |
+            # Configure gcloud to leverage the generated credential configuration
+            gcloud auth login --brief --cred-file "<< parameters.gcp_cred_config_file_path >>"
+            # Configure ADC
+            echo "export GOOGLE_APPLICATION_CREDENTIALS='<< parameters.gcp_cred_config_file_path >>'" | tee -a "$BASH_ENV"
   notify-failures-on-main:
     description: "Notify Slack for CI job failures"
     parameters:
@@ -245,13 +291,154 @@ jobs:
     steps:
       - checkout
       - run: echo "All golang-validate-genesis-allocs jobs suceeded"
+
+  compute-config-diff-and-report-with-pr-comment:
+    machine:
+      image: ubuntu-2004:current
+    parameters:
+      command:
+        description: "Command to run to generate config files"
+        type: string
+      directory:
+        description: "Directory where config files are stored"
+        type: string
+      message:
+        description: "PR comment body prefixed message"
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Get circleci tools and set initial environment variables
+          command: |
+            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
+      - run:
+          name: Generate configs
+          working_directory: validation
+          command: |
+            HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.head.sha')
+
+            # Checkout the HEAD SHA
+            git fetch origin $HEAD_SHA
+            git checkout $HEAD_SHA
+            go run <<parameters.command>>/main.go HEAD
+
+
+            # Fetch PR details using GitHub API
+            BASE_BRANCH=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.base.ref')
+
+            # Fetch the base branch
+            git fetch origin $BASE_BRANCH
+
+            # Checkout the base branch
+            git checkout $BASE_BRANCH
+
+            go run <<parameters.command>>/main.go base
+      - run:
+          name: Compute diff
+          working_directory: validation
+          command: |
+            # Allow the script to continue even if the diff-configs.sh script returns a non-zero exit code
+            set +e
+
+            # Run the script and capture its output and exit code
+            ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
+            DIFF=$?
+            echo "export DIFF=$DIFF" >> $BASH_ENV
+
+            # Restore error handling
+            set -e
+          when: always
+      - run:
+          name: Handle PR Comment Based on DIFF
+          command: |
+            git clone --branch main --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
+            GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
+            pip install -r $GITHUB_CLI_PATH/requirements.txt
+            MAIN_PATH=$GITHUB_CLI_PATH/main.py
+            echo "export MAIN_PATH=$MAIN_PATH" >> $BASH_ENV
+
+            REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+
+            RUN_URL="${CIRCLE_BUILD_URL}"
+
+            MESSAGE="<<parameters.message>>"
+            COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
+            echo $COMMAND
+            COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
+              --github-token "${GITHUB_TOKEN}" \
+              --repo "${REPO}" \
+              --pr-number "${PR_NUMBER}" \
+              --message-substring "${MESSAGE}" \
+              --user-type "User" )
+
+            COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
+            COMMENT_OPTION=""
+            if [ -n "$COMMENT_ID" ]; then
+              COMMENT_OPTION="--comment-id $COMMENT_ID"
+            fi
+
+            if [ "$DIFF" -eq 1 ]; then
+                python $MAIN_PATH post-pr-comment \
+                  --github-token "${GITHUB_TOKEN}" \
+                  --repo "${REPO}" \
+                  --pr-number "${PR_NUMBER}" \
+                  --comment-body "${COMMENT_BODY}" \
+                  $COMMENT_OPTION
+            else
+              if [ -n "$COMMENT_ID" ]; then
+                python $MAIN_PATH delete-pr-comment \
+                  --github-token "${GITHUB_TOKEN}" \
+                  --repo "${REPO}" \
+                  --pr-number "${PR_NUMBER}" \
+                  --comment-id $COMMENT_ID
+              fi
+            fi
+
+  upload-chain-artifacts:
+    machine:
+      image: ubuntu-2004:current
+    steps:
+      - checkout
+      - gcp-cli/install
+      - gcp-oidc-authenticate
+      - run:
+          name: Get Current Commit Hash
+          command: echo "COMMIT_HASH=$(git rev-parse HEAD)" >> $BASH_ENV
+      - run:
+          name: Generate Genesis File
+          working_directory: validation
+          command: |
+            go run generate-genesis/main.go $COMMIT_HASH
+      - run:
+          name: Generate Rollup Config
+          working_directory: validation
+          command: |
+            go run generate-rollup-config/main.go $COMMIT_HASH
+      - run:
+          name: Upload Artifacts
+          working_directory: validation
+          command: |
+            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+              gs://${GCS_BUCKET}/chains/<< pipeline.parameters.chain >>/genesis.json
+            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+              gs://${GCS_BUCKET}/chains/<< pipeline.parameters.chain >>/rollup.json
+
+            # Upload with commit hash for historical records
+            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+              gs://${GCS_BUCKET}/chains/<< pipeline.parameters.chain >>/${COMMIT_HASH}/genesis.json
+            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+              gs://${GCS_BUCKET}/chains/<< pipeline.parameters.chain >>/${COMMIT_HASH}/rollup.json
+
 workflows:
   hourly:
     # run workflow only when the hourly_build pipeline is triggered
     when:
       and:
-        - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-        - equal: [ hourly_build, << pipeline.schedule.name >> ]
+        - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+        - equal: [hourly_build, << pipeline.schedule.name >>]
     jobs:
       - golang-validate-all:
           context:
@@ -263,8 +450,8 @@ workflows:
     # run workflow only when the nightly_build pipeline is triggered
     when:
       and:
-        - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-        - equal: [ nightly_build, << pipeline.schedule.name >> ]
+        - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+        - equal: [nightly_build, << pipeline.schedule.name >>]
     jobs:
       - golang-promotion-test:
           context:
@@ -282,3 +469,18 @@ workflows:
       - golang-test
       - golang-validate-modified
       - check-codegen
+
+compute-config-diff-and-report-with-pr-comment:
+  jobs:
+    - compute-config-diff-and-report-with-pr-comment:
+        name: compute-genesis-diff
+        command: "generate-genesis"
+        directory: "generate-genesis"
+        message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
+        context: circleci-superchain-registry
+    - compute-config-diff-and-report-with-pr-comment:
+        name: compute-rollup-config-diff
+        command: "generate-rollup-config"
+        directory: "generate-rollup-config"
+        message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
+        context: circleci-superchain-registry
