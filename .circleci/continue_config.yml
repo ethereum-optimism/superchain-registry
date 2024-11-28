@@ -12,6 +12,9 @@ parameters:
   chain:
     type: string
     default: "__required__"
+  interactive:
+    type: boolean
+    default: false
 
 commands:
   gcp-oidc-authenticate:
@@ -499,8 +502,10 @@ workflows:
 
   upload-chain-artifacts:
     when:
-      not:
-        equal: ["__required__", << pipeline.parameters.chain >>]
+      and:
+        - not:
+            equal: ["__required__", << pipeline.parameters.chain >>]
+        - << pipeline.parameters.interactive >>
     jobs:
       - upload-chain-artifacts:
           context: circleci-superchain-registry

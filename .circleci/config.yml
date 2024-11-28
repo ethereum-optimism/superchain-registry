@@ -7,6 +7,9 @@ parameters:
   chain:
     type: string
     default: "__required__"
+  interactive:
+    type: boolean
+    default: false
 
 orbs:
   continuation: circleci/continuation@0.3.1
@@ -42,5 +45,7 @@ jobs:
 
 workflows:
   setup:
+    when:
+      not: << pipeline.parameters.interactive >>
     jobs:
       - setup-genesis-allocs-validation
