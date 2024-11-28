@@ -433,6 +433,8 @@ jobs:
           working_directory: validation
           command: |
             FOLDER="chains"
+            FOLDER="ci-test-chains"
+
 
             gsutil cp ./generate-genesis/output-${COMMIT_HASH}/${CHAIN}.json \
               gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/genesis.json
