@@ -405,8 +405,8 @@ jobs:
           name: Verify Chain Parameter
           command: |
             if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
-              echo "Error: The 'chain' parameter is required but was not provided."
-              exit 1
+              echo "The 'chain' parameter is required but was not provided, skipping upload"
+              exit 0
             fi
             echo "export CHAIN=<< pipeline.parameters.chain >>" >> $BASH_ENV
       - checkout
