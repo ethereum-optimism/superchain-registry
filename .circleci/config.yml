@@ -81,8 +81,8 @@ jobs:
           parameters: "{}"
 
   compute-config-diff-and-report-with-pr-comment:
-    machine:
-      image: ubuntu-2004:current
+    docker:
+      - image: alpine:latest
     parameters:
       command:
         description: "Command to run to generate config files"
