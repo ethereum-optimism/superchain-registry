@@ -5,9 +5,6 @@ setup: true
 
 orbs:
   continuation: circleci/continuation@0.3.1
-  gcp-cli: circleci/gcp-cli@3.0.1
-  go: circleci/go@2.1.0
-  python: circleci/python@1.1.0
 
 jobs:
   setup-genesis-allocs-validation:
