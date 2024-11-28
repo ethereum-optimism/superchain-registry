@@ -454,6 +454,7 @@ workflows:
       and:
         - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
         - equal: [hourly_build, << pipeline.schedule.name >>]
+        - not: << pipeline.parameters.interactive >>
     jobs:
       - golang-validate-all:
           context:
@@ -467,11 +468,14 @@ workflows:
       and:
         - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
         - equal: [nightly_build, << pipeline.schedule.name >>]
+        - not: << pipeline.parameters.interactive >>
     jobs:
       - golang-promotion-test:
           context:
             - slack
   pr-checks:
+    when:
+      not: << pipeline.parameters.interactive >>
     jobs:
       - golang-validate-genesis-allocs:
           matrix:
@@ -486,6 +490,8 @@ workflows:
       - check-codegen
 
   compute-config-diff-and-report:
+    when:
+      not: << pipeline.parameters.interactive >>
     jobs:
       - compute-config-diff-and-report-with-pr-comment:
           name: compute-genesis-diff
