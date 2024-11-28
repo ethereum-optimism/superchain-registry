@@ -51,7 +51,8 @@ RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST $API_ENDPOINT \
     -d '{
           "branch": "'"$BRANCH"'",
           "parameters": {
-            "chain": "'"$CHAIN"'"
+            "chain": "'"$CHAIN"'",
+            "interactive": true
           }
         }')
 

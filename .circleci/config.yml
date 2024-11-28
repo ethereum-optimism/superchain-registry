@@ -45,7 +45,5 @@ jobs:
 
 workflows:
   setup:
-    when:
-      not: << pipeline.parameters.interactive >>
     jobs:
       - setup-genesis-allocs-validation
