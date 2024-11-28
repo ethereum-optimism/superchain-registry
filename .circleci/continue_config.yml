@@ -11,7 +11,7 @@ parameters:
     default: 1.22.7 # update CI Go version here
   chain:
     type: string
-    default: "op-mainnet"
+    default: "test-sepolia"
 
 commands:
   gcp-oidc-authenticate:
@@ -421,16 +421,21 @@ jobs:
           name: Upload Artifacts
           working_directory: validation
           command: |
-            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-              gs://${GCS_BUCKET}/chains/<< pipeline.parameters.chain >>/genesis.json
-            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-              gs://${GCS_BUCKET}/chains/<< pipeline.parameters.chain >>/rollup.json
+            FOLDER="chains"
+            FOLDER="ci-test-chains"
 
-            # Upload with commit hash for historical records
-            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-              gs://${GCS_BUCKET}/chains/<< pipeline.parameters.chain >>/${COMMIT_HASH}/genesis.json
-            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-              gs://${GCS_BUCKET}/chains/<< pipeline.parameters.chain >>/${COMMIT_HASH}/rollup.json
+            echo "Uploading artifacts to gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>"
+
+            # gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+            #   gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/genesis.json
+            # gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+            #   gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/rollup.json
+
+            # # Upload with commit hash for historical records
+            # gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+            #   gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/${COMMIT_HASH}/genesis.json
+            # gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
+            #   gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/${COMMIT_HASH}/rollup.json
 
 workflows:
   hourly:
@@ -483,4 +488,9 @@ workflows:
           command: "generate-rollup-config"
           directory: "generate-rollup-config"
           message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
+          context: circleci-superchain-registry
+
+  upload-chain-artifacts:
+    jobs:
+      - upload-chain-artifacts:
           context: circleci-superchain-registry
