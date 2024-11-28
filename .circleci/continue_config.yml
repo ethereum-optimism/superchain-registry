@@ -405,8 +405,8 @@ jobs:
           name: Verify Chain Parameter
           command: |
             if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
-              echo "The 'chain' parameter is required but was not provided, skipping upload"
-              exit 0
+              echo "Error: The 'chain' parameter is required but was not provided, skipping upload"
+              exit 1
             fi
             echo "export CHAIN=<< pipeline.parameters.chain >>" >> $BASH_ENV
       - checkout
@@ -433,16 +433,16 @@ jobs:
             FOLDER="ci-test-chains"
 
 
-            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-              gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/genesis.json
-            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-              gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/rollup.json
+            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/genesis.json
+            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/rollup.json
 
             # Upload with commit hash for historical records
-            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-              gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/${COMMIT_HASH}/genesis.json
-            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/<< pipeline.parameters.chain >>.json \
-              gs://${GCS_BUCKET}/${FOLDER}/<< pipeline.parameters.chain >>/${COMMIT_HASH}/rollup.json
+            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/${COMMIT_HASH}/genesis.json
+            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/${COMMIT_HASH}/rollup.json
 
 workflows:
   hourly:
