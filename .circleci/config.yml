@@ -65,9 +65,8 @@ jobs:
             # Checkout the HEAD SHA
             git fetch origin $HEAD_SHA
             git checkout $HEAD_SHA
-            go build -o ./out <<parameters.command>>/main.go
-            chmod +x ./out
-            ./out HEAD
+            go run <<parameters.command>>/main.go HEAD
+
 
             # Fetch PR details using GitHub API
             BASE_BRANCH=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
@@ -79,8 +78,7 @@ jobs:
             # Checkout the base branch
             git checkout $BASE_BRANCH
 
-            ./out base
-            ls -la
+            go run <<parameters.command>>/main.go base
       - run:
           name: Compute diff
           working_directory: validation
