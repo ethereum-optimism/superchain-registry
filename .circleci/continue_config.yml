@@ -498,6 +498,9 @@ workflows:
           context: circleci-superchain-registry
 
   upload-chain-artifacts:
+    when:
+      not:
+        equal: ["__required__", << pipeline.parameters.chain >>]
     jobs:
       - upload-chain-artifacts:
           context: circleci-superchain-registry
