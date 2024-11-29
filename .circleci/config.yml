@@ -38,11 +38,9 @@ jobs:
             if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
               echo "Generating test configuration..."
               sh validation/genesis/validation-inputs/generate-test-config.sh
-              echo '{}' > .circleci/my_parameters.json
               cp .circleci/continue_config.yml .circleci/selected_continue_config.yml
             else
               echo "Generating interactive configuration..."
-              echo '{ "chain": "<< pipeline.parameters.chain >>" }' > .circleci/my_parameters.json
               cp .circleci/continue_interactive.yml .circleci/selected_continue_config.yml
             fi
       - continuation/continue:

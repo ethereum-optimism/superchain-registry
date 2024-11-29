@@ -87,18 +87,16 @@ jobs:
           command: |
             FOLDER="chains"
             FOLDER="ci-test-chains"
-            echo $chain
-            echo $CHAIN
-            # gsutil cp ./generate-genesis/output-${COMMIT_HASH}/${CHAIN}.json \
-            #   gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/genesis.json
-            # gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/${CHAIN}.json \
-            #   gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/rollup.json
+            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/genesis.json
+            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/rollup.json
 
-            # # Upload with commit hash for historical records
-            # gsutil cp ./generate-genesis/output-${COMMIT_HASH}/${CHAIN}.json \
-            #   gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/${COMMIT_HASH}/genesis.json
-            # gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/${CHAIN}.json \
-            #   gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/${COMMIT_HASH}/rollup.json
+            # Upload with commit hash for historical records
+            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/${COMMIT_HASH}/genesis.json
+            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/${COMMIT_HASH}/rollup.json
 
 workflows:
   upload-chain-artifacts:
