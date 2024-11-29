@@ -9,7 +9,6 @@ orbs:
 parameters:
   chain:
     type: string
-    default: "__required__"
 
 commands:
   gcp-oidc-authenticate:
