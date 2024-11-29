@@ -3,11 +3,6 @@ version: 2.1
 # This allows us to use CircleCI's dynamic configuration feature
 setup: true
 
-parameters:
-  chain:
-    type: string
-    default: "__required__"
-
 orbs:
   continuation: circleci/continuation@0.3.1
 
@@ -42,7 +37,7 @@ jobs:
               cp .circleci/continue_config.yml .circleci/selected_continue_config.yml
             else
               echo "Generating interactive configuration..."
-              echo '{ "chain_in": "<< pipeline.parameters.chain >>" }' > .circleci/my_parameters.json
+              echo '{ "chain": "<< pipeline.parameters.chain >>" }' > .circleci/my_parameters.json
               cp .circleci/continue_interactive.yml .circleci/selected_continue_config.yml
             fi
       - continuation/continue:
