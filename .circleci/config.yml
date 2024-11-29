@@ -33,10 +33,6 @@ jobs:
           name: Verify jq
           command: jq --version
       - run:
-          name: Generate list of chainids and insert into  continue_config.yml file
-          command: |
-            sh validation/genesis/validation-inputs/generate-test-config.sh
-      - run:
           name: Generate Configuration
           command: |
             if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
@@ -46,7 +42,7 @@ jobs:
               cp .circleci/continue_config.yml .circleci/selected_continue_config.yml
             else
               echo "Generating interactive configuration..."
-              echo '{ "chain2": "<< pipeline.parameters.chain >>" }' > .circleci/my_parameters.json
+              echo '{ "chain_in": "<< pipeline.parameters.chain >>" }' > .circleci/my_parameters.json
               cp .circleci/continue_interactive.yml .circleci/selected_continue_config.yml
             fi
       - continuation/continue:
