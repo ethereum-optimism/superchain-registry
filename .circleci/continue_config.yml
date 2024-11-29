@@ -3,8 +3,6 @@ orbs:
   go: circleci/go@2.1.0
   node: circleci/node@5.2.0
   slack: circleci/slack@4.10.1
-  gcp-cli: circleci/gcp-cli@3.0.1
-  python: circleci/python@1.1.0
 parameters:
   go_version:
     type: string
@@ -419,7 +417,6 @@ workflows:
           context:
             - slack
   pr-checks:
-    when:
     jobs:
       - golang-validate-genesis-allocs:
           matrix:
