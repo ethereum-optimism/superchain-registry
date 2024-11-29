@@ -6,6 +6,11 @@ orbs:
   gcp-cli: circleci/gcp-cli@3.0.1
   python: circleci/python@1.1.0
 
+parameters:
+  chain:
+    type: string
+    default: "__required__"
+
 commands:
   gcp-oidc-authenticate:
     description: "Authenticate with GCP using a CircleCI OIDC token."
