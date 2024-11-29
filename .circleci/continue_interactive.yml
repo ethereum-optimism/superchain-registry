@@ -6,6 +6,11 @@ orbs:
   gcp-cli: circleci/gcp-cli@3.0.1
   python: circleci/python@1.1.0
 
+parameters:
+  chain2:
+    type: string
+    default: "__required__"
+
 commands:
   gcp-oidc-authenticate:
     description: "Authenticate with GCP using a CircleCI OIDC token."
@@ -55,11 +60,11 @@ jobs:
       - run:
           name: Verify Chain Parameter
           command: |
-            if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
+            if [ "<< pipeline.parameters.chain2 >>" = "__required__" ]; then
               echo "Error: The 'chain' parameter is required but was not provided, skipping upload"
               exit 1
             fi
-            echo "export CHAIN=<< pipeline.parameters.chain >>" >> $BASH_ENV
+            echo "export CHAIN=<< pipeline.parameters.chain2 >>" >> $BASH_ENV
       - checkout
       - gcp-cli/install
       - gcp-oidc-authenticate
@@ -99,7 +104,7 @@ workflows:
   upload-chain-artifacts:
     when:
       not:
-        equal: ["__required__", << pipeline.parameters.chain >>]
+        equal: ["__required__", << pipeline.parameters.chain2 >>]
     jobs:
       - upload-chain-artifacts:
           context: circleci-superchain-registry
