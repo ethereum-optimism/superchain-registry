@@ -47,7 +47,6 @@ jobs:
             else
               echo "Generating interactive configuration..."
               echo '{ "chain": "<< pipeline.parameters.chain >>" }' > .circleci/parameters.json
-              echo '{}' > .circleci/parameters.json
               cp .circleci/continue_interactive.yml .circleci/selected_continue_config.yml
             fi
       - continuation/continue:
