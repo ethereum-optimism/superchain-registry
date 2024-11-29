@@ -36,9 +36,22 @@ jobs:
           name: Generate list of chainids and insert into  continue_config.yml file
           command: |
             sh validation/genesis/validation-inputs/generate-test-config.sh
+      - run:
+          name: Generate Configuration
+          command: |
+            if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
+              echo "Generating test configuration..."
+              sh validation/genesis/validation-inputs/generate-test-config.sh
+              echo '{}' > /home/circleci/parameters.json
+              cp .circleci/continue_config.yml .circleci/selected_continue_config.yml
+            else
+              echo "Generating interactive configuration..."
+              echo '{ "chain": "<< pipeline.parameters.chain >>" }' > /home/circleci/parameters.json
+              cp .circleci/continue_interactive.yml .circleci/selected_continue_config.yml
+            fi
       - continuation/continue:
-          configuration_path: .circleci/continue_config.yml
-          parameters: "{}"
+          configuration_path: .circleci/selected_continue_config.yml
+          parameters: /home/circleci/parameters.json
 
 workflows:
   setup:
