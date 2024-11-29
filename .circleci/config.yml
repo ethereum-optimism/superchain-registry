@@ -12,7 +12,7 @@ orbs:
   continuation: circleci/continuation@0.3.1
 
 jobs:
-  setup-genesis-allocs-validation:
+  generate-and-select-continuation-config:
     docker:
       - image: alpine:latest
     steps:
@@ -40,12 +40,12 @@ jobs:
 
               echo "Generating test configuration..."
               sh validation/genesis/validation-inputs/generate-test-config.sh
-              cp .circleci/continue_config.yml .circleci/selected_continue_config.yml
+              cp .circleci/main_config.yml .circleci/selected_continue_config.yml
             else
               # This only runs if launched with curl or the CircleCI GUI with non default chain value
 
               echo "Generating interactive configuration..."
-              cp .circleci/continue_interactive.yml .circleci/selected_continue_config.yml
+              cp .circleci/artifact_upload_config.yml .circleci/selected_continue_config.yml
             fi
       - continuation/continue:
           configuration_path: .circleci/selected_continue_config.yml
@@ -53,4 +53,4 @@ jobs:
 workflows:
   setup:
     jobs:
-      - setup-genesis-allocs-validation
+      - generate-and-select-continuation-config
