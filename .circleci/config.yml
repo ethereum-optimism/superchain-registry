@@ -36,10 +36,14 @@ jobs:
           name: Generate Configuration
           command: |
             if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
+              # This will always be selected unless the user chooses to interact with the configuration by setting a non default value in the chain parameter. This would happens if the user launch the pipeline with a specific chain value via either curl or the CircleCI GUI.
+
               echo "Generating test configuration..."
               sh validation/genesis/validation-inputs/generate-test-config.sh
               cp .circleci/continue_config.yml .circleci/selected_continue_config.yml
             else
+              # This only runs if launched with curl or the CircleCI GUI with non default chain value
+
               echo "Generating interactive configuration..."
               cp .circleci/continue_interactive.yml .circleci/selected_continue_config.yml
             fi
