@@ -7,9 +7,6 @@ parameters:
   chain:
     type: string
     default: "__required__"
-  interactive:
-    type: boolean
-    default: false
 
 orbs:
   continuation: circleci/continuation@0.3.1

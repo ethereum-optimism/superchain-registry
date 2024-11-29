@@ -9,12 +9,6 @@ parameters:
   go_version:
     type: string
     default: 1.22.7 # update CI Go version here
-  chain:
-    type: string
-    default: "__required__"
-  interactive:
-    type: boolean
-    default: false
 
 commands:
   gcp-oidc-authenticate:
@@ -400,53 +394,6 @@ jobs:
               fi
             fi
 
-  upload-chain-artifacts:
-    machine:
-      image: ubuntu-2004:current
-    steps:
-      - run:
-          name: Verify Chain Parameter
-          command: |
-            if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
-              echo "Error: The 'chain' parameter is required but was not provided, skipping upload"
-              exit 1
-            fi
-            echo "export CHAIN=<< pipeline.parameters.chain >>" >> $BASH_ENV
-      - checkout
-      - gcp-cli/install
-      - gcp-oidc-authenticate
-      - run:
-          name: Get Current Commit Hash
-          command: echo "COMMIT_HASH=$(git rev-parse HEAD)" >> $BASH_ENV
-      - run:
-          name: Generate Genesis File
-          working_directory: validation
-          command: |
-            go run generate-genesis/main.go $COMMIT_HASH
-      - run:
-          name: Generate Rollup Config
-          working_directory: validation
-          command: |
-            go run generate-rollup-config/main.go $COMMIT_HASH
-      - run:
-          name: Upload Artifacts
-          working_directory: validation
-          command: |
-            FOLDER="chains"
-            FOLDER="ci-test-chains"
-
-
-            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/${CHAIN}.json \
-              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/genesis.json
-            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/${CHAIN}.json \
-              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/rollup.json
-
-            # Upload with commit hash for historical records
-            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/${CHAIN}.json \
-              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/${COMMIT_HASH}/genesis.json
-            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/${CHAIN}.json \
-              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/${COMMIT_HASH}/rollup.json
-
 workflows:
   hourly:
     # run workflow only when the hourly_build pipeline is triggered
@@ -454,7 +401,6 @@ workflows:
       and:
         - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
         - equal: [hourly_build, << pipeline.schedule.name >>]
-        - not: << pipeline.parameters.interactive >>
     jobs:
       - golang-validate-all:
           context:
@@ -468,14 +414,12 @@ workflows:
       and:
         - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
         - equal: [nightly_build, << pipeline.schedule.name >>]
-        - not: << pipeline.parameters.interactive >>
     jobs:
       - golang-promotion-test:
           context:
             - slack
   pr-checks:
     when:
-      not: << pipeline.parameters.interactive >>
     jobs:
       - golang-validate-genesis-allocs:
           matrix:
@@ -490,8 +434,6 @@ workflows:
       - check-codegen
 
   compute-config-diff-and-report:
-    when:
-      not: << pipeline.parameters.interactive >>
     jobs:
       - compute-config-diff-and-report-with-pr-comment:
           name: compute-genesis-diff
@@ -504,14 +446,4 @@ workflows:
           command: "generate-rollup-config"
           directory: "generate-rollup-config"
           message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
-          context: circleci-superchain-registry
-
-  upload-chain-artifacts:
-    when:
-      and:
-        - not:
-            equal: ["__required__", << pipeline.parameters.chain >>]
-        - << pipeline.parameters.interactive >>
-    jobs:
-      - upload-chain-artifacts:
           context: circleci-superchain-registry
