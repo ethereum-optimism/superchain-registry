@@ -28,7 +28,7 @@ func readAddressesFromChain(addresses *superchain.AddressList, l1RpcUrl string, 
 	if err != nil {
 		address, err = validation.CastCall(addresses.OptimismPortalProxy, "guardian()(address)", nil, l1RpcUrl)
 		if err != nil {
-			return fmt.Errorf("could not retrieve address for Guardian %w", err)
+			return fmt.Errorf("could not retrieve Guardian address from OptimismPortalProxy at %s: %w", addresses.OptimismPortalProxy, err)
 		}
 	}
 	addresses.Guardian = superchain.MustHexToAddress(address[0])
@@ -102,7 +102,7 @@ func readAddressesFromJSON(addressList *superchain.AddressList, deploymentsDir s
 	deployFilePath := filepath.Join(deploymentsDir)
 	fileInfo, err := os.Stat(deployFilePath)
 	if err != nil {
-		return fmt.Errorf("invalid deployment filepath provided: %w", err)
+		return fmt.Errorf("invalid deployment filepath provided (%s): %w", deployFilePath, err)
 	}
 
 	if fileInfo.IsDir() {
@@ -110,21 +110,25 @@ func readAddressesFromJSON(addressList *superchain.AddressList, deploymentsDir s
 		_, err = os.Stat(deployFilePath)
 		if err != nil {
 			// Use legacy deployment artifact schema
+			fmt.Printf("failed to find .deploy file. Will look for legacy .json files in %s.", deploymentsDir)
 			contractAddresses := make(map[string]string)
-			fmt.Printf("failed to find .deploy file. Will look for legacy .json files")
-			files, _ := os.ReadDir(deploymentsDir)
+			files, err := os.ReadDir(deploymentsDir)
+			if err != nil {
+				return fmt.Errorf("failed to read contents of directory (%s): %w", deploymentsDir, err)
+			}
 			for _, file := range files {
 				if file.IsDir() {
 					continue
 				}
 				contractName := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
-				fileContents, err := os.ReadFile(filepath.Join(deploymentsDir, file.Name()))
+				filePath := filepath.Join(deploymentsDir, file.Name())
+				fileContents, err := os.ReadFile(filePath)
 				if err != nil {
-					return fmt.Errorf("failed to read file: %w", err)
+					return fmt.Errorf("failed to read file (%s): %w", filePath, err)
 				}
 				var data AddressData
 				if err = json.Unmarshal(fileContents, &data); err != nil {
-					return fmt.Errorf("failed to unmarshal json: %w", err)
+					return fmt.Errorf("failed to unmarshal JSON in file (%s): %w", filePath, err)
 				}
 				contractAddresses[contractName] = data.Address
 				err = mapToAddressList(contractAddresses, addressList)
@@ -138,7 +142,7 @@ func readAddressesFromJSON(addressList *superchain.AddressList, deploymentsDir s
 
 	rawData, err := os.ReadFile(deployFilePath)
 	if err != nil {
-		return fmt.Errorf("failed to read file: %w", err)
+		return fmt.Errorf("failed to read file %s: %w", deployFilePath, err)
 	}
 
 	if err = json.Unmarshal(rawData, &addressList); err != nil {
