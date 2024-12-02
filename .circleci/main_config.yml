@@ -272,6 +272,8 @@ jobs:
           working_directory: validation
           command: |
 
+            echo  "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER"
+
             curl -s -H "Authorization: token $GITHUB_TOKEN" \
               "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" > api_response.json
 
