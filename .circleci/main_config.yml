@@ -268,17 +268,16 @@ jobs:
             PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
             echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
       - run:
-          name: Generate configurations
+          name: Generate configs
           working_directory: validation
           command: |
-            # HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            #   "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.head.sha')
+            HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.head.sha')
 
-            # # Checkout the HEAD SHA
-            git fetch origin
-            git checkout -b merge-preview
-            git merge main
-            go run <<parameters.command>>/main.go merge-preview
+            # Checkout the HEAD SHA
+            git fetch origin $HEAD_SHA
+            git checkout $HEAD_SHA
+            go run <<parameters.command>>/main.go HEAD
 
 
             # Fetch PR details using GitHub API
@@ -300,7 +299,7 @@ jobs:
             set +e
 
             # Run the script and capture its output and exit code
-            ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-merge-preview
+            ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
             DIFF=$?
             echo "export DIFF=$DIFF" >> $BASH_ENV
 
