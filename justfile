@@ -75,7 +75,7 @@ clean-scr-ops:
 tidy-all: tidy-scr-ops tidy-superchain tidy-validation
 
 # Tidy the scr-ops go.mod file
-tidy-scr-ops
+tidy-scr-ops:
 	cd scr-ops && go mod tidy
 
 # Tidy the superchain go.mod file
