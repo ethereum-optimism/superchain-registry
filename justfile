@@ -4,15 +4,15 @@ alias l := lint-all
 
 # Adding a chain
 add-chain:
-	go run ./add-chain add-new-chain
-	go run ./add-chain check-rollup-config
-	go run ./add-chain compress-genesis
-	go run ./add-chain check-genesis
+	go run ./scr-ops add-new-chain
+	go run ./scr-ops check-rollup-config
+	go run ./scr-ops compress-genesis
+	go run ./scr-ops check-genesis
 	just codegen
 
 # Promote a standard candidate chain to a standard chain, example: just promote-to-standard 10
 promote-to-standard CHAIN:
-	go run ./add-chain promote-to-standard --chain-id={{CHAIN}}
+	go run ./scr-ops promote-to-standard --chain-id={{CHAIN}}
 	just codegen
 
 # Generate auto-generated files
@@ -30,8 +30,8 @@ test-all: test-add-chain test-superchain test-validation
 test-add-chain:
 	# We separate the first test from the rest because it generates artifacts
 	# Which need to exist before the remaining tests run.
-	TEST_DIRECTORY=./add-chain go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run TestAddChain_Main
-	TEST_DIRECTORY=./add-chain/... go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run '[^TestAddChain_Main]'
+	TEST_DIRECTORY=./scr-ops go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run TestAddChain_Main
+	TEST_DIRECTORY=./scr-ops/... go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run '[^TestAddChain_Main]'
 
 # Test all Go code in the superchain module
 test-superchain: clean-add-chain
