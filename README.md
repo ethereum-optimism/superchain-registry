@@ -30,6 +30,7 @@ The Superchain configs are stored in a minimal form and embedded in downstream O
 If you would like your chain to automatically receive superchain-wide coordinated hardfork activations, you can enable this by:
 1. Adding your chain [as above](docs/add-chain.md)
 2. Ensuring the `superchain_time` in your chain's config is set to an appropriate value.
+Set it to `0` if you want to receive all superchain forks that occur after your chain's genesis, and you have activated all superchain forks up to your genesis time at genesis.
 3. Having that value reflected in the `main` branch well in advance of the testnet (resp. mainnet) release of `op-geth` and `op-node`.
 4. Having your chain's nodes started with the network flags.
 
