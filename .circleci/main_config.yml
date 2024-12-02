@@ -275,9 +275,10 @@ jobs:
             #   "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.head.sha')
 
             # # Checkout the HEAD SHA
-            # git fetch origin $HEAD_SHA
-            # git checkout $HEAD_SHA
-            go run <<parameters.command>>/main.go HEAD
+            git fetch origin
+            git checkout -b merge-preview
+            git merge main
+            go run <<parameters.command>>/main.go merge-preview
 
 
             # Fetch PR details using GitHub API
@@ -299,7 +300,7 @@ jobs:
             set +e
 
             # Run the script and capture its output and exit code
-            ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
+            ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-merge-preview
             DIFF=$?
             echo "export DIFF=$DIFF" >> $BASH_ENV
 
