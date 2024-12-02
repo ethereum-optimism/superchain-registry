@@ -3,6 +3,9 @@ name: Rollup Config and Genesis Diff
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  push:
+      branches:
+        - "**"
 
 jobs:
   compute-genesis-diff:
