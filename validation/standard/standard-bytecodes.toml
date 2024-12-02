@@ -1,6 +1,6 @@
 ["op-contracts/v1.8.0"] # Holocene https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.8.0-rc.3
 # Updated in this release
-system_config = "0x765ed9c632a7af063d046a6a9bbff7fcd638b3eadedc80340cf77416ad1c8c50"             # version 2.3.0
+system_config = "0x165dece6291f3a071e602c804f4a3e89977a71ec866f46c85eb21448f22f6f9a"             # version 2.3.0
 fault_dispute_game = "0x1a81c5fe9fbbf68a0f75e987451e5181c4fc3e801f5c056d38f08942cefed349"        # version "1.3.1"
 permissioned_dispute_game = "0x69bd3197f9f0248972d9518a9c220a22e326760dc8c0ffcc1612d4d0730a7a1a" # version "1.3.1"
 mips = "0xd80e53cfb3a0655e5a82b40f370b7352bd926d6d28de7f1735583fcfeba3f0fd"                      # version "1.2.1"
