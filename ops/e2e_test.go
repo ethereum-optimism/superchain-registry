@@ -81,7 +81,7 @@ var tests = []struct {
 	},
 }
 
-func TestScrOps_Main(t *testing.T) {
+func TestOps_Main(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
@@ -112,7 +112,7 @@ func TestScrOps_Main(t *testing.T) {
 
 	t.Run("compress-genesis", func(t *testing.T) {
 		// Must run this test to produce the .json.gz output artifact for the
-		// subsequent TestScrOps_CheckGenesis
+		// subsequent TestOps_CheckGenesis
 		t.Parallel()
 		err := os.Setenv("SCR_RUN_TESTS", "true")
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
@@ -129,7 +129,7 @@ func TestScrOps_Main(t *testing.T) {
 	})
 }
 
-func TestScrOps_CheckRollupConfig(t *testing.T) {
+func TestOps_CheckRollupConfig(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
@@ -150,7 +150,7 @@ func TestScrOps_CheckRollupConfig(t *testing.T) {
 	}
 }
 
-func TestScrOps_CheckGenesis(t *testing.T) {
+func TestOps_CheckGenesis(t *testing.T) {
 	t.Run("genesis_zorasep", func(t *testing.T) {
 		err := os.Setenv("SCR_RUN_TESTS", "true")
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
