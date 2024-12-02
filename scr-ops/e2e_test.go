@@ -81,7 +81,7 @@ var tests = []struct {
 	},
 }
 
-func TestAddChain_Main(t *testing.T) {
+func TestScrOps_Main(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
@@ -93,7 +93,7 @@ func TestAddChain_Main(t *testing.T) {
 			require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
 
 			args := []string{
-				"add-chain",
+				"scr-ops",
 				"add-new-chain",
 				"--chain-name=" + tt.chainName,
 				"--chain-short-name=" + tt.chainShortName,
@@ -104,7 +104,7 @@ func TestAddChain_Main(t *testing.T) {
 			}
 
 			err = runApp(args)
-			require.NoError(t, err, "add-chain app failed")
+			require.NoError(t, err, "scr-ops app failed")
 
 			checkConfigTOML(t, tt.name, tt.chainShortName)
 		})
@@ -112,24 +112,24 @@ func TestAddChain_Main(t *testing.T) {
 
 	t.Run("compress-genesis", func(t *testing.T) {
 		// Must run this test to produce the .json.gz output artifact for the
-		// subsequent TestAddChain_CheckGenesis
+		// subsequent TestScrOps_CheckGenesis
 		t.Parallel()
 		err := os.Setenv("SCR_RUN_TESTS", "true")
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
 
 		args := []string{
-			"add-chain",
+			"scr-ops",
 			"compress-genesis",
 			"--genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
 			"--superchain-target=" + "sepolia",
 			"--chain-short-name=" + "testchain_zs",
 		}
 		err = runApp(args)
-		require.NoError(t, err, "add-chain compress-genesis failed")
+		require.NoError(t, err, "scr-ops compress-genesis failed")
 	})
 }
 
-func TestAddChain_CheckRollupConfig(t *testing.T) {
+func TestScrOps_CheckRollupConfig(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
@@ -140,28 +140,28 @@ func TestAddChain_CheckRollupConfig(t *testing.T) {
 			require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
 
 			args := []string{
-				"add-chain",
+				"scr-ops",
 				"check-rollup-config",
 				"--rollup-config=" + tt.rollupConfigFile,
 			}
 			err = runApp(args)
-			require.NoError(t, err, "add-chain check-rollup-config failed")
+			require.NoError(t, err, "scr-ops check-rollup-config failed")
 		})
 	}
 }
 
-func TestAddChain_CheckGenesis(t *testing.T) {
+func TestScrOps_CheckGenesis(t *testing.T) {
 	t.Run("genesis_zorasep", func(t *testing.T) {
 		err := os.Setenv("SCR_RUN_TESTS", "true")
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
 
 		args := []string{
-			"add-chain",
+			"scr-ops",
 			"check-genesis",
 			"--genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
 		}
 		err = runApp(args)
-		require.NoError(t, err, "add-chain check-genesis failed")
+		require.NoError(t, err, "scr-ops check-genesis failed")
 	})
 }
 
