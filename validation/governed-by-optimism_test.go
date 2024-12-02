@@ -18,6 +18,6 @@ func testGovernedByOptimism(t *testing.T, chain *ChainConfig) {
 	optimismMultisig := standard.Config.MultisigRoles[superchain].KeyHandover.L1.Universal["ProxyAdmin"]["owner()"]
 
 	if chain.GovernedByOptimism == true {
-		require.Equal(t, chain.Addresses.ProxyAdminOwner.String(), optimismMultisig, "Chains using Optimism governance must have their ProxyAdminOwner set to the Optimism multisig")
+		require.Equal(t, optimismMultisig, chain.Addresses.ProxyAdminOwner.String(), "Chains using Optimism governance must have their ProxyAdminOwner set to the Optimism multisig")
 	}
 }
