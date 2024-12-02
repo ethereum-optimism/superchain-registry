@@ -35,7 +35,7 @@ commands:
   install-foundry:
     steps:
       - run:
-          # need foundry to execute 'cast call' within add-chain script
+          # need foundry to execute 'cast call' within scr-ops script
           name: Install foundry
           command: |
             echo "SHELL=$SHELL"
@@ -116,8 +116,8 @@ jobs:
           name: run validation module unit tests
           command: just test-validation
       - run:
-          name: run add-chain module unit tests
-          command: just test-add-chain
+          name: run scr-ops module unit tests
+          command: just test-scr-ops
       - notify-failures-on-main:
           channel: C03N11M0BBN # to slack channel `notify-ci-failures`
           # TODO this should also be filtered on modified chains
