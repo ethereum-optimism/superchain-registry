@@ -4,6 +4,7 @@ public_rpc = "https://sepolia.mode.network"
 sequencer_rpc = "https://sepolia.mode.network"
 explorer = "https://sepolia.explorer.mode.network"
 superchain_level = 0
+governed_by_optimism = false
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 superchain_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
 batch_inbox_addr = "0xcDDaE6148dA1E003C230E4527f9baEdc8a204e7E"
