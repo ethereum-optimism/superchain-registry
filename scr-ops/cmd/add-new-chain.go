@@ -271,7 +271,7 @@ func writeGenesisValidationMetadata(commit string, targetDir string) error {
 	// Define default metadata params:
 	// These may not be sufficient to make the genesis validation work,
 	// but we address that with some manual trial-and-error intervention
-	// involving OPLabs engineers after the add-chain command runs.
+	// involving OPLabs engineers after the add-new-chain command runs.
 	const defaultNodeVersion = "18.12.1"
 	const defaultMonorepoBuildCommand = "pnpm"
 	const defaultGenesisCreationCommand = "forge1" // See validation/genesis/commands.go
