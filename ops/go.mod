@@ -1,4 +1,4 @@
-module github.com/ethereum-optimism/superchain-registry/scr-ops
+module github.com/ethereum-optimism/superchain-registry/ops
 
 go 1.22.0
 

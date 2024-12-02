@@ -3,7 +3,7 @@
 > [!WARNING]
 > `CONTRIBUTING.md` contains guidelines for modifying or working with the code in the Superchain Registry, including the validation checks and exported modules.
 >
-> For guidelines on how to add a chain to the Registry, see the documentation for [adding a new chain](docs/scr-ops.md#adding-a-chain).
+> For guidelines on how to add a chain to the Registry, see the documentation for [adding a new chain](docs/ops.md#adding-a-chain).
 
 The Superchain Registry repository contains:
 
@@ -12,7 +12,7 @@ The Superchain Registry repository contains:
 - a Go workspace with
   - a [`superchain`](#superchain-go-module) module
   - a [`validation`](#validation-go-module) module
-  - an [`scr-ops`](#scr-ops-go-module) module
+  - an [`ops`](#ops-go-module) module
   - The modules are tracked by a top level `go.work` file. The associated `go.work.sum` file is gitignored and not important to typical workflows, which should mirror those of the [CI configuration](.circleci/config.yml).
 - Automatically generated summary `chainList.json` and `chainList.toml` files.
 
@@ -67,7 +67,7 @@ The configs are consumed by downstream OP Stack software, i.e. `op-geth` and `op
 
 A second module exists in this repo whose purpose is to validate the config exported by the `superchain` module. It is a separate module to avoid import cycles and polluting downstream dependencies with things like `go-ethereum` (which is used in the validation tests).
 
-## `scr-ops` Go module
+## `ops` Go module
 
 This module contains the CLI tool for generating `superchain` compliant configs and extra data to the registry.
 

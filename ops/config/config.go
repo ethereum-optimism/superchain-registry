@@ -13,7 +13,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum/go-ethereum/core"
 
-	"github.com/ethereum-optimism/superchain-registry/scr-ops/utils"
+	"github.com/ethereum-optimism/superchain-registry/ops/utils"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 

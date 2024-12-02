@@ -1,4 +1,4 @@
-# Superchain Registry Operations (scr-ops)
+# Superchain Registry Operations (ops)
 
 ## Adding a Chain
 

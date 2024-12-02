@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
-	"github.com/ethereum-optimism/superchain-registry/scr-ops/flags"
+	"github.com/ethereum-optimism/superchain-registry/ops/flags"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"

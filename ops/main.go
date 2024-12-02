@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ethereum-optimism/superchain-registry/scr-ops/cmd"
+	"github.com/ethereum-optimism/superchain-registry/ops/cmd"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 )
 
 var app = &cli.App{
-	Name:  "scr-ops",
+	Name:  "ops",
 	Usage: "Utilities for working with the superchain-registry",
 	Commands: []*cli.Command{
 		&cmd.AddNewChainCmd,

@@ -93,7 +93,7 @@ func TestScrOps_Main(t *testing.T) {
 			require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
 
 			args := []string{
-				"scr-ops",
+				"ops",
 				"add-new-chain",
 				"--chain-name=" + tt.chainName,
 				"--chain-short-name=" + tt.chainShortName,
@@ -104,7 +104,7 @@ func TestScrOps_Main(t *testing.T) {
 			}
 
 			err = runApp(args)
-			require.NoError(t, err, "scr-ops app failed")
+			require.NoError(t, err, "ops app failed")
 
 			checkConfigTOML(t, tt.name, tt.chainShortName)
 		})
@@ -118,14 +118,14 @@ func TestScrOps_Main(t *testing.T) {
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
 
 		args := []string{
-			"scr-ops",
+			"ops",
 			"compress-genesis",
 			"--genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
 			"--superchain-target=" + "sepolia",
 			"--chain-short-name=" + "testchain_zs",
 		}
 		err = runApp(args)
-		require.NoError(t, err, "scr-ops compress-genesis failed")
+		require.NoError(t, err, "ops compress-genesis failed")
 	})
 }
 
@@ -140,12 +140,12 @@ func TestScrOps_CheckRollupConfig(t *testing.T) {
 			require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
 
 			args := []string{
-				"scr-ops",
+				"ops",
 				"check-rollup-config",
 				"--rollup-config=" + tt.rollupConfigFile,
 			}
 			err = runApp(args)
-			require.NoError(t, err, "scr-ops check-rollup-config failed")
+			require.NoError(t, err, "ops check-rollup-config failed")
 		})
 	}
 }
@@ -156,12 +156,12 @@ func TestScrOps_CheckGenesis(t *testing.T) {
 		require.NoError(t, err, "failed to set SCR_RUN_TESTS env var")
 
 		args := []string{
-			"scr-ops",
+			"ops",
 			"check-genesis",
 			"--genesis=" + "./testdata/monorepo/op-node/genesis_zorasep.json",
 		}
 		err = runApp(args)
-		require.NoError(t, err, "scr-ops check-genesis failed")
+		require.NoError(t, err, "ops check-genesis failed")
 	})
 }
 

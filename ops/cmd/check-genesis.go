@@ -6,7 +6,7 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/ethereum-optimism/superchain-registry/scr-ops/flags"
+	"github.com/ethereum-optimism/superchain-registry/ops/flags"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
