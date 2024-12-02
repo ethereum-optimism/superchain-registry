@@ -4,6 +4,7 @@ public_rpc = "https://rpc.sepolia-api.lisk.com"
 sequencer_rpc = "https://rpc.sepolia-api.lisk.com"
 explorer = "https://sepolia-blockscout.lisk.com"
 superchain_level = 0
+governed_by_optimism = false
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 batch_inbox_addr = "0xff00000000000000000000000000000000004202"
 canyon_time = 1705312994 # Mon 15 Jan 2024 10:03:14 UTC
