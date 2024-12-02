@@ -271,12 +271,12 @@ jobs:
           name: Generate configs
           working_directory: validation
           command: |
-            HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.head.sha')
+            # HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            #   "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.head.sha')
 
-            # Checkout the HEAD SHA
-            git fetch origin $HEAD_SHA
-            git checkout $HEAD_SHA
+            # # Checkout the HEAD SHA
+            # git fetch origin $HEAD_SHA
+            # git checkout $HEAD_SHA
             go run <<parameters.command>>/main.go HEAD
 
 
