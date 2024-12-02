@@ -271,18 +271,20 @@ jobs:
           name: Generate configs
           working_directory: validation
           command: |
-            HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.head.sha')
+
+            curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" > api_response.json
+
+            cat api_response.json
+
+            HEAD_SHA=$(jq -r '.head.sha' api_response.json)
+            BASE_BRANCH=$(jq -r '.base.ref' api_response.json)
 
             # Checkout the HEAD SHA
             git fetch origin $HEAD_SHA
             git checkout $HEAD_SHA
             go run <<parameters.command>>/main.go HEAD
 
-
-            # Fetch PR details using GitHub API
-            BASE_BRANCH=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.base.ref')
 
             # Fetch the base branch
             git fetch origin $BASE_BRANCH
