@@ -15,7 +15,7 @@ preimage_oracle = "0x2109eb20fb34703fe7ab0231bf0e93d972fe78423b72e7fb1f797f16821
 # for the contracts below which contain immutables, the hash is calculated from the masked bytecode (not the deployed bytecode as-is).
 # sections of the bytecode that contain the immutables are masked (set to 0) before computing the hash
 anchor_state_registry = "0x46e8ecc46fd27f178ada1c5a2168c09512e7ed2f7d4ac9a7c74123af26fd850c" # version "2.0.0"
-delayed_weth = "0xc4fb1a6fa54865937fda773735938b5374d23fcf556bb4c69686f23be96b3f97"          # version "1.0.0"
+delayed_weth = "0xc4fb1a6fa54865937fda773735938b5374d23fcf556bb4c69686f23be96b3f97"          # version "1.1.0"
 
 
 ["op-contracts/v1.6.0"] # Fault Proof Fixes https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.6.0
@@ -31,7 +31,7 @@ permissioned_dispute_game = "0x666d50416294caefc6a0a9c7c3803d75dbb76e9b85384c4aa
 # for the contracts below which contain immutables, the hash is calculated from the masked bytecode (not the deployed bytecode as-is).
 # sections of the bytecode that contain the immutables are masked (set to 0) before computing the hash
 anchor_state_registry = "0x46e8ecc46fd27f178ada1c5a2168c09512e7ed2f7d4ac9a7c74123af26fd850c" # version "2.0.0"
-delayed_weth = "0xc4fb1a6fa54865937fda773735938b5374d23fcf556bb4c69686f23be96b3f97"          # version "1.0.0"
+delayed_weth = "0xc4fb1a6fa54865937fda773735938b5374d23fcf556bb4c69686f23be96b3f97"          # version "1.1.0"
 mips = "0x8f1cb311156fdc848bd99f26b08d88f0bec2c419bbca97533049907794390b4b"                  # version "1.1.0"
 fault_dispute_game = "0x94ded5b66802fe6287d2105fad9ab6c4c8f25275db55d997e07e2284c830595a"    # version "1.2.0"
 
