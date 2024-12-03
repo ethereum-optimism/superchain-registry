@@ -398,7 +398,7 @@ workflows:
       - check-codegen
 
   compute-config-diff-and-report:
-    when: pipeline.parameters.is_pull_request
+    when: << pipeline.parameters.is_pull_request >> # only run this job on PRs
     jobs:
       - compute-config-diff-and-report-with-pr-comment:
           name: compute-genesis-diff
