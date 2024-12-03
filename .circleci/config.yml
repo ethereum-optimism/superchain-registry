@@ -35,6 +35,7 @@ jobs:
       - run:
           name: Generate Configuration
           command: |
+
             is_pull_request=false
             if [ -n "$CIRCLE_PULL_REQUEST" ]; then
               is_pull_request=true
