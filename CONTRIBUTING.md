@@ -177,5 +177,11 @@ See [Superchain Upgrades] OP Stack specifications.
 
 [Superchain Upgrades]: https://specs.optimism.io/protocol/superchain-upgrades.html
 
-## CI-Checks
+## CircleCI Checks
 
+The following CircleCI checks are required and must pass before submitting a pull request:
+
+- `ci/circleci: compute-genesis-diff` — Your tests passed on CircleCI!
+- `ci/circleci: compute-rollup-config-diff` — Your tests passed on CircleCI!
+
+If these checks did not run, they can be triggered manually from CircleCI without any parameters or by submitting and empty commit after the PR has being created.
