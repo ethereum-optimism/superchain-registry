@@ -7,6 +7,9 @@ parameters:
   go_version:
     type: string
     default: 1.22.7 # update CI Go version here
+  is_pull_request:
+    type: boolean
+    default: false
 
 commands:
   notify-failures-on-main:
@@ -271,18 +274,22 @@ jobs:
           name: Generate configs
           working_directory: validation
           command: |
-            HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.head.sha')
+
+            curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" > api_response.json
+
+            cat api_response.json
+
+            HEAD_SHA=$(jq -r '.head.sha' api_response.json)
+            BASE_BRANCH=$(jq -r '.base.ref' api_response.json)
+
+            echo "HEAD_SHA=$HEAD_SHA"
+            echo "BASE_BRANCH=$BASE_BRANCH"
 
             # Checkout the HEAD SHA
             git fetch origin $HEAD_SHA
             git checkout $HEAD_SHA
             go run <<parameters.command>>/main.go HEAD
-
-
-            # Fetch PR details using GitHub API
-            BASE_BRANCH=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-              "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" | jq -r '.base.ref')
 
             # Fetch the base branch
             git fetch origin $BASE_BRANCH
@@ -391,9 +398,7 @@ workflows:
       - check-codegen
 
   compute-config-diff-and-report:
-    when:
-      not:
-        equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+    when: pipeline.parameters.is_pull_request
     jobs:
       - compute-config-diff-and-report-with-pr-comment:
           name: compute-genesis-diff
