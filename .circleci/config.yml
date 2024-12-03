@@ -41,7 +41,7 @@ jobs:
               is_pull_request=true
             fi
 
-            echo "{\"is_pull_request\":\"$is_pull_request\"}" > .circleci/parameters.json
+            echo "{\"is_pull_request\":$is_pull_request}" > .circleci/parameters.json
 
             if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
               # This will always be selected unless the user chooses to interact with the configuration by setting a non default value in the chain parameter. This would happens if the user launch the pipeline with a specific chain value via either curl or the CircleCI GUI.
