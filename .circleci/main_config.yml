@@ -274,7 +274,6 @@ jobs:
           name: Generate configs
           working_directory: validation
           command: |
-
             curl -s -H "Authorization: token $GITHUB_TOKEN" \
             "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" > api_response.json
 
