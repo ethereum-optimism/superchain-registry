@@ -2,7 +2,7 @@
 
 > [!WARNING]
 > `CONTRIBUTING.md` contains guidelines for modifying or working with the code in the Superchain Registry, including the validation checks and exported modules.
-> 
+>
 > For guidelines on how to add a chain to the Registry, see the documentation for [adding a new chain](docs/add-chain.md).
 
 The Superchain Registry repository contains:
@@ -176,3 +176,6 @@ If you use VSCode, you can place the following in a `settings.json` file in the 
 See [Superchain Upgrades] OP Stack specifications.
 
 [Superchain Upgrades]: https://specs.optimism.io/protocol/superchain-upgrades.html
+
+## CI-Checks
+
