@@ -410,6 +410,23 @@
     }
   },
   {
+    "name": "Minato",
+    "identifier": "sepolia/minato",
+    "chainId": 1946,
+    "rpc": [
+      "https://rpc.minato.soneium.org"
+    ],
+    "explorers": [
+      "https://soneium-minato.blockscout.com/"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Mode Testnet",
     "identifier": "sepolia/mode",
     "chainId": 919,
