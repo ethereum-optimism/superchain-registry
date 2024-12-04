@@ -42,7 +42,7 @@ func TestConfigInitialization(t *testing.T) {
 			require.NotZero(t, Config.MultisigRoles[network], "Config.MultisigRoles[%s] should not be zero value", network)
 		})
 
-		t.Run(fmt.Sprintf("NetworkVersion[%s]", network), func(t *testing.T) {
+		t.Run(fmt.Sprintf("NetworkVersions[%s]", network), func(t *testing.T) {
 			// Ensure network Versions are populated
 			versions, ok := NetworkVersions[network]
 			require.True(t, ok, "NetworkVersions[%s] should exist", network)
@@ -51,6 +51,16 @@ func TestConfigInitialization(t *testing.T) {
 
 			_, ok = versions.Releases[Release]
 			require.True(t, ok, "NetworkVersions[%s].Releases[%s] should exist", network, Release)
+
+			// Ensure release.ImplementationAddress and release.Address are correctly set
+			release, ok := versions.Releases["op-contracts/v1.6.0"]
+			require.True(t, ok, "NetworkVersions[%s].Releases[%s] should exist", network, "op-contracts/v1.6.0")
+			if network == "mainnet" {
+				require.Equal(t, "0xe2F826324b2faf99E513D16D266c3F80aE87832B", release.OptimismPortal.ImplementationAddress.String(), "failed parsing release implementation_address")
+			} else {
+				require.Equal(t, "0x35028bAe87D71cbC192d545d38F960BA30B4B233", release.OptimismPortal.ImplementationAddress.String(), "failed parsing release implementation_address")
+			}
+			require.Nil(t, release.OptimismPortal.Address, "failed parsing release address")
 
 			_, ok = versions.Releases["fake-release"]
 			require.False(t, ok, "NetworkVersions[%s].Releases[%s] should not exist", network, Release)
