@@ -256,9 +256,7 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 
 func requireStandardSemvers(t *testing.T, versions standard.ContractVersions, isTestnet bool, chain *ChainConfig) {
 	standardVersions := standard.NetworkVersions[chain.Superchain].Releases[standard.Release]
-	s := reflect.ValueOf(standardVersions)
-	c := reflect.ValueOf(versions)
-	matches := checkMatchOrTestnet(s, c, isTestnet)
+	matches := checkMatchOrTestnet(standardVersions, versions, isTestnet)
 
 	if !matches {
 		diff := cmp.Diff(standardVersions, versions, cmp.FilterPath(func(p cmp.Path) bool {
@@ -312,8 +310,12 @@ func checkMatch(s, c reflect.Value) bool {
 	return true
 }
 
-// checkMatchOrTestnet returns true if s and c match, OR if the chain is a testnet and s < c
-func checkMatchOrTestnet(s, c reflect.Value, isTestnet bool) bool {
+// checkMatchOrTestnet returns true if one of the following is true:
+//   - standardVersion and currentVersion match for all contracts
+//   - isTestnet == true and currentVersion >= standardVersion for all contracts
+func checkMatchOrTestnet(standardVersions, currentVersions standard.ContractVersions, isTestnet bool) bool {
+	s := reflect.ValueOf(standardVersions)
+	c := reflect.ValueOf(currentVersions)
 	// Iterate over each field of the standard struct
 	for i := 0; i < s.NumField(); i++ {
 

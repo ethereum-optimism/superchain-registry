@@ -1,7 +1,6 @@
 package validation
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
@@ -9,16 +8,12 @@ import (
 )
 
 func TestCheckMatchOrTestnet(t *testing.T) {
+	standardVersions := standard.NetworkVersions["mainnet"].Releases[standard.Release]
 	dummyVersions := standard.ContractVersions{
 		OptimismPortal: standard.VersionedContract{Version: "incorrect"},
 		SystemConfig:   standard.VersionedContract{ImplementationAddress: nil},
 	}
 
-	standardVersions := standard.NetworkVersions["mainnet"].Releases[standard.Release]
-
-	s := reflect.ValueOf(standardVersions)
-	c := reflect.ValueOf(dummyVersions)
-
-	matches := checkMatchOrTestnet(s, c, false)
+	matches := checkMatchOrTestnet(standardVersions, dummyVersions, false)
 	require.False(t, matches)
 }
