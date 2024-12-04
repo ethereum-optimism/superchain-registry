@@ -15,10 +15,7 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
-	"golang.org/x/mod/semver"
 )
-
-var ErrEmptyVersion = errors.New("empty version")
 
 //go:embed configs
 var superchainFS embed.FS
@@ -248,136 +245,6 @@ func (c *ChainConfig) GenerateTOMLComments(ctx context.Context) (map[string]stri
 	}
 
 	return comments, nil
-}
-
-type MappedContractProperties[T string | VersionedContract] struct {
-	L1CrossDomainMessenger       T `toml:"l1_cross_domain_messenger,omitempty"`
-	L1ERC721Bridge               T `toml:"l1_erc721_bridge,omitempty"`
-	L1StandardBridge             T `toml:"l1_standard_bridge,omitempty"`
-	L2OutputOracle               T `toml:"l2_output_oracle,omitempty"`
-	OptimismMintableERC20Factory T `toml:"optimism_mintable_erc20_factory,omitempty"`
-	OptimismPortal               T `toml:"optimism_portal,omitempty"`
-	OptimismPortal2              T `toml:"optimism_portal2,omitempty"`
-	SystemConfig                 T `toml:"system_config,omitempty"`
-	// Superchain-wide contracts:
-	ProtocolVersions T `toml:"protocol_versions,omitempty"`
-	SuperchainConfig T `toml:"superchain_config,omitempty"`
-	// Fault Proof contracts:
-	AnchorStateRegistry     T `toml:"anchor_state_registry,omitempty"`
-	DelayedWETH             T `toml:"delayed_weth,omitempty"`
-	DisputeGameFactory      T `toml:"dispute_game_factory,omitempty"`
-	FaultDisputeGame        T `toml:"fault_dispute_game,omitempty"`
-	MIPS                    T `toml:"mips,omitempty"`
-	PermissionedDisputeGame T `toml:"permissioned_dispute_game,omitempty"`
-	PreimageOracle          T `toml:"preimage_oracle,omitempty"`
-	CannonFaultDisputeGame  T `toml:"cannon_fault_dispute_game,omitempty"`
-}
-
-// ContractBytecodeHashes stores a bytecode hash against each contract
-type ContractBytecodeHashes MappedContractProperties[string]
-
-// VersionedContract represents a contract that has a semantic version.
-type VersionedContract struct {
-	Version string `toml:"version"`
-	// If the contract is a superchain singleton, it will have a static address
-	Address *Address `toml:"implementation_address,omitempty"`
-	// If the contract is proxied, the implementation will have a static address
-	ImplementationAddress *Address `toml:"address,omitempty"`
-}
-
-// ContractVersions represents the desired semantic version of the contracts
-// in the superchain. This currently only supports L1 contracts but could
-// represent L2 predeploys in the future.
-type ContractVersions MappedContractProperties[VersionedContract]
-
-// GetNonEmpty returns a slice of contract names, with an entry for each contract
-// in the receiver with a non empty Version property.
-func (c ContractVersions) GetNonEmpty() []string {
-	// Get the value and type of the struct
-	v := reflect.ValueOf(c)
-	t := reflect.TypeOf(c)
-
-	var fieldNames []string
-
-	// Iterate through the struct fields
-	for i := 0; i < v.NumField(); i++ {
-		field := v.Field(i)
-		fieldType := t.Field(i)
-
-		// Ensure the field is of type VersionedContract
-		if field.Type() == reflect.TypeOf(VersionedContract{}) {
-			// Get the Version field from the VersionedContract
-			versionField := field.FieldByName("Version")
-
-			// Check if the Version is non-empty
-			if versionField.IsValid() && versionField.String() != "" {
-				fieldNames = append(fieldNames, fieldType.Name)
-			}
-		}
-	}
-
-	return fieldNames
-}
-
-// VersionFor returns the version for the supplied contract name, if it exits
-// (and an error otherwise). Useful for slicing into the struct using a string.
-func (c ContractVersions) VersionFor(contractName string) (string, error) {
-	// Use reflection to get the value of the struct
-	val := reflect.ValueOf(c)
-	// Get the field by name (contractName)
-	field := val.FieldByName(contractName)
-
-	// Check if the field exists and is a struct
-	if !field.IsValid() {
-		return "", errors.New("no such contract name")
-	}
-
-	// Check if the struct contains the "Version" field
-	versionField := field.FieldByName("Version")
-	if !versionField.IsValid() || versionField.String() == "" {
-		return "", errors.New("no version specified")
-	}
-
-	// Return the version if it's a string
-	if versionField.Kind() == reflect.String {
-		return versionField.String(), nil
-	}
-
-	return "", errors.New("version is not a string")
-}
-
-// Check will sanity check the validity of the semantic version strings
-// in the ContractVersions struct. If allowEmptyVersions is true, empty version errors will be ignored.
-func (c ContractVersions) Check(allowEmptyVersions bool) error {
-	val := reflect.ValueOf(c)
-	for i := 0; i < val.NumField(); i++ {
-		field := val.Field(i)
-		vC, ok := field.Interface().(VersionedContract)
-		if !ok {
-			return fmt.Errorf("invalid type for field %s", val.Type().Field(i).Name)
-		}
-		if vC.Version == "" {
-			if allowEmptyVersions {
-				continue // we allow empty strings and rely on tests to assert (or except) a nonempty version
-			}
-			return fmt.Errorf("empty version for field %s", val.Type().Field(i).Name)
-		}
-		vC.Version = CanonicalizeSemver(vC.Version)
-		if !semver.IsValid(vC.Version) {
-			return fmt.Errorf("invalid semver %s for field %s", vC.Version, val.Type().Field(i).Name)
-		}
-	}
-	return nil
-}
-
-// CanonicalizeSemver will ensure that the version string has a "v" prefix.
-// This is because the semver library being used requires the "v" prefix,
-// even though
-func CanonicalizeSemver(version string) string {
-	if !strings.HasPrefix(version, "v") {
-		version = "v" + version
-	}
-	return version
 }
 
 type GenesisAccount struct {
