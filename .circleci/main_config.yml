@@ -316,7 +316,7 @@ jobs:
       - run:
           name: Handle PR Comment Based on DIFF
           command: |
-            git clone --branch main --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
+            git clone --branch v0.1.0 --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
             GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
             pip install -r $GITHUB_CLI_PATH/requirements.txt
             MAIN_PATH=$GITHUB_CLI_PATH/main.py
