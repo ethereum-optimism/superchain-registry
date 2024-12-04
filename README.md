@@ -26,7 +26,15 @@ A glossary, with key terms and more information about Superchain levels and requ
 
 The Superchain configs are stored in a minimal form and embedded in downstream OP-Stack software ([`op-node`](https://github.com/ethereum-optimism/optimism) and [`op-geth`](https://github.com/ethereum-optimism/op-geth)). This means that after a chain has been added to the registry and the dependency on the registry updates in the downstream software, it is possible to start an `op-node` instance [using the `--network` flag](https://docs.optimism.io/builders/node-operators/configuration/consensus-config#network) (and also an `op-geth` instance [using the `--op-network` tag](https://docs.optimism.io/builders/node-operators/configuration/execution-config#op-network-betaop-network)) which will successfully sync with other nodes on that network.
 
-See also this [specification on hardfork activation inheritance behavior](./docs/hardfork-activation-inheritance.md).
+### Hardfork activations
+If you would like your chain to automatically receive superchain-wide coordinated hardfork activations, you can enable this by:
+1. Adding your chain [as above](docs/add-chain.md)
+2. Ensuring the `superchain_time` in your chain's config is set to an appropriate value.
+Set it to `0` if you want to receive all superchain forks that occur after your chain's genesis, and you have activated all superchain forks up to your genesis time at genesis.
+3. Having that value reflected in the `main` branch well in advance of the testnet (resp. mainnet) release of `op-geth` and `op-node`.
+4. Having your chain's nodes started with the network flags.
+
+This is explained in more detail in this [specification on hardfork activation inheritance behavior](./docs/hardfork-activation-inheritance.md).
 
 ## License
 

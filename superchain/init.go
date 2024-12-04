@@ -10,9 +10,6 @@ import (
 )
 
 func init() {
-	var err error
-	SuperchainSemver = make(map[string]ContractVersions)
-
 	superchainTargets, err := superchainFS.ReadDir("configs")
 	if err != nil {
 		panic(fmt.Errorf("failed to read superchain dir: %w", err))

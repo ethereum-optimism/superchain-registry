@@ -338,10 +338,6 @@ func (a AddressList) AddressFor(name string) (Address, error) {
 	return address, nil
 }
 
-// AddressSet represents a set of addresses for a given
-// contract. They are keyed by the semantic version.
-type AddressSet map[string]Address
-
 type MappedContractProperties[T string | VersionedContract] struct {
 	L1CrossDomainMessenger       T `toml:"l1_cross_domain_messenger,omitempty"`
 	L1ERC721Bridge               T `toml:"l1_erc721_bridge,omitempty"`
@@ -559,9 +555,6 @@ var OPChains = map[uint64]*ChainConfig{}
 var Addresses = map[uint64]*AddressList{}
 
 var GenesisSystemConfigs = map[uint64]*SystemConfig{}
-
-// SuperchainSemver maps superchain name to a contract name : approved semver version structure.
-var SuperchainSemver map[string]ContractVersions
 
 func isConfigFile(c fs.DirEntry) bool {
 	return (!c.IsDir() &&
