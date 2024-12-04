@@ -24,21 +24,6 @@ func TestAddressFor(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestVersionFor(t *testing.T) {
-	cl := ContractVersions{
-		L1CrossDomainMessenger: VersionedContract{Version: "1.9.9"},
-		OptimismPortal:         VersionedContract{Version: ""},
-	}
-	want := "1.9.9"
-	got, err := cl.VersionFor("L1CrossDomainMessenger")
-	require.NoError(t, err)
-	require.Equal(t, want, got)
-	_, err = cl.VersionFor("OptimismPortal")
-	require.Error(t, err)
-	_, err = cl.VersionFor("Garbage")
-	require.Error(t, err)
-}
-
 func TestChainIds(t *testing.T) {
 	chainIDs := map[uint64]bool{}
 

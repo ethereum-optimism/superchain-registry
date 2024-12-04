@@ -5,7 +5,6 @@ import (
 	"io/fs"
 
 	"github.com/BurntSushi/toml"
-	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
 //go:embed *.toml
@@ -28,8 +27,8 @@ func init() {
 		Config.Params[network] = new(Params)
 		decodeTOMLFileIntoConfig("standard-config-params-"+network+".toml", Config.Params[network])
 
-		var versions VersionTags = VersionTags{
-			Releases: make(map[Tag]superchain.ContractVersions, 0),
+		versions := VersionTags{
+			Releases: make(map[Tag]ContractVersions, 0),
 		}
 
 		decodeTOMLFileIntoConfig("standard-versions-"+network+".toml", &versions)

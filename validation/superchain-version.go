@@ -42,15 +42,15 @@ func checkForStandardVersions(t *testing.T, chain *ChainConfig) {
 
 	// don't perform bytecode checking for testnets
 	if !isTestnet {
-		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client, chain)
+		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client)
 		require.NoError(t, err)
-		requireStandardByteCodeHashes(t, bytecodeHashes, chain)
+		requireStandardByteCodeHashes(t, bytecodeHashes)
 	}
 }
 
 // getContractVersionsFromChain pulls the appropriate contract versions from chain
 // using the supplied client (calling the version() method for each contract). It does this concurrently.
-func getContractVersionsFromChain(list AddressList, client *ethclient.Client, chain *ChainConfig) (ContractVersions, error) {
+func getContractVersionsFromChain(list AddressList, client *ethclient.Client, chain *ChainConfig) (standard.ContractVersions, error) {
 	// Prepare a concurrency-safe object to store version information in, and
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
@@ -85,7 +85,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, ch
 
 	// use reflection to convert results mapping into a ContractVersions object
 	// without resorting to boilerplate code.
-	cv := ContractVersions{}
+	cv := standard.ContractVersions{}
 	results.Range(func(k, v any) bool {
 		s := reflect.ValueOf(cv)
 		for i := 0; i < s.NumField(); i++ {
@@ -108,7 +108,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, ch
 
 // getContractBytecodeHashesFromChain pulls the appropriate bytecode from chain
 // using the supplied client, concurrently.
-func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client, chain *ChainConfig) (standard.L1ContractBytecodeHashes, error) {
+func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client) (standard.L1ContractBytecodeHashes, error) {
 	// Prepare a concurrency-safe object to store bytecode information in, and
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
@@ -254,7 +254,7 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 	return crypto.Keccak256Hash(bytecodeImmutableFilterer.Bytecode).Hex(), nil
 }
 
-func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet bool, chain *ChainConfig) {
+func requireStandardSemvers(t *testing.T, versions standard.ContractVersions, isTestnet bool, chain *ChainConfig) {
 	standardVersions := standard.NetworkVersions[chain.Superchain].Releases[standard.Release]
 	s := reflect.ValueOf(standardVersions)
 	c := reflect.ValueOf(versions)
@@ -270,7 +270,7 @@ func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet b
 	}
 }
 
-func requireStandardByteCodeHashes(t *testing.T, hashes standard.L1ContractBytecodeHashes, chain *ChainConfig) {
+func requireStandardByteCodeHashes(t *testing.T, hashes standard.L1ContractBytecodeHashes) {
 	standardHashes := standard.BytecodeHashes[standard.Release]
 	s := reflect.ValueOf(standardHashes)
 	c := reflect.ValueOf(hashes)
@@ -323,9 +323,9 @@ func checkMatchOrTestnet(s, c reflect.Value, isTestnet bool) bool {
 			continue
 		}
 
-		innerStStd := s.Field(i).Interface().(VersionedContract)
+		innerStStd := s.Field(i).Interface().(standard.VersionedContract)
 		innerFieldS := reflect.ValueOf(innerStStd).FieldByName("Version")
-		innerStCand := c.Field(i).Interface().(VersionedContract)
+		innerStCand := c.Field(i).Interface().(standard.VersionedContract)
 		innerFieldC := reflect.ValueOf(innerStCand).FieldByName("Version")
 
 		if innerFieldS.Kind() != reflect.String {
@@ -344,8 +344,8 @@ func checkMatchOrTestnet(s, c reflect.Value, isTestnet bool) bool {
 
 			// testnets are permitted to have contract versions that are newer than what's specified in the standard config
 			// testnets may NOT have contract versions that are older.
-			min := CanonicalizeSemver(innerFieldS.String())
-			current := CanonicalizeSemver(innerFieldC.String())
+			min := standard.CanonicalizeSemver(innerFieldS.String())
+			current := standard.CanonicalizeSemver(innerFieldC.String())
 			if semver.Compare(min, current) > 0 {
 				return false
 			}

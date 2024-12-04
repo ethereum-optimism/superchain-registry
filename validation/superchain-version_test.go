@@ -4,15 +4,14 @@ import (
 	"reflect"
 	"testing"
 
-	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 	"github.com/stretchr/testify/require"
 )
 
 func TestCheckMatchOrTestnet(t *testing.T) {
-	dummyVersions := ContractVersions{
-		OptimismPortal: VersionedContract{Version: "incorrect"},
-		SystemConfig:   VersionedContract{ImplementationAddress: nil},
+	dummyVersions := standard.ContractVersions{
+		OptimismPortal: standard.VersionedContract{Version: "incorrect"},
+		SystemConfig:   standard.VersionedContract{ImplementationAddress: nil},
 	}
 
 	standardVersions := standard.NetworkVersions["mainnet"].Releases[standard.Release]
