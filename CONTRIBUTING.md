@@ -56,7 +56,7 @@ Superchain-wide configuration, like the `ProtocolVersions` contract address, sho
 
 ## `superchain` Go Module
 
-Per chain and supechain-wide configs and extra data are embedded into the `superchain` go module, which can be imported like so:
+Per chain and superchain-wide configs and extra data are embedded into the `superchain` go module, which can be imported like so:
 
 ```
 go get github.com/ethereum-optimism/superchain-registry/superchain@latest
