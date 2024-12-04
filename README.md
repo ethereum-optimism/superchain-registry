@@ -3,7 +3,7 @@
 > [!WARNING]
 > This repository is a **work in progress**.  At a later date, it will be proposed to, and must be approved by, Optimism Governance.  Until that time, the configuration described here is subject to change.
 
-The Superchain Registry is an index of chains which serves as the source of truth for who’s in the Superchain and what modifications they’ve made to their chains.
+The Superchain Registry is an index of chains which serves as the source of truth for who’s in the Superchain Ecosystem and what modifications they’ve made to their chains.
 
 ## Quickstart
 
