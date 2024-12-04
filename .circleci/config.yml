@@ -35,6 +35,14 @@ jobs:
       - run:
           name: Generate Configuration
           command: |
+
+            is_pull_request=false
+            if [ -n "$CIRCLE_PULL_REQUEST" ]; then
+              is_pull_request=true
+            fi
+
+            echo "{\"is_pull_request\":$is_pull_request}" > .circleci/parameters.json
+
             if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
               # This will always be selected unless the user chooses to interact with the configuration by setting a non default value in the chain parameter. This would happens if the user launch the pipeline with a specific chain value via either curl or the CircleCI GUI.
 
@@ -49,6 +57,7 @@ jobs:
             fi
       - continuation/continue:
           configuration_path: .circleci/selected_continue_config.yml
+          parameters: .circleci/parameters.json
 
 workflows:
   setup:
