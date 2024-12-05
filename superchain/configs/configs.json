@@ -1582,7 +1582,7 @@
           "Explorer": "https://sepolia-blockscout.lisk.com",
           "SuperchainLevel": 0,
           "StandardChainCandidate": true,
-          "SuperchainTime": 1732633200,
+          "SuperchainTime": 0,
           "batch_inbox_address": "0xff00000000000000000000000000000000004202",
           "Superchain": "sepolia",
           "Chain": "lisk",
