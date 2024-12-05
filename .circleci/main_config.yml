@@ -307,9 +307,6 @@ jobs:
       message:
         description: "PR comment body prefixed message"
         type: string
-      command:
-        description: "Command to run to generate config files"
-        type: string
       read_from:
         description: "Variable to read the diff result"
         type: string
