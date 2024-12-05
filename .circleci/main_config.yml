@@ -295,10 +295,14 @@ jobs:
             # Run the script and capture its output and exit code
             ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
             DIFF=$?
-            echo "export <<parameters.save_to>>_DIFF=$DIFF" >> $BASH_ENV
-            echo "export <<parameters.save_to>>_RUN_URL=${CIRCLE_BUILD_URL}" >> $BASH_ENV
+            echo "export DIFF=$DIFF" >> /results/<<parameters.save_to>>
+            echo "export _RUN_URL=${CIRCLE_BUILD_URL}" >> /results/<<parameters.save_to>>
             # Restore error handling
             set -e
+      - persist_to_workspace:
+          root: /results
+          paths:
+            - <<parameters.save_to>>
 
   report-config-diff:
     machine:
@@ -311,6 +315,8 @@ jobs:
         description: "Variable to read the diff result"
         type: string
     steps:
+      - attach_workspace:
+          at: /results
       - run:
           name: Handle PR Comment Based on DIFF only if it is a PR
           command: |
@@ -326,8 +332,7 @@ jobs:
               MAIN_PATH=$GITHUB_CLI_PATH/main.py
 
               REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-              RUN_URL="${<<parameters.read_from>>_RUN_URL}"
-              DIFF="${<<parameters.read_from>>_DIFF}"
+              source /results/<<parameters.read_from>>
               echo "DIFF=$DIFF"
               echo "RUN_URL=$RUN_URL"
 
