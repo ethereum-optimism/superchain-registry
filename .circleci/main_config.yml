@@ -295,12 +295,12 @@ jobs:
             # Run the script and capture its output and exit code
             ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
             DIFF=$?
-            echo "export DIFF=$DIFF" >> /results/<<parameters.save_to>>
-            echo "export _RUN_URL=${CIRCLE_BUILD_URL}" >> /results/<<parameters.save_to>>
+            echo "export DIFF=$DIFF" >> <<parameters.save_to>>
+            echo "export _RUN_URL=${CIRCLE_BUILD_URL}" >> <<parameters.save_to>>
             # Restore error handling
             set -e
       - persist_to_workspace:
-          root: /results
+          root: validation
           paths:
             - <<parameters.save_to>>
 
@@ -316,9 +316,10 @@ jobs:
         type: string
     steps:
       - attach_workspace:
-          at: /results
+          at: validation
       - run:
           name: Handle PR Comment Based on DIFF only if it is a PR
+          working_directory: validation
           command: |
             #check if we are in a PR
             if [ -z "$CIRCLE_PULL_REQUEST" ]; then
