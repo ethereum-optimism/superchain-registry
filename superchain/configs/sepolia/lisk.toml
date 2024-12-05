@@ -52,3 +52,4 @@ data_availability_type = "eth-da"
   ProxyAdmin = "0x5Db9F05921d8d5a6a157F6f49c411cc0e46c6330"
   SuperchainConfig = "0xC2Be75506d5724086DEB7245bd260Cc9753911Be"
   DisputeGameFactoryProxy = "0x9AA3890a87E6BD2CB85Dad1A5D8B0A9D669e658a"
+  
