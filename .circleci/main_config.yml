@@ -296,7 +296,7 @@ jobs:
             ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
             DIFF=$?
             echo "export DIFF=$DIFF" >> <<parameters.save_to>>
-            echo "export _RUN_URL=${CIRCLE_BUILD_URL}" >> <<parameters.save_to>>
+            echo "export RUN_URL=${CIRCLE_BUILD_URL}" >> <<parameters.save_to>>
             # Restore error handling
             set -e
       - persist_to_workspace:
