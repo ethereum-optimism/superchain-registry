@@ -333,7 +333,7 @@ jobs:
               MAIN_PATH=$GITHUB_CLI_PATH/main.py
 
               REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-              source /results/<<parameters.read_from>>
+              source <<parameters.read_from>>
               echo "DIFF=$DIFF"
               echo "RUN_URL=$RUN_URL"
 
