@@ -263,6 +263,9 @@ jobs:
       directory:
         description: "Directory where config files are stored"
         type: string
+      save_to:
+        description: "Variable to save the diff result"
+        type: string
     steps:
       - checkout
       - run:
@@ -292,8 +295,8 @@ jobs:
             # Run the script and capture its output and exit code
             ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
             DIFF=$?
-            echo "export <<parameters.command>>_DIFF=$DIFF" >> $BASH_ENV
-            echo "export <<parameters.command>>_RUN_URL=${CIRCLE_BUILD_URL}" >> $BASH_ENV
+            echo "export <<parameters.save_to>>_DIFF=$DIFF" >> $BASH_ENV
+            echo "export <<parameters.save_to>>_RUN_URL=${CIRCLE_BUILD_URL}" >> $BASH_ENV
             # Restore error handling
             set -e
 
@@ -306,6 +309,9 @@ jobs:
         type: string
       command:
         description: "Command to run to generate config files"
+        type: string
+      read_from:
+        description: "Variable to read the diff result"
         type: string
     steps:
       - run:
@@ -323,8 +329,10 @@ jobs:
               MAIN_PATH=$GITHUB_CLI_PATH/main.py
 
               REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-              RUN_URL="${<<parameters.command>>_RUN_URL}"
-              DIFF="${<<parameters.command>>_DIFF}"
+              RUN_URL="${<<parameters.read_from>>_RUN_URL}"
+              DIFF="${<<parameters.read_from>>_DIFF}"
+              echo "DIFF=$DIFF"
+              echo "RUN_URL=$RUN_URL"
 
               MESSAGE="<<parameters.message>>"
               COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
@@ -403,20 +411,22 @@ workflows:
       - compute-config-diff:
           name: compute-genesis-diff
           command: "generate-genesis"
+          save_to: "GENESIS"
           directory: "generate-genesis"
       - report-config-diff:
           name: report-genesis-diff
-          command: "generate-genesis"
+          read_from: "GENESIS"
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
           context: circleci-superchain-registry
           requires: [compute-genesis-diff]
       - compute-config-diff:
           name: compute-rollup-config-diff
           command: "generate-rollup-config"
+          save_to: "ROLLUP"
           directory: "generate-rollup-config"
       - report-config-diff:
           name: report-rollup-config-diff
-          command: "generate-rollup-config"
+          read_from: "ROLLUP"
           message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
           context: circleci-superchain-registry
           requires: [compute-rollup-config-diff]
