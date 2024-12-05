@@ -286,18 +286,23 @@ jobs:
             echo "HEAD_SHA=$HEAD_SHA"
             echo "BASE_BRANCH=$BASE_BRANCH"
 
+            HEAD_SHA_2=$(git rev-parse HEAD)
+            echo "HEAD_SHA_2=$HEAD_SHA_2"
+            BASE_BRANCH_2=$(git rev-parse main)
+            echo "BASE_BRANCH_2=$BASE_BRANCH_2"
+
             # Checkout the HEAD SHA
-            git fetch origin $HEAD_SHA
-            git checkout $HEAD_SHA
-            go run <<parameters.command>>/main.go HEAD
+            # git fetch origin $HEAD_SHA
+            # git checkout $HEAD_SHA
+            # go run <<parameters.command>>/main.go HEAD
 
-            # Fetch the base branch
-            git fetch origin $BASE_BRANCH
+            # # Fetch the base branch
+            # git fetch origin $BASE_BRANCH
 
-            # Checkout the base branch
-            git checkout $BASE_BRANCH
+            # # Checkout the base branch
+            # git checkout $BASE_BRANCH
 
-            go run <<parameters.command>>/main.go base
+            # go run <<parameters.command>>/main.go base
       - run:
           name: Compute diff
           working_directory: validation
