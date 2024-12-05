@@ -10,9 +10,6 @@ parameters:
   chain:
     type: string
     default: "__required__"
-  is_pull_request:
-    type: boolean
-    default: false
 
 commands:
   notify-failures-on-main:
