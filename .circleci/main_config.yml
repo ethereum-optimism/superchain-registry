@@ -271,7 +271,7 @@ jobs:
           command: |
             BASE_BRANCH="main"
 
-            #We are already in the Head of the PR after checkout
+            # We are already in the Head of the PR after checkout
             go run <<parameters.command>>/main.go HEAD
 
             # Fetch the base branch
