@@ -269,40 +269,21 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Get circleci tools and set initial environment variables
-          command: |
-            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
-            echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
-      - run:
           name: Generate configs
           working_directory: validation
           command: |
-            curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" > api_response.json
+            BASE_BRANCH="main"
 
-            HEAD_SHA=$(jq -r '.head.sha' api_response.json)
-            BASE_BRANCH=$(jq -r '.base.ref' api_response.json)
+            #We are already in the Head of the PR after checkout
+            go run <<parameters.command>>/main.go HEAD
 
-            echo "HEAD_SHA=$HEAD_SHA"
-            echo "BASE_BRANCH=$BASE_BRANCH"
+            # Fetch the base branch
+            git fetch origin $BASE_BRANCH
 
-            HEAD_SHA_2=$(git rev-parse HEAD)
-            echo "HEAD_SHA_2=$HEAD_SHA_2"
-            BASE_BRANCH_2=$(git rev-parse main)
-            echo "BASE_BRANCH_2=$BASE_BRANCH_2"
+            # Checkout the base branch
+            git checkout $BASE_BRANCH
 
-            # Checkout the HEAD SHA
-            # git fetch origin $HEAD_SHA
-            # git checkout $HEAD_SHA
-            # go run <<parameters.command>>/main.go HEAD
-
-            # # Fetch the base branch
-            # git fetch origin $BASE_BRANCH
-
-            # # Checkout the base branch
-            # git checkout $BASE_BRANCH
-
-            # go run <<parameters.command>>/main.go base
+            go run <<parameters.command>>/main.go base
 
       - run:
           name: Compute diff
@@ -320,48 +301,55 @@ jobs:
             set -e
           when: always
       - run:
-          name: Handle PR Comment Based on DIFF
+          name: Handle PR Comment Based on DIFF only if it is a PR
           command: |
-            git clone --branch v0.1.0 --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
-            GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
-            pip install -r $GITHUB_CLI_PATH/requirements.txt
-            MAIN_PATH=$GITHUB_CLI_PATH/main.py
-            echo "export MAIN_PATH=$MAIN_PATH" >> $BASH_ENV
-
-            REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-
-            RUN_URL="${CIRCLE_BUILD_URL}"
-
-            MESSAGE="<<parameters.message>>"
-            COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
-            echo $COMMAND
-            COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
-              --github-token "${GITHUB_TOKEN}" \
-              --repo "${REPO}" \
-              --pr-number "${PR_NUMBER}" \
-              --message-substring "${MESSAGE}" \
-              --user-type "User" )
-
-            COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
-            COMMENT_OPTION=""
-            if [ -n "$COMMENT_ID" ]; then
-              COMMENT_OPTION="--comment-id $COMMENT_ID"
-            fi
-
-            if [ "$DIFF" -eq 1 ]; then
-                python $MAIN_PATH post-pr-comment \
-                  --github-token "${GITHUB_TOKEN}" \
-                  --repo "${REPO}" \
-                  --pr-number "${PR_NUMBER}" \
-                  --comment-body "${COMMENT_BODY}" \
-                  $COMMENT_OPTION
+            #check if we are in a PR
+            if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+              echo "Not a PR. Exiting."
             else
+              PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+
+              git clone --branch v0.1.0 --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
+              GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
+              pip install -r $GITHUB_CLI_PATH/requirements.txt
+              MAIN_PATH=$GITHUB_CLI_PATH/main.py
+              echo "export MAIN_PATH=$MAIN_PATH" >> $BASH_ENV
+
+              REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+
+              RUN_URL="${CIRCLE_BUILD_URL}"
+
+              MESSAGE="<<parameters.message>>"
+              COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
+              echo $COMMAND
+              COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
+                --github-token "${GITHUB_TOKEN}" \
+                --repo "${REPO}" \
+                --pr-number "${PR_NUMBER}" \
+                --message-substring "${MESSAGE}" \
+                --user-type "User" )
+
+              COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
+              COMMENT_OPTION=""
               if [ -n "$COMMENT_ID" ]; then
-                python $MAIN_PATH delete-pr-comment \
-                  --github-token "${GITHUB_TOKEN}" \
-                  --repo "${REPO}" \
-                  --pr-number "${PR_NUMBER}" \
-                  --comment-id $COMMENT_ID
+                COMMENT_OPTION="--comment-id $COMMENT_ID"
+              fi
+
+              if [ "$DIFF" -eq 1 ]; then
+                  python $MAIN_PATH post-pr-comment \
+                    --github-token "${GITHUB_TOKEN}" \
+                    --repo "${REPO}" \
+                    --pr-number "${PR_NUMBER}" \
+                    --comment-body "${COMMENT_BODY}" \
+                    $COMMENT_OPTION
+              else
+                if [ -n "$COMMENT_ID" ]; then
+                  python $MAIN_PATH delete-pr-comment \
+                    --github-token "${GITHUB_TOKEN}" \
+                    --repo "${REPO}" \
+                    --pr-number "${PR_NUMBER}" \
+                    --comment-id $COMMENT_ID
+                fi
               fi
             fi
 
@@ -404,7 +392,6 @@ workflows:
       - check-codegen
 
   compute-config-diff-and-report:
-    when: << pipeline.parameters.is_pull_request >> # only run this job on PRs
     jobs:
       - compute-config-diff-and-report-with-pr-comment:
           name: compute-genesis-diff
