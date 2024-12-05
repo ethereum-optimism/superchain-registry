@@ -10,9 +10,6 @@ parameters:
   chain:
     type: string
     default: "__required__"
-  is_pull_request:
-    type: boolean
-    default: false
 
 commands:
   notify-failures-on-main:
@@ -253,7 +250,7 @@ jobs:
       - checkout
       - run: echo "All golang-validate-genesis-allocs jobs suceeded"
 
-  compute-config-diff-and-report-with-pr-comment:
+  compute-config-diff:
     machine:
       image: ubuntu-2004:current
     parameters:
@@ -263,32 +260,18 @@ jobs:
       directory:
         description: "Directory where config files are stored"
         type: string
-      message:
-        description: "PR comment body prefixed message"
+      save_to:
+        description: "Variable to save the diff result"
         type: string
     steps:
       - checkout
       - run:
-          name: Get circleci tools and set initial environment variables
-          command: |
-            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
-            echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
-      - run:
           name: Generate configs
           working_directory: validation
           command: |
-            curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/$PR_NUMBER" > api_response.json
+            BASE_BRANCH="main"
 
-            HEAD_SHA=$(jq -r '.head.sha' api_response.json)
-            BASE_BRANCH=$(jq -r '.base.ref' api_response.json)
-
-            echo "HEAD_SHA=$HEAD_SHA"
-            echo "BASE_BRANCH=$BASE_BRANCH"
-
-            # Checkout the HEAD SHA
-            git fetch origin $HEAD_SHA
-            git checkout $HEAD_SHA
+            # We are already in the Head of the PR after checkout
             go run <<parameters.command>>/main.go HEAD
 
             # Fetch the base branch
@@ -298,6 +281,7 @@ jobs:
             git checkout $BASE_BRANCH
 
             go run <<parameters.command>>/main.go base
+
       - run:
           name: Compute diff
           working_directory: validation
@@ -308,54 +292,79 @@ jobs:
             # Run the script and capture its output and exit code
             ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
             DIFF=$?
-            echo "export DIFF=$DIFF" >> $BASH_ENV
-
+            echo "export DIFF=$DIFF" >> <<parameters.save_to>>
+            echo "export RUN_URL=${CIRCLE_BUILD_URL}" >> <<parameters.save_to>>
             # Restore error handling
             set -e
-          when: always
+      - persist_to_workspace:
+          root: validation
+          paths:
+            - <<parameters.save_to>>
+
+  report-config-diff:
+    machine:
+      image: ubuntu-2004:current
+    parameters:
+      message:
+        description: "PR comment body prefixed message"
+        type: string
+      read_from:
+        description: "Variable to read the diff result"
+        type: string
+    steps:
+      - attach_workspace:
+          at: validation
       - run:
-          name: Handle PR Comment Based on DIFF
+          name: Handle PR Comment Based on DIFF only if it is a PR
+          working_directory: validation
           command: |
-            git clone --branch v0.1.0 --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
-            GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
-            pip install -r $GITHUB_CLI_PATH/requirements.txt
-            MAIN_PATH=$GITHUB_CLI_PATH/main.py
-            echo "export MAIN_PATH=$MAIN_PATH" >> $BASH_ENV
-
-            REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-
-            RUN_URL="${CIRCLE_BUILD_URL}"
-
-            MESSAGE="<<parameters.message>>"
-            COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
-            echo $COMMAND
-            COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
-              --github-token "${GITHUB_TOKEN}" \
-              --repo "${REPO}" \
-              --pr-number "${PR_NUMBER}" \
-              --message-substring "${MESSAGE}" \
-              --user-type "User" )
-
-            COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
-            COMMENT_OPTION=""
-            if [ -n "$COMMENT_ID" ]; then
-              COMMENT_OPTION="--comment-id $COMMENT_ID"
-            fi
-
-            if [ "$DIFF" -eq 1 ]; then
-                python $MAIN_PATH post-pr-comment \
-                  --github-token "${GITHUB_TOKEN}" \
-                  --repo "${REPO}" \
-                  --pr-number "${PR_NUMBER}" \
-                  --comment-body "${COMMENT_BODY}" \
-                  $COMMENT_OPTION
+            #check if we are in a PR
+            if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+              echo "Not a PR. Exiting."
             else
+              PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+
+              git clone --branch v0.1.0 --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
+              GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
+              pip install -r $GITHUB_CLI_PATH/requirements.txt
+              MAIN_PATH=$GITHUB_CLI_PATH/main.py
+
+              REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+              source <<parameters.read_from>>
+              echo "DIFF=$DIFF"
+              echo "RUN_URL=$RUN_URL"
+
+              MESSAGE="<<parameters.message>>"
+              COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
+              echo $COMMAND
+              COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
+                --github-token "${GITHUB_TOKEN}" \
+                --repo "${REPO}" \
+                --pr-number "${PR_NUMBER}" \
+                --message-substring "${MESSAGE}" \
+                --user-type "User" )
+
+              COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
+              COMMENT_OPTION=""
               if [ -n "$COMMENT_ID" ]; then
-                python $MAIN_PATH delete-pr-comment \
-                  --github-token "${GITHUB_TOKEN}" \
-                  --repo "${REPO}" \
-                  --pr-number "${PR_NUMBER}" \
-                  --comment-id $COMMENT_ID
+                COMMENT_OPTION="--comment-id $COMMENT_ID"
+              fi
+
+              if [ "$DIFF" -eq 1 ]; then
+                  python $MAIN_PATH post-pr-comment \
+                    --github-token "${GITHUB_TOKEN}" \
+                    --repo "${REPO}" \
+                    --pr-number "${PR_NUMBER}" \
+                    --comment-body "${COMMENT_BODY}" \
+                    $COMMENT_OPTION
+              else
+                if [ -n "$COMMENT_ID" ]; then
+                  python $MAIN_PATH delete-pr-comment \
+                    --github-token "${GITHUB_TOKEN}" \
+                    --repo "${REPO}" \
+                    --pr-number "${PR_NUMBER}" \
+                    --comment-id $COMMENT_ID
+                fi
               fi
             fi
 
@@ -398,17 +407,26 @@ workflows:
       - check-codegen
 
   compute-config-diff-and-report:
-    when: << pipeline.parameters.is_pull_request >> # only run this job on PRs
     jobs:
-      - compute-config-diff-and-report-with-pr-comment:
+      - compute-config-diff:
           name: compute-genesis-diff
           command: "generate-genesis"
+          save_to: "GENESIS"
           directory: "generate-genesis"
+      - report-config-diff:
+          name: report-genesis-diff
+          read_from: "GENESIS"
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
           context: circleci-superchain-registry
-      - compute-config-diff-and-report-with-pr-comment:
+          requires: [compute-genesis-diff]
+      - compute-config-diff:
           name: compute-rollup-config-diff
           command: "generate-rollup-config"
+          save_to: "ROLLUP"
           directory: "generate-rollup-config"
+      - report-config-diff:
+          name: report-rollup-config-diff
+          read_from: "ROLLUP"
           message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
           context: circleci-superchain-registry
+          requires: [compute-rollup-config-diff]
