@@ -253,7 +253,7 @@ jobs:
       - checkout
       - run: echo "All golang-validate-genesis-allocs jobs suceeded"
 
-  compute-config-diff-and-report-with-pr-comment:
+  compute-config-diff:
     machine:
       image: ubuntu-2004:current
     parameters:
@@ -262,9 +262,6 @@ jobs:
         type: string
       directory:
         description: "Directory where config files are stored"
-        type: string
-      message:
-        description: "PR comment body prefixed message"
         type: string
     steps:
       - checkout
@@ -295,11 +292,22 @@ jobs:
             # Run the script and capture its output and exit code
             ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
             DIFF=$?
-            echo "export DIFF=$DIFF" >> $BASH_ENV
-
+            echo "export <<parameters.command>>_DIFF=$DIFF" >> $BASH_ENV
+            echo "export <<parameters.command>>_RUN_URL=${CIRCLE_BUILD_URL}" >> $BASH_ENV
             # Restore error handling
             set -e
-          when: always
+
+  report-config-diff:
+    machine:
+      image: ubuntu-2004:current
+    parameters:
+      message:
+        description: "PR comment body prefixed message"
+        type: string
+      command:
+        description: "Command to run to generate config files"
+        type: string
+    steps:
       - run:
           name: Handle PR Comment Based on DIFF only if it is a PR
           command: |
@@ -313,11 +321,10 @@ jobs:
               GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
               pip install -r $GITHUB_CLI_PATH/requirements.txt
               MAIN_PATH=$GITHUB_CLI_PATH/main.py
-              echo "export MAIN_PATH=$MAIN_PATH" >> $BASH_ENV
 
               REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-
-              RUN_URL="${CIRCLE_BUILD_URL}"
+              RUN_URL="${<<parameters.command>>_RUN_URL}"
+              DIFF="${<<parameters.command>>_DIFF}"
 
               MESSAGE="<<parameters.message>>"
               COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
@@ -393,15 +400,21 @@ workflows:
 
   compute-config-diff-and-report:
     jobs:
-      - compute-config-diff-and-report-with-pr-comment:
+      - compute-config-diff:
           name: compute-genesis-diff
           command: "generate-genesis"
           directory: "generate-genesis"
+      - report-config-diff:
+          command: "generate-genesis"
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
           context: circleci-superchain-registry
-      - compute-config-diff-and-report-with-pr-comment:
+          requires: [compute-genesis-diff]
+      - compute-config-diff:
           name: compute-rollup-config-diff
           command: "generate-rollup-config"
           directory: "generate-rollup-config"
+      - report-config-diff:
+          command: "generate-rollup-config"
           message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
           context: circleci-superchain-registry
+          requires: [compute-rollup-config-diff]
