@@ -13,7 +13,7 @@ fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+data_availability_type = "alt-da"
 
 [optimism]
   eip1559_elasticity = 6
