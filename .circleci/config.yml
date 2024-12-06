@@ -35,7 +35,6 @@ jobs:
       - run:
           name: Generate Configuration
           command: |
-
             if [[ $CIRCLE_BRANCH == pull/* ]]; then
                 is_forked_pull_request=true
             else
