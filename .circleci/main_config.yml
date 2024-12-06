@@ -10,6 +10,9 @@ parameters:
   chain:
     type: string
     default: "__required__"
+  is_forked_pull_request:
+    type: bool
+    default: false
 
 commands:
   notify-failures-on-main:

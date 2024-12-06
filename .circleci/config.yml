@@ -16,9 +16,6 @@ jobs:
     docker:
       - image: alpine:latest
     steps:
-      - run:
-          command: |
-            echo $CIRCLE_BRANCH
       - checkout
       - run:
           name: Install Git, yq, and jq
@@ -38,8 +35,14 @@ jobs:
       - run:
           name: Generate Configuration
           command: |
-
-            echo "{}" > .circleci/parameters.json
+            if [[ $CIRCLE_BRANCH == pull/* ]]; then
+                echo "CIRCLE_BRANCH is a pull request branch."
+                is_forked_pull_request=true
+            else
+                echo "CIRCLE_BRANCH is not a pull request branch."
+                is_forked_pull_request=false
+            fi
+            echo "{\"is_forked_pull_request\":$is_forked_pull_request}" > .circleci/parameters.json
 
             if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
               # This will always be selected unless the user chooses to interact with the configuration by setting a non default value in the chain parameter. This would happens if the user launch the pipeline with a specific chain value via either curl or the CircleCI GUI.
