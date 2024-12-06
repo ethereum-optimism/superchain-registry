@@ -123,7 +123,7 @@
   rpc = ["https://mainnet.mode.network"]
   explorers = ["https://explorer.mode.network"]
   superchain_level = 0
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -215,7 +215,7 @@
   rpc = ["https://rpc.zora.energy"]
   explorers = ["https://explorer.zora.energy"]
   superchain_level = 0
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"

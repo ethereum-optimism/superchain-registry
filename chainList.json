@@ -173,7 +173,7 @@
       "https://explorer.mode.network"
     ],
     "superchainLevel": 0,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -300,7 +300,7 @@
       "https://explorer.zora.energy"
     ],
     "superchainLevel": 0,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
