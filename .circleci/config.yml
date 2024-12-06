@@ -36,10 +36,8 @@ jobs:
           name: Generate Configuration
           command: |
             if [[ $CIRCLE_BRANCH == pull/* ]]; then
-                echo "CIRCLE_BRANCH is a pull request branch."
                 is_forked_pull_request=true
             else
-                echo "CIRCLE_BRANCH is not a pull request branch."
                 is_forked_pull_request=false
             fi
             echo "{\"is_forked_pull_request\":$is_forked_pull_request}" > .circleci/parameters.json

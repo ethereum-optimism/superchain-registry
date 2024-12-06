@@ -11,7 +11,7 @@ parameters:
     type: string
     default: "__required__"
   is_forked_pull_request:
-    type: bool
+    type: boolean
     default: false
 
 commands:
@@ -410,6 +410,8 @@ workflows:
       - check-codegen
 
   compute-config-diff-and-report:
+    when:
+      not: << pipeline.parameters.is_forked_pull_request >>
     jobs:
       - compute-config-diff:
           name: compute-genesis-diff
@@ -433,3 +435,17 @@ workflows:
           message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
           context: circleci-superchain-registry
           requires: [compute-rollup-config-diff]
+
+  compute-config-diff-and-report-forked-pr:
+    when: << pipeline.parameters.is_forked_pull_request >>
+    jobs:
+      - compute-config-diff:
+          name: compute-genesis-diff
+          command: "generate-genesis"
+          save_to: "GENESIS"
+          directory: "generate-genesis"
+      - compute-config-diff:
+          name: compute-rollup-config-diff
+          command: "generate-rollup-config"
+          save_to: "ROLLUP"
+          directory: "generate-rollup-config"
