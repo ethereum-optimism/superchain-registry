@@ -18,7 +18,7 @@ jobs:
     steps:
       - run:
           command: |
-          echo $CIRCLE_BRANCH
+            echo $CIRCLE_BRANCH
       - checkout
       - run:
           name: Install Git, yq, and jq
