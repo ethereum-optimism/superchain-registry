@@ -18,42 +18,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Git, yq, and jq
+          name: test
           command: |
-            apk add --no-cache git jq curl
-            curl -sLo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-            chmod +x /usr/local/bin/yq
-      - run:
-          name: Verify Git
-          command: git --version
-      - run:
-          name: Verify yq
-          command: yq --version
-      - run:
-          name: Verify jq
-          command: jq --version
-      - run:
-          name: Generate Configuration
-          command: |
-
-            echo "{}" > .circleci/parameters.json
-
-            if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
-              # This will always be selected unless the user chooses to interact with the configuration by setting a non default value in the chain parameter. This would happens if the user launch the pipeline with a specific chain value via either curl or the CircleCI GUI.
-
-              echo "Generating test configuration..."
-              sh validation/genesis/validation-inputs/generate-test-config.sh
-              cp .circleci/main_config.yml .circleci/selected_continue_config.yml
-            else
-              # This only runs if launched with curl or the CircleCI GUI with non default chain value
-
-              echo "Generating interactive configuration..."
-              cp .circleci/artifact_upload_config.yml .circleci/selected_continue_config.yml
-            fi
-      - continuation/continue:
-          configuration_path: .circleci/selected_continue_config.yml
-          parameters: .circleci/parameters.json
-
+          echo $CIRCLE_BRANCH
 workflows:
   setup:
     jobs:
