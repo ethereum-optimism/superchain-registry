@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"encoding/json"
@@ -16,7 +16,7 @@ type AddressData struct {
 	Address string `json:"address"`
 }
 
-func readAddressesFromChain(addresses *superchain.AddressList, l1RpcUrl string, isFaultProofs bool) error {
+func ReadAddressesFromChain(addresses *superchain.AddressList, l1RpcUrl string, isFaultProofs bool) error {
 	// SuperchainConfig
 	address, err := validation.CastCall(addresses.OptimismPortalProxy, "superchainConfig()(address)", nil, l1RpcUrl)
 	if err == nil {
@@ -94,7 +94,7 @@ func readAddressesFromChain(addresses *superchain.AddressList, l1RpcUrl string, 
 	return nil
 }
 
-func readAddressesFromJSON(addressList *superchain.AddressList, deploymentsDir string) error {
+func ReadAddressesFromJSON(addressList *superchain.AddressList, deploymentsDir string) error {
 	// Check for the following
 	// 1. filepath == deploymentsDir
 	// 2. filepath == deploymentsDir/.deploy

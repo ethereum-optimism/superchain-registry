@@ -2,7 +2,7 @@
 
 > [!WARNING]
 > `CONTRIBUTING.md` contains guidelines for modifying or working with the code in the Superchain Registry, including the validation checks and exported modules.
-> 
+>
 > For guidelines on how to add a chain to the Registry, see the documentation for [adding a new chain](docs/add-chain.md).
 
 The Superchain Registry repository contains:
@@ -56,7 +56,7 @@ Superchain-wide configuration, like the `ProtocolVersions` contract address, sho
 
 ## `superchain` Go Module
 
-Per chain and supechain-wide configs and extra data are embedded into the `superchain` go module, which can be imported like so:
+Per chain and superchain-wide configs and extra data are embedded into the `superchain` go module, which can be imported like so:
 
 ```
 go get github.com/ethereum-optimism/superchain-registry/superchain@latest
@@ -176,3 +176,12 @@ If you use VSCode, you can place the following in a `settings.json` file in the 
 See [Superchain Upgrades] OP Stack specifications.
 
 [Superchain Upgrades]: https://specs.optimism.io/protocol/superchain-upgrades.html
+
+## CircleCI Checks
+
+The following CircleCI checks are required and must pass before submitting a pull request:
+
+- `ci/circleci: compute-genesis-diff`
+- `ci/circleci: compute-rollup-config-diff`
+
+If these checks did not run, they can be triggered manually from CircleCI without any parameters or by submitting and empty commit after the PR has being created.
