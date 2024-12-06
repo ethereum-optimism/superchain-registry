@@ -1,7 +1,6 @@
 package standard
 
 import (
-	"fmt"
 	"embed"
 	"io/fs"
 
@@ -22,11 +21,11 @@ func init() {
 	decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
 
 	networkDirName := "networks"
-	networks, err := standardConfigFS.ReadDir("config/"+networkDirName)
+	networks, err := standardConfigFS.ReadDir("config/" + networkDirName)
 	if err != nil {
 		panic(fmt.Errorf("failed to read dir: %w", err))
 	}
-	
+
 	// iterate over network entries
 	for _, networkDir := range networks {
 		if !networkDir.IsDir() {
