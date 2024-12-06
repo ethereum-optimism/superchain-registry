@@ -11,6 +11,7 @@ delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 granite_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC
+superchain_time = 1726070401  # Granite time
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
