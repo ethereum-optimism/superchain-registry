@@ -20,7 +20,7 @@ func testGovernedByOptimism(t *testing.T, chain *ChainConfig) {
 		t.Errorf("No role configuration found for superchain '%s'!", superchain)
 		return
 	}
-	
+
 	optimismMultisig := superchainRoleConfig.KeyHandover.L1.Universal["ProxyAdmin"]["owner()"]
 
 	makeMsg := func(governed bool) string {
@@ -32,8 +32,8 @@ func testGovernedByOptimism(t *testing.T, chain *ChainConfig) {
 	}
 
 	paoAddress := chain.Addresses.ProxyAdminOwner.String()
-	
-	if chain.GovernedByOptimism == true {	
+
+	if chain.GovernedByOptimism == true {
 		require.Equal(t, optimismMultisig, paoAddress, makeMsg(true))
 	} else {
 		require.NotEqual(t, optimismMultisig, paoAddress, makeMsg(false))

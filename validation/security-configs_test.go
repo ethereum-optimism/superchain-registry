@@ -21,10 +21,10 @@ func resolveAddress(t *testing.T, chainID uint64, contract string) (Address, err
 	if common.IsHexAddress(contract) {
 		return Address(common.HexToAddress(contract)), nil
 	}
-	
+
 	contractAddress, err := Addresses[chainID].AddressFor(contract)
 	require.NoError(t, err)
-	
+
 	return contractAddress, err
 }
 
@@ -115,7 +115,6 @@ func testL2SecurityConfig(t *testing.T, chain *ChainConfig) {
 	defer client.Close()
 	checkResolutions(t, standard.Config.Roles.L2.Universal, chain.ChainID, client)
 }
-
 
 func getMappingValue(contractAddress Address, mapSlot uint8, key Address, client *ethclient.Client) ([]byte, error) {
 	preimage := make([]byte, 12, 64)
