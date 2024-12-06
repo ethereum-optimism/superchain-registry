@@ -67,7 +67,7 @@ func main() {
 			case Frontier:
 				frontierChains = append(frontierChains, chainEntry)
 			default:
-				panic(fmt.Sprintf("unknown SuperchanLevel %d", chain.SuperchainLevel))
+				panic(fmt.Sprintf("unknown SuperchainLevel %d", chain.SuperchainLevel))
 			}
 		}
 		allChains = append(allChains, standardChains...)
@@ -90,7 +90,7 @@ func main() {
 	fmt.Println("Wrote chainList.json file")
 
 	var buf bytes.Buffer
-	allChainsForTOML := map[string]([]ChainEntry){"chains": allChains}
+	allChainsForTOML := map[string][]ChainEntry{"chains": allChains}
 	if err := toml.NewEncoder(&buf).Encode(allChainsForTOML); err != nil {
 		fmt.Println("Error encoding TOML:", err)
 		return
@@ -101,7 +101,7 @@ func main() {
 	}
 	fmt.Println("Wrote chainList.toml file")
 
-	// Write all chain configs to a single file
+	// Write all chain configurations to a single file
 	type Superchain struct {
 		Name         string           `json:"name" toml:"name"`
 		Config       SuperchainConfig `json:"config" toml:"config"`

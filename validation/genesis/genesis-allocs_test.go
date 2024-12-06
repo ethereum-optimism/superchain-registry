@@ -35,7 +35,7 @@ func TestMain(m *testing.M) {
 	thisDir := filepath.Dir(filename)
 	temporaryOptimismDir = path.Join(thisDir, "../../../optimism-temporary")
 
-	// Clone the repo if it the folder doesn't exist
+	// Clone the repo if the folder doesn't exist
 	_, err := os.Stat(temporaryOptimismDir)
 	needToClone := os.IsNotExist(err)
 	if needToClone {
