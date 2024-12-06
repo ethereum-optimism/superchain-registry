@@ -189,4 +189,4 @@ These jobs will run at every commit in every branch.
 
 For pull requests from forks, these checks will not appear directly in the PR comments, but **the jobs will still run** and their results can be viewed in the diffs.
 
-Please note that while these jobs are **not blocking**, they must pass to ensure the accuracy of the changes. If the checks did not run, they can be triggered manually from CircleCI without any parameters or by submitting an empty commit after the PR has been created.
+Please note that while these jobs are **not blocking**, they must pass to ensure the accuracy of the changes.
