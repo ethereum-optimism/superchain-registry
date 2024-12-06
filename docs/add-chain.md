@@ -6,12 +6,12 @@ The following are the steps you need to take to add a chain to the registry:
 > Ensure your chain is listed at [ethereum-lists/chains](https://github.com/ethereum-lists/chains).
 > This is to ensure your chain has a unique chain ID. Our validation suite will
 > check against this repository. This is a mandatory prerequisite before being
-> added to the registy.
+> added to the registry.
 
 ### 0. Fork this repository
 You will be raising a Pull Request from your fork to the upstream repo.
 
-We recommend only adding one chain at a time, and starting with a fresh branch of this repo for every chain. 
+We recommend only adding one chain at a time, and starting with a fresh branch of this repo for every chain.
 
 ### 1. Install dependencies
 
@@ -61,9 +61,10 @@ The format is a gzipped JSON `genesis.json` file, with either:
 
 ### 5. Run tests locally
 
-Run the following command to run the Go validation checks, for only the chain you added (replace the `<chain-id>` accordingly):
+Run the following commands to run the Go validation checks, for only the chain you added (replace the `<chain-id>` accordingly):
 ```
 just validate <chain-id>
+just validate-genesis-allocs <chain-id>
 ```
 
 > [!NOTE]
@@ -90,7 +91,7 @@ just codegen
 When opening a PR:
 - Open it from a non-protected branch in your fork (e.g. avoid the `main` branch). This allows maintainers to push to your branch if needed, which streamlines the review and merge process.
 - Open one PR per chain you would like to add. This ensures the merge of one chain is not blocked by unexpected issues.
-- Once the PR is opened, please check the box to [allow edits from maintainers](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork). 
+- Once the PR is opened, please check the box to [allow edits from maintainers](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork).
 
 Once the PR is opened, the same automated checks you've run locally will then run on your PR, and your PR will be reviewed in due course. Once these checks pass, the PR will be merged.
 

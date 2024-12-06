@@ -94,6 +94,7 @@ func TestAddChain_Main(t *testing.T) {
 
 			args := []string{
 				"add-chain",
+				"add-new-chain",
 				"--chain-name=" + tt.chainName,
 				"--chain-short-name=" + tt.chainShortName,
 				"--rollup-config=" + tt.rollupConfigFile,

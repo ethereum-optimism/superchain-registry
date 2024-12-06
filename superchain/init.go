@@ -10,9 +10,6 @@ import (
 )
 
 func init() {
-	var err error
-	SuperchainSemver = make(map[string]ContractVersions)
-
 	superchainTargets, err := superchainFS.ReadDir("configs")
 	if err != nil {
 		panic(fmt.Errorf("failed to read superchain dir: %w", err))
@@ -79,12 +76,10 @@ func init() {
 			switch superchainEntry.Superchain {
 			case "mainnet":
 				if runningInCI == "true" {
-					fmt.Println("Using ci mainnet rpc")
 					superchainEntry.Config.L1.PublicRPC = "https://ci-mainnet-l1-archive.optimism.io"
 				}
 			case "sepolia", "sepolia-dev-0":
 				if runningInCI == "true" {
-					fmt.Println("Using ci sepolia rpc")
 					superchainEntry.Config.L1.PublicRPC = "https://ci-sepolia-l1-archive.optimism.io"
 				}
 			}

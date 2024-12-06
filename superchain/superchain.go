@@ -61,6 +61,7 @@ type HardForkConfiguration struct {
 	FjordTime    *uint64 `json:"fjord_time,omitempty" toml:"fjord_time,omitempty"`
 	GraniteTime  *uint64 `json:"granite_time,omitempty" toml:"granite_time,omitempty"`
 	HoloceneTime *uint64 `json:"holocene_time,omitempty" toml:"holocene_time,omitempty"`
+	IsthmusTime  *uint64 `json:"isthmus_time,omitempty" toml:"isthmus_time,omitempty"`
 }
 
 type SuperchainLevel uint
@@ -265,6 +266,7 @@ func (c *ChainConfig) GenerateTOMLComments(ctx context.Context) (map[string]stri
 	createTimestampComment("fjord_time", c.FjordTime, comments)
 	createTimestampComment("granite_time", c.GraniteTime, comments)
 	createTimestampComment("holocene_time", c.HoloceneTime, comments)
+	createTimestampComment("isthmus_time", c.IsthmusTime, comments)
 
 	if c.StandardChainCandidate {
 		comments["standard_chain_candidate"] = "# This is a temporary field which causes most of the standard validation checks to run on this chain"
@@ -336,10 +338,6 @@ func (a AddressList) AddressFor(name string) (Address, error) {
 	return address, nil
 }
 
-// AddressSet represents a set of addresses for a given
-// contract. They are keyed by the semantic version.
-type AddressSet map[string]Address
-
 type MappedContractProperties[T string | VersionedContract] struct {
 	L1CrossDomainMessenger       T `toml:"l1_cross_domain_messenger,omitempty"`
 	L1ERC721Bridge               T `toml:"l1_erc721_bridge,omitempty"`
@@ -370,9 +368,9 @@ type ContractBytecodeHashes MappedContractProperties[string]
 type VersionedContract struct {
 	Version string `toml:"version"`
 	// If the contract is a superchain singleton, it will have a static address
-	Address *Address `toml:"implementation_address,omitempty"`
+	Address *Address `toml:"address,omitempty"`
 	// If the contract is proxied, the implementation will have a static address
-	ImplementationAddress *Address `toml:"address,omitempty"`
+	ImplementationAddress *Address `toml:"implementation_address,omitempty"`
 }
 
 // ContractVersions represents the desired semantic version of the contracts
@@ -511,8 +509,9 @@ type SuperchainConfig struct {
 	Name string           `toml:"name"`
 	L1   SuperchainL1Info `toml:"l1"`
 
-	ProtocolVersionsAddr *Address `toml:"protocol_versions_addr,omitempty"`
-	SuperchainConfigAddr *Address `toml:"superchain_config_addr,omitempty"`
+	ProtocolVersionsAddr        *Address `toml:"protocol_versions_addr,omitempty"`
+	SuperchainConfigAddr        *Address `toml:"superchain_config_addr,omitempty"`
+	OPContractsManagerProxyAddr *Address `toml:"op_contracts_manager_proxy_addr,omitempty"`
 
 	// Hardfork Configuration. These values may be overridden by individual chains.
 	hardForkDefaults HardForkConfiguration
@@ -556,9 +555,6 @@ var OPChains = map[uint64]*ChainConfig{}
 var Addresses = map[uint64]*AddressList{}
 
 var GenesisSystemConfigs = map[uint64]*SystemConfig{}
-
-// SuperchainSemver maps superchain name to a contract name : approved semver version structure.
-var SuperchainSemver map[string]ContractVersions
 
 func isConfigFile(c fs.DirEntry) bool {
 	return (!c.IsDir() &&

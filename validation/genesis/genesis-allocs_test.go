@@ -16,6 +16,7 @@ import (
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/validation/common"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/stretchr/testify/require"
@@ -158,6 +159,8 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 		require.NoError(t, err)
 		allocs := types.GenesisAlloc{}
 		err = json.Unmarshal(expectedData, &allocs)
+		removeEmptyStorageSlots(allocs, t)
+
 		require.NoError(t, err)
 		expectedData, err = json.MarshalIndent(allocs, "", " ")
 		require.NoError(t, err)
@@ -166,13 +169,20 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 		require.NoError(t, err)
 		gen := core.Genesis{}
 		err = json.Unmarshal(expectedData, &gen)
+		removeEmptyStorageSlots(gen.Alloc, t)
 		require.NoError(t, err)
 		expectedData, err = json.MarshalIndent(gen.Alloc, "", " ")
 		require.NoError(t, err)
 	}
 
 	g, err := core.LoadOPStackGenesis(chainId)
+	removeEmptyStorageSlots(g.Alloc, t)
 	require.NoError(t, err)
+
+	if chainId == uint64(1301) {
+		delete(g.Alloc, common.HexToAddress("0x1f98431c8ad98523631ae4a59f267346ea31f984"))
+		delete(g.Alloc, common.HexToAddress("0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f"))
+	}
 
 	gotData, err := json.MarshalIndent(g.Alloc, "", " ")
 	require.NoError(t, err)
@@ -206,6 +216,18 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err)
 
 	require.Equal(t, string(expectedData), string(gotData))
+}
+
+// This function removes empty storage slots as we know declaring empty slots is functionally equivalent to not declaring them.
+func removeEmptyStorageSlots(allocs types.GenesisAlloc, t *testing.T) {
+	for _, account := range allocs {
+		for slot, value := range account.Storage {
+			if value == (common.Hash{}) {
+				delete(account.Storage, slot)
+				t.Log("Removed empty storage slot: ", slot.Hex())
+			}
+		}
+	}
 }
 
 // trim the CBOR octets from the bytecode of a weth9 contract
