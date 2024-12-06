@@ -181,9 +181,11 @@ See [Superchain Upgrades] OP Stack specifications.
 
 ## CircleCI Checks
 
-The following CircleCI checks are required and must pass before submitting a pull request:
+The following CircleCI checks are not mandatory for submitting a pull request, but they should be reviewed:
 
 - `ci/circleci: compute-genesis-diff`
 - `ci/circleci: compute-rollup-config-diff`
 
-If these checks did not run, they can be triggered manually from CircleCI without any parameters or by submitting and empty commit after the PR has being created.
+For pull requests from forks, these checks will not appear directly in the PR comments, but **the jobs will still run** and their results can be viewed in the diffs.
+
+Please note that while these jobs are **not blocking**, they must pass to ensure the accuracy of the changes. If the checks did not run, they can be triggered manually from CircleCI without any parameters or by submitting an empty commit after the PR has been created.
