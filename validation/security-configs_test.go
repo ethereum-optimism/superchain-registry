@@ -17,29 +17,42 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func resolveAddress(t *testing.T, chainID uint64, contract string) (Address, error) {
+	if common.IsHexAddress(contract) {
+		return Address(common.HexToAddress(contract)), nil
+	}
+	
+	contractAddress, err := Addresses[chainID].AddressFor(contract)
+	require.NoError(t, err)
+	
+	return contractAddress, err
+}
+
+func getAddress(method string, contractAddress Address, client *ethclient.Client) (Address, error) {
+	addr := (common.Address(contractAddress))
+	callMsg := ethereum.CallMsg{
+		To:   &addr,
+		Data: crypto.Keccak256([]byte(method))[:4],
+	}
+
+	// Make the call
+	callContract := func(msg ethereum.CallMsg) ([]byte, error) {
+		return client.CallContract(context.Background(), msg, nil)
+	}
+	result, err := Retry(callContract)(callMsg)
+	if err != nil {
+		return Address{}, err
+	}
+
+	return Address(common.BytesToAddress(result)), nil
+}
+
 var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64, client *ethclient.Client) {
 	for contract, methodToOutput := range r {
-
-		var contractAddress Address
-		var err error
-
-		if common.IsHexAddress(contract) {
-			contractAddress = Address(common.HexToAddress(contract))
-		} else {
-			contractAddress, err = Addresses[chainID].AddressFor(contract)
-			require.NoError(t, err)
-		}
+		contractAddress, _ := resolveAddress(t, chainID, contract)
 
 		for method, output := range methodToOutput {
-
-			var want Address
-
-			if common.IsHexAddress(output) {
-				want = Address(common.HexToAddress(output))
-			} else {
-				want, err = Addresses[chainID].AddressFor(output)
-				require.NoError(t, err)
-			}
+			want, _ := resolveAddress(t, chainID, output)
 
 			got, err := getAddress(method, contractAddress, client)
 			require.NoErrorf(t, err, "problem calling %s.%s (%s)", contract, method, contractAddress)
@@ -49,7 +62,6 @@ var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64
 				t.Errorf("%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
 			}
 		}
-
 	}
 }
 
@@ -104,24 +116,6 @@ func testL2SecurityConfig(t *testing.T, chain *ChainConfig) {
 	checkResolutions(t, standard.Config.Roles.L2.Universal, chain.ChainID, client)
 }
 
-func getAddress(method string, contractAddress Address, client *ethclient.Client) (Address, error) {
-	addr := (common.Address(contractAddress))
-	callMsg := ethereum.CallMsg{
-		To:   &addr,
-		Data: crypto.Keccak256([]byte(method))[:4],
-	}
-
-	// Make the call
-	callContract := func(msg ethereum.CallMsg) ([]byte, error) {
-		return client.CallContract(context.Background(), msg, nil)
-	}
-	result, err := Retry(callContract)(callMsg)
-	if err != nil {
-		return Address{}, err
-	}
-
-	return Address(common.BytesToAddress(result)), nil
-}
 
 func getMappingValue(contractAddress Address, mapSlot uint8, key Address, client *ethclient.Client) ([]byte, error) {
 	preimage := make([]byte, 12, 64)
