@@ -318,7 +318,7 @@
       "https://sepolia-optimistic.etherscan.io"
     ],
     "superchainLevel": 1,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -426,7 +426,7 @@
       "https://testnet.explorer.metall2.com"
     ],
     "superchainLevel": 0,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -462,7 +462,7 @@
       "https://sepolia.explorer.mode.network"
     ],
     "superchainLevel": 0,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -571,7 +571,7 @@
       "https://sepolia.explorer.zora.energy"
     ],
     "superchainLevel": 0,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -607,7 +607,7 @@
       ""
     ],
     "superchainLevel": 0,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",

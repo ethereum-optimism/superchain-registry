@@ -228,7 +228,7 @@
   rpc = ["https://sepolia.optimism.io"]
   explorers = ["https://sepolia-optimistic.etherscan.io"]
   superchain_level = 1
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -306,7 +306,7 @@
   rpc = ["https://testnet.rpc.metall2.com"]
   explorers = ["https://testnet.explorer.metall2.com"]
   superchain_level = 0
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -332,7 +332,7 @@
   rpc = ["https://sepolia.mode.network"]
   explorers = ["https://sepolia.explorer.mode.network"]
   superchain_level = 0
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -411,7 +411,7 @@
   rpc = ["https://sepolia.rpc.zora.energy"]
   explorers = ["https://sepolia.explorer.zora.energy"]
   superchain_level = 0
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -437,7 +437,7 @@
   rpc = [""]
   explorers = [""]
   superchain_level = 0
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
