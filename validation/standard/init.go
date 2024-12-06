@@ -1,6 +1,7 @@
 package standard
 
 import (
+	"fmt"
 	"embed"
 	"io/fs"
 
@@ -8,8 +9,8 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 )
 
-//go:embed *.toml
-var standardConfigFile embed.FS
+//go:embed config
+var standardConfigFS embed.FS
 
 func init() {
 	Config = ConfigType{
@@ -20,19 +21,31 @@ func init() {
 
 	decodeTOMLFileIntoConfig("standard-config-roles-universal.toml", Config.Roles)
 
-	networks := []string{"mainnet", "sepolia"}
-	for _, network := range networks {
+	networkDirName := "networks"
+	networks, err := standardConfigFS.ReadDir("config/"+networkDirName)
+	if err != nil {
+		panic(fmt.Errorf("failed to read dir: %w", err))
+	}
+	
+	// iterate over network entries
+	for _, networkDir := range networks {
+		if !networkDir.IsDir() {
+			continue // ignore files, e.g. a readme
+		}
+
+		network := networkDir.Name()
+
 		Config.MultisigRoles[network] = new(MultisigRoles)
-		decodeTOMLFileIntoConfig("standard-config-roles-"+network+".toml", Config.MultisigRoles[network])
+		decodeTOMLFileIntoConfig(networkDirName+"/"+network+"/standard-config-roles-"+network+".toml", Config.MultisigRoles[network])
 
 		Config.Params[network] = new(Params)
-		decodeTOMLFileIntoConfig("standard-config-params-"+network+".toml", Config.Params[network])
+		decodeTOMLFileIntoConfig(networkDirName+"/"+network+"/standard-config-params-"+network+".toml", Config.Params[network])
 
 		var versions VersionTags = VersionTags{
 			Releases: make(map[Tag]superchain.ContractVersions, 0),
 		}
 
-		decodeTOMLFileIntoConfig("standard-versions-"+network+".toml", &versions)
+		decodeTOMLFileIntoConfig(networkDirName+"/"+network+"/standard-versions-"+network+".toml", &versions)
 		NetworkVersions[network] = versions
 	}
 
@@ -53,7 +66,7 @@ func init() {
 
 func decodeTOMLFileIntoConfig[
 	T any](filename string, config *T) {
-	data, err := fs.ReadFile(standardConfigFile, filename)
+	data, err := fs.ReadFile(standardConfigFS, "config/"+filename)
 	if err != nil {
 		panic(err)
 	}
