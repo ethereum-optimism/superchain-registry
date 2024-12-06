@@ -6,8 +6,6 @@ import (
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
 
-	// "github.com/ethereum/go-ethereum/common"
-
 	"github.com/stretchr/testify/require"
 )
 
