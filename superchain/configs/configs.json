@@ -423,7 +423,7 @@
           "Explorer": "https://explorer.thebinaryholdings.com",
           "SuperchainLevel": 0,
           "StandardChainCandidate": false,
-          "SuperchainTime": null,
+          "SuperchainTime": 1736445601,
           "batch_inbox_address": "0xFF00000000000000000000000000000000000624",
           "Superchain": "mainnet",
           "Chain": "tbn",
