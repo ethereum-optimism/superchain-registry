@@ -35,5 +35,5 @@ prependedTargets=${prependedTargets%,}
 prependedTargets="[$prependedTargets]"
 
 # Use yq to replace the target-version   key
-yq e ".workflows.pr-checks.jobs[0].golang-validate-genesis-allocs.matrix.parameters.chainid = $targets" -i .circleci/continue_config.yml
-yq e ".workflows.pr-checks.jobs[1].genesis-allocs-all-ok.requires = $prependedTargets" -i .circleci/continue_config.yml
+yq e ".workflows.pr-checks.jobs[0].golang-validate-genesis-allocs.matrix.parameters.chainid = $targets" -i .circleci/main_config.yml
+yq e ".workflows.pr-checks.jobs[1].genesis-allocs-all-ok.requires = $prependedTargets" -i .circleci/main_config.yml
