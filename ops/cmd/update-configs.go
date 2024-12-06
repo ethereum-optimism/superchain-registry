@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/ethereum-optimism/superchain-registry/add-chain/config"
+	"github.com/ethereum-optimism/superchain-registry/ops/config"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/urfave/cli/v2"
 )
