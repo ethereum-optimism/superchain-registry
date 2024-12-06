@@ -14,6 +14,7 @@ const (
 	UniquenessTest               = "Uniqueness"
 	ChainIDRPCTest               = "ChainID_RPC"
 	OptimismConfigTest           = "Optimism_Config"
+	GovernedByOptimismTest       = "Governed_By_Optimism"
 	RollupConfigTest             = "Rollup_Config"
 	GasTokenTest                 = "Gas_Token"
 	ResourceConfigTest           = "Resource_Config"
@@ -80,6 +81,7 @@ func testUniversal(t *testing.T, chain *ChainConfig) {
 	t.Run(UniquenessTest, applyExclusions(chain, testIsGloballyUnique))
 	t.Run(ChainIDRPCTest, applyExclusions(chain, testChainIDFromRPC))
 	t.Run(OptimismConfigTest, applyExclusions(chain, testOptimismConfig))
+	t.Run(GovernedByOptimismTest, applyExclusions(chain, testGovernedByOptimism))
 }
 
 // testStandardCandidate applies to Standard and Standard Candidate Chains.

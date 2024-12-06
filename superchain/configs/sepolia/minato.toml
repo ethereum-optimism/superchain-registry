@@ -4,6 +4,7 @@ public_rpc = "https://rpc.minato.soneium.org"
 sequencer_rpc = "https://rpc.minato.soneium.org"
 explorer = "https://soneium-minato.blockscout.com/"
 superchain_level = 0
+governed_by_optimism = false
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 batch_inbox_addr = "0x00Ca81E019a5312d404aE7fe8367D30DE4c11365"
 canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC

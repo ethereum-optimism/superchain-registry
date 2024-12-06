@@ -4,6 +4,7 @@ public_rpc = "https://rpc.api.lisk.com"
 sequencer_rpc = "https://rpc.api.lisk.com"
 explorer = "https://blockscout.lisk.com"
 superchain_level = 0
+governed_by_optimism = false
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 batch_inbox_addr = "0xFf00000000000000000000000000000000001135"
 canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
