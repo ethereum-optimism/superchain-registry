@@ -1,14 +1,14 @@
 [l1.nonFaultProofs]
-OptimismPortalProxy."guardian()" = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
-L2OutputOracleProxy."challenger()" = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
+OptimismPortalProxy."guardian()" = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
+L2OutputOracleProxy."challenger()" = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
 
 [l1.FaultProofs]
-OptimismPortalProxy."guardian()" = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
-PermissionedDisputeGame."challenger()" = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
+OptimismPortalProxy."guardian()" = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
+PermissionedDisputeGame."challenger()" = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
 
 [key-handover.l1.universal]
 # This is a 2/2 Safe between the Optimism Foundation and the Security Council
-ProxyAdmin."owner()" = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
+ProxyAdmin."owner()" = "0x4377BB0F0103992b31eC12b4d796a8687B8dC8E9"
 
 [key-handover.l2]
 # This is the ALIASED address of the L1 2/2 Safe between the Optimism Foundation and the Security Council.
