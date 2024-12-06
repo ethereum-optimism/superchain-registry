@@ -436,7 +436,7 @@ workflows:
           context: circleci-superchain-registry
           requires: [compute-rollup-config-diff]
 
-  compute-config-diff-and-report-forked-pr:
+  compute-config-diff-only:
     when: << pipeline.parameters.is_forked_pull_request >>
     jobs:
       - compute-config-diff:

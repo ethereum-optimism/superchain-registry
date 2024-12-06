@@ -180,11 +180,12 @@ See [Superchain Upgrades] OP Stack specifications.
 [Superchain Upgrades]: https://specs.optimism.io/protocol/superchain-upgrades.html
 
 ## CircleCI Checks
-
 The following CircleCI checks are not mandatory for submitting a pull request, but they should be reviewed:
 
 - `ci/circleci: compute-genesis-diff`
 - `ci/circleci: compute-rollup-config-diff`
+
+These jobs will run at every commit in every branch.
 
 For pull requests from forks, these checks will not appear directly in the PR comments, but **the jobs will still run** and their results can be viewed in the diffs.
 
