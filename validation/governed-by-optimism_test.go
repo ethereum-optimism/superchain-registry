@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"fmt"
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
@@ -13,8 +14,28 @@ func testGovernedByOptimism(t *testing.T, chain *ChainConfig) {
 	chainID := chain.ChainID
 	superchain := OPChains[chainID].Superchain
 
-	if chain.GovernedByOptimism == true {
-		optimismMultisig := standard.Config.MultisigRoles[superchain].KeyHandover.L1.Universal["ProxyAdmin"]["owner()"]
-		require.Equal(t, optimismMultisig, chain.Addresses.ProxyAdminOwner.String(), "Chains using Optimism governance must have their ProxyAdminOwner set to the Optimism multisig")
+	superchainRoleConfig := standard.Config.MultisigRoles[superchain]
+
+	if superchainRoleConfig == nil {
+		t.Errorf("No role configuration found for superchain '%s'!", superchain)
+		return
+	}
+	
+	optimismMultisig := superchainRoleConfig.KeyHandover.L1.Universal["ProxyAdmin"]["owner()"]
+
+	makeMsg := func(governed bool) string {
+		var notString string
+		if !governed {
+			notString = "not "
+		}
+		return fmt.Sprintf("Chains %susing Optimism governance must %shave their ProxyAdminOwner set to the Optimism multisig", notString, notString)
+	}
+
+	paoAddress := chain.Addresses.ProxyAdminOwner.String()
+	
+	if chain.GovernedByOptimism == true {	
+		require.Equal(t, optimismMultisig, paoAddress, makeMsg(true))
+	} else {
+		require.NotEqual(t, optimismMultisig, paoAddress, makeMsg(false))
 	}
 }
