@@ -239,6 +239,23 @@
     }
   },
   {
+    "name": "Swell Network",
+    "identifier": "mainnet/swell",
+    "chainId": 1923,
+    "rpc": [
+      "https://swell-mainnet.alt.technology"
+    ],
+    "explorers": [
+      "https://explorer.swellnetwork.io"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Binary Mainnet",
     "identifier": "mainnet/tbn",
     "chainId": 624,

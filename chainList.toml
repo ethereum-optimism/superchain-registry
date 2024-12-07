@@ -168,6 +168,18 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Swell Network"
+  identifier = "mainnet/swell"
+  chain_id = 1923
+  rpc = ["https://swell-mainnet.alt.technology"]
+  explorers = ["https://explorer.swellnetwork.io"]
+  superchain_level = 0
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Binary Mainnet"
   identifier = "mainnet/tbn"
   chain_id = 624
