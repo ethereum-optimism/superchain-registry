@@ -555,7 +555,7 @@
           "Explorer": "https://blockscout.lisk.com",
           "SuperchainLevel": 0,
           "StandardChainCandidate": true,
-          "SuperchainTime": null,
+          "SuperchainTime": 0,
           "batch_inbox_address": "0xFf00000000000000000000000000000000001135",
           "Superchain": "mainnet",
           "Chain": "lisk",
