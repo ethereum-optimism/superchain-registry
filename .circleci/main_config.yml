@@ -411,7 +411,10 @@ workflows:
 
   compute-config-diff-and-report:
     when:
-      not: << pipeline.parameters.is_forked_pull_request >>
+      and:
+        - not:
+            equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+        - not: << pipeline.parameters.is_forked_pull_request >>
     jobs:
       - compute-config-diff:
           name: compute-genesis-diff
@@ -437,7 +440,11 @@ workflows:
           requires: [compute-rollup-config-diff]
 
   compute-config-diff-only:
-    when: << pipeline.parameters.is_forked_pull_request >>
+    when:
+      and:
+        - not:
+            equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+        - << pipeline.parameters.is_forked_pull_request >>
     jobs:
       - compute-config-diff:
           name: compute-genesis-diff
