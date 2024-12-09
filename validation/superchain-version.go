@@ -48,7 +48,7 @@ func checkForStandardVersions(t *testing.T, chain *ChainConfig) {
 	}
 }
 
-// getContractVersionsFromChain pulls the appropriate contract versions from chain
+// getContractVersionsFromChain pulls the appropriate contract versions from the chain
 // using the supplied client (calling the version() method for each contract). It does this concurrently.
 func getContractVersionsFromChain(list AddressList, client *ethclient.Client, chain *ChainConfig) (ContractVersions, error) {
 	// Prepare a concurrency-safe object to store version information in, and
@@ -237,7 +237,7 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 		return "", fmt.Errorf("%s: %w", addrToCheck, err)
 	}
 
-	// if the contract is known to have immutables, setup the filterer to mask the bytes which contain the variable's value
+	// if the contract is known to have immutables, set up the filterer to mask the bytes which contain the variable's value
 	tag := standard.Release
 	bytecodeImmutableFilterer, err := initBytecodeImmutableMask(code, tag, contractName)
 	// error indicates that the contract _does_ have immutables, but we weren't able to determine the coordinates of the immutables in the bytecode

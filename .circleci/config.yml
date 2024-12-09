@@ -1,13 +1,18 @@
 version: 2.1
 
-# this allows us to use CircleCI's dynamic configuration feature
+# This allows us to use CircleCI's dynamic configuration feature
 setup: true
+
+parameters:
+  chain:
+    type: string
+    default: "__required__"
 
 orbs:
   continuation: circleci/continuation@0.3.1
 
 jobs:
-  setup-genesis-allocs-validation:
+  generate-and-select-continuation-config:
     docker:
       - image: alpine:latest
     steps:
@@ -28,14 +33,32 @@ jobs:
           name: Verify jq
           command: jq --version
       - run:
-          name: Generate list of chainids and insert into  continue_config.yml file
+          name: Generate Configuration
           command: |
-            sh validation/genesis/validation-inputs/generate-test-config.sh
+            if [[ $CIRCLE_BRANCH == pull/* ]]; then
+                is_forked_pull_request=true
+            else
+                is_forked_pull_request=false
+            fi
+            echo "{\"is_forked_pull_request\":$is_forked_pull_request}" > .circleci/parameters.json
+
+            if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
+              # This will always be selected unless the user chooses to interact with the configuration by setting a non default value in the chain parameter. This would happens if the user launch the pipeline with a specific chain value via either curl or the CircleCI GUI.
+
+              echo "Generating test configuration..."
+              sh validation/genesis/validation-inputs/generate-test-config.sh
+              cp .circleci/main_config.yml .circleci/selected_continue_config.yml
+            else
+              # This only runs if launched with curl or the CircleCI GUI with non default chain value
+
+              echo "Generating interactive configuration..."
+              cp .circleci/artifact_upload_config.yml .circleci/selected_continue_config.yml
+            fi
       - continuation/continue:
-          configuration_path: .circleci/continue_config.yml
-          parameters: '{}'
+          configuration_path: .circleci/selected_continue_config.yml
+          parameters: .circleci/parameters.json
 
 workflows:
   setup:
     jobs:
-       - setup-genesis-allocs-validation
+      - generate-and-select-continuation-config

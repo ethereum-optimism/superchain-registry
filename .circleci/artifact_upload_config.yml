@@ -1,0 +1,111 @@
+version: 2.1
+orbs:
+  go: circleci/go@2.1.0
+  node: circleci/node@5.2.0
+  slack: circleci/slack@4.10.1
+  gcp-cli: circleci/gcp-cli@3.0.1
+  python: circleci/python@1.1.0
+
+parameters:
+  chain:
+    type: string
+    default: "__required__"
+  is_forked_pull_request:
+    type: boolean
+    default: false
+
+commands:
+  gcp-oidc-authenticate:
+    description: "Authenticate with GCP using a CircleCI OIDC token."
+    parameters:
+      project_id:
+        type: env_var_name
+        default: GCP_PROJECT_ID
+      workload_identity_pool_id:
+        type: env_var_name
+        default: GCP_WIP_ID
+      workload_identity_pool_provider_id:
+        type: env_var_name
+        default: GCP_WIP_PROVIDER_ID
+      service_account_email:
+        type: env_var_name
+        default: GCP_SERVICE_ACCOUNT_EMAIL
+      gcp_cred_config_file_path:
+        type: string
+        default: /home/circleci/gcp_cred_config.json
+      oidc_token_file_path:
+        type: string
+        default: /home/circleci/oidc_token.json
+    steps:
+      - run:
+          name: "Create OIDC credential configuration"
+          command: |
+            # Store OIDC token in temp file
+            echo $CIRCLE_OIDC_TOKEN > << parameters.oidc_token_file_path >>
+            # Create a credential configuration for the generated OIDC ID Token
+            gcloud iam workload-identity-pools create-cred-config \
+                "projects/${<< parameters.project_id >>}/locations/global/workloadIdentityPools/${<< parameters.workload_identity_pool_id >>}/providers/${<< parameters.workload_identity_pool_provider_id >>}"\
+                --output-file="<< parameters.gcp_cred_config_file_path >>" \
+                --service-account="${<< parameters.service_account_email >>}" \
+                --credential-source-file=<< parameters.oidc_token_file_path >>
+      - run:
+          name: "Authenticate with GCP using OIDC"
+          command: |
+            # Configure gcloud to leverage the generated credential configuration
+            gcloud auth login --brief --cred-file "<< parameters.gcp_cred_config_file_path >>"
+            # Configure ADC
+            echo "export GOOGLE_APPLICATION_CREDENTIALS='<< parameters.gcp_cred_config_file_path >>'" | tee -a "$BASH_ENV"
+jobs:
+  upload-chain-artifacts:
+    machine:
+      image: ubuntu-2004:current
+    steps:
+      - run:
+          name: Verify Chain Parameter
+          command: |
+            if [ "<< pipeline.parameters.chain>>" = "__required__" ]; then
+              echo "Error: The 'chain' parameter is required but was not provided, skipping upload"
+              exit 1
+            fi
+            echo "export CHAIN=<< pipeline.parameters.chain>>" >> $BASH_ENV
+      - checkout
+      - gcp-cli/install
+      - gcp-oidc-authenticate
+      - run:
+          name: Get Current Commit Hash
+          command: echo "COMMIT_HASH=$(git rev-parse HEAD)" >> $BASH_ENV
+      - run:
+          name: Generate Genesis File
+          working_directory: validation
+          command: |
+            go run generate-genesis/main.go $COMMIT_HASH
+      - run:
+          name: Generate Rollup Config
+          working_directory: validation
+          command: |
+            go run generate-rollup-config/main.go $COMMIT_HASH
+      - run:
+          name: Upload Artifacts
+          working_directory: validation
+          command: |
+            FOLDER="chains"
+
+            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/genesis.json
+            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/rollup.json
+
+            # Upload with commit hash for historical records
+            gsutil cp ./generate-genesis/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/${COMMIT_HASH}/genesis.json
+            gsutil cp ./generate-rollup-config/output-${COMMIT_HASH}/${CHAIN}.json \
+              gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/${COMMIT_HASH}/rollup.json
+
+workflows:
+  upload-chain-artifacts-workflow:
+    when:
+      not:
+        equal: ["__required__", << pipeline.parameters.chain>>]
+    jobs:
+      - upload-chain-artifacts:
+          context: circleci-superchain-registry
