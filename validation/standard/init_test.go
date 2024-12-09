@@ -37,7 +37,7 @@ func TestConfigInitialization(t *testing.T) {
 
 		t.Run(fmt.Sprintf("MultisigRoles[%s]", network), func(t *testing.T) {
 			roles := Config.MultisigRoles[network]
-			
+
 			// Ensure network MultisigRoles are populated
 			require.NotNil(t, roles, "Config.MultisigRoles[%s] should not be nil", network)
 			if roles != nil {
@@ -45,7 +45,7 @@ func TestConfigInitialization(t *testing.T) {
 
 				l1Roles := roles.KeyHandover.L1.Universal
 				require.NotNil(t, l1Roles, "Config.MultisigRoles[%s].KeyHandover.L1.Universal must be present", network)
-				
+
 				if l1Roles != nil {
 					require.NotEmpty(t, l1Roles["ProxyAdmin"]["owner()"], "Config.MultisigRoles[%s].ProxyAdmin.\"owner()\" must be set", network)
 				}
