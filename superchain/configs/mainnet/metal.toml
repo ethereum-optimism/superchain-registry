@@ -4,6 +4,7 @@ public_rpc = "https://rpc.metall2.com"
 sequencer_rpc = "https://rpc.metall2.com"
 explorer = "https://explorer.metall2.com"
 superchain_level = 0
+governed_by_optimism = true
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
 batch_inbox_addr = "0xc83f7D9F2D4A76E81145849381ABA02602373723"

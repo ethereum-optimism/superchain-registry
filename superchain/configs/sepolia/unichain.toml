@@ -4,6 +4,7 @@ public_rpc = "https://sepolia.unichain.org"
 sequencer_rpc = "https://sepolia-sequencer.unichain.org"
 explorer = "https://sepolia.uniscan.xyz"
 superchain_level = 0
+governed_by_optimism = false
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 superchain_time = 1734559200 # Wed Dec 18 22:00:00 UTC 2024
 batch_inbox_addr = "0xFf00000000000000000000000000000000001301"
