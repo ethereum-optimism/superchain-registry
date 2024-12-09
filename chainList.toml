@@ -168,7 +168,7 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "Swell Network"
+  name = "Swellchain"
   identifier = "mainnet/swell"
   chain_id = 1923
   rpc = ["https://swell-mainnet.alt.technology"]

@@ -1,4 +1,4 @@
-name = "Swell Network"
+name = "Swellchain"
 chain_id = 1923
 public_rpc = "https://swell-mainnet.alt.technology"
 sequencer_rpc = "https://swell-mainnet.alt.technology"

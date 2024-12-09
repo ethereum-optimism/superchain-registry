@@ -676,7 +676,7 @@
           }
         },
         {
-          "Name": "Swell Network",
+          "Name": "Swellchain",
           "l2_chain_id": 1923,
           "PublicRPC": "https://swell-mainnet.alt.technology",
           "SequencerRPC": "https://swell-mainnet.alt.technology",
