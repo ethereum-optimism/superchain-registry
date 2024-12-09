@@ -61,10 +61,10 @@ github.com/decred/dcrd/crypto/blake256 v1.0.1 h1:7PltbUIQB7u/FfZ39+DGa/ShuMyJ5il
 github.com/decred/dcrd/crypto/blake256 v1.0.1/go.mod h1:2OfgNZ5wDpcsFmHmCK5gZTPcCXqlm2ArzUIkw9czNJo=
 github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 h1:rpfIENRNNilwHwZeG5+P150SMrnNEcHYvcCuK6dPZSg=
 github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0/go.mod h1:v57UDF4pDQJcEfFUCRop3lJL149eHGSe9Jvczhzjo/0=
-github.com/ethereum-optimism/optimism v1.9.6-0.20241111122827-a786daaf0f06 h1:va2tW74qb6r5AQrLQzPCIthLfkretZn8t9rv2P628zE=
-github.com/ethereum-optimism/optimism v1.9.6-0.20241111122827-a786daaf0f06/go.mod h1:2KDyI2zWYRa8evoMXWd3/iSC50MMbpHs75MLTCJYCQ0=
-github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240910145426-b3905c89e8ac h1:hCIrLuOPV3FJfMDvXeOhCC3uQNvFoMIIlkT2mN2cfeg=
-github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240910145426-b3905c89e8ac/go.mod h1:XaVXL9jg8BcyOeugECgIUGa9Y3DjYJj71RHmb5qon6M=
+github.com/ethereum-optimism/optimism v1.10.0 h1:XXwVgEohp5/NBaKOp55CnDLHgVLxFalnzBj2uXL5I+Q=
+github.com/ethereum-optimism/optimism v1.10.0/go.mod h1:2XBIvnbfV/NEDHcgjUBI944XzZ2gHYEd/hpAo9Jr08g=
+github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20241119111730-bee358f6d6e6 h1:+AIYWDX7FeWRLnBVqPiwireTacLLGGww1slGyv+YN0o=
+github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20241119111730-bee358f6d6e6/go.mod h1:9feO8jcL5OZ1tvRjEfNAHz4Aggvd6373l+ZxmZZAyZs=
 github.com/ethereum/c-kzg-4844 v1.0.0 h1:0X1LBXxaEtYD9xsyj9B9ctQEZIpnvVDeoBx8aHEwTNA=
 github.com/ethereum/c-kzg-4844 v1.0.0/go.mod h1:VewdlzQmpT5QSrVhbBuGoCdFJkpaJlO1aQputP83wc0=
 github.com/ethereum/go-ethereum v1.14.11 h1:8nFDCUUE67rPc6AKxFj7JKaOa2W/W1Rse3oS6LvvxEY=
@@ -265,8 +265,8 @@ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJ
 golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
-golang.org/x/sync v0.8.0 h1:3NFvSEYkUoMifnESzZl15y791HH1qU2xm6eCJU5ZPXQ=
-golang.org/x/sync v0.8.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
+golang.org/x/sync v0.9.0 h1:fEo0HyrW1GIgZdpbhCRO0PkJajUS5H9IFUztCgEo2jQ=
+golang.org/x/sync v0.9.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
 golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=

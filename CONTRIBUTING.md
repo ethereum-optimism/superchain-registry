@@ -2,28 +2,29 @@
 
 > [!WARNING]
 > `CONTRIBUTING.md` contains guidelines for modifying or working with the code in the Superchain Registry, including the validation checks and exported modules.
-> 
-> For guidelines on how to add a chain to the Registry, see the documentation for [adding a new chain](docs/add-chain.md).
+>
+> For guidelines on how to add a chain to the Registry, see the documentation for [adding a new chain](docs/ops.md#adding-a-chain).
 
 The Superchain Registry repository contains:
-* raw ["per-chain" config data](./README.md#3-understand-output) in `toml` and `json/json.gz` files arranged in a semantically meaningful directory structure
-* [superchain-wide config data](#superchain-wide-config-data)
-* a Go workspace with
+
+- raw ["per-chain" config data](./README.md#3-understand-output) in `toml` and `json/json.gz` files arranged in a semantically meaningful directory structure
+- [superchain-wide config data](#superchain-wide-config-data)
+- a Go workspace with
   - a [`superchain`](#superchain-go-module) module
   - a [`validation`](#validation-go-module) module
-  - an [`add-chain`](#add-chain-go-module) module
+  - an [`ops`](#ops-go-module) module
   - The modules are tracked by a top level `go.work` file. The associated `go.work.sum` file is gitignored and not important to typical workflows, which should mirror those of the [CI configuration](.circleci/config.yml).
-* Automatically generated summary `chainList.json` and `chainList.toml` files.
-
+- Automatically generated summary `chainList.json` and `chainList.toml` files.
 
 ## Superchain-wide config data
-A superchain target defines a set of layer 2 chains which share a `SuperchainConfig` and `ProtocolVersions` contract deployment on layer 1. It is usually named after the layer 1 chain, possibly with an extra identifier to distinguish devnets.
 
+A superchain target defines a set of layer 2 chains which share a `SuperchainConfig` and `ProtocolVersions` contract deployment on layer 1. It is usually named after the layer 1 chain, possibly with an extra identifier to distinguish devnets.
 
 > **Note**
 > Example: `sepolia` and `sepolia-dev-0` are distinct superchain targets, although they are on the same layer 1 chain.
 
 ### Adding a superchain target
+
 A new Superchain Target can be added by creating a new superchain config directory,
 with a `superchain.yaml` config file.
 
@@ -49,25 +50,25 @@ protocol_versions_addr: null # todo
 superchain_config_addr: null # todo
 EOF
 ```
+
 Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.
-
-
-
 
 ## `superchain` Go Module
 
-Per chain and supechain-wide configs and extra data are embedded into the `superchain` go module, which can be imported like so:
+Per chain and superchain-wide configs and extra data are embedded into the `superchain` go module, which can be imported like so:
 
-```
+```shell
 go get github.com/ethereum-optimism/superchain-registry/superchain@latest
 ```
+
 The configs are consumed by downstream OP Stack software, i.e. `op-geth` and `op-node`.
 
-
 ## `validation` Go Module
+
 A second module exists in this repo whose purpose is to validate the config exported by the `superchain` module. It is a separate module to avoid import cycles and polluting downstream dependencies with things like `go-ethereum` (which is used in the validation tests).
 
-## `add-chain` Go module
+## `ops` Go module
+
 This module contains the CLI tool for generating `superchain` compliant configs and extra data to the registry.
 
 ## CheckSecurityConfigs
@@ -158,6 +159,7 @@ graph TD
 ```
 
 ## Setting up your editor for formatting and linting
+
 If you use VSCode, you can place the following in a `settings.json` file in the gitignored `.vscode` directory:
 
 ```json
@@ -171,8 +173,20 @@ If you use VSCode, you can place the following in a `settings.json` file in the 
 }
 ```
 
-
 ## Links
+
 See [Superchain Upgrades] OP Stack specifications.
 
 [Superchain Upgrades]: https://specs.optimism.io/protocol/superchain-upgrades.html
+
+## CircleCI Checks
+The following CircleCI checks are not mandatory for submitting a pull request, but they should be reviewed:
+
+- `ci/circleci: compute-genesis-diff`
+- `ci/circleci: compute-rollup-config-diff`
+
+These jobs will run at every commit in every branch.
+
+For pull requests from forks, these checks will not appear directly in the PR comments, but **the jobs will still run** and their results can be viewed in the diffs.
+
+Please note that while these jobs are **not blocking**, they must pass to ensure the accuracy of the changes.

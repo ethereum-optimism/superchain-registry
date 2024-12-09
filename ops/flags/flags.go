@@ -27,7 +27,7 @@ var (
 		Value:    "",
 		EnvVars:  prefixEnvVars("CHAIN_SHORT_NAME"),
 		Usage:    "Custom short name of the chain",
-		Required: false,
+		Required: true,
 	}
 	PublicRpcFlag = &cli.StringFlag{
 		Name:     "public-rpc",
@@ -55,7 +55,7 @@ var (
 		Value:    "",
 		EnvVars:  prefixEnvVars("SUPERCHAIN_TARGET"),
 		Usage:    "superchain this L2 will belong to (mainnet or sepolia)",
-		Required: false,
+		Required: true,
 	}
 	MonorepoDirFlag = &cli.StringFlag{
 		Name:     "monorepo-dir",

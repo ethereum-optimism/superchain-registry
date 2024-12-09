@@ -35,7 +35,7 @@ func TestMain(m *testing.M) {
 	thisDir := filepath.Dir(filename)
 	temporaryOptimismDir = path.Join(thisDir, "../../../optimism-temporary")
 
-	// Clone the repo if it the folder doesn't exist
+	// Clone the repo if the folder doesn't exist
 	_, err := os.Stat(temporaryOptimismDir)
 	needToClone := os.IsNotExist(err)
 	if needToClone {
@@ -182,6 +182,21 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	if chainId == uint64(1301) {
 		delete(g.Alloc, common.HexToAddress("0x1f98431c8ad98523631ae4a59f267346ea31f984"))
 		delete(g.Alloc, common.HexToAddress("0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f"))
+	}
+
+	// Ink Sepolia
+	if chainId == uint64(763373) {
+		// forge deployer address
+		delete(g.Alloc, common.HexToAddress("0xae0bdc4eeac5e950b67c6819b118761caaf61946"))
+		// GovernanceToken predeploy storage slot was set to null, which is functionally equivalent to the 0x000...dead address
+		governanceTokenAddress := common.HexToAddress("0x4200000000000000000000000000000000000042")
+		storageSlot := common.HexToHash("0x000000000000000000000000000000000000000000000000000000000000000a")
+		if _, ok := g.Alloc[governanceTokenAddress].
+			Storage[storageSlot]; ok {
+			require.Fail(t, "expected GovernanceToken contract storage slot to be null")
+		}
+		g.Alloc[governanceTokenAddress].
+			Storage[storageSlot] = common.HexToHash("0x000000000000000000000000deaddeaddeaddeaddeaddeaddeaddeaddeaddead")
 	}
 
 	gotData, err := json.MarshalIndent(g.Alloc, "", " ")

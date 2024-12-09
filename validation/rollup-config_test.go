@@ -17,7 +17,7 @@ func testRollupConfig(t *testing.T, chain *ChainConfig) {
 
 // The values contained in the ChainConfig.Optimism struct used to be hardcoded within
 // op-geth, not read from registry config files. This test forces chains that ran an
-// old version of add-chain to include these fields, since they are now required downstream
+// old version of ops to include these fields, since they are now required downstream
 func testOptimismConfig(t *testing.T, chain *ChainConfig) {
 	require.NotEmpty(t, chain.Optimism, "Optimism config cannot be nil")
 	require.NotEmpty(t, chain.Optimism.EIP1559Elasticity, "EIP1559Elasticity cannot be 0")

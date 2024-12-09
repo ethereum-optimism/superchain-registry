@@ -12,8 +12,8 @@ import (
 	"runtime"
 
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
-	"github.com/ethereum-optimism/superchain-registry/add-chain/flags"
-	"github.com/ethereum-optimism/superchain-registry/add-chain/utils"
+	"github.com/ethereum-optimism/superchain-registry/ops/flags"
+	"github.com/ethereum-optimism/superchain-registry/ops/utils"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core"
@@ -39,13 +39,7 @@ var CompressGenesisCmd = cli.Command{
 		}
 		superchainRepoRoot := filepath.Dir(filepath.Dir(filepath.Dir(thisFile)))
 		superchainTarget := ctx.String(flags.SuperchainTargetFlag.Name)
-		if superchainTarget == "" {
-			return fmt.Errorf("missing required flag: %s", flags.SuperchainTargetFlag.Name)
-		}
 		chainShortName := ctx.String(flags.ChainShortNameFlag.Name)
-		if chainShortName == "" {
-			return fmt.Errorf("missing required flag: %s", flags.ChainShortNameFlag.Name)
-		}
 
 		zipOutputDir := filepath.Join(superchainRepoRoot, "/superchain/extra/genesis", superchainTarget, chainShortName+".json.gz")
 		genesisPath := ctx.Path(flags.GenesisFlag.Name)
