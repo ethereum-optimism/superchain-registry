@@ -376,6 +376,23 @@
     }
   },
   {
+    "name": "Ink Sepolia",
+    "identifier": "sepolia/ink",
+    "chainId": 763373,
+    "rpc": [
+      "https://rpc-gel-sepolia.inkonchain.com"
+    ],
+    "explorers": [
+      "https://explorer-sepolia.inkonchain.com"
+    ],
+    "superchainLevel": 0,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Lisk Sepolia Testnet",
     "identifier": "sepolia/lisk",
     "chainId": 4202,
