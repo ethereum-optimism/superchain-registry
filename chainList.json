@@ -239,7 +239,7 @@
     }
   },
   {
-    "name": "Swell Network",
+    "name": "Swellchain",
     "identifier": "mainnet/swell",
     "chainId": 1923,
     "rpc": [
