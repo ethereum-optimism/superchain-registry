@@ -4,6 +4,7 @@ public_rpc = "https://rpc-gel-sepolia.inkonchain.com"
 sequencer_rpc = "https://rpc-gel-sepolia.inkonchain.com"
 explorer = "https://explorer-sepolia.inkonchain.com"
 superchain_level = 0
+superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 batch_inbox_addr = "0x004De1914F4f17aC234f5A5Bc8a4072a231d44BF"
 canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
