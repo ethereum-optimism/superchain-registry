@@ -17,13 +17,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func getAddressFromConfig(t *testing.T, chainID uint64, contractName string) (Address, error) {
+func getAddressFromConfig(chainID uint64, contractName string) (Address, error) {
 	if common.IsHexAddress(contractName) {
 		return Address(common.HexToAddress(contractName)), nil
 	}
 
 	contractAddress, err := Addresses[chainID].AddressFor(contractName)
-	require.NoError(t, err)
 
 	return contractAddress, err
 }
@@ -49,10 +48,12 @@ func getAddressFromChain(method string, contractAddress Address, client *ethclie
 
 var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64, client *ethclient.Client) {
 	for contract, methodToOutput := range r {
-		contractAddress, _ := getAddressFromConfig(t, chainID, contract)
+		contractAddress, err := getAddressFromConfig(chainID, contract)
+		require.NoError(t, err)
 
 		for method, output := range methodToOutput {
-			want, _ := getAddressFromConfig(t, chainID, output)
+			want, err := getAddressFromConfig(chainID, output)
+			require.NoError(t, err)
 
 			got, err := getAddressFromChain(method, contractAddress, client)
 			require.NoErrorf(t, err, "problem calling %s.%s (%s)", contract, method, contractAddress)
