@@ -505,6 +505,7 @@ type Genesis struct {
 type SuperchainL1Info struct {
 	ChainID   uint64 `toml:"chain_id"`
 	PublicRPC string `toml:"public_rpc"`
+	TestRPC string `toml:"test_rpc"`
 	Explorer  string `toml:"explorer"`
 }
 
