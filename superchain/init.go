@@ -79,7 +79,12 @@ func init() {
 		}
 
 		if replaceL1Rpc {
-			superchainEntry.Config.L1.PublicRPC = superchainEntry.Config.L1.TestRPC
+			testRpc := superchainEntry.Config.L1.TestRPC
+			if testRpc == "" {
+				panic(fmt.Errorf("missing test RPC endpoint for superchain %q", superchainEntry.Superchain))
+			}
+
+			superchainEntry.Config.L1.PublicRPC = testRpc
 		}
 
 		Superchains[superchainEntry.Superchain] = &superchainEntry
