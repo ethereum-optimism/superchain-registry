@@ -4,6 +4,7 @@ public_rpc = "https://swell-mainnet.alt.technology"
 sequencer_rpc = "https://swell-mainnet.alt.technology"
 explorer = "https://explorer.swellnetwork.io"
 superchain_level = 0
+governed_by_optimism = true
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 batch_inbox_addr = "0x005dE5857e38dFD703a1725c0900E9C6f24cbdE0"
 canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC

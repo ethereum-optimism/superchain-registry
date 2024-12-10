@@ -4,6 +4,7 @@ public_rpc = "https://rpc.lyra.finance"
 sequencer_rpc = "https://rpc.lyra.finance"
 explorer = "https://explorer.lyra.finance"
 superchain_level = 0
+governed_by_optimism = false
 superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
 batch_inbox_addr = "0x5f7f7f6DB967F0ef10BdA0678964DBA185d16c50"
 canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC

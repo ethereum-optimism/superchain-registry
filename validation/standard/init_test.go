@@ -28,18 +28,24 @@ func TestConfigInitialization(t *testing.T) {
 	require.NotNil(t, Config.MultisigRoles, "Config.MultisigRoles should not be nil")
 
 	// Check individual network configurations
-	networks := []string{"mainnet", "sepolia"}
-	for _, network := range networks {
+	for network, params := range Config.Params {
 		t.Run(fmt.Sprintf("Params[%s]", network), func(t *testing.T) {
 			// Ensure network Params are populated
-			require.NotNil(t, Config.Params[network], "Config.Params[%s] should not be nil", network)
-			require.NoError(t, Config.Params[network].Check(), "Config.Params[%s] has invalid zero value", network)
+			require.NotNil(t, params, "Config.Params[%s] should not be nil", network)
+			require.NoError(t, params.Check(), "Config.Params[%s] has invalid zero value", network)
 		})
 
 		t.Run(fmt.Sprintf("MultisigRoles[%s]", network), func(t *testing.T) {
+			roles := Config.MultisigRoles[network]
+
 			// Ensure network MultisigRoles are populated
-			require.NotNil(t, Config.MultisigRoles[network], "Config.MultisigRoles[%s] should not be nil", network)
-			require.NotZero(t, Config.MultisigRoles[network], "Config.MultisigRoles[%s] should not be zero value", network)
+			require.NotNil(t, roles, "Config.MultisigRoles[%s] should not be nil", network)
+
+			require.NotZero(t, roles, "Config.MultisigRoles[%s] should not be zero value", network)
+
+			l1Roles := roles.KeyHandover.L1.Universal
+			require.NotNil(t, l1Roles, "Config.MultisigRoles[%s].KeyHandover.L1.Universal must be present", network)
+			require.NotEmpty(t, l1Roles["ProxyAdmin"]["owner()"], "Config.MultisigRoles[%s].ProxyAdmin.\"owner()\" must be set", network)
 		})
 
 		t.Run(fmt.Sprintf("NetworkVersions[%s]", network), func(t *testing.T) {
