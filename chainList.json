@@ -263,6 +263,7 @@
       "https://explorer.swellnetwork.io"
     ],
     "superchainLevel": 0,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -425,6 +426,7 @@
       "https://explorer-sepolia.inkonchain.com"
     ],
     "superchainLevel": 0,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",

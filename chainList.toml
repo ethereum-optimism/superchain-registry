@@ -188,6 +188,7 @@
   rpc = ["https://swell-mainnet.alt.technology"]
   explorers = ["https://explorer.swellnetwork.io"]
   superchain_level = 0
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -305,6 +306,7 @@
   rpc = ["https://rpc-gel-sepolia.inkonchain.com"]
   explorers = ["https://explorer-sepolia.inkonchain.com"]
   superchain_level = 0
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
