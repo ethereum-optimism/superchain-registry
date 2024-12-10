@@ -2,7 +2,6 @@ package standard
 
 import (
 	"embed"
-	"fmt"
 	"io/fs"
 
 	"github.com/BurntSushi/toml"

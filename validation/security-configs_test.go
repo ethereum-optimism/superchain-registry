@@ -17,18 +17,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func resolveAddress(t *testing.T, chainID uint64, contract string) (Address, error) {
-	if common.IsHexAddress(contract) {
-		return Address(common.HexToAddress(contract)), nil
+func getAddressFromConfig(t *testing.T, chainID uint64, contractName string) (Address, error) {
+	if common.IsHexAddress(contractName) {
+		return Address(common.HexToAddress(contractName)), nil
 	}
 
-	contractAddress, err := Addresses[chainID].AddressFor(contract)
+	contractAddress, err := Addresses[chainID].AddressFor(contractName)
 	require.NoError(t, err)
 
 	return contractAddress, err
 }
 
-func getAddress(method string, contractAddress Address, client *ethclient.Client) (Address, error) {
+func getAddressFromChain(method string, contractAddress Address, client *ethclient.Client) (Address, error) {
 	addr := (common.Address(contractAddress))
 	callMsg := ethereum.CallMsg{
 		To:   &addr,
@@ -49,12 +49,12 @@ func getAddress(method string, contractAddress Address, client *ethclient.Client
 
 var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64, client *ethclient.Client) {
 	for contract, methodToOutput := range r {
-		contractAddress, _ := resolveAddress(t, chainID, contract)
+		contractAddress, _ := getAddressFromConfig(t, chainID, contract)
 
 		for method, output := range methodToOutput {
-			want, _ := resolveAddress(t, chainID, output)
+			want, _ := getAddressFromConfig(t, chainID, output)
 
-			got, err := getAddress(method, contractAddress, client)
+			got, err := getAddressFromChain(method, contractAddress, client)
 			require.NoErrorf(t, err, "problem calling %s.%s (%s)", contract, method, contractAddress)
 
 			// Use t.Errorf here for a concise output of failures, since failure info is sent to a slack channel
