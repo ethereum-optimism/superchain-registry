@@ -47,8 +47,8 @@ var exclusions = map[string]map[uint64]bool{
 		11763072: true, // sepolia-dev-0/base-devnet-0     Not in https://github.com/ethereum-lists/chains
 	},
 	GovernedByOptimismTest: {
-		11155421: true, // sepolia-dev-0/oplabs-devnet-0   Not in https://github.com/ethereum-lists/chains
-		11763072: true, // sepolia-dev-0/base-devnet-0     Not in https://github.com/ethereum-lists/chains
+		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No standard superchain config for sepolia-dev-0
+		11763072: true, // sepolia-dev-0/base-devnet-0     No standard superchain config for sepolia-dev-0
 	},
 	// Standard Checks
 	OptimismPortal2ParamsTest: {
