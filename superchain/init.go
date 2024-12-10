@@ -14,6 +14,14 @@ func init() {
 	if err != nil {
 		panic(fmt.Errorf("failed to read superchain dir: %w", err))
 	}
+
+	runningInCodegen := os.Getenv("CODEGEN") != ""
+	runningInCI := os.Getenv("CI") == "true"
+	runningInTest := os.Getenv("TEST_DIRECTORY") != ""
+
+	// Impute endpoints only if we're not in codegen mode.
+	replaceL1Rpc := !runningInCodegen && (runningInCI || runningInTest)
+
 	// iterate over superchain-target entries
 	for _, s := range superchainTargets {
 
@@ -70,18 +78,12 @@ func init() {
 			GenesisSystemConfigs[chainConfig.ChainID] = &chainConfig.Genesis.SystemConfig
 		}
 
-		// Impute endpoints only if we're not in codegen mode.
-		if os.Getenv("CODEGEN") == "" {
-			runningInCI := os.Getenv("CI")
+		if replaceL1Rpc {
 			switch superchainEntry.Superchain {
 			case "mainnet":
-				if runningInCI == "true" {
-					superchainEntry.Config.L1.PublicRPC = "https://ci-mainnet-l1-archive.optimism.io"
-				}
+				superchainEntry.Config.L1.PublicRPC = "https://ci-mainnet-l1-archive.optimism.io"
 			case "sepolia", "sepolia-dev-0":
-				if runningInCI == "true" {
-					superchainEntry.Config.L1.PublicRPC = "https://ci-sepolia-l1-archive.optimism.io"
-				}
+				superchainEntry.Config.L1.PublicRPC = "https://ci-sepolia-l1-archive.optimism.io"
 			}
 		}
 
