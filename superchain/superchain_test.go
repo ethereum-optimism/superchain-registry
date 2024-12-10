@@ -206,6 +206,7 @@ isthmus_time = 7
 [l1]
   chain_id = 314
   public_rpc = "https://disney.com"
+  test_rpc = "https://ci.disney.com"
   explorer = "https://disneyscan.io"
 `
 
@@ -216,6 +217,7 @@ isthmus_time = 7
 	expectL1Info := SuperchainL1Info{
 		ChainID:   314,
 		PublicRPC: "https://disney.com",
+		TestRPC: "https://ci.disney.com",
 		Explorer:  "https://disneyscan.io",
 	}
 

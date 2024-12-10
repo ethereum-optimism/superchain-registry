@@ -79,12 +79,7 @@ func init() {
 		}
 
 		if replaceL1Rpc {
-			switch superchainEntry.Superchain {
-			case "mainnet":
-				superchainEntry.Config.L1.PublicRPC = "https://ci-mainnet-l1-archive.optimism.io"
-			case "sepolia", "sepolia-dev-0":
-				superchainEntry.Config.L1.PublicRPC = "https://ci-sepolia-l1-archive.optimism.io"
-			}
+			superchainEntry.Config.L1.PublicRPC = superchainEntry.Config.L1.TestRPC
 		}
 
 		Superchains[superchainEntry.Superchain] = &superchainEntry

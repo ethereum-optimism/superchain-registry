@@ -13,4 +13,5 @@ holocene_time = 1736445601 # Thu 09 Jan 2025 18:00:01 UTC
 [l1]
   chain_id = 1
   public_rpc = "https://ethereum-rpc.publicnode.com"
+  test_rpc = "https://ci-mainnet-l1-archive.optimism.io"
   explorer = "https://etherscan.io"
