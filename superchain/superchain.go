@@ -411,6 +411,21 @@ func (c ContractVersions) GetNonEmpty() []string {
 // VersionFor returns the version for the supplied contract name, if it exits
 // (and an error otherwise). Useful for slicing into the struct using a string.
 func (c ContractVersions) VersionFor(contractName string) (string, error) {
+
+	vc, err := c.VersionedContractFor(contractName)
+	if err != nil {
+		return "", err
+	}
+
+	if vc.Version == "" {
+		return "", ErrEmptyVersion
+	}
+	return vc.Version, nil
+}
+
+// VersionFor returns the version for the supplied contract name, if it exits
+// (and an error otherwise). Useful for slicing into the struct using a string.
+func (c ContractVersions) VersionedContractFor(contractName string) (VersionedContract, error) {
 	// Use reflection to get the value of the struct
 	val := reflect.ValueOf(c)
 	// Get the field by name (contractName)
@@ -418,21 +433,10 @@ func (c ContractVersions) VersionFor(contractName string) (string, error) {
 
 	// Check if the field exists and is a struct
 	if !field.IsValid() {
-		return "", errors.New("no such contract name")
+		return VersionedContract{}, errors.New("no such contract name")
 	}
+	return field.Interface().(VersionedContract), nil
 
-	// Check if the struct contains the "Version" field
-	versionField := field.FieldByName("Version")
-	if !versionField.IsValid() || versionField.String() == "" {
-		return "", errors.New("no version specified")
-	}
-
-	// Return the version if it's a string
-	if versionField.Kind() == reflect.String {
-		return versionField.String(), nil
-	}
-
-	return "", errors.New("version is not a string")
 }
 
 // Check will sanity check the validity of the semantic version strings
