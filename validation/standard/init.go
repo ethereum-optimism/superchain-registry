@@ -57,6 +57,9 @@ func decodeTOMLFileIntoConfig[
 	if err != nil {
 		panic(err)
 	}
+	if data == nil {
+		panic("empty data")
+	}
 	err = toml.Unmarshal(data, config)
 	if err != nil {
 		panic(err)

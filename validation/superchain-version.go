@@ -114,7 +114,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 	results := new(sync.Map)
 
 	getBytecodeHashAsync := func(chainID uint64, contractAddress Address, results *sync.Map, contractName string, wg *sync.WaitGroup) {
-		r, err := getBytecodeHash(context.Background(), chainID, contractName, common.Address(contractAddress), client)
+		r, err := GetBytecodeHash(context.Background(), chainID, contractName, common.Address(contractAddress), client)
 		if err != nil {
 			panic(err)
 		}
@@ -216,11 +216,11 @@ func getContractImplAddr(
 	return common.BytesToAddress(result), nil
 }
 
-// getBytecodeHash gets the hash of the bytecode of a contract
+// GetBytecodeHash gets the hash of the bytecode of a contract
 //   - at a given address, if the contract is not a proxy contract
 //   - at the proxy implementation contract's address, if the contract is a proxy contract (we currently use the name suffix to determine
 //     whether the contract is a proxy or not)
-func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, targetContractAddr common.Address, client *ethclient.Client) (string, error) {
+func GetBytecodeHash(ctx context.Context, chainID uint64, contractName string, targetContractAddr common.Address, client *ethclient.Client) (string, error) {
 	addrToCheck := targetContractAddr
 	proxyContract := strings.HasSuffix(strings.ToLower(contractName), "proxy")
 	if proxyContract {
