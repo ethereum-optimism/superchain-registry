@@ -3,7 +3,7 @@
 system_config = "0x165dece6291f3a071e602c804f4a3e89977a71ec866f46c85eb21448f22f6f9a"             # version 2.3.0
 fault_dispute_game = "0x1a81c5fe9fbbf68a0f75e987451e5181c4fc3e801f5c056d38f08942cefed349"        # version "1.3.1"
 permissioned_dispute_game = "0x69bd3197f9f0248972d9518a9c220a22e326760dc8c0ffcc1612d4d0730a7a1a" # version "1.3.1"
-mips = "0x4a7d63a97bdded091d1611c00c15e18119ee85b7d330c97645d75704566dd1c7"                      # version "1.2.1"
+mips = "0xd80e53cfb3a0655e5a82b40f370b7352bd926d6d28de7f1735583fcfeba3f0fd"                      # version "1.2.1"
 # Unchanged in this release
 address_manager = ""
 l1_cross_domain_messenger = "0xc919b535f7bbbaa57f32b602f26000e3997c22c933efbb92a36e053b20b2b4b1"       # version 2.3.0
@@ -53,7 +53,7 @@ permissioned_dispute_game = "0xb0a3aed0fb964b33445061d604e5fcfb952fb99dbff4d6f0c
 anchor_state_registry = "0x46e8ecc46fd27f178ada1c5a2168c09512e7ed2f7d4ac9a7c74123af26fd850c" # version "2.0.0"
 dispute_game_factory = "0x0d25ffc72ede825443defd6dfb435f5ddeb2e9ce0e3da3e40af069f3ba6bef0f"  # version "1.0.0"
 delayed_weth = "0x66cb5d2c98ecd6b1e8768bdee4abd7a66775beaa50d995af1ac24f0cd837d1a3"          # version "1.0.0"
-mips = "0xc75d602754d0e2799008e32b94296b6bc920ff0fc0f189cd07111f897f7e7881"                  # version "1.0.0"
+mips = "0xce7e7ce9dc98d151ecbbb02a548534ab33a59aa4091ad52be0a703dc6c4f3d39"                  # version "1.0.0"
 fault_dispute_game = "0x875e36fd4039b580b20051d25336a7db1ea982613edcc7b83f9d6406f8c84959"    # version "1.2.0"
 
 # MCP https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.3.0
