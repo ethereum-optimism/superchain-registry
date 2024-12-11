@@ -411,7 +411,6 @@ func (c ContractVersions) GetNonEmpty() []string {
 // VersionFor returns the version for the supplied contract name, if it exits
 // (and an error otherwise). Useful for slicing into the struct using a string.
 func (c ContractVersions) VersionFor(contractName string) (string, error) {
-
 	vc, err := c.VersionedContractFor(contractName)
 	if err != nil {
 		return "", err
@@ -436,7 +435,6 @@ func (c ContractVersions) VersionedContractFor(contractName string) (VersionedCo
 		return VersionedContract{}, errors.New("no such contract name")
 	}
 	return field.Interface().(VersionedContract), nil
-
 }
 
 // Check will sanity check the validity of the semantic version strings
