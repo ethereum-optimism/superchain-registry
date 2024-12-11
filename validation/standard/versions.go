@@ -1,6 +1,7 @@
 package standard
 
 import (
+	"fmt"
 	"reflect"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
@@ -59,6 +60,30 @@ var (
 
 // L1ContractBytecodeHashes represents the hash of the contract bytecode (as a hex string) for each L1 contract
 type L1ContractBytecodeHashes superchain.ContractBytecodeHashes
+
+func (bch L1ContractBytecodeHashes) GetBytecodeHashFor(name string) (string, error) {
+	// Use reflection to get the struct value and type
+	v := reflect.ValueOf(bch)
+
+	// Try to find the field by name
+	field := v.FieldByName(name)
+	if !field.IsValid() {
+		return "", fmt.Errorf("no such name %s", name)
+	}
+
+	// Check if the field is of type Address
+	if field.Type() != reflect.TypeOf("") {
+		return "", fmt.Errorf("field %s is not of type string", name)
+	}
+
+	// Check if the hash is a non-zero value
+	hash := field.String()
+	if hash == "" {
+		return "", fmt.Errorf("no hash specified for %s", name)
+	}
+
+	return hash, nil
+}
 
 // GetNonEmpty returns a slice of contract name strings, with an entry for each key in the receiver
 // with a non-empty value
