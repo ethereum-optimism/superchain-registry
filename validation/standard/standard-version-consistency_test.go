@@ -19,7 +19,6 @@ import (
 // There is a contract at that address with the matching bytecode and semver.
 // This is a consistency check on the standard package itself, not any particular chain
 func TestStandardVersionConsistency(t *testing.T) {
-
 	for _, superchain := range []string{"sepolia", "mainnet"} {
 		rpcEndpoint := Superchains[superchain].Config.L1.PublicRPC
 		require.NotEmpty(t, rpcEndpoint)
