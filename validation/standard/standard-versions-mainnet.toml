@@ -8,10 +8,10 @@
 # Holocene https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.8.0-rc.3
 [releases."op-contracts/v1.8.0-rc.3"]
 # Updated in this release
-system_config = { version = "2.3.0", implementation_address = "TODO" } # UPDATED IN THIS RELEASE
-fault_dispute_game = { version = "1.3.1" }                             # UPDATED IN THIS RELEASE
-permissioned_dispute_game = { version = "1.3.1" }                      # UPDATED IN THIS RELEASE
-mips = { version = "1.2.1", address = "TODO" }                         # UPDATED IN THIS RELEASE
+system_config = { version = "2.3.0", implementation_address = "0xAB9d6cB7A427c0765163A7f45BB91cAfe5f2D375" } # UPDATED IN THIS RELEASE
+fault_dispute_game = { version = "1.3.1" }                                                                   # UPDATED IN THIS RELEASE
+permissioned_dispute_game = { version = "1.3.1" }                                                            # UPDATED IN THIS RELEASE
+mips = { version = "1.2.1", address = "0x5fE03a12C1236F9C22Cb6479778DDAa4bce6299C" }                         # UPDATED IN THIS RELEASE
 # Unchanged in this release
 optimism_portal = { version = "3.10.0", implementation_address = "0x35028bae87d71cbc192d545d38f960ba30b4b233" }
 anchor_state_registry = { version = "2.0.0" }
