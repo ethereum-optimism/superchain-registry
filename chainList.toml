@@ -156,6 +156,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Redstone"
+  identifier = "mainnet/redstone"
+  chain_id = 690
+  rpc = ["https://rpc.redstonechain.com"]
+  explorers = ["https://explorer.redstone.xyz"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Shape"
   identifier = "mainnet/shape"
   chain_id = 360
