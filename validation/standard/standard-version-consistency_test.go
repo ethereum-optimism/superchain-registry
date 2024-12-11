@@ -55,17 +55,17 @@ func TestStandardVersionConsistency(t *testing.T) {
 					}
 
 					dummyChainId := uint64(12345678) // we don't actually need a chain ID for this since we wouldn't ever pass a proxy here
-					bytedcodeHash, err := validation.GetBytecodeHash(context.Background(), dummyChainId, contract, common.Address(*addressToCheck), client)
+					bytecodeHash, err := validation.GetBytecodeHash(context.Background(), dummyChainId, contract, common.Address(*addressToCheck), client, tag)
 					if err != nil {
 						t.Fatal(err)
 					}
 
 					h, err := standard.BytecodeHashes[tag].GetBytecodeHashFor(contract)
 					if err != nil {
-						t.Fatal(err, "could not get hash for ", contract, "release", tag, "should be", bytedcodeHash)
+						t.Fatal(err, "could not get hash for ", contract, "release", tag, "should be", bytecodeHash)
 					}
 
-					require.Equal(t, h, bytedcodeHash, "bytecode hash mismatch for ", contract, "release", tag, "should be", bytedcodeHash)
+					require.Equal(t, h, bytecodeHash, "bytecode hash mismatch for ", contract, "release", tag, "superchain", superchain, "should be", bytecodeHash)
 
 				}
 			}
