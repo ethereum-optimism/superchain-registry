@@ -28,10 +28,7 @@ func init() {
 		Config.Params[network] = new(Params)
 		decodeTOMLFileIntoConfig("standard-config-params-"+network+".toml", Config.Params[network])
 
-		var versions VersionTags = VersionTags{
-			Releases: make(map[Tag]superchain.ContractVersions, 0),
-		}
-
+		versions := make(map[Tag]superchain.ContractVersions)
 		decodeTOMLFileIntoConfig("standard-versions-"+network+".toml", &versions)
 		ContractVersions[network] = versions
 	}

@@ -53,7 +53,7 @@ type VersionTags struct {
 
 var (
 	Release            Tag
-	ContractVersions                          = make(map[string]VersionTags)
+	ContractVersions                          = make(map[string]map[Tag]superchain.ContractVersions)
 	BytecodeHashes     BytecodeHashTags       = make(BytecodeHashTags, 0)
 	BytecodeImmutables BytecodeImmutablesTags = make(BytecodeImmutablesTags, 0)
 )

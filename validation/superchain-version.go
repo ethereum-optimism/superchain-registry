@@ -66,7 +66,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, ch
 
 	wg := new(sync.WaitGroup)
 
-	contractsToCheckVersionOf := standard.ContractVersions[chain.Superchain].Releases[standard.Release].GetNonEmpty()
+	contractsToCheckVersionOf := standard.ContractVersions[chain.Superchain][standard.Release].GetNonEmpty()
 
 	for _, contractName := range contractsToCheckVersionOf {
 		a, err := list.AddressFor(contractName)
@@ -254,7 +254,7 @@ func GetBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 }
 
 func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet bool, chain *ChainConfig) {
-	standardVersions := standard.ContractVersions[chain.Superchain].Releases[standard.Release]
+	standardVersions := standard.ContractVersions[chain.Superchain][standard.Release]
 	s := reflect.ValueOf(standardVersions)
 	c := reflect.ValueOf(versions)
 	matches := checkMatchOrTestnet(s, c, isTestnet)

@@ -26,7 +26,7 @@ func TestStandardVersionConsistency(t *testing.T) {
 		client, err := ethclient.Dial(rpcEndpoint)
 		require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
-		for tag, release := range standard.ContractVersions[superchain].Releases {
+		for tag, release := range standard.ContractVersions[superchain] {
 			for _, contract := range release.GetNonEmpty() {
 				vc, err := release.VersionedContractFor(contract)
 				require.NoError(t, err)

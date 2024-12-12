@@ -39,7 +39,7 @@ test-superchain: clean-ops
 
 # Unit test all Go code in the validation module, and do not run validation checks themselves
 test-validation: clean-ops
-	TEST_DIRECTORY=./validation/... go run gotest.tools/gotestsum@latest --format testname -- -run '[^TestValidation|^TestPromotion|^TestGenesisAllocs]'
+	TEST_DIRECTORY=./validation/... go run gotest.tools/gotestsum@latest --format testname -- -count=1 -run '[^TestValidation|^TestPromotion|^TestGenesisAllocs]'
 
 # Runs validation checks for any chain whose config changed
 validate-modified-chains REF:
