@@ -28,45 +28,27 @@ func TestStandardVersionConsistency(t *testing.T) {
 
 		for tag, release := range standard.NetworkVersions[superchain].Releases {
 			for _, contract := range release.GetNonEmpty() {
-				releaseVersion := release
-				vc, err := releaseVersion.VersionedContractFor(contract)
-				if err != nil {
-					t.Fatal(err)
-				}
+				vc, err := release.VersionedContractFor(contract)
+				require.NoError(t, err)
 				if vc.Address != nil && vc.ImplementationAddress != nil {
-					t.Fatal("should not specify both address and implementation address")
+					require.FailNow(t, "should not specify both address and implementation address")
 				}
-				var addressToCheck *Address
-				if vc.Address != nil {
-					addressToCheck = vc.Address
-				}
+				addressToCheck := vc.Address
 				if vc.ImplementationAddress != nil {
 					addressToCheck = vc.ImplementationAddress
 				}
 				if addressToCheck != nil {
 					version, err := validation.GetVersion(context.Background(), common.Address(*addressToCheck), client)
-					if err != nil {
-						t.Fatal(err, "could not get version for %s", addressToCheck, "contract", contract, "superchain", superchain, "release", tag)
-					}
+					require.NoErrorf(t, err, "could not get version for address %s, contract %s, superchain %s, release %s", addressToCheck, contract, superchain, tag)
 					require.Equal(t, vc.Version, version, "version mismatch for %s", addressToCheck)
-
-					if version == vc.Version {
-						t.Log("version match for", addressToCheck, "contract", contract, "superchain", superchain, "release", tag)
-					}
 
 					dummyChainId := uint64(12345678) // we don't actually need a chain ID for this since we wouldn't ever pass a proxy here
 					bytecodeHash, err := validation.GetBytecodeHash(context.Background(), dummyChainId, contract, common.Address(*addressToCheck), client, tag)
-					if err != nil {
-						t.Fatal(err)
-					}
+					require.NoError(t, err)
 
 					h, err := standard.BytecodeHashes[tag].GetBytecodeHashFor(contract)
-					if err != nil {
-						t.Fatal(err, "could not get hash for ", contract, "release", tag, "should be", bytecodeHash)
-					}
-
+					require.NoErrorf(t, err, "could not get hash for contract %s, release %s", contract, tag)
 					require.Equal(t, h, bytecodeHash, "bytecode hash mismatch for ", contract, "release", tag, "superchain", superchain, "should be", bytecodeHash)
-
 				}
 			}
 		}
