@@ -38,7 +38,7 @@ func TestStandardVersionConsistency(t *testing.T) {
 					addressToCheck = vc.ImplementationAddress
 				}
 				if addressToCheck != nil {
-					version, err := validation.GetVersion(context.Background(), common.Address(*addressToCheck), client)
+					version, err := validation.GetContractVersion(context.Background(), common.Address(*addressToCheck), client)
 					require.NoErrorf(t, err, "could not get version for address %s, contract %s, superchain %s, release %s", addressToCheck, contract, superchain, tag)
 					require.Equal(t, vc.Version, version, "version mismatch for %s", addressToCheck)
 

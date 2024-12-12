@@ -56,7 +56,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, ch
 	results := new(sync.Map)
 
 	getVersionAsync := func(contractAddress Address, results *sync.Map, key string, wg *sync.WaitGroup) {
-		r, err := GetVersion(context.Background(), common.Address(contractAddress), client)
+		r, err := GetContractVersion(context.Background(), common.Address(contractAddress), client)
 		if err != nil {
 			panic(err)
 		}
@@ -163,8 +163,8 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 	return cbh, nil
 }
 
-// GetVersion will get the version of a contract at a given address, if it exposes a version() method.
-func GetVersion(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
+// GetContractVersion will get the version of a contract at a given address, if it exposes a version() method.
+func GetContractVersion(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
 	isemver, err := bindings.NewISemver(addr, client)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", addr, err)
