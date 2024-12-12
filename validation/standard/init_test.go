@@ -50,7 +50,7 @@ func TestConfigInitialization(t *testing.T) {
 
 		t.Run(fmt.Sprintf("NetworkVersions[%s]", network), func(t *testing.T) {
 			// Ensure network Versions are populated
-			versions, ok := NetworkVersions[network]
+			versions, ok := ContractVersions[network]
 			require.True(t, ok, "NetworkVersions[%s] should exist", network)
 			require.NotNil(t, versions, "NetworkVersions[%s] should not be nil", network)
 			require.NotZero(t, len(versions.Releases), "NetworkVersions[%s].Releases should not be empty", network)

@@ -33,7 +33,7 @@ func init() {
 		}
 
 		decodeTOMLFileIntoConfig("standard-versions-"+network+".toml", &versions)
-		NetworkVersions[network] = versions
+		ContractVersions[network] = versions
 	}
 
 	decodeTOMLFileIntoConfig("standard-bytecodes.toml", &BytecodeHashes)

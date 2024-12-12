@@ -15,7 +15,7 @@ func TestCheckMatchOrTestnet(t *testing.T) {
 		SystemConfig:   VersionedContract{ImplementationAddress: nil},
 	}
 
-	standardVersions := standard.NetworkVersions["mainnet"].Releases[standard.Release]
+	standardVersions := standard.ContractVersions["mainnet"].Releases[standard.Release]
 
 	s := reflect.ValueOf(standardVersions)
 	c := reflect.ValueOf(dummyVersions)
