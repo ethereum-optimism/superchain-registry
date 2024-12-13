@@ -20,7 +20,7 @@ func testOptimismPortal2Params(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err)
 
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-	client, err := ethclient.Dial(rpcEndpoint)
+	client, _ := ethclient.Dial(rpcEndpoint)
 
 	op, err := bindings.NewOptimismPortal2(common.Address(opAddr), client)
 	require.NoError(t, err)

@@ -70,7 +70,7 @@ func testL1SecurityConfig(t *testing.T, chain *ChainConfig) {
 	chainID := chain.ChainID
 
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-	client, err := ethclient.Dial(rpcEndpoint)
+	client, _ := ethclient.Dial(rpcEndpoint)
 
 	portalProxyAddress, err := Addresses[chainID].AddressFor("OptimismPortalProxy")
 	require.NoError(t, err)

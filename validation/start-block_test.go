@@ -19,7 +19,7 @@ import (
 
 func testStartBlock(t *testing.T, chain *ChainConfig) {
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-	client, err := ethclient.Dial(rpcEndpoint)
+	client, _ := ethclient.Dial(rpcEndpoint)
 
 	systemConfigAddress := Addresses[chain.ChainID].SystemConfigProxy
 	require.NotZero(t, systemConfigAddress)

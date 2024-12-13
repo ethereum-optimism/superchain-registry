@@ -37,9 +37,9 @@ func testGenesisHash(t *testing.T, chain *ChainConfig) {
 
 func testGenesisHashAgainstRPC(t *testing.T, chain *ChainConfig) {
 	declaredGenesisHash := chain.Genesis.L2.Hash
-	
+
 	rpcEndpoint := chain.PublicRPC
-	client, err := ethclient.Dial(rpcEndpoint)
+	client, _ := ethclient.Dial(rpcEndpoint)
 
 	blockByNumber := func(blockNumber uint64) (*types.Block, error) {
 		return client.BlockByNumber(context.Background(), big.NewInt(int64(blockNumber)))

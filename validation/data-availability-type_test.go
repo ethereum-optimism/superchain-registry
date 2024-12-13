@@ -20,7 +20,7 @@ import (
 
 func testDataAvailabilityType(t *testing.T, chain *ChainConfig) {
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-	client, err := ethclient.Dial(rpcEndpoint)
+	client, _ := ethclient.Dial(rpcEndpoint)
 
 	// Standard chains must be eth-da for now. Will add checks for alt-da later
 	require.Equal(t, superchain.EthDA, chain.DataAvailabilityType)

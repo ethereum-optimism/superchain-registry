@@ -11,7 +11,7 @@ import (
 func testKeyHandover(t *testing.T, chain *ChainConfig) {
 	chainID := chain.ChainID
 	superchain := OPChains[chainID].Superchain
-	
+
 	rpcEndpoint := Superchains[superchain].Config.L1.PublicRPC
 	client, _ := ethclient.Dial(rpcEndpoint)
 

@@ -27,7 +27,7 @@ import (
 
 func checkForStandardVersions(t *testing.T, chain *ChainConfig) {
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-	client, err := ethclient.Dial(rpcEndpoint)
+	client, _ := ethclient.Dial(rpcEndpoint)
 
 	// testnets and devnets are permitted to use newer contract versions
 	// than the versions specified in the standard config
