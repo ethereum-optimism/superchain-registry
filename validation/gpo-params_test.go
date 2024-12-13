@@ -57,7 +57,7 @@ func testGasPriceOracleParams(t *testing.T, chain *ChainConfig) {
 	}
 
 	rpcEndpoint := chain.PublicRPC
-	client, err := ethclient.Dial(rpcEndpoint)
+	client, _ := ethclient.Dial(rpcEndpoint)
 	checkResourceConfig(t, chain, client)
 }
 
