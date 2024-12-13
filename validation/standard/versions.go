@@ -47,10 +47,6 @@ type (
 	BytecodeImmutablesTags = map[Tag]ContractBytecodeImmutables
 )
 
-type VersionTags struct {
-	Releases map[Tag]superchain.ContractVersions `toml:"releases"`
-}
-
 var (
 	Release            Tag
 	ContractVersions                          = make(map[string]map[Tag]superchain.ContractVersions)
