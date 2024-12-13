@@ -13,8 +13,6 @@ func testKeyHandover(t *testing.T, chain *ChainConfig) {
 	chainID := chain.ChainID
 	superchain := OPChains[chainID].Superchain
 	rpcEndpoint := Superchains[superchain].Config.L1.PublicRPC
-	require.NotEmpty(t, rpcEndpoint, "no rpc specified")
-
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 

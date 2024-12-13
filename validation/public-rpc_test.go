@@ -13,6 +13,6 @@ func testPublicRPC(t *testing.T, chain *ChainConfig) {
 	require.NotEmpty(t, rpcEndpoint, "no public_rpc endpoint specified")
 
 	client, err := ethclient.Dial(rpcEndpoint)
-	defer client.Close()
 	require.NoErrorf(t, err, "could not dial rpc endpoint '%s'", rpcEndpoint)
+	defer client.Close()
 }

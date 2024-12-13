@@ -60,14 +60,14 @@ func preflightChecks(t *testing.T) {
 		require.NotEmpty(t, rpcEndpoint, "no public_rpc specified for superchain '%s'", name)
 
 		client, err := ethclient.Dial(rpcEndpoint)
-		defer client.Close()
 		require.NoErrorf(t, err, "could not dial rpc endpoint '%s' for superchain '%s'", rpcEndpoint, name)
-		
+		defer client.Close()
+
 		_, err = client.ChainID(context.Background())
 		require.NoErrorf(t, err, "could not query node at '%s' for superchain '%s'", rpcEndpoint, name)
 
 		superchainConfigAddr := *chain.Config.SuperchainConfigAddr
-		
+
 		_, err = client.NonceAt(context.Background(), ethCommon.Address(superchainConfigAddr), big.NewInt(1))
 		require.NoErrorf(t, err, "node at '%s' for superchain '%s' is not an archive node", rpcEndpoint, name)
 	}
