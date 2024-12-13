@@ -69,7 +69,7 @@ func preflightChecks(t *testing.T) {
 		superchainConfigAddr := *chain.Config.SuperchainConfigAddr
 
 		_, err = client.NonceAt(context.Background(), ethCommon.Address(superchainConfigAddr), big.NewInt(1))
-		require.NoErrorf(t, err, "node at '%s' for superchain '%s' is not an archive node", rpcEndpoint, name)
+		require.NoErrorf(t, err, "node at '%s' for superchain '%s' is not an archive node. please set an L1 archive node RPC url in the `test_rpc` field of the superchain config file", rpcEndpoint, name)
 	}
 }
 
