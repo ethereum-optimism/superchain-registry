@@ -202,15 +202,19 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	gotData, err := json.MarshalIndent(g.Alloc, "", " ")
 	require.NoError(t, err)
 
-	// special handling of weth9 for op-sepolia at the validated commit
-	// We've observed that the contract [metadata hash](https://docs.soliditylang.org/en/latest/metadata.html)
-	// does not match for the bytecode that is generated and what's in the superchain-registry.
-	// The issue is likely a difference in compiler settings when the contract artifacts were generated and
-	// stored in the superchain registry. To account for this, we trim the metadata hash portion of the
-	// weth9 contract bytecode before writing to file/comparing the outputs
-	// For extra safety, we allow this type of check only at the commit hash we know has this issue.
-	// In other instances, the metadata may have optionally been excluded from the bytecode in the registry,
-	// in which case we ought to check for a complete match.
+	/*
+	  special handling of weth9 for op-sepolia at the validated commit
+	  We've observed that the contract [metadata hash](https://docs.soliditylang.org/en/latest/metadata.html)
+	  does not match for the bytecode that is generated and what's in the superchain-registry.
+	  
+	  The issue is likely a difference in compiler settings when the contract artifacts were generated and
+	  stored in the superchain registry. To account for this, we trim the metadata hash portion of the
+	  weth9 contract bytecode before writing to file/comparing the outputs
+	 
+	  For extra safety, we allow this type of check only at the commit hash we know has this issue.
+	  In other instances, the metadata may have optionally been excluded from the bytecode in the registry,
+	  in which case we ought to check for a complete match.
+	*/
 	if chainId == uint64(11155420) && monorepoCommit == "ba493e94a25df0f646a040c0899bfd0f4d237c06" {
 		t.Log("✂️️ Trimming WETH9 bytecode CBOR hash for OP-Sepolia...")
 		expectedData, err = trimWeth9BytecodeMetadataHash(expectedData)
@@ -218,6 +222,7 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 			err = fmt.Errorf("Regenerated alloc: %w", err)
 		}
 		require.NoError(t, err)
+
 		gotData, err = trimWeth9BytecodeMetadataHash(gotData)
 		if err != nil {
 			err = fmt.Errorf("Registry alloc: %w", err)
@@ -227,10 +232,12 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 
 	err = os.WriteFile(path.Join(monorepoDir, "regenerated-alloc.json"), expectedData, os.ModePerm) // regenerated
 	require.NoError(t, err)
+
 	err = os.WriteFile(path.Join(monorepoDir, "registry-alloc.json"), gotData, os.ModePerm) // read from registry
 	require.NoError(t, err)
 
-	require.Equal(t, string(expectedData), string(gotData))
+	l2Time := chain.Genesis.L2Time
+	require.Equal(t, string(expectedData), string(gotData), "regenerated alloc does not match registry alloc; this may have been caused by using the wrong `genesis_creation_commit`. You must specify the commit at which you deployed your contracts; to find an appropriate commit, use this command: `git rev-list --before=%d HEAD`", l2Time)
 }
 
 // This function removes empty storage slots as we know declaring empty slots is functionally equivalent to not declaring them.
