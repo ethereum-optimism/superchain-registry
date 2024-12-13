@@ -1,10 +1,16 @@
 package validation
 
 import (
+	"context"
+	"math/big"
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/common"
+	"github.com/stretchr/testify/require"
+
+	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 // Test names
@@ -45,7 +51,29 @@ func applyExclusions(chain *ChainConfig, f subTestForChain) subTest {
 	}
 }
 
+func preflightChecks(t *testing.T) {
+	// Check that all superchains have an accessible L1 archive RPC endpoint configured
+	for name, chain := range Superchains {
+		rpcEndpoint := chain.Config.L1.PublicRPC
+
+		require.NotEmpty(t, rpcEndpoint)
+
+		client, err := ethclient.Dial(rpcEndpoint)
+		require.NoErrorf(t, err, "could not dial rpc endpoint '%s' for superchain '%s'", rpcEndpoint, name)
+		
+		_, err = client.ChainID(context.Background())
+		require.NoErrorf(t, err, "could not query node at '%s' for superchain '%s'", rpcEndpoint, name)
+
+		superchainConfigAddr := *chain.Config.SuperchainConfigAddr
+		
+		_, err = client.NonceAt(context.Background(), ethCommon.Address(superchainConfigAddr), big.NewInt(1))
+		require.NoErrorf(t, err, "node at '%s' for superchain '%s' is not an archive node", rpcEndpoint, name)
+	}
+}
+
 func TestValidation(t *testing.T) {
+	preflightChecks(t)
+
 	// Entry point for validation checks which run
 	// on each OP chain.
 	for _, chain := range OPChains {
