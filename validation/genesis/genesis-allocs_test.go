@@ -3,7 +3,6 @@ package genesis
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -112,17 +111,15 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	mustExecuteCommandInDir(validationInputsDir,
 		exec.Command("cp", "deploy-config.json", path.Join(contractsDir, "deploy-config", chainIdString+".json")))
 	err := os.MkdirAll(path.Join(contractsDir, "deployments", chainIdString), os.ModePerm)
-	if err != nil {
-		log.Fatalf("Failed to create directory: %v", err)
-	}
+	require.NoError(t, err, "Failed to create directory")
+
 	if vis.GenesisCreationCommand == "opnode1" {
 		err = writeDeploymentsLegacy(chainId, path.Join(contractsDir, "deployments", chainIdString))
 	} else {
 		err = writeDeployments(chainId, path.Join(contractsDir, "deployments", chainIdString))
 	}
-	if err != nil {
-		log.Fatalf("Failed to write deployments: %v", err)
-	}
+
+	require.NoError(t, err, "Failed to write deployments; check that your `genesis_creation_command` field was set correctly in `meta.toml`. Options: opnode1, opnode2, forge1")
 
 	var runDir string
 	if strings.HasPrefix(vis.GenesisCreationCommand, "forge") {
@@ -133,20 +130,17 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 
 	mustExecuteCommandInDir(thisDir, exec.Command("cp", "./monorepo-outputs.sh", runDir))
 	buildCommand := BuildCommand[vis.MonorepoBuildCommand]
-	if vis.NodeVersion == "" {
-		panic("must set node_version in meta.toml")
-	}
+	require.NotEmpty(t, vis.NodeVersion, "must set node_version in meta.toml")
+
 	creationCommand := GenesisCreationCommand[vis.GenesisCreationCommand](chainId, Superchains[chain.Superchain].Config.L1.PublicRPC)
 	cmd := exec.Command("bash", "./monorepo-outputs.sh", vis.NodeVersion, buildCommand, creationCommand)
 
 	stdoutPipe, err := cmd.StdoutPipe()
-	if err != nil {
-		t.Fatalf("Failed to get stdout pipe: %v", err)
-	}
+	require.NoError(t, err, "Failed to get stdout pipe")
+
 	stderrPipe, err := cmd.StderrPipe()
-	if err != nil {
-		t.Fatalf("Failed to get stderr pipe: %v", err)
-	}
+	require.NoError(t, err, "Failed to get stderr pipe")
+	
 	// Stream the command's stdout and stderr to the test logger
 	go streamOutputToLogger(stdoutPipe, t)
 	go streamOutputToLogger(stderrPipe, t)
@@ -161,19 +155,22 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 		expectedData, err = os.ReadFile(path.Join(contractsDir, "statedump.json"))
 		require.NoError(t, err)
 		allocs := types.GenesisAlloc{}
+		
 		err = json.Unmarshal(expectedData, &allocs)
 		removeEmptyStorageSlots(allocs, t)
-
 		require.NoError(t, err)
+
 		expectedData, err = json.MarshalIndent(allocs, "", " ")
 		require.NoError(t, err)
 	} else {
 		expectedData, err = os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 		require.NoError(t, err)
+
 		gen := core.Genesis{}
 		err = json.Unmarshal(expectedData, &gen)
 		removeEmptyStorageSlots(gen.Alloc, t)
 		require.NoError(t, err)
+
 		expectedData, err = json.MarshalIndent(gen.Alloc, "", " ")
 		require.NoError(t, err)
 	}
