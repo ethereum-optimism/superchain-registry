@@ -54,7 +54,7 @@
 
   "useFaultProofs": true,
   "respectedGameType": 1,
-  "faultGameAbsolutePrestate": "0x00000000deaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddead",
+  "faultGameAbsolutePrestate": "0x0364e4e72922e7d649338f558f8a14b50ca31922a1484e73ea03987fb1516095",
   "faultGameGenesisOutputRoot": "0x00000000deaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddead",
   "faultGameMaxDepth": 73,
   "faultGameClockExtension": 10800,
