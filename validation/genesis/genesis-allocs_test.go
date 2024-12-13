@@ -35,12 +35,15 @@ func TestMain(m *testing.M) {
 	thisDir := filepath.Dir(filename)
 	temporaryOptimismDir = path.Join(thisDir, "../../../optimism-temporary")
 
-	// Clone the repo if the folder doesn't exist
+	// Clone the repo if the folder doesn't exist, otherwise pull the latest changes
 	_, err := os.Stat(temporaryOptimismDir)
 	needToClone := os.IsNotExist(err)
 	if needToClone {
 		mustExecuteCommandInDir(thisDir,
 			exec.Command("git", "clone", "--recurse-submodules", "https://github.com/ethereum-optimism/optimism.git", temporaryOptimismDir))
+	} else {
+		mustExecuteCommandInDir(thisDir,
+			exec.Command("git", "pull", temporaryOptimismDir))
 	}
 
 	// Run tests
