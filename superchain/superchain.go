@@ -301,13 +301,14 @@ type AddressList struct {
 	SuperchainConfig                  Address `json:"SuperchainConfig,omitempty" toml:"SuperchainConfig,omitempty"`
 
 	// Fault Proof contracts:
-	AnchorStateRegistryProxy Address `json:"AnchorStateRegistryProxy,omitempty" toml:"AnchorStateRegistryProxy,omitempty"`
-	DelayedWETHProxy         Address `json:"DelayedWETHProxy,omitempty" toml:"DelayedWETHProxy,omitempty"`
-	DisputeGameFactoryProxy  Address `json:"DisputeGameFactoryProxy,omitempty" toml:"DisputeGameFactoryProxy,omitempty"`
-	FaultDisputeGame         Address `json:"FaultDisputeGame,omitempty" toml:"FaultDisputeGame,omitempty"`
-	MIPS                     Address `json:"MIPS,omitempty" toml:"MIPS,omitempty"`
-	PermissionedDisputeGame  Address `json:"PermissionedDisputeGame,omitempty" toml:"PermissionedDisputeGame,omitempty"`
-	PreimageOracle           Address `json:"PreimageOracle,omitempty" toml:"PreimageOracle,omitempty"`
+	AnchorStateRegistryProxy     Address `json:"AnchorStateRegistryProxy,omitempty" toml:"AnchorStateRegistryProxy,omitempty"`
+	DelayedWETHProxy             Address `json:"DelayedWETHProxy,omitempty" toml:"DelayedWETHProxy,omitempty"`
+	PermissionedDelayedWETHProxy Address `json:"PermissionedDelayedWETHProxy,omitempty" toml:"PermissionedDelayedWETHProxy,omitempty"`
+	DisputeGameFactoryProxy      Address `json:"DisputeGameFactoryProxy,omitempty" toml:"DisputeGameFactoryProxy,omitempty"`
+	FaultDisputeGame             Address `json:"FaultDisputeGame,omitempty" toml:"FaultDisputeGame,omitempty"`
+	MIPS                         Address `json:"MIPS,omitempty" toml:"MIPS,omitempty"`
+	PermissionedDisputeGame      Address `json:"PermissionedDisputeGame,omitempty" toml:"PermissionedDisputeGame,omitempty"`
+	PreimageOracle               Address `json:"PreimageOracle,omitempty" toml:"PreimageOracle,omitempty"`
 
 	// AltDA contracts:
 	DAChallengeAddress Address `json:"DAChallengeAddress,omitempty" toml:"DAChallengeAddress,omitempty"`
@@ -354,6 +355,7 @@ type MappedContractProperties[T string | VersionedContract] struct {
 	// Fault Proof contracts:
 	AnchorStateRegistry     T `toml:"anchor_state_registry,omitempty"`
 	DelayedWETH             T `toml:"delayed_weth,omitempty"`
+	PermissionedDelayedWETH T `toml:"permissioned_delayed_weth,omitempty"`
 	DisputeGameFactory      T `toml:"dispute_game_factory,omitempty"`
 	FaultDisputeGame        T `toml:"fault_dispute_game,omitempty"`
 	MIPS                    T `toml:"mips,omitempty"`

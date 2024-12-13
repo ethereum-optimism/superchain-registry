@@ -31,6 +31,9 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 	delayedWethAddr, err := Addresses[chain.ChainID].AddressFor("DelayedWETHProxy")
 	require.NoError(t, err)
 
+	permissionedDelayedWethAddr, err := Addresses[chain.ChainID].AddressFor("PermissionedDelayedWETHProxy")
+	require.NoError(t, err)
+
 	optimismPortalAddr, err := Addresses[chain.ChainID].AddressFor("OptimismPortalProxy")
 	require.NoError(t, err)
 
@@ -83,6 +86,11 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 	wethDelay, err := CastCall(delayedWethAddr, "delay()", nil, rpcEndpoint)
 	require.NoError(t, err)
 	require.Equal(t, "0x0000000000000000000000000000000000000000000000000000000000093a80", wethDelay[0], "DelayedWETH: bond withdrawal delay") // 604800 sec = 7 days
+
+	// PermissionedDelayedWETH
+	pwethDelay, err := CastCall(permissionedDelayedWethAddr, "delay()", nil, rpcEndpoint)
+	require.NoError(t, err)
+	require.Equal(t, "0x0000000000000000000000000000000000000000000000000000000000093a80", pwethDelay[0], "PermissionedDelayedWETH: bond withdrawal delay") // 604800 sec = 7 days
 }
 
 func findOpProgramRelease(t *testing.T, hash string, superchain string) bool {
