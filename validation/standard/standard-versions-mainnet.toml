@@ -3,8 +3,8 @@
 #   * proxied             : specify a standard "implementation_address"
 #   * neither             : specify neither a standard "address" nor "implementation_address"
 
-# Holocene https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.8.0-rc.3
-["op-contracts/v1.8.0-rc.3"]
+# Holocene https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.8.0-rc.4
+["op-contracts/v1.8.0-rc.4"]
 # Updated in this release
 system_config = { version = "2.3.0", implementation_address = "0xAB9d6cB7A427c0765163A7f45BB91cAfe5f2D375" } # UPDATED IN THIS RELEASE
 fault_dispute_game = { version = "1.3.1" }                                                                   # UPDATED IN THIS RELEASE
