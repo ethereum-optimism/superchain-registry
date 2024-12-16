@@ -237,7 +237,7 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err)
 
 	l2Time := chain.Genesis.L2Time
-	require.Equal(t, string(expectedData), string(gotData), "regenerated alloc does not match registry alloc; this may have been caused by using the wrong `genesis_creation_commit`. You must specify the commit at which you deployed your contracts; to find an appropriate commit, use this command: `git rev-list --before=%d HEAD`", l2Time)
+	require.Equal(t, string(expectedData), string(gotData), "regenerated alloc does not match registry alloc; this may have been caused by using the wrong `genesis_creation_commit`. You must specify the commit at which you deployed your contracts; to find an appropriate commit, run this command against the `optimism` repository: `git rev-list --before=%d HEAD`", l2Time)
 }
 
 // This function removes empty storage slots as we know declaring empty slots is functionally equivalent to not declaring them.
