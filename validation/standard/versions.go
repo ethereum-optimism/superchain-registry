@@ -54,6 +54,12 @@ var (
 	BytecodeImmutables BytecodeImmutablesTags = make(BytecodeImmutablesTags, 0)
 )
 
+var (
+	ErrNoSuchContractName = fmt.Errorf("no such contract name")
+	ErrFieldNotTypeString = fmt.Errorf("field is not type string")
+	ErrHashNotSpecified   = fmt.Errorf("hash not specified")
+)
+
 // L1ContractBytecodeHashes represents the hash of the contract bytecode (as a hex string) for each L1 contract
 type L1ContractBytecodeHashes superchain.ContractBytecodeHashes
 
@@ -64,18 +70,18 @@ func (bch L1ContractBytecodeHashes) GetBytecodeHashFor(name string) (string, err
 	// Try to find the field by name
 	field := v.FieldByName(name)
 	if !field.IsValid() {
-		return "", fmt.Errorf("no such name %s", name)
+		return "", fmt.Errorf("%w: %s", ErrNoSuchContractName, name)
 	}
 
-	// Check if the field is of type Address
+	// Check if the field is of type String
 	if field.Type() != reflect.TypeOf("") {
-		return "", fmt.Errorf("field %s is not of type string", name)
+		return "", fmt.Errorf("%w: %s", ErrFieldNotTypeString, name)
 	}
 
 	// Check if the hash is a non-zero value
 	hash := field.String()
 	if hash == "" {
-		return "", fmt.Errorf("no hash specified for %s", name)
+		return "", fmt.Errorf("%w: %s", ErrHashNotSpecified, name)
 	}
 
 	return hash, nil
