@@ -4,6 +4,7 @@ public_rpc = "http://awe.some.rpc"
 sequencer_rpc = "http://awe.some.seq.rpc"
 explorer = "https://awesomescan.org"
 superchain_level = 0
+governed_by_optimism = false
 batch_inbox_addr = "0xFf00000000000000000000000000000000042069"
 canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 delta_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC

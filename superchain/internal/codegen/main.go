@@ -22,6 +22,7 @@ type ChainEntry struct {
 	RPC                  []string `json:"rpc" toml:"rpc"`
 	Explorer             []string `json:"explorers" toml:"explorers"`
 	SuperchainLevel      uint     `json:"superchainLevel" toml:"superchain_level"`
+	GovernedByOptimism   bool     `json:"governedByOptimism" toml:"governed_by_optimism"`
 	DataAvailabilityType string   `json:"dataAvailabilityType" toml:"data_availability_type"`
 	Parent               Parent   `json:"parent" toml:"parent"`
 	GasPayingToken       *Address `json:"gasPayingToken,omitempty" toml:"gas_paying_token,omitempty"`
@@ -56,6 +57,7 @@ func main() {
 				RPC:                  []string{chain.PublicRPC},
 				Explorer:             []string{chain.Explorer},
 				SuperchainLevel:      uint(chain.SuperchainLevel),
+				GovernedByOptimism:   chain.GovernedByOptimism,
 				DataAvailabilityType: string(chain.DataAvailabilityType),
 				Parent:               Parent{"L2", chain.Superchain, []string{}},
 				GasPayingToken:       chain.GasPayingToken,
