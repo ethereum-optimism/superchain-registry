@@ -422,6 +422,8 @@ jobs:
             REPO=${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
             echo "export PR_NUMBER=$PR_NUMBER" >> "$BASH_ENV"
             echo "export REPO=$REPO" >> "$BASH_ENV"
+            echo $DIFF
+            echo $RUN_URL
       - when:
           condition:
             and: #only if it's a PR and there is a diff
