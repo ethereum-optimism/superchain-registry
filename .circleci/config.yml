@@ -50,13 +50,14 @@ jobs:
 
             if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
               # This will always be selected unless the user chooses to interact with the configuration by setting a non default value in the chain parameter. This would happens if the user launch the pipeline with a specific chain value via either curl or the CircleCI GUI.
-              echo "{}" > .circleci/parameters.json
+              echo "{\"is_forked_pull_request\":$is_forked_pull_request,\"is_pull_request\":$is_pull_request}" > .circleci/parameters.json
+
               echo "Generating test configuration..."
               sh validation/genesis/validation-inputs/generate-test-config.sh
               cp .circleci/main_config.yml .circleci/selected_continue_config.yml
             else
               # This only runs if launched with curl or the CircleCI GUI with non default chain value
-              echo "{\"is_forked_pull_request\":$is_forked_pull_request,\"is_pull_request\":$is_pull_request}" > .circleci/parameters.json
+              echo "{}" > .circleci/parameters.json
 
               echo "Generating interactive configuration..."
               cp .circleci/artifact_upload_config.yml .circleci/selected_continue_config.yml
