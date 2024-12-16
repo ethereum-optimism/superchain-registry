@@ -141,8 +141,8 @@ commands:
           name: Post PR Comment
           command: |
             COMMENT_OPTION=""
-            if [ -n "<< paramaters.COMMENT_ID >>" ]; then
-              COMMENT_OPTION="--comment-id << paramaters.COMMENT_ID >>"
+            if [ -n "<< parameters.COMMENT_ID >>" ]; then
+              COMMENT_OPTION="--comment-id << parameters.COMMENT_ID >>"
             fi
 
             python $MAIN_PATH post-pr-comment \
