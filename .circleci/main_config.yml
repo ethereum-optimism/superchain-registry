@@ -85,95 +85,6 @@ commands:
             source ~/.bashrc
             nvm --version
 
-  get-pr-comments:
-    parameters:
-      REPO:
-        type: string
-      PR_NUMBER:
-        type: string
-      message:
-        type: string
-      user_type:
-        type: string
-        default: "User"
-    steps:
-      - utils/setup-circleci-utils
-      - run:
-          name: Get PR Comments
-          command: |
-            echo "DIFF=$DIFF"
-            echo "RUN_URL=$RUN_URL"
-
-            COMMENT_BODY="<<parameters.message>>. You can see the detail [here]($RUN_URL)."
-            COMMENT_ID=$( python $CIRCLECI_TOOLS_PATH get-pr-comments \
-              --github-token "${GITHUB_TOKEN}" \
-              --repo "<< parameters.REPO >>" \
-              --pr-number "<< parameters.PR_NUMBER >>" \
-              --message-substring "<<parameters.message>>" \
-              --user-type "<<parameters.user_type>>" )
-
-            COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
-            echo "export COMMENT_ID=$COMMENT_ID" >> "$BASH_ENV"
-
-  post-pr-comment:
-    parameters:
-      COMMENT_BODY:
-        type: string
-        description: "The body of the comment"
-      COMMENT_ID:
-        type: string
-        description: "The ID of the comment to update"
-      GITHUB_TOKEN:
-        type: env_var_name
-        description: "The GitHub token to use for posting the comment"
-        default: GITHUB_TOKEN
-      REPO:
-        type: string
-      PR_NUMBER:
-        type: string
-    steps:
-      - utils/setup-circleci-utils
-      - run:
-          name: Post PR Comment
-          command: |
-            COMMENT_OPTION=""
-            if [ -n "<< parameters.COMMENT_ID >>" ]; then
-              COMMENT_OPTION="--comment-id << parameters.COMMENT_ID >>"
-            fi
-
-            python $CIRCLECI_TOOLS_PATH post-pr-comment \
-                  --github-token "${<< parameters.GITHUB_TOKEN >>}" \
-                  --repo "<< parameters.REPO >>" \
-                  --pr-number "<< parameters.PR_NUMBER >>" \
-                  --comment-body "<< parameters.COMMENT_BODY >>" \
-                  $COMMENT_OPTION
-
-  delete-pr-comment:
-    parameters:
-      COMMENT_ID:
-        type: string
-        description: "The ID of the comment to update"
-      GITHUB_TOKEN:
-        type: env_var_name
-        description: "The GitHub token to use for posting the comment"
-        default: GITHUB_TOKEN
-      REPO:
-        type: string
-      PR_NUMBER:
-        type: string
-    steps:
-      - utils/setup-circleci-utils
-      - run:
-          name: Post PR Comment
-          command: |
-            if [ -n "${<< parameters.COMMENT_ID >>}" ]; then
-              python $CIRCLECI_TOOLS_PATH delete-pr-comment \
-                --github-token "${<< parameters.GITHUB_TOKEN >>}" \
-                --repo "<< parameters.REPO >>" \
-                --pr-number "<< parameters.PR_NUMBER >>" \
-                --comment-id << parameters.COMMENT_ID >>
-            fi
-
   report-on-diff-true:
     parameters:
       COMMENT_BODY:
@@ -182,10 +93,6 @@ commands:
       COMMENT_ID:
         type: string
         description: "The ID of the comment to update"
-      GITHUB_TOKEN:
-        type: env_var_name
-        description: "The GitHub token to use for posting the comment"
-        default: GITHUB_TOKEN
       REPO:
         type: string
       PR_NUMBER:
@@ -204,12 +111,12 @@ commands:
               echo "DIFF is not 1"
               circleci step halt
             fi
-      - post-pr-comment:
-          COMMENT_BODY: << parameters.COMMENT_BODY >>
-          COMMENT_ID: << parameters.COMMENT_ID >>
-          GITHUB_TOKEN: << parameters.GITHUB_TOKEN >>
-          REPO: << parameters.REPO >>
-          PR_NUMBER: << parameters.PR_NUMBER >>
+      - utils/post-github-pr-comment:
+          comment-body: << parameters.COMMENT_BODY >>
+          comment-id: << parameters.COMMENT_ID >>
+          token-name: GITHUB_TOKEN
+          repo: << parameters.REPO >>
+          pr-number: << parameters.PR_NUMBER >>
 
   report-on-diff-false:
     parameters:
@@ -241,7 +148,7 @@ commands:
               echo "DIFF is not 0"
               circleci step halt
             fi
-      - delete-pr-comment:
+      - utils/delete-github-pr-comment:
           COMMENT_ID: << parameters.COMMENT_ID >>
           GITHUB_TOKEN: << parameters.GITHUB_TOKEN >>
           REPO: << parameters.REPO >>
@@ -480,11 +387,6 @@ jobs:
         description: "PR comment body prefixed message"
         type: string
     steps:
-      - run:
-          name: test
-          command: |
-            echo $CIRCLE_NODE_INDEX
-            exit 0
       - checkout
       - compute-config-diff:
           working_directory: validation
@@ -505,10 +407,11 @@ jobs:
               - not: << pipeline.parameters.is_forked_pull_request >>
               - << pipeline.parameters.is_pull_request >>
           steps:
-            - get-pr-comments:
+            - utils/get-github-pr-comments:
                 REPO: $REPO
                 PR_NUMBER: $PR_NUMBER
                 message: << parameters.message >>
+                GIT_TOKEN: GITHUB_TOKEN
             - report-on-diff-true:
                 REPO: $REPO
                 PR_NUMBER: $PR_NUMBER
