@@ -278,7 +278,7 @@ commands:
             go run <<parameters.command>>/main.go base
 
       - run:
-          name: Compute diff
+          name: OUTPUT DIFF -- LOOK HERE
           working_directory: <<parameters.working_directory>>
           command: |
             # Allow the script to continue even if the diff-configs.sh script returns a non-zero exit code
