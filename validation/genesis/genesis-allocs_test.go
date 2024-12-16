@@ -3,7 +3,6 @@ package genesis
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -35,12 +34,15 @@ func TestMain(m *testing.M) {
 	thisDir := filepath.Dir(filename)
 	temporaryOptimismDir = path.Join(thisDir, "../../../optimism-temporary")
 
-	// Clone the repo if the folder doesn't exist
+	// Clone the repo if the folder doesn't exist, otherwise pull the latest changes
 	_, err := os.Stat(temporaryOptimismDir)
 	needToClone := os.IsNotExist(err)
 	if needToClone {
 		mustExecuteCommandInDir(thisDir,
 			exec.Command("git", "clone", "--recurse-submodules", "https://github.com/ethereum-optimism/optimism.git", temporaryOptimismDir))
+	} else {
+		mustExecuteCommandInDir(thisDir,
+			exec.Command("git", "pull", temporaryOptimismDir))
 	}
 
 	// Run tests
@@ -109,17 +111,15 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	mustExecuteCommandInDir(validationInputsDir,
 		exec.Command("cp", "deploy-config.json", path.Join(contractsDir, "deploy-config", chainIdString+".json")))
 	err := os.MkdirAll(path.Join(contractsDir, "deployments", chainIdString), os.ModePerm)
-	if err != nil {
-		log.Fatalf("Failed to create directory: %v", err)
-	}
+	require.NoError(t, err, "Failed to create directory")
+
 	if vis.GenesisCreationCommand == "opnode1" {
 		err = writeDeploymentsLegacy(chainId, path.Join(contractsDir, "deployments", chainIdString))
 	} else {
 		err = writeDeployments(chainId, path.Join(contractsDir, "deployments", chainIdString))
 	}
-	if err != nil {
-		log.Fatalf("Failed to write deployments: %v", err)
-	}
+
+	require.NoError(t, err, "Failed to write deployments; check that your `genesis_creation_command` field was set correctly in `meta.toml`. Options: opnode1, opnode2, forge1")
 
 	var runDir string
 	if strings.HasPrefix(vis.GenesisCreationCommand, "forge") {
@@ -130,20 +130,17 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 
 	mustExecuteCommandInDir(thisDir, exec.Command("cp", "./monorepo-outputs.sh", runDir))
 	buildCommand := BuildCommand[vis.MonorepoBuildCommand]
-	if vis.NodeVersion == "" {
-		panic("must set node_version in meta.toml")
-	}
+	require.NotEmpty(t, vis.NodeVersion, "must set node_version in meta.toml")
+
 	creationCommand := GenesisCreationCommand[vis.GenesisCreationCommand](chainId, Superchains[chain.Superchain].Config.L1.PublicRPC)
 	cmd := exec.Command("bash", "./monorepo-outputs.sh", vis.NodeVersion, buildCommand, creationCommand)
 
 	stdoutPipe, err := cmd.StdoutPipe()
-	if err != nil {
-		t.Fatalf("Failed to get stdout pipe: %v", err)
-	}
+	require.NoError(t, err, "Failed to get stdout pipe")
+
 	stderrPipe, err := cmd.StderrPipe()
-	if err != nil {
-		t.Fatalf("Failed to get stderr pipe: %v", err)
-	}
+	require.NoError(t, err, "Failed to get stderr pipe")
+
 	// Stream the command's stdout and stderr to the test logger
 	go streamOutputToLogger(stdoutPipe, t)
 	go streamOutputToLogger(stderrPipe, t)
@@ -158,19 +155,22 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 		expectedData, err = os.ReadFile(path.Join(contractsDir, "statedump.json"))
 		require.NoError(t, err)
 		allocs := types.GenesisAlloc{}
+
 		err = json.Unmarshal(expectedData, &allocs)
 		removeEmptyStorageSlots(allocs, t)
-
 		require.NoError(t, err)
+
 		expectedData, err = json.MarshalIndent(allocs, "", " ")
 		require.NoError(t, err)
 	} else {
 		expectedData, err = os.ReadFile(path.Join(monorepoDir, "expected-genesis.json"))
 		require.NoError(t, err)
+
 		gen := core.Genesis{}
 		err = json.Unmarshal(expectedData, &gen)
 		removeEmptyStorageSlots(gen.Alloc, t)
 		require.NoError(t, err)
+
 		expectedData, err = json.MarshalIndent(gen.Alloc, "", " ")
 		require.NoError(t, err)
 	}
@@ -202,15 +202,19 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	gotData, err := json.MarshalIndent(g.Alloc, "", " ")
 	require.NoError(t, err)
 
-	// special handling of weth9 for op-sepolia at the validated commit
-	// We've observed that the contract [metadata hash](https://docs.soliditylang.org/en/latest/metadata.html)
-	// does not match for the bytecode that is generated and what's in the superchain-registry.
-	// The issue is likely a difference in compiler settings when the contract artifacts were generated and
-	// stored in the superchain registry. To account for this, we trim the metadata hash portion of the
-	// weth9 contract bytecode before writing to file/comparing the outputs
-	// For extra safety, we allow this type of check only at the commit hash we know has this issue.
-	// In other instances, the metadata may have optionally been excluded from the bytecode in the registry,
-	// in which case we ought to check for a complete match.
+	/*
+	  special handling of weth9 for op-sepolia at the validated commit
+	  We've observed that the contract [metadata hash](https://docs.soliditylang.org/en/latest/metadata.html)
+	  does not match for the bytecode that is generated and what's in the superchain-registry.
+
+	  The issue is likely a difference in compiler settings when the contract artifacts were generated and
+	  stored in the superchain registry. To account for this, we trim the metadata hash portion of the
+	  weth9 contract bytecode before writing to file/comparing the outputs
+
+	  For extra safety, we allow this type of check only at the commit hash we know has this issue.
+	  In other instances, the metadata may have optionally been excluded from the bytecode in the registry,
+	  in which case we ought to check for a complete match.
+	*/
 	if chainId == uint64(11155420) && monorepoCommit == "ba493e94a25df0f646a040c0899bfd0f4d237c06" {
 		t.Log("✂️️ Trimming WETH9 bytecode CBOR hash for OP-Sepolia...")
 		expectedData, err = trimWeth9BytecodeMetadataHash(expectedData)
@@ -218,6 +222,7 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 			err = fmt.Errorf("Regenerated alloc: %w", err)
 		}
 		require.NoError(t, err)
+
 		gotData, err = trimWeth9BytecodeMetadataHash(gotData)
 		if err != nil {
 			err = fmt.Errorf("Registry alloc: %w", err)
@@ -227,10 +232,12 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 
 	err = os.WriteFile(path.Join(monorepoDir, "regenerated-alloc.json"), expectedData, os.ModePerm) // regenerated
 	require.NoError(t, err)
+
 	err = os.WriteFile(path.Join(monorepoDir, "registry-alloc.json"), gotData, os.ModePerm) // read from registry
 	require.NoError(t, err)
 
-	require.Equal(t, string(expectedData), string(gotData))
+	l2Time := chain.Genesis.L2Time
+	require.Equal(t, string(expectedData), string(gotData), "regenerated alloc does not match registry alloc; this may have been caused by using the wrong `genesis_creation_commit`. You must specify the commit at which you deployed your contracts; to find an appropriate commit, run this command against the `optimism` repository: `git rev-list --before=%d HEAD`", l2Time)
 }
 
 // This function removes empty storage slots as we know declaring empty slots is functionally equivalent to not declaring them.
