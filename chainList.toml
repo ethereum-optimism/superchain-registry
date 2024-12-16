@@ -18,7 +18,7 @@
   rpc = ["https://rpc.arena-z.gg"]
   explorers = ["https://explorer.arena-z.gg"]
   superchain_level = 0
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"

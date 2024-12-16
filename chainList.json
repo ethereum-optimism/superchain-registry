@@ -28,7 +28,7 @@
       "https://explorer.arena-z.gg"
     ],
     "superchainLevel": 0,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",

@@ -906,7 +906,7 @@
           "SequencerRPC": "https://rpc.arena-z.gg",
           "Explorer": "https://explorer.arena-z.gg",
           "SuperchainLevel": 0,
-          "GovernedByOptimism": false,
+          "GovernedByOptimism": true,
           "StandardChainCandidate": true,
           "SuperchainTime": null,
           "batch_inbox_address": "0x00f9BCEe08DCe4F0e7906c1f6cFb10c77802EEd0",
