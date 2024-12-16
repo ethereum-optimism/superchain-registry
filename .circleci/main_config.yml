@@ -141,7 +141,7 @@ commands:
           name: Post PR Comment
           command: |
             COMMENT_OPTION=""
-            if [ -n "${<< paramaters.COMMENT_ID >>}" ]; then
+            if [ -n "<< paramaters.COMMENT_ID >>" ]; then
               COMMENT_OPTION="--comment-id $COMMENT_ID"
             fi
 
