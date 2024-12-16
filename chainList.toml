@@ -12,6 +12,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "arena-z"
+  identifier = "mainnet/arena-z"
+  chain_id = 7897
+  rpc = ["https://rpc.arena-z.gg"]
+  explorers = ["https://explorer.arena-z.gg"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Automata Mainnet"
   identifier = "mainnet/automata"
   chain_id = 65536
