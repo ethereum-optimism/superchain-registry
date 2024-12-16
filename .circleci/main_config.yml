@@ -3,6 +3,8 @@ orbs:
   go: circleci/go@2.1.0
   node: circleci/node@5.2.0
   slack: circleci/slack@4.10.1
+  utils: ethereum-optimism/circleci-utils@dev:first
+
 parameters:
   go_version:
     type: string
@@ -11,6 +13,9 @@ parameters:
     type: string
     default: "__required__"
   is_forked_pull_request:
+    type: boolean
+    default: false
+  is_pull_request:
     type: boolean
     default: false
 
@@ -79,6 +84,144 @@ commands:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
             source ~/.bashrc
             nvm --version
+
+  get-pr-comments:
+    parameters:
+      REPO:
+        type: string
+      PR_NUMBER:
+        type: string
+      message:
+        type: string
+      user_type:
+        type: string
+        default: "User"
+    steps:
+      - run:
+          name: Get PR Comments
+          command: |
+            echo "DIFF=$DIFF"
+            echo "RUN_URL=$RUN_URL"
+
+            PR_NUMBER="<< parameters.PR_NUMBER >>""
+            REPO="<< parameters.REPO >>"
+            MESSAGE="<<parameters.message>>"
+            USER_TYPE="<<parameters.user_type>>"
+
+            COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
+            echo $COMMAND
+            COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
+              --github-token "${GITHUB_TOKEN}" \
+              --repo "${REPO}" \
+              --pr-number "${PR_NUMBER}" \
+              --message-substring "${MESSAGE}" \
+              --user-type "$USER_TYPE" )
+
+            COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
+            echo "export COMMENT_ID=$COMMENT_ID" >> "$BASH_ENV"
+
+  post-pr-comment:
+    parameters:
+      COMMENT_BODY:
+        type: string
+        description: "The body of the comment"
+      COMMENT_ID:
+        type: string
+        description: "The ID of the comment to update"
+      GITHUB_TOKEN:
+        type: env_var_name
+        description: "The GitHub token to use for posting the comment"
+        default: GITHUB_TOKEN
+      REPO:
+        type: string
+      PR_NUMBER:
+        type: string
+    steps:
+      - run:
+          name: Post PR Comment
+          command: |
+            COMMENT_OPTION=""
+            if [ -n "${<< paramaters.COMMENT_ID >>}" ]; then
+              COMMENT_OPTION="--comment-id $COMMENT_ID"
+            fi
+
+            python $MAIN_PATH post-pr-comment \
+                  --github-token "${<< parameters.GITHUB_TOKEN >>}" \
+                  --repo "${REPO}" \
+                  --pr-number "${PR_NUMBER}" \
+                  --comment-body "${COMMENT_BODY}" \
+                  $COMMENT_OPTION
+
+  delete-pr-comment:
+    parameters:
+      COMMENT_ID:
+        type: string
+        description: "The ID of the comment to update"
+      GITHUB_TOKEN:
+        type: env_var_name
+        description: "The GitHub token to use for posting the comment"
+        default: GITHUB_TOKEN
+      REPO:
+        type: string
+      PR_NUMBER:
+        type: string
+    steps:
+      - run:
+          name: Post PR Comment
+          command: |
+            if [ -n "${<< parameters.COMMENT_ID >>}" ]; then
+              python $MAIN_PATH delete-pr-comment \
+                --github-token "${<< parameters.GITHUB_TOKEN >>}" \
+                --repo "${REPO}" \
+                --pr-number "${PR_NUMBER}" \
+                --comment-id << parameters.COMMENT_ID >>
+            fi
+
+  compute-config-diff:
+    parameters:
+      command:
+        description: "Command to run to generate config files"
+        type: string
+      directory:
+        description: "Directory where config files are stored"
+        type: string
+      working_directory:
+        type: string
+        default: "validation"
+    steps:
+      - checkout
+      - run:
+          name: Generate configs
+          working_directory: <<parameters.working_directory>>
+          command: |
+            BASE_BRANCH="main"
+
+            # We are already in the Head of the PR after checkout
+            go run <<parameters.command>>/main.go HEAD
+
+            # Fetch the base branch
+            git fetch origin $BASE_BRANCH
+
+            # Checkout the base branch
+            git checkout $BASE_BRANCH
+
+            go run <<parameters.command>>/main.go base
+
+      - run:
+          name: Compute diff
+          working_directory: <<parameters.working_directory>>
+          command: |
+            # Allow the script to continue even if the diff-configs.sh script returns a non-zero exit code
+            set +e
+
+            # Run the script and capture its output and exit code
+            ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
+            DIFF=$?
+            echo "export DIFF=$DIFF" >> "$BASH_ENV"
+            echo "export RUN_URL=${CIRCLE_BUILD_URL}" >> "$BASH_ENV"
+            # Restore error handling
+            set -e
+
 jobs:
   golang-lint:
     executor:
@@ -253,7 +396,7 @@ jobs:
       - checkout
       - run: echo "All golang-validate-genesis-allocs jobs suceeded"
 
-  compute-config-diff:
+  compute-config-diff-and-report:
     machine:
       image: ubuntu-2004:current
     parameters:
@@ -263,113 +406,54 @@ jobs:
       directory:
         description: "Directory where config files are stored"
         type: string
-      save_to:
-        description: "Variable to save the diff result"
-        type: string
-    steps:
-      - checkout
-      - run:
-          name: Generate configs
-          working_directory: validation
-          command: |
-            BASE_BRANCH="main"
-
-            # We are already in the Head of the PR after checkout
-            go run <<parameters.command>>/main.go HEAD
-
-            # Fetch the base branch
-            git fetch origin $BASE_BRANCH
-
-            # Checkout the base branch
-            git checkout $BASE_BRANCH
-
-            go run <<parameters.command>>/main.go base
-
-      - run:
-          name: Compute diff
-          working_directory: validation
-          command: |
-            # Allow the script to continue even if the diff-configs.sh script returns a non-zero exit code
-            set +e
-
-            # Run the script and capture its output and exit code
-            ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
-            DIFF=$?
-            echo "export DIFF=$DIFF" >> <<parameters.save_to>>
-            echo "export RUN_URL=${CIRCLE_BUILD_URL}" >> <<parameters.save_to>>
-            # Restore error handling
-            set -e
-      - persist_to_workspace:
-          root: validation
-          paths:
-            - <<parameters.save_to>>
-
-  report-config-diff:
-    machine:
-      image: ubuntu-2004:current
-    parameters:
       message:
         description: "PR comment body prefixed message"
         type: string
-      read_from:
-        description: "Variable to read the diff result"
-        type: string
     steps:
-      - attach_workspace:
-          at: validation
-      - run:
-          name: Handle PR Comment Based on DIFF only if it is a PR
+      - checkout
+      - compute-config-diff:
           working_directory: validation
+          command: <<parameters.command>>
+          directory: <<parameters.directory>>
+      - run:
+          name: get pr number
           command: |
-            #check if we are in a PR
-            if [ -z "$CIRCLE_PULL_REQUEST" ]; then
-              echo "Not a PR. Exiting."
-            else
-              PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            REPO=${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+            echo "export PR_NUMBER=$PR_NUMBER" >> "$BASH_ENV"
+            echo "export REPO=$REPO" >> "$BASH_ENV"
+      - when:
+          condition:
+            and: #only if it's a PR and there is a diff
+              - not: << pipeline.parameters.is_forked_pull_request >>
+              - << pipeline.parameters.is_pull_request >>
+              - equal: ["$DIFF", 1]
+          steps:
+            - get-pr-comments:
+                REPO: $REPO
+                PR_NUMBER: $PR_NUMBER
+                message: << parameters.message >>
+            - post-pr-comment:
+                REPO: $REPO
+                PR_NUMBER: $PR_NUMBER
+                COMMENT_ID: $COMMENT_ID
+                COMMENT_BODY: "$MESSAGE. You can see the detail [here]($RUN_URL)."
 
-              git clone --branch v0.1.0 --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
-              GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
-              pip install -r $GITHUB_CLI_PATH/requirements.txt
-              MAIN_PATH=$GITHUB_CLI_PATH/main.py
-
-              REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-              source <<parameters.read_from>>
-              echo "DIFF=$DIFF"
-              echo "RUN_URL=$RUN_URL"
-
-              MESSAGE="<<parameters.message>>"
-              COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
-              echo $COMMAND
-              COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
-                --github-token "${GITHUB_TOKEN}" \
-                --repo "${REPO}" \
-                --pr-number "${PR_NUMBER}" \
-                --message-substring "${MESSAGE}" \
-                --user-type "User" )
-
-              COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
-              COMMENT_OPTION=""
-              if [ -n "$COMMENT_ID" ]; then
-                COMMENT_OPTION="--comment-id $COMMENT_ID"
-              fi
-
-              if [ "$DIFF" -eq 1 ]; then
-                  python $MAIN_PATH post-pr-comment \
-                    --github-token "${GITHUB_TOKEN}" \
-                    --repo "${REPO}" \
-                    --pr-number "${PR_NUMBER}" \
-                    --comment-body "${COMMENT_BODY}" \
-                    $COMMENT_OPTION
-              else
-                if [ -n "$COMMENT_ID" ]; then
-                  python $MAIN_PATH delete-pr-comment \
-                    --github-token "${GITHUB_TOKEN}" \
-                    --repo "${REPO}" \
-                    --pr-number "${PR_NUMBER}" \
-                    --comment-id $COMMENT_ID
-                fi
-              fi
-            fi
+      - when:
+          condition:
+            and: #only if it's a PR and there is no diff
+              - not: << pipeline.parameters.is_forked_pull_request >>
+              - << pipeline.parameters.is_pull_request >>
+              - equal: ["$DIFF", 0]
+          steps:
+            - get-pr-comments:
+                REPO: ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+                PR_NUMBER: $PR_NUMBER
+                message: << parameters.message >>
+            - delete-pr-comment:
+                REPO: $REPO
+                PR_NUMBER: $PR_NUMBER
+                COMMENT_ID: $COMMENT_ID
 
 workflows:
   hourly:
@@ -409,50 +493,20 @@ workflows:
       - golang-validate-modified
       - check-codegen
 
-  compute-config-diff-and-report:
+  compute-config-diff-and-report-workflow:
     when:
-      and:
-        - not:
-            equal: [scheduled_pipeline, << pipeline.trigger_source >>]
-        - not: << pipeline.parameters.is_forked_pull_request >>
+      not:
+        equal: [scheduled_pipeline, << pipeline.trigger_source >>]
     jobs:
-      - compute-config-diff:
+      - compute-config-diff-and-report:
           name: compute-genesis-diff
           command: "generate-genesis"
-          save_to: "GENESIS"
           directory: "generate-genesis"
-      - report-config-diff:
-          name: report-genesis-diff
-          read_from: "GENESIS"
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
           context: circleci-superchain-registry
-          requires: [compute-genesis-diff]
-      - compute-config-diff:
+      - compute-config-diff-and-report:
           name: compute-rollup-config-diff
           command: "generate-rollup-config"
-          save_to: "ROLLUP"
           directory: "generate-rollup-config"
-      - report-config-diff:
-          name: report-rollup-config-diff
-          read_from: "ROLLUP"
           message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
           context: circleci-superchain-registry
-          requires: [compute-rollup-config-diff]
-
-  compute-config-diff-only:
-    when:
-      and:
-        - not:
-            equal: [scheduled_pipeline, << pipeline.trigger_source >>]
-        - << pipeline.parameters.is_forked_pull_request >>
-    jobs:
-      - compute-config-diff:
-          name: compute-genesis-diff
-          command: "generate-genesis"
-          save_to: "GENESIS"
-          directory: "generate-genesis"
-      - compute-config-diff:
-          name: compute-rollup-config-diff
-          command: "generate-rollup-config"
-          save_to: "ROLLUP"
-          directory: "generate-rollup-config"
