@@ -103,19 +103,13 @@ commands:
             echo "DIFF=$DIFF"
             echo "RUN_URL=$RUN_URL"
 
-            PR_NUMBER="<< parameters.PR_NUMBER >>""
-            REPO="<< parameters.REPO >>"
-            MESSAGE="<<parameters.message>>"
-            USER_TYPE="<<parameters.user_type>>"
-
-            COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
-            echo $COMMAND
+            COMMENT_BODY="<<parameters.message>>. You can see the detail [here]($RUN_URL)."
             COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
               --github-token "${GITHUB_TOKEN}" \
-              --repo "${REPO}" \
-              --pr-number "${PR_NUMBER}" \
-              --message-substring "${MESSAGE}" \
-              --user-type "$USER_TYPE" )
+              --repo "<< parameters.REPO >>" \
+              --pr-number "<< parameters.PR_NUMBER >>" \
+              --message-substring "<<parameters.message>>" \
+              --user-type "<<parameters.user_type>>" )
 
             COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
             echo "export COMMENT_ID=$COMMENT_ID" >> "$BASH_ENV"
