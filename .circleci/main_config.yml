@@ -97,6 +97,7 @@ commands:
         type: string
         default: "User"
     steps:
+      - utils/setup-circleci-utils
       - run:
           name: Get PR Comments
           command: |
@@ -104,7 +105,7 @@ commands:
             echo "RUN_URL=$RUN_URL"
 
             COMMENT_BODY="<<parameters.message>>. You can see the detail [here]($RUN_URL)."
-            COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
+            COMMENT_ID=$( python $GITHUB_CLI_PATH get-pr-comments \
               --github-token "${GITHUB_TOKEN}" \
               --repo "<< parameters.REPO >>" \
               --pr-number "<< parameters.PR_NUMBER >>" \
@@ -131,6 +132,7 @@ commands:
       PR_NUMBER:
         type: string
     steps:
+      - utils/setup-circleci-utils
       - run:
           name: Post PR Comment
           command: |
@@ -139,7 +141,7 @@ commands:
               COMMENT_OPTION="--comment-id << parameters.COMMENT_ID >>"
             fi
 
-            python $MAIN_PATH post-pr-comment \
+            python $GITHUB_CLI_PATH post-pr-comment \
                   --github-token "${<< parameters.GITHUB_TOKEN >>}" \
                   --repo "<< parameters.REPO >>" \
                   --pr-number "<< parameters.PR_NUMBER >>" \
@@ -160,11 +162,12 @@ commands:
       PR_NUMBER:
         type: string
     steps:
+      - utils/setup-circleci-utils
       - run:
           name: Post PR Comment
           command: |
             if [ -n "${<< parameters.COMMENT_ID >>}" ]; then
-              python $MAIN_PATH delete-pr-comment \
+              python $GITHUB_CLI_PATH delete-pr-comment \
                 --github-token "${<< parameters.GITHUB_TOKEN >>}" \
                 --repo "<< parameters.REPO >>" \
                 --pr-number "<< parameters.PR_NUMBER >>" \
