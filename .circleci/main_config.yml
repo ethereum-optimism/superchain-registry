@@ -408,10 +408,10 @@ jobs:
               - << pipeline.parameters.is_pull_request >>
           steps:
             - utils/get-github-pr-comments:
-                REPO: $REPO
-                PR_NUMBER: $PR_NUMBER
+                repo: $REPO
+                pr-number: $PR_NUMBER
                 message: << parameters.message >>
-                GIT_TOKEN: GITHUB_TOKEN
+                token-name: GITHUB_TOKEN
             - report-on-diff-true:
                 REPO: $REPO
                 PR_NUMBER: $PR_NUMBER
