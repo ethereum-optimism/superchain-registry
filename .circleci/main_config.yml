@@ -194,6 +194,7 @@ commands:
         type: string
     steps:
       - run:
+          Name: Check if the diff is 1
           command: |
             #check if "$DIFF" is 1
             echo DIFF=$DIFF
@@ -230,6 +231,7 @@ commands:
         type: string
     steps:
       - run:
+          Name: Check if the diff is 0
           command: |
             #check if "$DIFF" is 0
             echo DIFF=$DIFF
@@ -478,6 +480,11 @@ jobs:
         description: "PR comment body prefixed message"
         type: string
     steps:
+      - run:
+          name: test
+          command: |
+            echo $CIRCLE_NODE_INDEX
+            exit 0
       - checkout
       - compute-config-diff:
           working_directory: validation
