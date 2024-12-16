@@ -150,10 +150,10 @@ commands:
               circleci step halt
             fi
       - utils/delete-github-pr-comment:
-          COMMENT_ID: << parameters.COMMENT_ID >>
-          GITHUB_TOKEN: << parameters.GITHUB_TOKEN >>
-          REPO: << parameters.REPO >>
-          PR_NUMBER: << parameters.PR_NUMBER >>
+          comment-id: << parameters.COMMENT_ID >>
+          token-name: << parameters.GITHUB_TOKEN >>
+          repo: << parameters.REPO >>
+          pr-number: << parameters.PR_NUMBER >>
 
   compute-config-diff:
     parameters:
