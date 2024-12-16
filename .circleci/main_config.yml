@@ -142,14 +142,14 @@ commands:
           command: |
             COMMENT_OPTION=""
             if [ -n "<< paramaters.COMMENT_ID >>" ]; then
-              COMMENT_OPTION="--comment-id $COMMENT_ID"
+              COMMENT_OPTION="--comment-id << paramaters.COMMENT_ID >>"
             fi
 
             python $MAIN_PATH post-pr-comment \
                   --github-token "${<< parameters.GITHUB_TOKEN >>}" \
-                  --repo "${REPO}" \
-                  --pr-number "${PR_NUMBER}" \
-                  --comment-body "${COMMENT_BODY}" \
+                  --repo "<< parameters.REPO >>" \
+                  --pr-number "<< parameters.PR_NUMBER >>" \
+                  --comment-body "<< parameters.COMMENT_BODY >>" \
                   $COMMENT_OPTION
 
   delete-pr-comment:
@@ -172,8 +172,8 @@ commands:
             if [ -n "${<< parameters.COMMENT_ID >>}" ]; then
               python $MAIN_PATH delete-pr-comment \
                 --github-token "${<< parameters.GITHUB_TOKEN >>}" \
-                --repo "${REPO}" \
-                --pr-number "${PR_NUMBER}" \
+                --repo "<< parameters.REPO >>" \
+                --pr-number "<< parameters.PR_NUMBER >>" \
                 --comment-id << parameters.COMMENT_ID >>
             fi
 
