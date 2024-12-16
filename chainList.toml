@@ -248,7 +248,7 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "Arena-Z Testnet"
+  name = "arena-z-testnet"
   identifier = "sepolia/arena-z-testnet"
   chain_id = 9897
   rpc = ["https://rpc.arena-z.t.raas.gelato.cloud"]

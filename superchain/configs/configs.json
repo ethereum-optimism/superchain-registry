@@ -1879,7 +1879,7 @@
           }
         },
         {
-          "Name": "Arena-Z Testnet",
+          "Name": "arena-z-testnet",
           "l2_chain_id": 9897,
           "PublicRPC": "https://rpc.arena-z.t.raas.gelato.cloud",
           "SequencerRPC": "https://rpc.arena-z.t.raas.gelato.cloud",

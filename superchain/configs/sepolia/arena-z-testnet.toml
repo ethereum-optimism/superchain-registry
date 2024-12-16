@@ -1,4 +1,4 @@
-name = "Arena-Z Testnet"
+name = "arena-z-testnet"
 chain_id = 9897
 public_rpc = "https://rpc.arena-z.t.raas.gelato.cloud"
 sequencer_rpc = "https://rpc.arena-z.t.raas.gelato.cloud"
