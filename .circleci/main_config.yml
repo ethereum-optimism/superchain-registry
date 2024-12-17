@@ -99,6 +99,10 @@ commands:
         type: string
       DIFF:
         type: string
+      TOKEN_NAME:
+        type: env_var_name
+        description: "The GitHub token to use for posting the comment"
+        default: GITHUB_APP_TOKEN
     steps:
       - run:
           Name: Check if the diff is 1
@@ -114,7 +118,7 @@ commands:
       - utils/post-github-pr-comment:
           comment-body: << parameters.COMMENT_BODY >>
           comment-id: << parameters.COMMENT_ID >>
-          token-name: GITHUB_TOKEN
+          token-name: << parameters.TOKEN_NAME >>
           repo: << parameters.REPO >>
           pr-number: << parameters.PR_NUMBER >>
 
@@ -136,6 +140,10 @@ commands:
         type: string
       DIFF:
         type: string
+      TOKEN_NAME:
+        type: env_var_name
+        description: "The GitHub token to use for posting the comment"
+        default: GITHUB_APP_TOKEN
     steps:
       - run:
           Name: Check if the diff is 0
@@ -150,7 +158,7 @@ commands:
             fi
       - utils/delete-github-pr-comment:
           comment-id: << parameters.COMMENT_ID >>
-          token-name: << parameters.GITHUB_TOKEN >>
+          token-name: << parameters.TOKEN_NAME >>
           repo: << parameters.REPO >>
           pr-number: << parameters.PR_NUMBER >>
 
@@ -407,11 +415,12 @@ jobs:
               - not: << pipeline.parameters.is_forked_pull_request >>
               - << pipeline.parameters.is_pull_request >>
           steps:
+            - utils/get-github-access-token:
+                repo: $REPO
             - utils/get-github-pr-comments:
                 repo: $REPO
                 pr-number: $PR_NUMBER
                 message: << parameters.message >>
-                token-name: GITHUB_TOKEN
             - report-on-diff-true:
                 REPO: $REPO
                 PR_NUMBER: $PR_NUMBER
@@ -473,10 +482,14 @@ workflows:
           command: "generate-genesis"
           directory: "generate-genesis"
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
-          context: circleci-superchain-registry
+          context:
+            - circleci-superchain-registry
+            - circleci-repo-superchain-registry
       - compute-config-diff-and-report:
           name: compute-rollup-config-diff
           command: "generate-rollup-config"
           directory: "generate-rollup-config"
           message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
-          context: circleci-superchain-registry
+          context:
+            - circleci-superchain-registry
+            - circleci-repo-superchain-registry
