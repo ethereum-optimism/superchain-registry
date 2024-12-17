@@ -414,9 +414,6 @@ jobs:
             COMMENT_BODY="<< parameters.message >>. You can see the detail [here](""$RUN_URL"")."
             echo "export COMMENT_BODY=$COMMENT_BODY" >> "$BASH_ENV"
 
-            echo $DIFF
-            echo $COMMENT_BODY
-
       - utils/get-github-access-token:
           repo: $REPO
       - utils/get-github-pr-comments:
