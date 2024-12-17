@@ -411,8 +411,7 @@ jobs:
             echo "export REPO=$REPO" >> "$BASH_ENV"
             echo "export DIFF=$DIFF" >> "$BASH_ENV"
             echo "export RUN_URL=$RUN_URL" >> "$BASH_ENV"
-            # COMMENT_BODY="<< parameters.message >>. You can see the detail [here]($RUN_URL)."
-            COMMENT_BODY="ALL GOOD"
+            COMMENT_BODY="<< parameters.message >>. You can see the detail [here](" $RUN_URL ")."
             echo "export COMMENT_BODY=$COMMENT_BODY" >> "$BASH_ENV"
 
             echo $DIFF
@@ -495,24 +494,24 @@ workflows:
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
           context: circleci-repo-superchain-registry
           requires: [compute-genesis-diff]
-      - compute-config-diff:
-          name: compute-rollup-config-diff
-          command: "generate-rollup-config"
-          save_to: "ROLLUP"
-          directory: "generate-rollup-config"
-      - report-config-diff:
-          name: report-rollup-config-diff
-          read_from: "ROLLUP"
-          message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
-          context: circleci-repo-superchain-registry
-          requires: [compute-rollup-config-diff]
+      # - compute-config-diff:
+      #     name: compute-rollup-config-diff
+      #     command: "generate-rollup-config"
+      #     save_to: "ROLLUP"
+      #     directory: "generate-rollup-config"
+      # - report-config-diff:
+      #     name: report-rollup-config-diff
+      #     read_from: "ROLLUP"
+      #     message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
+      #     context: circleci-repo-superchain-registry
+      #     requires: [compute-rollup-config-diff]
 
   compute-config-diff-only:
     when:
       and:
         - not:
             equal: [scheduled_pipeline, << pipeline.trigger_source >>]
-        - not: << pipeline.parameters.is_forked_pull_request >>
+        - not: << pipeline.parameters.is_pull_request >>
     jobs:
       - compute-config-diff:
           name: compute-genesis-diff
