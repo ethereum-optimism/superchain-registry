@@ -411,7 +411,9 @@ jobs:
             echo "export REPO=$REPO" >> "$BASH_ENV"
             echo "export DIFF=$DIFF" >> "$BASH_ENV"
             echo "export RUN_URL=$RUN_URL" >> "$BASH_ENV"
-            COMMENT_BODY="<< parameters.message >>. You can see the detail [here] $RUN_URL ."
+            COMMENT_BODY="<< parameters.message >>. You can see the detail [here]("
+            COMMENT_BODY="$COMMENT_BODY$RUN_URL"
+            COMMENT_BODY="$COMMENT_BODY)."
             echo "export COMMENT_BODY=$COMMENT_BODY" >> "$BASH_ENV"
 
       - utils/get-github-access-token:
