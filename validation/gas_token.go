@@ -44,24 +44,24 @@ func CheckGasToken(chain *superchain.ChainConfig, l1Client *ethclient.Client) er
 	}
 
 	l1BlockPredeployAddress := superchain.MustHexToAddress("0x4200000000000000000000000000000000000015")
-	got, err := getBool("isCustomGasToken()", l1BlockPredeployAddress, l2Client)
+	isCustomGasToken, err := getBool("isCustomGasToken()", l1BlockPredeployAddress, l2Client)
 	if err != nil && !strings.Contains(err.Error(), "execution reverted") {
 		// Pre: reverting is acceptable
 		return err
 	} else {
 		// Post: must be set to false
-		if got != false {
+		if isCustomGasToken {
 			return fmt.Errorf("L1Block.isCustomGasToken() must return false")
 		}
 	}
 
-	got, err = getBool("isCustomGasToken()", superchain.Addresses[chain.ChainID].SystemConfigProxy, l2Client)
+	isCustomGasToken, err = getBool("isCustomGasToken()", superchain.Addresses[chain.ChainID].SystemConfigProxy, l2Client)
 	if err != nil && !strings.Contains(err.Error(), "execution reverted") {
 		// Pre: reverting is acceptable
 		return err
 	} else {
 		// Post: must be set to false
-		if got != false {
+		if isCustomGasToken {
 			return fmt.Errorf("SystemConfigProxy.isCustomGasToken() must return false")
 		}
 	}
