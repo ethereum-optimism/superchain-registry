@@ -117,7 +117,6 @@ commands:
               echo "DIFF is not 1"
               circleci step halt
             fi
-
             echo "export COMMENT_BODY='<< parameters.COMMENT_BODY >>. You can see the detail [here]($RUN_URL).'">> "$BASH_ENV"
 
       - utils/post-github-pr-comment:
