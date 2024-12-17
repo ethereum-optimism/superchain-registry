@@ -118,7 +118,7 @@ commands:
               circleci step halt
             fi
 
-            export COMMENT_BODY="<< parameters.COMMENT_BODY >>. You can see the detail [here]($RUN_URL)."
+            echo "export COMMENT_BODY='<< parameters.COMMENT_BODY >>. You can see the detail [here]($RUN_URL).'">> "$BASH_ENV"
 
       - utils/post-github-pr-comment:
           comment-body: "$COMMENT_BODY"
