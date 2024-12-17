@@ -65,4 +65,4 @@ workflows:
         equal: ["__required__", << pipeline.parameters.chain>>]
     jobs:
       - upload-chain-artifacts:
-          context: circleci-superchain-registry
+          context: oplabs-artifacts
