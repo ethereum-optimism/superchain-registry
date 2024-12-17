@@ -11,8 +11,13 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-service/retry"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
+	"github.com/ethereum/go-ethereum"
 	"github.com/stretchr/testify/assert"
 )
+
+type EthClient interface {
+	CallContract(ctx context.Context, msg ethereum.CallMsg, blockNumber *big.Int) ([]byte, error)
+}
 
 // isBigIntWithinBounds returns true if actual is within bounds, where the bounds are [lower bound, upper bound] and are inclusive.
 var isBigIntWithinBounds = func(actual *big.Int, bounds [2]*big.Int) bool {
