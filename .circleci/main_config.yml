@@ -420,7 +420,7 @@ jobs:
           repo: $REPO
           pr-number: $PR_NUMBER
           message: << parameters.message >>
-          output-comment-id: COMMENT_ID
+          output-comment-id: "COMMENT_ID"
       - run:
           name: "get comment id"
           command: |
