@@ -99,6 +99,8 @@ commands:
         type: string
       DIFF:
         type: string
+      RUN_URL:
+        type: string
       TOKEN_NAME:
         type: env_var_name
         description: "The GitHub token to use for posting the comment"
@@ -125,9 +127,6 @@ commands:
 
   report-on-diff-false:
     parameters:
-      COMMENT_BODY:
-        type: string
-        description: "The body of the comment"
       COMMENT_ID:
         type: string
         description: "The ID of the comment to update"
@@ -157,7 +156,6 @@ commands:
               echo "DIFF is not 0"
               circleci step halt
             fi
-            echo << parameters.COMMENT_BODY >>
       - utils/delete-github-pr-comment:
           comment-id: << parameters.COMMENT_ID >>
           token-name: << parameters.TOKEN_NAME >>
@@ -414,9 +412,12 @@ jobs:
             echo "export REPO=$REPO" >> "$BASH_ENV"
             echo "export DIFF=$DIFF" >> "$BASH_ENV"
             echo "export RUN_URL=$RUN_URL" >> "$BASH_ENV"
+            COMMENT_BODY="<< parameters.message >>. You can see the detail [here]($RUN_URL)."
+            echo "export COMMENT_BODY=$COMMENT_BODY"$BASH_ENV"
 
             echo $DIFF
             echo $RUN_URL
+
       - when:
           condition:
             and: #only if it's a PR and there is a diff
@@ -429,18 +430,19 @@ jobs:
                 repo: $REPO
                 pr-number: $PR_NUMBER
                 message: << parameters.message >>
+                output-comment-id: COMMENT_ID
             - report-on-diff-true:
                 REPO: $REPO
                 PR_NUMBER: $PR_NUMBER
                 COMMENT_ID: $COMMENT_ID
                 DIFF: $DIFF
-                COMMENT_BODY: "<< parameters.message >>. You can see the detail [here]($RUN_URL)."
+                COMMENT_BODY: $COMMENT_BODY
+                RUN_URL: $RUN_URL
             - report-on-diff-false:
                 REPO: $REPO
                 PR_NUMBER: $PR_NUMBER
                 COMMENT_ID: $COMMENT_ID
                 DIFF: $DIFF
-                COMMENT_BODY: "<< parameters.message >>. You can see the detail [here]($RUN_URL)."
 
 workflows:
   hourly:
