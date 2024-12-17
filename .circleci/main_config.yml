@@ -117,8 +117,11 @@ commands:
               echo "DIFF is not 1"
               circleci step halt
             fi
+
+            export COMMENT_BODY="<< parameters.COMMENT_BODY >>. You can see the detail [here]($RUN_URL)."
+
       - utils/post-github-pr-comment:
-          comment-body: << parameters.COMMENT_BODY >>
+          comment-body: "$COMMENT_BODY"
           comment-id: << parameters.COMMENT_ID >>
           token-name: << parameters.TOKEN_NAME >>
           repo: << parameters.REPO >>
@@ -411,10 +414,6 @@ jobs:
             echo "export REPO=$REPO" >> "$BASH_ENV"
             echo "export DIFF=$DIFF" >> "$BASH_ENV"
             echo "export RUN_URL=$RUN_URL" >> "$BASH_ENV"
-            BODY="<< parameters.message >>. You can see the detail [here]($RUN_URL)."
-            echo "export BODY=$BODY" >> "$BASH_ENV"
-            echo $BODY
-            echo "export COMMENT_BODY=something" >> "$BASH_ENV"
 
       - utils/get-github-access-token:
           repo: $REPO
@@ -428,7 +427,7 @@ jobs:
           PR_NUMBER: $PR_NUMBER
           COMMENT_ID: $COMMENT_ID
           DIFF: $DIFF
-          COMMENT_BODY: $COMMENT_BODY
+          COMMENT_BODY: << parameters.message >>
           RUN_URL: $RUN_URL
       - report-on-diff-false:
           REPO: $REPO
