@@ -111,7 +111,6 @@ commands:
               echo "DIFF is not 1"
               circleci step halt
             fi
-
       - utils/post-github-pr-comment:
           comment-body: << parameters.COMMENT_BODY >>
           comment-id: << parameters.COMMENT_ID >>
