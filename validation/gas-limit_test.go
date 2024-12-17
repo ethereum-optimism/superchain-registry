@@ -14,6 +14,8 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+var BASE_CHAIN_ID = uint64(8453)
+
 func testGasLimit(t *testing.T, chain *ChainConfig) {
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
 
@@ -28,6 +30,12 @@ func testGasLimit(t *testing.T, chain *ChainConfig) {
 	desiredParam := standard.Config.Params[chain.Superchain].SystemConfig.GasLimit
 	actualParam, err := getGasLimitWithRetries(context.Background(), common.Address(contractAddress), client)
 	require.NoError(t, err)
+
+	// We're adding an exemption for Base here per https://github.com/ethereum-optimism/superchain-registry/issues/800
+	// TODO - This needs to be removed when Base adheres to the standard charter.
+	if chain.ChainID == BASE_CHAIN_ID {
+		return
+	}
 
 	assertIntInBounds(t, "gas_limit", actualParam, desiredParam)
 }
