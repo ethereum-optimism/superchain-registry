@@ -28,12 +28,9 @@ func init() {
 		Config.Params[network] = new(Params)
 		decodeTOMLFileIntoConfig("standard-config-params-"+network+".toml", Config.Params[network])
 
-		var versions VersionTags = VersionTags{
-			Releases: make(map[Tag]superchain.ContractVersions, 0),
-		}
-
+		versions := make(map[Tag]superchain.ContractVersions)
 		decodeTOMLFileIntoConfig("standard-versions-"+network+".toml", &versions)
-		NetworkVersions[network] = versions
+		ContractVersions[network] = versions
 	}
 
 	decodeTOMLFileIntoConfig("standard-bytecodes.toml", &BytecodeHashes)
@@ -56,6 +53,9 @@ func decodeTOMLFileIntoConfig[
 	data, err := fs.ReadFile(standardConfigFile, filename)
 	if err != nil {
 		panic(err)
+	}
+	if data == nil {
+		panic("empty data")
 	}
 	err = toml.Unmarshal(data, config)
 	if err != nil {

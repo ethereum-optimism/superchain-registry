@@ -36,11 +36,9 @@ func TestConfigInitialization(t *testing.T) {
 		})
 
 		t.Run(fmt.Sprintf("MultisigRoles[%s]", network), func(t *testing.T) {
-			roles := Config.MultisigRoles[network]
-
 			// Ensure network MultisigRoles are populated
+			roles := Config.MultisigRoles[network]
 			require.NotNil(t, roles, "Config.MultisigRoles[%s] should not be nil", network)
-
 			require.NotZero(t, roles, "Config.MultisigRoles[%s] should not be zero value", network)
 
 			l1Roles := roles.KeyHandover.L1.Universal
@@ -48,19 +46,19 @@ func TestConfigInitialization(t *testing.T) {
 			require.NotEmpty(t, l1Roles["ProxyAdmin"]["owner()"], "Config.MultisigRoles[%s].ProxyAdmin.\"owner()\" must be set", network)
 		})
 
-		t.Run(fmt.Sprintf("NetworkVersions[%s]", network), func(t *testing.T) {
+		t.Run(fmt.Sprintf("ContractVersions[%s]", network), func(t *testing.T) {
 			// Ensure network Versions are populated
-			versions, ok := NetworkVersions[network]
-			require.True(t, ok, "NetworkVersions[%s] should exist", network)
-			require.NotNil(t, versions, "NetworkVersions[%s] should not be nil", network)
-			require.NotZero(t, len(versions.Releases), "NetworkVersions[%s].Releases should not be empty", network)
+			versions, ok := ContractVersions[network]
+			require.True(t, ok, "ContractVersions[%s] should exist", network)
+			require.NotNil(t, versions, "ContractVersions[%s] should not be nil", network)
+			require.NotZero(t, len(versions), "ContractVersions[%s] should not be empty", network)
 
-			_, ok = versions.Releases[Release]
-			require.True(t, ok, "NetworkVersions[%s].Releases[%s] should exist", network, Release)
+			_, ok = versions[Release]
+			require.True(t, ok, "ContractVersions[%s][%s] should exist", network, Release)
 
-			// Ensure release.ImplementationAddress and release.Address are correctly set
-			release, ok := versions.Releases["op-contracts/v1.6.0"]
-			require.True(t, ok, "NetworkVersions[%s].Releases[%s] should exist", network, "op-contracts/v1.6.0")
+			// Ensure ImplementationAddress/Address are correctly set
+			release, ok := versions["op-contracts/v1.6.0"]
+			require.True(t, ok, "ContractVersions[%s][%s] should exist", network, "op-contracts/v1.6.0")
 			if network == "mainnet" {
 				require.Equal(t, "0xe2F826324b2faf99E513D16D266c3F80aE87832B", release.OptimismPortal.ImplementationAddress.String(), "failed parsing release implementation_address")
 			} else {
@@ -68,8 +66,8 @@ func TestConfigInitialization(t *testing.T) {
 			}
 			require.Nil(t, release.OptimismPortal.Address, "failed parsing release address")
 
-			_, ok = versions.Releases["fake-release"]
-			require.False(t, ok, "NetworkVersions[%s].Releases[%s] should not exist", network, Release)
+			_, ok = versions["fake-release"]
+			require.False(t, ok, "ContractVersions[%s][%s] should not exist", network, Release)
 		})
 	}
 }
