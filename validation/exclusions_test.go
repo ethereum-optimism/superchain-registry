@@ -34,6 +34,10 @@ var exclusions = map[string]map[uint64]bool{
 		10:   true, // op-mainnet
 		1740: true, // metal-sepolia
 	},
+	PublicRPCTest: {
+		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
+		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared
+	},
 	ChainIDRPCTest: {
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No Public RPC declared
 		11763072: true, // sepolia-dev-0/base-devnet-0     No Public RPC declared

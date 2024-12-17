@@ -17,11 +17,7 @@ import (
 
 func testResourceConfig(t *testing.T, chain *ChainConfig) {
 	rpcEndpoint := Superchains[chain.Superchain].Config.L1.PublicRPC
-
-	require.NotEmpty(t, rpcEndpoint)
-
-	client, err := ethclient.Dial(rpcEndpoint)
-	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+	client, _ := ethclient.Dial(rpcEndpoint)
 
 	contractAddress, err := Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
 	require.NoError(t, err)

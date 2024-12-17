@@ -12,4 +12,5 @@ holocene_time = 1731682800 # Fri Nov 15 15:00:00 UTC 2024
 [l1]
   chain_id = 11155111
   public_rpc = "https://ethereum-sepolia-rpc.publicnode.com"
+  test_rpc = "https://ci-sepolia-l1-archive.optimism.io"
   explorer = "https://sepolia.etherscan.io"
