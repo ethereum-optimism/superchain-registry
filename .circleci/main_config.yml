@@ -117,7 +117,6 @@ commands:
               echo "DIFF is not 1"
               circleci step halt
             fi
-            echo << parameters.COMMENT_BODY >>
       - utils/post-github-pr-comment:
           comment-body: << parameters.COMMENT_BODY >>
           comment-id: << parameters.COMMENT_ID >>
@@ -412,7 +411,8 @@ jobs:
             echo "export REPO=$REPO" >> "$BASH_ENV"
             echo "export DIFF=$DIFF" >> "$BASH_ENV"
             echo "export RUN_URL=$RUN_URL" >> "$BASH_ENV"
-            COMMENT_BODY="<< parameters.message >>. You can see the detail [here]($RUN_URL)."
+            # COMMENT_BODY="<< parameters.message >>. You can see the detail [here]($RUN_URL)."
+            COMMENT_BODY="ALL GOOD"
             echo "export COMMENT_BODY=$COMMENT_BODY" >> "$BASH_ENV"
 
             echo $DIFF
@@ -512,6 +512,7 @@ workflows:
       and:
         - not:
             equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+        - not: << pipeline.parameters.is_forked_pull_request >>
     jobs:
       - compute-config-diff:
           name: compute-genesis-diff
