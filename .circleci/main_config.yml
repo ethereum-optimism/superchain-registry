@@ -492,17 +492,17 @@ workflows:
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
           context: circleci-repo-superchain-registry
           requires: [compute-genesis-diff]
-      # - compute-config-diff:
-      #     name: compute-rollup-config-diff
-      #     command: "generate-rollup-config"
-      #     save_to: "ROLLUP"
-      #     directory: "generate-rollup-config"
-      # - report-config-diff:
-      #     name: report-rollup-config-diff
-      #     read_from: "ROLLUP"
-      #     message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
-      #     context: circleci-repo-superchain-registry
-      #     requires: [compute-rollup-config-diff]
+      - compute-config-diff:
+          name: compute-rollup-config-diff
+          command: "generate-rollup-config"
+          save_to: "ROLLUP"
+          directory: "generate-rollup-config"
+      - report-config-diff:
+          name: report-rollup-config-diff
+          read_from: "ROLLUP"
+          message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
+          context: circleci-repo-superchain-registry
+          requires: [compute-rollup-config-diff]
 
   compute-config-diff-only:
     when:
