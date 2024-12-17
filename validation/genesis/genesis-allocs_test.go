@@ -25,6 +25,10 @@ var temporaryOptimismDir string
 
 // TestMain is the entry point for testing in this package.
 func TestMain(m *testing.M) {
+	if os.Getenv("SKIP_TESTMAIN") == "true" {
+		return
+	}
+
 	// Clone optimism into gitignored temporary directory (if that directory does not yet exist)
 	// We avoid cloning under the superchain-registry tree, since this causes dependency resolution problems
 	_, filename, _, ok := runtime.Caller(0)
