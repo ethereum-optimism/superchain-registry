@@ -18,6 +18,24 @@
     }
   },
   {
+    "name": "arena-z",
+    "identifier": "mainnet/arena-z",
+    "chainId": 7897,
+    "rpc": [
+      "https://rpc.arena-z.gg"
+    ],
+    "explorers": [
+      "https://explorer.arena-z.gg"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Automata Mainnet",
     "identifier": "mainnet/automata",
     "chainId": 65536,
