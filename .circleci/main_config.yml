@@ -421,10 +421,14 @@ jobs:
           pr-number: $PR_NUMBER
           message: << parameters.message >>
           output-comment-id: COMMENT_ID
+      - run:
+          name: "get comment id"
+          command: |
+            echo $COMMENT_ID
       - report-on-diff-true:
           REPO: $REPO
           PR_NUMBER: $PR_NUMBER
-          COMMENT_ID: $COMMENT_ID
+          COMMENT_ID: "$COMMENT_ID"
           DIFF: $DIFF
           COMMENT_BODY: << parameters.message >>
           RUN_URL: $RUN_URL
