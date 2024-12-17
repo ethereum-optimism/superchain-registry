@@ -413,7 +413,7 @@ jobs:
             echo "export DIFF=$DIFF" >> "$BASH_ENV"
             echo "export RUN_URL=$RUN_URL" >> "$BASH_ENV"
             COMMENT_BODY="<< parameters.message >>. You can see the detail [here]($RUN_URL)."
-            echo "export COMMENT_BODY=$COMMENT_BODY"$BASH_ENV"
+            echo "export COMMENT_BODY=$COMMENT_BODY" >> $BASH_ENV"
 
             echo $DIFF
             echo $RUN_URL
