@@ -15,8 +15,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-var getGasLimitWithRetriesFunc = getGasLimitWithRetries // Default implementation
-
 func testGasLimit(t *testing.T, chain *superchain.ChainConfig) {
 	rpcEndpoint := superchain.Superchains[chain.Superchain].Config.L1.PublicRPC
 	require.NotEmpty(t, rpcEndpoint)
@@ -28,14 +26,24 @@ func testGasLimit(t *testing.T, chain *superchain.ChainConfig) {
 	require.NoError(t, err)
 }
 
-func CheckGasLimit(chain *superchain.ChainConfig, l1Client *ethclient.Client) error {
+// Allows mock implementations to be passed in for testing
+type getGasLimitWithRetriesFuncType func(context.Context, common.Address, *ethclient.Client) (uint64, error)
+
+func CheckGasLimit(chain *superchain.ChainConfig, l1Client *ethclient.Client, override ...getGasLimitWithRetriesFuncType) error {
+
+	f := getGasLimitWithRetries
+
+	if len(override) > 0 {
+		f = override[0]
+	}
+
 	contractAddress, err := superchain.Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
 	if err != nil {
 		return err
 	}
 
 	desiredParam := standard.Config.Params[chain.Superchain].SystemConfig.GasLimit
-	actualParam, err := getGasLimitWithRetriesFunc(context.Background(), common.Address(contractAddress), l1Client)
+	actualParam, err := f(context.Background(), common.Address(contractAddress), l1Client)
 	if err != nil {
 		return err
 	}
