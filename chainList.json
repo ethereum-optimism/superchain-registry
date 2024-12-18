@@ -253,6 +253,24 @@
     }
   },
   {
+    "name": "Superseed",
+    "identifier": "mainnet/sseed",
+    "chainId": 5330,
+    "rpc": [
+      "https://mainnet.superseed.xyz"
+    ],
+    "explorers": [
+      "https://explorer.superseed.xyz"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Swan Chain Mainnet",
     "identifier": "mainnet/swan",
     "chainId": 254,

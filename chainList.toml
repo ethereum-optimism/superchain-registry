@@ -182,6 +182,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Superseed"
+  identifier = "mainnet/sseed"
+  chain_id = 5330
+  rpc = ["https://mainnet.superseed.xyz"]
+  explorers = ["https://explorer.superseed.xyz"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Swan Chain Mainnet"
   identifier = "mainnet/swan"
   chain_id = 254
