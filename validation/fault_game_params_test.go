@@ -73,6 +73,7 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err)
 	isMainnet := chain.Superchain == "mainnet"
 	mips64Address, err := Addresses[chain.ChainID].AddressFor("MIPS64")
+	require.NoError(t, err)
 	vmAddress := MustHexToAddress(vm[0])
 	isMips64 := vmAddress == mips64Address
 	// TODO: This is a temporary workaround to avoid checking the absolute prestate on testnets
