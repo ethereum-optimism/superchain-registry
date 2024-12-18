@@ -87,20 +87,20 @@ commands:
 
   report-on-diff-true:
     parameters:
-      COMMENT_BODY:
-        type: string
+      MESSAGE:
+        type: env_var_name
         description: "The body of the comment"
       COMMENT_ID:
-        type: string
+        type: env_var_name
         description: "The ID of the comment to update"
       REPO:
-        type: string
+        type: env_var_name
       PR_NUMBER:
-        type: string
+        type: env_var_name
       DIFF:
-        type: string
+        type: env_var_name
       RUN_URL:
-        type: string
+        type: env_var_name
       TOKEN_NAME:
         type: env_var_name
         description: "The GitHub token to use for posting the comment"
@@ -118,10 +118,10 @@ commands:
               circleci step halt
             fi
 
-            echo "export COMMENT_BODY='<< parameters.COMMENT_BODY >>. You can see the detail [here]($RUN_URL).'">> "$BASH_ENV"
+            echo "export COMMENT_BODY='${<< parameters.MESSAGE >>}. You can see the detail [here]($RUN_URL).'">> "$BASH_ENV"
 
       - utils/post-github-pr-comment:
-          comment-body: "$COMMENT_BODY"
+          comment-body: COMMENT_BODY
           comment-id: << parameters.COMMENT_ID >>
           token-name: << parameters.TOKEN_NAME >>
           repo: << parameters.REPO >>
@@ -130,18 +130,18 @@ commands:
   report-on-diff-false:
     parameters:
       COMMENT_ID:
-        type: string
+        type: env_var_name
         description: "The ID of the comment to update"
       GITHUB_TOKEN:
         type: env_var_name
         description: "The GitHub token to use for posting the comment"
         default: GITHUB_TOKEN
       REPO:
-        type: string
+        type: env_var_name
       PR_NUMBER:
-        type: string
+        type: env_var_name
       DIFF:
-        type: string
+        type: env_var_name
       TOKEN_NAME:
         type: env_var_name
         description: "The GitHub token to use for posting the comment"
@@ -414,30 +414,31 @@ jobs:
             echo "export REPO=$REPO" >> "$BASH_ENV"
             echo "export DIFF=$DIFF" >> "$BASH_ENV"
             echo "export RUN_URL=$RUN_URL" >> "$BASH_ENV"
+            echo "export MESSAGE='<< parameters.message >>'" >> "$BASH_ENV"
 
       - utils/get-github-access-token:
-          repo: $REPO
+          repo: REPO
       - utils/get-github-pr-comments:
-          repo: $REPO
-          pr-number: $PR_NUMBER
-          message: << parameters.message >>
+          repo: REPO
+          pr-number: PR_NUMBER
+          message: MESSAGE
 
       - run:
           name: "get comment id"
           command: |
             echo $COMMENT_ID
       - report-on-diff-true:
-          REPO: $REPO
-          PR_NUMBER: $PR_NUMBER
-          COMMENT_ID: "$COMMENT_ID"
-          DIFF: $DIFF
-          COMMENT_BODY: << parameters.message >>
-          RUN_URL: $RUN_URL
+          REPO: REPO
+          PR_NUMBER: PR_NUMBER
+          COMMENT_ID: COMMENT_ID
+          DIFF: DIFF
+          COMMENT_BODY: MESSAGE
+          RUN_URL: RUN_URL
       - report-on-diff-false:
-          REPO: $REPO
-          PR_NUMBER: $PR_NUMBER
-          COMMENT_ID: $COMMENT_ID
-          DIFF: $DIFF
+          REPO: REPO
+          PR_NUMBER: PR_NUMBER
+          COMMENT_ID: COMMENT_ID
+          DIFF: DIFF
 
 workflows:
   hourly:
