@@ -307,6 +307,7 @@ type AddressList struct {
 	DisputeGameFactoryProxy      Address `json:"DisputeGameFactoryProxy,omitempty" toml:"DisputeGameFactoryProxy,omitempty"`
 	FaultDisputeGame             Address `json:"FaultDisputeGame,omitempty" toml:"FaultDisputeGame,omitempty"`
 	MIPS                         Address `json:"MIPS,omitempty" toml:"MIPS,omitempty"`
+	MIPS64                       Address `json:"MIPS64,omitempty" toml:"MIPS64,omitempty"`
 	PermissionedDisputeGame      Address `json:"PermissionedDisputeGame,omitempty" toml:"PermissionedDisputeGame,omitempty"`
 	PreimageOracle               Address `json:"PreimageOracle,omitempty" toml:"PreimageOracle,omitempty"`
 
@@ -359,6 +360,7 @@ type MappedContractProperties[T string | VersionedContract] struct {
 	DisputeGameFactory      T `toml:"dispute_game_factory,omitempty"`
 	FaultDisputeGame        T `toml:"fault_dispute_game,omitempty"`
 	MIPS                    T `toml:"mips,omitempty"`
+	MIPS64                  T `toml:"mips64,omitempty"`
 	PermissionedDisputeGame T `toml:"permissioned_dispute_game,omitempty"`
 	PreimageOracle          T `toml:"preimage_oracle,omitempty"`
 	CannonFaultDisputeGame  T `toml:"cannon_fault_dispute_game,omitempty"`
