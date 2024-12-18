@@ -431,7 +431,7 @@ jobs:
           PR_NUMBER: PR_NUMBER
           COMMENT_ID: COMMENT_ID
           DIFF: DIFF
-          COMMENT_BODY: MESSAGE
+          MESSAGE: MESSAGE
           RUN_URL: RUN_URL
       - report-on-diff-false:
           REPO: REPO
