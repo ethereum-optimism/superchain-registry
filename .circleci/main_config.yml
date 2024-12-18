@@ -158,6 +158,7 @@ commands:
               echo "DIFF is not 0"
               circleci step halt
             fi
+
       - utils/delete-github-pr-comment:
           comment-id: << parameters.COMMENT_ID >>
           token-name: << parameters.TOKEN_NAME >>
