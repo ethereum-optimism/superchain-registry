@@ -422,7 +422,6 @@ jobs:
           repo: REPO
           pr-number: PR_NUMBER
           message: MESSAGE
-
       - run:
           name: "get comment id"
           command: |
