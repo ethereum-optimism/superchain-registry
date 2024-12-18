@@ -69,9 +69,20 @@ func testFaultGameParams(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err)
 	require.Equal(t, "0x0000000000000000000000000000000000000000000000000000000000002a30", clockExtension[0], "PermissionedDisputeGame: game clock extension") // 10800 sec = 3 hours
 
-	absolutePrestate, err := CastCall(permissionedDisputeGameAddr, "absolutePrestate()", nil, rpcEndpoint)
+	vm, err := CastCall(permissionedDisputeGameAddr, "vm()(address)", nil, rpcEndpoint)
 	require.NoError(t, err)
-	require.Truef(t, findOpProgramRelease(t, absolutePrestate[0], chain.Superchain), "onchain op-program prestate hash is not from a standard version: %v", absolutePrestate[0])
+	isMainnet := chain.Superchain == "mainnet"
+	mips64Address, err := Addresses[chain.ChainID].AddressFor("MIPS64")
+	vmAddress := MustHexToAddress(vm[0])
+	isMips64 := vmAddress == mips64Address
+	// TODO: This is a temporary workaround to avoid checking the absolute prestate on testnets
+	// The prestates registry cannot disambiguate between MIPS and MIPS64 prestates for the same op-program release.
+	// This limitation is temporary as once the superchain is upgraded to MIPS64, all op-program prestate releases will implicitly be MIPS64 prestates.
+	if isMainnet || !isMips64 {
+		absolutePrestate, err := CastCall(permissionedDisputeGameAddr, "absolutePrestate()", nil, rpcEndpoint)
+		require.NoError(t, err)
+		require.Truef(t, findOpProgramRelease(t, absolutePrestate[0], chain.Superchain), "onchain op-program prestate hash is not from a standard version: %v", absolutePrestate[0])
+	}
 
 	// PreimageOracle
 	challengePeriod, err := CastCall(preimageOracleAddr, "challengePeriod()", nil, rpcEndpoint)
