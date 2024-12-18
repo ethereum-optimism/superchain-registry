@@ -3,10 +3,12 @@ package validation
 import (
 	"context"
 	"fmt"
+	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
+	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -14,6 +16,17 @@ import (
 )
 
 type getGasLimitFunc func(context.Context, common.Address, *ethclient.Client) (uint64, error)
+
+func testGasLimit(t *testing.T, chain *superchain.ChainConfig) {
+	rpcEndpoint := superchain.Superchains[chain.Superchain].Config.L1.PublicRPC
+	require.NotEmpty(t, rpcEndpoint)
+
+	client, err := ethclient.Dial(rpcEndpoint)
+	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+
+	err = CheckGasLimit(chain, client, nil)
+	require.NoError(t, err)
+}
 
 func CheckGasLimit(chain *superchain.ChainConfig, l1Client *ethclient.Client, getGasLimitOverride *getGasLimitFunc) error {
 	getGasLimit := getGasLimitDefault

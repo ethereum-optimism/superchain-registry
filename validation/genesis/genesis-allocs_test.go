@@ -25,7 +25,7 @@ var temporaryOptimismDir string
 
 // TestMain is the entry point for testing in this package.
 func TestMain(m *testing.M) {
-	if os.Getenv("SKIP_TESTMAIN") == "true" {
+	if os.Getenv("SKIP_GENESIS_ALLOCS") == "true" {
 		return
 	}
 
