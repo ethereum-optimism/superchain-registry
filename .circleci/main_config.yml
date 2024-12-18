@@ -121,7 +121,7 @@ commands:
             echo "export COMMENT_BODY='${<< parameters.MESSAGE >>}. You can see the detail [here]($RUN_URL).'">> "$BASH_ENV"
 
       - utils/post-github-pr-comment:
-          comment-body: COMMENT_BODY
+          comment-body: $COMMENT_BODY
           comment-id: << parameters.COMMENT_ID >>
           token-name: << parameters.TOKEN_NAME >>
           repo: << parameters.REPO >>
@@ -428,17 +428,17 @@ jobs:
           command: |
             echo $COMMENT_ID
       - report-on-diff-true:
-          REPO: REPO
-          PR_NUMBER: PR_NUMBER
-          COMMENT_ID: COMMENT_ID
-          DIFF: DIFF
-          MESSAGE: MESSAGE
-          RUN_URL: RUN_URL
+          REPO: $REPO
+          PR_NUMBER: $PR_NUMBER
+          COMMENT_ID: $COMMENT_ID
+          DIFF: $DIFF
+          MESSAGE: $MESSAGE
+          RUN_URL: $RUN_URL
       - report-on-diff-false:
-          REPO: REPO
-          PR_NUMBER: PR_NUMBER
-          COMMENT_ID: COMMENT_ID
-          DIFF: DIFF
+          REPO: $REPO
+          PR_NUMBER: $PR_NUMBER
+          COMMENT_ID: $COMMENT_ID
+          DIFF: $DIFF
 
 workflows:
   hourly:
