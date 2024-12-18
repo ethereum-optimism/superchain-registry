@@ -54,6 +54,11 @@ var exclusions = map[string]map[uint64]bool{
 	OptimismPortal2ParamsTest: {
 		11763072: true, // sepolia-dev0/base-devnet-0
 	},
+	GasLimitTest: {
+		// We're adding an exemption for Base here per https://github.com/ethereum-optimism/superchain-registry/issues/800
+		// TODO - This needs to be removed when Base adheres to the standard charter.
+		8453: true, // base
+	},
 }
 
 var silences = map[string]map[uint64]time.Time{
