@@ -13,16 +13,21 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-var getGasLimitWithRetriesFunc = getGasLimitWithRetries // Default implementation
+type getGasLimitFunc func(context.Context, common.Address, *ethclient.Client) (uint64, error)
 
-func CheckGasLimit(chain *superchain.ChainConfig, l1Client *ethclient.Client) error {
+func CheckGasLimit(chain *superchain.ChainConfig, l1Client *ethclient.Client, getGasLimitOverride *getGasLimitFunc) error {
+	getGasLimit := getGasLimitDefault
+	if getGasLimitOverride != nil {
+		getGasLimit = *getGasLimitOverride
+	}
+
 	contractAddress, err := superchain.Addresses[chain.ChainID].AddressFor("SystemConfigProxy")
 	if err != nil {
 		return err
 	}
 
 	desiredParam := standard.Config.Params[chain.Superchain].SystemConfig.GasLimit
-	actualParam, err := getGasLimitWithRetriesFunc(context.Background(), common.Address(contractAddress), l1Client)
+	actualParam, err := getGasLimit(context.Background(), common.Address(contractAddress), l1Client)
 	if err != nil {
 		return err
 	}
@@ -33,7 +38,7 @@ func CheckGasLimit(chain *superchain.ChainConfig, l1Client *ethclient.Client) er
 	return nil
 }
 
-func getGasLimitWithRetries(ctx context.Context, systemConfigAddr common.Address, client *ethclient.Client) (uint64, error) {
+func getGasLimitDefault(ctx context.Context, systemConfigAddr common.Address, client *ethclient.Client) (uint64, error) {
 	callOpts := &bind.CallOpts{Context: ctx}
 	systemConfig, err := bindings.NewSystemConfig(systemConfigAddr, client)
 	if err != nil {
