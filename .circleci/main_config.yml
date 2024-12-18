@@ -3,7 +3,7 @@ orbs:
   go: circleci/go@2.1.0
   node: circleci/node@5.2.0
   slack: circleci/slack@4.10.1
-  utils: ethereum-optimism/circleci-utils@0.0.4
+  utils: ethereum-optimism/circleci-utils@dev:first
 
 parameters:
   go_version:
