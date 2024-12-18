@@ -12,6 +12,17 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+func testGasLimit(t *testing.T, chain *superchain.ChainConfig) {
+	rpcEndpoint := superchain.Superchains[chain.Superchain].Config.L1.PublicRPC
+	require.NotEmpty(t, rpcEndpoint)
+
+	client, err := ethclient.Dial(rpcEndpoint)
+	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
+
+	err = CheckGasLimit(chain, client)
+	require.NoError(t, err)
+}
+
 func TestCheckGasLimit(t *testing.T) {
 	mockClient := &ethclient.Client{}
 	mockChain := &superchain.ChainConfig{
