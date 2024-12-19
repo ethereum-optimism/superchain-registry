@@ -127,6 +127,24 @@
     }
   },
   {
+    "name": "Ink",
+    "identifier": "mainnet/ink",
+    "chainId": 57073,
+    "rpc": [
+      "https://rpc-gel.inkonchain.com"
+    ],
+    "explorers": [
+      "https://explorer.inkonchain.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Lisk",
     "identifier": "mainnet/lisk",
     "chainId": 1135,
