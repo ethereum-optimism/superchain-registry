@@ -4,6 +4,7 @@ public_rpc = "https://funki-testnet.alt.technology"
 sequencer_rpc = "https://funki-testnet.alt.technology"
 explorer = "https://sepolia-sandbox.funkichain.com/"
 superchain_level = 0
+governed_by_optimism = false
 batch_inbox_addr = "0xff000000000000000000000000000000000084bB"
 canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC

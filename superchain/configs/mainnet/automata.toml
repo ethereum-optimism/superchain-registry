@@ -4,6 +4,7 @@ public_rpc = "https://rpc.ata.network"
 sequencer_rpc = "https://automata-mainnet.alt.technology/"
 explorer = "https://explorer.ata.network"
 superchain_level = 0
+governed_by_optimism = false
 batch_inbox_addr = "0xff00000000000000000000000000000001111111"
 canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
