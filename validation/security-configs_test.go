@@ -9,62 +9,12 @@ import (
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/internal/bindings"
 	"github.com/ethereum-optimism/superchain-registry/validation/standard"
-	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/require"
 )
-
-func getAddressFromConfig(chainID uint64, contractName string) (Address, error) {
-	if common.IsHexAddress(contractName) {
-		return Address(common.HexToAddress(contractName)), nil
-	}
-
-	contractAddress, err := Addresses[chainID].AddressFor(contractName)
-
-	return contractAddress, err
-}
-
-func getAddressFromChain(method string, contractAddress Address, client *ethclient.Client) (Address, error) {
-	addr := (common.Address(contractAddress))
-	callMsg := ethereum.CallMsg{
-		To:   &addr,
-		Data: crypto.Keccak256([]byte(method))[:4],
-	}
-
-	// Make the call
-	callContract := func(msg ethereum.CallMsg) ([]byte, error) {
-		return client.CallContract(context.Background(), msg, nil)
-	}
-	result, err := Retry(callContract)(callMsg)
-	if err != nil {
-		return Address{}, err
-	}
-
-	return Address(common.BytesToAddress(result)), nil
-}
-
-var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64, client *ethclient.Client) {
-	for contract, methodToOutput := range r {
-		contractAddress, err := getAddressFromConfig(chainID, contract)
-		require.NoError(t, err)
-
-		for method, output := range methodToOutput {
-			want, err := getAddressFromConfig(chainID, output)
-			require.NoError(t, err)
-
-			got, err := getAddressFromChain(method, contractAddress, client)
-			require.NoErrorf(t, err, "problem calling %s.%s (%s)", contract, method, contractAddress)
-
-			// Use t.Errorf here for a concise output of failures, since failure info is sent to a slack channel
-			if want != got {
-				t.Errorf("%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
-			}
-		}
-	}
-}
 
 func testL1SecurityConfig(t *testing.T, chain *ChainConfig) {
 	chainID := chain.ChainID
