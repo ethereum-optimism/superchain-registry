@@ -381,7 +381,7 @@ jobs:
             go run <<parameters.command>>/main.go base
 
       - run:
-          name: Compute diff
+          name: -- READ HERE FOR IMPORTANT INFO ON DIFF --
           working_directory: validation
           command: |
             # Allow the script to continue even if the diff-configs.sh script returns a non-zero exit code
