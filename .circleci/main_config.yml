@@ -356,10 +356,12 @@ jobs:
             echo "DIFF=$DIFF"
             if [ "$DIFF" -eq 1 ]; then
               #when there is a diff we should report
-              echo "export condition=0" >> $BASH_ENV
+              echo "export condition_post_pr=0" >> $BASH_ENV
+              echo "export condition_delete_pr=1" >> $BASH_ENV
             else
               #when there is no diff we should not report and we should delete the comment
-              echo "export condition=1" >> $BASH_ENV
+              echo "export condition_post_pr=1" >> $BASH_ENV
+              echo "export condition_delete_pr=0" >> $BASH_ENV
             fi
       - utils/post-github-pr-comment:
           repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
@@ -367,13 +369,13 @@ jobs:
           comment-id: $COMMENT_ID #comment-id is set in the previous step. It is needed to know which comment to reply to
           comment-body: $COMMENT_BODY #comment-body is the body of the comment that will be posted
           token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
-          condition: $condition
+          condition: $condition_post_pr
       - utils/delete-github-pr-comment:
           repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
           pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
           comment-id: $COMMENT_ID #comment-id is set in the previous step. It is needed to know which comment to reply to
           token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
-          condition: $condition
+          condition: $condition_delete_pr
 
 workflows:
   hourly:
