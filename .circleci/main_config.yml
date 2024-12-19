@@ -87,83 +87,94 @@ commands:
 
   report-on-diff-true:
     parameters:
-      MESSAGE:
-        type: env_var_name
+      message:
+        type: string
         description: "The body of the comment"
-      COMMENT_ID:
-        type: env_var_name
-        description: "The ID of the comment to update"
-      REPO:
-        type: env_var_name
-      PR_NUMBER:
-        type: env_var_name
-      DIFF:
-        type: env_var_name
-      RUN_URL:
-        type: env_var_name
-      TOKEN_NAME:
-        type: env_var_name
-        description: "The GitHub token to use for posting the comment"
-        default: GITHUB_APP_TOKEN
     steps:
       - run:
           Name: Check if the diff is 1
           command: |
-            #check if "$DIFF" is 1
-            echo DIFF=$DIFF
+            echo "DIFF=$DIFF"
             if [ "$DIFF" -eq 1 ]; then
+              #when there is a diff we should report
               echo report-on-diff-true
             else
-              echo "DIFF is not 1"
+              #when there is no diff we should not report and we should halt the pipeline
               circleci step halt
             fi
+      - run:
+          name: "Set PR_NUMBER, REPO, DIFF, RUN_URL, MESSAGE"
+          command: |
+            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            echo "export PR_NUMBER=$PR_NUMBER" >> "$BASH_ENV"
 
-            echo "export COMMENT_BODY='${<< parameters.MESSAGE >>}. You can see the detail [here]($RUN_URL).'">> "$BASH_ENV"
+            REPO=${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+            echo "export REPO=$REPO" >> "$BASH_ENV"
 
+            echo "export COMMENT_BODY='<< parameters.message >>. You can see the detail [here](${RUN_URL}).'">> "$BASH_ENV"
+      - utils/get-github-access-token:
+          private-key-str: GITHUB_APP_KEY # GITHUB_APP_KEY is a context variable. Default is GITHUB_APP_KEY. Adding here for clarity
+          app-id: GITHUB_APP_ID # GITHUB_APP_ID is a context variable. Default is GITHUB_APP_ID. Adding here for clarity
+          repo: $REPO # REPO is set in the previous step, is needed to get the installation id
+          output-token-name: GITHUB_APP_TOKEN # output-token-name is the name of the output variable. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+      - utils/get-github-pr-comments:
+          repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
+          pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
+          message: << parameters.message >> #message is the message that will be used to filter the comments. The search will check if this message is contained in the comment body
+          token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+          output-comment-id: COMMENT_ID #output-comment-id is the name of the output variable. Default is COMMENT_ID. Adding here for clarity.
       - utils/post-github-pr-comment:
-          comment-body: $COMMENT_BODY
-          comment-id: << parameters.COMMENT_ID >>
-          token-name: << parameters.TOKEN_NAME >>
-          repo: << parameters.REPO >>
-          pr-number: << parameters.PR_NUMBER >>
+          repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
+          pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
+          comment-id: $COMMENT_ID #comment-id is set in the previous step. It is needed to know which comment to reply to
+          comment-body: $COMMENT_BODY #comment-body is the body of the comment that will be posted
+          token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
 
   report-on-diff-false:
     parameters:
-      COMMENT_ID:
-        type: env_var_name
-        description: "The ID of the comment to update"
-      GITHUB_TOKEN:
-        type: env_var_name
-        description: "The GitHub token to use for posting the comment"
-        default: GITHUB_TOKEN
-      REPO:
-        type: env_var_name
-      PR_NUMBER:
-        type: env_var_name
+      message:
+        type: string
+        description: "The body of the comment"
       DIFF:
-        type: env_var_name
-      TOKEN_NAME:
-        type: env_var_name
-        description: "The GitHub token to use for posting the comment"
-        default: GITHUB_APP_TOKEN
+        type: string
     steps:
       - run:
           Name: Check if the diff is 0
           command: |
-            #check if "$DIFF" is 0
-            echo DIFF=$DIFF
+            echo "DIFF=$DIFF"
             if [ "$DIFF" -eq 0 ]; then
+              #when there is no diff we should delete the comment
               echo report-on-diff-false
             else
-              echo "DIFF is not 0"
+              #when there is a diff we should not delete the comment and we should halt the pipeline
               circleci step halt
             fi
+      - run:
+          name: "Set PR_NUMBER, REPO, DIFF, RUN_URL, MESSAGE"
+          command: |
+            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            echo "export PR_NUMBER=$PR_NUMBER" >> "$BASH_ENV"
 
+            REPO=${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+            echo "export REPO=$REPO" >> "$BASH_ENV"
+
+            echo "export COMMENT_BODY='<< parameters.message >>. You can see the detail [here](${RUN_URL}).'">> "$BASH_ENV"
+      - utils/get-github-access-token:
+          private-key-str: GITHUB_APP_KEY # GITHUB_APP_KEY is a context variable. Default is GITHUB_APP_KEY. Adding here for clarity
+          app-id: GITHUB_APP_ID # GITHUB_APP_ID is a context variable. Default is GITHUB_APP_ID. Adding here for clarity
+          repo: $REPO # REPO is set in the previous step, is needed to get the installation id
+          output-token-name: GITHUB_APP_TOKEN # output-token-name is the name of the output variable. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+      - utils/get-github-pr-comments:
+          repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
+          pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
+          message: << parameters.message >> #message is the message that will be used to filter the comments. The search will check if this message is contained in the comment body
+          token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+          output-comment-id: COMMENT_ID #output-comment-id is the name of the output variable. Default is COMMENT_ID. Adding here for clarity.
       - utils/delete-github-pr-comment:
-          comment-id: << parameters.COMMENT_ID >>
-          token-name: << parameters.TOKEN_NAME >>
-          repo: << parameters.REPO >>
-          pr-number: << parameters.PR_NUMBER >>
+          repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
+          pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
+          comment-id: $COMMENT_ID #comment-id is set in the previous step. It is needed to know which comment to reply to
+          token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
 
 jobs:
   golang-lint:
@@ -408,38 +419,12 @@ jobs:
           working_directory: validation
           command: |
             source <<parameters.read_from>>
+            #DIFF is set in the previous job and shared via workspace
 
-            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
-            REPO=${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
-            echo "export PR_NUMBER=$PR_NUMBER" >> "$BASH_ENV"
-            echo "export REPO=$REPO" >> "$BASH_ENV"
-            echo "export DIFF=$DIFF" >> "$BASH_ENV"
-            echo "export RUN_URL=$RUN_URL" >> "$BASH_ENV"
-            echo "export MESSAGE='<< parameters.message >>'" >> "$BASH_ENV"
-
-      - utils/get-github-access-token:
-          repo: REPO
-      - utils/get-github-pr-comments:
-          repo: REPO
-          pr-number: PR_NUMBER
-          message: MESSAGE
-      - run:
-          name: "get comment id"
-          command: |
-            echo $COMMENT_ID
       - report-on-diff-true:
-          REPO: $REPO
-          PR_NUMBER: $PR_NUMBER
-          COMMENT_ID: $COMMENT_ID
-          DIFF: $DIFF
-          MESSAGE: $MESSAGE
-          RUN_URL: $RUN_URL
+          message: <<parameters.message>>
       - report-on-diff-false:
-          REPO: $REPO
-          PR_NUMBER: $PR_NUMBER
-          COMMENT_ID: $COMMENT_ID
-          DIFF: $DIFF
-
+          message: <<parameters.message>>
 workflows:
   hourly:
     # run workflow only when the hourly_build pipeline is triggered
