@@ -100,7 +100,7 @@ commands:
               echo report-on-diff-true
             else
               #when there is no diff we should not report and we should halt the pipeline
-              circleci step halt
+              exit 1 || true
             fi
       - run:
           name: "Set PR_NUMBER, REPO, DIFF, RUN_URL, MESSAGE"
@@ -145,7 +145,7 @@ commands:
               echo report-on-diff-false
             else
               #when there is a diff we should not delete the comment and we should halt the pipeline
-              circleci step halt
+              exit 1 || true
             fi
       - run:
           name: "Set PR_NUMBER, REPO, DIFF, RUN_URL, MESSAGE"
