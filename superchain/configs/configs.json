@@ -7,6 +7,7 @@
         "L1": {
           "ChainID": 1,
           "PublicRPC": "https://ethereum-rpc.publicnode.com",
+          "TestRPC": "https://ci-mainnet-l1-archive.optimism.io",
           "Explorer": "https://etherscan.io"
         },
         "ProtocolVersionsAddr": "0x8062AbC286f5e7D9428a0Ccb9AbD71e50d93b935",
@@ -1546,6 +1547,7 @@
         "L1": {
           "ChainID": 11155111,
           "PublicRPC": "https://ethereum-sepolia-rpc.publicnode.com",
+          "TestRPC": "https://ci-sepolia-l1-archive.optimism.io",
           "Explorer": "https://sepolia.etherscan.io"
         },
         "ProtocolVersionsAddr": "0x79ADD5713B383DAa0a138d3C4780C7A1804a8090",
@@ -2728,6 +2730,7 @@
         "L1": {
           "ChainID": 11155111,
           "PublicRPC": "https://ethereum-sepolia-rpc.publicnode.com",
+          "TestRPC": "https://ci-sepolia-l1-archive.optimism.io",
           "Explorer": "https://sepolia.etherscan.io"
         },
         "ProtocolVersionsAddr": "0x252CbE9517F731C618961D890D534183822dcC8d",

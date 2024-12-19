@@ -1,10 +1,16 @@
 package validation
 
 import (
+	"context"
+	"math/big"
 	"testing"
 
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/ethereum-optimism/superchain-registry/validation/common"
+	"github.com/stretchr/testify/require"
+
+	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 // Test names
@@ -12,6 +18,7 @@ const (
 	GenesisHashTest              = "Genesis_Hash"
 	GenesisRPCTest               = "Genesis_RPC"
 	UniquenessTest               = "Uniqueness"
+	PublicRPCTest                = "Public_RPC"
 	ChainIDRPCTest               = "ChainID_RPC"
 	OptimismConfigTest           = "Optimism_Config"
 	GovernedByOptimismTest       = "Governed_By_Optimism"
@@ -45,7 +52,30 @@ func applyExclusions(chain *ChainConfig, f subTestForChain) subTest {
 	}
 }
 
+func preflightChecks(t *testing.T) {
+	// Check that all superchains have an accessible L1 archive RPC endpoint configured
+	for name, chain := range Superchains {
+		rpcEndpoint := chain.Config.L1.PublicRPC
+
+		require.NotEmpty(t, rpcEndpoint, "no public_rpc specified for superchain '%s'", name)
+
+		client, err := ethclient.Dial(rpcEndpoint)
+		require.NoErrorf(t, err, "could not dial rpc endpoint '%s' for superchain '%s'", rpcEndpoint, name)
+		defer client.Close()
+
+		_, err = client.ChainID(context.Background())
+		require.NoErrorf(t, err, "could not query node at '%s' for superchain '%s'", rpcEndpoint, name)
+
+		superchainConfigAddr := *chain.Config.SuperchainConfigAddr
+
+		_, err = client.NonceAt(context.Background(), ethCommon.Address(superchainConfigAddr), big.NewInt(1))
+		require.NoErrorf(t, err, "node at '%s' for superchain '%s' is not an archive node. please set an L1 archive node RPC url in the `test_rpc` field of the superchain config file", rpcEndpoint, name)
+	}
+}
+
 func TestValidation(t *testing.T) {
+	preflightChecks(t)
+
 	// Entry point for validation checks which run
 	// on each OP chain.
 	for _, chain := range OPChains {
@@ -79,6 +109,7 @@ func testUniversal(t *testing.T, chain *ChainConfig) {
 	t.Run(GenesisHashTest, applyExclusions(chain, testGenesisHash))
 	t.Run(GenesisRPCTest, applyExclusions(chain, testGenesisHashAgainstRPC))
 	t.Run(UniquenessTest, applyExclusions(chain, testIsGloballyUnique))
+	t.Run(PublicRPCTest, applyExclusions(chain, testPublicRPC))
 	t.Run(ChainIDRPCTest, applyExclusions(chain, testChainIDFromRPC))
 	t.Run(OptimismConfigTest, applyExclusions(chain, testOptimismConfig))
 	t.Run(GovernedByOptimismTest, applyExclusions(chain, testGovernedByOptimism))
