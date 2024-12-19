@@ -363,6 +363,7 @@ jobs:
               echo "export condition_post_pr=1" >> $BASH_ENV
               echo "export condition_delete_pr=0" >> $BASH_ENV
             fi
+
       - utils/post-github-pr-comment:
           repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
           pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
