@@ -416,8 +416,9 @@ jobs:
           name: Handle PR Comment Based on DIFF only if it is a PR
           working_directory: validation
           command: |
-            source <<parameters.read_from>>
-            #DIFF is set in the previous job and shared via workspace
+            # Append environment variables shared from the previous job to the bash environment
+            # This contains the diff result as well in $DIFF
+            cat <<parameters.read_from>> >> $BASH_ENV
 
       - report-on-diff-true:
           message: <<parameters.message>>
