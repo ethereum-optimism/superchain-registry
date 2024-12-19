@@ -135,8 +135,6 @@ commands:
       message:
         type: string
         description: "The body of the comment"
-      DIFF:
-        type: string
     steps:
       - run:
           Name: Check if the diff is 0
