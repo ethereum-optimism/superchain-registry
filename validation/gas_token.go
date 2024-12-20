@@ -17,20 +17,18 @@ import (
 
 func testGasToken(t *testing.T, chain *superchain.ChainConfig) {
 	l1Client, err := ethclient.Dial(superchain.Superchains[chain.Superchain].Config.L1.PublicRPC)
-	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
+	require.NoError(t, err, "Failed to connect to L1 EthClient at RPC url %s", superchain.Superchains[chain.Superchain].Config.L1.PublicRPC)
 	defer l1Client.Close()
 
-	err = CheckGasToken(chain, l1Client)
+	l2Client, err := ethclient.Dial(chain.PublicRPC)
+	require.NoError(t, err, "Failed to connect to L2 EthClient at RPC url %s", chain.PublicRPC)
+	defer l2Client.Close()
+
+	err = CheckGasToken(chain, l1Client, l2Client)
 	require.NoError(t, err)
 }
 
-func CheckGasToken(chain *superchain.ChainConfig, l1Client EthClient) error {
-	l2Client, err := ethclient.Dial(chain.PublicRPC)
-	if err != nil {
-		return err
-	}
-	defer l2Client.Close()
-
+func CheckGasToken(chain *superchain.ChainConfig, l1Client EthClient, l2Client EthClient) error {
 	weth9PredeployAddress := superchain.MustHexToAddress("0x4200000000000000000000000000000000000006")
 	want := "0000000000000000000000000000000000000000000000000000000000000020" + // offset
 		"000000000000000000000000000000000000000000000000000000000000000d" + // length
@@ -55,7 +53,7 @@ func CheckGasToken(chain *superchain.ChainConfig, l1Client EthClient) error {
 		}
 	}
 
-	isCustomGasToken, err = getBool("isCustomGasToken()", superchain.Addresses[chain.ChainID].SystemConfigProxy, l2Client)
+	isCustomGasToken, err = getBool("isCustomGasToken()", superchain.Addresses[chain.ChainID].SystemConfigProxy, l1Client)
 	if err != nil && !strings.Contains(err.Error(), "execution reverted") {
 		// Pre: reverting is acceptable
 		return err
