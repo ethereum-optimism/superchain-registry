@@ -20,8 +20,7 @@ func TestGetBytes_Success(t *testing.T) {
 		Return(expected, nil).
 		Once()
 
-	contractAddress := superchain.MustHexToAddress("0x1234567890abcdef1234567890abcdef12345678")
-	result, err := getBytes("myMethod()", contractAddress, mockClient)
+	result, err := getBytes("myMethod()", superchain.Address{}, mockClient)
 	require.NoError(t, err)
 	require.Equal(t, expected, result)
 
@@ -33,11 +32,10 @@ func TestGetBytes_Error(t *testing.T) {
 
 	mockClient := &testutils.MockEthClient{}
 	mockClient.On("CallContract", mock.Anything, mock.Anything, (*big.Int)(nil)).
-		Return(nil, errors.New("some call error")).
-		Once()
+		Return([]byte{}, errors.New("some call error")).
+		Times(DefaultMaxRetries)
 
-	contractAddress := superchain.MustHexToAddress("0x1234567890abcdef1234567890abcdef12345678")
-	_, err := getBytes("failingMethod()", contractAddress, mockClient)
+	_, err := getBytes("failingMethod()", superchain.Address{}, mockClient)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "some call error")
 
@@ -53,8 +51,7 @@ func TestGetHexString_Success(t *testing.T) {
 		Return(expected, nil).
 		Once()
 
-	contractAddress := superchain.MustHexToAddress("0xabcdef7890abcdef1234567890abcdef12345678")
-	hexVal, err := getHexString("hexMethod()", contractAddress, mockClient)
+	hexVal, err := getHexString("hexMethod()", superchain.Address{}, mockClient)
 	require.NoError(t, err)
 	require.Equal(t, "00112233", hexVal)
 
@@ -66,11 +63,10 @@ func TestGetHexString_Error(t *testing.T) {
 
 	mockClient := &testutils.MockEthClient{}
 	mockClient.On("CallContract", mock.Anything, mock.Anything, (*big.Int)(nil)).
-		Return(nil, errors.New("getHexString error")).
-		Once()
+		Return([]byte{}, errors.New("getHexString error")).
+		Times(DefaultMaxRetries)
 
-	contractAddress := superchain.MustHexToAddress("0x1234567890abcdef1234567890abcdef12345678")
-	_, err := getHexString("hexMethod()", contractAddress, mockClient)
+	_, err := getHexString("hexMethod()", superchain.Address{}, mockClient)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "getHexString error")
 
@@ -86,8 +82,7 @@ func TestGetBool_True(t *testing.T) {
 		Return([]byte("0x0100000000000000000000000000000000000000000000000000000000000000"), nil).
 		Once()
 
-	contractAddress := superchain.MustHexToAddress("0x1111117890abcdef1234567890abcdef12345678")
-	val, err := getBool("boolMethod()", contractAddress, mockClient)
+	val, err := getBool("boolMethod()", superchain.Address{}, mockClient)
 	require.NoError(t, err)
 	require.True(t, val)
 
@@ -102,8 +97,7 @@ func TestGetBool_False(t *testing.T) {
 		Return([]byte(""), nil).
 		Once()
 
-	contractAddress := superchain.MustHexToAddress("0x2222227890abcdef1234567890abcdef12345678")
-	val, err := getBool("boolMethod()", contractAddress, mockClient)
+	val, err := getBool("boolMethod()", superchain.Address{}, mockClient)
 	require.NoError(t, err)
 	require.False(t, val)
 
@@ -118,8 +112,7 @@ func TestGetBool_ErrorUnexpectedValue(t *testing.T) {
 		Return([]byte("0xabcdef"), nil).
 		Once()
 
-	contractAddress := superchain.MustHexToAddress("0x2222227890abcdef1234567890abcdef12345678")
-	_, err := getBool("boolMethod()", contractAddress, mockClient)
+	_, err := getBool("boolMethod()", superchain.Address{}, mockClient)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "unexpected non-bool return value")
 
