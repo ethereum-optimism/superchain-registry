@@ -1376,7 +1376,7 @@
             "AnchorStateRegistryProxy": "0xde744491BcF6b2DD2F32146364Ea1487D75E2509",
             "BatchSubmitter": "0x500d7Ea63CF2E501dadaA5feeC1FC19FE2Aa72Ac",
             "Challenger": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
-            "DelayedWETHProxy": "0x69d3Cf86B2Bf1a9e99875B7e2D9B6a84426c171f",
+            "DelayedWETHProxy": "0x14773a8040Ff22e3DcBb0C83eC8e33Be7D920D38",
             "DisputeGameFactoryProxy": "0x10d7B35078d3baabB96Dd45a9143B94be65b12CD",
             "Guardian": "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2",
             "L1CrossDomainMessengerProxy": "0x69d3Cf86B2Bf1a9e99875B7e2D9B6a84426c171f",
