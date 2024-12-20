@@ -24,7 +24,7 @@ func testGasToken(t *testing.T, chain *superchain.ChainConfig) {
 	require.NoError(t, err)
 }
 
-func CheckGasToken(chain *superchain.ChainConfig, l1Client *ethclient.Client) error {
+func CheckGasToken(chain *superchain.ChainConfig, l1Client EthClient) error {
 	l2Client, err := ethclient.Dial(chain.PublicRPC)
 	if err != nil {
 		return err
@@ -35,7 +35,7 @@ func CheckGasToken(chain *superchain.ChainConfig, l1Client *ethclient.Client) er
 	want := "0000000000000000000000000000000000000000000000000000000000000020" + // offset
 		"000000000000000000000000000000000000000000000000000000000000000d" + // length
 		"5772617070656420457468657200000000000000000000000000000000000000" // "Wrapped Ether" padded to 32 bytes
-	gotName, err := getHexString("WETH9.name()", weth9PredeployAddress, l2Client)
+	gotName, err := getHexString("name()", weth9PredeployAddress, l2Client)
 	if err != nil {
 		return err
 	}
