@@ -38,7 +38,6 @@ func testGenesisHash(t *testing.T, chain *ChainConfig) {
 func testGenesisHashAgainstRPC(t *testing.T, chain *ChainConfig) {
 	declaredGenesisHash := chain.Genesis.L2.Hash
 	rpcEndpoint := chain.PublicRPC
-
 	client, err := ethclient.Dial(rpcEndpoint)
 	require.NoErrorf(t, err, "could not dial rpc endpoint %s", rpcEndpoint)
 
