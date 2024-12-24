@@ -91,3 +91,6 @@ remove-chain SUPERCHAIN_TARGET CHAIN:
 	rm superchain/configs/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.toml
 	rm superchain/extra/genesis/{{SUPERCHAIN_TARGET}}/{{CHAIN}}.json.gz
 	just codegen
+
+apply-hardforks:
+	go run ./ops apply-hardforks
