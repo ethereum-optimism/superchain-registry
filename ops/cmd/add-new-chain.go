@@ -250,7 +250,7 @@ func getGasPayingToken(l1rpcURl string, SystemConfigAddress superchain.Address) 
 		return nil, err
 	}
 	if (result.Addr == common.Address{}) {
-		// This happens with the SystemConfig contract
+		// This happens when the SystemConfig contract
 		// does have the CGT functionality, but it has
 		// not been enabled.
 		return nil, nil
