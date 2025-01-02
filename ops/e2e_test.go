@@ -82,6 +82,15 @@ var tests = []struct {
 }
 
 func TestOps_AddNewChain(t *testing.T) {
+	// breaking due to this 
+	// {
+	// 	name:             "baseline",
+	// 	chainName:        "testchain_baseline",
+	// 	chainId:          4206900,
+	// 	chainShortName:   "testchain_b",
+	// 	rollupConfigFile: "./testdata/monorepo/op-node/rollup_baseline.json",
+	// 	deploymentsDir:   "./testdata/monorepo/deployments",
+	// },
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
