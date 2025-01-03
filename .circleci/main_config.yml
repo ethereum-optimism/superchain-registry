@@ -3,6 +3,8 @@ orbs:
   go: circleci/go@2.1.0
   node: circleci/node@5.2.0
   slack: circleci/slack@4.10.1
+  utils: ethereum-optimism/circleci-utils@0.0.6
+
 parameters:
   go_version:
     type: string
@@ -11,6 +13,9 @@ parameters:
     type: string
     default: "__required__"
   is_forked_pull_request:
+    type: boolean
+    default: false
+  is_pull_request:
     type: boolean
     default: false
 
@@ -286,7 +291,7 @@ jobs:
             go run <<parameters.command>>/main.go base
 
       - run:
-          name: Compute diff
+          name: -- READ HERE FOR IMPORTANT INFO ON DIFF --
           working_directory: validation
           command: |
             # Allow the script to continue even if the diff-configs.sh script returns a non-zero exit code
@@ -321,55 +326,57 @@ jobs:
           name: Handle PR Comment Based on DIFF only if it is a PR
           working_directory: validation
           command: |
-            #check if we are in a PR
-            if [ -z "$CIRCLE_PULL_REQUEST" ]; then
-              echo "Not a PR. Exiting."
+            # Append environment variables shared from the previous job to the bash environment
+            # This contains the diff result as well in $DIFF
+            cat <<parameters.read_from>> >> $BASH_ENV
+      - run:
+          name: "Set PR_NUMBER, REPO, DIFF, RUN_URL, MESSAGE"
+          command: |
+            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+            echo "export PR_NUMBER=$PR_NUMBER" >> "$BASH_ENV"
+
+            REPO=${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+            echo "export REPO=$REPO" >> "$BASH_ENV"
+
+            echo "export COMMENT_BODY='<< parameters.message >>. You can see the detail [here](${RUN_URL}).'">> "$BASH_ENV"
+      - utils/get-github-access-token:
+          private-key-str: GITHUB_APP_KEY # GITHUB_APP_KEY is a context variable. Default is GITHUB_APP_KEY. Adding here for clarity
+          app-id: GITHUB_APP_ID # GITHUB_APP_ID is a context variable. Default is GITHUB_APP_ID. Adding here for clarity
+          repo: $REPO # REPO is set in the previous step, is needed to get the installation id
+          output-token-name: GITHUB_APP_TOKEN # output-token-name is the name of the output variable. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+      - utils/get-github-pr-comments:
+          repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
+          pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
+          message: << parameters.message >> #message is the message that will be used to filter the comments. The search will check if this message is contained in the comment body
+          token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+          output-comment-id: COMMENT_ID #output-comment-id is the name of the output variable. Default is COMMENT_ID. Adding here for clarity.
+      - run:
+          Name: Check if the diff is 1
+          command: |
+            echo "DIFF=$DIFF"
+            if [ "$DIFF" -eq 1 ]; then
+              #when there is a diff we should report
+              echo "export condition_post_pr=0" >> $BASH_ENV
+              echo "export condition_delete_pr=1" >> $BASH_ENV
             else
-              PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
-
-              git clone --branch v0.1.0 --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
-              GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
-              pip install -r $GITHUB_CLI_PATH/requirements.txt
-              MAIN_PATH=$GITHUB_CLI_PATH/main.py
-
-              REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-              source <<parameters.read_from>>
-              echo "DIFF=$DIFF"
-              echo "RUN_URL=$RUN_URL"
-
-              MESSAGE="<<parameters.message>>"
-              COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
-              echo $COMMAND
-              COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
-                --github-token "${GITHUB_TOKEN}" \
-                --repo "${REPO}" \
-                --pr-number "${PR_NUMBER}" \
-                --message-substring "${MESSAGE}" \
-                --user-type "User" )
-
-              COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
-              COMMENT_OPTION=""
-              if [ -n "$COMMENT_ID" ]; then
-                COMMENT_OPTION="--comment-id $COMMENT_ID"
-              fi
-
-              if [ "$DIFF" -eq 1 ]; then
-                  python $MAIN_PATH post-pr-comment \
-                    --github-token "${GITHUB_TOKEN}" \
-                    --repo "${REPO}" \
-                    --pr-number "${PR_NUMBER}" \
-                    --comment-body "${COMMENT_BODY}" \
-                    $COMMENT_OPTION
-              else
-                if [ -n "$COMMENT_ID" ]; then
-                  python $MAIN_PATH delete-pr-comment \
-                    --github-token "${GITHUB_TOKEN}" \
-                    --repo "${REPO}" \
-                    --pr-number "${PR_NUMBER}" \
-                    --comment-id $COMMENT_ID
-                fi
-              fi
+              #when there is no diff we should not report and we should delete the comment
+              echo "export condition_post_pr=1" >> $BASH_ENV
+              echo "export condition_delete_pr=0" >> $BASH_ENV
             fi
+
+      - utils/post-github-pr-comment:
+          repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
+          pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
+          comment-id: $COMMENT_ID #comment-id is set in the previous step. It is needed to know which comment to reply to
+          comment-body: $COMMENT_BODY #comment-body is the body of the comment that will be posted
+          token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+          condition: $condition_post_pr
+      - utils/delete-github-pr-comment:
+          repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
+          pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
+          comment-id: $COMMENT_ID #comment-id is set in the previous step. It is needed to know which comment to reply to
+          token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+          condition: $condition_delete_pr
 
 workflows:
   hourly:
@@ -415,6 +422,7 @@ workflows:
         - not:
             equal: [scheduled_pipeline, << pipeline.trigger_source >>]
         - not: << pipeline.parameters.is_forked_pull_request >>
+        - << pipeline.parameters.is_pull_request >>
     jobs:
       - compute-config-diff:
           name: compute-genesis-diff
@@ -425,7 +433,7 @@ workflows:
           name: report-genesis-diff
           read_from: "GENESIS"
           message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
-          context: circleci-superchain-registry
+          context: circleci-repo-superchain-registry
           requires: [compute-genesis-diff]
       - compute-config-diff:
           name: compute-rollup-config-diff
@@ -436,7 +444,7 @@ workflows:
           name: report-rollup-config-diff
           read_from: "ROLLUP"
           message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
-          context: circleci-superchain-registry
+          context: circleci-repo-superchain-registry
           requires: [compute-rollup-config-diff]
 
   compute-config-diff-only:
@@ -444,7 +452,7 @@ workflows:
       and:
         - not:
             equal: [scheduled_pipeline, << pipeline.trigger_source >>]
-        - << pipeline.parameters.is_forked_pull_request >>
+        - not: << pipeline.parameters.is_pull_request >>
     jobs:
       - compute-config-diff:
           name: compute-genesis-diff
