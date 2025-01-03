@@ -1,20 +1,24 @@
 name = "OP Labs Sepolia devnet 0"
-chain_id = 11155421
 public_rpc = ""
 sequencer_rpc = ""
 explorer = ""
 superchain_level = 0
 governed_by_optimism = true
-superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
+superchain_time = 0
+data_availability_type = "eth-da"
+chain_id = 11155421
 batch_inbox_addr = "0xFf00000000000000000000000000000011155421"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
-fjord_time = 1715961600 # Fri 17 May 2024 16:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 1706634000 # Tue 30 Jan 2024 17:00:00 UTC
+  fjord_time = 1715961600 # Fri 17 May 2024 16:00:00 UTC
+  granite_time = 1723046400 # Wed 7 Aug 2024 16:00:00 UTC
+  holocene_time = 1731682800 # Fri 15 Nov 2024 15:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -35,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
   ProxyAdminOwner = "0x4377BB0F0103992b31eC12b4d796a8687B8dC8E9"
   Guardian = "0x8c20c40180751d93E939DDDee3517AE0d1EBeAd2"
@@ -43,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0x95014c45078354Ff839f14192228108Eac82E00A"
   UnsafeBlockSigner = "0xa95B83e39AA78B00F12fe431865B563793D97AF5"
   BatchSubmitter = "0x19CC7073150D9f5888f09E0e9016d2a39667df14"
+
+[addresses]
   AddressManager = "0x3eb579b25F6b9547e0073c848389a768FD382296"
   L1CrossDomainMessengerProxy = "0x18e72C15FEE4e995454b919EfaA61D8f116F82dd"
   L1ERC721BridgeProxy = "0x1bb726658E039E8a9A4ac21A41fE5a0704760461"

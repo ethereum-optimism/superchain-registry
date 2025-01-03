@@ -11,7 +11,7 @@ superchain/**/testchain*
 /broadcast/**/dry-run/
 
 # vim
-*.sw*
+*.sw*m
 
 # jetbrains
 .idea/
@@ -31,3 +31,7 @@ go.work.sum
 
 # editor specific config
 .vscode
+
+ops/bin
+
+.staging

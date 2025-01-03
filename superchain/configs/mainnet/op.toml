@@ -1,20 +1,24 @@
 name = "OP Mainnet"
-chain_id = 10
 public_rpc = "https://mainnet.optimism.io"
 sequencer_rpc = "https://mainnet-sequencer.optimism.io"
 explorer = "https://explorer.optimism.io"
 superchain_level = 1
 governed_by_optimism = true
-superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
+superchain_time = 0
+data_availability_type = "eth-da"
+chain_id = 10
 batch_inbox_addr = "0xFF00000000000000000000000000000000000010"
-canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
-delta_time = 1708560000 # Thu 22 Feb 2024 00:00:00 UTC
-ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
-fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
+  delta_time = 1708560000 # Thu 22 Feb 2024 00:00:00 UTC
+  ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
+  fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
+  granite_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC
+  holocene_time = 1736445601 # Thu 9 Jan 2025 18:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -35,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x847B5c174615B1B7fDF770882256e2D3E95b9D92"
   ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
   Guardian = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
@@ -43,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0x473300df21D047806A082244b417f96b32f13A33"
   UnsafeBlockSigner = "0xAAAA45d9549EDA09E70937013520214382Ffc4A2"
   BatchSubmitter = "0x6887246668a3b87F54DeB3b94Ba47a6f63F32985"
+
+[addresses]
   AddressManager = "0xdE1FCfB0851916CA5101820A69b13a4E276bd81F"
   L1CrossDomainMessengerProxy = "0x25ace71c97B33Cc4729CF772ae268934F7ab5fA1"
   L1ERC721BridgeProxy = "0x5a7749f83b81B301cAb5f48EB8516B986DAef23D"

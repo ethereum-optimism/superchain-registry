@@ -1,41 +1,5 @@
 [
   {
-    "name": "OP Mainnet",
-    "identifier": "mainnet/op",
-    "chainId": 10,
-    "rpc": [
-      "https://mainnet.optimism.io"
-    ],
-    "explorers": [
-      "https://explorer.optimism.io"
-    ],
-    "superchainLevel": 1,
-    "governedByOptimism": true,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    }
-  },
-  {
-    "name": "arena-z",
-    "identifier": "mainnet/arena-z",
-    "chainId": 7897,
-    "rpc": [
-      "https://rpc.arena-z.gg"
-    ],
-    "explorers": [
-      "https://explorer.arena-z.gg"
-    ],
-    "superchainLevel": 0,
-    "governedByOptimism": true,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    }
-  },
-  {
     "name": "Automata Mainnet",
     "identifier": "mainnet/automata",
     "chainId": 65536,
@@ -71,6 +35,25 @@
       "type": "L2",
       "chain": "mainnet"
     }
+  },
+  {
+    "name": "Binary Mainnet",
+    "identifier": "mainnet/tbn",
+    "chainId": 624,
+    "rpc": [
+      "https://rpc.zero.thebinaryholdings.com"
+    ],
+    "explorers": [
+      "https://explorer.thebinaryholdings.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    },
+    "gasPayingToken": "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
   },
   {
     "name": "Cyber Mainnet",
@@ -217,6 +200,24 @@
     }
   },
   {
+    "name": "OP Mainnet",
+    "identifier": "mainnet/op",
+    "chainId": 10,
+    "rpc": [
+      "https://mainnet.optimism.io"
+    ],
+    "explorers": [
+      "https://explorer.optimism.io"
+    ],
+    "superchainLevel": 1,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Orderly Mainnet",
     "identifier": "mainnet/orderly",
     "chainId": 291,
@@ -343,25 +344,6 @@
     }
   },
   {
-    "name": "Binary Mainnet",
-    "identifier": "mainnet/tbn",
-    "chainId": 624,
-    "rpc": [
-      "https://rpc.zero.thebinaryholdings.com"
-    ],
-    "explorers": [
-      "https://explorer.thebinaryholdings.com"
-    ],
-    "superchainLevel": 0,
-    "governedByOptimism": false,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    },
-    "gasPayingToken": "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
-  },
-  {
     "name": "World Chain",
     "identifier": "mainnet/worldchain",
     "chainId": 480,
@@ -398,39 +380,21 @@
     }
   },
   {
-    "name": "OP Sepolia Testnet",
-    "identifier": "sepolia/op",
-    "chainId": 11155420,
+    "name": "arena-z",
+    "identifier": "mainnet/arena-z",
+    "chainId": 7897,
     "rpc": [
-      "https://sepolia.optimism.io"
+      "https://rpc.arena-z.gg"
     ],
     "explorers": [
-      "https://sepolia-optimistic.etherscan.io"
+      "https://explorer.arena-z.gg"
     ],
-    "superchainLevel": 1,
+    "superchainLevel": 0,
     "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
-    "name": "arena-z-testnet",
-    "identifier": "sepolia/arena-z-testnet",
-    "chainId": 9897,
-    "rpc": [
-      "https://rpc.arena-z.t.raas.gelato.cloud"
-    ],
-    "explorers": [
-      "https://arena-z.blockscout.com"
-    ],
-    "superchainLevel": 0,
-    "governedByOptimism": false,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
+      "chain": "mainnet"
     }
   },
   {
@@ -450,6 +414,25 @@
       "type": "L2",
       "chain": "sepolia"
     }
+  },
+  {
+    "name": "Binary Sepolia",
+    "identifier": "sepolia/tbn",
+    "chainId": 625,
+    "rpc": [
+      "https://rpc.testnet.thebinaryholdings.com"
+    ],
+    "explorers": [
+      "https://explorer.sepolia.thebinaryholdings.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    },
+    "gasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
   },
   {
     "name": "Cyber Testnet",
@@ -596,6 +579,24 @@
     }
   },
   {
+    "name": "OP Sepolia Testnet",
+    "identifier": "sepolia/op",
+    "chainId": 11155420,
+    "rpc": [
+      "https://sepolia.optimism.io"
+    ],
+    "explorers": [
+      "https://sepolia-optimistic.etherscan.io"
+    ],
+    "superchainLevel": 1,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "RACE Testnet",
     "identifier": "sepolia/race",
     "chainId": 6806,
@@ -630,25 +631,6 @@
       "type": "L2",
       "chain": "sepolia"
     }
-  },
-  {
-    "name": "Binary Sepolia",
-    "identifier": "sepolia/tbn",
-    "chainId": 625,
-    "rpc": [
-      "https://rpc.testnet.thebinaryholdings.com"
-    ],
-    "explorers": [
-      "https://explorer.sepolia.thebinaryholdings.com"
-    ],
-    "superchainLevel": 0,
-    "governedByOptimism": false,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    },
-    "gasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
   },
   {
     "name": "Unichain Sepolia Testnet",
@@ -698,6 +680,24 @@
     ],
     "superchainLevel": 0,
     "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "arena-z-testnet",
+    "identifier": "sepolia/arena-z-testnet",
+    "chainId": 9897,
+    "rpc": [
+      "https://rpc.arena-z.t.raas.gelato.cloud"
+    ],
+    "explorers": [
+      "https://arena-z.blockscout.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",

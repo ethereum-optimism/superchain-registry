@@ -1,22 +1,23 @@
 name = "arena-z-testnet"
-chain_id = 9897
 public_rpc = "https://rpc.arena-z.t.raas.gelato.cloud"
 sequencer_rpc = "https://rpc.arena-z.t.raas.gelato.cloud"
 explorer = "https://arena-z.blockscout.com"
 superchain_level = 0
 governed_by_optimism = false
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+data_availability_type = "eth-da"
+chain_id = 9897
 batch_inbox_addr = "0xFF00000000000000000000000000000000009897"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
-holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
+  holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 10
@@ -37,7 +38,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x776beE5229Eb00349D6Fc956EFAD7985ee36804d"
   ProxyAdminOwner = "0xb33c6A58C26666F04054E8b0D939e17D6eB1a155"
   Guardian = "0x776beE5229Eb00349D6Fc956EFAD7985ee36804d"
@@ -45,6 +46,8 @@ data_availability_type = "eth-da"
   Proposer = "0xBF80C17ee655837E25208436ed543217899B4bd8"
   UnsafeBlockSigner = "0xBBC751e8A6285F22C8B6305D1158071f204Dbca4"
   BatchSubmitter = "0xaBecfbb176FA579ee7E1Ed1947E375B118433be0"
+
+[addresses]
   AddressManager = "0x5b7996f61650a6f4920F2C8eF4BfaF4f64a07638"
   L1CrossDomainMessengerProxy = "0xCC226A3B7b5ec4D4d698418fC2C0492950136Ba7"
   L1ERC721BridgeProxy = "0x11d7f6f2E59Fc12E61DbfafE7790e54CAb01b434"

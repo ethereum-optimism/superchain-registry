@@ -1,17 +1,24 @@
 name = "Lisk"
-chain_id = 1135
 public_rpc = "https://rpc.api.lisk.com"
 sequencer_rpc = "https://rpc.api.lisk.com"
 explorer = "https://blockscout.lisk.com"
 superchain_level = 0
 governed_by_optimism = false
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
-batch_inbox_addr = "0xFf00000000000000000000000000000000001135"
 superchain_time = 0
+data_availability_type = "eth-da"
+chain_id = 1135
+batch_inbox_addr = "0xFf00000000000000000000000000000000001135"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
+  delta_time = 1708560000 # Thu 22 Feb 2024 00:00:00 UTC
+  ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
+  fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
+  granite_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC
+  holocene_time = 1736445601 # Thu 9 Jan 2025 18:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 20
@@ -32,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xBeA2Bc852a160B8547273660E22F4F08C2fa9Bbb"
   ProxyAdminOwner = "0xECd4150ABbb1EBff13f74e42Fb43C3d78B4E0b45"
   Guardian = "0xBeA2Bc852a160B8547273660E22F4F08C2fa9Bbb"
@@ -40,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0x0AbD6da1cE10D1cD6c7C9C14b905786D20f3EB23"
   UnsafeBlockSigner = "0xb9DE90a90c5E441C483e754FE7341100D5fbaEcA"
   BatchSubmitter = "0xa6Ea2f3299b63c53143c993d2d5E60A69Cd6Fe24"
+
+[addresses]
   AddressManager = "0x2dF7057d3F25212E51aFEA8dA628668229Ea423f"
   L1CrossDomainMessengerProxy = "0x31B72D76FB666844C41EdF08dF0254875Dbb7edB"
   L1ERC721BridgeProxy = "0x3A44A3b263FB631cdbf25f339e2D29497511A81f"

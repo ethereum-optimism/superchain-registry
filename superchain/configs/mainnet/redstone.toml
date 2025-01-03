@@ -1,17 +1,20 @@
 name = "Redstone"
-chain_id = 690
 public_rpc = "https://rpc.redstonechain.com"
 sequencer_rpc = "https://rpc.redstonechain.com"
 explorer = "https://explorer.redstone.xyz"
 superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "alt-da"
+chain_id = 690
 batch_inbox_addr = "0xff00000000000000000000000000000000000690"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "alt-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 2
@@ -19,7 +22,7 @@ data_availability_type = "alt-da"
   eip1559_denominator_canyon = 50
 
 [alt_da]
-  da_challenge_contract_address = "0x97A2dA87d3439b172e6DD027220e01c9Cb565B80"
+  da_challenge_contract_address = "0x97a2da87d3439b172e6dd027220e01c9cb565b80"
   da_challenge_window = 3600
   da_resolve_window = 3600
   da_commitment_type = "KeccakCommitment"
@@ -38,7 +41,7 @@ data_availability_type = "alt-da"
     scalar = "0x0000000000000000000000000000000000000000000000000000000000001def"
     gasLimit = 100000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xb356B146F1629c49C44344464F69BCDAfb4bb664"
   ProxyAdminOwner = "0x70FdbCb066eD3621647Ddf61A1f40aaC6058Bc89"
   Guardian = "0xb356B146F1629c49C44344464F69BCDAfb4bb664"
@@ -46,6 +49,8 @@ data_availability_type = "alt-da"
   Proposer = "0x4c465E58946145bb2BFC38833154f5A3B5728CF7"
   UnsafeBlockSigner = "0xA5bdf717af725a47Fd7378d3D9C833776951efa0"
   BatchSubmitter = "0xA31cb9Bc414601171D4537580f98F66C03aECd43"
+
+[addresses]
   AddressManager = "0xFe27f187A9E46104a932189dDF229871E06B22F8"
   L1CrossDomainMessengerProxy = "0x592C1299e0F8331D81A28C0FC7352Da24eDB444a"
   L1ERC721BridgeProxy = "0x4FFB98dBC3086bA85d5E626a6EbC3D0d08533fF4"

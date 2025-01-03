@@ -1,0 +1,11 @@
+# Superchain Ecosystem
+
+{{ range $index, $superchain := .Superchains -}}
+### {{ $superchain }}
+
+| Chain Name | OP Governed | Upgradeable | Explorer | Public RPC | Sequencer RPC
+|---|---|---|---|---|---|
+{{- range index $.ChainData $index }}
+| {{ .Name }} | {{ checkmark .GovernedByOptimism }} | {{ optedInSuperchain .SuperchainTime }} | {{ .Explorer }} | `{{ .PublicRPC }}` | `{{ .SequencerRPC }}` |
+{{- end }}
+{{ end }}

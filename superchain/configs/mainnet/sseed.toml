@@ -1,20 +1,21 @@
 name = "Superseed"
-chain_id = 5330
 public_rpc = "https://mainnet.superseed.xyz"
 sequencer_rpc = "https://mainnet.superseed.xyz"
 explorer = "https://explorer.superseed.xyz"
 superchain_level = 0
 governed_by_optimism = false
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+data_availability_type = "eth-da"
+chain_id = 5330
 batch_inbox_addr = "0x8612014a343089F1ddBACfD42baf4Afbf9133593"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -35,7 +36,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
   ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
   Guardian = "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A"
@@ -43,6 +44,8 @@ data_availability_type = "eth-da"
   Proposer = "0xB2354BDF5925d03cA06B03a7bD7386Bd685cE814"
   UnsafeBlockSigner = "0x92Dc533201e8634f0337D66a11820a8C4E902474"
   BatchSubmitter = "0xa9B074B27DE97f492F8F07fD7C213400E4ca5391"
+
+[addresses]
   AddressManager = "0x0a1B34aA2047AD1AbEF8aC085b1a7802Ed9dbCF0"
   L1CrossDomainMessengerProxy = "0x3a30AEd8fa7717aC2D8454D82c125cF6B875061a"
   L1ERC721BridgeProxy = "0xA99f82730e68968a78AA21522FC7eb90DB76D8Cb"

@@ -1,21 +1,22 @@
 name = "Ink"
-chain_id = 57073
 public_rpc = "https://rpc-gel.inkonchain.com"
 sequencer_rpc = "https://rpc-gel.inkonchain.com"
 explorer = "https://explorer.inkonchain.com"
 superchain_level = 0
 governed_by_optimism = true
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+data_availability_type = "eth-da"
+chain_id = 57073
 batch_inbox_addr = "0x005969bf0EcbF6eDB6C47E5e94693b1C3651Be97"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 1
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -36,7 +37,7 @@ data_availability_type = "eth-da"
     scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xBeA2Bc852a160B8547273660E22F4F08C2fa9Bbb"
   ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
   Guardian = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
@@ -44,6 +45,8 @@ data_availability_type = "eth-da"
   Proposer = "0x65436ddCbc026F34118954F229f7F132b696b3B4"
   UnsafeBlockSigner = "0x7D056B99AA2021864c42E25B4F8cE3BdEAc9463C"
   BatchSubmitter = "0x500d7Ea63CF2E501dadaA5feeC1FC19FE2Aa72Ac"
+
+[addresses]
   AddressManager = "0x9b7C9BbD6d540A8A4dEDd935819fC4408Ba71153"
   L1CrossDomainMessengerProxy = "0x69d3Cf86B2Bf1a9e99875B7e2D9B6a84426c171f"
   L1ERC721BridgeProxy = "0x661235a238B11191211fa95D4Dd9E423d521E0Be"

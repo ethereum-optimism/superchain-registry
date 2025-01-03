@@ -1,16 +1,19 @@
 name = "Swan Chain Mainnet"
-chain_id = 254
 public_rpc = "https://mainnet-rpc.swanchain.org"
 sequencer_rpc = "https://sequencer-mainnet.swanchain.org"
 explorer = "https://swanscan.io"
 superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 254
 batch_inbox_addr = "0xfF00000000000000000000000000000000000254"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 5
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -31,7 +34,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x3FcB6E08A960EF52Ec3101A444f71A2Fd964b248"
   ProxyAdminOwner = "0x6197f64902b9275e6815F9A5b641Ed2291A5d39c"
   Guardian = "0x3FcB6E08A960EF52Ec3101A444f71A2Fd964b248"
@@ -39,6 +42,8 @@ data_availability_type = "eth-da"
   Proposer = "0xb2a5571C23d13Ce16EF3e993FbE8d225D3f67366"
   UnsafeBlockSigner = "0x05a220507e8F4c73a446DbAfC5607016A7D5Eab0"
   BatchSubmitter = "0xde794bEc196832474f2F218135bFd0f7cA7fb038"
+
+[addresses]
   AddressManager = "0x55Aec4EE11dA7d655565cCc2EB3bF21a46C94e6f"
   L1CrossDomainMessengerProxy = "0x15567C4FfD9109795dFf1D9A5233D10aef0738D2"
   L1ERC721BridgeProxy = "0x1Ccf7e62889E6A93413DEAFC4e390Bd4047bDC32"

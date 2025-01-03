@@ -1,20 +1,24 @@
 name = "OP Sepolia Testnet"
-chain_id = 11155420
 public_rpc = "https://sepolia.optimism.io"
 sequencer_rpc = "https://sepolia-sequencer.optimism.io"
 explorer = "https://sepolia-optimistic.etherscan.io"
 superchain_level = 1
 governed_by_optimism = true
-superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
+superchain_time = 0
+data_availability_type = "eth-da"
+chain_id = 11155420
 batch_inbox_addr = "0xff00000000000000000000000000000011155420"
-canyon_time = 1699981200  # Tue 14 Nov 2023 17:00:00 UTC
-delta_time = 1703203200   # Fri 22 Dec 2023 00:00:00 UTC
-ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
-fjord_time = 1716998400   # Wed 29 May 2024 16:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 1699981200 # Tue 14 Nov 2023 17:00:00 UTC
+  delta_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
+  ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
+  fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
+  granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
+  holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -35,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
   ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
   Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
@@ -43,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0x49277EE36A024120Ee218127354c4a3591dc90A9"
   UnsafeBlockSigner = "0x57CACBB0d30b01eb2462e5dC940c161aff3230D3"
   BatchSubmitter = "0x8F23BB38F531600e5d8FDDaAEC41F13FaB46E98c"
+
+[addresses]
   AddressManager = "0x9bFE9c5609311DF1c011c47642253B78a4f33F4B"
   L1CrossDomainMessengerProxy = "0x58Cc85b8D04EA49cC6DBd3CbFFd00B4B8D6cb3ef"
   L1ERC721BridgeProxy = "0xd83e03D576d23C9AEab8cC44Fa98d058D2176D1f"
