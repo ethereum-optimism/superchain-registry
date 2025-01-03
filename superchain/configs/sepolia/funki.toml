@@ -1,17 +1,20 @@
 name = "Funki Sepolia Testnet"
-chain_id = 3397901
 public_rpc = "https://funki-testnet.alt.technology"
 sequencer_rpc = "https://funki-testnet.alt.technology"
 explorer = "https://sepolia-sandbox.funkichain.com/"
 superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "alt-da"
+chain_id = 3397901
 batch_inbox_addr = "0xff000000000000000000000000000000000084bB"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 28800
 max_sequencer_drift = 600
-data_availability_type = "alt-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -19,7 +22,7 @@ data_availability_type = "alt-da"
   eip1559_denominator_canyon = 250
 
 [alt_da]
-  da_challenge_contract_address = "0x12C6A7dB25b20347CA6F5d47E56D5E8219871C6d"
+  da_challenge_contract_address = "0x12c6a7db25b20347ca6f5d47e56d5e8219871c6d"
   da_challenge_window = 1
   da_resolve_window = 1
   da_commitment_type = "KeccakCommitment"
@@ -38,7 +41,7 @@ data_availability_type = "alt-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xCDAf106c5531fd27Bf27536E4696E325de9F52b8"
   ProxyAdminOwner = "0x814973b1ec9Eb9172996931dE7BF1380bd64a824"
   Guardian = "0xdf3d6FA42Fe4225E6A042C4eD191d7E5D8252E6f"
@@ -46,6 +49,8 @@ data_availability_type = "alt-da"
   Proposer = "0x0b8AA7c355917016496e999a80F1737ef9c0C962"
   UnsafeBlockSigner = "0x5359050ACb96c515562896BA71089487138e4bDe"
   BatchSubmitter = "0xDa19a4E4d1DbC69bACf13435f08F76cED9B3C245"
+
+[addresses]
   AddressManager = "0x6ECc4a306cD20f8041d63B3Db8ecA46b713cDEcC"
   L1CrossDomainMessengerProxy = "0x6F82D895E223Dde65DA28a8bbD14f3eF79cBF3b8"
   L1ERC721BridgeProxy = "0x598D245Ea85FBfBceCe6c62232bbCAB688D3F68b"

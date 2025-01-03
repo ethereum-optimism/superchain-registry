@@ -1,21 +1,24 @@
 name = "Base Sepolia Testnet"
-chain_id = 84532
 public_rpc = "https://sepolia.base.org"
 sequencer_rpc = "https://sepolia-sequencer.base.org"
 explorer = "https://sepolia-explorer.base.org"
 superchain_level = 0
 governed_by_optimism = false
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
-superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
+superchain_time = 0
+data_availability_type = "eth-da"
+chain_id = 84532
 batch_inbox_addr = "0xfF00000000000000000000000000000000084532"
-canyon_time = 1699981200 # Tue 14 Nov 2023 17:00:00 UTC
-delta_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
-ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
-fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 1699981200 # Tue 14 Nov 2023 17:00:00 UTC
+  delta_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
+  ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
+  fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
+  granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
+  holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 10
@@ -36,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
     gasLimit = 25000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x0fe884546476dDd290eC46318785046ef68a0BA9"
   ProxyAdminOwner = "0x0fe884546476dDd290eC46318785046ef68a0BA9"
   Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
@@ -44,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0x037637067c1DbE6d2430616d8f54Cb774Daa5999"
   UnsafeBlockSigner = "0xb830b99c95Ea32300039624Cb567d324D4b1D83C"
   BatchSubmitter = "0xfc56E7272EEBBBA5bC6c544e159483C4a38f8bA3"
+
+[addresses]
   AddressManager = "0x709c2B8ef4A9feFc629A8a2C1AF424Dc5BD6ad1B"
   L1CrossDomainMessengerProxy = "0xC34855F4De64F1840e5686e64278da901e261f20"
   L1ERC721BridgeProxy = "0x21eFD066e581FA55Ef105170Cc04d74386a09190"

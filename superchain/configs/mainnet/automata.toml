@@ -1,19 +1,22 @@
 name = "Automata Mainnet"
-chain_id = 65536
 public_rpc = "https://rpc.ata.network"
 sequencer_rpc = "https://automata-mainnet.alt.technology/"
 explorer = "https://explorer.ata.network"
 superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "alt-da"
+chain_id = 65536
 batch_inbox_addr = "0xff00000000000000000000000000000001111111"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 7200
 max_sequencer_drift = 1800
-data_availability_type = "alt-da"
 gas_paying_token = "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 10
@@ -21,7 +24,7 @@ gas_paying_token = "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
   eip1559_denominator_canyon = 250
 
 [alt_da]
-  da_challenge_contract_address = "0x08c5DCDD5e46d31CC1591ee15b084663507597f3"
+  da_challenge_contract_address = "0x08c5dcdd5e46d31cc1591ee15b084663507597f3"
   da_challenge_window = 3600
   da_resolve_window = 3600
   da_commitment_type = "KeccakCommitment"
@@ -40,7 +43,7 @@ gas_paying_token = "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
     scalar = "0x0100000000000000000000000000000000000000000000000000000000013880"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x49eC5Bd8C9cC35Ce26b87E534d2E36980621dDD2"
   ProxyAdminOwner = "0x03eC1C43434E2f910A2fb984906cd2470fdb39c8"
   Guardian = "0xa5822fb7E3Fb516E518e2629E6786e93858e41F4"
@@ -48,6 +51,8 @@ gas_paying_token = "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
   Proposer = "0x8c6F6580C846634C5DA08c40AE308DE23006a679"
   UnsafeBlockSigner = "0xA940a669DAe672111FD02Df597Cf7De7Cf758fAD"
   BatchSubmitter = "0x5BEF09f138921eF7985d83AAB97da1dB6E4dd190"
+
+[addresses]
   AddressManager = "0xF1C911e0c1E6dd08c8a7C80c9890e2037e0504c6"
   L1CrossDomainMessengerProxy = "0x825C858149F1E775a0f4Aeb172037B970bE7B736"
   L1ERC721BridgeProxy = "0x00bd00c5C7F60e222D9CB8040270Ba929241A280"

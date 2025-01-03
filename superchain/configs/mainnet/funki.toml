@@ -1,18 +1,21 @@
 name = "Funki"
-chain_id = 33979
 public_rpc = "https://rpc-mainnet.funkichain.com"
 sequencer_rpc = "https://rpc-mainnet.funkichain.com"
 explorer = "https://funki.superscan.network"
 superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "alt-da"
+chain_id = 33979
 batch_inbox_addr = "0xfF00000000000000000000000000000084BB84Bb"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 8400
 max_sequencer_drift = 1800
-data_availability_type = "alt-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 10
@@ -20,7 +23,7 @@ data_availability_type = "alt-da"
   eip1559_denominator_canyon = 250
 
 [alt_da]
-  da_challenge_contract_address = "0xF40b807c2407e1d7dabb85f3ceefd5EACc7bF3CD"
+  da_challenge_contract_address = "0xf40b807c2407e1d7dabb85f3ceefd5eacc7bf3cd"
   da_challenge_window = 3600
   da_resolve_window = 3600
   da_commitment_type = "KeccakCommitment"
@@ -39,7 +42,7 @@ data_availability_type = "alt-da"
     scalar = "0x0100000000000000000000000000000000000000000000000000000000003138"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xc0CE2761d5cC92d25dB6ccD95e4b9483eD22D11B"
   ProxyAdminOwner = "0x89CB6669f87c165E7128F4a57476EE4Daa7ffbCD"
   Guardian = "0x052a8cd5967bc3Bdb5660c989a3A68bCA683A077"
@@ -47,6 +50,8 @@ data_availability_type = "alt-da"
   Proposer = "0x7a7690bBAb496537Ac59B45B4c59d789233BcA16"
   UnsafeBlockSigner = "0x843458b6De651E02dFD5bFFea0e9cfb3eca293EF"
   BatchSubmitter = "0x73c98Cf34AF1f7D798e8e6f34b16037530Bffc41"
+
+[addresses]
   AddressManager = "0x5a4ebF927338EA6af377caEee99C85088908f57D"
   L1CrossDomainMessengerProxy = "0x8F56a665c376A08b604DD32ee6E88667A6093172"
   L1ERC721BridgeProxy = "0x94519dD4BA8ba20Aaad14f7C6cD00fa1bB0192E9"
