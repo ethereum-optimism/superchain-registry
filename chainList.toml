@@ -1,30 +1,4 @@
 [[chains]]
-  name = "OP Mainnet"
-  identifier = "mainnet/op"
-  chain_id = 10
-  rpc = ["https://mainnet.optimism.io"]
-  explorers = ["https://explorer.optimism.io"]
-  superchain_level = 1
-  governed_by_optimism = true
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-
-[[chains]]
-  name = "arena-z"
-  identifier = "mainnet/arena-z"
-  chain_id = 7897
-  rpc = ["https://rpc.arena-z.gg"]
-  explorers = ["https://explorer.arena-z.gg"]
-  superchain_level = 0
-  governed_by_optimism = true
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-
-[[chains]]
   name = "Automata Mainnet"
   identifier = "mainnet/automata"
   chain_id = 65536
@@ -47,6 +21,20 @@
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Binary Mainnet"
+  identifier = "mainnet/tbn"
+  chain_id = 624
+  rpc = ["https://rpc.zero.thebinaryholdings.com"]
+  explorers = ["https://explorer.thebinaryholdings.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  gas_paying_token = "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -156,6 +144,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "OP Mainnet"
+  identifier = "mainnet/op"
+  chain_id = 10
+  rpc = ["https://mainnet.optimism.io"]
+  explorers = ["https://explorer.optimism.io"]
+  superchain_level = 1
+  governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Orderly Mainnet"
   identifier = "mainnet/orderly"
   chain_id = 291
@@ -247,20 +248,6 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "Binary Mainnet"
-  identifier = "mainnet/tbn"
-  chain_id = 624
-  rpc = ["https://rpc.zero.thebinaryholdings.com"]
-  explorers = ["https://explorer.thebinaryholdings.com"]
-  superchain_level = 0
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  gas_paying_token = "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-
-[[chains]]
   name = "World Chain"
   identifier = "mainnet/worldchain"
   chain_id = 480
@@ -287,30 +274,17 @@
     chain = "mainnet"
 
 [[chains]]
-  name = "OP Sepolia Testnet"
-  identifier = "sepolia/op"
-  chain_id = 11155420
-  rpc = ["https://sepolia.optimism.io"]
-  explorers = ["https://sepolia-optimistic.etherscan.io"]
-  superchain_level = 1
+  name = "arena-z"
+  identifier = "mainnet/arena-z"
+  chain_id = 7897
+  rpc = ["https://rpc.arena-z.gg"]
+  explorers = ["https://explorer.arena-z.gg"]
+  superchain_level = 0
   governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
-    chain = "sepolia"
-
-[[chains]]
-  name = "arena-z-testnet"
-  identifier = "sepolia/arena-z-testnet"
-  chain_id = 9897
-  rpc = ["https://rpc.arena-z.t.raas.gelato.cloud"]
-  explorers = ["https://arena-z.blockscout.com"]
-  superchain_level = 0
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
+    chain = "mainnet"
 
 [[chains]]
   name = "Base Sepolia Testnet"
@@ -321,6 +295,20 @@
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Binary Sepolia"
+  identifier = "sepolia/tbn"
+  chain_id = 625
+  rpc = ["https://rpc.testnet.thebinaryholdings.com"]
+  explorers = ["https://explorer.sepolia.thebinaryholdings.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  gas_paying_token = "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
@@ -430,6 +418,19 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "OP Sepolia Testnet"
+  identifier = "sepolia/op"
+  chain_id = 11155420
+  rpc = ["https://sepolia.optimism.io"]
+  explorers = ["https://sepolia-optimistic.etherscan.io"]
+  superchain_level = 1
+  governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "RACE Testnet"
   identifier = "sepolia/race"
   chain_id = 6806
@@ -451,20 +452,6 @@
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-
-[[chains]]
-  name = "Binary Sepolia"
-  identifier = "sepolia/tbn"
-  chain_id = 625
-  rpc = ["https://rpc.testnet.thebinaryholdings.com"]
-  explorers = ["https://explorer.sepolia.thebinaryholdings.com"]
-  superchain_level = 0
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  gas_paying_token = "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
@@ -503,6 +490,19 @@
   explorers = ["https://sepolia.explorer.zora.energy"]
   superchain_level = 0
   governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "arena-z-testnet"
+  identifier = "sepolia/arena-z-testnet"
+  chain_id = 9897
+  rpc = ["https://rpc.arena-z.t.raas.gelato.cloud"]
+  explorers = ["https://arena-z.blockscout.com"]
+  superchain_level = 0
+  governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
