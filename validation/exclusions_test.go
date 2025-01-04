@@ -46,10 +46,18 @@ var exclusions = map[string]map[uint64]bool{
 		11155421: true, // sepolia-dev-0/oplabs-devnet-0   Not in https://github.com/ethereum-lists/chains
 		11763072: true, // sepolia-dev-0/base-devnet-0     Not in https://github.com/ethereum-lists/chains
 	},
-
+	GovernedByOptimismTest: {
+		11155421: true, // sepolia-dev-0/oplabs-devnet-0   No standard superchain config for sepolia-dev-0
+		11763072: true, // sepolia-dev-0/base-devnet-0     No standard superchain config for sepolia-dev-0
+	},
 	// Standard Checks
 	OptimismPortal2ParamsTest: {
 		11763072: true, // sepolia-dev0/base-devnet-0
+	},
+	GasLimitTest: {
+		// We're adding an exemption for Base here per https://github.com/ethereum-optimism/superchain-registry/issues/800
+		// TODO - This needs to be removed when Base adheres to the standard charter.
+		8453: true, // base
 	},
 }
 

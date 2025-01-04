@@ -29,7 +29,7 @@ func testSuperchainConfig(t *testing.T, chain *ChainConfig) {
 
 	// DelayedWETHProxy uses a different method name, so it is broken out here
 	delayedWETHAddress := Addresses[chain.ChainID].DelayedWETHProxy
-	got, err := getAddress("config()", delayedWETHAddress, client)
+	got, err := getAddressFromChain("config()", delayedWETHAddress, client)
 	require.NoError(t, err)
 	if *expected != got {
 		t.Errorf("incorrect config() address: got %s, wanted %s (queried %s)", got, expected, delayedWETHAddress)
@@ -37,7 +37,7 @@ func testSuperchainConfig(t *testing.T, chain *ChainConfig) {
 }
 
 func checkSuperchainConfig(t *testing.T, client *ethclient.Client, targetContract Address, expected Address) {
-	got, err := getAddress("superchainConfig()", targetContract, client)
+	got, err := getAddressFromChain("superchainConfig()", targetContract, client)
 	require.NoError(t, err)
 
 	if expected != got {

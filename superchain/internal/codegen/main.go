@@ -22,6 +22,7 @@ type ChainEntry struct {
 	RPC                  []string `json:"rpc" toml:"rpc"`
 	Explorer             []string `json:"explorers" toml:"explorers"`
 	SuperchainLevel      uint     `json:"superchainLevel" toml:"superchain_level"`
+	GovernedByOptimism   bool     `json:"governedByOptimism" toml:"governed_by_optimism"`
 	DataAvailabilityType string   `json:"dataAvailabilityType" toml:"data_availability_type"`
 	Parent               Parent   `json:"parent" toml:"parent"`
 	GasPayingToken       *Address `json:"gasPayingToken,omitempty" toml:"gas_paying_token,omitempty"`
@@ -56,6 +57,7 @@ func main() {
 				RPC:                  []string{chain.PublicRPC},
 				Explorer:             []string{chain.Explorer},
 				SuperchainLevel:      uint(chain.SuperchainLevel),
+				GovernedByOptimism:   chain.GovernedByOptimism,
 				DataAvailabilityType: string(chain.DataAvailabilityType),
 				Parent:               Parent{"L2", chain.Superchain, []string{}},
 				GasPayingToken:       chain.GasPayingToken,
@@ -67,7 +69,7 @@ func main() {
 			case Frontier:
 				frontierChains = append(frontierChains, chainEntry)
 			default:
-				panic(fmt.Sprintf("unknown SuperchanLevel %d", chain.SuperchainLevel))
+				panic(fmt.Sprintf("unknown SuperchainLevel %d", chain.SuperchainLevel))
 			}
 		}
 		allChains = append(allChains, standardChains...)
@@ -90,7 +92,7 @@ func main() {
 	fmt.Println("Wrote chainList.json file")
 
 	var buf bytes.Buffer
-	allChainsForTOML := map[string]([]ChainEntry){"chains": allChains}
+	allChainsForTOML := map[string][]ChainEntry{"chains": allChains}
 	if err := toml.NewEncoder(&buf).Encode(allChainsForTOML); err != nil {
 		fmt.Println("Error encoding TOML:", err)
 		return
@@ -101,7 +103,7 @@ func main() {
 	}
 	fmt.Println("Wrote chainList.toml file")
 
-	// Write all chain configs to a single file
+	// Write all chain configurations to a single file
 	type Superchain struct {
 		Name         string           `json:"name" toml:"name"`
 		Config       SuperchainConfig `json:"config" toml:"config"`

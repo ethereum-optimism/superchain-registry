@@ -17,31 +17,45 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func getAddressFromConfig(chainID uint64, contractName string) (Address, error) {
+	if common.IsHexAddress(contractName) {
+		return Address(common.HexToAddress(contractName)), nil
+	}
+
+	contractAddress, err := Addresses[chainID].AddressFor(contractName)
+
+	return contractAddress, err
+}
+
+func getAddressFromChain(method string, contractAddress Address, client *ethclient.Client) (Address, error) {
+	addr := (common.Address(contractAddress))
+	callMsg := ethereum.CallMsg{
+		To:   &addr,
+		Data: crypto.Keccak256([]byte(method))[:4],
+	}
+
+	// Make the call
+	callContract := func(msg ethereum.CallMsg) ([]byte, error) {
+		return client.CallContract(context.Background(), msg, nil)
+	}
+	result, err := Retry(callContract)(callMsg)
+	if err != nil {
+		return Address{}, err
+	}
+
+	return Address(common.BytesToAddress(result)), nil
+}
+
 var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64, client *ethclient.Client) {
 	for contract, methodToOutput := range r {
-
-		var contractAddress Address
-		var err error
-
-		if common.IsHexAddress(contract) {
-			contractAddress = Address(common.HexToAddress(contract))
-		} else {
-			contractAddress, err = Addresses[chainID].AddressFor(contract)
-			require.NoError(t, err)
-		}
+		contractAddress, err := getAddressFromConfig(chainID, contract)
+		require.NoError(t, err)
 
 		for method, output := range methodToOutput {
+			want, err := getAddressFromConfig(chainID, output)
+			require.NoError(t, err)
 
-			var want Address
-
-			if common.IsHexAddress(output) {
-				want = Address(common.HexToAddress(output))
-			} else {
-				want, err = Addresses[chainID].AddressFor(output)
-				require.NoError(t, err)
-			}
-
-			got, err := getAddress(method, contractAddress, client)
+			got, err := getAddressFromChain(method, contractAddress, client)
 			require.NoErrorf(t, err, "problem calling %s.%s (%s)", contract, method, contractAddress)
 
 			// Use t.Errorf here for a concise output of failures, since failure info is sent to a slack channel
@@ -49,7 +63,6 @@ var checkResolutions = func(t *testing.T, r standard.Resolutions, chainID uint64
 				t.Errorf("%s.%s = %s, expected %s (%s)", contract, method, got, want, output)
 			}
 		}
-
 	}
 }
 
@@ -102,25 +115,6 @@ func testL2SecurityConfig(t *testing.T, chain *ChainConfig) {
 	require.NoError(t, err, "Failed to connect to the Ethereum client at RPC url %s", chain.PublicRPC)
 	defer client.Close()
 	checkResolutions(t, standard.Config.Roles.L2.Universal, chain.ChainID, client)
-}
-
-func getAddress(method string, contractAddress Address, client *ethclient.Client) (Address, error) {
-	addr := (common.Address(contractAddress))
-	callMsg := ethereum.CallMsg{
-		To:   &addr,
-		Data: crypto.Keccak256([]byte(method))[:4],
-	}
-
-	// Make the call
-	callContract := func(msg ethereum.CallMsg) ([]byte, error) {
-		return client.CallContract(context.Background(), msg, nil)
-	}
-	result, err := Retry(callContract)(callMsg)
-	if err != nil {
-		return Address{}, err
-	}
-
-	return Address(common.BytesToAddress(result)), nil
 }
 
 func getMappingValue(contractAddress Address, mapSlot uint8, key Address, client *ethclient.Client) ([]byte, error) {

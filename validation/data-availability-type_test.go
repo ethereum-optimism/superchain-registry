@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ethereum-optimism/optimism/op-service/eth"
+	"github.com/ethereum-optimism/optimism/op-service/retry"
 	"github.com/ethereum-optimism/superchain-registry/superchain"
 	. "github.com/ethereum-optimism/superchain-registry/superchain"
 	"github.com/stretchr/testify/require"
@@ -33,22 +34,25 @@ func testDataAvailabilityType(t *testing.T, chain *ChainConfig) {
 	batchInboxAddress := chain.BatchInboxAddr
 	require.NotZero(t, batchInboxAddress)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	depth := chain.SequencerWindowSize
 	require.NotZero(t, depth)
 
-	// First attempt without needing an archive node
-	//  - full nodes keep the last 128 blocks but we use 120 to give a buffer
-	nonArchivalDepth := 120
-	blockNum, found, err := eth.CheckRecentTxs(ctx, client, nonArchivalDepth, common.Address(batchSubmitterAddress))
-	if !found {
-		if err != nil {
-			t.Log("failed to check recent batcher txs, will attempt retry")
+	blockNum, found, err := retry.Do2(context.Background(), DefaultMaxRetries, retry.Exponential(), func() (uint64, bool, error) {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+		defer cancel()
+		// First attempt without needing an archive node
+		//  - full nodes keep the last 128 blocks but we use 120 to give a buffer
+		nonArchivalDepth := 120
+		blockNum, found, err := eth.CheckRecentTxs(ctx, client, nonArchivalDepth, common.Address(batchSubmitterAddress))
+		if !found {
+			if err != nil {
+				t.Log("failed to check recent batcher txs, will attempt retry")
+			}
+			blockNum, found, err = eth.CheckRecentTxs(ctx, client, int(depth), common.Address(batchSubmitterAddress))
 		}
-		blockNum, found, err = eth.CheckRecentTxs(ctx, client, int(depth), common.Address(batchSubmitterAddress))
-	}
+
+		return blockNum, found, err
+	})
 	require.NoErrorf(t, err, "failed when checking chain for recent batcher txs from %s", batchSubmitterAddress)
 	require.True(t, found, "failed to find recent batcher tx")
 

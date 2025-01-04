@@ -4,6 +4,7 @@ public_rpc = "https://rpc.orderly.network"
 sequencer_rpc = "https://rpc.orderly.network"
 explorer = "https://explorer.orderly.network"
 superchain_level = 0
+governed_by_optimism = false
 superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
 batch_inbox_addr = "0x08aA34cC843CeEBcC88A627F18430294aA9780be"
 canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC

@@ -4,6 +4,7 @@ public_rpc = "https://sepolia.shape.network/"
 sequencer_rpc = "https://shape-sepolia-sequencer.g.alchemy.com"
 explorer = "https://shape-sepolia.explorer.alchemy.com/"
 superchain_level = 0
+governed_by_optimism = false
 standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
 batch_inbox_addr = "0xFF00000000000000000000000000000000011011"
 canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC

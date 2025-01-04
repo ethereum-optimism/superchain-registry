@@ -1,0 +1,458 @@
+version: 2.1
+orbs:
+  go: circleci/go@2.1.0
+  node: circleci/node@5.2.0
+  slack: circleci/slack@4.10.1
+parameters:
+  go_version:
+    type: string
+    default: 1.22.7 # update CI Go version here
+  chain:
+    type: string
+    default: "__required__"
+  is_forked_pull_request:
+    type: boolean
+    default: false
+
+commands:
+  notify-failures-on-main:
+    description: "Notify Slack for CI job failures"
+    parameters:
+      channel:
+        type: string
+    steps:
+      - slack/notify:
+          channel: << parameters.channel >>
+          event: fail
+          template: basic_fail_1
+          branch_pattern: main
+  install-just:
+    steps:
+      - run:
+          name: "Install just"
+          command: |
+            wget -qO - 'https://proget.makedeb.org/debian-feeds/prebuilt-mpr.pub' | gpg --dearmor | sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1> /dev/null
+            echo "deb [arch=all,$(dpkg --print-architecture) signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
+            sudo apt update
+            sudo apt install just
+  install-foundry:
+    steps:
+      - run:
+          # need foundry to execute 'cast call' within ops script
+          name: Install foundry
+          command: |
+            echo "SHELL=$SHELL"
+            # Set up directory structure
+            mkdir -p $HOME/.foundry/bin
+            echo 'export PATH="$HOME/.foundry/bin:$PATH"' >> $BASH_ENV
+            source $BASH_ENV
+
+            # Download foundryup and make it executable
+            curl -sSL "https://raw.githubusercontent.com/foundry-rs/foundry/master/foundryup/foundryup" -o $HOME/.foundry/bin/foundryup
+            chmod +x $HOME/.foundry/bin/foundryup
+
+            $HOME/.foundry/bin/foundryup
+            forge --version
+  install-gvm:
+    steps:
+      - run:
+          name: install gvm
+          command: |
+            sudo apt-get update
+            sudo apt-get -yq install curl git mercurial make binutils bison gcc build-essential bsdmainutils
+            bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+  install-pnpm:
+    description: "Installs pnpm"
+    steps:
+      - run:
+          name: Install pnpm
+          command: |
+            sudo npm install -g pnpm
+  install-nvm:
+    description: "Installs nvm"
+    steps:
+      - run:
+          name: Install nvm
+          command: |
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+            source ~/.bashrc
+            nvm --version
+jobs:
+  golang-lint:
+    executor:
+      name: go/default # is based on cimg/go
+      tag: <<pipeline.parameters.go_version>>
+    steps:
+      - checkout
+      - install-just
+      - run: just lint-all
+      - run:
+          name: check git tree is clean
+          command: git diff --exit-code
+  golang-modules-tidy:
+    executor:
+      name: go/default # is based on cimg/go
+      tag: <<pipeline.parameters.go_version>>
+    steps:
+      - checkout
+      - install-just
+      - run: just tidy-all
+      - run:
+          name: check git tree is clean
+          command: git diff --exit-code
+  golang-test:
+    circleci_ip_ranges: true
+    shell: /bin/bash -eo pipefail
+    executor:
+      name: go/default # is based on cimg/go
+      tag: <<pipeline.parameters.go_version>>
+    steps:
+      - checkout
+      - install-just
+      - install-foundry
+      - run:
+          name: run superchain module unit tests
+          command: just test-superchain
+      - run:
+          name: run validation module unit tests
+          command: just test-validation
+      - run:
+          name: run ops module unit tests
+          command: just test-ops
+      - notify-failures-on-main:
+          channel: C03N11M0BBN # to slack channel `notify-ci-failures`
+          # TODO this should also be filtered on modified chains
+  golang-validate-modified:
+    circleci_ip_ranges: true
+    shell: /bin/bash -eo pipefail
+    executor:
+      name: go/default # is based on cimg/go
+      tag: <<pipeline.parameters.go_version>>
+    steps:
+      - checkout
+      - install-just
+      - install-foundry
+      - run:
+          name: run validation checks
+          command: just validate-modified-chains main # TODO ideally this is the base branch
+  golang-validate-all:
+    circleci_ip_ranges: true
+    shell: /bin/bash -eo pipefail
+    executor:
+      name: go/default # is based on cimg/go
+      tag: <<pipeline.parameters.go_version>>
+    steps:
+      - checkout
+      - install-just
+      - install-foundry
+      - run:
+          name: run validation checks on all chains
+          command: just validate "*"
+      - notify-failures-on-main:
+          channel: C07GQQZDW1G # to slack channel `notify-superchain-validation-failures`
+  golang-promotion-test:
+    circleci_ip_ranges: true
+    shell: /bin/bash -eo pipefail
+    executor:
+      name: go/default # is based on cimg/go
+      tag: <<pipeline.parameters.go_version>>
+    steps:
+      - checkout
+      - install-just
+      - install-foundry
+      - run:
+          name: run validation checks
+          command: just promotion-test
+      - slack/notify:
+          event: always
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":control_knobs: The daily report on standard candidate chains is ready!"
+                  },
+                  "accessory": {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "👀 View Report",
+                      "emoji": true
+                    },
+                    "url": "${CIRCLE_BUILD_URL}"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "Click the link to see what validation checks would fail if all candidate chains were promoted to standard (and exclusions removed)."
+                    }
+                  ]
+                }
+              ]
+            }
+          channel: C07GZVCCUS0 # to slack channel `notify-superchain-promotion-reports`
+  publish-bot:
+    environment:
+      NODE_AUTH_TOKEN: $NPM_TOKEN # Use NPM_TOKEN as the auth token
+    docker:
+      - image: cimg/node:18 # Use Node.js 18
+    steps:
+      - checkout
+      - run:
+          name: Set deployment token
+          command: npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+      - env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run:
+          name: "Build and publish package on NPM \U0001F4E6"
+          command: pnpm release
+  check-codegen:
+    executor:
+      name: go/default # is based on cimg/go
+      tag: <<pipeline.parameters.go_version>>
+    steps:
+      - checkout
+      - install-just
+      - run:
+          name: Run codegen
+          command: just codegen
+      - run:
+          name: check git tree is clean
+          command: git diff --exit-code
+  golang-validate-genesis-allocs:
+    circleci_ip_ranges: true
+    docker:
+      - image: cimg/go:<<pipeline.parameters.go_version>>-node
+    resource_class: medium
+    parameters:
+      chainid:
+        type: string
+    steps:
+      - checkout
+      - install-pnpm
+      - install-just
+      - install-foundry
+      - install-gvm
+      - install-nvm
+      - run: just validate-genesis-allocs <<parameters.chainid>>
+  genesis-allocs-all-ok:
+    docker:
+      - image: cimg/go:<<pipeline.parameters.go_version>>-node
+    resource_class: medium
+    steps:
+      - checkout
+      - run: echo "All golang-validate-genesis-allocs jobs suceeded"
+
+  compute-config-diff:
+    machine:
+      image: ubuntu-2004:current
+    parameters:
+      command:
+        description: "Command to run to generate config files"
+        type: string
+      directory:
+        description: "Directory where config files are stored"
+        type: string
+      save_to:
+        description: "Variable to save the diff result"
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Generate configs
+          working_directory: validation
+          command: |
+            BASE_BRANCH="main"
+
+            # We are already in the Head of the PR after checkout
+            go run <<parameters.command>>/main.go HEAD
+
+            # Fetch the base branch
+            git fetch origin $BASE_BRANCH
+
+            # Checkout the base branch
+            git checkout $BASE_BRANCH
+
+            go run <<parameters.command>>/main.go base
+
+      - run:
+          name: Compute diff
+          working_directory: validation
+          command: |
+            # Allow the script to continue even if the diff-configs.sh script returns a non-zero exit code
+            set +e
+
+            # Run the script and capture its output and exit code
+            ./scripts/diff-configs.sh <<parameters.directory>>/output-base <<parameters.directory>>/output-HEAD
+            DIFF=$?
+            echo "export DIFF=$DIFF" >> <<parameters.save_to>>
+            echo "export RUN_URL=${CIRCLE_BUILD_URL}" >> <<parameters.save_to>>
+            # Restore error handling
+            set -e
+      - persist_to_workspace:
+          root: validation
+          paths:
+            - <<parameters.save_to>>
+
+  report-config-diff:
+    machine:
+      image: ubuntu-2004:current
+    parameters:
+      message:
+        description: "PR comment body prefixed message"
+        type: string
+      read_from:
+        description: "Variable to read the diff result"
+        type: string
+    steps:
+      - attach_workspace:
+          at: validation
+      - run:
+          name: Handle PR Comment Based on DIFF only if it is a PR
+          working_directory: validation
+          command: |
+            #check if we are in a PR
+            if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+              echo "Not a PR. Exiting."
+            else
+              PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed 's|.*/||')
+
+              git clone --branch v0.1.0 --depth 1 https://github.com/ethereum-optimism/circleci-utils.git /tmp/circleci-utils
+              GITHUB_CLI_PATH="/tmp/circleci-utils/github_utility/github_cli"
+              pip install -r $GITHUB_CLI_PATH/requirements.txt
+              MAIN_PATH=$GITHUB_CLI_PATH/main.py
+
+              REPO="${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+              source <<parameters.read_from>>
+              echo "DIFF=$DIFF"
+              echo "RUN_URL=$RUN_URL"
+
+              MESSAGE="<<parameters.message>>"
+              COMMENT_BODY="$MESSAGE. You can see the detail [here]($RUN_URL)."
+              echo $COMMAND
+              COMMENT_ID=$( python $MAIN_PATH get-pr-comments \
+                --github-token "${GITHUB_TOKEN}" \
+                --repo "${REPO}" \
+                --pr-number "${PR_NUMBER}" \
+                --message-substring "${MESSAGE}" \
+                --user-type "User" )
+
+              COMMENT_ID=$(echo "$COMMENT_ID" | tr -d ' \n' | cut -d',' -f1)
+              COMMENT_OPTION=""
+              if [ -n "$COMMENT_ID" ]; then
+                COMMENT_OPTION="--comment-id $COMMENT_ID"
+              fi
+
+              if [ "$DIFF" -eq 1 ]; then
+                  python $MAIN_PATH post-pr-comment \
+                    --github-token "${GITHUB_TOKEN}" \
+                    --repo "${REPO}" \
+                    --pr-number "${PR_NUMBER}" \
+                    --comment-body "${COMMENT_BODY}" \
+                    $COMMENT_OPTION
+              else
+                if [ -n "$COMMENT_ID" ]; then
+                  python $MAIN_PATH delete-pr-comment \
+                    --github-token "${GITHUB_TOKEN}" \
+                    --repo "${REPO}" \
+                    --pr-number "${PR_NUMBER}" \
+                    --comment-id $COMMENT_ID
+                fi
+              fi
+            fi
+
+workflows:
+  hourly:
+    # run workflow only when the hourly_build pipeline is triggered
+    when:
+      and:
+        - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+        - equal: [hourly_build, << pipeline.schedule.name >>]
+    jobs:
+      - golang-validate-all:
+          context:
+            - slack
+      - golang-test:
+          context:
+            - slack
+  nightly:
+    # run workflow only when the nightly_build pipeline is triggered
+    when:
+      and:
+        - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+        - equal: [nightly_build, << pipeline.schedule.name >>]
+    jobs:
+      - golang-promotion-test:
+          context:
+            - slack
+  pr-checks:
+    jobs:
+      - golang-validate-genesis-allocs:
+          matrix:
+            parameters:
+              chainid: [] # This list will be replaced by the generate_test_config.sh script
+      - genesis-allocs-all-ok:
+          requires: [] # This list will be replaced by the generate_test_config.sh script
+      - golang-lint
+      - golang-modules-tidy
+      - golang-test
+      - golang-validate-modified
+      - check-codegen
+
+  compute-config-diff-and-report:
+    when:
+      and:
+        - not:
+            equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+        - not: << pipeline.parameters.is_forked_pull_request >>
+    jobs:
+      - compute-config-diff:
+          name: compute-genesis-diff
+          command: "generate-genesis"
+          save_to: "GENESIS"
+          directory: "generate-genesis"
+      - report-config-diff:
+          name: report-genesis-diff
+          read_from: "GENESIS"
+          message: "Detected nonzero diff in genesis. This PR modifies the genesis data of at least one chain in the registry, which may or may not have been intended"
+          context: circleci-superchain-registry
+          requires: [compute-genesis-diff]
+      - compute-config-diff:
+          name: compute-rollup-config-diff
+          command: "generate-rollup-config"
+          save_to: "ROLLUP"
+          directory: "generate-rollup-config"
+      - report-config-diff:
+          name: report-rollup-config-diff
+          read_from: "ROLLUP"
+          message: "Detected nonzero diff in rollup config. This PR modifies the configuration of at least one chain in the registry, which may or may not have been intended"
+          context: circleci-superchain-registry
+          requires: [compute-rollup-config-diff]
+
+  compute-config-diff-only:
+    when:
+      and:
+        - not:
+            equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+        - << pipeline.parameters.is_forked_pull_request >>
+    jobs:
+      - compute-config-diff:
+          name: compute-genesis-diff
+          command: "generate-genesis"
+          save_to: "GENESIS"
+          directory: "generate-genesis"
+      - compute-config-diff:
+          name: compute-rollup-config-diff
+          command: "generate-rollup-config"
+          save_to: "ROLLUP"
+          directory: "generate-rollup-config"

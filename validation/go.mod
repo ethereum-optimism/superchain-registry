@@ -6,8 +6,8 @@ toolchain go1.22.7
 
 require (
 	github.com/BurntSushi/toml v1.4.0
-	github.com/ethereum-optimism/optimism v1.9.6-0.20241111122827-a786daaf0f06
-	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240910145426-b3905c89e8ac
+	github.com/ethereum-optimism/optimism v1.10.0
+	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20241119111730-bee358f6d6e6
 	github.com/ethereum/go-ethereum v1.14.11
 	github.com/google/go-cmp v0.6.0
 	github.com/stretchr/testify v1.9.0
@@ -85,7 +85,7 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	golang.org/x/crypto v0.28.0 // indirect
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect
-	golang.org/x/sync v0.8.0 // indirect
+	golang.org/x/sync v0.9.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
 	golang.org/x/term v0.25.0 // indirect
 	golang.org/x/text v0.19.0 // indirect
