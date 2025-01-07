@@ -351,7 +351,7 @@ jobs:
           token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
           output-comment-id: COMMENT_ID #output-comment-id is the name of the output variable. Default is COMMENT_ID. Adding here for clarity.
       - run:
-          Name: Check if the diff is 1
+          Name: Check if there's a diff
           command: |
             echo "DIFF=$DIFF"
             if [ "$DIFF" -eq 1 ]; then
