@@ -323,7 +323,7 @@ jobs:
       - attach_workspace:
           at: validation
       - run:
-          name: Handle PR Comment Based on DIFF only if it is a PR
+          name: "Append environment variables from previous job to current bash environment"
           working_directory: validation
           command: |
             # Append environment variables shared from the previous job to the bash environment
@@ -340,16 +340,16 @@ jobs:
 
             echo "export COMMENT_BODY='<< parameters.message >>. You can see the detail [here](${RUN_URL}).'" >> "$BASH_ENV"
       - utils/get-github-access-token:
-          private-key-str: GITHUB_APP_KEY # GITHUB_APP_KEY is a context variable. Default is GITHUB_APP_KEY. Adding here for clarity
-          app-id: GITHUB_APP_ID # GITHUB_APP_ID is a context variable. Default is GITHUB_APP_ID. Adding here for clarity
+          private-key-str: GITHUB_APP_KEY # GITHUB_APP_KEY is a context variable. Default is GITHUB_APP_KEY.
+          app-id: GITHUB_APP_ID # GITHUB_APP_ID is a context variable. Default is GITHUB_APP_ID.
           repo: $REPO # REPO is set in the previous step, is needed to get the installation id
-          output-token-name: GITHUB_APP_TOKEN # output-token-name is the name of the output variable. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+          output-token-name: GITHUB_APP_TOKEN # output-token-name is the name of the output variable. Default is GITHUB_ACCESS_TOKEN..
       - utils/get-github-pr-comments:
           repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
           pr-number: $PR_NUMBER # pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
           message: << parameters.message >> # message is the message that will be used to filter the comments. The search will check if this message is contained in the comment body
-          token-name: GITHUB_APP_TOKEN # token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
-          output-comment-id: COMMENT_ID # output-comment-id is the name of the output variable. Default is COMMENT_ID. Adding here for clarity.
+          token-name: GITHUB_APP_TOKEN # token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN..
+          output-comment-id: COMMENT_ID # output-comment-id is the name of the output variable. Default is COMMENT_ID..
       - run:
           Name: Check if there's a diff
           command: |
@@ -369,13 +369,13 @@ jobs:
           pr-number: $PR_NUMBER # pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
           comment-id: $COMMENT_ID # comment-id is set in the previous step. It is needed to know which comment to reply to
           comment-body: $COMMENT_BODY # comment-body is the body of the comment that will be posted
-          token-name: GITHUB_APP_TOKEN # token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+          token-name: GITHUB_APP_TOKEN # token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN..
           condition: $condition_post_pr
       - utils/delete-github-pr-comment:
           repo: $REPO # repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
           pr-number: $PR_NUMBER # pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
           comment-id: $COMMENT_ID # comment-id is set in the previous step. It is needed to know which comment to reply to
-          token-name: GITHUB_APP_TOKEN # token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+          token-name: GITHUB_APP_TOKEN # token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN..
           condition: $condition_delete_pr
 
 workflows:
