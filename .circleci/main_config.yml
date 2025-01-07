@@ -32,7 +32,8 @@ commands:
           name: "Install just"
           command: |
             curl https://sh.rustup.rs -sSf | sh -s -- -y
-            export PATH="$PATH:$HOME/.cargo/bin"
+            echo 'export PATH="$PATH:$HOME/.cargo/bin"' >> $BASH_ENV
+            source $BASH_ENV
             cargo install just
   install-foundry:
     steps:
