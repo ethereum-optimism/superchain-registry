@@ -365,17 +365,17 @@ jobs:
             fi
 
       - utils/post-github-pr-comment:
-          repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
-          pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
-          comment-id: $COMMENT_ID #comment-id is set in the previous step. It is needed to know which comment to reply to
-          comment-body: $COMMENT_BODY #comment-body is the body of the comment that will be posted
-          token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+          repo: $REPO # repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
+          pr-number: $PR_NUMBER # pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
+          comment-id: $COMMENT_ID # comment-id is set in the previous step. It is needed to know which comment to reply to
+          comment-body: $COMMENT_BODY # comment-body is the body of the comment that will be posted
+          token-name: GITHUB_APP_TOKEN # token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
           condition: $condition_post_pr
       - utils/delete-github-pr-comment:
-          repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
-          pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
-          comment-id: $COMMENT_ID #comment-id is set in the previous step. It is needed to know which comment to reply to
-          token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+          repo: $REPO # repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
+          pr-number: $PR_NUMBER # pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
+          comment-id: $COMMENT_ID # comment-id is set in the previous step. It is needed to know which comment to reply to
+          token-name: GITHUB_APP_TOKEN # token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
           condition: $condition_delete_pr
 
 workflows:
