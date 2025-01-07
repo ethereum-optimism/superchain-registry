@@ -122,8 +122,10 @@ jobs:
           name: run ops module unit tests
           command: just test-ops
       - notify-failures-on-main:
-          channel: C03N11M0BBN # to slack channel `notify-ci-failures`
-          # TODO this should also be filtered on modified chains
+          channel: C07GQQZDW1G # to slack channel `notify-superchain-validation-failures`
+      #- notify-failures-on-main:
+          #channel: C03N11M0BBN # to slack channel `notify-ci-failures`
+          ## TODO this should also be filtered on modified chains
   golang-validate-modified:
     circleci_ip_ranges: true
     shell: /bin/bash -eo pipefail
