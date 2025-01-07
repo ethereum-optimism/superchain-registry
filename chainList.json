@@ -18,6 +18,24 @@
     }
   },
   {
+    "name": "arena-z",
+    "identifier": "mainnet/arena-z",
+    "chainId": 7897,
+    "rpc": [
+      "https://rpc.arena-z.gg"
+    ],
+    "explorers": [
+      "https://explorer.arena-z.gg"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Automata Mainnet",
     "identifier": "mainnet/automata",
     "chainId": 65536,
@@ -103,6 +121,24 @@
     "superchainLevel": 0,
     "governedByOptimism": false,
     "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Ink",
+    "identifier": "mainnet/ink",
+    "chainId": 57073,
+    "rpc": [
+      "https://rpc-gel.inkonchain.com"
+    ],
+    "explorers": [
+      "https://explorer.inkonchain.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -217,6 +253,24 @@
     }
   },
   {
+    "name": "Redstone",
+    "identifier": "mainnet/redstone",
+    "chainId": 690,
+    "rpc": [
+      "https://rpc.redstonechain.com"
+    ],
+    "explorers": [
+      "https://explorer.redstone.xyz"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Shape",
     "identifier": "mainnet/shape",
     "chainId": 360,
@@ -225,6 +279,24 @@
     ],
     "explorers": [
       "https://shape-mainnet.explorer.alchemy.com/"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Superseed",
+    "identifier": "mainnet/sseed",
+    "chainId": 5330,
+    "rpc": [
+      "https://mainnet.superseed.xyz"
+    ],
+    "explorers": [
+      "https://explorer.superseed.xyz"
     ],
     "superchainLevel": 0,
     "governedByOptimism": false,
@@ -337,6 +409,24 @@
     ],
     "superchainLevel": 1,
     "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "arena-z-testnet",
+    "identifier": "sepolia/arena-z-testnet",
+    "chainId": 9897,
+    "rpc": [
+      "https://rpc.arena-z.t.raas.gelato.cloud"
+    ],
+    "explorers": [
+      "https://arena-z.blockscout.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",

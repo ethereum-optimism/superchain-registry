@@ -496,6 +496,81 @@
           }
         },
         {
+          "Name": "Redstone",
+          "l2_chain_id": 690,
+          "PublicRPC": "https://rpc.redstonechain.com",
+          "SequencerRPC": "https://rpc.redstonechain.com",
+          "Explorer": "https://explorer.redstone.xyz",
+          "SuperchainLevel": 0,
+          "GovernedByOptimism": false,
+          "StandardChainCandidate": false,
+          "SuperchainTime": null,
+          "batch_inbox_address": "0xff00000000000000000000000000000000000690",
+          "Superchain": "mainnet",
+          "Chain": "redstone",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "block_time": 2,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "alt-da",
+          "optimism": {
+            "eip1559Elasticity": 2,
+            "eip1559Denominator": 50,
+            "eip1559DenominatorCanyon": 50
+          },
+          "alt_da": {
+            "da_challenge_contract_address": "0x97A2dA87d3439b172e6DD027220e01c9Cb565B80",
+            "da_challenge_window": 3600,
+            "da_resolve_window": 3600,
+            "da_commitment_type": "KeccakCommitment"
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "l1": {
+              "hash": "0xb9ec694afdde2e2ed661ed8ec56dace5cf8723801342fa1229e693f2a98af672",
+              "number": 19578374
+            },
+            "l2": {
+              "hash": "0xa4f55631013577464810893a05b18f07fe483885a6ef93e0060e7128bdf4ca3b",
+              "number": 0
+            },
+            "l2_time": 1712185091,
+            "system_config": {
+              "batcherAddr": "0xA31cb9Bc414601171D4537580f98F66C03aECd43",
+              "overhead": "0x0000000000000000000000000000000000000000000000000000000000000001",
+              "scalar": "0x0000000000000000000000000000000000000000000000000000000000001def",
+              "gasLimit": 100000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0xFe27f187A9E46104a932189dDF229871E06B22F8",
+            "AnchorStateRegistryProxy": "0xc51ac31BcEFB64D999AF10129Cb7693EeE7c1179",
+            "BatchSubmitter": "0xA31cb9Bc414601171D4537580f98F66C03aECd43",
+            "Challenger": "0xb356B146F1629c49C44344464F69BCDAfb4bb664",
+            "DAChallengeAddress": "0x97A2dA87d3439b172e6DD027220e01c9Cb565B80",
+            "DelayedWETHProxy": "0xa130523fD22e2a9D78F8aB232b01ff552845B4A9",
+            "DisputeGameFactoryProxy": "0x8f68E849eaf8EB943536F9d1D49Ea9C9b5868b98",
+            "Guardian": "0xb356B146F1629c49C44344464F69BCDAfb4bb664",
+            "L1CrossDomainMessengerProxy": "0x592C1299e0F8331D81A28C0FC7352Da24eDB444a",
+            "L1ERC721BridgeProxy": "0x4FFB98dBC3086bA85d5E626a6EbC3D0d08533fF4",
+            "L1StandardBridgeProxy": "0xc473ca7E02af24c129c2eEf51F2aDf0411c1Df69",
+            "L2OutputOracleProxy": "0xa426A052f657AEEefc298b3B5c35a470e4739d69",
+            "MIPS": "0x66D6be83984e3F026B4a9e2D8Fb082ecDBd43648",
+            "OptimismMintableERC20FactoryProxy": "0x5f962474834Cf1981Df6232e4b6431d3d10cb71D",
+            "OptimismPortalProxy": "0xC7bCb0e8839a28A1cFadd1CF716de9016CdA51ae",
+            "PreimageOracle": "0xE7d0fE72637B3C949cd81c63A4Ff1fb23feeF3b2",
+            "Proposer": "0x4c465E58946145bb2BFC38833154f5A3B5728CF7",
+            "ProxyAdmin": "0xCC53b447aFe07926423aB96D5496b1af30485ED2",
+            "ProxyAdminOwner": "0x70FdbCb066eD3621647Ddf61A1f40aaC6058Bc89",
+            "SuperchainConfig": "0x4b5b41c240173191425F5928bc6bdd0d439331BB",
+            "SystemConfigOwner": "0xb356B146F1629c49C44344464F69BCDAfb4bb664",
+            "SystemConfigProxy": "0x8f2428F7189c0d92D1c4a5358903A8c80Ec6a69D",
+            "UnsafeBlockSigner": "0xA5bdf717af725a47Fd7378d3D9C833776951efa0"
+          }
+        },
+        {
           "Name": "Lyra Chain",
           "l2_chain_id": 957,
           "PublicRPC": "https://rpc.lyra.finance",
@@ -742,7 +817,7 @@
             "AnchorStateRegistryProxy": "0x14387438EE964e826A4EAeB95B2BCe7754174dD1",
             "BatchSubmitter": "0xf854cd5B26bfd73d51236c0122798907Ed65B1f2",
             "Challenger": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
-            "DelayedWETHProxy": "0xe6a99Ef12995DeFC5ff47EC0e13252f0E6903759",
+            "DelayedWETHProxy": "0x89c98736A806176Fe85283c1cB727ffBdeaf37A9",
             "DisputeGameFactoryProxy": "0x87690676786cDc8cCA75A472e483AF7C8F2f0F57",
             "Guardian": "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2",
             "L1CrossDomainMessengerProxy": "0xe6a99Ef12995DeFC5ff47EC0e13252f0E6903759",
@@ -760,6 +835,75 @@
             "SystemConfigOwner": "0x06F7fB1C74147e34Fce04a6828c7BF809B038d0E",
             "SystemConfigProxy": "0xD3d4c6B703978a5d24FecF3a70a51127667Ff1A4",
             "UnsafeBlockSigner": "0x6967D304E9b7E26b5eb3f5A1FD1239DaAD3215E6"
+          }
+        },
+        {
+          "Name": "Superseed",
+          "l2_chain_id": 5330,
+          "PublicRPC": "https://mainnet.superseed.xyz",
+          "SequencerRPC": "https://mainnet.superseed.xyz",
+          "Explorer": "https://explorer.superseed.xyz",
+          "SuperchainLevel": 0,
+          "GovernedByOptimism": false,
+          "StandardChainCandidate": true,
+          "SuperchainTime": null,
+          "batch_inbox_address": "0x8612014a343089F1ddBACfD42baf4Afbf9133593",
+          "Superchain": "mainnet",
+          "Chain": "sseed",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "fjord_time": 0,
+          "block_time": 2,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 6,
+            "eip1559Denominator": 50,
+            "eip1559DenominatorCanyon": 250
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "l1": {
+              "hash": "0x32566bf75b83734e532a687ad0c1d0b884e544815498401696ca5a49df238cf2",
+              "number": 20737477
+            },
+            "l2": {
+              "hash": "0x0e5eb156fd2ea921d57ee4921191a2a46ebe3a11854ee7a63a5c6c580aa99219",
+              "number": 0
+            },
+            "l2_time": 1726179683,
+            "system_config": {
+              "batcherAddr": "0xa9B074B27DE97f492F8F07fD7C213400E4ca5391",
+              "overhead": "0x00000000000000000000000000000000000000000000000000000000000000bc",
+              "scalar": "0x00000000000000000000000000000000000000000000000000000000000a6fe0",
+              "gasLimit": 30000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0x0a1B34aA2047AD1AbEF8aC085b1a7802Ed9dbCF0",
+            "AnchorStateRegistryProxy": "0xaC1e4B08300C6c4705918089ee10b286b3ec24df",
+            "BatchSubmitter": "0xa9B074B27DE97f492F8F07fD7C213400E4ca5391",
+            "Challenger": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+            "DelayedWETHProxy": "0xEc4DC88475A2887e73b2073b60425575FD693c0a",
+            "DisputeGameFactoryProxy": "0x8b097CF1f9BbD9cbFD0DD561858a1FCbC8857Be0",
+            "Guardian": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
+            "L1CrossDomainMessengerProxy": "0x3a30AEd8fa7717aC2D8454D82c125cF6B875061a",
+            "L1ERC721BridgeProxy": "0xA99f82730e68968a78AA21522FC7eb90DB76D8Cb",
+            "L1StandardBridgeProxy": "0x8b0576E39F1233679109F9b40cFcC2a7E0901Ede",
+            "L2OutputOracleProxy": "0x693A0F8854F458D282DE3C5b69E8eE5EEE8aA949",
+            "MIPS": "0x7F4F96cD3719F2829117c8C5E810e01dBD6846Ba",
+            "OptimismMintableERC20FactoryProxy": "0x484529223d68a0Cf85902Bf5E781394f0D0f837C",
+            "OptimismPortalProxy": "0x2c2150aa5c75A24fB93d4fD2F2a895D618054f07",
+            "PreimageOracle": "0xB18202e3E4dbF7AbCEa623A38526AAD5A64DcD59",
+            "Proposer": "0xB2354BDF5925d03cA06B03a7bD7386Bd685cE814",
+            "ProxyAdmin": "0xF3b7697c9C0CbdE923f34991F2D19cC1c66612bD",
+            "ProxyAdminOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+            "SuperchainConfig": "0x118D04d841B54FC52e56D39371E278EF7815C358",
+            "SystemConfigOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+            "SystemConfigProxy": "0x525a2744134805516a45B8abb6Aa0aA1dA3809F6",
+            "UnsafeBlockSigner": "0x92Dc533201e8634f0337D66a11820a8C4E902474"
           }
         },
         {
@@ -897,6 +1041,76 @@
             "SystemConfigOwner": "0xc76C563185d01284AdbC9cF5bb909162dD2F15e7",
             "SystemConfigProxy": "0x5D1F4bbaF6D484fA9D5D9705f92dE6063bff6055",
             "UnsafeBlockSigner": "0xa7A4D6d5920b93D0FE590f9524Ef17f24EE1F5B8"
+          }
+        },
+        {
+          "Name": "arena-z",
+          "l2_chain_id": 7897,
+          "PublicRPC": "https://rpc.arena-z.gg",
+          "SequencerRPC": "https://rpc.arena-z.gg",
+          "Explorer": "https://explorer.arena-z.gg",
+          "SuperchainLevel": 0,
+          "GovernedByOptimism": true,
+          "StandardChainCandidate": true,
+          "SuperchainTime": null,
+          "batch_inbox_address": "0x00f9BCEe08DCe4F0e7906c1f6cFb10c77802EEd0",
+          "Superchain": "mainnet",
+          "Chain": "arena-z",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "fjord_time": 0,
+          "granite_time": 0,
+          "block_time": 2,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 20,
+            "eip1559Denominator": 2000,
+            "eip1559DenominatorCanyon": 2000
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "l1": {
+              "hash": "0x5e7db5c04973dd6e06ac7e2abf5b9373089f0f09e8ae8231642f0c6aff177e27",
+              "number": 21167590
+            },
+            "l2": {
+              "hash": "0xbe7112a730b1fae8d94115271adc600559ebe87c75df1d2df9414bd7298eb7fb",
+              "number": 0
+            },
+            "l2_time": 1731366083,
+            "system_config": {
+              "batcherAddr": "0x2b8733E8c60A928b19BB7db1D79b918e8E09AC8c",
+              "overhead": "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "scalar": "0x010000000000000000000000000000000000000000000000000c3a30000060a4",
+              "gasLimit": 30000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0x1cb5FB7Da1444e2d895420442D246787B7aFA95D",
+            "AnchorStateRegistryProxy": "0x924911E2CCAdB4638447ccD00b6cFb040Cc08560",
+            "BatchSubmitter": "0x2b8733E8c60A928b19BB7db1D79b918e8E09AC8c",
+            "Challenger": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
+            "DelayedWETHProxy": "0xAF1308930B721e763a6b21cf143E4e86e702f164",
+            "DisputeGameFactoryProxy": "0x658656A14AFdf9c507096aC406564497d13EC754",
+            "Guardian": "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2",
+            "L1CrossDomainMessengerProxy": "0x0BE364912219bC74760f1d1c25F4866b328eBfC6",
+            "L1ERC721BridgeProxy": "0xbc404ae11E4E9DA3Ea9276Aa6DCcA31097D4f4Ee",
+            "L1StandardBridgeProxy": "0x564Eb0CeFCcA86160649a8986C419693c82F3678",
+            "MIPS": "0x16e83cE5Ce29BF90AD9Da06D2fE6a15d5f344ce4",
+            "OptimismMintableERC20FactoryProxy": "0xa33f75a3A2babD502cbC1A6F54345B529C1F306E",
+            "OptimismPortalProxy": "0xB20f99b598E8d888d1887715439851BC68806b22",
+            "PermissionedDisputeGame": "0x227882E5972EbAd990dcF04E2dbe2fC84094E146",
+            "PreimageOracle": "0x9c065e11870B891D214Bc2Da7EF1f9DDFA1BE277",
+            "Proposer": "0x5f16E66D8736B689a430564a31c8d887ca357CD8",
+            "ProxyAdmin": "0xEEFD1782D70824CBcacf9438afab7f353F1797F0",
+            "ProxyAdminOwner": "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A",
+            "SuperchainConfig": "0x95703e0982140D16f8ebA6d158FccEde42f04a4C",
+            "SystemConfigOwner": "0xBeA2Bc852a160B8547273660E22F4F08C2fa9Bbb",
+            "SystemConfigProxy": "0x34A564BbD863C4bf73Eca711Cf38a77C4Ccbdd6A",
+            "UnsafeBlockSigner": "0xb774Ca8438319d2a97B9925F4CD248e4C470Ac5B"
           }
         },
         {
@@ -1110,6 +1324,76 @@
             "SystemConfigOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
             "SystemConfigProxy": "0x5e6432F18Bc5d497B1Ab2288a025Fbf9D69E2221",
             "UnsafeBlockSigner": "0xa7fA9CA4ac88686A542C0f830d7378eAB4A0278F"
+          }
+        },
+        {
+          "Name": "Ink",
+          "l2_chain_id": 57073,
+          "PublicRPC": "https://rpc-gel.inkonchain.com",
+          "SequencerRPC": "https://rpc-gel.inkonchain.com",
+          "Explorer": "https://explorer.inkonchain.com",
+          "SuperchainLevel": 0,
+          "GovernedByOptimism": true,
+          "StandardChainCandidate": true,
+          "SuperchainTime": null,
+          "batch_inbox_address": "0x005969bf0EcbF6eDB6C47E5e94693b1C3651Be97",
+          "Superchain": "mainnet",
+          "Chain": "ink",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "fjord_time": 0,
+          "granite_time": 0,
+          "block_time": 1,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 6,
+            "eip1559Denominator": 250,
+            "eip1559DenominatorCanyon": 250
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "l1": {
+              "hash": "0x39e4e0c0c94f8076134b441a9dc18d10b595fd9777edeb763bb9f9bd8f922fd9",
+              "number": 21344310
+            },
+            "l2": {
+              "hash": "0x23a2658170ba70d014ba0d0d2709f8fbfe2fa660cd868c5f282f991eecbe38ee",
+              "number": 0
+            },
+            "l2_time": 1733498411,
+            "system_config": {
+              "batcherAddr": "0x500d7Ea63CF2E501dadaA5feeC1FC19FE2Aa72Ac",
+              "overhead": "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "scalar": "0x010000000000000000000000000000000000000000000000000c5fc500000558",
+              "gasLimit": 30000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0x9b7C9BbD6d540A8A4dEDd935819fC4408Ba71153",
+            "AnchorStateRegistryProxy": "0xde744491BcF6b2DD2F32146364Ea1487D75E2509",
+            "BatchSubmitter": "0x500d7Ea63CF2E501dadaA5feeC1FC19FE2Aa72Ac",
+            "Challenger": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
+            "DelayedWETHProxy": "0x14773a8040Ff22e3DcBb0C83eC8e33Be7D920D38",
+            "DisputeGameFactoryProxy": "0x10d7B35078d3baabB96Dd45a9143B94be65b12CD",
+            "Guardian": "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2",
+            "L1CrossDomainMessengerProxy": "0x69d3Cf86B2Bf1a9e99875B7e2D9B6a84426c171f",
+            "L1ERC721BridgeProxy": "0x661235a238B11191211fa95D4Dd9E423d521E0Be",
+            "L1StandardBridgeProxy": "0x88FF1e5b602916615391F55854588EFcBB7663f0",
+            "MIPS": "0x16e83cE5Ce29BF90AD9Da06D2fE6a15d5f344ce4",
+            "OptimismMintableERC20FactoryProxy": "0xA8B389A82e088b164cD03230e900980CcED34d29",
+            "OptimismPortalProxy": "0x5d66C1782664115999C47c9fA5cd031f495D3e4F",
+            "PermissionedDisputeGame": "0xa8E6a9bF1Ba2dF76C6787EAEbE2273Ae98498059",
+            "PreimageOracle": "0x9c065e11870B891D214Bc2Da7EF1f9DDFA1BE277",
+            "Proposer": "0x65436ddCbc026F34118954F229f7F132b696b3B4",
+            "ProxyAdmin": "0xd56045E68956FCe2576E680c95a4750cf8241f79",
+            "ProxyAdminOwner": "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A",
+            "SuperchainConfig": "0x95703e0982140D16f8ebA6d158FccEde42f04a4C",
+            "SystemConfigOwner": "0xBeA2Bc852a160B8547273660E22F4F08C2fa9Bbb",
+            "SystemConfigProxy": "0x62C0a111929fA32ceC2F76aDba54C16aFb6E8364",
+            "UnsafeBlockSigner": "0x7D056B99AA2021864c42E25B4F8cE3BdEAc9463C"
           }
         },
         {
@@ -1879,6 +2163,77 @@
           }
         },
         {
+          "Name": "arena-z-testnet",
+          "l2_chain_id": 9897,
+          "PublicRPC": "https://rpc.arena-z.t.raas.gelato.cloud",
+          "SequencerRPC": "https://rpc.arena-z.t.raas.gelato.cloud",
+          "Explorer": "https://arena-z.blockscout.com",
+          "SuperchainLevel": 0,
+          "GovernedByOptimism": false,
+          "StandardChainCandidate": true,
+          "SuperchainTime": null,
+          "batch_inbox_address": "0xFF00000000000000000000000000000000009897",
+          "Superchain": "sepolia",
+          "Chain": "arena-z-testnet",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "fjord_time": 0,
+          "granite_time": 1723478400,
+          "holocene_time": 1732633200,
+          "block_time": 2,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 10,
+            "eip1559Denominator": 50,
+            "eip1559DenominatorCanyon": 250
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "l1": {
+              "hash": "0x0c9c133c27d12e35a7b3ff2358f2dc1ff5eda8cced373dccb6cf394302bfd135",
+              "number": 6410228
+            },
+            "l2": {
+              "hash": "0xbd3f64b71ff2f6a414afa77068e602b764c45fe399b72de992af2a7787e8227d",
+              "number": 0
+            },
+            "l2_time": 1722432480,
+            "system_config": {
+              "batcherAddr": "0xaBecfbb176FA579ee7E1Ed1947E375B118433be0",
+              "overhead": "0x00000000000000000000000000000000000000000000000000000000000000bc",
+              "scalar": "0x00000000000000000000000000000000000000000000000000000000000f4240",
+              "gasLimit": 30000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0x5b7996f61650a6f4920F2C8eF4BfaF4f64a07638",
+            "AnchorStateRegistryProxy": "0xBB5B16c3ffdB21F67b1d7b1158517ce62D95AA68",
+            "BatchSubmitter": "0xaBecfbb176FA579ee7E1Ed1947E375B118433be0",
+            "Challenger": "0x776beE5229Eb00349D6Fc956EFAD7985ee36804d",
+            "DelayedWETHProxy": "0x8A91337Fd5113669CC368F2b9D5aed8f6c4458c9",
+            "DisputeGameFactoryProxy": "0xD9E9933Cc6EF672C93d2a42494b0D2BF14C05544",
+            "Guardian": "0x776beE5229Eb00349D6Fc956EFAD7985ee36804d",
+            "L1CrossDomainMessengerProxy": "0xCC226A3B7b5ec4D4d698418fC2C0492950136Ba7",
+            "L1ERC721BridgeProxy": "0x11d7f6f2E59Fc12E61DbfafE7790e54CAb01b434",
+            "L1StandardBridgeProxy": "0x76A4B2CC5d210729Fb3DE13CeE250663bdac73A6",
+            "L2OutputOracleProxy": "0xf2574585eC7ba515Fd86402B84A60D5eFb51B0Ff",
+            "MIPS": "0x379094D2ED496ca4FfaF1B17Ad4BA3e152Fb8486",
+            "OptimismMintableERC20FactoryProxy": "0x88404B147e158e65fe7C9E7A9f50DD278F5e5e6e",
+            "OptimismPortalProxy": "0x2188047AD28B78D975cE319dfcDa5D06c2a6a68b",
+            "PreimageOracle": "0x0e4371a13E53563F7A635380CF2DB6eCD620F444",
+            "Proposer": "0xBF80C17ee655837E25208436ed543217899B4bd8",
+            "ProxyAdmin": "0x554D3431CF89e680610CFBFb9B558777e0a72F39",
+            "ProxyAdminOwner": "0xb33c6A58C26666F04054E8b0D939e17D6eB1a155",
+            "SuperchainConfig": "0xF7Ad8d1bca6c97F10714525358a9eb54108AbDb6",
+            "SystemConfigOwner": "0x776beE5229Eb00349D6Fc956EFAD7985ee36804d",
+            "SystemConfigProxy": "0xa3c900d30EE6e906FC085633258d2FE619680884",
+            "UnsafeBlockSigner": "0xBBC751e8A6285F22C8B6305D1158071f204Dbca4"
+          }
+        },
+        {
           "Name": "Shape Sepolia Testnet",
           "l2_chain_id": 11011,
           "PublicRPC": "https://sepolia.shape.network/",
@@ -2070,7 +2425,7 @@
             "AnchorStateRegistryProxy": "0x89126a987717207d4E990ed2e8880fd170DceA1A",
             "BatchSubmitter": "0x21e57C21530Bc33F12Ba96C9dDC135488365002F",
             "Challenger": "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301",
-            "DelayedWETHProxy": "0x9fE1d3523F5342535E6E7770ED09ed85Dbc1Acc2",
+            "DelayedWETHProxy": "0x180AC451088B8f87006ab0CA98a01507e42AC456",
             "DisputeGameFactoryProxy": "0x860e626c700AF381133D9f4aF31412A2d1DB3D5d",
             "Guardian": "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E",
             "L1CrossDomainMessengerProxy": "0x9fE1d3523F5342535E6E7770ED09ed85Dbc1Acc2",

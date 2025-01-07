@@ -12,6 +12,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "arena-z"
+  identifier = "mainnet/arena-z"
+  chain_id = 7897
+  rpc = ["https://rpc.arena-z.gg"]
+  explorers = ["https://explorer.arena-z.gg"]
+  superchain_level = 0
+  governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Automata Mainnet"
   identifier = "mainnet/automata"
   chain_id = 65536
@@ -73,6 +86,19 @@
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Ink"
+  identifier = "mainnet/ink"
+  chain_id = 57073
+  rpc = ["https://rpc-gel.inkonchain.com"]
+  explorers = ["https://explorer.inkonchain.com"]
+  superchain_level = 0
+  governed_by_optimism = true
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -156,11 +182,37 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Redstone"
+  identifier = "mainnet/redstone"
+  chain_id = 690
+  rpc = ["https://rpc.redstonechain.com"]
+  explorers = ["https://explorer.redstone.xyz"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Shape"
   identifier = "mainnet/shape"
   chain_id = 360
   rpc = ["https://mainnet.shape.network/"]
   explorers = ["https://shape-mainnet.explorer.alchemy.com/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Superseed"
+  identifier = "mainnet/sseed"
+  chain_id = 5330
+  rpc = ["https://mainnet.superseed.xyz"]
+  explorers = ["https://explorer.superseed.xyz"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
@@ -242,6 +294,19 @@
   explorers = ["https://sepolia-optimistic.etherscan.io"]
   superchain_level = 1
   governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "arena-z-testnet"
+  identifier = "sepolia/arena-z-testnet"
+  chain_id = 9897
+  rpc = ["https://rpc.arena-z.t.raas.gelato.cloud"]
+  explorers = ["https://arena-z.blockscout.com"]
+  superchain_level = 0
+  governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"

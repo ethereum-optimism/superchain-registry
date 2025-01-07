@@ -77,7 +77,7 @@ func ConstructChainConfig(
 	return chainConfig, nil
 }
 
-// WriteChainConfigTPOML accepts a rollupConfig, formats it, and writes a single output toml
+// WriteChainConfigTOML accepts a rollupConfig, formats it, and writes a single output toml
 // file which includes the following:
 //   - general chain info/config
 //   - contract and role addresses
