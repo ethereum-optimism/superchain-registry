@@ -346,10 +346,10 @@ jobs:
           output-token-name: GITHUB_APP_TOKEN # output-token-name is the name of the output variable. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
       - utils/get-github-pr-comments:
           repo: $REPO #repo is set in the previous step. It is needed to know from which repo to get the comments from. It should be always the one where the PR is coming from
-          pr-number: $PR_NUMBER #pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
-          message: << parameters.message >> #message is the message that will be used to filter the comments. The search will check if this message is contained in the comment body
-          token-name: GITHUB_APP_TOKEN #token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
-          output-comment-id: COMMENT_ID #output-comment-id is the name of the output variable. Default is COMMENT_ID. Adding here for clarity.
+          pr-number: $PR_NUMBER # pr-number is set in the previous step. It is needed to know from which PR to get the comments from.
+          message: << parameters.message >> # message is the message that will be used to filter the comments. The search will check if this message is contained in the comment body
+          token-name: GITHUB_APP_TOKEN # token-name is the name of the token that will be used to authenticate the request. Default is GITHUB_ACCESS_TOKEN. Adding here for clarity.
+          output-comment-id: COMMENT_ID # output-comment-id is the name of the output variable. Default is COMMENT_ID. Adding here for clarity.
       - run:
           Name: Check if there's a diff
           command: |
