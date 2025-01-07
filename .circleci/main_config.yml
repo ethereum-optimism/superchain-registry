@@ -338,7 +338,7 @@ jobs:
             REPO=${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
             echo "export REPO=$REPO" >> "$BASH_ENV"
 
-            echo "export COMMENT_BODY='<< parameters.message >>. You can see the detail [here](${RUN_URL}).'">> "$BASH_ENV"
+            echo "export COMMENT_BODY='<< parameters.message >>. You can see the detail [here](${RUN_URL}).'" >> "$BASH_ENV"
       - utils/get-github-access-token:
           private-key-str: GITHUB_APP_KEY # GITHUB_APP_KEY is a context variable. Default is GITHUB_APP_KEY. Adding here for clarity
           app-id: GITHUB_APP_ID # GITHUB_APP_ID is a context variable. Default is GITHUB_APP_ID. Adding here for clarity
