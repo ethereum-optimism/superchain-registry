@@ -67,6 +67,12 @@ The configs are consumed by downstream OP Stack software, i.e. `op-geth` and `op
 
 A second module exists in this repo whose purpose is to validate the config exported by the `superchain` module. It is a separate module to avoid import cycles and polluting downstream dependencies with things like `go-ethereum` (which is used in the validation tests).
 
+> In order to run validation tests locally you must have access to a L1 archive node. If you are an:
+>
+> - OP Labs core dev: you must set Tailscale to use the Tailnet exit node in order to be able to connect to CI L1 archive nodes
+>
+> - external contributor: you must provide your own L1 archive node and set its RPC endpoint in the `l1.test_rpc` field in the superchain config files (e.g. `superchain/configs/{mainnet,sepolia,sepolia-dev-0}/superchain.yaml`)
+
 ## `ops` Go module
 
 This module contains the CLI tool for generating `superchain` compliant configs and extra data to the registry.
@@ -180,6 +186,7 @@ See [Superchain Upgrades] OP Stack specifications.
 [Superchain Upgrades]: https://specs.optimism.io/protocol/superchain-upgrades.html
 
 ## CircleCI Checks
+
 The following CircleCI checks are not mandatory for submitting a pull request, but they should be reviewed:
 
 - `ci/circleci: compute-genesis-diff`
