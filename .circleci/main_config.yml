@@ -31,10 +31,10 @@ commands:
       - run:
           name: "Install just"
           command: |
-            wget -qO - 'https://proget.makedeb.org/debian-feeds/prebuilt-mpr.pub' | gpg --dearmor | sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1> /dev/null
-            echo "deb [arch=all,$(dpkg --print-architecture) signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
-            sudo apt update
-            sudo apt install just
+            curl https://sh.rustup.rs -sSf | sh -s -- -y
+            echo 'export PATH="$PATH:$HOME/.cargo/bin"' >> $BASH_ENV
+            source $BASH_ENV
+            cargo install just
   install-foundry:
     steps:
       - run:
@@ -122,8 +122,10 @@ jobs:
           name: run ops module unit tests
           command: just test-ops
       - notify-failures-on-main:
-          channel: C03N11M0BBN # to slack channel `notify-ci-failures`
-          # TODO this should also be filtered on modified chains
+          channel: C07GQQZDW1G # to slack channel `notify-superchain-validation-failures`
+      #- notify-failures-on-main:
+          #channel: C03N11M0BBN # to slack channel `notify-ci-failures`
+          ## TODO this should also be filtered on modified chains
   golang-validate-modified:
     circleci_ip_ranges: true
     shell: /bin/bash -eo pipefail
