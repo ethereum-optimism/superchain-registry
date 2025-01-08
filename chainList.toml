@@ -404,7 +404,7 @@
     chain = "sepolia"
 
 [[chains]]
-  name = "Minato"
+  name = "Soneium Testnet Minato"
   identifier = "sepolia/minato"
   chain_id = 1946
   rpc = ["https://rpc.minato.soneium.org"]

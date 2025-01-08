@@ -560,7 +560,7 @@
     }
   },
   {
-    "name": "Minato",
+    "name": "Soneium Testnet Minato",
     "identifier": "sepolia/minato",
     "chainId": 1946,
     "rpc": [

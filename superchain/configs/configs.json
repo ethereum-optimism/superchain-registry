@@ -1893,7 +1893,7 @@
           }
         },
         {
-          "Name": "Minato",
+          "Name": "Soneium Testnet Minato",
           "l2_chain_id": 1946,
           "PublicRPC": "https://rpc.minato.soneium.org",
           "SequencerRPC": "https://rpc.minato.soneium.org",
