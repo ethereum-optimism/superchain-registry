@@ -1893,7 +1893,7 @@
           }
         },
         {
-          "Name": "Minato",
+          "Name": "Soneium Testnet Minato",
           "l2_chain_id": 1946,
           "PublicRPC": "https://rpc.minato.soneium.org",
           "SequencerRPC": "https://rpc.minato.soneium.org",
@@ -1904,7 +1904,7 @@
           "SuperchainTime": 1734685200,
           "batch_inbox_address": "0x00Ca81E019a5312d404aE7fe8367D30DE4c11365",
           "Superchain": "sepolia",
-          "Chain": "minato",
+          "Chain": "soneium-minato",
           "canyon_time": 0,
           "delta_time": 0,
           "ecotone_time": 0,
