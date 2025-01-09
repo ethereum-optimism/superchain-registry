@@ -1,4 +1,4 @@
-name = "Soneium Minato"
+name = "Soneium Testnet Minato"
 chain_id = 1946
 public_rpc = "https://rpc.minato.soneium.org"
 sequencer_rpc = "https://rpc.minato.soneium.org"
