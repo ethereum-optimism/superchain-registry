@@ -202,6 +202,7 @@ fjord_time = 4
 granite_time = 5
 holocene_time = 6
 isthmus_time = 7
+jovian_time = 8
 
 [l1]
   chain_id = 314
@@ -231,6 +232,7 @@ isthmus_time = 7
 	require.Equal(t, uint64Ptr(uint64(5)), s.hardForkDefaults.GraniteTime)
 	require.Equal(t, uint64Ptr(uint64(6)), s.hardForkDefaults.HoloceneTime)
 	require.Equal(t, uint64Ptr(uint64(7)), s.hardForkDefaults.IsthmusTime)
+	require.Equal(t, uint64Ptr(uint64(8)), s.hardForkDefaults.JovianTime)
 }
 
 func TestHardForkOverridesAndDefaults(t *testing.T) {

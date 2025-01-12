@@ -62,6 +62,7 @@ type HardForkConfiguration struct {
 	GraniteTime  *uint64 `json:"granite_time,omitempty" toml:"granite_time,omitempty"`
 	HoloceneTime *uint64 `json:"holocene_time,omitempty" toml:"holocene_time,omitempty"`
 	IsthmusTime  *uint64 `json:"isthmus_time,omitempty" toml:"isthmus_time,omitempty"`
+	JovianTime   *uint64 `json:"jovian_time,omitempty" toml:"jovian_time,omitempty"`
 }
 
 type SuperchainLevel uint
@@ -268,6 +269,7 @@ func (c *ChainConfig) GenerateTOMLComments(ctx context.Context) (map[string]stri
 	createTimestampComment("granite_time", c.GraniteTime, comments)
 	createTimestampComment("holocene_time", c.HoloceneTime, comments)
 	createTimestampComment("isthmus_time", c.IsthmusTime, comments)
+	createTimestampComment("jovian_time", c.JovianTime, comments)
 
 	if c.StandardChainCandidate {
 		comments["standard_chain_candidate"] = "# This is a temporary field which causes most of the standard validation checks to run on this chain"
