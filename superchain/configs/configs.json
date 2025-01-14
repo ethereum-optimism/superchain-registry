@@ -768,6 +768,76 @@
           }
         },
         {
+          "Name": "Soneium",
+          "l2_chain_id": 1868,
+          "PublicRPC": "https://rpc.soneium.org",
+          "SequencerRPC": "",
+          "Explorer": "https://soneium.blockscout.com/",
+          "SuperchainLevel": 0,
+          "GovernedByOptimism": true,
+          "StandardChainCandidate": true,
+          "SuperchainTime": null,
+          "batch_inbox_address": "0x008dC74CecC9dedA8595B2Fe210cE5979F0BfA8e",
+          "Superchain": "mainnet",
+          "Chain": "soneium",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "fjord_time": 0,
+          "granite_time": 0,
+          "block_time": 2,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 6,
+            "eip1559Denominator": 50,
+            "eip1559DenominatorCanyon": 250
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "l1": {
+              "hash": "0x68b4ad05c3dafc2613853d26cf39f0e1716e986f879207440f187b56c12cb4d6",
+              "number": 21314185
+            },
+            "l2": {
+              "hash": "0x295d22d269634c7d0055b33b887519362d0b31899e97109d1789a8a168de1b21",
+              "number": 0
+            },
+            "l2_time": 1733134751,
+            "system_config": {
+              "batcherAddr": "0x6776BE80dBAda6A02B5F2095cF13734ac303B8d1",
+              "overhead": "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "scalar": "0x010000000000000000000000000000000000000000000000000c5fc500000558",
+              "gasLimit": 60000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0xB24bFEeCE1B3b7A44559F4Cbc21BeD312b130b70",
+            "AnchorStateRegistryProxy": "0x61f89A381E0BE13BD8Ab356cf4B7301BC97d7522",
+            "BatchSubmitter": "0x6776BE80dBAda6A02B5F2095cF13734ac303B8d1",
+            "Challenger": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
+            "DelayedWETHProxy": "0x9CF951E3F74B644e621b36Ca9cea147a78D4c39f",
+            "DisputeGameFactoryProxy": "0x512A3d2c7a43BD9261d2B8E8C9c70D4bd4D503C0",
+            "Guardian": "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2",
+            "L1CrossDomainMessengerProxy": "0x9CF951E3F74B644e621b36Ca9cea147a78D4c39f",
+            "L1ERC721BridgeProxy": "0x5933e323bE8896DfaCd1cD671442F27dAA10a053",
+            "L1StandardBridgeProxy": "0xeb9bf100225c214Efc3E7C651ebbaDcF85177607",
+            "MIPS": "0x16e83cE5Ce29BF90AD9Da06D2fE6a15d5f344ce4",
+            "OptimismMintableERC20FactoryProxy": "0xc1047e30EFC9E172cFe7aa0219895B6a43fC415F",
+            "OptimismPortalProxy": "0x88e529A6ccd302c948689Cd5156C83D4614FAE92",
+            "PermissionedDisputeGame": "0x42D15f045159Ce4adE9EDC7da5704eF36056c936",
+            "PreimageOracle": "0x9c065e11870B891D214Bc2Da7EF1f9DDFA1BE277",
+            "Proposer": "0x400c164C4a8cA84385B70EEd6eB03ea847c8E1b8",
+            "ProxyAdmin": "0x89889B569c3a505f3640ee1Bd0ac1D557f436D2a",
+            "ProxyAdminOwner": "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A",
+            "SuperchainConfig": "0x95703e0982140D16f8ebA6d158FccEde42f04a4C",
+            "SystemConfigOwner": "0x509182eC226b3B71D36A3255A80EF0b1A9D43033",
+            "SystemConfigProxy": "0x7A8Ed66B319911A0F3E7288BDdAB30d9c0C875c3",
+            "UnsafeBlockSigner": "0x7c2Bd59ee2a2C7391c9A240132f26071e9546262"
+          }
+        },
+        {
           "Name": "Swellchain",
           "l2_chain_id": 1923,
           "PublicRPC": "https://swell-mainnet.alt.technology",

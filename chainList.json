@@ -289,6 +289,24 @@
     }
   },
   {
+    "name": "Soneium",
+    "identifier": "mainnet/soneium",
+    "chainId": 1868,
+    "rpc": [
+      "https://rpc.soneium.org"
+    ],
+    "explorers": [
+      "https://soneium.blockscout.com/"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Superseed",
     "identifier": "mainnet/sseed",
     "chainId": 5330,
