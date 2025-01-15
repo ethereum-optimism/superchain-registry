@@ -362,7 +362,7 @@
           "Explorer": "https://worldchain-mainnet.explorer.alchemy.com/",
           "SuperchainLevel": 0,
           "GovernedByOptimism": false,
-          "StandardChainCandidate": false,
+          "StandardChainCandidate": true,
           "SuperchainTime": null,
           "batch_inbox_address": "0xff00000000000000000000000000000000000480",
           "Superchain": "mainnet",
