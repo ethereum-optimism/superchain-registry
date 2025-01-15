@@ -776,7 +776,7 @@
           "SuperchainLevel": 0,
           "GovernedByOptimism": true,
           "StandardChainCandidate": true,
-          "SuperchainTime": null,
+          "SuperchainTime": 1738573200,
           "batch_inbox_address": "0x008dC74CecC9dedA8595B2Fe210cE5979F0BfA8e",
           "Superchain": "mainnet",
           "Chain": "soneium",
