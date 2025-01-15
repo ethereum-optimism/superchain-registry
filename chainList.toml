@@ -301,6 +301,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Xterio Chain (ETH)"
+  identifier = "mainnet/xterio-eth"
+  chain_id = 2702128
+  rpc = ["https://xterio-eth.alt.technology/"]
+  explorers = ["https://eth.xterscan.io/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Zora"
   identifier = "mainnet/zora"
   chain_id = 7777777
