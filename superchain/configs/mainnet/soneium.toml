@@ -13,6 +13,7 @@ ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 holocene_time = 1738573200 # Mon 3 Feb 2025 09:00:00 UTC
+superchain_time = 1738573200 # Joining from Isthmus
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
