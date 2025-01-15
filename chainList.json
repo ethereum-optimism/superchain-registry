@@ -560,24 +560,6 @@
     }
   },
   {
-    "name": "Minato",
-    "identifier": "sepolia/minato",
-    "chainId": 1946,
-    "rpc": [
-      "https://rpc.minato.soneium.org"
-    ],
-    "explorers": [
-      "https://soneium-minato.blockscout.com/"
-    ],
-    "superchainLevel": 0,
-    "governedByOptimism": false,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
     "name": "Mode Testnet",
     "identifier": "sepolia/mode",
     "chainId": 919,
@@ -622,6 +604,24 @@
     ],
     "explorers": [
       "https://shape-sepolia.explorer.alchemy.com/"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Soneium Testnet Minato",
+    "identifier": "sepolia/soneium-minato",
+    "chainId": 1946,
+    "rpc": [
+      "https://rpc.minato.soneium.org"
+    ],
+    "explorers": [
+      "https://soneium-minato.blockscout.com/"
     ],
     "superchainLevel": 0,
     "governedByOptimism": false,
