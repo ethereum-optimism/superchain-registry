@@ -380,6 +380,24 @@
     }
   },
   {
+    "name": "Xterio Chain (ETH)",
+    "identifier": "mainnet/xterio-eth",
+    "chainId": 2702128,
+    "rpc": [
+      "https://xterio-eth.alt.technology/"
+    ],
+    "explorers": [
+      "https://eth.xterscan.io/"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Zora",
     "identifier": "mainnet/zora",
     "chainId": 7777777,
