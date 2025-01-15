@@ -650,6 +650,24 @@
     }
   },
   {
+    "name": "Swellchain Testnet",
+    "identifier": "sepolia/swell",
+    "chainId": 1924,
+    "rpc": [
+      "https://swell-testnet.alt.technology"
+    ],
+    "explorers": [
+      "https://swell-testnet-explorer.alt.technology"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Binary Sepolia",
     "identifier": "sepolia/tbn",
     "chainId": 625,
