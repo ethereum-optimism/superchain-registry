@@ -771,7 +771,7 @@
           "Name": "Soneium",
           "l2_chain_id": 1868,
           "PublicRPC": "https://rpc.soneium.org",
-          "SequencerRPC": "",
+          "SequencerRPC": "https://rpc.soneium.org",
           "Explorer": "https://soneium.blockscout.com/",
           "SuperchainLevel": 0,
           "GovernedByOptimism": true,

@@ -1,7 +1,7 @@
 name = "Soneium"
 chain_id = 1868
 public_rpc = "https://rpc.soneium.org"
-sequencer_rpc = ""
+sequencer_rpc = "https://rpc.soneium.org"
 explorer = "https://soneium.blockscout.com/"
 superchain_level = 0
 governed_by_optimism = true
