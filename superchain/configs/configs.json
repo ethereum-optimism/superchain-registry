@@ -2304,6 +2304,7 @@
             "MIPS": "0xCEd5c6ca2f32dE7bf43DB981E1cac398D7A978F2",
             "OptimismMintableERC20FactoryProxy": "0x2D272eF54Ee8EF5c2Ff3523559186580b158cd57",
             "OptimismPortalProxy": "0xFf6EBa109271fe6d4237EeeD4bAb1dD9A77dD1A4",
+            "PermissionedDisputeGame": "0x89cB66e16253Cf1792C9cD042c2Ff85DE06C1B51",
             "PreimageOracle": "0x954C0Fb8083047f37c8Fe954c114f8138614131C",
             "Proposer": "0x77a95104e4025fC8B88A6a0F5FB7Fae20851E414",
             "ProxyAdmin": "0x3a987FE1cb587B0A1808cf9bB7Cbe0E341838319",
