@@ -50,19 +50,20 @@ func CollectChainConfigs(p string) ([]DiskChainConfig, error) {
 		for file := range filesCh {
 			data, err := os.ReadFile(file)
 			if err != nil {
-				firstErr.Set(fmt.Errorf("failed to read file: %w", err))
+				firstErr.Set(fmt.Errorf("failed to read file %s: %w", file, err))
 				return
 			}
 
+			basename := filepath.Base(file)
 			var chain config.Chain
 			if err := toml.Unmarshal(data, &chain); err != nil {
-				firstErr.Set(fmt.Errorf("failed to unmarshal toml: %w", err))
+				firstErr.Set(fmt.Errorf("failed to unmarshal toml %s: %w", basename, err))
 				return
 			}
 
 			mtx.Lock()
 			out = append(out, DiskChainConfig{
-				ShortName: strings.TrimSuffix(filepath.Base(file), ".toml"),
+				ShortName: strings.TrimSuffix(basename, ".toml"),
 				Filepath:  file,
 				Config:    &chain,
 			})

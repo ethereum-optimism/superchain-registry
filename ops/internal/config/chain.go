@@ -94,10 +94,10 @@ type SystemConfig struct {
 }
 
 type AltDA struct {
-	DaChallengeContractAddress common.Address `toml:"da_challenge_contract_address"`
-	DaChallengeWindow          uint64         `toml:"da_challenge_window"`
-	DaResolveWindow            uint64         `toml:"da_resolve_window"`
-	DaCommitmentType           string         `toml:"da_commitment_type"`
+	DaChallengeContractAddress ChecksummedAddress `toml:"da_challenge_contract_address"`
+	DaChallengeWindow          uint64             `toml:"da_challenge_window"`
+	DaResolveWindow            uint64             `toml:"da_resolve_window"`
+	DaCommitmentType           string             `toml:"da_commitment_type"`
 }
 
 type Optimism struct {

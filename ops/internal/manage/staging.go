@@ -97,7 +97,7 @@ func InflateChainConfig(sc *StagedChain) (*config.Chain, error) {
 
 	if dc.UseAltDA {
 		cfg.AltDA = &config.AltDA{
-			DaChallengeContractAddress: dc.DAChallengeProxy,
+			DaChallengeContractAddress: config.ChecksummedAddress(dc.DAChallengeProxy),
 			DaChallengeWindow:          dc.DAChallengeWindow,
 			DaResolveWindow:            dc.DAResolveWindow,
 			DaCommitmentType:           dc.DACommitmentType,

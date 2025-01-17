@@ -24,7 +24,7 @@ gas_paying_token = "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
   eip1559_denominator_canyon = 250
 
 [alt_da]
-  da_challenge_contract_address = "0x08c5dcdd5e46d31cc1591ee15b084663507597f3"
+  da_challenge_contract_address = "0x08c5DCDD5e46d31CC1591ee15b084663507597f3"
   da_challenge_window = 3600
   da_resolve_window = 3600
   da_commitment_type = "KeccakCommitment"

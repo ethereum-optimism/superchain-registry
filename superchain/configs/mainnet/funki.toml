@@ -23,7 +23,7 @@ max_sequencer_drift = 1800
   eip1559_denominator_canyon = 250
 
 [alt_da]
-  da_challenge_contract_address = "0xf40b807c2407e1d7dabb85f3ceefd5eacc7bf3cd"
+  da_challenge_contract_address = "0xF40b807c2407e1d7dabb85f3ceefd5EACc7bF3CD"
   da_challenge_window = 3600
   da_resolve_window = 3600
   da_commitment_type = "KeccakCommitment"
