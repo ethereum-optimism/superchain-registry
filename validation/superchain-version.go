@@ -42,13 +42,13 @@ func checkForStandardVersions(t *testing.T, chain *ChainConfig) {
 
 	// don't perform bytecode checking for testnets
 	if !isTestnet {
-		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client, chain)
+		bytecodeHashes, err := getContractBytecodeHashesFromChain(chain.ChainID, *Addresses[chain.ChainID], client, chain, standard.Release)
 		require.NoError(t, err)
 		requireStandardByteCodeHashes(t, bytecodeHashes, chain)
 	}
 }
 
-// getContractVersionsFromChain pulls the appropriate contract versions from chain
+// getContractVersionsFromChain pulls the appropriate contract versions from the chain
 // using the supplied client (calling the version() method for each contract). It does this concurrently.
 func getContractVersionsFromChain(list AddressList, client *ethclient.Client, chain *ChainConfig) (ContractVersions, error) {
 	// Prepare a concurrency-safe object to store version information in, and
@@ -56,7 +56,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, ch
 	results := new(sync.Map)
 
 	getVersionAsync := func(contractAddress Address, results *sync.Map, key string, wg *sync.WaitGroup) {
-		r, err := getVersion(context.Background(), common.Address(contractAddress), client)
+		r, err := GetContractVersion(context.Background(), common.Address(contractAddress), client)
 		if err != nil {
 			panic(err)
 		}
@@ -66,7 +66,7 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, ch
 
 	wg := new(sync.WaitGroup)
 
-	contractsToCheckVersionOf := standard.NetworkVersions[chain.Superchain].Releases[standard.Release].GetNonEmpty()
+	contractsToCheckVersionOf := standard.ContractVersions[chain.Superchain][standard.Release].GetNonEmpty()
 
 	for _, contractName := range contractsToCheckVersionOf {
 		a, err := list.AddressFor(contractName)
@@ -108,13 +108,13 @@ func getContractVersionsFromChain(list AddressList, client *ethclient.Client, ch
 
 // getContractBytecodeHashesFromChain pulls the appropriate bytecode from chain
 // using the supplied client, concurrently.
-func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client, chain *ChainConfig) (standard.L1ContractBytecodeHashes, error) {
+func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client *ethclient.Client, chain *ChainConfig, tag standard.Tag) (standard.L1ContractBytecodeHashes, error) {
 	// Prepare a concurrency-safe object to store bytecode information in, and
 	// spin up a goroutine for each contract we are checking (to speed things up).
 	results := new(sync.Map)
 
-	getBytecodeHashAsync := func(chainID uint64, contractAddress Address, results *sync.Map, contractName string, wg *sync.WaitGroup) {
-		r, err := getBytecodeHash(context.Background(), chainID, contractName, common.Address(contractAddress), client)
+	getBytecodeHashAsync := func(chainID uint64, contractAddress Address, results *sync.Map, contractName string, tag standard.Tag, wg *sync.WaitGroup) {
+		r, err := GetBytecodeHash(context.Background(), chainID, contractName, common.Address(contractAddress), client, tag)
 		if err != nil {
 			panic(err)
 		}
@@ -137,7 +137,7 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 			contractName = contractName + "Proxy"
 		}
 		wg.Add(1)
-		go getBytecodeHashAsync(chainID, contractAddress, results, contractName, wg)
+		go getBytecodeHashAsync(chainID, contractAddress, results, contractName, tag, wg)
 	}
 
 	wg.Wait()
@@ -163,8 +163,8 @@ func getContractBytecodeHashesFromChain(chainID uint64, list AddressList, client
 	return cbh, nil
 }
 
-// getVersion will get the version of a contract at a given address, if it exposes a version() method.
-func getVersion(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
+// GetContractVersion will get the version of a contract at a given address, if it exposes a version() method.
+func GetContractVersion(ctx context.Context, addr common.Address, client *ethclient.Client) (string, error) {
 	isemver, err := bindings.NewISemver(addr, client)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", addr, err)
@@ -216,11 +216,11 @@ func getContractImplAddr(
 	return common.BytesToAddress(result), nil
 }
 
-// getBytecodeHash gets the hash of the bytecode of a contract
+// GetBytecodeHash gets the hash of the bytecode of a contract
 //   - at a given address, if the contract is not a proxy contract
 //   - at the proxy implementation contract's address, if the contract is a proxy contract (we currently use the name suffix to determine
 //     whether the contract is a proxy or not)
-func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, targetContractAddr common.Address, client *ethclient.Client) (string, error) {
+func GetBytecodeHash(ctx context.Context, chainID uint64, contractName string, targetContractAddr common.Address, client *ethclient.Client, tag standard.Tag) (string, error) {
 	addrToCheck := targetContractAddr
 	proxyContract := strings.HasSuffix(strings.ToLower(contractName), "proxy")
 	if proxyContract {
@@ -237,8 +237,7 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 		return "", fmt.Errorf("%s: %w", addrToCheck, err)
 	}
 
-	// if the contract is known to have immutables, setup the filterer to mask the bytes which contain the variable's value
-	tag := standard.Release
+	// if the contract is known to have immutables, set up the filterer to mask the bytes which contain the variable's value
 	bytecodeImmutableFilterer, err := initBytecodeImmutableMask(code, tag, contractName)
 	// error indicates that the contract _does_ have immutables, but we weren't able to determine the coordinates of the immutables in the bytecode
 	if err != nil {
@@ -255,7 +254,7 @@ func getBytecodeHash(ctx context.Context, chainID uint64, contractName string, t
 }
 
 func requireStandardSemvers(t *testing.T, versions ContractVersions, isTestnet bool, chain *ChainConfig) {
-	standardVersions := standard.NetworkVersions[chain.Superchain].Releases[standard.Release]
+	standardVersions := standard.ContractVersions[chain.Superchain][standard.Release]
 	s := reflect.ValueOf(standardVersions)
 	c := reflect.ValueOf(versions)
 	matches := checkMatchOrTestnet(s, c, isTestnet)

@@ -10,6 +10,9 @@ parameters:
   chain:
     type: string
     default: "__required__"
+  is_forked_pull_request:
+    type: boolean
+    default: false
 
 commands:
   gcp-oidc-authenticate:
@@ -99,7 +102,7 @@ jobs:
               gs://${GCS_BUCKET}/${FOLDER}/${CHAIN}/${COMMIT_HASH}/rollup.json
 
 workflows:
-  upload-chain-artifacts:
+  upload-chain-artifacts-workflow:
     when:
       not:
         equal: ["__required__", << pipeline.parameters.chain>>]
