@@ -43,18 +43,18 @@ func TestHardforkTime_MarshalTOML(t *testing.T) {
 }
 
 func TestCopyHardforks(t *testing.T) {
-	a := &Hardforks{
+	src := &Hardforks{
 		CanyonTime: NewHardforkTime(1),
 		DeltaTime:  NewHardforkTime(2),
 	}
-	b := &Hardforks{
+	dest := &Hardforks{
 		CanyonTime: NewHardforkTime(0),
 	}
 
-	require.NoError(t, CopyHardforks(a, b))
+	require.NoError(t, CopyHardforks(src, dest))
 
 	require.Equal(t, &Hardforks{
 		CanyonTime: NewHardforkTime(0),
 		DeltaTime:  NewHardforkTime(2),
-	}, b)
+	}, dest)
 }
