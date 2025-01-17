@@ -2525,6 +2525,7 @@
           "SequencerRPC": "https://sepolia.pivotalprotocol.com/",
           "Explorer": "https://sepolia.pivotalscan.org/",
           "SuperchainLevel": 0,
+          "GovernedByOptimism": false,
           "StandardChainCandidate": true,
           "SuperchainTime": null,
           "batch_inbox_address": "0xFF000000000000000000000B0000000000016481",

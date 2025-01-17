@@ -643,6 +643,7 @@
       "https://sepolia.pivotalscan.org/"
     ],
     "superchainLevel": 0,
+    "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",

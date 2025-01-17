@@ -463,6 +463,7 @@
   rpc = ["https://sepolia.pivotalprotocol.com/"]
   explorers = ["https://sepolia.pivotalscan.org/"]
   superchain_level = 0
+  governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
