@@ -60,6 +60,30 @@ jobs:
                 name: Check diff
                 command: git diff --exit-code
 
+  check-staging-empty:
+    docker:
+      - image: cimg/go:1.23.1
+    steps:
+      - checkout
+      - run:
+          name: Check staging is empty
+          command: |
+            # Count number of files in .staging (including hidden files)
+            file_count=$(ls -la .staging | wc -l)
+            # Subtract 3 from count to account for "." and ".." and ".gitkeep"
+            actual_count=$((file_count - 3))
+
+            # Check if .gitkeep exists
+            if [ ! -f ".staging/.gitkeep" ]; then
+                echo "Error: .gitkeep file is missing"
+                exit 1
+            fi
+
+            # Nothing else should be in the directory
+            if [ $actual_count -ne 1 ]; then
+              echo "Staging directory is not empty"
+              exit 1
+            fi
 
 workflows:
   main:
@@ -78,9 +102,11 @@ workflows:
           tool: codegen
           check_diff: true
       - run-tool:
-          name: check-staging
+          name: check-staging-synced
           tool: sync_staging
           check_diff: true
+      - check-staging-empty:
+          name: check-staging-empty
       - run-tool:
           name: check-apply-hardforks
           tool: apply_hardforks
