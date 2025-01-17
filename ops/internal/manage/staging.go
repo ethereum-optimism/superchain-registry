@@ -177,14 +177,15 @@ func CopyDeployConfigHFTimes(src *genesis.UpgradeScheduleDeployConfig, dst *conf
 
 		// Get the destination field
 		dstField := dstVal.FieldByName(dstFieldName)
-		if !dstField.IsValid() {
-			continue // Skip if destination field doesn't exist
-		}
 
 		// Get the source field value
 		srcField := srcVal.Field(i)
 		if srcField.IsNil() {
 			continue // Skip if source value is nil
+		}
+
+		if !dstField.IsValid() {
+			return fmt.Errorf("destination field %s doesn't exist", dstFieldName)
 		}
 
 		// Create a new HardforkTime pointer and set its value
