@@ -209,6 +209,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "River"
+  identifier = "mainnet/river"
+  chain_id = 550
+  rpc = ["https://towns-mainnet.calderachain.xyz/http"]
+  explorers = ["https://explorer.river.build"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Shape"
   identifier = "mainnet/shape"
   chain_id = 360
