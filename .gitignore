@@ -33,5 +33,3 @@ go.work.sum
 .vscode
 
 ops/bin
-
-.staging
