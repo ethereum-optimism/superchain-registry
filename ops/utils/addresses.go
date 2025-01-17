@@ -32,7 +32,10 @@ func ReadAddressesFromChain(addresses *superchain.AddressList, l1RpcUrl string, 
 	if err != nil {
 		address, err = validation.CastCall(addresses.OptimismPortalProxy, "guardian()(address)", nil, l1RpcUrl)
 		if err != nil {
-			return wrapCastCallErrorForChain(err, l1RpcUrl, "Guardian")
+			address, err = validation.CastCall(addresses.OptimismPortalProxy, "GUARDIAN()(address)", nil, l1RpcUrl)
+			if err != nil {
+				return wrapCastCallErrorForChain(err, l1RpcUrl, "Guardian")
+			}
 		}
 	}
 	addresses.Guardian = superchain.MustHexToAddress(address[0])
