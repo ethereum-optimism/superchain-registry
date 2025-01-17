@@ -91,6 +91,20 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "HashKey Chain"
+  identifier = "mainnet/hashkeychain"
+  chain_id = 177
+  rpc = ["https://mainnet.hsk.xyz"]
+  explorers = ["https://explorer.hsk.xyz"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  gas_paying_token = "0xE7C6BF469e97eEB0bFB74C8dbFF5BD47D4C1C98a"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Ink"
   identifier = "mainnet/ink"
   chain_id = 57073
@@ -282,6 +296,19 @@
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Xterio Chain (ETH)"
+  identifier = "mainnet/xterio-eth"
+  chain_id = 2702128
+  rpc = ["https://xterio-eth.alt.technology/"]
+  explorers = ["https://eth.xterscan.io/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"

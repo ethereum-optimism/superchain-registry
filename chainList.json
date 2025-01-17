@@ -127,6 +127,25 @@
     }
   },
   {
+    "name": "HashKey Chain",
+    "identifier": "mainnet/hashkeychain",
+    "chainId": 177,
+    "rpc": [
+      "https://mainnet.hsk.xyz"
+    ],
+    "explorers": [
+      "https://explorer.hsk.xyz"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    },
+    "gasPayingToken": "0xE7C6BF469e97eEB0bFB74C8dbFF5BD47D4C1C98a"
+  },
+  {
     "name": "Ink",
     "identifier": "mainnet/ink",
     "chainId": 57073,
@@ -392,6 +411,24 @@
     "superchainLevel": 0,
     "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Xterio Chain (ETH)",
+    "identifier": "mainnet/xterio-eth",
+    "chainId": 2702128,
+    "rpc": [
+      "https://xterio-eth.alt.technology/"
+    ],
+    "explorers": [
+      "https://eth.xterscan.io/"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
