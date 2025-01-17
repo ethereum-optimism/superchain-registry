@@ -471,6 +471,24 @@
     }
   },
   {
+    "name": "Camp Network Testnet V2",
+    "identifier": "sepolia/CampV2",
+    "chainId": 325000,
+    "rpc": [
+      "https://rpc-campnetwork.xyz"
+    ],
+    "explorers": [
+      "https://camp-network-testnet.blockscout.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "arena-z-testnet",
     "identifier": "sepolia/arena-z-testnet",
     "chainId": 9897,

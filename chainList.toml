@@ -340,6 +340,19 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Camp Network Testnet V2"
+  identifier = "sepolia/CampV2"
+  chain_id = 325000
+  rpc = ["https://rpc-campnetwork.xyz"]
+  explorers = ["https://camp-network-testnet.blockscout.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "arena-z-testnet"
   identifier = "sepolia/arena-z-testnet"
   chain_id = 9897
