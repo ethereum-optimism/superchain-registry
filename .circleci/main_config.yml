@@ -235,7 +235,7 @@ jobs:
     circleci_ip_ranges: true
     docker:
       - image: cimg/go:<<pipeline.parameters.go_version>>-node
-    resource_class: medium
+    resource_class: xlarge
     parameters:
       chainid:
         type: string
