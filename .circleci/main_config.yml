@@ -51,7 +51,7 @@ commands:
             curl -sSL "https://raw.githubusercontent.com/foundry-rs/foundry/master/foundryup/foundryup" -o $HOME/.foundry/bin/foundryup
             chmod +x $HOME/.foundry/bin/foundryup
 
-            $HOME/.foundry/bin/foundryup
+            $HOME/.foundry/bin/foundryup -v nightly-5a8bd893eeeeb9489ea66dd52a02eeaa580e3af0
             forge --version
   install-gvm:
     steps:
