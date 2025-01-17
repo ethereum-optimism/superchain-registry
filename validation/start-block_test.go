@@ -2,6 +2,7 @@ package validation
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 	"testing"
 	"time"
@@ -31,7 +32,7 @@ func testStartBlock(t *testing.T, chain *ChainConfig) {
 	defer cancel()
 
 	offChainParam := chain.Genesis.L1.Number
-	onChainParam, err := getStartBlockWithRetries(ctx, common.Address(systemConfigAddress), client)
+	onChainParam, err := getStartBlockWithRetries(ctx, common.Address(systemConfigAddress), offChainParam, client)
 	require.NoError(t, err)
 
 	if offChainParam > onChainParam {
@@ -45,7 +46,7 @@ func testStartBlock(t *testing.T, chain *ChainConfig) {
 	}
 }
 
-func getStartBlockWithRetries(ctx context.Context, systemConfigAddr common.Address, client *ethclient.Client) (uint64, error) {
+func getStartBlockWithRetries(ctx context.Context, systemConfigAddr common.Address, genesisBlock uint64, client *ethclient.Client) (uint64, error) {
 	callOpts := &bind.CallOpts{Context: ctx}
 	systemConfig, err := bindings.NewSystemConfig(systemConfigAddr, client)
 	if err != nil {
@@ -53,7 +54,30 @@ func getStartBlockWithRetries(ctx context.Context, systemConfigAddr common.Addre
 	}
 	val, err := Retry(systemConfig.StartBlock)(callOpts)
 	if err != nil {
-		return 0, err
+		// Checking when the contract has been deployed, backward compatibility with SystemConfig without StartBlock()
+		// Fetch the block when the proxy has been deployed via the AdminChanged event from 0x0 to the actual admin
+		logs, err := client.FilterLogs(
+			ctx,
+			ethereum.FilterQuery{
+				FromBlock: big.NewInt(int64(genesisBlock)), // we assume SystemConfig has been deployed closely to genesis (100 blocks around)
+				ToBlock:   big.NewInt(int64(genesisBlock + 100)),
+				Addresses: []common.Address{systemConfigAddr},
+				Topics:    [][]common.Hash{{common.HexToHash("0x7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f")}}, // AdminChanged hash
+			},
+		)
+		if err != nil {
+			return 0, err
+		}
+
+		if len(logs) == 0 {
+			return 0, fmt.Errorf("unable to find logs")
+		} else if len(logs) > 1 {
+			return 0, fmt.Errorf("multiple logs found")
+		}
+
+		log := logs[0]
+
+		return log.BlockNumber, nil
 	}
 
 	return val.Uint64(), nil
