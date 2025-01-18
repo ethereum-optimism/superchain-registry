@@ -3,6 +3,7 @@ package report
 import (
 	"bytes"
 	"maps"
+	"slices"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -122,6 +123,10 @@ func computeStorageDiff(a map[common.Hash]common.Hash, b map[common.Hash]common.
 		}
 		out = append(out, diff)
 	}
+
+	slices.SortFunc(out, func(a, b StorageDiff) int {
+		return bytes.Compare(a.Key.Bytes(), b.Key.Bytes())
+	})
 
 	if len(out) == 0 {
 		return nil

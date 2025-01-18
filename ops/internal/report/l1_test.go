@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/opcm"
 	"github.com/ethereum-optimism/optimism/op-service/testlog"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/testutil/mockrpc"
 	"github.com/ethereum/go-ethereum/common"
@@ -54,7 +53,7 @@ func TestParseDeployedEvent(t *testing.T) {
 		OutputVersion: common.Big0,
 		L2ChainID:     common.BigToHash(big.NewInt(0x1517d)),
 		Deployer:      common.HexToAddress("0x9cb6296f6c9b6bb5bf382e8c1ec82b7e373ec693"),
-		DeployOutput: opcm.DeployOPChainOutput{
+		DeployOutput: DeployOPChainOutput{
 			OpChainProxyAdmin:                  common.HexToAddress("0xb9a59B4dB790fD9674FFB03d38a2057dEAD4BC0F"),
 			AddressManager:                     common.HexToAddress("0x2A1e2bE26e00E7f0f1D8d90240fC22F6f6C069AF"),
 			L1ERC721BridgeProxy:                common.HexToAddress("0x775350Dc0DaCb54C86F723E17407B51Ae9B8a028"),

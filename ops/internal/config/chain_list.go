@@ -14,8 +14,8 @@ type ChainListEntry struct {
 }
 
 type ChainListEntryParent struct {
-	Type  string `json:"type" toml:"type"`
-	Chain string `json:"chain" toml:"chain"`
+	Type  string     `json:"type" toml:"type"`
+	Chain Superchain `json:"chain" toml:"chain"`
 }
 
 type ChainListTOML struct {

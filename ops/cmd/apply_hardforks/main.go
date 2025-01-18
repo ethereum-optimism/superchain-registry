@@ -22,7 +22,7 @@ func main() {
 }
 
 func mainErr() error {
-	wd, err := os.Getwd()
+	wd, err := paths.FindRepoRoot()
 	if err != nil {
 		return fmt.Errorf("failed to get working directory: %w", err)
 	}
@@ -52,10 +52,10 @@ func mainErr() error {
 	return nil
 }
 
-func processSuperchainDir(wd string, superchain string) error {
+func processSuperchainDir(wd string, superchain config.Superchain) error {
 	superchainCfgPath := paths.SuperchainConfig(wd, superchain)
 
-	var superchainCfg config.Superchain
+	var superchainCfg config.SuperchainDefinition
 	if err := paths.ReadTOMLFile(superchainCfgPath, &superchainCfg); err != nil {
 		return fmt.Errorf("error reading superchain config: %w", err)
 	}

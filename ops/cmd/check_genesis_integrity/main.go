@@ -17,7 +17,7 @@ func main() {
 }
 
 func mainErr() error {
-	wd, err := os.Getwd()
+	wd, err := paths.FindRepoRoot()
 	if err != nil {
 		return fmt.Errorf("failed to get working directory: %w", err)
 	}
@@ -40,7 +40,7 @@ func mainErr() error {
 				continue
 			}
 
-			genesis, err := manage.DecompressGenesis(wd, superchain, cfg.ShortName)
+			genesis, err := manage.ReadSuperchainGenesis(wd, superchain, cfg.ShortName)
 			if err != nil {
 				output.WriteNotOK("error decompressing genesis for %s/%s: %v", superchain, cfg.ShortName, err)
 				integrityCheckFailed = true

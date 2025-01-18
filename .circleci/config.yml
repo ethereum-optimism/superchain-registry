@@ -47,12 +47,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build tool
-          command: go build -o ./bin/<<parameters.tool>> ./cmd/<< parameters.tool >>/main.go
-          working_directory: ./ops
-      - run:
           name: Run tool
-          command: ./ops/bin/<< parameters.tool >> << parameters.args >>
+          command: go run ./cmd/<< parameters.tool >>/main.go << parameters.args >>
+          working_directory: ops
       - when:
           condition: << parameters.check_diff >>
           steps:
@@ -85,6 +82,18 @@ jobs:
               exit 1
             fi
 
+  run-staging-report:
+    circleci_ip_ranges: true
+    docker:
+      - image: cimg/go:1.23.1
+    steps:
+      - checkout
+      - run:
+          name: Run staging report
+          command: |
+            cd ops
+            go run ./cmd/print_staging_report/main.go
+
 workflows:
   main:
     jobs:
@@ -111,4 +120,6 @@ workflows:
           name: check-apply-hardforks
           tool: apply_hardforks
           check_diff: true
+      - run-staging-report:
+          name: run-staging-report
 

@@ -16,7 +16,7 @@ func TestValidateGenesisIntegrity(t *testing.T) {
 		cfg, err := ReadChainConfig("testdata", "sepolia", "testchain")
 		require.NoError(t, err)
 
-		genesis, err := DecompressGenesis("testdata", "sepolia", "testchain")
+		genesis, err := ReadSuperchainGenesis("testdata", "sepolia", "testchain")
 		require.NoError(t, err)
 
 		err = ValidateGenesisIntegrity(cfg, genesis)
@@ -89,7 +89,7 @@ func TestValidateGenesisIntegrity(t *testing.T) {
 			cfg, err := ReadChainConfig("testdata", "sepolia", "testchain")
 			require.NoError(t, err)
 
-			genesis, err := DecompressGenesis("testdata", "sepolia", "testchain")
+			genesis, err := ReadSuperchainGenesis("testdata", "sepolia", "testchain")
 			require.NoError(t, err)
 
 			tt.mutator(genesis, cfg)

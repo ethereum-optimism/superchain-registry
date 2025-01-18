@@ -3,14 +3,13 @@ package report
 import (
 	"context"
 	"fmt"
+	"math"
 	"math/big"
 
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/opcm"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/standard"
 	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
@@ -21,7 +20,25 @@ type DeployedEvent struct {
 	OutputVersion *big.Int
 	L2ChainID     common.Hash
 	Deployer      common.Address
-	DeployOutput  opcm.DeployOPChainOutput
+	DeployOutput  DeployOPChainOutput
+}
+
+type DeployOPChainOutput struct {
+	OpChainProxyAdmin                  common.Address
+	AddressManager                     common.Address
+	L1ERC721BridgeProxy                common.Address
+	SystemConfigProxy                  common.Address
+	OptimismMintableERC20FactoryProxy  common.Address
+	L1StandardBridgeProxy              common.Address
+	L1CrossDomainMessengerProxy        common.Address
+	OptimismPortalProxy                common.Address
+	DisputeGameFactoryProxy            common.Address
+	AnchorStateRegistryProxy           common.Address
+	AnchorStateRegistryImpl            common.Address
+	FaultDisputeGame                   common.Address
+	PermissionedDisputeGame            common.Address
+	DelayedWETHPermissionedGameProxy   common.Address
+	DelayedWETHPermissionlessGameProxy common.Address
 }
 
 func ParseDeployedEvent(log *types.Log) (*DeployedEvent, error) {
@@ -156,7 +173,7 @@ func ScanL1(
 func ScanOwnership(
 	ctx context.Context,
 	rpc *rpc.Client,
-	deployOutput opcm.DeployOPChainOutput,
+	deployOutput DeployOPChainOutput,
 ) (L1OwnershipReport, error) {
 	w3Client := w3.NewClient(rpc)
 
@@ -276,7 +293,7 @@ func ScanSystemConfig(
 func ScanSemvers(
 	ctx context.Context,
 	rpc *rpc.Client,
-	deployOutput opcm.DeployOPChainOutput,
+	deployOutput DeployOPChainOutput,
 ) (L1SemversReport, error) {
 	w3Client := w3.NewClient(rpc)
 	makeBatchCall := bindBatchCallMethod(versionABI)

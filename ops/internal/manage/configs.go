@@ -10,8 +10,8 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 )
 
-func WriteChainConfig(rootP string, meta *config.StagingMetadata, in *config.Chain) error {
-	fname := paths.ChainConfig(rootP, meta.Superchain, meta.ShortName)
+func WriteChainConfig(rootP string, in *config.StagedChain) error {
+	fname := paths.ChainConfig(rootP, in.Superchain, in.ShortName)
 	exists, err := fs.FileExists(fname)
 	if err != nil {
 		return fmt.Errorf("failed to check if file exists: %w", err)
@@ -20,7 +20,7 @@ func WriteChainConfig(rootP string, meta *config.StagingMetadata, in *config.Cha
 		return fmt.Errorf("file already exists: %s", fname)
 	}
 
-	data, err := toml.Marshal(in)
+	data, err := toml.Marshal(in.Chain)
 	if err != nil {
 		return fmt.Errorf("failed to marshal toml: %w", err)
 	}
@@ -31,7 +31,7 @@ func WriteChainConfig(rootP string, meta *config.StagingMetadata, in *config.Cha
 	return nil
 }
 
-func ReadChainConfig(rootP string, superchain string, shortName string) (*config.Chain, error) {
+func ReadChainConfig(rootP string, superchain config.Superchain, shortName string) (*config.Chain, error) {
 	fname := paths.ChainConfig(rootP, superchain, shortName)
 	exists, err := fs.FileExists(fname)
 	if err != nil {

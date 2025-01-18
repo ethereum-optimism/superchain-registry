@@ -7,13 +7,14 @@ import (
 	"os"
 	"path"
 
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/fs"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/klauspost/compress/zstd"
 )
 
-func CompressGenesis(rootP string, superchain string, shortName string, gen *core.Genesis) error {
+func WriteSuperchainGenesis(rootP string, superchain config.Superchain, shortName string, gen *core.Genesis) error {
 	genPath := paths.GenesisFile(rootP, superchain, shortName)
 	exists, err := fs.FileExists(genPath)
 	if err != nil {
@@ -23,6 +24,10 @@ func CompressGenesis(rootP string, superchain string, shortName string, gen *cor
 		return fmt.Errorf("genesis already exists: %s", genPath)
 	}
 
+	return WriteGenesis(rootP, genPath, gen)
+}
+
+func WriteGenesis(rootP string, genPath string, gen *core.Genesis) error {
 	dictPath := path.Join(paths.ExtraDir(rootP), "dictionary")
 	dict, err := os.ReadFile(dictPath)
 	if err != nil {
@@ -48,7 +53,7 @@ func CompressGenesis(rootP string, superchain string, shortName string, gen *cor
 	return nil
 }
 
-func DecompressGenesis(rootP string, superchain string, shortName string) (*core.Genesis, error) {
+func ReadSuperchainGenesis(rootP string, superchain config.Superchain, shortName string) (*core.Genesis, error) {
 	genPath := paths.GenesisFile(rootP, superchain, shortName)
 	exists, err := fs.FileExists(genPath)
 	if err != nil {
@@ -58,6 +63,10 @@ func DecompressGenesis(rootP string, superchain string, shortName string) (*core
 		return nil, fmt.Errorf("genesis does not exist: %s", genPath)
 	}
 
+	return ReadGenesis(rootP, genPath)
+}
+
+func ReadGenesis(rootP string, genPath string) (*core.Genesis, error) {
 	dictPath := path.Join(paths.ExtraDir(rootP), "dictionary")
 	dict, err := os.ReadFile(dictPath)
 	if err != nil {

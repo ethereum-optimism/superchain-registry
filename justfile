@@ -35,8 +35,7 @@ tidy-ops: (_go-tidy 'ops')
 tidy-validation: (_go-tidy 'validation')
 
 _run_ops_bin bin flags='':
-    cd ops && go build -o ./bin/{{ bin }} ./cmd/{{ bin }}/main.go
-    ./ops/bin/{{ bin }} {{flags}}
+	cd ops && go run ./cmd/{{ bin }}/main.go {{ flags }}
 
 apply-hardforks: (_run_ops_bin 'apply_hardforks')
 
@@ -49,3 +48,6 @@ print-staging-report: (_run_ops_bin 'print_staging_report')
 check-genesis-integrity: (_run_ops_bin 'check_genesis_integrity')
 
 codegen: (_run_ops_bin 'codegen')
+
+inflate-config SHORTNAME FILENAME:
+	@just _run_ops_bin "inflate_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{FILENAME}})"
