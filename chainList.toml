@@ -183,6 +183,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Polynomial"
+  identifier = "mainnet/polynomial"
+  chain_id = 8008
+  rpc = ["https://rpc.polynomial.fi"]
+  explorers = ["https://polynomialscan.io"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "RACE Mainnet"
   identifier = "mainnet/race"
   chain_id = 6805

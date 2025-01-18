@@ -1255,6 +1255,71 @@
           }
         },
         {
+          "Name": "Polynomial",
+          "l2_chain_id": 8008,
+          "PublicRPC": "https://rpc.polynomial.fi",
+          "SequencerRPC": "https://rpc.polynomial.fi",
+          "Explorer": "https://polynomialscan.io",
+          "SuperchainLevel": 0,
+          "GovernedByOptimism": false,
+          "StandardChainCandidate": true,
+          "SuperchainTime": 0,
+          "batch_inbox_address": "0x0bd57e83B5E0f9eCD84d559bB58e1EcFEEdD2565",
+          "Superchain": "mainnet",
+          "Chain": "polynomial",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "fjord_time": 1720627201,
+          "granite_time": 1726070401,
+          "holocene_time": 1736445601,
+          "block_time": 2,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "eth-da",
+          "optimism": {
+            "eip1559Elasticity": 6,
+            "eip1559Denominator": 50,
+            "eip1559DenominatorCanyon": 250
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "l1": {
+              "hash": "0xc6d18992ff6e4c9e4798d34a7b97423a7ec276e9f2bbecfd4bb69ccdd49f516a",
+              "number": 20062729
+            },
+            "l2": {
+              "hash": "0x1b5e76ad2f290fb6fa2c60755d8c52942dbefedab76d01091e24080d5c129fd0",
+              "number": 0
+            },
+            "l2_time": 1718038175,
+            "system_config": {
+              "batcherAddr": "0x67a44CE38627F46F20b1293960559eD85Dd194F1",
+              "overhead": "0x00000000000000000000000000000000000000000000000000000000000000bc",
+              "scalar": "0x00000000000000000000000000000000000000000000000000000000000a6fe0",
+              "gasLimit": 30000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0x287bBa8116F2fc5a642bfD6027EBf5AD6522655C",
+            "BatchSubmitter": "0x67a44CE38627F46F20b1293960559eD85Dd194F1",
+            "Challenger": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+            "Guardian": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+            "L1CrossDomainMessengerProxy": "0x36725a5e0040deB7C697d46C0e24390702b202e0",
+            "L1ERC721BridgeProxy": "0xD5890BBAFaFdce942597757385E55174569e8d1A",
+            "L1StandardBridgeProxy": "0x3Be64BF2b9C2dE637067C7AAb6baE5EDf9fEBA55",
+            "L2OutputOracleProxy": "0xe512D477Cc89196AF2cE837f6AB8EA30e199f757",
+            "OptimismMintableERC20FactoryProxy": "0x994233366C8E11da5c525AB903c04e7AFB2915bD",
+            "OptimismPortalProxy": "0x034cbb620d1e0e4C2E29845229bEAc57083b04eC",
+            "Proposer": "0x5DA28F0186051a9F7b9eE2553FFdc165EB0A6714",
+            "ProxyAdmin": "0x3c68b1d45f4faa4F028c3DC8910fA3247c7f0a1f",
+            "ProxyAdminOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+            "SystemConfigOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+            "SystemConfigProxy": "0x58b51fb9FeeD00DD846f91D265Eba3cdd855A413",
+            "UnsafeBlockSigner": "0x11e2785DCc88FBD03EA71Df324CbbB0A529B88a2"
+          }
+        },
+        {
           "Name": "Base",
           "l2_chain_id": 8453,
           "PublicRPC": "https://mainnet.base.org",

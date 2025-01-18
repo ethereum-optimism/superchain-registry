@@ -1,0 +1,4 @@
+genesis_creation_commit = "6483bb21de16614dc2ac9ea25ed3444c261f4b20"
+node_version = "18.12.1"
+monorepo_build_command = "pnpm"
+genesis_creation_command = "opnode2"
