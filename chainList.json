@@ -308,6 +308,24 @@
     }
   },
   {
+    "name": "River",
+    "identifier": "mainnet/river",
+    "chainId": 550,
+    "rpc": [
+      "https://towns-mainnet.calderachain.xyz/http"
+    ],
+    "explorers": [
+      "https://explorer.river.build"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Shape",
     "identifier": "mainnet/shape",
     "chainId": 360,
