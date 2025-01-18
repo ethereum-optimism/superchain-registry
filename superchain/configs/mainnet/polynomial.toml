@@ -1,20 +1,24 @@
 name = "Polynomial"
-chain_id = 8008
 public_rpc = "https://rpc.polynomial.fi"
 sequencer_rpc = "https://rpc.polynomial.fi"
 explorer = "https://polynomialscan.io"
 superchain_level = 0
 governed_by_optimism = false
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
-batch_inbox_addr = "0x0bd57e83B5E0f9eCD84d559bB58e1EcFEEdD2565"
 superchain_time = 0
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+data_availability_type = "eth-da"
+chain_id = 8008
+batch_inbox_addr = "0x0bd57e83B5E0f9eCD84d559bB58e1EcFEEdD2565"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
+  granite_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC
+  holocene_time = 1736445601 # Thu 9 Jan 2025 18:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -35,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
   ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
   Guardian = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
@@ -43,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0x5DA28F0186051a9F7b9eE2553FFdc165EB0A6714"
   UnsafeBlockSigner = "0x11e2785DCc88FBD03EA71Df324CbbB0A529B88a2"
   BatchSubmitter = "0x67a44CE38627F46F20b1293960559eD85Dd194F1"
+
+[addresses]
   AddressManager = "0x287bBa8116F2fc5a642bfD6027EBf5AD6522655C"
   L1CrossDomainMessengerProxy = "0x36725a5e0040deB7C697d46C0e24390702b202e0"
   L1ERC721BridgeProxy = "0xD5890BBAFaFdce942597757385E55174569e8d1A"

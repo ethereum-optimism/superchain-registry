@@ -1,18 +1,20 @@
 name = "Pivotal Sepolia"
-chain_id = 16481
 public_rpc = "https://sepolia.pivotalprotocol.com/"
 sequencer_rpc = "https://sepolia.pivotalprotocol.com/"
 explorer = "https://sepolia.pivotalscan.org/"
 superchain_level = 0
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 16481
 batch_inbox_addr = "0xFF000000000000000000000B0000000000016481"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -33,7 +35,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xC121E7f785AC0E5B1da6C7316326412D1c4Eb28c"
   ProxyAdminOwner = "0x1D60661F40ACC64E38fcAdE8979D22a9B9278E6E"
   Guardian = "0xC121E7f785AC0E5B1da6C7316326412D1c4Eb28c"
@@ -41,6 +43,8 @@ data_availability_type = "eth-da"
   Proposer = "0xC12309Aac4bd25DBF7Df460fdDd93f621ee5DA3B"
   UnsafeBlockSigner = "0xC120Bd1178485def5f761F85a4a393200A0aeFD6"
   BatchSubmitter = "0xc122b4d47644BBD7A98E41Dd242D20054A11f720"
+
+[addresses]
   AddressManager = "0x40601f9c44ec842E3fAA45CAd15d475B450d9277"
   L1CrossDomainMessengerProxy = "0x1F6393C113b9C221fbcFB17c163C88d4bDa172b0"
   L1ERC721BridgeProxy = "0x079ba88EDD1BE4FEFb5011B61714Df9eF092Ad8f"

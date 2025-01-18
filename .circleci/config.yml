@@ -1,64 +1,114 @@
 version: 2.1
 
-# This allows us to use CircleCI's dynamic configuration feature
-setup: true
-
-parameters:
-  chain:
-    type: string
-    default: "__required__"
-
 orbs:
-  continuation: circleci/continuation@0.3.1
+  codecov: codecov/codecov@5.0.3
 
 jobs:
-  generate-and-select-continuation-config:
+  go-lint-test:
+    parameters:
+      package:
+        type: string
     docker:
-      - image: alpine:latest
+      - image: cimg/go:1.23.1
     steps:
       - checkout
       - run:
-          name: Install Git, yq, and jq
+          name: Tidy mod
           command: |
-            apk add --no-cache git jq curl
-            curl -sLo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-            chmod +x /usr/local/bin/yq
+            go mod tidy
+            git diff --exit-code
+          working_directory: << parameters.package >>
       - run:
-          name: Verify Git
-          command: git --version
+          name: Lint
+          command: golangci-lint run ./...
+          working_directory: << parameters.package >>
       - run:
-          name: Verify yq
-          command: yq --version
+          name: Run tests
+          command: gotestsum --format testname --junitfile test-results.xml --packages=./... -- --coverprofile coverage.out
+          working_directory: << parameters.package >>
+      - store_test_results:
+          path: << parameters.package >>/test-results.xml
+      - codecov/upload:
+          disable_search: true
+          files: ./<<parameters.package>>/coverage.out
+
+  run-tool:
+    parameters:
+      tool:
+        type: string
+      args:
+        type: string
+        default: ""
+      check_diff:
+        type: boolean
+        default: false
+    docker:
+      - image: cimg/go:1.23.1
+    steps:
+      - checkout
       - run:
-          name: Verify jq
-          command: jq --version
+          name: Build tool
+          command: go build -o ./bin/<<parameters.tool>> ./cmd/<< parameters.tool >>/main.go
+          working_directory: ./ops
       - run:
-          name: Generate Configuration
+          name: Run tool
+          command: ./ops/bin/<< parameters.tool >> << parameters.args >>
+      - when:
+          condition: << parameters.check_diff >>
+          steps:
+            - run:
+                name: Check diff
+                command: git diff --exit-code
+
+  check-staging-empty:
+    docker:
+      - image: cimg/go:1.23.1
+    steps:
+      - checkout
+      - run:
+          name: Check staging is empty
           command: |
-            if [[ $CIRCLE_BRANCH == pull/* ]]; then
-                is_forked_pull_request=true
-            else
-                is_forked_pull_request=false
+            # Count number of files in .staging (including hidden files)
+            file_count=$(ls -la .staging | wc -l)
+            # Subtract 3 from count to account for "." and ".." and ".gitkeep"
+            actual_count=$((file_count - 3))
+
+            # Check if .gitkeep exists
+            if [ ! -f ".staging/.gitkeep" ]; then
+                echo "Error: .gitkeep file is missing"
+                exit 1
             fi
-            echo "{\"is_forked_pull_request\":$is_forked_pull_request}" > .circleci/parameters.json
 
-            if [ "<< pipeline.parameters.chain >>" = "__required__" ]; then
-              # This will always be selected unless the user chooses to interact with the configuration by setting a non default value in the chain parameter. This would happens if the user launch the pipeline with a specific chain value via either curl or the CircleCI GUI.
-
-              echo "Generating test configuration..."
-              sh validation/genesis/validation-inputs/generate-test-config.sh
-              cp .circleci/main_config.yml .circleci/selected_continue_config.yml
-            else
-              # This only runs if launched with curl or the CircleCI GUI with non default chain value
-
-              echo "Generating interactive configuration..."
-              cp .circleci/artifact_upload_config.yml .circleci/selected_continue_config.yml
+            # Nothing else should be in the directory
+            if [ $actual_count -ne 1 ]; then
+              echo "Staging directory is not empty"
+              exit 1
             fi
-      - continuation/continue:
-          configuration_path: .circleci/selected_continue_config.yml
-          parameters: .circleci/parameters.json
 
 workflows:
-  setup:
+  main:
     jobs:
-      - generate-and-select-continuation-config
+      - go-lint-test:
+          name: go-lint-test-ops
+          package: ops
+      - go-lint-test:
+          name: go-lint-test-validation
+          package: validation
+      - run-tool:
+          name: check-genesis-integrity
+          tool: check_genesis_integrity
+      - run-tool:
+          name: check-codegen
+          tool: codegen
+          check_diff: true
+      - run-tool:
+          name: check-staging-synced
+          tool: sync_staging
+          check_diff: true
+      - check-staging-empty:
+          name: check-staging-empty
+      - run-tool:
+          name: check-apply-hardforks
+          tool: apply_hardforks
+          check_diff: true
+

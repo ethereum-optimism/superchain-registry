@@ -1,21 +1,24 @@
 name = "Metal L2"
-chain_id = 1750
 public_rpc = "https://rpc.metall2.com"
 sequencer_rpc = "https://rpc.metall2.com"
 explorer = "https://explorer.metall2.com"
 superchain_level = 0
 governed_by_optimism = true
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
-superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
+superchain_time = 0
+data_availability_type = "eth-da"
+chain_id = 1750
 batch_inbox_addr = "0xc83f7D9F2D4A76E81145849381ABA02602373723"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
+  granite_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC
+  holocene_time = 1736445601 # Thu 9 Jan 2025 18:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -36,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
   ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
   Guardian = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
@@ -44,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0xC8187d40AD440328104A52BBed2D8Efc5ab1F1F6"
   UnsafeBlockSigner = "0x4a65F5da5e80DEFfEA844eAa15CE130e80605dc5"
   BatchSubmitter = "0xC94C243f8fb37223F3EB2f7961F7072602A51B8B"
+
+[addresses]
   AddressManager = "0xd4b1EC0DEc3C7F12abD3ec27B7514880ae1C3a37"
   L1CrossDomainMessengerProxy = "0x0a47A44f1B2bb753474f8c830322554A96C9934D"
   L1ERC721BridgeProxy = "0x50D700e97967F9115e3f999bDB263d69F6704680"
