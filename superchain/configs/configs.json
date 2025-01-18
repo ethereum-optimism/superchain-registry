@@ -1922,6 +1922,7 @@
           "ecotone_time": 0,
           "fjord_time": 1723204838,
           "granite_time": 1723545055,
+          "holocene_time": 1732633200,
           "block_time": 2,
           "seq_window_size": 3600,
           "max_sequencer_drift": 600,
