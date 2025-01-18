@@ -110,6 +110,25 @@
     }
   },
   {
+    "name": "HashKey Chain",
+    "identifier": "mainnet/hashkeychain",
+    "chainId": 177,
+    "rpc": [
+      "https://mainnet.hsk.xyz"
+    ],
+    "explorers": [
+      "https://explorer.hsk.xyz"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    },
+    "gasPayingToken": "0xE7C6BF469e97eEB0bFB74C8dbFF5BD47D4C1C98a"
+  },
+  {
     "name": "Ink",
     "identifier": "mainnet/ink",
     "chainId": 57073,
@@ -290,6 +309,24 @@
     }
   },
   {
+    "name": "Soneium",
+    "identifier": "mainnet/soneium",
+    "chainId": 1868,
+    "rpc": [
+      "https://rpc.soneium.org"
+    ],
+    "explorers": [
+      "https://soneium.blockscout.com/"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Superseed",
     "identifier": "mainnet/sseed",
     "chainId": 5330,
@@ -356,6 +393,24 @@
     "superchainLevel": 0,
     "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Xterio Chain (ETH)",
+    "identifier": "mainnet/xterio-eth",
+    "chainId": 2702128,
+    "rpc": [
+      "https://xterio-eth.alt.technology/"
+    ],
+    "explorers": [
+      "https://eth.xterscan.io/"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
@@ -597,6 +652,24 @@
     }
   },
   {
+    "name": "Pivotal Sepolia",
+    "identifier": "sepolia/pivotal",
+    "chainId": 16481,
+    "rpc": [
+      "https://sepolia.pivotalprotocol.com/"
+    ],
+    "explorers": [
+      "https://sepolia.pivotalscan.org/"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "RACE Testnet",
     "identifier": "sepolia/race",
     "chainId": 6806,
@@ -623,6 +696,24 @@
     ],
     "explorers": [
       "https://shape-sepolia.explorer.alchemy.com/"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "Soneium Testnet Minato",
+    "identifier": "sepolia/soneium-minato",
+    "chainId": 1946,
+    "rpc": [
+      "https://rpc.minato.soneium.org"
+    ],
+    "explorers": [
+      "https://soneium-minato.blockscout.com/"
     ],
     "superchainLevel": 0,
     "governedByOptimism": false,

@@ -79,6 +79,20 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "HashKey Chain"
+  identifier = "mainnet/hashkeychain"
+  chain_id = 177
+  rpc = ["https://mainnet.hsk.xyz"]
+  explorers = ["https://explorer.hsk.xyz"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  gas_paying_token = "0xE7C6BF469e97eEB0bFB74C8dbFF5BD47D4C1C98a"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Ink"
   identifier = "mainnet/ink"
   chain_id = 57073
@@ -209,6 +223,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Soneium"
+  identifier = "mainnet/soneium"
+  chain_id = 1868
+  rpc = ["https://rpc.soneium.org"]
+  explorers = ["https://soneium.blockscout.com/"]
+  superchain_level = 0
+  governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Superseed"
   identifier = "mainnet/sseed"
   chain_id = 5330
@@ -256,6 +283,19 @@
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Xterio Chain (ETH)"
+  identifier = "mainnet/xterio-eth"
+  chain_id = 2702128
+  rpc = ["https://xterio-eth.alt.technology/"]
+  explorers = ["https://eth.xterscan.io/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -431,6 +471,19 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Pivotal Sepolia"
+  identifier = "sepolia/pivotal"
+  chain_id = 16481
+  rpc = ["https://sepolia.pivotalprotocol.com/"]
+  explorers = ["https://sepolia.pivotalscan.org/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "RACE Testnet"
   identifier = "sepolia/race"
   chain_id = 6806
@@ -449,6 +502,19 @@
   chain_id = 11011
   rpc = ["https://sepolia.shape.network/"]
   explorers = ["https://shape-sepolia.explorer.alchemy.com/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Soneium Testnet Minato"
+  identifier = "sepolia/soneium-minato"
+  chain_id = 1946
+  rpc = ["https://rpc.minato.soneium.org"]
+  explorers = ["https://soneium-minato.blockscout.com/"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"

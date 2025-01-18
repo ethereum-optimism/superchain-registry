@@ -1,4 +1,4 @@
-name = "Minato"
+name = "Soneium Testnet Minato"
 public_rpc = "https://rpc.minato.soneium.org"
 sequencer_rpc = "https://rpc.minato.soneium.org"
 explorer = "https://soneium-minato.blockscout.com/"
