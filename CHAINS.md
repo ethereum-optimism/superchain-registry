@@ -18,6 +18,7 @@
 | Mode | ✅ | ✅ | https://explorer.mode.network | `https://mainnet.mode.network` | `https://mainnet-sequencer.mode.network` |
 | OP Mainnet | ✅ | ✅ | https://explorer.optimism.io | `https://mainnet.optimism.io` | `https://mainnet-sequencer.optimism.io` |
 | Orderly Mainnet | ❌ | ✅ | https://explorer.orderly.network | `https://rpc.orderly.network` | `https://rpc.orderly.network` |
+| Polynomial | ❌ | ✅ | https://polynomialscan.io | `https://rpc.polynomial.fi` | `https://rpc.polynomial.fi` |
 | RACE Mainnet | ❌ | ❌ | https://racescan.io/ | `https://racemainnet.io` | `https://racemainnet.io` |
 | Redstone | ❌ | ❌ | https://explorer.redstone.xyz | `https://rpc.redstonechain.com` | `https://rpc.redstonechain.com` |
 | Shape | ❌ | ❌ | https://shape-mainnet.explorer.alchemy.com/ | `https://mainnet.shape.network/` | `https://shape-mainnet-sequencer.g.alchemy.com` |
@@ -41,7 +42,6 @@
 | Ink Sepolia | ✅ | ✅ | https://explorer-sepolia.inkonchain.com | `https://rpc-gel-sepolia.inkonchain.com` | `https://rpc-gel-sepolia.inkonchain.com` |
 | Lisk Sepolia Testnet | ❌ | ❌ | https://sepolia-blockscout.lisk.com | `https://rpc.sepolia-api.lisk.com` | `https://rpc.sepolia-api.lisk.com` |
 | Metal L2 Testnet | ✅ | ✅ | https://testnet.explorer.metall2.com | `https://testnet.rpc.metall2.com` | `https://testnet.rpc.metall2.com` |
-| Minato | ❌ | ✅ | https://soneium-minato.blockscout.com/ | `https://rpc.minato.soneium.org` | `https://rpc.minato.soneium.org` |
 | Mode Testnet | ✅ | ✅ | https://sepolia.explorer.mode.network | `https://sepolia.mode.network` | `https://sepolia.mode.network` |
 | OP Sepolia Testnet | ✅ | ✅ | https://sepolia-optimistic.etherscan.io | `https://sepolia.optimism.io` | `https://sepolia-sequencer.optimism.io` |
 | Pivotal Sepolia | ❌ | ❌ | https://sepolia.pivotalscan.org/ | `https://sepolia.pivotalprotocol.com/` | `https://sepolia.pivotalprotocol.com/` |

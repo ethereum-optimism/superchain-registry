@@ -255,6 +255,24 @@
     }
   },
   {
+    "name": "Polynomial",
+    "identifier": "mainnet/polynomial",
+    "chainId": 8008,
+    "rpc": [
+      "https://rpc.polynomial.fi"
+    ],
+    "explorers": [
+      "https://polynomialscan.io"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "RACE Mainnet",
     "identifier": "mainnet/race",
     "chainId": 6805,
@@ -591,24 +609,6 @@
     ],
     "superchainLevel": 0,
     "governedByOptimism": true,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
-    "name": "Minato",
-    "identifier": "sepolia/minato",
-    "chainId": 1946,
-    "rpc": [
-      "https://rpc.minato.soneium.org"
-    ],
-    "explorers": [
-      "https://soneium-minato.blockscout.com/"
-    ],
-    "superchainLevel": 0,
-    "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
