@@ -1,0 +1,50 @@
+name = "Ancient8"
+chain_id = 888888888
+public_rpc = "https://rpc.ancient8.gg"
+sequencer_rpc = "https://rpc.ancient8.gg"
+explorer = "https://scan.ancient8.gg"
+superchain_level = 0
+governed_by_optimism = false
+batch_inbox_addr = "0xd5df46c580fD2FBdaEE751dc535E14295C0336F3"
+superchain_time = 0
+canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+data_availability_type = "alt-da"
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+
+[genesis]
+  l2_time = 1706027387
+  [genesis.l1]
+    hash = "0x62bd64efb28026c83587b5ed0a472debecd1b19b52bafe81e982d06c72c895e1"
+    number = 19070566
+  [genesis.l2]
+    hash = "0x4f3304f45e3fe981deeef86e49ab6b73e9e991cb32de63f0389cf8225f357767"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x6079e9c37b87fE06D0bDe2431a0fa309826c9b67"
+    overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
+    scalar = "0x0000000000000000000000000000000000000000000000000000000000032190"
+    gasLimit = 30000000
+
+[addresses]
+  SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
+  ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
+  Guardian = "0x1B1ecDdbd5F9601b34262Aa3Ca346209E61aA68f"
+  Challenger = "0x1B1ecDdbd5F9601b34262Aa3Ca346209E61aA68f"
+  Proposer = "0xAF24199C29D5cc3fd298356137913A42847eA690"
+  UnsafeBlockSigner = "0x132F4CbD6aE20b264620602fd4faa7a10B084f8c"
+  BatchSubmitter = "0x6079e9c37b87fE06D0bDe2431a0fa309826c9b67"
+  AddressManager = "0x15A52Fed1c448028A240b603dD93f2697E12Dc82"
+  L1CrossDomainMessengerProxy = "0x012c341506ee1939e56084F43Ae5dbCe224Ce2af"
+  L1ERC721BridgeProxy = "0xd5e3eDf5b68135D559D572E26bF863FBC1950033"
+  L1StandardBridgeProxy = "0x12d4E64E1B46d27A00fe392653A894C1dd36fb80"
+  L2OutputOracleProxy = "0xB09DC08428C8b4EFB4ff9C0827386CDF34277996"
+  OptimismMintableERC20FactoryProxy = "0xF2b7b677d14F4F570D084d7d615254F984e7089E"
+  OptimismPortalProxy = "0x639F2AECE398Aa76b07e59eF6abe2cFe32bacb68"
+  SystemConfigProxy = "0x0b4cfc49aCc656CE6D03CB0794860Da92bE3E8ec"
+  ProxyAdmin = "0x75a223Fb459461B9Fa61dd25109EA05522b4b492"

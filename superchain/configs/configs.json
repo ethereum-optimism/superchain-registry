@@ -1816,6 +1816,70 @@
             "SystemConfigProxy": "0xA3cAB0126d5F504B071b81a3e8A2BBBF17930d86",
             "UnsafeBlockSigner": "0x3Dc8Dfd0709C835cAd15a6A27e089FF4cF4C9228"
           }
+        },
+        {
+          "Name": "Ancient8",
+          "l2_chain_id": 888888888,
+          "PublicRPC": "https://rpc.ancient8.gg",
+          "SequencerRPC": "https://rpc.ancient8.gg",
+          "Explorer": "https://scan.ancient8.gg",
+          "SuperchainLevel": 0,
+          "GovernedByOptimism": false,
+          "StandardChainCandidate": false,
+          "SuperchainTime": 0,
+          "batch_inbox_address": "0xd5df46c580fD2FBdaEE751dc535E14295C0336F3",
+          "Superchain": "mainnet",
+          "Chain": "ancient8",
+          "canyon_time": 0,
+          "delta_time": 1708560000,
+          "ecotone_time": 1710374401,
+          "fjord_time": 1720627201,
+          "granite_time": 1726070401,
+          "holocene_time": 1736445601,
+          "block_time": 2,
+          "seq_window_size": 3600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "alt-da",
+          "optimism": {
+            "eip1559Elasticity": 6,
+            "eip1559Denominator": 50
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "l1": {
+              "hash": "0x62bd64efb28026c83587b5ed0a472debecd1b19b52bafe81e982d06c72c895e1",
+              "number": 19070566
+            },
+            "l2": {
+              "hash": "0x4f3304f45e3fe981deeef86e49ab6b73e9e991cb32de63f0389cf8225f357767",
+              "number": 0
+            },
+            "l2_time": 1706027387,
+            "system_config": {
+              "batcherAddr": "0x6079e9c37b87fE06D0bDe2431a0fa309826c9b67",
+              "overhead": "0x00000000000000000000000000000000000000000000000000000000000000bc",
+              "scalar": "0x0000000000000000000000000000000000000000000000000000000000032190",
+              "gasLimit": 30000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0x15A52Fed1c448028A240b603dD93f2697E12Dc82",
+            "BatchSubmitter": "0x6079e9c37b87fE06D0bDe2431a0fa309826c9b67",
+            "Challenger": "0x1B1ecDdbd5F9601b34262Aa3Ca346209E61aA68f",
+            "Guardian": "0x1B1ecDdbd5F9601b34262Aa3Ca346209E61aA68f",
+            "L1CrossDomainMessengerProxy": "0x012c341506ee1939e56084F43Ae5dbCe224Ce2af",
+            "L1ERC721BridgeProxy": "0xd5e3eDf5b68135D559D572E26bF863FBC1950033",
+            "L1StandardBridgeProxy": "0x12d4E64E1B46d27A00fe392653A894C1dd36fb80",
+            "L2OutputOracleProxy": "0xB09DC08428C8b4EFB4ff9C0827386CDF34277996",
+            "OptimismMintableERC20FactoryProxy": "0xF2b7b677d14F4F570D084d7d615254F984e7089E",
+            "OptimismPortalProxy": "0x639F2AECE398Aa76b07e59eF6abe2cFe32bacb68",
+            "Proposer": "0xAF24199C29D5cc3fd298356137913A42847eA690",
+            "ProxyAdmin": "0x75a223Fb459461B9Fa61dd25109EA05522b4b492",
+            "ProxyAdminOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+            "SystemConfigOwner": "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746",
+            "SystemConfigProxy": "0x0b4cfc49aCc656CE6D03CB0794860Da92bE3E8ec",
+            "UnsafeBlockSigner": "0x132F4CbD6aE20b264620602fd4faa7a10B084f8c"
+          }
         }
       ]
     },

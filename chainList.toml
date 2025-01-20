@@ -12,6 +12,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Ancient8"
+  identifier = "mainnet/ancient8"
+  chain_id = 888888888
+  rpc = ["https://rpc.ancient8.gg"]
+  explorers = ["https://scan.ancient8.gg"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "arena-z"
   identifier = "mainnet/arena-z"
   chain_id = 7897
