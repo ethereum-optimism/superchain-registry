@@ -201,7 +201,7 @@
   identifier = "mainnet/race"
   chain_id = 6805
   rpc = ["https://racemainnet.io"]
-  explorers = ["https://racescan.io/"]
+  explorers = ["https://racescan.io"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
@@ -226,8 +226,8 @@
   name = "Shape"
   identifier = "mainnet/shape"
   chain_id = 360
-  rpc = ["https://mainnet.shape.network/"]
-  explorers = ["https://shape-mainnet.explorer.alchemy.com/"]
+  rpc = ["https://mainnet.shape.network"]
+  explorers = ["https://shape-mainnet.explorer.alchemy.com"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
@@ -240,7 +240,7 @@
   identifier = "mainnet/soneium"
   chain_id = 1868
   rpc = ["https://rpc.soneium.org"]
-  explorers = ["https://soneium.blockscout.com/"]
+  explorers = ["https://soneium.blockscout.com"]
   superchain_level = 0
   governed_by_optimism = true
   data_availability_type = "eth-da"
@@ -292,7 +292,7 @@
   identifier = "mainnet/worldchain"
   chain_id = 480
   rpc = ["https://worldchain-mainnet.g.alchemy.com/public"]
-  explorers = ["https://worldchain-mainnet.explorer.alchemy.com/"]
+  explorers = ["https://worldchain-mainnet.explorer.alchemy.com"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
@@ -304,8 +304,8 @@
   name = "Xterio Chain (ETH)"
   identifier = "mainnet/xterio-eth"
   chain_id = 2702128
-  rpc = ["https://xterio-eth.alt.technology/"]
-  explorers = ["https://eth.xterscan.io/"]
+  rpc = ["https://xterio-eth.alt.technology"]
+  explorers = ["https://eth.xterscan.io"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "alt-da"
@@ -371,7 +371,7 @@
   identifier = "sepolia/cyber"
   chain_id = 111557560
   rpc = ["https://rpc.testnet.cyber.co"]
-  explorers = ["https://testnet.cyberscan.co/"]
+  explorers = ["https://testnet.cyberscan.co"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
@@ -397,7 +397,7 @@
   identifier = "sepolia/funki"
   chain_id = 3397901
   rpc = ["https://funki-testnet.alt.technology"]
-  explorers = ["https://sepolia-sandbox.funkichain.com/"]
+  explorers = ["https://sepolia-sandbox.funkichain.com"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "alt-da"
@@ -474,8 +474,8 @@
   name = "Pivotal Sepolia"
   identifier = "sepolia/pivotal"
   chain_id = 16481
-  rpc = ["https://sepolia.pivotalprotocol.com/"]
-  explorers = ["https://sepolia.pivotalscan.org/"]
+  rpc = ["https://sepolia.pivotalprotocol.com"]
+  explorers = ["https://sepolia.pivotalscan.org"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
@@ -488,7 +488,7 @@
   identifier = "sepolia/race"
   chain_id = 6806
   rpc = ["https://racetestnet.io"]
-  explorers = ["https://testnet.racescan.io/"]
+  explorers = ["https://testnet.racescan.io"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
@@ -500,8 +500,8 @@
   name = "Shape Sepolia Testnet"
   identifier = "sepolia/shape"
   chain_id = 11011
-  rpc = ["https://sepolia.shape.network/"]
-  explorers = ["https://shape-sepolia.explorer.alchemy.com/"]
+  rpc = ["https://sepolia.shape.network"]
+  explorers = ["https://shape-sepolia.explorer.alchemy.com"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
@@ -514,7 +514,7 @@
   identifier = "sepolia/soneium-minato"
   chain_id = 1946
   rpc = ["https://rpc.minato.soneium.org"]
-  explorers = ["https://soneium-minato.blockscout.com/"]
+  explorers = ["https://soneium-minato.blockscout.com"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
@@ -540,7 +540,7 @@
   identifier = "sepolia/worldchain"
   chain_id = 4801
   rpc = ["https://worldchain-sepolia.g.alchemy.com/public"]
-  explorers = ["https://worldchain-sepolia.explorer.alchemy.com/"]
+  explorers = ["https://worldchain-sepolia.explorer.alchemy.com"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
