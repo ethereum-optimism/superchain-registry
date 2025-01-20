@@ -44,7 +44,7 @@
   identifier = "mainnet/cyber"
   chain_id = 7560
   rpc = ["https://rpc.cyber.co"]
-  explorers = ["https://cyberscan.co/"]
+  explorers = ["https://cyberscan.co"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "alt-da"
