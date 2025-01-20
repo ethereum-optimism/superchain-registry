@@ -37,6 +37,7 @@
 |---|---|---|---|---|---|
 | Base Sepolia Testnet | ❌ | ✅ | https://sepolia-explorer.base.org | `https://sepolia.base.org` | `https://sepolia-sequencer.base.org` |
 | Binary Sepolia | ❌ | ❌ | https://explorer.sepolia.thebinaryholdings.com | `https://rpc.testnet.thebinaryholdings.com` | `https://sequencer.rpc.bnry.testnet.zeeve.net` |
+| Creator Chain Testnet | ❌ | ✅ | https://explorer.creatorchain.io | `https://rpc.creatorchain.io` | `https://rpc.creatorchain.io` |
 | Cyber Testnet | ❌ | ❌ | https://testnet.cyberscan.co/ | `https://rpc.testnet.cyber.co` | `https://cyber.alt.technology/` |
 | Ethernity Testnet | ❌ | ✅ | https://testnet.ernscan.io | `https://testnet.ethernitychain.io` | `https://testnet.ethernitychain.io` |
 | Funki Sepolia Testnet | ❌ | ❌ | https://sepolia-sandbox.funkichain.com/ | `https://funki-testnet.alt.technology` | `https://funki-testnet.alt.technology` |
