@@ -15,6 +15,7 @@
 | Lisk | ❌ | ✅ | https://blockscout.lisk.com | `https://rpc.api.lisk.com` | `https://rpc.api.lisk.com` |
 | Lyra Chain | ❌ | ✅ | https://explorer.lyra.finance | `https://rpc.lyra.finance` | `https://rpc.lyra.finance` |
 | Metal L2 | ✅ | ✅ | https://explorer.metall2.com | `https://rpc.metall2.com` | `https://rpc.metall2.com` |
+| Mint Mainnet | ❌ | ✅ | https://explorer.mintchain.io | `https://rpc.mintchain.io` | `https://rpc.mintchain.io` |
 | Mode | ✅ | ✅ | https://explorer.mode.network | `https://mainnet.mode.network` | `https://mainnet-sequencer.mode.network` |
 | OP Mainnet | ✅ | ✅ | https://explorer.optimism.io | `https://mainnet.optimism.io` | `https://mainnet-sequencer.optimism.io` |
 | Orderly Mainnet | ❌ | ✅ | https://explorer.orderly.network | `https://rpc.orderly.network` | `https://rpc.orderly.network` |
