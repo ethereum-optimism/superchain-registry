@@ -4,6 +4,7 @@
 
 | Chain Name | OP Governed | Upgradeable | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
+| Ancient8 | ❌ | ✅ | https://scan.ancient8.gg | `https://rpc.ancient8.gg` | `https://rpc.ancient8.gg` |
 | Automata Mainnet | ❌ | ❌ | https://explorer.ata.network | `https://rpc.ata.network` | `https://automata-mainnet.alt.technology/` |
 | Base | ❌ | ✅ | https://explorer.base.org | `https://mainnet.base.org` | `https://mainnet-sequencer.base.org` |
 | Binary Mainnet | ❌ | ✅ | https://explorer.thebinaryholdings.com | `https://rpc.zero.thebinaryholdings.com` | `https://sequencer.bnry.mainnet.zeeve.net` |
