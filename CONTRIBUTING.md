@@ -190,3 +190,12 @@ These jobs will run at every commit in every branch.
 For pull requests from forks, these checks will not appear directly in the PR comments, but **the jobs will still run** and their results can be viewed in the diffs.
 
 Please note that while these jobs are **not blocking**, they must pass to ensure the accuracy of the changes.
+
+# How to Contribute
+
+We welcome any contributions to the project! Here are a few ways you can help:
+
+- Report a bug
+- Suggest a new feature
+- Fix typos in the documentation
+- Improve existing code
