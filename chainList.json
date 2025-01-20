@@ -73,6 +73,24 @@
     }
   },
   {
+    "name": "BOB",
+    "identifier": "mainnet/bob",
+    "chainId": 60808,
+    "rpc": [
+      "https://rpc.gobob.xyz"
+    ],
+    "explorers": [
+      "https://explorer.gobob.xyz"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Cyber Mainnet",
     "identifier": "mainnet/cyber",
     "chainId": 7560,

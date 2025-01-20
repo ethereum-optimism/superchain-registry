@@ -52,6 +52,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "BOB"
+  identifier = "mainnet/bob"
+  chain_id = 60808
+  rpc = ["https://rpc.gobob.xyz"]
+  explorers = ["https://explorer.gobob.xyz"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Cyber Mainnet"
   identifier = "mainnet/cyber"
   chain_id = 7560
