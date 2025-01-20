@@ -24,7 +24,4 @@ func TestCopyDeployConfigHFTimes(t *testing.T) {
 		CanyonTime: config.NewHardforkTime(1),
 		DeltaTime:  config.NewHardforkTime(2),
 	}, b)
-
-	a.L2GenesisRegolithTimeOffset = new(hexutil.Uint64)
-	require.ErrorContains(t, CopyDeployConfigHFTimes(a, b), "destination field RegolithTime doesn't exist")
 }

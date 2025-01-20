@@ -6,45 +6,47 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-type StagingMetadata struct {
-	ShortName  string `toml:"short_name"`
-	Superchain string `toml:"superchain"`
-	Metadata
-}
-
-type Metadata struct {
-	Name                 string       `toml:"name"`
-	PublicRPC            string       `toml:"public_rpc"`
-	SequencerRPC         string       `toml:"sequencer_rpc"`
-	Explorer             string       `toml:"explorer"`
-	SuperchainLevel      int          `toml:"superchain_level"`
-	GovernedByOptimism   bool         `toml:"governed_by_optimism"`
-	SuperchainTime       *uint64      `toml:"superchain_time"`
-	DataAvailabilityType string       `toml:"data_availability_type"`
-	DeploymentTxHash     *common.Hash `toml:"deployment_tx_hash"`
+type StagedChain struct {
+	Chain
+	ShortName                    string             `toml:"-"`
+	Superchain                   Superchain         `toml:"superchain"`
+	BaseFeeVaultRecipient        ChecksummedAddress `toml:"base_fee_vault_recipient"`
+	L1FeeVaultRecipient          ChecksummedAddress `toml:"l1_fee_vault_recipient"`
+	SequencerFeeVaultRecipient   ChecksummedAddress `toml:"sequencer_fee_vault_recipient"`
+	DeploymentTxHash             *common.Hash       `toml:"deployment_tx_hash"`
+	DeploymentL1ContractsVersion *artifacts.Locator `toml:"deployment_l1_contracts_version"`
+	DeploymentL2ContractsVersion *artifacts.Locator `toml:"deployment_l2_contracts_version"`
 }
 
 type Chain struct {
-	Metadata
-	ChainID           uint64              `toml:"chain_id"`
-	BatchInboxAddr    *ChecksummedAddress `toml:"batch_inbox_addr"`
-	BlockTime         uint64              `toml:"block_time"`
-	SeqWindowSize     uint64              `toml:"seq_window_size"`
-	MaxSequencerDrift uint64              `toml:"max_sequencer_drift"`
-	GasPayingToken    *ChecksummedAddress `toml:"gas_paying_token"`
-	Hardforks         Hardforks           `toml:"hardforks"`
-	Optimism          Optimism            `toml:"optimism"`
-	AltDA             *AltDA              `toml:"alt_da"`
-	Genesis           Genesis             `toml:"genesis"`
-	Roles             Roles               `toml:"roles"`
-	Addresses         Addresses           `toml:"addresses"`
+	Name                 string              `toml:"name"`
+	PublicRPC            string              `toml:"public_rpc"`
+	SequencerRPC         string              `toml:"sequencer_rpc"`
+	Explorer             string              `toml:"explorer"`
+	SuperchainLevel      int                 `toml:"superchain_level"`
+	GovernedByOptimism   bool                `toml:"governed_by_optimism"`
+	SuperchainTime       *uint64             `toml:"superchain_time"`
+	DataAvailabilityType string              `toml:"data_availability_type"`
+	ChainID              uint64              `toml:"chain_id"`
+	BatchInboxAddr       *ChecksummedAddress `toml:"batch_inbox_addr"`
+	BlockTime            uint64              `toml:"block_time"`
+	SeqWindowSize        uint64              `toml:"seq_window_size"`
+	MaxSequencerDrift    uint64              `toml:"max_sequencer_drift"`
+	GasPayingToken       *ChecksummedAddress `toml:"gas_paying_token,omitempty"`
+	Hardforks            Hardforks           `toml:"hardforks"`
+	Optimism             Optimism            `toml:"optimism"`
+	AltDA                *AltDA              `toml:"alt_da"`
+	Genesis              Genesis             `toml:"genesis"`
+	Roles                Roles               `toml:"roles"`
+	Addresses            Addresses           `toml:"addresses"`
 }
 
-func (c Chain) ChainListEntry(superchain string, shortName string) ChainListEntry {
+func (c Chain) ChainListEntry(superchain Superchain, shortName string) ChainListEntry {
 	return ChainListEntry{
 		Name:                 c.Name,
 		Identifier:           fmt.Sprintf("%s/%s", superchain, shortName),

@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path"
 	"time"
 
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/gh"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/report"
@@ -20,10 +21,16 @@ import (
 )
 
 var (
-	L1RPCURLFlag = &cli.StringFlag{
-		Name:     "l1-rpc-url",
-		Usage:    "The URL of the L1 RPC endpoint.",
-		EnvVars:  []string{"L1_RPC_URL"},
+	SepoliaRPCURLFlag = &cli.StringFlag{
+		Name:     "sepolia-rpc-url",
+		Usage:    "The URL of the Sepolia RPC endpoint.",
+		EnvVars:  []string{"SEPOLIA_RPC_URL"},
+		Required: true,
+	}
+	MainnetRPCURLFlag = &cli.StringFlag{
+		Name:     "mainnet-rpc-url",
+		Usage:    "The URL of the mainnet RPC endpoint.",
+		EnvVars:  []string{"MAINNET_RPC_URL"},
 		Required: true,
 	}
 	PRURLFlag = &cli.StringFlag{
@@ -58,7 +65,8 @@ func main() {
 		Name:  "print-staging-report",
 		Usage: "Prints a standards compliance report for the Standard Blockspace Charter.",
 		Flags: []cli.Flag{
-			L1RPCURLFlag,
+			SepoliaRPCURLFlag,
+			MainnetRPCURLFlag,
 			PRURLFlag,
 			GitSHAFlag,
 			GithubTokenFlag,
@@ -73,13 +81,12 @@ func main() {
 }
 
 func PrintStagingReport(cliCtx *cli.Context) error {
-	l1RPCURL := cliCtx.String(L1RPCURLFlag.Name)
 	prURL := cliCtx.String(PRURLFlag.Name)
 	gitSHA := cliCtx.String(GitSHAFlag.Name)
 	githubToken := cliCtx.String(GithubTokenFlag.Name)
 	githubRepo := cliCtx.String(GithubRepoFlag.Name)
 
-	wd, err := os.Getwd()
+	wd, err := paths.FindRepoRoot()
 	if err != nil {
 		return fmt.Errorf("failed to get working directory: %w", err)
 	}
@@ -88,39 +95,59 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		return fmt.Errorf("root directory error: %w", err)
 	}
 
+	chainCfg, err := manage.StagedChainConfig(wd)
+	if errors.Is(err, manage.ErrNoStagedConfig) {
+		output.WriteOK("no staged chain config found, exiting")
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("failed to get staged chain config: %w", err)
+	}
+
+	genesisFilename := chainCfg.ShortName + ".json.zst"
+	originalGenesis, err := manage.ReadGenesis(wd, path.Join(paths.StagingDir(wd), genesisFilename))
+	if err != nil {
+		return fmt.Errorf("failed to read genesis: %w", err)
+	}
+
+	if chainCfg.DeploymentTxHash == nil {
+		return fmt.Errorf("deployment tx hash is required")
+	}
+
+	contractsVersion := validation.Semver(chainCfg.DeploymentL1ContractsVersion.Tag)
+	stdPrestate := validation.StandardPrestates[contractsVersion]
+	stdVersions := validation.StandardVersionsMainnet[contractsVersion]
+
+	var stdConfigs validation.ConfigParams
+	var stdRoles validation.RolesConfig
+	var l1RPCURL string
+	switch chainCfg.Superchain {
+	case config.MainnetSuperchain:
+		stdConfigs = validation.StandardConfigParamsMainnet
+		stdRoles = validation.StandardConfigRolesMainnet
+		l1RPCURL = cliCtx.String(MainnetRPCURLFlag.Name)
+	case config.SepoliaSuperchain:
+		stdConfigs = validation.StandardConfigParamsSepolia
+		stdRoles = validation.StandardConfigRolesSepolia
+		l1RPCURL = cliCtx.String(SepoliaRPCURLFlag.Name)
+	default:
+		return fmt.Errorf("unsupported superchain: %s", chainCfg.Superchain)
+	}
+
 	rpcClient, err := rpc.Dial(l1RPCURL)
 	if err != nil {
 		return fmt.Errorf("failed to dial RPC client: %w", err)
 	}
 
-	var meta config.StagingMetadata
-	if err := paths.ReadTOMLFile(path.Join(paths.StagingDir(wd), "meta.toml"), &meta); err != nil {
-		return fmt.Errorf("failed to read meta.toml: %w", err)
-	}
-
-	if meta.DeploymentTxHash == nil {
-		return fmt.Errorf("deployment tx hash is required")
-	}
-
-	var st state.State
-	if err := paths.ReadJSONFile(path.Join(paths.StagingDir(wd), "state.json"), &st); err != nil {
-		return fmt.Errorf("failed to read state.json: %w", err)
-	}
-
-	intent := st.AppliedIntent
-	if intent == nil {
-		return fmt.Errorf("no intent found in state.json")
-	}
-
 	var params validation.ConfigParams
-	if err := paths.ReadTOMLFile(paths.ValidationsFile(wd, meta.Superchain), &params); err != nil {
+	if err := paths.ReadTOMLFile(paths.ValidationsFile(wd, string(chainCfg.Superchain)), &params); err != nil {
 		return fmt.Errorf("failed to read standard params: %w", err)
 	}
 
 	ctx, cancel := context.WithTimeout(cliCtx.Context, 5*time.Minute)
 	defer cancel()
 
-	allReport := report.ScanAll(ctx, rpcClient, *meta.DeploymentTxHash, intent.L1ContractsLocator, &st)
+	allReport := report.ScanAll(ctx, rpcClient, chainCfg, originalGenesis)
 	output.WriteOK("scanned L1 and L2")
 
 	ghClient := github.NewClient(nil).WithAuthToken(githubToken)
@@ -128,22 +155,6 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	currUser, _, err := ghClient.Users.Get(ctx, "")
 	if err != nil {
 		return fmt.Errorf("failed to get authenticated GitHub user: %w", err)
-	}
-
-	contractsVersion := validation.Semver(intent.L1ContractsLocator.Tag)
-	stdPrestate := validation.StandardPrestates[contractsVersion]
-	stdVersions := validation.StandardVersionsMainnet[contractsVersion]
-	var stdConfigs validation.ConfigParams
-	var stdRoles validation.RolesConfig
-	switch allReport.L1.DeploymentChainID {
-	case 1:
-		stdConfigs = validation.StandardConfigParamsMainnet
-		stdRoles = validation.StandardConfigRolesMainnet
-	case 11155111:
-		stdConfigs = validation.StandardConfigParamsSepolia
-		stdRoles = validation.StandardConfigRolesSepolia
-	default:
-		return fmt.Errorf("unsupported chain ID: %d", allReport.L1.DeploymentChainID)
 	}
 
 	comment, err := report.RenderComment(

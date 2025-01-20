@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
@@ -14,17 +15,17 @@ import (
 
 func TestGenesisCompression(t *testing.T) {
 	wd := "testdata"
-	superchain := "mainnet"
+	superchain := config.MainnetSuperchain
 	shortName := "test"
 	testGen := makeTestGenesis()
 
-	require.NoError(t, CompressGenesis(wd, superchain, shortName, testGen))
+	require.NoError(t, WriteSuperchainGenesis(wd, superchain, shortName, testGen))
 	require.FileExists(t, paths.GenesisFile(wd, superchain, shortName))
 	t.Cleanup(func() {
 		require.NoError(t, os.Remove(paths.GenesisFile(wd, superchain, shortName)))
 	})
 
-	readGen, err := DecompressGenesis(wd, superchain, shortName)
+	readGen, err := ReadSuperchainGenesis(wd, superchain, shortName)
 	require.NoError(t, err)
 
 	require.Equal(t, testGen, readGen)

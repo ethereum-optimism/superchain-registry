@@ -1,85 +1,41 @@
 package report
 
 import (
-	"context"
+	"errors"
 	"fmt"
+	"math/big"
 	"os"
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/foundry"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/broadcaster"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/opcm"
+	opcmv170 "github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/opcm/v170"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/env"
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/log"
 )
 
-type ArtifactsProvider interface {
-	Artifacts(ctx context.Context, loc *artifacts.Locator) (foundry.StatDirFs, error)
-}
-
-type artifactsHolder struct {
-	fs  foundry.StatDirFs
-	loc *artifacts.Locator
-}
-
-func (a *artifactsHolder) Artifacts(_ context.Context, loc *artifacts.Locator) (foundry.StatDirFs, error) {
-	if !a.loc.Equal(loc) {
-		return nil, fmt.Errorf("unexpected locator: %s", loc)
-	}
-	return a.fs, nil
-}
-
 func ScanL2(
-	ctx context.Context,
-	originalState *state.State,
+	startBlock *types.Header,
+	chainCfg *config.StagedChain,
+	originalGenesis *core.Genesis,
+	afacts foundry.StatDirFs,
 ) (*L2Report, error) {
 	var report L2Report
-	if originalState.AppliedIntent == nil {
-		return nil, fmt.Errorf("no intent found in original state")
+
+	if !chainCfg.DeploymentL2ContractsVersion.Canonical {
+		return nil, errors.New("contracts version is not canonical")
 	}
 
-	intent := originalState.AppliedIntent
-
-	if !intent.L2ContractsLocator.IsTag() {
-		return nil, fmt.Errorf("must use a tag for L2 contracts locator")
-	}
-
-	report.Release = intent.L2ContractsLocator.Tag
-
-	originalGenesis, _, err := inspect.GenesisAndRollup(originalState, intent.Chains[0].ID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to generate original genesis: %w", err)
-	}
-
+	report.Release = chainCfg.DeploymentL2ContractsVersion.Tag
 	report.ProvidedGenesisHash = originalGenesis.ToBlock().Hash()
 
-	afacts, cleanup, err := artifacts.Download(
-		ctx,
-		intent.L2ContractsLocator,
-		func(current, total int64) {
-			output.WriteStderr("downloading L2 artifacts: %.2f/%.2f MB", float64(current)/1_000_000, float64(total)/1_000_000)
-		},
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to download L2 artifacts: %w", err)
-	}
-	defer func() {
-		if err := cleanup(); err != nil {
-			output.WriteStderr("failed to clean up L2 artifacts: %v", err)
-		}
-	}()
-	artifactsProvider := &artifactsHolder{
-		fs:  afacts,
-		loc: intent.L2ContractsLocator,
-	}
-
-	standardGenesisHash, diffs, err := DiffL2Genesis(ctx, artifactsProvider, originalState)
+	standardGenesisHash, diffs, err := DiffL2Genesis(chainCfg, originalGenesis.Alloc, afacts, startBlock)
 	if err != nil {
 		return nil, fmt.Errorf("failed to diff L2 genesis: %w", err)
 	}
@@ -90,111 +46,109 @@ func ScanL2(
 }
 
 func DiffL2Genesis(
-	ctx context.Context,
-	artifactsProvider ArtifactsProvider,
-	originalState *state.State,
+	chainCfg *config.StagedChain,
+	originalAllocs types.GenesisAlloc,
+	artifacts foundry.StatDirFs,
+	startBlock *types.Header,
 ) (common.Hash, []AccountDiff, error) {
 	var standardHash common.Hash
-	originalIntent := originalState.AppliedIntent
-	if originalIntent == nil {
-		return standardHash, nil, fmt.Errorf("no intent found in original state")
-	}
 
-	if len(originalIntent.Chains) != 1 {
-		return standardHash, nil, fmt.Errorf("expected exactly one chain in original intent, got %d", len(originalIntent.Chains))
-	}
-	if len(originalState.Chains) != 1 {
-		return standardHash, nil, fmt.Errorf("expected exactly one chain in original state, got %d", len(originalState.Chains))
-	}
-
-	originalChainIntent := originalIntent.Chains[0]
-	originalChainState := originalState.Chains[0]
-
-	var roles validation.RolesConfig
-	if originalIntent.L1ChainID == 1 {
-		roles = validation.StandardConfigRolesMainnet
-	} else if originalIntent.L1ChainID == 11155111 {
-		roles = validation.StandardConfigRolesSepolia
+	var l1ChainID uint64
+	var standardRoles validation.RolesConfig
+	if chainCfg.Superchain == config.MainnetSuperchain {
+		standardRoles = validation.StandardConfigRolesMainnet
+		l1ChainID = 1
+	} else if chainCfg.Superchain == config.SepoliaSuperchain {
+		standardRoles = validation.StandardConfigRolesSepolia
+		l1ChainID = 11155111
 	} else {
-		return standardHash, nil, fmt.Errorf("unsupported L1 chain ID: %d", originalIntent.L1ChainID)
-	}
-
-	if ok := validation.IsValidContractSemver(originalIntent.L1ContractsLocator.Tag); !ok {
-		return standardHash, nil, fmt.Errorf("invalid L1 contracts locator: %s", originalIntent.L1ContractsLocator)
-	}
-	if ok := validation.IsValidContractSemver(originalIntent.L2ContractsLocator.Tag); !ok {
-		return standardHash, nil, fmt.Errorf("invalid L2 contracts locator: %s", originalIntent.L2ContractsLocator)
+		return standardHash, nil, fmt.Errorf("unsupported superchain: %s", chainCfg.Superchain)
 	}
 
 	standardIntent := &state.Intent{
-		DeploymentStrategy: state.DeploymentStrategyGenesis,
 		ConfigType:         state.IntentConfigTypeStrict,
 		FundDevAccounts:    false,
 		UseInterop:         false,
-		L1ContractsLocator: originalIntent.L1ContractsLocator,
-		L2ContractsLocator: originalIntent.L2ContractsLocator,
-		L1ChainID:          originalIntent.L1ChainID,
+		L1ContractsLocator: chainCfg.DeploymentL1ContractsVersion,
+		L2ContractsLocator: chainCfg.DeploymentL2ContractsVersion,
+		L1ChainID:          l1ChainID,
 
 		SuperchainRoles: &state.SuperchainRoles{
-			ProxyAdminOwner:       common.Address(roles.L1ProxyAdminOwner),
-			Guardian:              common.Address(roles.Guardian),
-			ProtocolVersionsOwner: common.Address(roles.ProtocolVersionsOwner),
+			ProxyAdminOwner:       common.Address(standardRoles.L1ProxyAdminOwner),
+			Guardian:              common.Address(standardRoles.Guardian),
+			ProtocolVersionsOwner: common.Address(standardRoles.ProtocolVersionsOwner),
 		},
 
 		Chains: []*state.ChainIntent{
 			{
-				ID:                         originalChainIntent.ID,
-				BaseFeeVaultRecipient:      originalChainIntent.BaseFeeVaultRecipient,
-				L1FeeVaultRecipient:        originalChainIntent.L1FeeVaultRecipient,
-				SequencerFeeVaultRecipient: originalChainIntent.SequencerFeeVaultRecipient,
-				Eip1559DenominatorCanyon:   originalChainIntent.Eip1559DenominatorCanyon,
-				Eip1559Denominator:         originalChainIntent.Eip1559Denominator,
-				Eip1559Elasticity:          originalChainIntent.Eip1559Elasticity,
+				ID:                         common.BigToHash(new(big.Int).SetUint64(chainCfg.ChainID)),
+				BaseFeeVaultRecipient:      common.Address(chainCfg.BaseFeeVaultRecipient),
+				L1FeeVaultRecipient:        common.Address(chainCfg.L1FeeVaultRecipient),
+				SequencerFeeVaultRecipient: common.Address(chainCfg.SequencerFeeVaultRecipient),
+				Eip1559DenominatorCanyon:   chainCfg.Optimism.EIP1559DenominatorCanyon,
+				Eip1559Denominator:         chainCfg.Optimism.EIP1559Denominator,
+				Eip1559Elasticity:          chainCfg.Optimism.EIP1559Elasticity,
 				Roles: state.ChainRoles{
-					L1ProxyAdminOwner: common.Address(roles.L1ProxyAdminOwner),
-					L2ProxyAdminOwner: common.Address(roles.L2ProxyAdminOwner),
-					SystemConfigOwner: originalChainIntent.Roles.SystemConfigOwner,
-					UnsafeBlockSigner: originalChainIntent.Roles.UnsafeBlockSigner,
-					Batcher:           originalChainIntent.Roles.Batcher,
-					Proposer:          originalChainIntent.Roles.Proposer,
-					Challenger:        originalChainIntent.Roles.Challenger,
+					L1ProxyAdminOwner: common.Address(standardRoles.L1ProxyAdminOwner),
+					L2ProxyAdminOwner: common.Address(standardRoles.L2ProxyAdminOwner),
+					SystemConfigOwner: common.Address(*chainCfg.Roles.SystemConfigOwner),
+					UnsafeBlockSigner: common.Address(*chainCfg.Roles.UnsafeBlockSigner),
+					Batcher:           common.Address(*chainCfg.Roles.BatchSubmitter),
+					Proposer:          common.Address(*chainCfg.Roles.Proposer),
+					Challenger:        common.Address(*chainCfg.Roles.Challenger),
 				},
 			},
 		},
 	}
 
-	standardDeployConfig, err := state.CombineDeployConfig(standardIntent, standardIntent.Chains[0], originalState, originalChainState)
+	// Hack until I find a better way of doing this
+	if chainCfg.DeploymentL1ContractsVersion.Tag == string(validation.Semver160) {
+		standardIntent.GlobalDeployOverrides = map[string]any{
+			"l2GenesisHoloceneTimeOffset": nil,
+		}
+	}
+
+	standardState := &state.State{
+		// These values are not used in L2 genesis.
+		SuperchainDeployment: new(state.SuperchainDeployment),
+	}
+
+	standardChainState := &state.ChainState{
+		ID:                                 common.BigToHash(new(big.Int).SetUint64(chainCfg.ChainID)),
+		StartBlock:                         startBlock,
+		L1StandardBridgeProxyAddress:       common.Address(*chainCfg.Addresses.L1StandardBridgeProxy),
+		L1CrossDomainMessengerProxyAddress: common.Address(*chainCfg.Addresses.L1CrossDomainMessengerProxy),
+		L1ERC721BridgeProxyAddress:         common.Address(*chainCfg.Addresses.L1ERC721BridgeProxy),
+		SystemConfigProxyAddress:           common.Address(*chainCfg.Addresses.SystemConfigProxy),
+		OptimismPortalProxyAddress:         common.Address(*chainCfg.Addresses.OptimismPortalProxy),
+	}
+
+	standardDeployConfig, err := state.CombineDeployConfig(standardIntent, standardIntent.Chains[0], standardState, standardChainState)
 	if err != nil {
 		return standardHash, nil, fmt.Errorf("failed to combine deploy config: %w", err)
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelWarn, false))
-
-	artifactsL2, err := artifactsProvider.Artifacts(ctx, originalIntent.L2ContractsLocator)
-	if err != nil {
-		return standardHash, nil, fmt.Errorf("failed to download L2 artifacts: %w", err)
-	}
-
 	deployer := common.Address{'D'}
 	host, err := env.DefaultScriptHost(
 		broadcaster.NoopBroadcaster(),
 		lgr,
 		deployer,
-		artifactsL2,
+		artifacts,
 	)
 	if err != nil {
 		return standardHash, nil, fmt.Errorf("failed to create script host: %w", err)
 	}
 
-	if err := opcm.L2Genesis(host, &opcm.L2GenesisInput{
-		L1Deployments: opcm.L1Deployments{
-			L1CrossDomainMessengerProxy: originalChainState.L1CrossDomainMessengerProxyAddress,
-			L1StandardBridgeProxy:       originalChainState.L1StandardBridgeProxyAddress,
-			L1ERC721BridgeProxy:         originalChainState.L1ERC721BridgeProxyAddress,
+	if err := opcmv170.L2Genesis(host, &opcmv170.L2GenesisInput{
+		L1Deployments: opcmv170.L1Deployments{
+			L1CrossDomainMessengerProxy: common.Address(*chainCfg.Addresses.L1CrossDomainMessengerProxy),
+			L1StandardBridgeProxy:       common.Address(*chainCfg.Addresses.L1StandardBridgeProxy),
+			L1ERC721BridgeProxy:         common.Address(*chainCfg.Addresses.L1ERC721BridgeProxy),
 		},
 		L2Config: standardDeployConfig.L2InitializationConfig,
 	}); err != nil {
-		return standardHash, nil, fmt.Errorf("failed to call L2Genesis script: %w", err)
+		return standardHash, nil, fmt.Errorf("failed to call v170 L2Genesis script: %w", err)
 	}
 
 	host.Wipe(deployer)
@@ -204,16 +158,11 @@ func DiffL2Genesis(
 		return standardHash, nil, fmt.Errorf("failed to dump state: %w", err)
 	}
 
-	originalGenesis, _, err := inspect.GenesisAndRollup(originalState, originalChainIntent.ID)
-	if err != nil {
-		return standardHash, nil, fmt.Errorf("failed to generate original genesis: %w", err)
-	}
-
-	standardGenesis, err := genesis.BuildL2Genesis(&standardDeployConfig, standardAllocs, originalChainState.StartBlock)
+	standardGenesis, err := genesis.BuildL2Genesis(&standardDeployConfig, standardAllocs, startBlock)
 	if err != nil {
 		return standardHash, nil, fmt.Errorf("failed to build standard genesis: %w", err)
 	}
 
-	diffs := DiffAllocs(standardAllocs.Accounts, originalGenesis.Alloc)
+	diffs := DiffAllocs(standardAllocs.Accounts, originalAllocs)
 	return standardGenesis.ToBlock().Hash(), diffs, nil
 }

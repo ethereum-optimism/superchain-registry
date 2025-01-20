@@ -6,6 +6,7 @@ import (
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 )
 
 func main() {
@@ -16,7 +17,7 @@ func main() {
 }
 
 func mainErr() error {
-	wd, err := os.Getwd()
+	wd, err := paths.FindRepoRoot()
 	if err != nil {
 		return fmt.Errorf("failed to get working directory: %w", err)
 	}

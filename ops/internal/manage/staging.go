@@ -1,85 +1,50 @@
 package manage
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
-	"path"
+	"path/filepath"
 	"reflect"
 	"strings"
 
-	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-type StagedChain struct {
-	State   *state.State
-	Meta    *config.StagingMetadata
-	cleanup func() error
-}
-
-func NewStagedChain(p string) (*StagedChain, error) {
-	stateData, err := os.ReadFile(path.Join(p, "state.json"))
-	if err != nil {
-		return nil, fmt.Errorf("failed to read state: %w", err)
-	}
-	var st state.State
-	if err := json.Unmarshal(stateData, &st); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal state: %w", err)
+func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
+	if len(st.AppliedIntent.Chains) != 1 {
+		return nil, errors.New("expected exactly one chain in state")
 	}
 
-	metaData, err := os.ReadFile(path.Join(p, "meta.toml"))
-	if err != nil {
-		return nil, fmt.Errorf("failed to read metadata: %w", err)
-	}
-	var meta config.StagingMetadata
-	if err := toml.Unmarshal(metaData, &meta); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal metadata: %w", err)
-	}
-
-	return &StagedChain{
-		State: &st,
-		Meta:  &meta,
-		cleanup: func() error {
-			for _, f := range []string{"state.json", "meta.toml"} {
-				if err := os.Remove(path.Join(p, f)); err != nil {
-					return err
-				}
-			}
-			return nil
-		},
-	}, nil
-}
-
-func (s *StagedChain) Cleanup() error {
-	return s.cleanup()
-}
-
-func InflateChainConfig(sc *StagedChain) (*config.Chain, error) {
-	chainIntent := sc.State.AppliedIntent.Chains[0]
+	chainIntent := st.AppliedIntent.Chains[0]
 	chainID := chainIntent.ID
-	dc, err := inspect.DeployConfig(sc.State, chainID)
+	dc, err := inspect.DeployConfig(st, chainID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to inspect deploy config: %w", err)
 	}
 
-	_, rollup, err := inspect.GenesisAndRollup(sc.State, chainID)
+	_, rollup, err := inspect.GenesisAndRollup(st, chainID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to inspect genesis and rollup: %w", err)
 	}
 
-	cfg := new(config.Chain)
-	cfg.Metadata = sc.Meta.Metadata
+	cfg := new(config.StagedChain)
 	cfg.ChainID = chainID.Big().Uint64()
 	cfg.BatchInboxAddr = config.NewChecksummedAddress(dc.BatchInboxAddress)
 	cfg.BlockTime = dc.L2BlockTime
 	cfg.SeqWindowSize = dc.SequencerWindowSize
 	cfg.MaxSequencerDrift = dc.MaxSequencerDrift
+	cfg.DataAvailabilityType = "eth-da"
+	cfg.DeploymentL1ContractsVersion = st.AppliedIntent.L1ContractsLocator
+	cfg.DeploymentL2ContractsVersion = st.AppliedIntent.L2ContractsLocator
+	cfg.DeploymentTxHash = new(common.Hash)
+	cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.BaseFeeVaultRecipient)
+	cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.L1FeeVaultRecipient)
+	cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.SequencerFeeVaultRecipient)
 
 	if dc.CustomGasTokenAddress != (common.Address{}) {
 		cfg.GasPayingToken = config.NewChecksummedAddress(dc.CustomGasTokenAddress)
@@ -102,9 +67,11 @@ func InflateChainConfig(sc *StagedChain) (*config.Chain, error) {
 			DaResolveWindow:            dc.DAResolveWindow,
 			DaCommitmentType:           dc.DACommitmentType,
 		}
+		cfg.Addresses.DAChallengeAddress = config.NewChecksummedAddress(dc.DAChallengeProxy)
+		cfg.DataAvailabilityType = "alt-da"
 	}
 
-	chainState := sc.State.Chains[0]
+	chainState := st.Chains[0]
 	cfg.Genesis = config.Genesis{
 		L2Time: chainState.StartBlock.Time,
 		L1: config.GenesisRef{
@@ -115,15 +82,22 @@ func InflateChainConfig(sc *StagedChain) (*config.Chain, error) {
 			Hash:   rollup.Genesis.L2.Hash,
 			Number: rollup.Genesis.L2.Number,
 		},
+		SystemConfig: config.SystemConfig{
+			BatcherAddr: *config.NewChecksummedAddress(rollup.Genesis.SystemConfig.BatcherAddr),
+			Overhead:    common.Hash(rollup.Genesis.SystemConfig.Overhead),
+			Scalar:      common.Hash(rollup.Genesis.SystemConfig.Scalar),
+			GasLimit:    rollup.Genesis.SystemConfig.GasLimit,
+		},
 	}
 
 	cfg.Roles = config.Roles{
 		SystemConfigOwner: config.NewChecksummedAddress(chainIntent.Roles.SystemConfigOwner),
 		ProxyAdminOwner:   config.NewChecksummedAddress(chainIntent.Roles.L1ProxyAdminOwner),
-		Guardian:          config.NewChecksummedAddress(sc.State.AppliedIntent.SuperchainRoles.Guardian),
+		Guardian:          config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.Guardian),
 		Proposer:          config.NewChecksummedAddress(chainIntent.Roles.Proposer),
 		UnsafeBlockSigner: config.NewChecksummedAddress(chainIntent.Roles.UnsafeBlockSigner),
 		BatchSubmitter:    config.NewChecksummedAddress(chainIntent.Roles.Batcher),
+		Challenger:        config.NewChecksummedAddress(chainIntent.Roles.Challenger),
 	}
 
 	cfg.Addresses = config.Addresses{
@@ -135,15 +109,11 @@ func InflateChainConfig(sc *StagedChain) (*config.Chain, error) {
 		OptimismPortalProxy:               config.NewChecksummedAddress(chainState.OptimismPortalProxyAddress),
 		SystemConfigProxy:                 config.NewChecksummedAddress(chainState.SystemConfigProxyAddress),
 		ProxyAdmin:                        config.NewChecksummedAddress(chainState.ProxyAdminAddress),
-		SuperchainConfig:                  config.NewChecksummedAddress(sc.State.SuperchainDeployment.SuperchainConfigProxyAddress),
+		SuperchainConfig:                  config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxyAddress),
 		AnchorStateRegistryProxy:          config.NewChecksummedAddress(chainState.AnchorStateRegistryProxyAddress),
 		DelayedWETHProxy:                  config.NewChecksummedAddress(chainState.DelayedWETHPermissionedGameProxyAddress),
 		DisputeGameFactoryProxy:           config.NewChecksummedAddress(chainState.DisputeGameFactoryProxyAddress),
 		PermissionedDisputeGame:           config.NewChecksummedAddress(chainState.PermissionedDisputeGameAddress),
-	}
-
-	if dc.UseAltDA {
-		cfg.Addresses.DAChallengeAddress = config.NewChecksummedAddress(dc.DAChallengeProxy)
 	}
 
 	return cfg, nil
@@ -164,8 +134,10 @@ func CopyDeployConfigHFTimes(src *genesis.UpgradeScheduleDeployConfig, dst *conf
 		fieldName := field.Name
 
 		// Only process fields that start with "L2Genesis" and end with "TimeOffset"
+		// Also skip Regolith since it's not included in the configs.
 		if !strings.HasPrefix(fieldName, "L2Genesis") ||
-			!strings.HasSuffix(fieldName, "TimeOffset") {
+			!strings.HasSuffix(fieldName, "TimeOffset") ||
+			strings.Contains(fieldName, "Regolith") {
 			continue
 		}
 
@@ -197,4 +169,30 @@ func CopyDeployConfigHFTimes(src *genesis.UpgradeScheduleDeployConfig, dst *conf
 	}
 
 	return nil
+}
+
+var (
+	ErrNoStagedConfig  = errors.New("no staged chain config found")
+	ErrMultipleConfigs = errors.New("only one TOML file is allowed in the staging directory at a time")
+)
+
+func StagedChainConfig(rootP string) (*config.StagedChain, error) {
+	tomls, err := paths.CollectFiles(paths.StagingDir(rootP), paths.FileExtMatcher(".toml"))
+	if err != nil {
+		return nil, fmt.Errorf("failed to collect staged chain configs: %w", err)
+	}
+	if len(tomls) == 0 {
+		return nil, ErrNoStagedConfig
+	}
+	if len(tomls) != 1 {
+		return nil, ErrMultipleConfigs
+	}
+
+	cfgFilename := tomls[0]
+	chainCfg := new(config.StagedChain)
+	if err := paths.ReadTOMLFile(cfgFilename, chainCfg); err != nil {
+		return nil, fmt.Errorf("failed to read %s: %w", cfgFilename, err)
+	}
+	chainCfg.ShortName = strings.TrimSuffix(filepath.Base(cfgFilename), ".toml")
+	return chainCfg, nil
 }

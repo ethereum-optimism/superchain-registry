@@ -1,12 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
 
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/fs"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -43,76 +42,55 @@ func main() {
 func action(cliCtx *cli.Context) error {
 	check := cliCtx.Bool(FlagCheck.Name)
 	noCleanup := cliCtx.Bool(FlagPreserveInput.Name)
-	wd, err := os.Getwd()
+	wd, err := paths.FindRepoRoot()
 	if err != nil {
 		return fmt.Errorf("failed to get working directory: %w", err)
 	}
 
-	stagingDir := path.Join(wd, ".staging")
+	stagingDir := paths.StagingDir(wd)
 
-	intentExists, err := fs.FileExists(path.Join(stagingDir, "state.json"))
-	if err != nil {
-		return fmt.Errorf("failed to check for state file: %w", err)
-	}
-	if !intentExists {
-		output.WriteOK("no staged intent file found, exiting")
+	chainCfg, err := manage.StagedChainConfig(wd)
+	if errors.Is(err, manage.ErrNoStagedConfig) {
+		output.WriteOK("no staged chain config found, exiting")
 		return nil
 	}
-
-	stagedChain, err := manage.NewStagedChain(stagingDir)
 	if err != nil {
-		return fmt.Errorf("failed to create staged chain: %w", err)
+		return fmt.Errorf("failed to get staged chain config: %w", err)
 	}
 
-	chainCfg, err := manage.InflateChainConfig(stagedChain)
+	genesisFilename := path.Join(stagingDir, chainCfg.ShortName+".json.zst")
+	genesis, err := manage.ReadGenesis(wd, genesisFilename)
 	if err != nil {
-		return fmt.Errorf("failed to inflate chain config: %w", err)
+		return fmt.Errorf("failed to read genesis: %w", err)
 	}
 
-	superchainPath := paths.SuperchainDir(wd, stagedChain.Meta.Superchain)
+	superchainPath := paths.SuperchainDir(wd, chainCfg.Superchain)
 	chainCfgs, err := manage.CollectChainConfigs(superchainPath)
 	if err != nil {
 		return fmt.Errorf("failed to collect chain configs: %w", err)
 	}
 
-	if err := manage.ValidateUniqueness(chainCfg, stagedChain.Meta.ShortName, chainCfgs); err != nil {
+	if err := manage.ValidateUniqueness(chainCfg, chainCfgs); err != nil {
 		return fmt.Errorf("failed uniqueness check: %w", err)
 	}
 	output.WriteOK("internal uniqueness check passed")
-
-	globalChainData, err := manage.FetchGlobalChainIDs()
-	if err != nil {
-		return fmt.Errorf("failed to fetch global chain IDs: %w", err)
-	}
-	if globalChainData.ChainIDs[chainCfg.ChainID] {
-		return fmt.Errorf("chain ID %d is already in use", chainCfg.ChainID)
-	}
-	if globalChainData.ShortNames[stagedChain.Meta.ShortName] {
-		return fmt.Errorf("short name %s is already in use", stagedChain.Meta.ShortName)
-	}
-	output.WriteOK("global uniqueness check passed")
 
 	if check {
 		output.WriteOK("validation successful")
 		return nil
 	}
 
-	if err := manage.WriteChainConfig(wd, stagedChain.Meta, chainCfg); err != nil {
+	if err := manage.WriteChainConfig(wd, chainCfg); err != nil {
 		return fmt.Errorf("failed to write chain config: %w", err)
 	}
 
 	output.WriteOK(
 		"wrote chain config %s.toml to %s superchain",
-		stagedChain.Meta.ShortName,
-		stagedChain.Meta.Superchain,
+		chainCfg.ShortName,
+		chainCfg.Superchain,
 	)
 
-	genesis, _, err := inspect.GenesisAndRollup(stagedChain.State, stagedChain.State.AppliedIntent.Chains[0].ID)
-	if err != nil {
-		return fmt.Errorf("failed to get genesis: %w", err)
-	}
-
-	if err := manage.CompressGenesis(wd, stagedChain.Meta.Superchain, stagedChain.Meta.ShortName, genesis); err != nil {
+	if err := manage.WriteSuperchainGenesis(wd, chainCfg.Superchain, chainCfg.ShortName, genesis); err != nil {
 		return fmt.Errorf("failed to compress genesis: %w", err)
 	}
 
@@ -123,8 +101,12 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	if !noCleanup {
-		if err := stagedChain.Cleanup(); err != nil {
-			return fmt.Errorf("failed to clean up staging directory: %w", err)
+		cfgFilename := path.Join(stagingDir, chainCfg.ShortName+".toml")
+		if err := os.Remove(cfgFilename); err != nil {
+			output.WriteNotOK("failed to remove %s: %v", cfgFilename, err)
+		}
+		if err := os.Remove(genesisFilename); err != nil {
+			output.WriteNotOK("failed to remove %s: %v", genesisFilename, err)
 		}
 
 		output.WriteOK("cleaned up staging directory")

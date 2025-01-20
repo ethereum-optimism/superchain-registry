@@ -140,7 +140,7 @@ func GenChainListFile(rootP string, outP string) error {
 }
 
 type ChainsReadmeData struct {
-	Superchains []string
+	Superchains []config.Superchain
 	ChainData   [][]*config.Chain
 }
 

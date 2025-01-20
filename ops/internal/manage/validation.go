@@ -26,8 +26,7 @@ type GlobalChainIDs struct {
 }
 
 func ValidateUniqueness(
-	in *config.Chain,
-	shortName string,
+	in *config.StagedChain,
 	chains []DiskChainConfig,
 ) error {
 	for _, chain := range chains {
@@ -35,14 +34,20 @@ func ValidateUniqueness(
 			return ErrDuplicateChainID
 		}
 
-		if chain.ShortName == shortName {
+		if chain.ShortName == in.ShortName {
 			return ErrDuplicateShortName
 		}
 	}
 	return nil
 }
 
-func FetchGlobalChainIDs() (*GlobalChainIDs, error) {
+type ChainEntry struct {
+	ChainID   uint64 `json:"chainId"`
+	Name      string `json:"name"`
+	ShortName string `json:"shortName"`
+}
+
+func FetchGlobalChainIDs() (map[uint64]ChainEntry, error) {
 	req, err := http.NewRequest(http.MethodGet, chainListUrl, nil)
 	if err != nil {
 		return nil, err
@@ -56,65 +61,51 @@ func FetchGlobalChainIDs() (*GlobalChainIDs, error) {
 	}
 	defer res.Body.Close()
 
-	type chainEntry struct {
-		ChainId   uint64 `json:"chainId"`
-		Name      string `json:"name"`
-		ShortName string `json:"shortName"`
-	}
-
-	var out []chainEntry
-
-	if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
+	var entries []ChainEntry
+	if err := json.NewDecoder(res.Body).Decode(&entries); err != nil {
 		return nil, err
 	}
 
-	chainIDs := make(map[uint64]bool)
-	shortNames := make(map[string]bool)
-	for _, entry := range out {
-		chainIDs[entry.ChainId] = true
-		shortNames[entry.ShortName] = true
+	out := make(map[uint64]ChainEntry)
+	for _, entry := range entries {
+		out[entry.ChainID] = entry
 	}
-
-	return &GlobalChainIDs{
-		ChainIDs:   chainIDs,
-		ShortNames: shortNames,
-	}, nil
+	return out, nil
 }
 
 func ValidateGenesisIntegrity(cfg *config.Chain, genesis *core.Genesis) error {
 	genesisActivation := uint64(0)
 	out := &params.ChainConfig{
-		ChainID:                       new(big.Int).SetUint64(cfg.ChainID),
-		HomesteadBlock:                common.Big0,
-		DAOForkBlock:                  nil,
-		DAOForkSupport:                false,
-		EIP150Block:                   common.Big0,
-		EIP155Block:                   common.Big0,
-		EIP158Block:                   common.Big0,
-		ByzantiumBlock:                common.Big0,
-		ConstantinopleBlock:           common.Big0,
-		PetersburgBlock:               common.Big0,
-		IstanbulBlock:                 common.Big0,
-		MuirGlacierBlock:              common.Big0,
-		BerlinBlock:                   common.Big0,
-		LondonBlock:                   common.Big0,
-		ArrowGlacierBlock:             common.Big0,
-		GrayGlacierBlock:              common.Big0,
-		MergeNetsplitBlock:            common.Big0,
-		ShanghaiTime:                  cfg.Hardforks.CanyonTime.U64Ptr(),  // Shanghai activates with Canyon
-		CancunTime:                    cfg.Hardforks.EcotoneTime.U64Ptr(), // Cancun activates with Ecotone
-		PragueTime:                    nil,
-		BedrockBlock:                  common.Big0,
-		RegolithTime:                  &genesisActivation,
-		CanyonTime:                    cfg.Hardforks.CanyonTime.U64Ptr(),
-		EcotoneTime:                   cfg.Hardforks.EcotoneTime.U64Ptr(),
-		FjordTime:                     cfg.Hardforks.FjordTime.U64Ptr(),
-		GraniteTime:                   cfg.Hardforks.GraniteTime.U64Ptr(),
-		HoloceneTime:                  cfg.Hardforks.HoloceneTime.U64Ptr(),
-		TerminalTotalDifficulty:       common.Big0,
-		TerminalTotalDifficultyPassed: true,
-		Ethash:                        nil,
-		Clique:                        nil,
+		ChainID:                 new(big.Int).SetUint64(cfg.ChainID),
+		HomesteadBlock:          common.Big0,
+		DAOForkBlock:            nil,
+		DAOForkSupport:          false,
+		EIP150Block:             common.Big0,
+		EIP155Block:             common.Big0,
+		EIP158Block:             common.Big0,
+		ByzantiumBlock:          common.Big0,
+		ConstantinopleBlock:     common.Big0,
+		PetersburgBlock:         common.Big0,
+		IstanbulBlock:           common.Big0,
+		MuirGlacierBlock:        common.Big0,
+		BerlinBlock:             common.Big0,
+		LondonBlock:             common.Big0,
+		ArrowGlacierBlock:       common.Big0,
+		GrayGlacierBlock:        common.Big0,
+		MergeNetsplitBlock:      common.Big0,
+		ShanghaiTime:            cfg.Hardforks.CanyonTime.U64Ptr(),  // Shanghai activates with Canyon
+		CancunTime:              cfg.Hardforks.EcotoneTime.U64Ptr(), // Cancun activates with Ecotone
+		PragueTime:              nil,
+		BedrockBlock:            common.Big0,
+		RegolithTime:            &genesisActivation,
+		CanyonTime:              cfg.Hardforks.CanyonTime.U64Ptr(),
+		EcotoneTime:             cfg.Hardforks.EcotoneTime.U64Ptr(),
+		FjordTime:               cfg.Hardforks.FjordTime.U64Ptr(),
+		GraniteTime:             cfg.Hardforks.GraniteTime.U64Ptr(),
+		HoloceneTime:            cfg.Hardforks.HoloceneTime.U64Ptr(),
+		TerminalTotalDifficulty: common.Big0,
+		Ethash:                  nil,
+		Clique:                  nil,
 	}
 
 	out.Optimism = &params.OptimismConfig{
