@@ -201,6 +201,24 @@
     }
   },
   {
+    "name": "Mint Mainnet",
+    "identifier": "mainnet/mint",
+    "chainId": 185,
+    "rpc": [
+      "https://rpc.mintchain.io"
+    ],
+    "explorers": [
+      "https://explorer.mintchain.io"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Mode",
     "identifier": "mainnet/mode",
     "chainId": 34443,
@@ -506,6 +524,24 @@
       "chain": "sepolia"
     },
     "gasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
+  },
+  {
+    "name": "Creator Chain Testnet",
+    "identifier": "sepolia/creator-chain-testnet",
+    "chainId": 66665,
+    "rpc": [
+      "https://rpc.creatorchain.io"
+    ],
+    "explorers": [
+      "https://explorer.creatorchain.io"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
   },
   {
     "name": "Cyber Testnet",

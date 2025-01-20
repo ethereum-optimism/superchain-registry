@@ -145,6 +145,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Mint Mainnet"
+  identifier = "mainnet/mint"
+  chain_id = 185
+  rpc = ["https://rpc.mintchain.io"]
+  explorers = ["https://explorer.mintchain.io"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Mode"
   identifier = "mainnet/mode"
   chain_id = 34443
@@ -362,6 +375,19 @@
   governed_by_optimism = false
   data_availability_type = "eth-da"
   gas_paying_token = "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Creator Chain Testnet"
+  identifier = "sepolia/creator-chain-testnet"
+  chain_id = 66665
+  rpc = ["https://rpc.creatorchain.io"]
+  explorers = ["https://explorer.creatorchain.io"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia"

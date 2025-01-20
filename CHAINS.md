@@ -15,6 +15,7 @@
 | Lisk | ❌ | ✅ | https://blockscout.lisk.com | `https://rpc.api.lisk.com` | `https://rpc.api.lisk.com` |
 | Lyra Chain | ❌ | ✅ | https://explorer.lyra.finance | `https://rpc.lyra.finance` | `https://rpc.lyra.finance` |
 | Metal L2 | ✅ | ✅ | https://explorer.metall2.com | `https://rpc.metall2.com` | `https://rpc.metall2.com` |
+| Mint Mainnet | ❌ | ✅ | https://explorer.mintchain.io | `https://rpc.mintchain.io` | `https://rpc.mintchain.io` |
 | Mode | ✅ | ✅ | https://explorer.mode.network | `https://mainnet.mode.network` | `https://mainnet-sequencer.mode.network` |
 | OP Mainnet | ✅ | ✅ | https://explorer.optimism.io | `https://mainnet.optimism.io` | `https://mainnet-sequencer.optimism.io` |
 | Orderly Mainnet | ❌ | ✅ | https://explorer.orderly.network | `https://rpc.orderly.network` | `https://rpc.orderly.network` |
@@ -36,6 +37,7 @@
 |---|---|---|---|---|---|
 | Base Sepolia Testnet | ❌ | ✅ | https://sepolia-explorer.base.org | `https://sepolia.base.org` | `https://sepolia-sequencer.base.org` |
 | Binary Sepolia | ❌ | ❌ | https://explorer.sepolia.thebinaryholdings.com | `https://rpc.testnet.thebinaryholdings.com` | `https://sequencer.rpc.bnry.testnet.zeeve.net` |
+| Creator Chain Testnet | ❌ | ✅ | https://explorer.creatorchain.io | `https://rpc.creatorchain.io` | `https://rpc.creatorchain.io` |
 | Cyber Testnet | ❌ | ❌ | https://testnet.cyberscan.co/ | `https://rpc.testnet.cyber.co` | `https://cyber.alt.technology/` |
 | Ethernity Testnet | ❌ | ✅ | https://testnet.ernscan.io | `https://testnet.ethernitychain.io` | `https://testnet.ethernitychain.io` |
 | Funki Sepolia Testnet | ❌ | ❌ | https://sepolia-sandbox.funkichain.com/ | `https://funki-testnet.alt.technology` | `https://funki-testnet.alt.technology` |
