@@ -30,7 +30,7 @@ var (
 
 func main() {
 	app := &cli.App{
-		Name:  "inflate-config",
+		Name:  "create-config",
 		Usage: "Turns a state file into a chain config in the stating directory.",
 		Flags: []cli.Flag{
 			StateFilename,

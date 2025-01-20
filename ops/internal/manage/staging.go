@@ -65,6 +65,8 @@ func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
 			DaResolveWindow:            dc.DAResolveWindow,
 			DaCommitmentType:           dc.DACommitmentType,
 		}
+		cfg.Addresses.DAChallengeAddress = config.NewChecksummedAddress(dc.DAChallengeProxy)
+		cfg.DataAvailabilityType = "alt-da"
 	}
 
 	chainState := st.Chains[0]
@@ -110,11 +112,6 @@ func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
 		DelayedWETHProxy:                  config.NewChecksummedAddress(chainState.DelayedWETHPermissionedGameProxyAddress),
 		DisputeGameFactoryProxy:           config.NewChecksummedAddress(chainState.DisputeGameFactoryProxyAddress),
 		PermissionedDisputeGame:           config.NewChecksummedAddress(chainState.PermissionedDisputeGameAddress),
-	}
-
-	if dc.UseAltDA {
-		cfg.Addresses.DAChallengeAddress = config.NewChecksummedAddress(dc.DAChallengeProxy)
-		cfg.DataAvailabilityType = "alt-da"
 	}
 
 	return cfg, nil

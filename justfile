@@ -49,5 +49,5 @@ check-genesis-integrity: (_run_ops_bin 'check_genesis_integrity')
 
 codegen: (_run_ops_bin 'codegen')
 
-inflate-config SHORTNAME FILENAME:
-	@just _run_ops_bin "inflate_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{FILENAME}})"
+create-config SHORTNAME FILENAME:
+	@just _run_ops_bin "create_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{FILENAME}})"

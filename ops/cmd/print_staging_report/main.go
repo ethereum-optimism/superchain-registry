@@ -22,9 +22,10 @@ import (
 
 var (
 	SepoliaRPCURLFlag = &cli.StringFlag{
-		Name:    "sepolia-rpc-url",
-		Usage:   "The URL of the Sepolia RPC endpoint.",
-		EnvVars: []string{"SEPOLIA_RPC_URL"},
+		Name:     "sepolia-rpc-url",
+		Usage:    "The URL of the Sepolia RPC endpoint.",
+		EnvVars:  []string{"SEPOLIA_RPC_URL"},
+		Required: true,
 	}
 	MainnetRPCURLFlag = &cli.StringFlag{
 		Name:     "mainnet-rpc-url",
