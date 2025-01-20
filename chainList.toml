@@ -380,6 +380,19 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Creator Chain Testnet"
+  identifier = "sepolia/creator-chain-testnet"
+  chain_id = 66665
+  rpc = ["https://rpc.creatorchain.io"]
+  explorers = ["https://explorer.creatorchain.io"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Cyber Testnet"
   identifier = "sepolia/cyber"
   chain_id = 111557560
