@@ -11,12 +11,12 @@ import (
 )
 
 func TestGenAddressesFile(t *testing.T) {
-	require.NoError(t, GenAddressesFile("testdata"))
-
 	addrsFile := paths.AddressesFile("testdata")
-	t.Cleanup(func() {
-		require.NoError(t, os.Remove(addrsFile))
-	})
+	defer func() {
+		_ = os.Remove(addrsFile)
+	}()
+
+	require.NoError(t, GenAddressesFile("testdata"))
 
 	expected, err := os.ReadFile("testdata/expected-addresses.json")
 	require.NoError(t, err)
@@ -35,9 +35,9 @@ func TestGenChainList(t *testing.T) {
 			outFile, err := os.CreateTemp("", fmt.Sprintf("chainList-*.%s", ext))
 			require.NoError(t, err)
 			defer outFile.Close()
-			t.Cleanup(func() {
-				require.NoError(t, os.Remove(outFile.Name()))
-			})
+			defer func() {
+				_ = os.Remove(outFile.Name())
+			}()
 
 			outPath := outFile.Name()
 			require.NoError(t, GenChainListFile("testdata", outPath))
@@ -60,9 +60,10 @@ func TestGenChainList(t *testing.T) {
 func TestGenChainsReadme(t *testing.T) {
 	readmeFile, err := os.CreateTemp("", "chains-*.md")
 	require.NoError(t, err)
-	t.Cleanup(func() {
-		require.NoError(t, os.Remove(readmeFile.Name()))
-	})
+	defer readmeFile.Close()
+	defer func() {
+		_ = os.Remove(readmeFile.Name())
+	}()
 
 	require.NoError(t, GenChainsReadme("testdata", readmeFile.Name()))
 
