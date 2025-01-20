@@ -1,5 +1,23 @@
 [
   {
+    "name": "Donatuz",
+    "identifier": "base/donatuz",
+    "chainId": 42026,
+    "rpc": [
+      "https://rpc.donatuz.com"
+    ],
+    "explorers": [
+      "https://explorer.donatuz.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "base"
+    }
+  },
+  {
     "name": "OP Mainnet",
     "identifier": "mainnet/op",
     "chainId": 10,

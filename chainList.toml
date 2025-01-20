@@ -1,4 +1,17 @@
 [[chains]]
+  name = "Donatuz"
+  identifier = "base/donatuz"
+  chain_id = 42026
+  rpc = ["https://rpc.donatuz.com"]
+  explorers = ["https://explorer.donatuz.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "base"
+
+[[chains]]
   name = "OP Mainnet"
   identifier = "mainnet/op"
   chain_id = 10

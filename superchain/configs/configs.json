@@ -1,6 +1,93 @@
 {
   "superchains": [
     {
+      "name": "base",
+      "config": {
+        "Name": "Base",
+        "L1": {
+          "ChainID": 8453,
+          "PublicRPC": "https://mainnet.base.org",
+          "Explorer": "https://basescan.io"
+        },
+        "ProtocolVersionsAddr": null,
+        "SuperchainConfigAddr": null,
+        "OPContractsManagerProxyAddr": null
+      },
+      "chains": [
+        {
+          "Name": "Donatuz",
+          "l2_chain_id": 42026,
+          "PublicRPC": "https://rpc.donatuz.com",
+          "SequencerRPC": "https://rpc.donatuz.com",
+          "Explorer": "https://explorer.donatuz.com",
+          "SuperchainLevel": 0,
+          "GovernedByOptimism": false,
+          "StandardChainCandidate": false,
+          "SuperchainTime": 0,
+          "batch_inbox_address": "0x718048A655428f0D7Afa9fC693Aa08D35669138c",
+          "Superchain": "base",
+          "Chain": "donatuz",
+          "canyon_time": 0,
+          "delta_time": 0,
+          "ecotone_time": 0,
+          "fjord_time": 1720627201,
+          "granite_time": 1726070401,
+          "holocene_time": 1736445601,
+          "block_time": 1,
+          "seq_window_size": 21600,
+          "max_sequencer_drift": 600,
+          "DataAvailabilityType": "alt-da",
+          "optimism": {
+            "eip1559Elasticity": 6,
+            "eip1559Denominator": 50,
+            "eip1559DenominatorCanyon": 250
+          },
+          "alt_da": {
+            "da_challenge_contract_address": null,
+            "da_challenge_window": 1800,
+            "da_resolve_window": 1800,
+            "da_commitment_type": "GenericCommitment"
+          },
+          "GasPayingToken": null,
+          "genesis": {
+            "l1": {
+              "hash": "0xcd142ff50c467236e5cf1b14fa846fd81ed34ab4fe31adf16af3f0b670e0e380",
+              "number": 16265043
+            },
+            "l2": {
+              "hash": "0xc3caf7e519043482ed93a0b5e88e09a3e998992741d719b6e1a1f81bbc35532d",
+              "number": 0
+            },
+            "l2_time": 1719319433,
+            "system_config": {
+              "batcherAddr": "0x9C5657Fd52b200b3fE7652ADF20659ec071DD8b0",
+              "overhead": "0x00000000000000000000000000000000000000000000000000000000000000bc",
+              "scalar": "0x00000000000000000000000000000000000000000000000000000000000a6fe0",
+              "gasLimit": 30000000
+            }
+          },
+          "Addresses": {
+            "AddressManager": "0x5416B7421c42B9218B29f688C47a46020c23cF0d",
+            "BatchSubmitter": "0x9C5657Fd52b200b3fE7652ADF20659ec071DD8b0",
+            "Challenger": "0x7dCe2FEE5e30EFf298cD3d9B92649f00EBDfc104",
+            "Guardian": "0x7dCe2FEE5e30EFf298cD3d9B92649f00EBDfc104",
+            "L1CrossDomainMessengerProxy": "0x4A2b7478B9646c06C3517E6f06e1232684143C00",
+            "L1ERC721BridgeProxy": "0xd1bA2aC05275228287deDb09E3210A1CcCE3e4cA",
+            "L1StandardBridgeProxy": "0xBbea8Cc549702F67cc082d2cAA9842Ba3767536B",
+            "L2OutputOracleProxy": "0x88dBaaeCDa265241a1BABe4A0ce69ad4957da8a2",
+            "OptimismMintableERC20FactoryProxy": "0xc0302a0e7C682C36B13F2Cd64BffEC46d751408C",
+            "OptimismPortalProxy": "0xb765Df9d2925a82678F4B7bc60eF5294c1604514",
+            "Proposer": "0xfB04981fa938f03b82B4Ca8F5B1FAAA1A547306B",
+            "ProxyAdmin": "0x85519ecD4E4c59E62B68dB2082dB1F5c75da1E15",
+            "ProxyAdminOwner": "0x7dCe2FEE5e30EFf298cD3d9B92649f00EBDfc104",
+            "SystemConfigOwner": "0x7dCe2FEE5e30EFf298cD3d9B92649f00EBDfc104",
+            "SystemConfigProxy": "0xa096dD38362bd2cE3C696474329989960722A7Fd",
+            "UnsafeBlockSigner": "0x7f445dCaD2E3A675381a396d6Bf6C6fbA6a76757"
+          }
+        }
+      ]
+    },
+    {
       "name": "mainnet",
       "config": {
         "Name": "Mainnet",
