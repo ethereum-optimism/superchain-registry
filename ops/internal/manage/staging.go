@@ -3,6 +3,7 @@ package manage
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 	"reflect"
 	"strings"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -167,4 +169,30 @@ func CopyDeployConfigHFTimes(src *genesis.UpgradeScheduleDeployConfig, dst *conf
 	}
 
 	return nil
+}
+
+var (
+	ErrNoStagedConfig  = errors.New("no staged chain config found")
+	ErrMultipleConfigs = errors.New("only one TOML file is allowed in the staging directory at a time")
+)
+
+func StagedChainConfig(rootP string) (*config.StagedChain, error) {
+	tomls, err := paths.CollectFiles(paths.StagingDir(rootP), paths.FileExtMatcher(".toml"))
+	if err != nil {
+		return nil, fmt.Errorf("failed to collect staged chain configs: %w", err)
+	}
+	if len(tomls) == 0 {
+		return nil, ErrNoStagedConfig
+	}
+	if len(tomls) != 1 {
+		return nil, ErrMultipleConfigs
+	}
+
+	cfgFilename := tomls[0]
+	chainCfg := new(config.StagedChain)
+	if err := paths.ReadTOMLFile(cfgFilename, chainCfg); err != nil {
+		return nil, fmt.Errorf("failed to read %s: %w", cfgFilename, err)
+	}
+	chainCfg.ShortName = strings.TrimSuffix(filepath.Base(cfgFilename), ".toml")
+	return chainCfg, nil
 }

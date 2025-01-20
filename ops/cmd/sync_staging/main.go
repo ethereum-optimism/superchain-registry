@@ -1,13 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
-	"path/filepath"
-	"strings"
 
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -51,24 +49,14 @@ func action(cliCtx *cli.Context) error {
 
 	stagingDir := paths.StagingDir(wd)
 
-	tomls, err := paths.CollectFiles(stagingDir, paths.FileExtMatcher(".toml"))
-	if err != nil {
-		return fmt.Errorf("failed to collect toml files: %w", err)
-	}
-	if len(tomls) == 0 {
+	chainCfg, err := manage.StagedChainConfig(wd)
+	if errors.Is(err, manage.ErrNoStagedConfig) {
 		output.WriteOK("no staged chain config found, exiting")
 		return nil
 	}
-	if len(tomls) != 1 {
-		return fmt.Errorf("only one chain config is supported")
+	if err != nil {
+		return fmt.Errorf("failed to get staged chain config: %w", err)
 	}
-
-	cfgFilename := tomls[0]
-	var chainCfg config.StagedChain
-	if err := paths.ReadTOMLFile(cfgFilename, &chainCfg); err != nil {
-		return fmt.Errorf("failed to read chain config: %w", err)
-	}
-	chainCfg.ShortName = strings.TrimSuffix(filepath.Base(tomls[0]), ".toml")
 
 	genesisFilename := path.Join(stagingDir, chainCfg.ShortName+".json.zst")
 	genesis, err := manage.ReadGenesis(wd, genesisFilename)
@@ -82,29 +70,17 @@ func action(cliCtx *cli.Context) error {
 		return fmt.Errorf("failed to collect chain configs: %w", err)
 	}
 
-	if err := manage.ValidateUniqueness(&chainCfg, chainCfgs); err != nil {
+	if err := manage.ValidateUniqueness(chainCfg, chainCfgs); err != nil {
 		return fmt.Errorf("failed uniqueness check: %w", err)
 	}
 	output.WriteOK("internal uniqueness check passed")
-
-	globalChainData, err := manage.FetchGlobalChainIDs()
-	if err != nil {
-		return fmt.Errorf("failed to fetch global chain IDs: %w", err)
-	}
-	if globalChainData.ChainIDs[chainCfg.ChainID] {
-		return fmt.Errorf("chain ID %d is already in use", chainCfg.ChainID)
-	}
-	if globalChainData.ShortNames[chainCfg.ShortName] {
-		return fmt.Errorf("short name %s is already in use", chainCfg.ShortName)
-	}
-	output.WriteOK("global uniqueness check passed")
 
 	if check {
 		output.WriteOK("validation successful")
 		return nil
 	}
 
-	if err := manage.WriteChainConfig(wd, &chainCfg); err != nil {
+	if err := manage.WriteChainConfig(wd, chainCfg); err != nil {
 		return fmt.Errorf("failed to write chain config: %w", err)
 	}
 
@@ -125,6 +101,7 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	if !noCleanup {
+		cfgFilename := path.Join(stagingDir, chainCfg.ShortName+".toml")
 		if err := os.Remove(cfgFilename); err != nil {
 			output.WriteNotOK("failed to remove %s: %v", cfgFilename, err)
 		}

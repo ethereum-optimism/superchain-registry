@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path"
-	"strings"
 	"time"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
@@ -95,28 +95,16 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		return fmt.Errorf("root directory error: %w", err)
 	}
 
-	tomls, err := paths.CollectFiles(paths.StagingDir(wd), paths.FileExtMatcher(".toml"))
-	if err != nil {
-		return fmt.Errorf("failed to collect TOML files: %w", err)
-	}
-	if len(tomls) == 0 {
+	chainCfg, err := manage.StagedChainConfig(wd)
+	if errors.Is(err, manage.ErrNoStagedConfig) {
 		output.WriteOK("no staged chain config found, exiting")
 		return nil
 	}
-	if len(tomls) != 1 {
-		return fmt.Errorf("only one TOML file is allowed in the staging directory at a time")
+	if err != nil {
+		return fmt.Errorf("failed to get staged chain config: %w", err)
 	}
 
-	cfgFilename := tomls[0]
-	shortName := strings.TrimSuffix(path.Base(cfgFilename), ".toml")
-	genesisFilename := shortName + ".json.zst"
-
-	var chainCfg config.StagedChain
-	if err := paths.ReadTOMLFile(cfgFilename, &chainCfg); err != nil {
-		return fmt.Errorf("failed to read %s: %w", cfgFilename, err)
-	}
-	chainCfg.ShortName = shortName
-
+	genesisFilename := chainCfg.ShortName + ".json.zst"
 	originalGenesis, err := manage.ReadGenesis(wd, path.Join(paths.StagingDir(wd), genesisFilename))
 	if err != nil {
 		return fmt.Errorf("failed to read genesis: %w", err)
@@ -159,7 +147,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	ctx, cancel := context.WithTimeout(cliCtx.Context, 5*time.Minute)
 	defer cancel()
 
-	allReport := report.ScanAll(ctx, rpcClient, &chainCfg, originalGenesis)
+	allReport := report.ScanAll(ctx, rpcClient, chainCfg, originalGenesis)
 	output.WriteOK("scanned L1 and L2")
 
 	ghClient := github.NewClient(nil).WithAuthToken(githubToken)

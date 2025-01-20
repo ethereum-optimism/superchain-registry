@@ -120,6 +120,9 @@ workflows:
           name: check-apply-hardforks
           tool: apply_hardforks
           check_diff: true
+      - run-tool:
+          name: check-chainlist
+          tool: check_chainlist
       - run-staging-report:
           name: run-staging-report
 

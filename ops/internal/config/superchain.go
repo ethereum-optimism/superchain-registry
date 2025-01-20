@@ -15,7 +15,7 @@ func ParseSuperchain(in string) (Superchain, error) {
 	case MainnetSuperchain, SepoliaSuperchain, SepoliaDev0Superchain:
 		return Superchain(in), nil
 	default:
-		return "", fmt.Errorf("unknown superchain: %s", in)
+		return "", fmt.Errorf("unknown superchain: '%s'", in)
 	}
 }
 

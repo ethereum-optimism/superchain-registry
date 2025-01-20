@@ -57,14 +57,14 @@ func action(cliCtx *cli.Context) error {
 		return fmt.Errorf("failed to read state file: %w", err)
 	}
 
-	output.WriteStderr("inflating chain config")
+	output.WriteOK("inflating chain config")
 	cfg, err := manage.InflateChainConfig(&st)
 	if err != nil {
 		return fmt.Errorf("failed to inflate chain config: %w", err)
 	}
 	cfg.ShortName = cliCtx.String(Shortname.Name)
 
-	output.WriteStderr("reading genesis")
+	output.WriteOK("reading genesis")
 	genesis, _, err := inspect.GenesisAndRollup(&st, st.AppliedIntent.Chains[0].ID)
 	if err != nil {
 		return fmt.Errorf("failed to get genesis: %w", err)
@@ -72,17 +72,16 @@ func action(cliCtx *cli.Context) error {
 
 	stagingDir := paths.StagingDir(wd)
 
-	output.WriteStderr("writing chain config")
+	output.WriteOK("writing chain config")
 	if err := paths.WriteTOMLFile(path.Join(stagingDir, cfg.ShortName+".toml"), cfg); err != nil {
 		return fmt.Errorf("failed to write chain config: %w", err)
 	}
 
-	output.WriteStderr("writing genesis")
+	output.WriteOK("writing genesis")
 	if err := manage.WriteGenesis(wd, path.Join(stagingDir, cfg.ShortName+".json.zst"), genesis); err != nil {
 		return fmt.Errorf("failed to write genesis: %w", err)
 	}
 
-	output.WriteStderr("done")
-
+	output.WriteOK("done")
 	return nil
 }

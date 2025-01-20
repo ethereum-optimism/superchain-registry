@@ -41,7 +41,13 @@ func ValidateUniqueness(
 	return nil
 }
 
-func FetchGlobalChainIDs() (*GlobalChainIDs, error) {
+type ChainEntry struct {
+	ChainID   uint64 `json:"chainId"`
+	Name      string `json:"name"`
+	ShortName string `json:"shortName"`
+}
+
+func FetchGlobalChainIDs() (map[uint64]ChainEntry, error) {
 	req, err := http.NewRequest(http.MethodGet, chainListUrl, nil)
 	if err != nil {
 		return nil, err
@@ -55,29 +61,16 @@ func FetchGlobalChainIDs() (*GlobalChainIDs, error) {
 	}
 	defer res.Body.Close()
 
-	type chainEntry struct {
-		ChainId   uint64 `json:"chainId"`
-		Name      string `json:"name"`
-		ShortName string `json:"shortName"`
-	}
-
-	var out []chainEntry
-
-	if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
+	var entries []ChainEntry
+	if err := json.NewDecoder(res.Body).Decode(&entries); err != nil {
 		return nil, err
 	}
 
-	chainIDs := make(map[uint64]bool)
-	shortNames := make(map[string]bool)
-	for _, entry := range out {
-		chainIDs[entry.ChainId] = true
-		shortNames[entry.ShortName] = true
+	out := make(map[uint64]ChainEntry)
+	for _, entry := range entries {
+		out[entry.ChainID] = entry
 	}
-
-	return &GlobalChainIDs{
-		ChainIDs:   chainIDs,
-		ShortNames: shortNames,
-	}, nil
+	return out, nil
 }
 
 func ValidateGenesisIntegrity(cfg *config.Chain, genesis *core.Genesis) error {

@@ -51,3 +51,5 @@ codegen: (_run_ops_bin 'codegen')
 
 create-config SHORTNAME FILENAME:
 	@just _run_ops_bin "create_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{FILENAME}})"
+
+check-chainlist: (_run_ops_bin 'check_chainlist')
