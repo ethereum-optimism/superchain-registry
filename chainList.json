@@ -218,6 +218,24 @@
     }
   },
   {
+    "name": "Mint Mainnet",
+    "identifier": "mainnet/mint",
+    "chainId": 185,
+    "rpc": [
+      "https://rpc.mintchain.io"
+    ],
+    "explorers": [
+      "https://explorer.mintchain.io"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Mode",
     "identifier": "mainnet/mode",
     "chainId": 34443,
