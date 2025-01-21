@@ -1,6 +1,6 @@
 # Hardfork activation inheritance behavior
 
-There is a mechanism whereby hardfork activation times are set _superchain-wide_ in the `superchain.toml` configuration file present for each superchain target, but then conditionally propagated to all chains in that superchain. This streamlines the process to updated many chains' hardfork activations in synchrony.
+There is a mechanism whereby hardfork activation times are set _superchain-wide_ in the `superchain.toml` configuration file present for each superchain target, but then conditionally propagated to all chains in that superchain. This streamlines the process to update many chains' hardfork activations in synchrony or for chains to opt in to receive hardforks at standard times automatically.
 
 For a chain to "receive" a particular default (superchain-wide) hardfork activation time, the following conditions must hold:
 * It must have the `superchain_time` set. All superchain-wide hardfork activations will be inherited starting from this timestamp.
