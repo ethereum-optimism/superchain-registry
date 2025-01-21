@@ -1,18 +1,20 @@
 name = "Xterio Chain (ETH)"
-chain_id = 2702128
 public_rpc = "https://xterio-eth.alt.technology/"
 sequencer_rpc = "https://xterio-eth.alt.technology/"
 explorer = "https://eth.xterscan.io/"
 superchain_level = 0
 governed_by_optimism = false
+data_availability_type = "alt-da"
+chain_id = 2702128
 batch_inbox_addr = "0xfF00000000000000000000000000000000293b30"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "alt-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -39,7 +41,7 @@ data_availability_type = "alt-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xCf06c459AE59d4f47469BcE535afC3485Ce89dBf"
   ProxyAdminOwner = "0xfF75Bd7672b79f2562fAf98D488bbb3Db1cD1574"
   Guardian = "0xdF3700a9Cf9c7506Ca3B41E6ba991476677A8787"
@@ -47,6 +49,8 @@ data_availability_type = "alt-da"
   Proposer = "0x7d2f9b38866141Bf090DD670A826F27eA2408Ad4"
   UnsafeBlockSigner = "0xcbdD38Ce74BA96F0ae3D2E608DA96Ec744c80A7E"
   BatchSubmitter = "0x7d6251D49A102a330CfB46d132982781620700Cb"
+
+[addresses]
   AddressManager = "0xBdF852e2cc26Ea3C2dee7b493B1Fc12dA406175a"
   L1CrossDomainMessengerProxy = "0x702dF90E92A6841c9013faE6D724ddFA8F141d5C"
   L1ERC721BridgeProxy = "0x28d56C3BBbe4807c19Cc81E6D5207Fb681C3726b"

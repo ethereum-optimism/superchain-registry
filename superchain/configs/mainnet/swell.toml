@@ -1,21 +1,22 @@
 name = "Swellchain"
-chain_id = 1923
 public_rpc = "https://swell-mainnet.alt.technology"
 sequencer_rpc = "https://swell-mainnet.alt.technology"
 explorer = "https://explorer.swellnetwork.io"
 superchain_level = 0
 governed_by_optimism = true
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+data_availability_type = "eth-da"
+chain_id = 1923
 batch_inbox_addr = "0x005dE5857e38dFD703a1725c0900E9C6f24cbdE0"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -36,7 +37,7 @@ data_availability_type = "eth-da"
     scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
     gasLimit = 60000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x06F7fB1C74147e34Fce04a6828c7BF809B038d0E"
   ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
   Guardian = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
@@ -44,6 +45,8 @@ data_availability_type = "eth-da"
   Proposer = "0xfE5dD32c3799249dC6A5D637CCB2f28e0ec227e3"
   UnsafeBlockSigner = "0x6967D304E9b7E26b5eb3f5A1FD1239DaAD3215E6"
   BatchSubmitter = "0xf854cd5B26bfd73d51236c0122798907Ed65B1f2"
+
+[addresses]
   AddressManager = "0xa54a84f17c2180148c762D79bC57BdfF7FdAFC8A"
   L1CrossDomainMessengerProxy = "0xe6a99Ef12995DeFC5ff47EC0e13252f0E6903759"
   L1ERC721BridgeProxy = "0xfd7618330E63B493070DC8C491Ad4aD26144Bc1e"

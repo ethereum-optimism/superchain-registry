@@ -1,20 +1,25 @@
 name = "Binary Mainnet"
-chain_id = 624
 public_rpc = "https://rpc.zero.thebinaryholdings.com"
 sequencer_rpc = "https://sequencer.bnry.mainnet.zeeve.net"
 explorer = "https://explorer.thebinaryholdings.com"
 superchain_level = 0
+governed_by_optimism = false
+superchain_time = 1726070401
+data_availability_type = "eth-da"
+chain_id = 624
 batch_inbox_addr = "0xFF00000000000000000000000000000000000624"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 1725536344  #Thu 05 Sep 2024 11:39:04 UTC
-superchain_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC - Granite
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
 gas_paying_token = "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 1725536344 # Thu 5 Sep 2024 11:39:04 UTC
+  granite_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC
+  holocene_time = 1736445601 # Thu 9 Jan 2025 18:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -35,7 +40,7 @@ gas_paying_token = "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
     scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x25A6E7c6f3d0fE89A656Fcf065614B74E55099fF"
   ProxyAdminOwner = "0x48EC051349dDc7E8baBafCBfe27696ECF2A8a8B3"
   Guardian = "0x87aab081Ac9F8ce80fb048f23280DF019036BA1d"
@@ -43,6 +48,8 @@ gas_paying_token = "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
   Proposer = "0x2b6cD940ABE0CAF2fd89155b99522548c00EBaB1"
   UnsafeBlockSigner = "0xDbad225D1C0DaBc27f6a9d250dBb136413C0DFb4"
   BatchSubmitter = "0x7f9D9c1BCE1062E1077845eA39a0303429600a06"
+
+[addresses]
   AddressManager = "0x8173904703995c6BbA59a42B8bBf8405F978758a"
   L1CrossDomainMessengerProxy = "0x807d21e416434ae92c8E5bcA4d506781aFbBa380"
   L1ERC721BridgeProxy = "0x1b396e4dC6ECB0be33CF01C5a34E1a3a7D03c378"

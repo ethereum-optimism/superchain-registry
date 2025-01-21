@@ -1,21 +1,22 @@
 name = "Lisk Sepolia Testnet"
-chain_id = 4202
 public_rpc = "https://rpc.sepolia-api.lisk.com"
 sequencer_rpc = "https://rpc.sepolia-api.lisk.com"
 explorer = "https://sepolia-blockscout.lisk.com"
 superchain_level = 0
 governed_by_optimism = false
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+data_availability_type = "eth-da"
+chain_id = 4202
 batch_inbox_addr = "0xff00000000000000000000000000000000004202"
-canyon_time = 1705312994 # Mon 15 Jan 2024 10:03:14 UTC
-delta_time = 1705312994 # Mon 15 Jan 2024 10:03:14 UTC
-ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
-fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
-granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 1705312994 # Mon 15 Jan 2024 10:03:14 UTC
+  delta_time = 1705312994 # Mon 15 Jan 2024 10:03:14 UTC
+  ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
+  fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
+  granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 10
@@ -36,7 +37,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x19De6D30Bf43654B7244B8adA135E1AA639bF091"
   ProxyAdminOwner = "0x465874903125F26316c730aE84862606a3326cA5"
   Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
@@ -44,6 +45,8 @@ data_availability_type = "eth-da"
   Proposer = "0xBbD3a1D90B0Ef416581ACdC6a72046b38D3af9AD"
   UnsafeBlockSigner = "0x99804980804e9EbE78db89C049fFe36ceaaEF654"
   BatchSubmitter = "0x246E119a5BcC2875161b23E4e602e25cEcE96E37"
+
+[addresses]
   AddressManager = "0x27Bb4A7cd8FB20cb816BF4Aac668BF841bb3D5d3"
   L1CrossDomainMessengerProxy = "0x857824E6234f7733ecA4e9A76804fd1afa1A3A2C"
   L1ERC721BridgeProxy = "0xb4E988CF1aD8C361D56118437502A8f11C7FaA01"

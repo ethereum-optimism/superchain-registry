@@ -1,21 +1,23 @@
 name = "World Chain"
-chain_id = 480
 public_rpc = "https://worldchain-mainnet.g.alchemy.com/public"
 sequencer_rpc = "https://worldchain-mainnet-sequencer.g.alchemy.com"
 explorer = "https://worldchain-mainnet.explorer.alchemy.com/"
 superchain_level = 0
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 480
 batch_inbox_addr = "0xff00000000000000000000000000000000000480"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 1721826000 # Wed 24 Jul 2024 13:00:00 UTC
-granite_time = 1727780400 # Tue 1 Oct 2024 11:00:00 UTC
-holocene_time = 1738238400 # Thu, 30 January 2025 12:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 1800
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 1721826000 # Wed 24 Jul 2024 13:00:00 UTC
+  granite_time = 1727780400 # Tue 1 Oct 2024 11:00:00 UTC
+  holocene_time = 1738238400 # Thu, 30 January 2025 12:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 10
@@ -36,7 +38,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 100000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xB2aa0C2C4fD6BFCBF699d4c787CD6Cc0dC461a9d"
   ProxyAdminOwner = "0xA4fB12D15Eb85dc9284a7df0AdBC8B696EdbbF1d"
   Guardian = "0xB2aa0C2C4fD6BFCBF699d4c787CD6Cc0dC461a9d"
@@ -44,6 +46,8 @@ data_availability_type = "eth-da"
   Proposer = "0x2307278fC8aB0005974A6DeD2FA6d1187333a223"
   UnsafeBlockSigner = "0x2270d6eC8E760daA317DD978cFB98C8f144B1f3A"
   BatchSubmitter = "0xdBBE3D8c2d2b22A2611c5A94A9a12C2fCD49Eb29"
+
+[addresses]
   AddressManager = "0x5891090d5085679714cb0e62f74950a3c19146a8"
   L1CrossDomainMessengerProxy = "0xf931a81D18B1766d15695ffc7c1920a62b7e710a"
   L1ERC721BridgeProxy = "0x1Df436AfDb2fBB40F1fE8bEd4Fc89A0D0990a8E9"

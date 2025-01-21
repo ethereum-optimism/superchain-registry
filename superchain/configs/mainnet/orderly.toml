@@ -1,20 +1,24 @@
 name = "Orderly Mainnet"
-chain_id = 291
 public_rpc = "https://rpc.orderly.network"
 sequencer_rpc = "https://rpc.orderly.network"
 explorer = "https://explorer.orderly.network"
 superchain_level = 0
 governed_by_optimism = false
-superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
+superchain_time = 0
+data_availability_type = "alt-da"
+chain_id = 291
 batch_inbox_addr = "0x08aA34cC843CeEBcC88A627F18430294aA9780be"
-canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
-delta_time = 1708560000 # Thu 22 Feb 2024 00:00:00 UTC
-ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
-fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "alt-da"
+
+[hardforks]
+  canyon_time = 1704992401 # Thu 11 Jan 2024 17:00:01 UTC
+  delta_time = 1708560000 # Thu 22 Feb 2024 00:00:00 UTC
+  ecotone_time = 1710374401 # Thu 14 Mar 2024 00:00:01 UTC
+  fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
+  granite_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC
+  holocene_time = 1736445601 # Thu 9 Jan 2025 18:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -35,7 +39,7 @@ data_availability_type = "alt-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
   ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
   Guardian = "0xcE10372313Ca39Fbf75A09e7f4c0E57F070259f4"
@@ -43,6 +47,8 @@ data_availability_type = "alt-da"
   Proposer = "0x74BaD482a7f73C8286F50D8Aa03e53b7d24A5f3B"
   UnsafeBlockSigner = "0xceED24B1Fd4A4393f6A9D2B137D9597dd5482569"
   BatchSubmitter = "0xf8dB8Aba597fF36cCD16fECfbb1B816B3236E9b8"
+
+[addresses]
   AddressManager = "0x87630a802a3789463eC4b00f89b27b1e9f6b92e9"
   L1CrossDomainMessengerProxy = "0xc76543A64666d9a073FaEF4e75F651c88e7DBC08"
   L1ERC721BridgeProxy = "0x934Ab59Ef14b638653b1C0FEf7aB9a72186393DC"
