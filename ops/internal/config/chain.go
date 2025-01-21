@@ -11,6 +11,41 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
+type SuperchainLevel int
+
+const (
+	SuperchainLevelNonStandard SuperchainLevel = iota
+	SuperchainLevelStandardCandidate
+	SuperchainLevelStandard
+)
+
+func NewSuperchainLevel(i int) (SuperchainLevel, error) {
+	switch SuperchainLevel(i) {
+	case SuperchainLevelNonStandard:
+		return SuperchainLevelNonStandard, nil
+	case SuperchainLevelStandardCandidate:
+		return SuperchainLevelStandardCandidate, nil
+	case SuperchainLevelStandard:
+		return SuperchainLevelStandard, nil
+	default:
+		return SuperchainLevelNonStandard, fmt.Errorf("invalid superchain level: %d", i)
+	}
+}
+
+func (s *SuperchainLevel) UnmarshalTOML(data any) error {
+	switch data.(type) {
+	case int64:
+		lvl, err := NewSuperchainLevel(int(data.(int64)))
+		if err != nil {
+			return fmt.Errorf("error unmarshaling superchain level: %w", err)
+		}
+		*s = lvl
+		return nil
+	default:
+		return fmt.Errorf("invalid superchain level type: %T", data)
+	}
+}
+
 type StagedChain struct {
 	Chain
 	ShortName                    string             `toml:"-"`
@@ -28,7 +63,7 @@ type Chain struct {
 	PublicRPC            string              `toml:"public_rpc"`
 	SequencerRPC         string              `toml:"sequencer_rpc"`
 	Explorer             string              `toml:"explorer"`
-	SuperchainLevel      int                 `toml:"superchain_level"`
+	SuperchainLevel      SuperchainLevel     `toml:"superchain_level"`
 	GovernedByOptimism   bool                `toml:"governed_by_optimism"`
 	SuperchainTime       *uint64             `toml:"superchain_time"`
 	DataAvailabilityType string              `toml:"data_availability_type"`
