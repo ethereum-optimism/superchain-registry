@@ -17,7 +17,7 @@ max_sequencer_drift = 1800
   ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   fjord_time = 1721739600 # Tue 23 Jul 2024 13:00:00 UTC
   granite_time = 1726570800 # Tue 17 Sep 2024 11:00:00 UTC
-  holocene_time = 1737633600 # Thu 23 January 2025 12:00:00 UTC
+  holocene_time = 1737633600 # Thu 23 Jan 2025 12:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 10
@@ -62,5 +62,5 @@ max_sequencer_drift = 1800
   DelayedWETHProxy = "0x4F4B8Adf1af4b61bb62F68b7aF1c37f8A6311663"
   DisputeGameFactoryProxy = "0x8Ec1111f67Dad6b6A93B3F42DfBC92D81c98449A"
   MIPS = "0xCEd5c6ca2f32dE7bf43DB981E1cac398D7A978F2"
-  PreimageOracle = "0x954C0Fb8083047f37c8Fe954c114f8138614131C"
   PermissionedDisputeGame = "0x89cB66e16253Cf1792C9cD042c2Ff85DE06C1B51"
+  PreimageOracle = "0x954C0Fb8083047f37c8Fe954c114f8138614131C"
