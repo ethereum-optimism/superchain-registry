@@ -27,7 +27,6 @@ func (h *HardforkTime) U64Ptr() *uint64 {
 }
 
 func CopyHardforks(src, dst *Hardforks, superchainTime, genesisTime *uint64) error {
-
 	if superchainTime == nil {
 		// No changes if SuperchainTime is unset
 		return nil

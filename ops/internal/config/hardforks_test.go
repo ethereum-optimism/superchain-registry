@@ -43,7 +43,6 @@ func TestHardforkTime_MarshalTOML(t *testing.T) {
 }
 
 func TestCopyHardforks(t *testing.T) {
-
 	src := &Hardforks{ // e.g. in superchain.toml
 		CanyonTime: NewHardforkTime(1),
 		DeltaTime:  NewHardforkTime(2),
@@ -70,7 +69,6 @@ func TestCopyHardforks(t *testing.T) {
 }
 
 func TestCopyHardforks2(t *testing.T) {
-
 	canyonAt := func(t uint64) *Hardforks {
 		return &Hardforks{
 			CanyonTime: NewHardforkTime(t),
