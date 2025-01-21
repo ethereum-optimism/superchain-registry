@@ -26,7 +26,17 @@ func (h *HardforkTime) U64Ptr() *uint64 {
 	return (*uint64)(h)
 }
 
-func CopyHardforks(src *Hardforks, dst *Hardforks) error {
+func CopyHardforks(src, dst *Hardforks, superchainTime, genesisTime *uint64) error {
+
+	if superchainTime == nil {
+		// No changes if SuperchainTime is unset
+		return nil
+	}
+
+	if genesisTime == nil {
+		return fmt.Errorf("genesisTime is nil")
+	}
+
 	srcVal := reflect.ValueOf(src).Elem()
 	dstVal := reflect.ValueOf(dst).Elem()
 
@@ -46,8 +56,20 @@ func CopyHardforks(src *Hardforks, dst *Hardforks) error {
 			continue
 		}
 
-		// Copy the value
-		dstField.Set(srcField)
+		srcValue := reflect.Indirect(srcField).Uint()
+		if srcValue < *superchainTime {
+			// No change if hardfork activated before SuperchainTime
+			continue
+		}
+
+		if srcValue > *genesisTime {
+			// Use src value if is after genesis
+			dstField.Set(srcField)
+		} else {
+			// Use zero if it is equal to or before genesis
+			ptrZero := reflect.ValueOf(NewHardforkTime(0))
+			dstField.Set(ptrZero)
+		}
 	}
 
 	return nil
