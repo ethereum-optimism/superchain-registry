@@ -68,7 +68,7 @@ func TestCopyHardforks(t *testing.T) {
 	}, dest)
 }
 
-func TestCopyHardforks2(t *testing.T) {
+func TestCopyHardforksActivationSemantics(t *testing.T) {
 	canyonAt := func(t uint64) *Hardforks {
 		return &Hardforks{
 			CanyonTime: NewHardforkTime(t),
