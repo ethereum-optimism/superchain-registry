@@ -19,6 +19,24 @@
     "gasPayingToken": "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
   },
   {
+    "name": "BOB",
+    "identifier": "mainnet/bob",
+    "chainId": 60808,
+    "rpc": [
+      "https://rpc.gobob.xyz"
+    ],
+    "explorers": [
+      "https://explorer.gobob.xyz"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Base",
     "identifier": "mainnet/base",
     "chainId": 8453,
