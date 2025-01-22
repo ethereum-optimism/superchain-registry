@@ -33,9 +33,9 @@ func NewSuperchainLevel(i int) (SuperchainLevel, error) {
 }
 
 func (s *SuperchainLevel) UnmarshalTOML(data any) error {
-	switch data.(type) {
+	switch i := data.(type) {
 	case int64:
-		lvl, err := NewSuperchainLevel(int(data.(int64)))
+		lvl, err := NewSuperchainLevel(int(i))
 		if err != nil {
 			return fmt.Errorf("error unmarshaling superchain level: %w", err)
 		}
