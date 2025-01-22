@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"time"
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
@@ -67,10 +66,14 @@ func processSuperchainDir(wd string, superchain config.Superchain) error {
 
 	for _, cfg := range cfgs {
 		chainCfg := cfg.Config
-		if chainCfg.SuperchainTime != nil && int64(*chainCfg.SuperchainTime) < time.Now().Unix() {
-			if err := config.CopyHardforks(&superchainCfg.Hardforks, &chainCfg.Hardforks); err != nil {
-				return fmt.Errorf("error copying hardforks: %w", err)
-			}
+
+		if err := config.CopyHardforks(
+			&superchainCfg.Hardforks,
+			&chainCfg.Hardforks,
+			chainCfg.SuperchainTime,
+			&chainCfg.Genesis.L2Time,
+		); err != nil {
+			return fmt.Errorf("error copying hardforks: %w", err)
 		}
 
 		realCfgData, err := toml.Marshal(chainCfg)

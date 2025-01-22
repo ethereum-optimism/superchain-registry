@@ -5,6 +5,7 @@
 | Chain Name | OP Governed | Upgradeable | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
 | Automata Mainnet | ❌ | ❌ | https://explorer.ata.network | `https://rpc.ata.network` | `https://automata-mainnet.alt.technology/` |
+| BOB | ❌ | ✅ | https://explorer.gobob.xyz | `https://rpc.gobob.xyz` | `https://rpc.gobob.xyz` |
 | Base | ❌ | ✅ | https://explorer.base.org | `https://mainnet.base.org` | `https://mainnet-sequencer.base.org` |
 | Binary Mainnet | ❌ | ✅ | https://explorer.thebinaryholdings.com | `https://rpc.zero.thebinaryholdings.com` | `https://sequencer.bnry.mainnet.zeeve.net` |
 | Cyber Mainnet | ❌ | ❌ | https://cyberscan.co/ | `https://rpc.cyber.co` | `https://cyber.alt.technology/` |

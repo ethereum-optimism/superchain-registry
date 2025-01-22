@@ -89,6 +89,13 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Check if PR
+          command: |
+            if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+              echo "Not a PR, skipping"
+              circleci-agent step halt
+            fi
+      - run:
           name: Run staging report
           command: |
             cd ops
