@@ -274,7 +274,7 @@ jobs:
           name: Generate configs
           working_directory: validation
           command: |
-            BASE_BRANCH="main"
+            BASE_BRANCH="pre-sr2"
 
             # We are already in the Head of the PR after checkout
             go run <<parameters.command>>/main.go HEAD
