@@ -1,3 +1,7 @@
+# This is the main justfile for the Superchain Registry project.
+# It contains common development commands for testing, linting, and managing the codebase.
+# For more information about the just command runner, visit: https://github.com/casey/just
+
 set positional-arguments := true
 set dotenv-load := true
 
