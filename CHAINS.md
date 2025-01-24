@@ -2,7 +2,7 @@
 
 ### mainnet
 
-| Chain Name | OP Governed | Upgradeable | Explorer | Public RPC | Sequencer RPC
+| Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
 | Automata Mainnet | ❌ | ❌ | https://explorer.ata.network | `https://rpc.ata.network` | `https://automata-mainnet.alt.technology/` |
 | BOB | ❌ | ✅ | https://explorer.gobob.xyz | `https://rpc.gobob.xyz` | `https://rpc.gobob.xyz` |
@@ -34,7 +34,7 @@
 | arena-z | ✅ | ❌ | https://explorer.arena-z.gg | `https://rpc.arena-z.gg` | `https://rpc.arena-z.gg` |
 ### sepolia
 
-| Chain Name | OP Governed | Upgradeable | Explorer | Public RPC | Sequencer RPC
+| Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
 | Base Sepolia Testnet | ❌ | ✅ | https://sepolia-explorer.base.org | `https://sepolia.base.org` | `https://sepolia-sequencer.base.org` |
 | Binary Sepolia | ❌ | ❌ | https://explorer.sepolia.thebinaryholdings.com | `https://rpc.testnet.thebinaryholdings.com` | `https://sequencer.rpc.bnry.testnet.zeeve.net` |
@@ -57,8 +57,11 @@
 | arena-z-testnet | ❌ | ❌ | https://arena-z.blockscout.com | `https://rpc.arena-z.t.raas.gelato.cloud` | `https://rpc.arena-z.t.raas.gelato.cloud` |
 ### sepolia-dev-0
 
-| Chain Name | OP Governed | Upgradeable | Explorer | Public RPC | Sequencer RPC
+| Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
 | Base devnet 0 | ❌ | ✅ |  | `` | `` |
 | OP Labs Sepolia devnet 0 | ✅ | ✅ |  | `` | `` |
 
+
+[^1]: Chains are governed by Optimism if their `L1ProxyAdminOwner` is set to the value specified by the standard config and [configurability.md](https://github.com/ethereum-optimism/specs/blob/main/specs/protocol/configurability.md#l1-proxyadmin-owner).
+[^2]: Chains receive Superchain hardforks if they've specified a `superchain_time`. This means that they have opted-into Superchain-wide upgrades.
