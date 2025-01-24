@@ -10,9 +10,9 @@ The following are the steps you need to take to add a chain to the registry:
 > check against this repository. This is a mandatory prerequisite before being
 > added to the registry.
 
-### 0. Deploy your chain with `op-deployer`
+### 0. Standard Chains: Deploy your chain with `op-deployer`
 
-Adding a chain to the Superchain Registry requires using `op-deployer` to deploy your chain. Check out
+If you are deploying a standard chain, it _must_ be deployed with `op-deployer` to be considered standard in the Superchain Registry. Check out
 the [docs](https://docs.optimism.io/builders/chain-operators/tools/op-deployer) for more information on how to use it.
 
 ### 1. Install dependencies
