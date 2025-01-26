@@ -104,8 +104,13 @@ the following privilege grants and role designations:
       than the legacy `L2OutputOracle` contract.
    5. Trusted system config. For example, `OptimismPortalProxy`
       specifies the system config they trust to get resource config
-      from. TODO(issues/37): add checks for the `ResourceMetering`
-      contract.
+      from. The `ResourceMetering` contract must be configured with:
+      - `max_resource_limit` set to 20000000
+      - `elasticity_multiplier` set to 10
+      - `base_fee_max_change_denominator` set to 8
+      - `minimum_base_fee` set to 1000000000
+      - `system_tx_max_gas` set to 1000000
+      - `maximum_base_fee` set to 340282366920938463463374607431768211455
 3. Optimism privileged operational roles:
    1. Guardians. This is the role that can pause withdrawals in the
       Optimism protocol.
