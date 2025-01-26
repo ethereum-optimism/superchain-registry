@@ -44,7 +44,7 @@
 | | Contract           | Std Param                                    | Got Param                                    |
 |---|-------------------|----------------------------------------------|----------------------------------------------|
 | {{ checkmarkUint .StdConfig.Proofs.Permissioned.GameType .Report.L1.Proofs.Permissioned.GameType }} | GameType | `{{ .StdConfig.Proofs.Permissioned.GameType }}` | `{{ .Report.L1.Proofs.Permissioned.GameType }}` |
-| {{ checkmarkHash .StdPrestate.AbsolutePrestate .Report.L1.Proofs.Permissioned.AbsolutePrestate }} | AbsolutePrestate | `{{ .StdPrestate.AbsolutePrestate }}` | `{{ .Report.L1.Proofs.Permissioned.AbsolutePrestate }}` |
+| {{ checkmarkHash .StdPrestate.Hash .Report.L1.Proofs.Permissioned.AbsolutePrestate }} | AbsolutePrestate | `{{ .StdPrestate.Hash }}` | `{{ .Report.L1.Proofs.Permissioned.AbsolutePrestate }}` |
 | {{ checkmarkUint64 .StdConfig.Proofs.Permissioned.MaxGameDepth .Report.L1.Proofs.Permissioned.MaxGameDepth }} | MaxGameDepth | `{{ .StdConfig.Proofs.Permissioned.MaxGameDepth }}` | `{{ .Report.L1.Proofs.Permissioned.MaxGameDepth }}` |
 | {{ checkmarkUint64 .StdConfig.Proofs.Permissioned.SplitDepth .Report.L1.Proofs.Permissioned.SplitDepth }} | SplitDepth | `{{ .StdConfig.Proofs.Permissioned.SplitDepth }}` | `{{ .Report.L1.Proofs.Permissioned.SplitDepth }}` |
 | {{ checkmarkUint64 .StdConfig.Proofs.Permissioned.MaxClockDuration .Report.L1.Proofs.Permissioned.MaxClockDuration }} | MaxClockDuration | `{{ .StdConfig.Proofs.Permissioned.MaxClockDuration }}` | `{{ .Report.L1.Proofs.Permissioned.MaxClockDuration }}` |

@@ -54,7 +54,9 @@ func TestRenderComment(t *testing.T) {
 			},
 			validation.StandardConfigParamsSepolia,
 			validation.StandardConfigRolesSepolia,
-			validation.StandardPrestates[validation.Semver160],
+			validation.Prestate{
+				Hash: validation.Hash(common.HexToHash("0x038512e02c4c3f7bdaec27d00edf55b7155e0905301e1a88083e4e0a6764d54c")),
+			},
 			validation.StandardVersionsSepolia[validation.Semver160],
 			"1234567890abcdef",
 		)
@@ -72,7 +74,7 @@ func TestRenderComment(t *testing.T) {
 			},
 			validation.StandardConfigParamsSepolia,
 			validation.StandardConfigRolesSepolia,
-			validation.StandardPrestates[validation.Semver160],
+			validation.StandardPrestates.StablePrestate(),
 			validation.StandardVersionsSepolia[validation.Semver160],
 			"1234567890abcdef",
 		)

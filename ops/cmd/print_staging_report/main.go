@@ -115,7 +115,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	}
 
 	contractsVersion := validation.Semver(chainCfg.DeploymentL1ContractsVersion.Tag)
-	stdPrestate := validation.StandardPrestates[contractsVersion]
+	stdPrestate := validation.StandardPrestates.StablePrestate()
 	stdVersions := validation.StandardVersionsMainnet[contractsVersion]
 
 	var stdConfigs validation.ConfigParams
