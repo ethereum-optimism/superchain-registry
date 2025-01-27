@@ -21,6 +21,7 @@ l1_erc721_bridge = { version = "2.1.0", implementation_address = "0xAE2AF01232a6
 l1_standard_bridge = { version = "2.1.0", implementation_address = "0x64B5a5Ed26DCb17370Ff4d33a8D503f0fbD06CfF" }
 # l2_output_oracle -- This contract not used in fault proofs
 optimism_mintable_erc20_factory = { version = "1.9.0", implementation_address = "0xE01efbeb1089D1d1dB9c6c8b135C934C0734c846" }
+op_contracts_manager = { version = "1.0.0-beta.21", implementation_address = "0x5269eed89b0d04d909a0973439e2587e815ba932" }
 
 # Fault Proofs https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv1.6.0
 ["op-contracts/v1.6.0"]
