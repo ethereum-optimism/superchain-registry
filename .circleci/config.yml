@@ -89,6 +89,9 @@ jobs:
     steps:
       - checkout
       - run:
+          command: |
+            env
+      - run:
           name: Check if PR
           command: |
             if [ -z "$CIRCLE_PULL_REQUEST" ]; then
