@@ -13,12 +13,10 @@ max_sequencer_drift = 3600
 gas_paying_token = "0x43bd82D1e29a1bEC03AfD11D5a3252779b8c760c"
 
 [hardforks]
-  regolith_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
