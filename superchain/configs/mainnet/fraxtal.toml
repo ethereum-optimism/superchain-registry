@@ -17,6 +17,7 @@ canyon_time = 0
 delta_time = 1717002001
 ecotone_time = 1717009201
 fjord_time = 1733947201
+granite_time = 1738958401
 
 [optimism]
 eip1559_elasticity = 10
