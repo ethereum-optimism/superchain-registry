@@ -41,7 +41,7 @@ func TestChecksummedAddress_UnmarshalTOML(t *testing.T) {
 			wantErr: "unexpected EOF",
 		},
 		{
-			name:    "invalid - not (high))",
+			name:    "invalid - not quoted (high))",
 			in:      `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF`,
 			wantErr: "out of range",
 		},
