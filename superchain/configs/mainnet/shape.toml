@@ -1,21 +1,22 @@
 name = "Shape"
-chain_id = 360
 public_rpc = "https://mainnet.shape.network/"
 sequencer_rpc = "https://shape-mainnet-sequencer.g.alchemy.com"
 explorer = "https://shape-mainnet.explorer.alchemy.com/"
-superchain_level = 0
+superchain_level = 1
 governed_by_optimism = false
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+data_availability_type = "eth-da"
+chain_id = 360
 batch_inbox_addr = "0xfF00000000000000000000000000000000000360"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-granite_time = 1727370000 # Thu 26 Sep 2024 17:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 1800
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 1727370000 # Thu 26 Sep 2024 17:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -36,7 +37,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xee1Af3f99AF8C5b93512FbE2A3f0dD5568CE087f"
   ProxyAdminOwner = "0xacAF178b5048CB56712dc59E95fBA72F7990A005"
   Guardian = "0xee1Af3f99AF8C5b93512FbE2A3f0dD5568CE087f"
@@ -44,6 +45,8 @@ data_availability_type = "eth-da"
   Proposer = "0x0D8a607F3d2de86adD04Df00f06794cB339A40de"
   UnsafeBlockSigner = "0x9C66333c504F3A4f5593D0e9739434744cCC5B5d"
   BatchSubmitter = "0xF7ca543d652E38692fD12f989eb55b5327eC9A20"
+
+[addresses]
   AddressManager = "0xcee78437aE9e15cee9c78E63757E0153c0FD7479"
   L1CrossDomainMessengerProxy = "0x2b18602877181C3cB72C687E2A771E123A3788E3"
   L1ERC721BridgeProxy = "0xe9d3E49b0636016c5fE9eaA2347948D0bA9f15Af"

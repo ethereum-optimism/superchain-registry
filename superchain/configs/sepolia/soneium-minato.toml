@@ -1,23 +1,24 @@
 name = "Soneium Testnet Minato"
-chain_id = 1946
 public_rpc = "https://rpc.minato.soneium.org"
 sequencer_rpc = "https://rpc.minato.soneium.org"
 explorer = "https://soneium-minato.blockscout.com/"
-superchain_level = 0
+superchain_level = 1
 governed_by_optimism = false
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
-superchain_time = 1734685200 # Fri Dec 20 2024 9:00:00 UTC
+superchain_time = 1734685200
+data_availability_type = "eth-da"
+chain_id = 1946
 batch_inbox_addr = "0x00Ca81E019a5312d404aE7fe8367D30DE4c11365"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 1730106000 # Mon 28 Oct 2024 9:00:00 UTC
-granite_time = 1730106000 # Mon 28 Oct 2024 9:00:00 UTC
-holocene_time = 1734685200 # Fri Dec 20 2024 9:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 1800
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 1730106000 # Mon 28 Oct 2024 09:00:00 UTC
+  granite_time = 1730106000 # Mon 28 Oct 2024 09:00:00 UTC
+  holocene_time = 1734685200 # Fri 20 Dec 2024 09:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -38,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xB278818732E5BEbb742dc4Aa0617ccd1Dec76b65"
   ProxyAdminOwner = "0x4d59CccA765E1211Bd32Aa6F2A037fD37E519a25"
   Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
@@ -46,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0xa759A2C80Ec4C6421829862da30dD34436114502"
   UnsafeBlockSigner = "0x55930859CD7003F32A2ba171297408476532E535"
   BatchSubmitter = "0xF0AB0441c8f4B89b561aE685B98c6aD5175e0CAB"
+
+[addresses]
   AddressManager = "0x6e8A77673109783001150DFA770E6c662f473DA9"
   L1CrossDomainMessengerProxy = "0x0184245D202724dc28a2b688952Cb56C882c226F"
   L1ERC721BridgeProxy = "0x2bfb22cd534a462028771a1cA9D6240166e450c4"

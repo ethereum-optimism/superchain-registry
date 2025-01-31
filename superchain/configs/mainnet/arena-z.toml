@@ -1,21 +1,22 @@
 name = "arena-z"
-chain_id = 7897
 public_rpc = "https://rpc.arena-z.gg"
 sequencer_rpc = "https://rpc.arena-z.gg"
 explorer = "https://explorer.arena-z.gg"
-superchain_level = 0
+superchain_level = 1
 governed_by_optimism = true
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+data_availability_type = "eth-da"
+chain_id = 7897
 batch_inbox_addr = "0x00f9BCEe08DCe4F0e7906c1f6cFb10c77802EEd0"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 20
@@ -36,7 +37,7 @@ data_availability_type = "eth-da"
     scalar = "0x010000000000000000000000000000000000000000000000000c3a30000060a4"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xBeA2Bc852a160B8547273660E22F4F08C2fa9Bbb"
   ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
   Guardian = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
@@ -44,6 +45,8 @@ data_availability_type = "eth-da"
   Proposer = "0x5f16E66D8736B689a430564a31c8d887ca357CD8"
   UnsafeBlockSigner = "0xb774Ca8438319d2a97B9925F4CD248e4C470Ac5B"
   BatchSubmitter = "0x2b8733E8c60A928b19BB7db1D79b918e8E09AC8c"
+
+[addresses]
   AddressManager = "0x1cb5FB7Da1444e2d895420442D246787B7aFA95D"
   L1CrossDomainMessengerProxy = "0x0BE364912219bC74760f1d1c25F4866b328eBfC6"
   L1ERC721BridgeProxy = "0xbc404ae11E4E9DA3Ea9276Aa6DCcA31097D4f4Ee"

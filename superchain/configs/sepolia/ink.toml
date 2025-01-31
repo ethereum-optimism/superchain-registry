@@ -1,17 +1,24 @@
 name = "Ink Sepolia"
-chain_id = 763373
 public_rpc = "https://rpc-gel-sepolia.inkonchain.com"
 sequencer_rpc = "https://rpc-gel-sepolia.inkonchain.com"
 explorer = "https://explorer-sepolia.inkonchain.com"
-superchain_level = 0
+superchain_level = 1
 governed_by_optimism = true
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
-superchain_time = 0 # Missing hardfork times are inherited from superchain.toml
+superchain_time = 0
+data_availability_type = "eth-da"
+chain_id = 763373
 batch_inbox_addr = "0x004De1914F4f17aC234f5A5Bc8a4072a231d44BF"
 block_time = 1
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 1699981200 # Tue 14 Nov 2023 17:00:00 UTC
+  delta_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
+  ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
+  fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
+  granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
+  holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -32,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xBeA2Bc852a160B8547273660E22F4F08C2fa9Bbb"
   ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
   Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
@@ -40,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0xB15d792E30C5b7f67CBe5fe9Ba76685b537B4543"
   UnsafeBlockSigner = "0x43ec5732581d3FAE18AbB7CE34a796E111dBD1a0"
   BatchSubmitter = "0x21e57C21530Bc33F12Ba96C9dDC135488365002F"
+
+[addresses]
   AddressManager = "0x3454F9df5E750F1383e58c1CB001401e7A4f3197"
   L1CrossDomainMessengerProxy = "0x9fE1d3523F5342535E6E7770ED09ed85Dbc1Acc2"
   L1ERC721BridgeProxy = "0xd1C901BBD7796546A7bA2492e0E199911fAE68c7"
