@@ -24,7 +24,7 @@
 | RACE Mainnet | ❌ | ❌ | https://racescan.io/ | `https://racemainnet.io` | `https://racemainnet.io` |
 | Redstone | ❌ | ❌ | https://explorer.redstone.xyz | `https://rpc.redstonechain.com` | `https://rpc.redstonechain.com` |
 | Shape | ❌ | ❌ | https://shape-mainnet.explorer.alchemy.com/ | `https://mainnet.shape.network/` | `https://shape-mainnet-sequencer.g.alchemy.com` |
-| Soneium | ✅ | ❌ | https://soneium.blockscout.com/ | `https://rpc.soneium.org` | `https://rpc.soneium.org` |
+| Soneium | ✅ | ✅ | https://soneium.blockscout.com/ | `https://rpc.soneium.org` | `https://rpc.soneium.org` |
 | Superseed | ❌ | ❌ | https://explorer.superseed.xyz | `https://mainnet.superseed.xyz` | `https://mainnet.superseed.xyz` |
 | Swan Chain Mainnet | ❌ | ❌ | https://swanscan.io | `https://mainnet-rpc.swanchain.org` | `https://sequencer-mainnet.swanchain.org` |
 | Swellchain | ✅ | ❌ | https://explorer.swellnetwork.io | `https://swell-mainnet.alt.technology` | `https://swell-mainnet.alt.technology` |
