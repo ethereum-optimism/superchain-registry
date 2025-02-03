@@ -31,7 +31,7 @@
 | World Chain | ❌ | ❌ | https://worldchain-mainnet.explorer.alchemy.com/ | `https://worldchain-mainnet.g.alchemy.com/public` | `https://worldchain-mainnet-sequencer.g.alchemy.com` |
 | Xterio Chain (ETH) | ❌ | ❌ | https://eth.xterscan.io/ | `https://xterio-eth.alt.technology/` | `https://xterio-eth.alt.technology/` |
 | Zora | ✅ | ✅ | https://explorer.zora.energy | `https://rpc.zora.energy` | `https://rpc.zora.energy` |
-| arena-z | ✅ | ❌ | https://explorer.arena-z.gg | `https://rpc.arena-z.gg` | `https://rpc.arena-z.gg` |
+| arena-z | ✅ | ✅ | https://explorer.arena-z.gg | `https://rpc.arena-z.gg` | `https://rpc.arena-z.gg` |
 ### sepolia
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
