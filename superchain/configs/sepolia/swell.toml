@@ -1,0 +1,69 @@
+name = "Swellchain Testnet"
+chain_id = 1924
+public_rpc = "https://swell-testnet.alt.technology"
+sequencer_rpc = "https://swell-testnet.alt.technology"
+explorer = "https://swell-testnet-explorer.alt.technology"
+superchain_level = 0
+governed_by_optimism = false
+standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+batch_inbox_addr = "0x00e4162c4fE9Db4796787E515F616A55650791B7"
+canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+
+[optimism]
+  eip1559_elasticity = 10
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1730453256
+  [genesis.l1]
+    hash = "0xd99f5dc5bb430b382da5e70964a2faf49808c0f450d4e8fa4bb3d4f7f9e3c18a"
+    number = 6989267
+  [genesis.l2]
+    hash = "0x56d83858e4fab3bcd009c0014c91fce910f0e4585d1f446e043c813043fd0317"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x77C60EfDBDa83410EE0373Eda2ed06891238c93d"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
+    gasLimit = 60000000
+
+[roles]
+  SystemConfigOwner = "0x6C22aD23a35658d045165ac1d20486C39A3BEFCE"
+  ProxyAdminOwner = "0xbA9b48E881c79C5e8E00891Dd0DBfd9322632da7"
+  Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
+  Challenger = "0x9C420427CABF2ab4b9e609ca8F4c64BB92bc76b0"
+  Proposer = "0xfAD4ab1C91530649bf3c1F3DadB401160d3854D0"
+  UnsafeBlockSigner = "0xACE029EaF8513FE15f03a511976F311454E4B423"
+  BatchSubmitter = "0x77C60EfDBDa83410EE0373Eda2ed06891238c93d"
+
+[addresses]
+  AddressManager = "0x9C7D8212d8c996ab3c849bF4d6d5cC0A597A5CE5"
+  L1CrossDomainMessengerProxy = "0xD89F9eC2D109FB5f978A3b5B846d6aA1959872fb"
+  L1ERC721BridgeProxy = "0x2Cff2FDA74b121B7D6371C740d5166F47a93d45C"
+  L1StandardBridgeProxy = "0xeBb79a1D00B2d489f53ADee985a2Ded2A3553F22"
+  OptimismMintableERC20FactoryProxy = "0xBa2b3e7a330ce394202ACB258f670B2926dB63BE"
+  OptimismPortalProxy = "0x595329C60C0B9E54a5246E98fB0fA7FcFd454f64"
+  SystemConfigProxy = "0xb8dB232300F007833592befD46E141C6aD3558ec"
+  ProxyAdmin = "0x85046864B00763415af4DA8d7Bd6FA9404385690"
+  AnchorStateRegistryProxy = "0x6D1443dD3f58889C6A8DE51E74b5fCa9c7116513"
+  DelayedWETHProxy = "0xD89F9eC2D109FB5f978A3b5B846d6aA1959872fb"
+  DisputeGameFactoryProxy = "0xF098dc3596d96b6Dfd43FdE6066551449242Fc15"
+  MIPS = "0x47B0E34C1054009e696BaBAAd56165e1e994144d"
+  PermissionedDisputeGame = "0x01Fe650FB880A287D1b7C2df6e830dA0540387fA"
+  PreimageOracle = "0x92240135b46fc1142dA181f550aE8f595B858854"

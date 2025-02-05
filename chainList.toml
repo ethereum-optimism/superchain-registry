@@ -562,6 +562,19 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Swellchain Testnet"
+  identifier = "sepolia/swell"
+  chain_id = 1924
+  rpc = ["https://swell-testnet.alt.technology"]
+  explorers = ["https://swell-testnet-explorer.alt.technology"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Unichain Sepolia Testnet"
   identifier = "sepolia/unichain"
   chain_id = 1301

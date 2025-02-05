@@ -51,6 +51,7 @@
 | RACE Testnet | ❌ | ❌ | https://testnet.racescan.io/ | `https://racetestnet.io` | `https://racetestnet.io` |
 | Shape Sepolia Testnet | ❌ | ❌ | https://shape-sepolia.explorer.alchemy.com/ | `https://sepolia.shape.network/` | `https://shape-sepolia-sequencer.g.alchemy.com` |
 | Soneium Testnet Minato | ❌ | ✅ | https://soneium-minato.blockscout.com/ | `https://rpc.minato.soneium.org` | `https://rpc.minato.soneium.org` |
+| Swellchain Testnet | ❌ | ❌ | https://swell-testnet-explorer.alt.technology | `https://swell-testnet.alt.technology` | `https://swell-testnet.alt.technology` |
 | Unichain Sepolia Testnet | ❌ | ✅ | https://sepolia.uniscan.xyz | `https://sepolia.unichain.org` | `https://sepolia-sequencer.unichain.org` |
 | World Chain Sepolia Testnet | ❌ | ❌ | https://worldchain-sepolia.explorer.alchemy.com/ | `https://worldchain-sepolia.g.alchemy.com/public` | `https://worldchain-sepolia-sequencer.g.alchemy.com` |
 | Zora Sepolia Testnet | ✅ | ✅ | https://sepolia.explorer.zora.energy | `https://sepolia.rpc.zora.energy` | `https://sepolia.rpc.zora.energy` |
