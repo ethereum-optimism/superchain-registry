@@ -174,11 +174,13 @@ deployment_l2_contracts_version = "tag://op-contracts/v1.7.0-beta.1+l2-contracts
   PermissionedDisputeGame = "0x1fA6B096aC9D8C6C8f150cDFaC9BC25b0CAFe00a"
 ```
 
-### 2. Manually update the first part of the config.
+### 2. Manually update the config.
 
 **You must ensure that every field in this file has been updated for your chain.**
 
-A few important fields include:
+### Chain metadata
+
+The first part of the config contains important metadata about your chain. These fields include:
 
 - `name`: Human-readable name for your chain.
 - `superchain`: Which superchain your chain belongs to. Can be `sepolia` or `mainnet`.
@@ -193,18 +195,25 @@ A few important fields include:
 - `deployment_l1_contracts_version`: Must match the OP Contracts version tag that was used to deploy your L1 contracts.
 - `deployment_l2_contracts_version`: Must match the OP Contracts version tag that was used to deploy your L2 contracts.
 
-### 3. ZST-encode your genesis file and update the config with these values.
+### Hardforks
+
+The `[hardforks]` section includes overrides for hardfork activation times.
+You can leave all these values as `0` if your chain has opted in to Superchain-wide hardforks.
+
+### Genesis
+
+The `[genesis]` section contains the hashes for the L1 start block of the rollup and the hash of the genesis of the L2. The L2 genesis hash is generated from its genesis file. Note that this is unrelated to the ZST encoding in step 4.
+
+#### Roles and addresses
+
+Roles and addresses in the config file must also be manually updated to match the roles and addresses specified when you deployed the chain.
+(If you deploy your chain using a custom tool, you will need to specify them at some point.
+Keep them handy so you can add your chain to the Superchain Registry!)
+
+### 4. ZST-encode your genesis file.
 
 The Superchain Registry requires ZST-encoded genesis files.
 To ZST-encode your genesis file, run
 `zstd -D superchain-registry/superchain/extra/dictionary <your-genesis.json>`.
 
 Put the generated file in the `.staging` directory alongside the config file.
-
-TODO(tess): Is this output used in the [genesis] section of the config file? Talk to Slipper and find out.
-
-### 4. Manually update roles and addresses.
-
-Roles and addresses in the config file must also be manually updated to match the roles and addresses specified when you deployed the chain.
-(If you deploy your chain using a custom tool, you will need to specify them at some point.
-Keep them handy so you can add your chain to the Superchain Registry!)
