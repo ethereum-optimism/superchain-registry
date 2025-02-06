@@ -195,12 +195,12 @@ The first part of the config contains important metadata about your chain. These
 - `deployment_l1_contracts_version`: Must match the OP Contracts version tag that was used to deploy your L1 contracts.
 - `deployment_l2_contracts_version`: Must match the OP Contracts version tag that was used to deploy your L2 contracts.
 
-### Hardforks
+#### Hardforks
 
 The `[hardforks]` section includes overrides for hardfork activation times.
 You can leave all these values as `0` if your chain has opted in to Superchain-wide hardforks.
 
-### Genesis
+#### Genesis
 
 The `[genesis]` section contains the hashes for the L1 start block of the rollup and the hash of the genesis of the L2. The L2 genesis hash is generated from its genesis file. Note that this is unrelated to the ZST encoding in step 4.
 
