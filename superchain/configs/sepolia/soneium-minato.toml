@@ -3,7 +3,7 @@ public_rpc = "https://rpc.minato.soneium.org"
 sequencer_rpc = "https://rpc.minato.soneium.org"
 explorer = "https://soneium-minato.blockscout.com/"
 superchain_level = 1
-governed_by_optimism = false
+governed_by_optimism = true
 superchain_time = 1734685200
 data_availability_type = "eth-da"
 chain_id = 1946
@@ -41,7 +41,7 @@ max_sequencer_drift = 1800
 
 [roles]
   SystemConfigOwner = "0xB278818732E5BEbb742dc4Aa0617ccd1Dec76b65"
-  ProxyAdminOwner = "0x4d59CccA765E1211Bd32Aa6F2A037fD37E519a25"
+  ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
   Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
   Challenger = "0xB278818732E5BEbb742dc4Aa0617ccd1Dec76b65"
   Proposer = "0xa759A2C80Ec4C6421829862da30dD34436114502"
