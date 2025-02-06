@@ -18,6 +18,24 @@
     }
   },
   {
+    "name": "Unichain",
+    "identifier": "mainnet/unichain",
+    "chainId": 130,
+    "rpc": [
+      "https://mainnet.unichain.org"
+    ],
+    "explorers": [
+      "https://explorer.unichain.org"
+    ],
+    "superchainLevel": 1,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "arena-z",
     "identifier": "mainnet/arena-z",
     "chainId": 7897,

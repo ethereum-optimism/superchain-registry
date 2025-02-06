@@ -12,6 +12,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Unichain"
+  identifier = "mainnet/unichain"
+  chain_id = 130
+  rpc = ["https://mainnet.unichain.org"]
+  explorers = ["https://explorer.unichain.org"]
+  superchain_level = 1
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "arena-z"
   identifier = "mainnet/arena-z"
   chain_id = 7897
