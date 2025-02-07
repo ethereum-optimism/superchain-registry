@@ -88,3 +88,67 @@ func TestHash(t *testing.T) {
 		require.Contains(t, err.Error(), "invalid hex string")
 	})
 }
+
+func TestValidateChainConfig(t *testing.T) {
+	tests := []struct {
+		name    string
+		config  *ChainConfig
+		wantErr bool
+	}{
+		{
+			name: "valid minimal config",
+			config: &ChainConfig{
+				Chain: Chain{
+					Name:     "test-chain",
+					ChainID:  123,
+					Protocol: Protocol{Version: "1.0.0"},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "invalid chain id",
+			config: &ChainConfig{
+				Chain: Chain{
+					Name:     "test-chain",
+					ChainID:  0,
+					Protocol: Protocol{Version: "1.0.0"},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalid protocol version",
+			config: &ChainConfig{
+				Chain: Chain{
+					Name:     "test-chain",
+					ChainID:  123,
+					Protocol: Protocol{Version: "invalid"},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "empty chain name",
+			config: &ChainConfig{
+				Chain: Chain{
+					Name:     "",
+					ChainID:  123,
+					Protocol: Protocol{Version: "1.0.0"},
+				},
+			},
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.config.Validate()
+			if tt.wantErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
