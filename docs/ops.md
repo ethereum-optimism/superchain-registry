@@ -88,7 +88,7 @@ A member of our team will review your PR. When ready, we will generate code from
 
 We **strongly recommend** that you use `op-deployer` to deploy your chain.
 `op-deployer` can be configured to create L3s, alt-DA and custom gas token chains.
-(See the [`op-deployer` docs]() for more.)
+(See the [`op-deployer` docs](https://devdocs.optimism.io/op-deployer/) for more.)
 However, if your chain requires further modifications, you may need to use a custom deployment method and
 manually create the files needed to add your chain to the Superchain Registry.
 
