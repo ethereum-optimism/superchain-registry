@@ -555,7 +555,7 @@
   rpc = ["https://rpc.minato.soneium.org"]
   explorers = ["https://soneium-minato.blockscout.com/"]
   superchain_level = 1
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"

@@ -770,7 +770,7 @@
       "https://soneium-minato.blockscout.com/"
     ],
     "superchainLevel": 1,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
