@@ -7,3 +7,6 @@ just = "1.37.0"
 
 # Go dependencies
 "go:github.com/golangci/golangci-lint/cmd/golangci-lint" = "1.61.0"
+
+[settings]
+experimental = true
