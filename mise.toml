@@ -1,0 +1,6 @@
+[tools]
+
+# Core dependencies
+go = "1.23.1"
+just = "1.37.0"
+
