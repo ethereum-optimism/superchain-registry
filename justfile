@@ -67,6 +67,8 @@ check-for-codegen-changes:
         echo -e "\033[31mFiles changed:\033[0m"
         git status --porcelain
         exit 1
+    else
+        echo -e "\033[32mNo changes detected after running codegen.\033[0m"
     fi
 
 
