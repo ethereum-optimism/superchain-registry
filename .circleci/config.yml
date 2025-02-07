@@ -114,8 +114,10 @@ jobs:
 workflows:
   scheduled-check-addresses:
     when:
-      and:
-        - equal: ["hourly_build", << pipeline.schedule.name >>]
+      or:
+        # Trigger on new commits
+        - equal: [webhook, << pipeline.trigger_source >>]
+        - equal: ["hourly_build", <<pipeline.schedule.name>>]
     jobs:
       - check-addresses
 
