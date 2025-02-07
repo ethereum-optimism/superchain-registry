@@ -54,22 +54,5 @@ create-config SHORTNAME FILENAME:
 
 check-chainlist: (_run_ops_bin 'check_chainlist')
 
-check-for-codegen-changes:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    if ! git diff-index --quiet HEAD --; then
-        echo -e "\033[31mError: Working directory is not clean. Please commit or stash your changes before checking for codegen changes.\033[0m"
-        exit 1
-    fi
-    just codegen
-    if ! git diff --quiet --exit-code; then
-        echo -e "\033[31m\nError: Code generation produced changes. Please commit them.\033[0m\n"
-        echo -e "\033[31mFiles changed:\033[0m"
-        git status --porcelain
-        exit 1
-    else
-        echo -e "\033[32mNo changes detected after running codegen.\033[0m"
-    fi
-
 
 

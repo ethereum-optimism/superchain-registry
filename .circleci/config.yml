@@ -167,23 +167,13 @@ jobs:
             cd ops
             go run ./cmd/print_staging_report/main.go
 
-  check-codegen-changes:
-    docker:
-      - image: <<pipeline.parameters.default_docker_image>>
-    steps:
-      - checkout-with-mise
-      - run:
-          name: Checks if running codegen causes changes
-          command: |
-            just check-for-codegen-changes
-
 workflows:
-  scheduled-check-codegen-changes:
+  scheduled-check-onchain-changes:
     when:
       and:
         - equal: ["hourly_build", <<pipeline.schedule.name>>]
     jobs:
-      - check-codegen-changes
+      - echo "Check for implementation changes onchain" # TODO: Implement this & add slack notif
 
   main:
     jobs:
