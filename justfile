@@ -54,7 +54,7 @@ create-config SHORTNAME FILENAME:
 
 check-chainlist: (_run_ops_bin 'check_chainlist')
 
-check-for-new-addresses:
+check-for-codegen-changes:
     #!/usr/bin/env bash
     set -euo pipefail
     root_dir=$(git rev-parse --show-toplevel)
@@ -63,10 +63,11 @@ check-for-new-addresses:
     just codegen
     hash_after=$(sha256sum $addresses_path)
     if [ "$hash_before" != "$hash_after" ]; then
-        echo -e "\033[31m\nError: $addresses_path has changed, please commit the new addresses.json file.\033[0m\n"
+        echo -e "\033[31m\nError: $addresses_path has changed, please commit codegen changes.\033[0m\n"
         echo -e "\033[31mFiles changed:\033[0m"
         git status --porcelain
-        exit 1
     fi
+    git diff --quiet --exit-code
+
 
 

@@ -167,24 +167,23 @@ jobs:
             cd ops
             go run ./cmd/print_staging_report/main.go
 
-  check-addresses:
+  check-codegen-changes:
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
     steps:
       - checkout-with-mise
       - run:
-          name: Check if addresses.json has changed
+          name: Checks if running codegen causes changes
           command: |
-            just check-for-new-addresses
+            just check-for-codegen-changes
 
 workflows:
-  scheduled-check-addresses:
+  scheduled-check-codegen-changes:
     when:
       and:
-        # Trigger on new commits
         - equal: ["hourly_build", <<pipeline.schedule.name>>]
     jobs:
-      - check-addresses
+      - check-codegen-changes
 
   main:
     jobs:
@@ -216,5 +215,4 @@ workflows:
           tool: check_chainlist
       - run-staging-report:
           name: run-staging-report
-      - check-addresses
 
