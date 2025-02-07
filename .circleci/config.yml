@@ -101,7 +101,24 @@ jobs:
             cd ops
             go run ./cmd/print_staging_report/main.go
 
+  check-addresses:
+    docker:
+      - image: cimg/go:1.23.1
+    steps:
+      - checkout
+      - run:
+          name: Check if addresses.json has changed
+          command: |
+            just check-for-new-addresses
+
 workflows:
+  scheduled-check-addresses:
+    when:
+      and:
+        - equal: ["hourly_build", << pipeline.schedule.name >>]
+    jobs:
+      - check-addresses
+
   main:
     jobs:
       - go-lint-test:

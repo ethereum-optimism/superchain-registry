@@ -53,3 +53,20 @@ create-config SHORTNAME FILENAME:
 	@just _run_ops_bin "create_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{FILENAME}})"
 
 check-chainlist: (_run_ops_bin 'check_chainlist')
+
+check-for-new-addresses:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    root_dir=$(git rev-parse --show-toplevel)
+    addresses_path=$root_dir/superchain/extra/addresses/addresses.json
+    hash_before=$(sha256sum $addresses_path)
+    just codegen
+    hash_after=$(sha256sum $addresses_path)
+    if [ "$hash_before" != "$hash_after" ]; then
+        echo -e "\033[31m\nError: $addresses_path has changed, please commit the new addresses.json file.\033[0m\n"
+        echo -e "\033[31mFiles changed:\033[0m"
+        git status --porcelain
+        exit 1
+    fi
+
+
