@@ -1,17 +1,20 @@
 name = "Cyber Mainnet"
-chain_id = 7560
 public_rpc = "https://rpc.cyber.co"
 sequencer_rpc = "https://cyber.alt.technology/"
 explorer = "https://cyberscan.co/"
 superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "alt-da"
+chain_id = 7560
 batch_inbox_addr = "0xfF00000000000000000000000000000000001d88"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "alt-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -38,7 +41,7 @@ data_availability_type = "alt-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xc76C563185d01284AdbC9cF5bb909162dD2F15e7"
   ProxyAdminOwner = "0xc2259E7Fb719411f97aBdCdf449f6Ba3B9D75398"
   Guardian = "0x0C883f622b4ccbF1e8ce86217998f87e6d36BCE4"
@@ -46,6 +49,8 @@ data_availability_type = "alt-da"
   Proposer = "0xF2987f0A626c8D29dFB2E0A21144ca3026d6F1E1"
   UnsafeBlockSigner = "0xa7A4D6d5920b93D0FE590f9524Ef17f24EE1F5B8"
   BatchSubmitter = "0xf0748C52EDC23135d9845CDFB91279Cf61ee14b4"
+
+[addresses]
   AddressManager = "0x19b5804B88F10262A55ac731f28A3BbC4209853a"
   L1CrossDomainMessengerProxy = "0x3c01ebF22e9c111528c1E027D68944eDaB08Dfc9"
   L1ERC721BridgeProxy = "0x4F4B716627D2Ba0439327Ce8B563b4443aF47Dbd"

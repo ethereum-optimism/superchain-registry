@@ -1,17 +1,24 @@
 name = "Ethernity Testnet"
-chain_id = 233
 public_rpc = "https://testnet.ethernitychain.io"
 sequencer_rpc = "https://testnet.ethernitychain.io"
 explorer = "https://testnet.ernscan.io"
-superchain_level = 0
+superchain_level = 1
 governed_by_optimism = false
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+superchain_time = 0
+data_availability_type = "eth-da"
+chain_id = 233
 batch_inbox_addr = "0xFf00000000000000000000000000000000000233"
-superchain_time = 0  
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 1699981200 # Tue 14 Nov 2023 17:00:00 UTC
+  delta_time = 1703203200 # Fri 22 Dec 2023 00:00:00 UTC
+  ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
+  fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
+  granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
+  holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -32,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x097955A7aa7966d55D781688Aa1493493AB513Af"
   ProxyAdminOwner = "0x5a19d3Afd327Bd01D390eb52c11C2A9a79BcFB32"
   Guardian = "0x097955A7aa7966d55D781688Aa1493493AB513Af"
@@ -40,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0xBf1374D8c2E98074368326786343f1aDE19d5ccD"
   UnsafeBlockSigner = "0xdb0C6821a033eb9Dc152bB008f42ebad0EAdDcA3"
   BatchSubmitter = "0x973A9E30D6D11355A459A69E7CbFBa61C7627736"
+
+[addresses]
   AddressManager = "0x2d34a143D7BeAD8F75479C841e3AAbF6c4AFdeC8"
   L1CrossDomainMessengerProxy = "0x1c8b6a6F3E3612c79E62460a6e44C24D1EfF2FDa"
   L1ERC721BridgeProxy = "0xBf0D43e12eF74dC21917e1D6175702AD673e1283"

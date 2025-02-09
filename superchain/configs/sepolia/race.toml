@@ -1,17 +1,20 @@
 name = "RACE Testnet"
-chain_id = 6806
 public_rpc = "https://racetestnet.io"
 sequencer_rpc = "https://racetestnet.io"
 explorer = "https://testnet.racescan.io/"
 superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 6806
 batch_inbox_addr = "0xff00000000000000000000000000000000006806"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -32,7 +35,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xE6869aF6c871614df04902870Bb13d4505E1586c"
   ProxyAdminOwner = "0xAc78E9B3Aa9373AE4bE2Ba5Bc9F716d7A746A65E"
   Guardian = "0xE6869aF6c871614df04902870Bb13d4505E1586c"
@@ -40,6 +43,8 @@ data_availability_type = "eth-da"
   Proposer = "0x5a145E3F466FD6cC095214C700359df7894BaD21"
   UnsafeBlockSigner = "0x89eA88ef4AC23f4C7Fdc611Fc9cD1c50DF702C2C"
   BatchSubmitter = "0x584D61A30C7Ef1E8D547eE02099dADC487f49889"
+
+[addresses]
   AddressManager = "0x1B573Db1000eA419B6dE8eB482C6d394179Bd1A3"
   L1CrossDomainMessengerProxy = "0xdaeab17598938A4f27E50AC771249Ad7df12Ea7D"
   L1ERC721BridgeProxy = "0xBafb1a6e54e7750aF29489D65888d1c96Dfd66Df"

@@ -1,23 +1,24 @@
 name = "Soneium"
-chain_id = 1868
 public_rpc = "https://rpc.soneium.org"
 sequencer_rpc = "https://rpc.soneium.org"
 explorer = "https://soneium.blockscout.com/"
-superchain_level = 0
+superchain_level = 1
 governed_by_optimism = true
-standard_chain_candidate = true # This is a temporary field which causes most of the standard validation checks to run on this chain
+superchain_time = 1738573200
+data_availability_type = "eth-da"
+chain_id = 1868
 batch_inbox_addr = "0x008dC74CecC9dedA8595B2Fe210cE5979F0BfA8e"
-canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-holocene_time = 1738573200 # Mon 3 Feb 2025 09:00:00 UTC
-superchain_time = 1738573200 # Joining from Isthmus
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 1738573200 # Mon 3 Feb 2025 09:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -38,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
     gasLimit = 60000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x509182eC226b3B71D36A3255A80EF0b1A9D43033"
   ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
   Guardian = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
@@ -46,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0x400c164C4a8cA84385B70EEd6eB03ea847c8E1b8"
   UnsafeBlockSigner = "0x7c2Bd59ee2a2C7391c9A240132f26071e9546262"
   BatchSubmitter = "0x6776BE80dBAda6A02B5F2095cF13734ac303B8d1"
+
+[addresses]
   AddressManager = "0xB24bFEeCE1B3b7A44559F4Cbc21BeD312b130b70"
   L1CrossDomainMessengerProxy = "0x9CF951E3F74B644e621b36Ca9cea147a78D4c39f"
   L1ERC721BridgeProxy = "0x5933e323bE8896DfaCd1cD671442F27dAA10a053"
