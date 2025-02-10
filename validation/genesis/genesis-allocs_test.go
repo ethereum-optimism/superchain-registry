@@ -187,6 +187,18 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 		delete(g.Alloc, common.HexToAddress("0x1f98431c8ad98523631ae4a59f267346ea31f984"))
 		delete(g.Alloc, common.HexToAddress("0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f"))
 	}
+	if chainId == uint64(130) {
+		// V2 / V3 / V4 Factory / Pool manager
+		delete(g.Alloc, common.HexToAddress("0x1f98400000000000000000000000000000000002"))
+		delete(g.Alloc, common.HexToAddress("0x1f98400000000000000000000000000000000003"))
+		delete(g.Alloc, common.HexToAddress("0x1f98400000000000000000000000000000000004"))
+		// Fee Splitter / L1 Fee Recipient / L1 Fee Recipient / Net Fee Splitter
+		delete(g.Alloc, common.HexToAddress("0x4300c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30001"))
+		delete(g.Alloc, common.HexToAddress("0x4300c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30002"))
+		delete(g.Alloc, common.HexToAddress("0x4300c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30003"))
+		delete(g.Alloc, common.HexToAddress("0x4300c0d3c0d3c0d3c0d3c0d3c0d3c0d3c0d30004"))
+
+	}
 
 	// Ink Sepolia
 	if chainId == uint64(763373) {
