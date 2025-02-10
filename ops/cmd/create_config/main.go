@@ -31,7 +31,7 @@ var (
 func main() {
 	app := &cli.App{
 		Name:  "create-config",
-		Usage: "Turns a state file into a chain config in the stating directory.",
+		Usage: "Turns a state file into a chain config in the staging directory.",
 		Flags: []cli.Flag{
 			StateFilename,
 			Shortname,
