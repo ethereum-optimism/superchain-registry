@@ -61,3 +61,5 @@ standard_chain_candidate = true # This is a temporary field which causes most of
   DisputeGameFactoryProxy = "0x2F12d621a16e2d3285929C9996f478508951dFe4"
   FaultDisputeGame = "0x08f0F8F4E792d21E16289dB7a80759323C446F61"
   PermissionedDisputeGame = "0xC457172937fFa9306099ec4F2317903254Bf7223"
+  MIPS = "0x5fE03a12C1236F9C22Cb6479778DDAa4bce6299C"
+  PreimageOracle = "0x9c065e11870B891D214Bc2Da7EF1f9DDFA1BE277"
