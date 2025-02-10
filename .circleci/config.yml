@@ -8,8 +8,6 @@ parameters:
   default_docker_image:
     type: string
     default: cimg/base:2024.01
-    steps:
-      - utils/init-mise
 
 jobs:
   go-lint-test:
@@ -19,6 +17,7 @@ jobs:
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
     steps:
+      - utils/init-mise
       - run:
           name: Tidy mod
           command: |
@@ -52,6 +51,7 @@ jobs:
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
     steps:
+      - utils/init-mise
       - run:
           name: Run tool
           command: go run ./cmd/<< parameters.tool >>/main.go << parameters.args >>
@@ -67,6 +67,7 @@ jobs:
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
     steps:
+      - utils/init-mise
       - run:
           name: Check staging is empty
           command: |
@@ -92,6 +93,7 @@ jobs:
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
     steps:
+      - utils/init-mise
       - run:
           name: Check if PR
           command: |
