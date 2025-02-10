@@ -2,14 +2,12 @@ version: 2.1
 
 orbs:
   codecov: codecov/codecov@5.0.3
+  utils: ethereum-optimism/circleci-utils@dev:first
 
 parameters:
   default_docker_image:
     type: string
     default: cimg/base:2024.01
-
-commands:
-  checkout-with-mise:
     steps:
       - checkout
       - run:
@@ -77,7 +75,7 @@ jobs:
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
     steps:
-      - checkout-with-mise
+      - utils/init-mise
       - run:
           name: Tidy mod
           command: |
@@ -111,7 +109,7 @@ jobs:
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
     steps:
-      - checkout-with-mise
+      - utils/init-mise
       - run:
           name: Run tool
           command: go run ./cmd/<< parameters.tool >>/main.go << parameters.args >>
@@ -127,7 +125,7 @@ jobs:
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
     steps:
-      - checkout-with-mise
+      - utils/init-mise
       - run:
           name: Check staging is empty
           command: |
@@ -153,7 +151,7 @@ jobs:
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
     steps:
-      - checkout-with-mise
+      - utils/init-mise
       - run:
           name: Check if PR
           command: |
