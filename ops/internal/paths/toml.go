@@ -54,11 +54,11 @@ func ReadJSONFile(p string, out any) error {
 func WriteTOMLFile(p string, in any) error {
 	data, err := toml.Marshal(in)
 	if err != nil {
-		return fmt.Errorf("failed to marshal JSON: %w", err)
+		return fmt.Errorf("failed to marshal TOML: %w", err)
 	}
 
 	if err := fs.AtomicWrite(p, 0o644, data); err != nil {
-		return fmt.Errorf("failed to write JSON file: %w", err)
+		return fmt.Errorf("failed to write TOML file: %w", err)
 	}
 
 	return nil
