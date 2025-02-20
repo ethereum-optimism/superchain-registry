@@ -4,7 +4,7 @@ sequencer_rpc = "https://rpc-gel.inkonchain.com"
 explorer = "https://explorer.inkonchain.com"
 superchain_level = 1
 governed_by_optimism = true
-superchain_time = 1740582000
+superchain_time = 1742396400
 data_availability_type = "eth-da"
 chain_id = 57073
 batch_inbox_addr = "0x005969bf0EcbF6eDB6C47E5e94693b1C3651Be97"
@@ -18,7 +18,7 @@ max_sequencer_drift = 600
   ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-  holocene_time = 1740582000 # Wed 26 Feb 2025 15:00:00 UTC
+  holocene_time = 1742396400 # Wed 19 Mar 2025 15:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
