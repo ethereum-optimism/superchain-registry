@@ -2,8 +2,9 @@ name = "arena-z"
 public_rpc = "https://rpc.arena-z.gg"
 sequencer_rpc = "https://rpc.arena-z.gg"
 explorer = "https://explorer.arena-z.gg"
-superchain_level = 0
+superchain_level = 1
 governed_by_optimism = true
+superchain_time = 1736445601
 data_availability_type = "eth-da"
 chain_id = 7897
 batch_inbox_addr = "0x00f9BCEe08DCe4F0e7906c1f6cFb10c77802EEd0"
@@ -17,6 +18,7 @@ max_sequencer_drift = 600
   ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 1736445601 # Thu 9 Jan 2025 18:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 20

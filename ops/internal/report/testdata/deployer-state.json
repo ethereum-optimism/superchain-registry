@@ -7,7 +7,7 @@
     "l1ChainID": 11155111,
     "superchainRoles": {
       "proxyAdminOwner": "0x1eb2ffc903729a0f03966b917003800b145f56e2",
-      "protocolVersionsOwner": "0x79add5713b383daa0a138d3c4780c7a1804a8090",
+      "protocolVersionsOwner": "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301",
       "guardian": "0x7a50f00e8d05b95f98fe38d8bee366a7324dcf7e"
     },
     "fundDevAccounts": false,

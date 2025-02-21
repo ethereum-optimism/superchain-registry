@@ -4,12 +4,52 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 )
+
+func TestSuperchainLevel_Marshaling(t *testing.T) {
+	type holder struct {
+		Lvl SuperchainLevel `toml:"lvl"`
+	}
+	tests := []struct {
+		level SuperchainLevel
+		exp   string
+	}{
+		{SuperchainLevelNonStandard, "lvl = 0"},
+		{SuperchainLevelStandardCandidate, "lvl = 1"},
+		{SuperchainLevelStandard, "lvl = 2"},
+	}
+	for _, tt := range tests {
+		data, err := toml.Marshal(holder{tt.level})
+		require.NoError(t, err)
+		require.Equal(t, tt.exp, strings.TrimSpace(string(data)))
+
+		var h holder
+		require.NoError(t, toml.Unmarshal(data, &h))
+		require.Equal(t, tt.level, h.Lvl)
+	}
+
+	errTests := []struct {
+		name string
+		in   string
+	}{
+		{"invalid float type", "lvl = 1.0"},
+		{"invalid string type", "lvl = \"sup\""},
+		{"invalid hex type", "lvl = 0x123"},
+	}
+	for _, tt := range errTests {
+		t.Run(tt.name, func(t *testing.T) {
+			var h holder
+			err := toml.Unmarshal([]byte(tt.in), &h)
+			require.Error(t, err)
+		})
+	}
+}
 
 func TestChain_Marshaling(t *testing.T) {
 	data, err := os.ReadFile("testdata/all.toml")
