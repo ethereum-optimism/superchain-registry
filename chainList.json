@@ -525,6 +525,42 @@
     }
   },
   {
+    "name": "",
+    "identifier": "sepolia/agr0",
+    "chainId": 420110000,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "",
+    "identifier": "sepolia/agr1",
+    "chainId": 420110002,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Base Sepolia Testnet",
     "identifier": "sepolia/base",
     "chainId": 84532,
