@@ -58,12 +58,32 @@ func DiffL2Genesis(
 	if chainCfg.Superchain == config.MainnetSuperchain {
 		standardRoles = validation.StandardConfigRolesMainnet
 		l1ChainID = 1
+
+		// Unichain
+		if chainCfg.ChainID == 130 {
+			standardRoles = validation.StandardConfigRolesUnichainMainnet
+		}
+		// Base
+		if chainCfg.ChainID == 8543 {
+			standardRoles = validation.StandardConfigRolesBaseMainnet
+		}
+
 	} else if chainCfg.Superchain == config.SepoliaSuperchain {
 		standardRoles = validation.StandardConfigRolesSepolia
 		l1ChainID = 11155111
+		// Unichain
+		if chainCfg.ChainID == 1301 {
+			standardRoles = validation.StandardConfigRolesUnichainSepolia
+		}
+		// Base
+		if chainCfg.ChainID == 84532 {
+			standardRoles = validation.StandardConfigRolesBaseMainnet
+		}
 	} else {
 		return standardHash, nil, fmt.Errorf("unsupported superchain: %s", chainCfg.Superchain)
 	}
+
+	// Overrides for 3/3 base and unichain
 
 	standardIntent := &state.Intent{
 		ConfigType:         state.IntentConfigTypeStrict,
