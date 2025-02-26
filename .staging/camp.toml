@@ -40,7 +40,7 @@ deployment_l2_contracts_version = "tag://op-contracts/v1.7.0-beta.1+l2-contracts
     hash = "0x7c7c4f48d2f33a04c5cbabc8b6ba6315f283d6ae0a874118ceb8881e21bfd05e"
     number = 0
   [genesis.system_config]
-    batcherAddress = "0x624811105f39936d5ce277d93292061abfedd4d5"
+    batcherAddress = "0x624811105f39936D5cE277d93292061ABfEDD4D5"
     overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
     gasLimit = 30000000
