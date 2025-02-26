@@ -53,6 +53,7 @@ type VersionConfig struct {
 	L1StandardBridge             *ContractData `toml:"l1_standard_bridge,omitempty"`
 	L2OutputOracle               *ContractData `toml:"l2_output_oracle,omitempty"`
 	OptimismMintableERC20Factory *ContractData `toml:"optimism_mintable_erc20_factory,omitempty"`
+	OPContractsManager           *ContractData `toml:"op_contracts_manager,omitempty"`
 }
 
 // Versions maps release tags to their contract configurations
