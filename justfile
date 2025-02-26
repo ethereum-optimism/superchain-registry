@@ -35,7 +35,7 @@ tidy-ops: (_go-tidy 'ops')
 tidy-validation: (_go-tidy 'validation')
 
 _run_ops_bin bin flags='':
-	cd ops && go run ./cmd/{{ bin }}/main.go {{ flags }}
+	cd ./ops && go run ./cmd/{{ bin }}/main.go {{ flags }}
 
 apply-hardforks: (_run_ops_bin 'apply_hardforks')
 
