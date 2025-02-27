@@ -21,12 +21,6 @@ var standardConfigRolesMainnetToml []byte
 //go:embed standard/standard-config-roles-sepolia.toml
 var standardConfigRolesSepoliaToml []byte
 
-//go:embed standard/standard-config-roles-base-sepolia.toml
-var standardConfigRolesBaseSepoliaToml []byte
-
-//go:embed standard/standard-config-roles-base-mainnet.toml
-var standardConfigRolesBaseMainnetToml []byte
-
 //go:embed standard/standard-config-roles-unichain-sepolia.toml
 var standardConfigRolesUnichainSepoliaToml []byte
 
@@ -38,8 +32,6 @@ var (
 	StandardConfigRolesSepolia         RolesConfig
 	StandardConfigRolesUnichainSepolia RolesConfig
 	StandardConfigRolesUnichainMainnet RolesConfig
-	StandardConfigRolesBaseSepolia     RolesConfig
-	StandardConfigRolesBaseMainnet     RolesConfig
 )
 
 func init() {
@@ -47,12 +39,6 @@ func init() {
 		panic(fmt.Errorf("failed to unmarshal mainnet standard config roles: %w", err))
 	}
 	if err := toml.Unmarshal(standardConfigRolesSepoliaToml, &StandardConfigRolesSepolia); err != nil {
-		panic(fmt.Errorf("failed to unmarshal sepolia standard config roles: %w", err))
-	}
-	if err := toml.Unmarshal(standardConfigRolesBaseSepoliaToml, &StandardConfigRolesBaseSepolia); err != nil {
-		panic(fmt.Errorf("failed to unmarshal sepolia standard config roles: %w", err))
-	}
-	if err := toml.Unmarshal(standardConfigRolesBaseMainnetToml, &StandardConfigRolesBaseMainnet); err != nil {
 		panic(fmt.Errorf("failed to unmarshal sepolia standard config roles: %w", err))
 	}
 	if err := toml.Unmarshal(standardConfigRolesUnichainSepoliaToml, &StandardConfigRolesUnichainSepolia); err != nil {
