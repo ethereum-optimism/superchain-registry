@@ -18,9 +18,11 @@ import (
 // This test file tests the integrity of the standard versions files. However, it can't
 // live in the validation package because the validation package can't import Geth.
 
-var versionFn = w3.MustNewFunc("version()", "string")
-
-var implsFn = w3.MustNewFunc("implementations()", "(address superchainConfig,address protocolVersions,address l1ERC721Bridge,address optimismPortal,address systemConfig,address optimismMintableERC20Factory,address l1CrossDomainMessenger,address l1StandardBridge,address disputeGameFactory,address anchorStateRegistry,address delayedWeth,address mips)")
+var (
+	versionFn = w3.MustNewFunc("version()", "string")
+	implsFn   = w3.MustNewFunc("implementations()", "(address superchainConfig,address protocolVersions,address l1ERC721Bridge,address optimismPortal,address systemConfig,address optimismMintableERC20Factory,address l1CrossDomainMessenger,address l1StandardBridge,address disputeGameFactory,address anchorStateRegistry,address delayedWeth,address mips)")
+	oracleFn  = w3.MustNewFunc("oracle()", "address")
+)
 
 type versionChecker func(version validation.VersionConfig) bool
 
@@ -127,5 +129,9 @@ func testVersionIntegrity(t *testing.T, network string) {
 			require.NoError(t, w3Client.CallCtx(ctx, eth.CallFunc(address, versionFn).Returns(&contractVer)))
 			require.Equal(t, contractData.Version, contractVer, "invalid version for %s", field)
 		}
+
+		var oracleAddr common.Address
+		require.NoError(t, w3Client.CallCtx(ctx, eth.CallFunc(common.Address(*stdVer.Mips.Address), oracleFn).Returns(&oracleAddr)))
+		require.Equal(t, common.Address(*stdVer.PreimageOracle.Address), oracleAddr, "invalid oracle address")
 	}
 }
