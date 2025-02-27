@@ -435,6 +435,24 @@
     }
   },
   {
+    "name": "Unichain",
+    "identifier": "mainnet/unichain",
+    "chainId": 130,
+    "rpc": [
+      "https://mainnet.unichain.org"
+    ],
+    "explorers": [
+      "https://explorer.unichain.org"
+    ],
+    "superchainLevel": 1,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "World Chain",
     "identifier": "mainnet/worldchain",
     "chainId": 480,
