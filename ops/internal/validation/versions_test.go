@@ -24,8 +24,6 @@ var (
 	oracleFn  = w3.MustNewFunc("oracle()", "address")
 )
 
-type versionChecker func(version validation.VersionConfig) bool
-
 type opcmImpls struct {
 	SuperchainConfig             common.Address
 	ProtocolVersions             common.Address
