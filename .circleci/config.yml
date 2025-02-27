@@ -11,6 +11,7 @@ parameters:
 
 jobs:
   go-lint-test:
+    circleci_ip_ranges: true
     parameters:
       package:
         type: string
