@@ -51,10 +51,6 @@ var versionMappings = map[string]validation.Versions{
 
 func TestVersionsIntegrity(t *testing.T) {
 	for _, network := range []string{"sepolia", "mainnet"} {
-		if network == "mainnet" {
-			t.Skipf("mainnet temporarily skipped since it isn't deployed yet")
-		}
-
 		t.Run(network, func(t *testing.T) {
 			testVersionIntegrity(t, network)
 		})
