@@ -20,7 +20,7 @@ max_sequencer_drift = 1800
   holocene_time = 1738238400 # Thu 30 Jan 2025 12:00:00 UTC
 
 [optimism]
-  eip1559_elasticity = 10
+  eip1559_elasticity = 2
   eip1559_denominator = 50
   eip1559_denominator_canyon = 250
 
