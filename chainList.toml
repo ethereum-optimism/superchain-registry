@@ -320,7 +320,7 @@
   rpc = ["https://mainnet.unichain.org"]
   explorers = ["https://explorer.unichain.org"]
   superchain_level = 1
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -581,7 +581,7 @@
   rpc = ["https://sepolia.unichain.org"]
   explorers = ["https://sepolia.uniscan.xyz"]
   superchain_level = 1
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
