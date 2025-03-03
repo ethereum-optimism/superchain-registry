@@ -1,0 +1,70 @@
+name = "Settlus"
+public_rpc = "https://settlus-septestnet.g.alchemy.com/public"
+sequencer_rpc = "https://settlus-sep-testnet-sequencer.g.alchemy.com/"
+explorer = "sepolia.settlus.network"
+superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 5373
+batch_inbox_addr = "0x00b18C246d9b94634a54DcC2A2d258a048ab2227"
+block_time = 1
+seq_window_size = 3600
+max_sequencer_drift = 1800
+superchain = "sepolia"
+base_fee_vault_recipient = "0xC5019AC7B57Ae7918BC3430a92D92bCcD3079aB6"
+l1_fee_vault_recipient = "0xC5019AC7B57Ae7918BC3430a92D92bCcD3079aB6"
+sequencer_fee_vault_recipient = "0xC5019AC7B57Ae7918BC3430a92D92bCcD3079aB6"
+deployment_tx_hash = "0xf94d07731ad35e433f92e9fa0746a0cf678a78c6dc1b61ad27b9dca851479b7f"
+deployment_l1_contracts_version = "tag://op-contracts/v1.6.0"
+deployment_l2_contracts_version = "tag://op-contracts/v1.6.0"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1736459256
+  [genesis.l1]
+    hash = "0xd8c9f415fe06484e7713d1e08144a4d1b37e064813b6f3ca45c9d9a29a1f13db"
+    number = 7456555
+  [genesis.l2]
+    hash = "0xa055eed3718c2ed1f04692c707b7045a804505b5e5184a37143514ba9d14281e"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x26A1bABee918f55bfdDB002066C63678147B03A2"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
+    gasLimit = 60000000
+
+[roles]
+  SystemConfigOwner = "0xC5019AC7B57Ae7918BC3430a92D92bCcD3079aB6"
+  ProxyAdminOwner = "0xC5019AC7B57Ae7918BC3430a92D92bCcD3079aB6"
+  Guardian = "0x8C7E4A51acb17719D225bd17598B8a94B46c8767"
+  Challenger = "0xAC165b92E4f98D0Dfd9fB7d2aB474feE56B98A0d"
+  Proposer = "0x3Fb1cAa16477704bD679C5a883D9DbB1924F4Ee0"
+  UnsafeBlockSigner = "0xb1fed649e18588D081C5Ea4aE14b61836dd0062a"
+  BatchSubmitter = "0x26A1bABee918f55bfdDB002066C63678147B03A2"
+
+[addresses]
+  AddressManager = "0xed768f41dBe97D81D77316818c2802d322cE21Db"
+  L1CrossDomainMessengerProxy = "0xffAe0c2cf1547057CD0828e3B01aF11C266C1b3C"
+  L1ERC721BridgeProxy = "0xbD07617F0Ce47DB1cd51Eb6b9b5E7b3c109410F2"
+  L1StandardBridgeProxy = "0x1Fe9c3b11Ed334fC049aE9a92Ec290aA69C39267"
+  OptimismMintableERC20FactoryProxy = "0x71c23513fA05827e168b5A4dCa1f1C81A9a5EEf4"
+  OptimismPortalProxy = "0x55585368857DcC7E0F89475d28963977DB0b1Ee1"
+  SystemConfigProxy = "0x7f73514A7eC19f3F51E3c607D536560818dF4205"
+  ProxyAdmin = "0x4b339825002823Af8B6cA1Ecdf5F9D08cA1f584A"
+  SuperchainConfig = "0xC2Be75506d5724086DEB7245bd260Cc9753911Be"
+  AnchorStateRegistryProxy = "0xC31B23208e7F7f8c8bC2Ce6816cbB6867C026b1f"
+  DelayedWETHProxy = "0xe2a6eFaC27793D4cC9a14B3BF3089817cFA41AA9"
+  DisputeGameFactoryProxy = "0x017D15a6854CCAaa89c63d1A9fea8da45Ced97Cf"
+  PermissionedDisputeGame = "0xEb0d28F0474103480eCD393C8e0C64C003a4914e"
