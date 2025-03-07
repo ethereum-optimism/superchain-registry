@@ -1,5 +1,23 @@
 [
   {
+    "name": "Ancient8",
+    "identifier": "mainnet/ancient8",
+    "chainId": 888888888,
+    "rpc": [
+      "https://rpc.ancient8.gg"
+    ],
+    "explorers": [
+      "https://scan.ancient8.gg"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Automata Mainnet",
     "identifier": "mainnet/automata",
     "chainId": 65536,

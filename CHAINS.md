@@ -4,6 +4,7 @@
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
+| Ancient8 | ❌ | ✅ | https://scan.ancient8.gg | `https://rpc.ancient8.gg` | `https://rpc.ancient8.gg` |
 | Automata Mainnet | ❌ | ❌ | https://explorer.ata.network | `https://rpc.ata.network` | `https://automata-mainnet.alt.technology/` |
 | BOB | ❌ | ✅ | https://explorer.gobob.xyz | `https://rpc.gobob.xyz` | `https://rpc.gobob.xyz` |
 | Base | ❌ | ✅ | https://explorer.base.org | `https://mainnet.base.org` | `https://mainnet-sequencer.base.org` |
