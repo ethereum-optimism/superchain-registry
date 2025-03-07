@@ -10,6 +10,8 @@ fjord_time = 1715961600   # Fri May 17 2024 16:00:00 UTC
 granite_time = 1723046400 # Wed Aug 7 16:00:00 UTC 2024
 holocene_time = 1731682800 # Fri Nov 15 15:00:00 UTC 2024
 
+pectra_blob_schedule_time = 1742486400 # Thu Mar 20 16:00:00 UTC 2025
+
 [l1]
   chain_id = 11155111
   public_rpc = "https://ethereum-sepolia-rpc.publicnode.com"
