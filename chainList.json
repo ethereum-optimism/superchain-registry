@@ -525,6 +525,42 @@
     }
   },
   {
+    "name": "",
+    "identifier": "sepolia/aegir-0",
+    "chainId": 420110004,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "",
+    "identifier": "sepolia/aegir-1",
+    "chainId": 420110005,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Base Sepolia Testnet",
     "identifier": "sepolia/base",
     "chainId": 84532,

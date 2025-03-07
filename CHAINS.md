@@ -37,6 +37,8 @@
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
+|  | ❌ | ❌ |  | `` | `` |
+|  | ❌ | ❌ |  | `` | `` |
 | Base Sepolia Testnet | ❌ | ✅ | https://sepolia-explorer.base.org | `https://sepolia.base.org` | `https://sepolia-sequencer.base.org` |
 | Binary Sepolia | ❌ | ❌ | https://explorer.sepolia.thebinaryholdings.com | `https://rpc.testnet.thebinaryholdings.com` | `https://sequencer.rpc.bnry.testnet.zeeve.net` |
 | Creator Chain Testnet | ❌ | ✅ | https://explorer.creatorchain.io | `https://rpc.creatorchain.io` | `https://rpc.creatorchain.io` |

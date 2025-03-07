@@ -379,6 +379,32 @@
     chain = "mainnet"
 
 [[chains]]
+  name = ""
+  identifier = "sepolia/aegir-0"
+  chain_id = 420110004
+  rpc = [""]
+  explorers = [""]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = ""
+  identifier = "sepolia/aegir-1"
+  chain_id = 420110005
+  rpc = [""]
+  explorers = [""]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Base Sepolia Testnet"
   identifier = "sepolia/base"
   chain_id = 84532
