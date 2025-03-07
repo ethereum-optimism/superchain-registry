@@ -100,13 +100,14 @@ func (c Chain) ChainListEntry(superchain Superchain, shortName string) ChainList
 }
 
 type Hardforks struct {
-	CanyonTime   *HardforkTime `toml:"canyon_time"`
-	DeltaTime    *HardforkTime `toml:"delta_time"`
-	EcotoneTime  *HardforkTime `toml:"ecotone_time"`
-	FjordTime    *HardforkTime `toml:"fjord_time"`
-	GraniteTime  *HardforkTime `toml:"granite_time"`
-	HoloceneTime *HardforkTime `toml:"holocene_time"`
-	IsthmusTime  *HardforkTime `toml:"isthmus_time"`
+	CanyonTime             *HardforkTime `toml:"canyon_time"`
+	DeltaTime              *HardforkTime `toml:"delta_time"`
+	EcotoneTime            *HardforkTime `toml:"ecotone_time"`
+	FjordTime              *HardforkTime `toml:"fjord_time"`
+	GraniteTime            *HardforkTime `toml:"granite_time"`
+	HoloceneTime           *HardforkTime `toml:"holocene_time"`
+	PectraBlobScheduleTime *HardforkTime `toml:"pectra_blob_schedule_time,omitempty"`
+	IsthmusTime            *HardforkTime `toml:"isthmus_time"`
 }
 
 type Genesis struct {
