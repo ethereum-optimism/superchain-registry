@@ -19,6 +19,7 @@ max_sequencer_drift = 600
   fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   holocene_time = 1734559200 # Wed 18 Dec 2024 22:00:00 UTC
+  pectra_blob_schedule_time = 1742486400 # Thu 20 Mar 2025 16:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
