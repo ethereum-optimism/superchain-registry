@@ -26,6 +26,11 @@ var (
 		Required: true,
 		Value:    "newchain",
 	}
+	ChainID = &cli.Int64Flag{
+		Name:     "chain-id",
+		Usage:    "Override the chain ID from the state file.",
+		Required: false,
+	}
 )
 
 func main() {
@@ -35,6 +40,7 @@ func main() {
 		Flags: []cli.Flag{
 			StateFilename,
 			Shortname,
+			ChainID,
 		},
 		Action: action,
 	}
@@ -58,7 +64,14 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	output.WriteOK("inflating chain config")
-	cfg, err := manage.InflateChainConfig(&st)
+
+	var chainID uint64
+	if cliCtx.IsSet(ChainID.Name) {
+		chainID = uint64(cliCtx.Int64(ChainID.Name))
+		output.WriteStderr("overriding chain ID to %d", chainID)
+	}
+
+	cfg, err := manage.InflateChainConfig(&st, chainID)
 	if err != nil {
 		return fmt.Errorf("failed to inflate chain config: %w", err)
 	}

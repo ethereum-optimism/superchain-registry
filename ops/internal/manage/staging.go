@@ -15,12 +15,37 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
-	if len(st.AppliedIntent.Chains) != 1 {
-		return nil, errors.New("expected exactly one chain in state")
+func InflateChainConfig(st *state.State, overrideChainID ...uint64) (*config.StagedChain, error) {
+	if len(st.AppliedIntent.Chains) == 1 && len(overrideChainID) == 0 {
+		// If no chain ID is provided, pass in 0 to inflate the first chain
+		return inflateChainConfig(st, 0)
+	}
+	if len(st.AppliedIntent.Chains) > 1 && len(overrideChainID) > 0 {
+		return inflateChainConfig(st, overrideChainID[0])
 	}
 
+	// For now, we don't support multiple chains in a single state file
+	return nil, errors.New("multiple chains found but no chain ID provided")
+}
+
+func inflateChainConfig(st *state.State, overrideChainID ...uint64) (*config.StagedChain, error) {
+	// default to the first chain
 	chainIntent := st.AppliedIntent.Chains[0]
+
+	// If chain ID is provided, use it to find the correct chain
+	if len(overrideChainID) > 0 && overrideChainID[0] > 0 {
+		for _, chain := range st.AppliedIntent.Chains {
+			if chain.ID.Big().Uint64() == overrideChainID[0] {
+				chainIntent = chain
+				break
+			}
+		}
+		// If we couldn't find a chain with the provided chain ID, return an error
+		if chainIntent.ID.Big().Uint64() != overrideChainID[0] {
+			return nil, fmt.Errorf("chain ID %d not found in state file", overrideChainID[0])
+		}
+	}
+
 	chainID := chainIntent.ID
 	dc, err := inspect.DeployConfig(st, chainID)
 	if err != nil {
@@ -34,6 +59,7 @@ func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
 
 	cfg := new(config.StagedChain)
 	cfg.ChainID = chainID.Big().Uint64()
+
 	cfg.BatchInboxAddr = config.NewChecksummedAddress(dc.BatchInboxAddress)
 	cfg.BlockTime = dc.L2BlockTime
 	cfg.SeqWindowSize = dc.SequencerWindowSize
