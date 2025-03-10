@@ -23,6 +23,7 @@
 | Polynomial | ❌ | ✅ | https://polynomialscan.io | `https://rpc.polynomial.fi` | `https://rpc.polynomial.fi` |
 | RACE Mainnet | ❌ | ❌ | https://racescan.io/ | `https://racemainnet.io` | `https://racemainnet.io` |
 | Redstone | ❌ | ❌ | https://explorer.redstone.xyz | `https://rpc.redstonechain.com` | `https://rpc.redstonechain.com` |
+| Settlus Mainnet | ❌ | ❌ | mainnet.settlus.network | `https://settlus-mainnet.g.alchemy.com/public` | `https://settlus-mainnet-sequencer.g.alchemy.com/` |
 | Shape | ❌ | ❌ | https://shape-mainnet.explorer.alchemy.com/ | `https://mainnet.shape.network/` | `https://shape-mainnet-sequencer.g.alchemy.com` |
 | Soneium | ✅ | ✅ | https://soneium.blockscout.com/ | `https://rpc.soneium.org` | `https://rpc.soneium.org` |
 | Superseed | ❌ | ❌ | https://explorer.superseed.xyz | `https://mainnet.superseed.xyz` | `https://mainnet.superseed.xyz` |
@@ -56,6 +57,7 @@
 | World Chain Sepolia Testnet | ❌ | ❌ | https://worldchain-sepolia.explorer.alchemy.com/ | `https://worldchain-sepolia.g.alchemy.com/public` | `https://worldchain-sepolia-sequencer.g.alchemy.com` |
 | Zora Sepolia Testnet | ✅ | ✅ | https://sepolia.explorer.zora.energy | `https://sepolia.rpc.zora.energy` | `https://sepolia.rpc.zora.energy` |
 | arena-z-testnet | ❌ | ❌ | https://arena-z.blockscout.com | `https://rpc.arena-z.t.raas.gelato.cloud` | `https://rpc.arena-z.t.raas.gelato.cloud` |
+| testchain | ❌ | ❌ |  | `` | `` |
 ### sepolia-dev-0
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
