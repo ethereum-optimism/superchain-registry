@@ -1,5 +1,45 @@
 latest_stable = "1.4.0"
-latest_rc = "1.4.1-rc.2"
+latest_rc = "1.5.0-rc.4"
+
+[[prestates."1.5.0-rc.4"]]
+type = "cannon32"
+hash = "0x0354eee87a1775d96afee8977ef6d5d6bd3612b256170952a01bf1051610ee01"
+
+[[prestates."1.5.0-rc.4"]]
+type = "cannon64"
+hash = "0x03ee2917da962ec266b091f4b62121dc9682bb0db534633707325339f99ee405"
+
+[[prestates."1.5.0-rc.3"]]
+type = "cannon32"
+hash = "0x039facea52b20c605c05efb0a33560a92de7074218998f75bcdf61e8989cb5d9"
+
+[[prestates."1.5.0-rc.3"]]
+type = "cannon64"
+hash = "0x039970872142f48b189d18dcbc03a3737338d098b0101713dc2d6710f9deb5ef"
+
+[[prestates."1.5.0-rc.2"]]
+type = "cannon32"
+hash = "0x035ac388b5cb22acf52a2063cfde108d09b1888655d21f02f595f9c3ea6cbdcd"
+
+[[prestates."1.5.0-rc.2"]]
+type = "cannon64"
+hash = "0x03a7d967025dc434a9ca65154acdb88a7b658147b9b049f0b2f5ecfb9179b0fe"
+
+[[prestates."1.5.0-rc.1"]]
+type = "cannon32"
+hash = "0x03dfa3b3ac66e8fae9f338824237ebacff616df928cf7dada0e14be2531bc1f4"
+
+[[prestates."1.5.0-rc.1"]]
+type = "cannon64"
+hash = "0x03f83792f653160f3274b0888e998077a27e1f74cb35bcb20d86021e769340aa"
+
+[[prestates."1.4.1-rc.3"]]
+type = "cannon64"
+hash = "0x03d7f817d7bb1321533aeeee5e0f2031cc69d167c4a17bf2816b4cc8b1be4077"
+
+[[prestates."1.4.1-rc.3"]]
+type = "cannon32"
+hash = "0x03ea123151750b03569369130a73c390b0b5e10c722ab42d762d116318325bb7"
 
 [[prestates."1.4.1-rc.2"]]
 type = "cannon64"
@@ -24,6 +64,14 @@ hash = "0x03b7eaa4e3cbce90381921a4b48008f4769871d64f93d113fcadca08ecee503b"
 [[prestates."1.4.0"]]
 type = "cannon32"
 hash = "0x03f89406817db1ed7fd8b31e13300444652cdb0b9c509a674de43483b2f83568"
+
+[[prestates."1.4.0-unichain-mainnet"]]
+type = "cannon64"
+hash = "0x03d5baff435a6828cfa13679e7ef34ac73d4d674550426c7d9a8005deb6a6db3"
+
+[[prestates."1.4.0-unichain-mainnet"]]
+type = "cannon32"
+hash = "0x0336751a224445089ba5456c8028376a0faf2bafa81d35f43fab8730258cdf37"
 
 [[prestates."1.4.0-rc.3"]]
 type = "cannon64"

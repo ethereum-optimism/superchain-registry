@@ -463,7 +463,7 @@
       "https://explorer.unichain.org"
     ],
     "superchainLevel": 1,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -824,7 +824,7 @@
       "https://sepolia.uniscan.xyz"
     ],
     "superchainLevel": 1,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
