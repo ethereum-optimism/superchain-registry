@@ -575,6 +575,19 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Settlus Sepolia"
+  identifier = "sepolia/settlus-sepolia"
+  chain_id = 5373
+  rpc = ["https://settlus-septestnet.g.alchemy.com/public"]
+  explorers = ["sepolia.settlus.network"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Shape Sepolia Testnet"
   identifier = "sepolia/shape"
   chain_id = 11011
