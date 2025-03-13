@@ -58,7 +58,6 @@
 | World Chain Sepolia Testnet | ❌ | ❌ | https://worldchain-sepolia.explorer.alchemy.com/ | `https://worldchain-sepolia.g.alchemy.com/public` | `https://worldchain-sepolia-sequencer.g.alchemy.com` |
 | Zora Sepolia Testnet | ✅ | ✅ | https://sepolia.explorer.zora.energy | `https://sepolia.rpc.zora.energy` | `https://sepolia.rpc.zora.energy` |
 | arena-z-testnet | ❌ | ❌ | https://arena-z.blockscout.com | `https://rpc.arena-z.t.raas.gelato.cloud` | `https://rpc.arena-z.t.raas.gelato.cloud` |
-| testchain | ❌ | ❌ |  | `` | `` |
 ### sepolia-dev-0
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC

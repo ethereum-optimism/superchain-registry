@@ -904,24 +904,6 @@
     }
   },
   {
-    "name": "testchain",
-    "identifier": "sepolia/testchain",
-    "chainId": 900,
-    "rpc": [
-      ""
-    ],
-    "explorers": [
-      ""
-    ],
-    "superchainLevel": 0,
-    "governedByOptimism": false,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
-    }
-  },
-  {
     "name": "Base devnet 0",
     "identifier": "sepolia-dev-0/base-devnet-0",
     "chainId": 11763072,
