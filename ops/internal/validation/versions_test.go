@@ -49,83 +49,88 @@ var versionMappings = map[string]validation.Versions{
 	"mainnet": validation.StandardVersionsMainnet,
 }
 
+var versionsToCheck = []validation.Semver{
+	"op-contracts/v2.0.0-rc.1",
+	"op-contracts/v3.0.0-rc.1",
+}
+
 func TestVersionsIntegrity(t *testing.T) {
 	for _, network := range []string{"sepolia", "mainnet"} {
 		t.Run(network, func(t *testing.T) {
-			testVersionIntegrity(t, network)
+			rpcURL := rpcURLs[network]
+			require.NotEmpty(t, rpcURL)
+
+			versions := versionMappings[network]
+			require.NotEmpty(t, versions)
+
+			rpcClient, err := rpc.Dial(rpcURL)
+			require.NoError(t, err)
+
+			w3Client := w3.NewClient(rpcClient)
+
+			for _, vc := range versionsToCheck {
+				t.Run(string(vc), func(t *testing.T) {
+					testVersionIntegrity(t, versions[vc], w3Client)
+				})
+			}
 		})
 	}
 }
 
-func testVersionIntegrity(t *testing.T, network string) {
-	rpcURL := rpcURLs[network]
-	require.NotEmpty(t, rpcURL)
-
-	versions := versionMappings[network]
-	require.NotEmpty(t, versions)
-
-	rpcClient, err := rpc.Dial(rpcURL)
-	require.NoError(t, err)
-
-	w3Client := w3.NewClient(rpcClient)
-
+func testVersionIntegrity(t *testing.T, stdVer validation.VersionConfig, w3Client *w3.Client) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	for _, semver := range []validation.Semver{"op-contracts/v2.0.0-rc.1"} {
-		stdVer, ok := versions[semver]
-		require.True(t, ok)
-		require.NotNil(t, stdVer.OPContractsManager)
-		opcmAddr := stdVer.OPContractsManager.Address
-		require.NotNil(t, opcmAddr)
+	require.NotNil(t, stdVer.OPContractsManager)
+	opcmAddr := stdVer.OPContractsManager.Address
+	require.NotNil(t, opcmAddr)
 
-		var impls opcmImpls
-		require.NoError(t, w3Client.CallCtx(
-			ctx,
-			eth.CallFunc(common.Address(*opcmAddr), implsFn).Returns(&impls),
-		))
+	var impls opcmImpls
+	require.NoError(t, w3Client.CallCtx(
+		ctx,
+		eth.CallFunc(common.Address(*opcmAddr), implsFn).Returns(&impls),
+	))
 
-		vValue := reflect.ValueOf(&stdVer).Elem()
-		implsValue := reflect.ValueOf(impls)
+	vValue := reflect.ValueOf(&stdVer).Elem()
+	implsValue := reflect.ValueOf(impls)
 
-		fields := []string{
-			"SuperchainConfig",
-			"ProtocolVersions",
-			"L1ERC721Bridge",
-			"OptimismPortal",
-			"SystemConfig",
-			"OptimismMintableERC20Factory",
-			"L1CrossDomainMessenger",
-			"L1StandardBridge",
-			"DisputeGameFactory",
-			"AnchorStateRegistry",
-			"DelayedWeth",
-			"Mips",
-		}
-
-		for _, field := range fields {
-			implsField := implsValue.FieldByName(field)
-			require.True(t, implsField.IsValid())
-
-			address := implsField.Interface().(common.Address)
-			contractData := vValue.FieldByName(field).Interface().(*validation.ContractData)
-			require.NotNil(t, contractData)
-
-			if contractData.Address != nil {
-				require.Equal(t, common.Address(*contractData.Address), address, "invalid address for %s", field)
-			} else if contractData.ImplementationAddress != nil {
-				require.Equal(t, common.Address(*contractData.ImplementationAddress), address, "invalid implementation address for %s", field)
-			} else {
-				require.Empty(t, address, "address %s should be empty", field)
-			}
-
-			var contractVer string
-			require.NoError(t, w3Client.CallCtx(ctx, eth.CallFunc(address, versionFn).Returns(&contractVer)))
-			require.Equal(t, contractData.Version, contractVer, "invalid version for %s", field)
-		}
-
-		var oracleAddr common.Address
-		require.NoError(t, w3Client.CallCtx(ctx, eth.CallFunc(common.Address(*stdVer.Mips.Address), oracleFn).Returns(&oracleAddr)))
-		require.Equal(t, common.Address(*stdVer.PreimageOracle.Address), oracleAddr, "invalid oracle address")
+	fields := []string{
+		"SuperchainConfig",
+		"ProtocolVersions",
+		"L1ERC721Bridge",
+		"OptimismPortal",
+		"SystemConfig",
+		"OptimismMintableERC20Factory",
+		"L1CrossDomainMessenger",
+		"L1StandardBridge",
+		"DisputeGameFactory",
+		"AnchorStateRegistry",
+		"DelayedWeth",
+		"Mips",
 	}
+
+	for _, field := range fields {
+		implsField := implsValue.FieldByName(field)
+		require.True(t, implsField.IsValid())
+
+		address := implsField.Interface().(common.Address)
+		contractData := vValue.FieldByName(field).Interface().(*validation.ContractData)
+		require.NotNil(t, contractData)
+
+		if contractData.Address != nil {
+			require.Equal(t, common.Address(*contractData.Address), address, "invalid address for %s", field)
+		} else if contractData.ImplementationAddress != nil {
+			require.Equal(t, common.Address(*contractData.ImplementationAddress), address, "invalid implementation address for %s", field)
+		} else {
+			require.Empty(t, address, "address %s should be empty", field)
+		}
+
+		var contractVer string
+		require.NoError(t, w3Client.CallCtx(ctx, eth.CallFunc(address, versionFn).Returns(&contractVer)))
+		require.Equal(t, contractData.Version, contractVer, "invalid version for %s", field)
+	}
+
+	var oracleAddr common.Address
+	require.NoError(t, w3Client.CallCtx(ctx, eth.CallFunc(common.Address(*stdVer.Mips.Address), oracleFn).Returns(&oracleAddr)))
+	require.Equal(t, common.Address(*stdVer.PreimageOracle.Address), oracleAddr, "invalid oracle address")
 }
