@@ -52,6 +52,7 @@ var versionMappings = map[string]validation.Versions{
 var versionsToCheck = []validation.Semver{
 	"op-contracts/v2.0.0-rc.1",
 	"op-contracts/v3.0.0-rc.1",
+	"op-contracts/v3.0.0-rc.2",
 }
 
 func TestVersionsIntegrity(t *testing.T) {
@@ -133,4 +134,13 @@ func testVersionIntegrity(t *testing.T, stdVer validation.VersionConfig, w3Clien
 	var oracleAddr common.Address
 	require.NoError(t, w3Client.CallCtx(ctx, eth.CallFunc(common.Address(*stdVer.Mips.Address), oracleFn).Returns(&oracleAddr)))
 	require.Equal(t, common.Address(*stdVer.PreimageOracle.Address), oracleAddr, "invalid oracle address")
+}
+
+// TestV300RCEquality tests that the versions for v3.0.0-rc.1 and v3.0.0-rc.2 are equal.
+// This is a sanity check to make sure that the L1 deployments did not change between these
+// RCs.
+func TestV300RCEquality(t *testing.T) {
+	for _, versions := range []validation.Versions{validation.StandardVersionsMainnet, validation.StandardVersionsSepolia} {
+		require.Equal(t, versions["op-contracts/v3.0.0-rc.1"], versions["op-contracts/v3.0.0-rc.2"])
+	}
 }
