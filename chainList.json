@@ -109,6 +109,24 @@
     }
   },
   {
+    "name": "Fraxtal",
+    "identifier": "mainnet/fraxtal",
+    "chainId": 252,
+    "rpc": [
+      "https://rpc.frax.com"
+    ],
+    "explorers": [
+      "https://fraxscan.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Funki",
     "identifier": "mainnet/funki",
     "chainId": 33979,
