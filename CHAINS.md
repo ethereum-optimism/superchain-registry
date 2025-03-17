@@ -24,6 +24,7 @@
 | RACE Mainnet | ❌ | ❌ | https://racescan.io/ | `https://racemainnet.io` | `https://racemainnet.io` |
 | Redstone | ❌ | ❌ | https://explorer.redstone.xyz | `https://rpc.redstonechain.com` | `https://rpc.redstonechain.com` |
 | Shape | ❌ | ❌ | https://shape-mainnet.explorer.alchemy.com/ | `https://mainnet.shape.network/` | `https://shape-mainnet-sequencer.g.alchemy.com` |
+| SnaxChain | ❌ | ✅ | https://explorer.snaxchain.io | `https://mainnet.snaxchain.io` | `https://mainnet.snaxchain.io` |
 | Soneium | ✅ | ✅ | https://soneium.blockscout.com/ | `https://rpc.soneium.org` | `https://rpc.soneium.org` |
 | Superseed | ❌ | ❌ | https://explorer.superseed.xyz | `https://mainnet.superseed.xyz` | `https://mainnet.superseed.xyz` |
 | Swan Chain Mainnet | ❌ | ❌ | https://swanscan.io | `https://mainnet-rpc.swanchain.org` | `https://sequencer-mainnet.swanchain.org` |
@@ -50,6 +51,7 @@
 | OP Sepolia Testnet | ✅ | ✅ | https://sepolia-optimistic.etherscan.io | `https://sepolia.optimism.io` | `https://sepolia-sequencer.optimism.io` |
 | Pivotal Sepolia | ❌ | ❌ | https://sepolia.pivotalscan.org/ | `https://sepolia.pivotalprotocol.com/` | `https://sepolia.pivotalprotocol.com/` |
 | RACE Testnet | ❌ | ❌ | https://testnet.racescan.io/ | `https://racetestnet.io` | `https://racetestnet.io` |
+| Settlus Sepolia | ❌ | ❌ | sepolia.settlus.network | `https://settlus-septestnet.g.alchemy.com/public` | `https://settlus-sep-testnet-sequencer.g.alchemy.com/` |
 | Shape Sepolia Testnet | ❌ | ❌ | https://shape-sepolia.explorer.alchemy.com/ | `https://sepolia.shape.network/` | `https://shape-sepolia-sequencer.g.alchemy.com` |
 | Soneium Testnet Minato | ✅ | ✅ | https://soneium-minato.blockscout.com/ | `https://rpc.minato.soneium.org` | `https://rpc.minato.soneium.org` |
 | Unichain Sepolia Testnet | ✅ | ✅ | https://sepolia.uniscan.xyz | `https://sepolia.unichain.org` | `https://sepolia-sequencer.unichain.org` |

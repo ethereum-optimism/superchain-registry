@@ -262,6 +262,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "SnaxChain"
+  identifier = "mainnet/snax"
+  chain_id = 2192
+  rpc = ["https://mainnet.snaxchain.io"]
+  explorers = ["https://explorer.snaxchain.io"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Soneium"
   identifier = "mainnet/soneium"
   chain_id = 1868
@@ -541,6 +554,19 @@
   chain_id = 6806
   rpc = ["https://racetestnet.io"]
   explorers = ["https://testnet.racescan.io/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Settlus Sepolia"
+  identifier = "sepolia/settlus-sepolia"
+  chain_id = 5373
+  rpc = ["https://settlus-septestnet.g.alchemy.com/public"]
+  explorers = ["sepolia.settlus.network"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
