@@ -15,7 +15,7 @@ At the time of writing, this is implemented for
 * [op-geth](https://docs.optimism.io/builders/node-operators/configuration/base-config#initialization-via-network-flags)
 * [op-node](https://docs.optimism.io/builders/node-operators/configuration/base-config#configuring-op-node)
 
-> [!NOTE}
+> [!NOTE]
 > Since version 2.0 of the superchain registry, the inherited hardfork activation times are applied directly to each chain's individual chain config TOML file. What you see is what you get (unlike in previous iterations of the registry, where the inheritance was applied "magically" by some Go bindings.
 
 The OPStack components above load configuration from the superchain registry. This implies some more conditions which need to hold for a chain to receive the superchain-wide hardfork activation:
