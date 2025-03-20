@@ -15,9 +15,12 @@ At the time of writing, this is implemented for
 * [op-geth](https://docs.optimism.io/builders/node-operators/configuration/base-config#initialization-via-network-flags)
 * [op-node](https://docs.optimism.io/builders/node-operators/configuration/base-config#configuring-op-node)
 
-These components load configuration from the superchain registry. This implies some more conditions which need to hold for a chain to receive the superchain-wide hardfork activation:
+> [!NOTE}
+> Since version 2.0 of the superchain registry, the inherited hardfork activation times are applied directly to each chain's individual chain config TOML file. What you see is what you get (unlike in previous iterations of the registry, where the inheritance was applied "magically" by some Go bindings.
+
+The OPStack components above load configuration from the superchain registry. This implies some more conditions which need to hold for a chain to receive the superchain-wide hardfork activation:
 * They must be running the above OP Stack software which supports this feature, with the relevant initialization invocations to trigger it
-* The software must be up-to-date enough to embed the latest superchain-wide default hardfork activation times as well as the chain's individual configuration file (complete with `superchain_time` field).
+* The software must be up-to-date enough to embed the chain's latest configuration file.
 
 > [!CAUTION]
 > If (for example) OP Stack components are initialized without the network flags, this will require manual coordination to pass hardfork activation times into the command line invocation of the relevant commands.
