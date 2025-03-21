@@ -1,7 +1,6 @@
 name = "Mainnet"
 protocol_versions_addr = "0x8062AbC286f5e7D9428a0Ccb9AbD71e50d93b935"
 superchain_config_addr = "0x95703e0982140D16f8ebA6d158FccEde42f04a4C"
-op_contracts_manager_proxy_addr = "0x18CeC91779995AD14c880e4095456B9147160790"
 
 [hardforks]
 canyon_time =  1704992401 # Thu 11 Jan 2024 17:00:01 UTC
