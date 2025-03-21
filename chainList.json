@@ -1,22 +1,21 @@
 [
   {
-    "name": "Automata Mainnet",
-    "identifier": "mainnet/automata",
-    "chainId": 65536,
+    "name": "Base",
+    "identifier": "mainnet/base",
+    "chainId": 8453,
     "rpc": [
-      "https://rpc.ata.network"
+      "https://mainnet.base.org"
     ],
     "explorers": [
-      "https://explorer.ata.network"
+      "https://explorer.base.org"
     ],
-    "superchainLevel": 0,
+    "superchainLevel": 1,
     "governedByOptimism": false,
-    "dataAvailabilityType": "alt-da",
+    "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"
-    },
-    "gasPayingToken": "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
+    }
   },
   {
     "name": "BOB",
@@ -37,14 +36,14 @@
     }
   },
   {
-    "name": "Base",
-    "identifier": "mainnet/base",
-    "chainId": 8453,
+    "name": "Binary Mainnet",
+    "identifier": "mainnet/tbn",
+    "chainId": 624,
     "rpc": [
-      "https://mainnet.base.org"
+      "https://rpc.zero.thebinaryholdings.com"
     ],
     "explorers": [
-      "https://explorer.base.org"
+      "https://explorer.thebinaryholdings.com"
     ],
     "superchainLevel": 1,
     "governedByOptimism": false,
@@ -52,7 +51,8 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
-    }
+    },
+    "gasPayingToken": "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
   },
   {
     "name": "Binary Mainnet",
@@ -540,6 +540,42 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Camp Network Testnet V2",
+    "identifier": "sepolia/CampV2",
+    "chainId": 325000,
+    "rpc": [
+      "https://rpc-campnetwork.xyz"
+    ],
+    "explorers": [
+      "https://camp-network-testnet.blockscout.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
+    "name": "arena-z-testnet",
+    "identifier": "sepolia/arena-z-testnet",
+    "chainId": 9897,
+    "rpc": [
+      "https://rpc.arena-z.t.raas.gelato.cloud"
+    ],
+    "explorers": [
+      "https://arena-z.blockscout.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
     }
   },
   {
