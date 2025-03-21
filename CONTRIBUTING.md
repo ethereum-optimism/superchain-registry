@@ -46,8 +46,8 @@ l1:
   public_rpc: https://ethereum-goerli-rpc.allthatnode.com
   explorer: https://goerli.etherscan.io
 
-protocol_versions_addr: "0x79add5713b383daa0a138d3c4780c7a1804a8090"
-superchain_config_addr: "0xc2be75506d5724086deb7245bd260cc9753911be"
+protocol_versions_addr: "0x37E15e4d6DFFa9e5E320Ee1eC036922E563CB76C"
+superchain_config_addr: "0x4da82a327773965b8d4D85Fa3dB8249b387458E7"
 EOF
 ```
 
