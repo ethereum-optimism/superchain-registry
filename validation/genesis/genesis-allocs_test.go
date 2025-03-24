@@ -180,8 +180,8 @@ func testGenesisAllocs(t *testing.T, chain *ChainConfig) {
 	}
 
 	g, err := core.LoadOPStackGenesis(chainId)
-	removeEmptyStorageSlots(g.Alloc, t)
 	require.NoError(t, err)
+	removeEmptyStorageSlots(g.Alloc, t)
 
 	if chainId == uint64(1301) {
 		delete(g.Alloc, common.HexToAddress("0x1f98431c8ad98523631ae4a59f267346ea31f984"))
