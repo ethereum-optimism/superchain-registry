@@ -82,9 +82,17 @@ func testVersionIntegrity(t *testing.T, stdVer validation.VersionConfig, w3Clien
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
+	getVersion := func(address common.Address) string {
+		var contractVer string
+		require.NoError(t, w3Client.CallCtx(ctx, eth.CallFunc(address, versionFn).Returns(&contractVer)))
+		return contractVer
+	}
+
 	require.NotNil(t, stdVer.OPContractsManager)
 	opcmAddr := stdVer.OPContractsManager.Address
 	require.NotNil(t, opcmAddr)
+
+	require.Equal(t, stdVer.OPContractsManager.Version, getVersion(common.Address(*opcmAddr)))
 
 	var impls opcmImpls
 	require.NoError(t, w3Client.CallCtx(
@@ -112,7 +120,7 @@ func testVersionIntegrity(t *testing.T, stdVer validation.VersionConfig, w3Clien
 
 	for _, field := range fields {
 		implsField := implsValue.FieldByName(field)
-		require.True(t, implsField.IsValid())
+		require.True(t, implsField.IsValid(), "field %s not found", field)
 
 		address := implsField.Interface().(common.Address)
 		contractData := vValue.FieldByName(field).Interface().(*validation.ContractData)
@@ -126,8 +134,7 @@ func testVersionIntegrity(t *testing.T, stdVer validation.VersionConfig, w3Clien
 			require.Empty(t, address, "address %s should be empty", field)
 		}
 
-		var contractVer string
-		require.NoError(t, w3Client.CallCtx(ctx, eth.CallFunc(address, versionFn).Returns(&contractVer)))
+		contractVer := getVersion(address)
 		require.Equal(t, contractData.Version, contractVer, "invalid version for %s", field)
 	}
 
