@@ -51,7 +51,9 @@ type GasPriceOracleParams struct {
 }
 
 type SystemConfigParams struct {
-	GasLimit Range `toml:"gas_limit"`
+	GasLimit            Range `toml:"gas_limit"`
+	OperatorFeeScalar   Range `toml:"operator_fee_scalar"`
+	OperatorFeeConstant Range `toml:"operator_fee_constant"`
 }
 
 type FDGParams struct {

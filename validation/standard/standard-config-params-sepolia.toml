@@ -29,6 +29,8 @@ base_fee_scalar = [0, 10_000_000]
 
 [system_config]
 gas_limit = [1000, 60_000_000]
+operator_fee_scalar = [0, 0]
+operator_fee_constant = [0, 0]
 
 [proofs.permissioned]
 game_type = 1
