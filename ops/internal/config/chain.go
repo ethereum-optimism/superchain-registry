@@ -145,34 +145,35 @@ type Optimism struct {
 }
 
 type Roles struct {
-	SystemConfigOwner *ChecksummedAddress `json:"SystemConfigOwner" toml:"SystemConfigOwner"`
-	ProxyAdminOwner   *ChecksummedAddress `json:"ProxyAdminOwner" toml:"ProxyAdminOwner"`
-	Guardian          *ChecksummedAddress `json:"Guardian" toml:"Guardian"`
-	Challenger        *ChecksummedAddress `json:"Challenger" toml:"Challenger"`
-	Proposer          *ChecksummedAddress `json:"Proposer,omitempty" toml:"Proposer,omitempty"`
-	UnsafeBlockSigner *ChecksummedAddress `json:"UnsafeBlockSigner,omitempty" toml:"UnsafeBlockSigner,omitempty"`
-	BatchSubmitter    *ChecksummedAddress `json:"BatchSubmitter" toml:"BatchSubmitter"`
+	SystemConfigOwner      *ChecksummedAddress `json:"SystemConfigOwner" toml:"SystemConfigOwner"`
+	OpChainProxyAdminOwner *ChecksummedAddress `json:"OpChainProxyAdminOwner" toml:"OpChainProxyAdminOwner"`
+	Guardian               *ChecksummedAddress `json:"Guardian" toml:"Guardian"`
+	Challenger             *ChecksummedAddress `json:"Challenger,omitempty" toml:"Challenger,omitempty"`
+	Proposer               *ChecksummedAddress `json:"Proposer,omitempty" toml:"Proposer,omitempty"`
+	UnsafeBlockSigner      *ChecksummedAddress `json:"UnsafeBlockSigner,omitempty" toml:"UnsafeBlockSigner,omitempty"`
+	BatchSubmitter         *ChecksummedAddress `json:"BatchSubmitter" toml:"BatchSubmitter"`
 }
 
 type Addresses struct {
-	AddressManager                    *ChecksummedAddress `toml:"AddressManager,omitempty" json:"AddressManager,omitempty"`
-	L1CrossDomainMessengerProxy       *ChecksummedAddress `toml:"L1CrossDomainMessengerProxy,omitempty" json:"L1CrossDomainMessengerProxy,omitempty"`
-	L1ERC721BridgeProxy               *ChecksummedAddress `toml:"L1ERC721BridgeProxy,omitempty" json:"L1ERC721BridgeProxy,omitempty"`
-	L1StandardBridgeProxy             *ChecksummedAddress `toml:"L1StandardBridgeProxy,omitempty" json:"L1StandardBridgeProxy,omitempty"`
-	L2OutputOracleProxy               *ChecksummedAddress `toml:"L2OutputOracleProxy,omitempty" json:"L2OutputOracleProxy,omitempty"`
-	OptimismMintableERC20FactoryProxy *ChecksummedAddress `toml:"OptimismMintableERC20FactoryProxy,omitempty" json:"OptimismMintableERC20FactoryProxy,omitempty"`
-	OptimismPortalProxy               *ChecksummedAddress `toml:"OptimismPortalProxy,omitempty" json:"OptimismPortalProxy,omitempty"`
-	SystemConfigProxy                 *ChecksummedAddress `toml:"SystemConfigProxy,omitempty" json:"SystemConfigProxy,omitempty"`
-	ProxyAdmin                        *ChecksummedAddress `toml:"ProxyAdmin,omitempty" json:"ProxyAdmin,omitempty"`
-	SuperchainConfig                  *ChecksummedAddress `toml:"SuperchainConfig,omitempty" json:"SuperchainConfig,omitempty"`
-	AnchorStateRegistryProxy          *ChecksummedAddress `toml:"AnchorStateRegistryProxy,omitempty" json:"AnchorStateRegistryProxy,omitempty"`
-	DelayedWETHProxy                  *ChecksummedAddress `toml:"DelayedWETHProxy,omitempty" json:"DelayedWETHProxy,omitempty"`
-	DisputeGameFactoryProxy           *ChecksummedAddress `toml:"DisputeGameFactoryProxy,omitempty" json:"DisputeGameFactoryProxy,omitempty"`
-	FaultDisputeGame                  *ChecksummedAddress `toml:"FaultDisputeGame,omitempty" json:"FaultDisputeGame,omitempty"`
-	MIPS                              *ChecksummedAddress `toml:"MIPS,omitempty" json:"MIPS,omitempty"`
-	PermissionedDisputeGame           *ChecksummedAddress `toml:"PermissionedDisputeGame,omitempty" json:"PermissionedDisputeGame,omitempty"`
-	PreimageOracle                    *ChecksummedAddress `toml:"PreimageOracle,omitempty" json:"PreimageOracle,omitempty"`
-	DAChallengeAddress                *ChecksummedAddress `toml:"DAChallengeAddress,omitempty" json:"DAChallengeAddress,omitempty"`
+	AddressManager                     *ChecksummedAddress `toml:"AddressManager,omitempty" json:"AddressManager,omitempty"`
+	L1CrossDomainMessengerProxy        *ChecksummedAddress `toml:"L1CrossDomainMessengerProxy,omitempty" json:"L1CrossDomainMessengerProxy,omitempty"`
+	L1ERC721BridgeProxy                *ChecksummedAddress `toml:"L1ERC721BridgeProxy,omitempty" json:"L1ERC721BridgeProxy,omitempty"`
+	L1StandardBridgeProxy              *ChecksummedAddress `toml:"L1StandardBridgeProxy,omitempty" json:"L1StandardBridgeProxy,omitempty"`
+	L2OutputOracleProxy                *ChecksummedAddress `toml:"L2OutputOracleProxy,omitempty" json:"L2OutputOracleProxy,omitempty"`
+	OptimismMintableERC20FactoryProxy  *ChecksummedAddress `toml:"OptimismMintableERC20FactoryProxy,omitempty" json:"OptimismMintableERC20FactoryProxy,omitempty"`
+	OptimismPortalProxy                *ChecksummedAddress `toml:"OptimismPortalProxy,omitempty" json:"OptimismPortalProxy,omitempty"`
+	SystemConfigProxy                  *ChecksummedAddress `toml:"SystemConfigProxy,omitempty" json:"SystemConfigProxy,omitempty"`
+	OpChainProxyAdmin                  *ChecksummedAddress `toml:"OpChainProxyAdmin,omitempty" json:"OpChainProxyAdmin,omitempty"`
+	SuperchainConfig                   *ChecksummedAddress `toml:"SuperchainConfig,omitempty" json:"SuperchainConfig,omitempty"`
+	AnchorStateRegistryProxy           *ChecksummedAddress `toml:"AnchorStateRegistryProxy,omitempty" json:"AnchorStateRegistryProxy,omitempty"`
+	DelayedWETHPermissionedGameProxy   *ChecksummedAddress `toml:"DelayedWETHPermissionedGameProxy,omitempty" json:"DelayedWETHPermissionedGameProxy,omitempty"`
+	DelayedWETHPermissionlessGameProxy *ChecksummedAddress `toml:"DelayedWETHPermissionlessGameProxy,omitempty" json:"DelayedWETHPermissionlessGameProxy,omitempty"`
+	DisputeGameFactoryProxy            *ChecksummedAddress `toml:"DisputeGameFactoryProxy,omitempty" json:"DisputeGameFactoryProxy,omitempty"`
+	FaultDisputeGame                   *ChecksummedAddress `toml:"FaultDisputeGame,omitempty" json:"FaultDisputeGame,omitempty"`
+	MIPS                               *ChecksummedAddress `toml:"MIPS,omitempty" json:"MIPS,omitempty"`
+	PermissionedDisputeGame            *ChecksummedAddress `toml:"PermissionedDisputeGame,omitempty" json:"PermissionedDisputeGame,omitempty"`
+	PreimageOracle                     *ChecksummedAddress `toml:"PreimageOracle,omitempty" json:"PreimageOracle,omitempty"`
+	DAChallengeAddress                 *ChecksummedAddress `toml:"DAChallengeAddress,omitempty" json:"DAChallengeAddress,omitempty"`
 }
 
 type AddressesJSON jsonutil.LazySortedJsonMap[string, *AddressesWithRoles]
@@ -183,7 +184,7 @@ type AddressesWithRoles struct {
 }
 
 func (a AddressesWithRoles) MarshalJSON() ([]byte, error) {
-	// Create a map to hold all fields
+	// Create a map to hold fields that won't be omitted
 	allFields := make(map[string]*ChecksummedAddress)
 
 	for _, embed := range []any{a.Addresses, a.Roles} {
@@ -203,11 +204,25 @@ func (a AddressesWithRoles) MarshalJSON() ([]byte, error) {
 				omitEmpty = tagSplit[1] == "omitempty"
 			}
 
-			if !omitEmpty && field.IsNil() {
-				allFields[fieldName] = nil
-			} else if !field.IsNil() {
-				allFields[fieldName] = field.Interface().(*ChecksummedAddress)
+			// Check for nil fields
+			if field.IsNil() {
+				if !omitEmpty {
+					allFields[fieldName] = nil
+				}
+				continue
 			}
+
+			// Check for zero addresses
+			addrPtr := field.Interface().(*ChecksummedAddress)
+			if common.Address(*addrPtr) == (common.Address{}) {
+				if !omitEmpty {
+					allFields[fieldName] = nil
+				}
+				continue
+			}
+
+			// Always include non-nil, non-zero addresses
+			allFields[fieldName] = addrPtr
 		}
 	}
 

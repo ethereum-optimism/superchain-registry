@@ -28,11 +28,8 @@ func TestScanL2(t *testing.T) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	afacts, cleanup, err := artifacts.Download(ctx, artifacts.MustNewLocatorFromURL("tag://"+string(validation.Semver170)), artifacts.NoopDownloadProgressor)
+	afacts, err := artifacts.Download(ctx, artifacts.MustNewLocatorFromURL("tag://"+string(validation.Semver170)), artifacts.NoopProgressor(), "")
 	require.NoError(t, err)
-	t.Cleanup(func() {
-		require.NoError(t, cleanup())
-	})
 
 	testAddr := common.HexToAddress("0x4200000000000000000000000000000000000000")
 
@@ -52,13 +49,6 @@ func TestScanL2(t *testing.T) {
 				StandardGenesisHash: common.HexToHash("0xcd901673f97d59259fa09b0b01b8787f5d25d9f1808566990673519be65cc3ae"),
 				AccountDiffs:        []AccountDiff{},
 			},
-		},
-		{
-			name: "non-canonical L2 contracts locator",
-			setup: func(_ *types.Header, sc *config.StagedChain, _ *core.Genesis) {
-				sc.DeploymentL2ContractsVersion.Canonical = false
-			},
-			wantErr: "contracts version is not canonical",
 		},
 		{
 			name: "different account balance",
