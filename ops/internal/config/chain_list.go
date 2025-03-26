@@ -1,16 +1,19 @@
 package config
 
+import "github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
+
 type ChainListEntry struct {
-	Name                 string               `json:"name" toml:"name"`
-	Identifier           string               `json:"identifier" toml:"identifier"`
-	ChainID              uint64               `json:"chainId" toml:"chain_id"`
-	RPC                  []string             `json:"rpc" toml:"rpc"`
-	Explorers            []string             `json:"explorers" toml:"explorers"`
-	SuperchainLevel      SuperchainLevel      `json:"superchainLevel" toml:"superchain_level"`
-	GovernedByOptimism   bool                 `json:"governedByOptimism" toml:"governed_by_optimism"`
-	DataAvailabilityType string               `json:"dataAvailabilityType" toml:"data_availability_type"`
-	Parent               ChainListEntryParent `json:"parent" toml:"parent"`
-	GasPayingToken       *ChecksummedAddress  `json:"gasPayingToken,omitempty" toml:"gas_paying_token,omitempty"`
+	Name                 string                  `json:"name" toml:"name"`
+	Identifier           string                  `json:"identifier" toml:"identifier"`
+	ChainID              uint64                  `json:"chainId" toml:"chain_id"`
+	RPC                  []string                `json:"rpc" toml:"rpc"`
+	Explorers            []string                `json:"explorers" toml:"explorers"`
+	SuperchainLevel      SuperchainLevel         `json:"superchainLevel" toml:"superchain_level"`
+	GovernedByOptimism   bool                    `json:"governedByOptimism" toml:"governed_by_optimism"`
+	DataAvailabilityType string                  `json:"dataAvailabilityType" toml:"data_availability_type"`
+	Parent               ChainListEntryParent    `json:"parent" toml:"parent"`
+	GasPayingToken       *ChecksummedAddress     `json:"gasPayingToken,omitempty" toml:"gas_paying_token,omitempty"`
+	FaultProofStatus     script.FaultProofStatus `json:"fault_proofs" toml:"fault_proofs"`
 }
 
 type ChainListEntryParent struct {

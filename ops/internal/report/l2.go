@@ -118,10 +118,8 @@ func DiffL2Genesis(
 	standardChainState := &state.ChainState{
 		ID: common.BigToHash(new(big.Int).SetUint64(chainCfg.ChainID)),
 		StartBlock: &state.L1BlockRefJSON{
-			Hash:       startBlock.Hash(),
-			ParentHash: startBlock.ParentHash,
-			Number:     hexutil.Uint64(startBlock.Number.Uint64()),
-			Time:       hexutil.Uint64(startBlock.Time),
+			Hash:   startBlock.Hash(),
+			Number: hexutil.Uint64(startBlock.Number.Uint64()),
 		},
 		L1StandardBridgeProxyAddress:       common.Address(*chainCfg.Addresses.L1StandardBridgeProxy),
 		L1CrossDomainMessengerProxyAddress: common.Address(*chainCfg.Addresses.L1CrossDomainMessengerProxy),
@@ -166,10 +164,8 @@ func DiffL2Genesis(
 	}
 
 	standardGenesis, err := genesis.BuildL2Genesis(&standardDeployConfig, standardAllocs, &eth.BlockRef{
-		Hash:       startBlock.Hash(),
-		Number:     startBlock.Number.Uint64(),
-		ParentHash: startBlock.ParentHash,
-		Time:       startBlock.Time,
+		Hash:   startBlock.Hash(),
+		Number: uint64(startBlock.Number.Uint64()),
 	})
 	if err != nil {
 		return standardHash, nil, fmt.Errorf("failed to build standard genesis: %w", err)

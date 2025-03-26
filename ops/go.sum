@@ -85,10 +85,12 @@ github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0/go.mod h1:v57UDF4pDQJcEfFUCRop3
 github.com/decred/dcrd/lru v1.0.0/go.mod h1:mxKOwFd7lFjN2GZYsiz/ecgqR6kkYAl+0pz0tEMk218=
 github.com/ethereum-optimism/go-ethereum-hdwallet v0.1.3 h1:RWHKLhCrQThMfch+QJ1Z8veEq5ZO3DfIhZ7xgRP9WTc=
 github.com/ethereum-optimism/go-ethereum-hdwallet v0.1.3/go.mod h1:QziizLAiF0KqyLdNJYD7O5cpDlaFMNZzlxYNcWsJUxs=
-github.com/ethereum-optimism/op-geth v1.101503.2-rc.5.0.20250401164435-02dfe8692a3c h1:2uU1Jx+wuqGtWR/qsZrmB+jfR+/hslowPS11bvBAda4=
-github.com/ethereum-optimism/op-geth v1.101503.2-rc.5.0.20250401164435-02dfe8692a3c/go.mod h1:QUo3fn+45vWqJWzJW+rIzRHUV7NmhhHLPdI87mAn1M8=
-github.com/ethereum-optimism/optimism v1.13.1-0.20250402215013-5391bf29692d h1:SWUqPFKjoh3WfAG2HaKNjwkwzxJ3Jm/ssvYQAF6AbY0=
-github.com/ethereum-optimism/optimism v1.13.1-0.20250402215013-5391bf29692d/go.mod h1:Pf1bUvfjbot5RyCmsfPKFR0kcBCT/HZvSlISRtB1+KE=
+github.com/ethereum-optimism/op-geth v1.101503.2-rc.2 h1:SihKdvBN4G0yW6pKb96CzXchq0NiHgetAoPqkZ8tYQA=
+github.com/ethereum-optimism/op-geth v1.101503.2-rc.2/go.mod h1:QUo3fn+45vWqJWzJW+rIzRHUV7NmhhHLPdI87mAn1M8=
+github.com/ethereum-optimism/optimism v1.12.3-0.20250326140346-873f4705152a h1:4BniiHbXeFK9PDmlVj3SX1RjrEkcoP6Vo47+qr7R9WQ=
+github.com/ethereum-optimism/optimism v1.12.3-0.20250326140346-873f4705152a/go.mod h1:qcX3CDKEy4PGLtuaxHKYKWmw1NtXvdilyklQSXgIcFs=
+github.com/ethereum-optimism/optimism v1.12.3-0.20250326154025-f321f26e3bb6 h1:FJ34G4Jcryy9tjjg2qvqfez36hmcfSOE0eaq5hT5t3k=
+github.com/ethereum-optimism/optimism v1.12.3-0.20250326154025-f321f26e3bb6/go.mod h1:qcX3CDKEy4PGLtuaxHKYKWmw1NtXvdilyklQSXgIcFs=
 github.com/ethereum-optimism/superchain-registry/validation v0.0.0-20250314162817-2c60e5723c64 h1:teDhU4h4ryaE8rSBl+vJJiwKHjxdnnHPkKZ9iNr2R8k=
 github.com/ethereum-optimism/superchain-registry/validation v0.0.0-20250314162817-2c60e5723c64/go.mod h1:NZ816PzLU1TLv1RdAvYAb6KWOj4Zm5aInT0YpDVml2Y=
 github.com/ethereum/c-kzg-4844 v1.0.0 h1:0X1LBXxaEtYD9xsyj9B9ctQEZIpnvVDeoBx8aHEwTNA=

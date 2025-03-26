@@ -4,7 +4,7 @@ go 1.23.1
 
 require (
 	github.com/BurntSushi/toml v1.4.0
-	github.com/ethereum-optimism/optimism v1.13.1-0.20250402215013-5391bf29692d
+	github.com/ethereum-optimism/optimism v1.12.3-0.20250326154025-f321f26e3bb6
 	github.com/ethereum/go-ethereum v1.15.3
 	github.com/lmittmann/w3 v0.17.8
 	github.com/stretchr/testify v1.10.0
@@ -83,4 +83,4 @@ require (
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
 
-replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101503.2-rc.5.0.20250401164435-02dfe8692a3c
+replace github.com/ethereum/go-ethereum => github.com/ethereum-optimism/op-geth v1.101503.2-rc.2
