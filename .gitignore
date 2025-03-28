@@ -2,6 +2,9 @@
 cache/
 out/
 
+# temp files
+**/tmp
+
 # test output artifacts
 superchain/**/testchain*
 
