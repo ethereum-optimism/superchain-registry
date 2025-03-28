@@ -86,13 +86,13 @@ func TestAddressesWithRoles_Marshaling(t *testing.T) {
 			DAChallengeAddress:                 nil,
 		},
 		Roles: Roles{
-			SystemConfigOwner:      NewChecksummedAddress(common.Address{'S'}),
-			OpChainProxyAdminOwner: NewChecksummedAddress(common.Address{'T'}),
-			Guardian:               NewChecksummedAddress(common.Address{'U'}),
-			Challenger:             NewChecksummedAddress(common.Address{'V'}),
-			Proposer:               nil,
-			UnsafeBlockSigner:      NewChecksummedAddress(common.Address{'X'}),
-			BatchSubmitter:         NewChecksummedAddress(common.Address{'Y'}),
+			SystemConfigOwner: NewChecksummedAddress(common.Address{'S'}),
+			L1ProxyAdminOwner: NewChecksummedAddress(common.Address{'T'}),
+			Guardian:          NewChecksummedAddress(common.Address{'U'}),
+			Challenger:        NewChecksummedAddress(common.Address{'V'}),
+			Proposer:          nil,
+			UnsafeBlockSigner: NewChecksummedAddress(common.Address{'X'}),
+			BatchSubmitter:    NewChecksummedAddress(common.Address{'Y'}),
 		},
 	}
 

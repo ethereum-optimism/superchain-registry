@@ -84,9 +84,9 @@ func (s *CodegenSyncer) FindChainFiles() ([]string, error) {
 }
 
 type chainConfig struct {
-	Addresses        config.Addresses        `json:"addresses"`
-	Roles            config.Roles            `json:"roles"`
-	FaultProofStatus script.FaultProofStatus `json:"fault_proofs"`
+	Addresses        config.Addresses
+	Roles            config.Roles
+	FaultProofStatus script.FaultProofStatus
 }
 
 // ReadChainFile parses a chain file into a struct

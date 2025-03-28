@@ -13,7 +13,7 @@ type ChainListEntry struct {
 	DataAvailabilityType string                  `json:"dataAvailabilityType" toml:"data_availability_type"`
 	Parent               ChainListEntryParent    `json:"parent" toml:"parent"`
 	GasPayingToken       *ChecksummedAddress     `json:"gasPayingToken,omitempty" toml:"gas_paying_token,omitempty"`
-	FaultProofStatus     script.FaultProofStatus `json:"fault_proofs" toml:"fault_proofs"`
+	FaultProofStatus     script.FaultProofStatus `json:"faultProofs" toml:"fault_proofs"`
 }
 
 type ChainListEntryParent struct {
