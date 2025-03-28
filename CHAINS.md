@@ -23,6 +23,7 @@
 | Polynomial | ❌ | ✅ | https://polynomialscan.io | `https://rpc.polynomial.fi` | `https://rpc.polynomial.fi` |
 | RACE Mainnet | ❌ | ❌ | https://racescan.io/ | `https://racemainnet.io` | `https://racemainnet.io` |
 | Redstone | ❌ | ❌ | https://explorer.redstone.xyz | `https://rpc.redstonechain.com` | `https://rpc.redstonechain.com` |
+| Settlus Mainnet | ❌ | ❌ | mainnet.settlus.network | `https://settlus-mainnet.g.alchemy.com/public` | `https://settlus-mainnet-sequencer.g.alchemy.com/` |
 | Shape | ❌ | ❌ | https://shape-mainnet.explorer.alchemy.com/ | `https://mainnet.shape.network/` | `https://shape-mainnet-sequencer.g.alchemy.com` |
 | SnaxChain | ❌ | ✅ | https://explorer.snaxchain.io | `https://mainnet.snaxchain.io` | `https://mainnet.snaxchain.io` |
 | Soneium | ✅ | ✅ | https://soneium.blockscout.com/ | `https://rpc.soneium.org` | `https://rpc.soneium.org` |
