@@ -145,13 +145,13 @@ type Optimism struct {
 }
 
 type Roles struct {
-	SystemConfigOwner      *ChecksummedAddress `json:"SystemConfigOwner" toml:"SystemConfigOwner"`
-	OpChainProxyAdminOwner *ChecksummedAddress `json:"OpChainProxyAdminOwner" toml:"OpChainProxyAdminOwner"`
-	Guardian               *ChecksummedAddress `json:"Guardian" toml:"Guardian"`
-	Challenger             *ChecksummedAddress `json:"Challenger,omitempty" toml:"Challenger,omitempty"`
-	Proposer               *ChecksummedAddress `json:"Proposer,omitempty" toml:"Proposer,omitempty"`
-	UnsafeBlockSigner      *ChecksummedAddress `json:"UnsafeBlockSigner,omitempty" toml:"UnsafeBlockSigner,omitempty"`
-	BatchSubmitter         *ChecksummedAddress `json:"BatchSubmitter" toml:"BatchSubmitter"`
+	SystemConfigOwner *ChecksummedAddress `json:"SystemConfigOwner" toml:"SystemConfigOwner"`
+	L1ProxyAdminOwner *ChecksummedAddress `json:"L1ProxyAdminOwner" toml:"L1ProxyAdminOwner"`
+	Guardian          *ChecksummedAddress `json:"Guardian" toml:"Guardian"`
+	Challenger        *ChecksummedAddress `json:"Challenger,omitempty" toml:"Challenger,omitempty"`
+	Proposer          *ChecksummedAddress `json:"Proposer,omitempty" toml:"Proposer,omitempty"`
+	UnsafeBlockSigner *ChecksummedAddress `json:"UnsafeBlockSigner,omitempty" toml:"UnsafeBlockSigner,omitempty"`
+	BatchSubmitter    *ChecksummedAddress `json:"BatchSubmitter" toml:"BatchSubmitter"`
 }
 
 type Addresses struct {

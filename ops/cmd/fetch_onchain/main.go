@@ -118,9 +118,6 @@ func FetchOnchainCLI(cliCtx *cli.Context) error {
 
 // processChainConfig processes a single chain configuration and saves the result to a file
 func processChainConfig(ctx context.Context, lgr log.Logger, cfg *manage.DiskChainConfig, outputDir, l1RPCURL string) error {
-	filename := fmt.Sprintf("%d.json", cfg.Config.ChainID)
-	outputFile := path.Join(outputDir, filename)
-
 	fetcher, err := fetch.NewFetcher(
 		lgr,
 		l1RPCURL,
@@ -136,13 +133,15 @@ func processChainConfig(ctx context.Context, lgr log.Logger, cfg *manage.DiskCha
 		return fmt.Errorf("error fetching chain info for chain %d: %w", cfg.Config.ChainID, err)
 	}
 
-	fileData := script.CreateChainConfig(result)
-	jsonData, err := json.MarshalIndent(fileData, "", "  ")
+	chainConfig := script.CreateChainConfig(result)
+	filedata, err := json.MarshalIndent(chainConfig, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal output for chain %d: %w", cfg.Config.ChainID, err)
 	}
 
-	err = os.WriteFile(outputFile, jsonData, 0o644)
+	filename := fmt.Sprintf("%d.json", cfg.Config.ChainID)
+	outputFile := path.Join(outputDir, filename)
+	err = os.WriteFile(outputFile, filedata, 0o644)
 	if err != nil {
 		return fmt.Errorf("failed to write output to file for chain %d: %w", cfg.Config.ChainID, err)
 	}
