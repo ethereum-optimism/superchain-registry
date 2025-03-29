@@ -15,6 +15,7 @@ max_sequencer_drift = 600
   canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  pectra_blob_schedule_time = 1744696800 # Tue 15 Apr 2025 06:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
