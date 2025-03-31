@@ -1,4 +1,4 @@
-latest_stable = "1.4.0"
+latest_stable = "1.5.0"
 latest_rc = "1.5.1-rc.1"
 
 [[prestates."1.5.1-rc.1"]]
@@ -8,6 +8,14 @@ hash = "0x0354eee87a1775d96afee8977ef6d5d6bd3612b256170952a01bf1051610ee01"
 [[prestates."1.5.1-rc.1"]]
 type = "cannon64"
 hash = "0x03ee2917da962ec266b091f4b62121dc9682bb0db534633707325339f99ee405"
+
+[[prestates."1.5.0"]]
+type = "cannon32"
+hash = "0x039facea52b20c605c05efb0a33560a92de7074218998f75bcdf61e8989cb5d9"
+
+[[prestates."1.5.0"]]
+type = "cannon64"
+hash = "0x039970872142f48b189d18dcbc03a3737338d098b0101713dc2d6710f9deb5ef"
 
 [[prestates."1.5.0-rc.4"]]
 type = "cannon32"

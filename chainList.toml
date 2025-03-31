@@ -249,6 +249,19 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Settlus Mainnet"
+  identifier = "mainnet/settlus-mainnet"
+  chain_id = 5371
+  rpc = ["https://settlus-mainnet.g.alchemy.com/public"]
+  explorers = ["mainnet.settlus.network"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Shape"
   identifier = "mainnet/shape"
   chain_id = 360
