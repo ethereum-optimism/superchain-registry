@@ -4,6 +4,7 @@ sequencer_rpc = "https://rpc.sepolia-api.lisk.com"
 explorer = "https://sepolia-blockscout.lisk.com"
 superchain_level = 1
 governed_by_optimism = false
+superchain_time = 1708534800
 data_availability_type = "eth-da"
 chain_id = 4202
 batch_inbox_addr = "0xff00000000000000000000000000000000004202"
