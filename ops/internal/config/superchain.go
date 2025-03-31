@@ -16,6 +16,12 @@ const (
 	SepoliaDev0Superchain Superchain = "sepolia-dev-0"
 )
 
+var SuperchainChainIds = map[Superchain]uint64{
+	MainnetSuperchain:     1,
+	SepoliaSuperchain:     11155111,
+	SepoliaDev0Superchain: 11155111,
+}
+
 func ParseSuperchain(in string) (Superchain, error) {
 	switch Superchain(in) {
 	case MainnetSuperchain, SepoliaSuperchain, SepoliaDev0Superchain:

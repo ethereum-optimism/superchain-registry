@@ -67,7 +67,6 @@ func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
 			DaResolveWindow:            dc.DAResolveWindow,
 			DaCommitmentType:           dc.DACommitmentType,
 		}
-		cfg.Addresses.DAChallengeAddress = config.NewChecksummedAddress(dc.DAChallengeProxy)
 		cfg.DataAvailabilityType = "alt-da"
 	}
 
@@ -91,30 +90,19 @@ func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
 	}
 
 	cfg.Roles = config.Roles{
-		SystemConfigOwner: config.NewChecksummedAddress(chainIntent.Roles.SystemConfigOwner),
-		L1ProxyAdminOwner: config.NewChecksummedAddress(chainIntent.Roles.L1ProxyAdminOwner),
-		Guardian:          config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.Guardian),
-		Proposer:          config.NewChecksummedAddress(chainIntent.Roles.Proposer),
-		UnsafeBlockSigner: config.NewChecksummedAddress(chainIntent.Roles.UnsafeBlockSigner),
-		BatchSubmitter:    config.NewChecksummedAddress(chainIntent.Roles.Batcher),
-		Challenger:        config.NewChecksummedAddress(chainIntent.Roles.Challenger),
+		SystemConfigOwner:      config.NewChecksummedAddress(chainIntent.Roles.SystemConfigOwner),
+		OpChainProxyAdminOwner: config.NewChecksummedAddress(chainIntent.Roles.L1ProxyAdminOwner),
+		Guardian:               config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.Guardian),
+		Proposer:               config.NewChecksummedAddress(chainIntent.Roles.Proposer),
+		UnsafeBlockSigner:      config.NewChecksummedAddress(chainIntent.Roles.UnsafeBlockSigner),
+		BatchSubmitter:         config.NewChecksummedAddress(chainIntent.Roles.Batcher),
+		Challenger:             config.NewChecksummedAddress(chainIntent.Roles.Challenger),
 	}
 
 	cfg.Addresses = config.Addresses{
-		AddressManager:                     config.NewChecksummedAddress(chainState.AddressManagerAddress),
-		L1CrossDomainMessengerProxy:        config.NewChecksummedAddress(chainState.L1CrossDomainMessengerProxyAddress),
-		L1ERC721BridgeProxy:                config.NewChecksummedAddress(chainState.L1ERC721BridgeProxyAddress),
-		L1StandardBridgeProxy:              config.NewChecksummedAddress(chainState.L1StandardBridgeProxyAddress),
-		OptimismMintableERC20FactoryProxy:  config.NewChecksummedAddress(chainState.OptimismMintableERC20FactoryProxyAddress),
-		OptimismPortalProxy:                config.NewChecksummedAddress(chainState.OptimismPortalProxyAddress),
-		SystemConfigProxy:                  config.NewChecksummedAddress(chainState.SystemConfigProxyAddress),
-		OpChainProxyAdmin:                  config.NewChecksummedAddress(chainState.ProxyAdminAddress),
-		SuperchainConfig:                   config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxyAddress),
-		AnchorStateRegistryProxy:           config.NewChecksummedAddress(chainState.AnchorStateRegistryProxyAddress),
-		DelayedWETHPermissionedGameProxy:   config.NewChecksummedAddress(chainState.DelayedWETHPermissionedGameProxyAddress),
-		DelayedWETHPermissionlessGameProxy: config.NewChecksummedAddress(chainState.DelayedWETHPermissionlessGameProxyAddress),
-		DisputeGameFactoryProxy:            config.NewChecksummedAddress(chainState.DisputeGameFactoryProxyAddress),
-		PermissionedDisputeGame:            config.NewChecksummedAddress(chainState.PermissionedDisputeGameAddress),
+		L1StandardBridgeProxy: config.NewChecksummedAddress(chainState.L1StandardBridgeProxyAddress),
+		OptimismPortalProxy:   config.NewChecksummedAddress(chainState.OptimismPortalProxyAddress),
+		SystemConfigProxy:     config.NewChecksummedAddress(chainState.SystemConfigProxyAddress),
 	}
 
 	return cfg, nil
