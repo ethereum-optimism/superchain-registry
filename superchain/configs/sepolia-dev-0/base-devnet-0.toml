@@ -20,6 +20,7 @@ max_sequencer_drift = 600
   granite_time = 1723046400 # Wed 7 Aug 2024 16:00:00 UTC
   holocene_time = 1731682800 # Fri 15 Nov 2024 15:00:00 UTC
   pectra_blob_schedule_time = 1742486400 # Thu 20 Mar 2025 16:00:00 UTC
+  isthmus_time = 1744300800 # Thu 10 Apr 2025 16:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
