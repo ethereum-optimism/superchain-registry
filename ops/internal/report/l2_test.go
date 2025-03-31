@@ -28,11 +28,12 @@ func TestScanL2(t *testing.T) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	afacts, err := artifacts.Download(ctx, artifacts.MustNewLocatorFromURL("tag://"+string(validation.Semver170)), artifacts.NoopProgressor(), "")
+	downloadDir := t.TempDir()
+	afacts, err := artifacts.Download(ctx, artifacts.MustNewLocatorFromURL("tag://"+string(validation.Semver170)), artifacts.NoopProgressor(), downloadDir)
 	require.NoError(t, err)
 
 	testAddr := common.HexToAddress("0x4200000000000000000000000000000000000000")
-	standardGenesisHash := common.HexToHash("0xcd901673f97d59259fa09b0b01b8787f5d25d9f1808566990673519be65cc3ae")
+	standardGenesisHash := common.HexToHash("0x91d4b9f2c1ffbf865de11b7424c3ae0d4e5561485a9f72d0d5fff2ea148594db")
 
 	tests := []struct {
 		name       string

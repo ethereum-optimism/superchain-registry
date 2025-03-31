@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
+	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -145,86 +146,74 @@ type Optimism struct {
 }
 
 type Roles struct {
-	SystemConfigOwner *ChecksummedAddress `json:"SystemConfigOwner" toml:"SystemConfigOwner"`
-	L1ProxyAdminOwner *ChecksummedAddress `json:"L1ProxyAdminOwner" toml:"L1ProxyAdminOwner"`
-	Guardian          *ChecksummedAddress `json:"Guardian" toml:"Guardian"`
-	Challenger        *ChecksummedAddress `json:"Challenger,omitempty" toml:"Challenger,omitempty"`
-	Proposer          *ChecksummedAddress `json:"Proposer,omitempty" toml:"Proposer,omitempty"`
-	UnsafeBlockSigner *ChecksummedAddress `json:"UnsafeBlockSigner,omitempty" toml:"UnsafeBlockSigner,omitempty"`
-	BatchSubmitter    *ChecksummedAddress `json:"BatchSubmitter" toml:"BatchSubmitter"`
+	SystemConfigOwner      *ChecksummedAddress `json:"SystemConfigOwner" toml:"SystemConfigOwner"`
+	OpChainProxyAdminOwner *ChecksummedAddress `json:"OpChainProxyAdminOwner" toml:"OpChainProxyAdminOwner"`
+	Guardian               *ChecksummedAddress `json:"Guardian" toml:"Guardian"`
+	Challenger             *ChecksummedAddress `json:"Challenger" toml:"Challenger"`
+	Proposer               *ChecksummedAddress `json:"Proposer" toml:"Proposer"`
+	UnsafeBlockSigner      *ChecksummedAddress `json:"UnsafeBlockSigner" toml:"UnsafeBlockSigner"`
+	BatchSubmitter         *ChecksummedAddress `json:"BatchSubmitter" toml:"BatchSubmitter"`
 }
 
 type Addresses struct {
-	AddressManager                     *ChecksummedAddress `toml:"AddressManager,omitempty" json:"AddressManager,omitempty"`
-	L1CrossDomainMessengerProxy        *ChecksummedAddress `toml:"L1CrossDomainMessengerProxy,omitempty" json:"L1CrossDomainMessengerProxy,omitempty"`
-	L1ERC721BridgeProxy                *ChecksummedAddress `toml:"L1ERC721BridgeProxy,omitempty" json:"L1ERC721BridgeProxy,omitempty"`
-	L1StandardBridgeProxy              *ChecksummedAddress `toml:"L1StandardBridgeProxy,omitempty" json:"L1StandardBridgeProxy,omitempty"`
-	L2OutputOracleProxy                *ChecksummedAddress `toml:"L2OutputOracleProxy,omitempty" json:"L2OutputOracleProxy,omitempty"`
-	OptimismMintableERC20FactoryProxy  *ChecksummedAddress `toml:"OptimismMintableERC20FactoryProxy,omitempty" json:"OptimismMintableERC20FactoryProxy,omitempty"`
-	OptimismPortalProxy                *ChecksummedAddress `toml:"OptimismPortalProxy,omitempty" json:"OptimismPortalProxy,omitempty"`
-	SystemConfigProxy                  *ChecksummedAddress `toml:"SystemConfigProxy,omitempty" json:"SystemConfigProxy,omitempty"`
-	OpChainProxyAdmin                  *ChecksummedAddress `toml:"OpChainProxyAdmin,omitempty" json:"OpChainProxyAdmin,omitempty"`
-	SuperchainConfig                   *ChecksummedAddress `toml:"SuperchainConfig,omitempty" json:"SuperchainConfig,omitempty"`
-	AnchorStateRegistryProxy           *ChecksummedAddress `toml:"AnchorStateRegistryProxy,omitempty" json:"AnchorStateRegistryProxy,omitempty"`
-	DelayedWETHPermissionedGameProxy   *ChecksummedAddress `toml:"DelayedWETHPermissionedGameProxy,omitempty" json:"DelayedWETHPermissionedGameProxy,omitempty"`
-	DelayedWETHPermissionlessGameProxy *ChecksummedAddress `toml:"DelayedWETHPermissionlessGameProxy,omitempty" json:"DelayedWETHPermissionlessGameProxy,omitempty"`
-	DisputeGameFactoryProxy            *ChecksummedAddress `toml:"DisputeGameFactoryProxy,omitempty" json:"DisputeGameFactoryProxy,omitempty"`
-	FaultDisputeGame                   *ChecksummedAddress `toml:"FaultDisputeGame,omitempty" json:"FaultDisputeGame,omitempty"`
-	MIPS                               *ChecksummedAddress `toml:"MIPS,omitempty" json:"MIPS,omitempty"`
-	PermissionedDisputeGame            *ChecksummedAddress `toml:"PermissionedDisputeGame,omitempty" json:"PermissionedDisputeGame,omitempty"`
-	PreimageOracle                     *ChecksummedAddress `toml:"PreimageOracle,omitempty" json:"PreimageOracle,omitempty"`
-	DAChallengeAddress                 *ChecksummedAddress `toml:"DAChallengeAddress,omitempty" json:"DAChallengeAddress,omitempty"`
+	SystemConfigProxy           *ChecksummedAddress `toml:"SystemConfigProxy,omitempty" json:"SystemConfigProxy,omitempty"`
+	L1StandardBridgeProxy       *ChecksummedAddress `toml:"L1StandardBridgeProxy,omitempty" json:"L1StandardBridgeProxy,omitempty"`
+	OptimismPortalProxy         *ChecksummedAddress `toml:"OptimismPortalProxy,omitempty" json:"OptimismPortalProxy,omitempty"`
+	L1ERC721BridgeProxy         *ChecksummedAddress `toml:"L1ERC721BridgeProxy,omitempty" json:"L1ERC721BridgeProxy,omitempty"`
+	L1CrossDomainMessengerProxy *ChecksummedAddress `toml:"L1CrossDomainMessengerProxy,omitempty" json:"L1CrossDomainMessengerProxy,omitempty"`
 }
 
 type AddressesJSON jsonutil.LazySortedJsonMap[string, *AddressesWithRoles]
 
 type AddressesWithRoles struct {
-	Addresses
-	Roles
+	script.Addresses
+	script.Roles
 }
 
 func (a AddressesWithRoles) MarshalJSON() ([]byte, error) {
-	// Create a map to hold fields that won't be omitted
-	allFields := make(map[string]*ChecksummedAddress)
+	// Create a map to hold non-zero address fields
+	allFields := make(map[string]string)
 
-	for _, embed := range []any{a.Addresses, a.Roles} {
-		val := reflect.ValueOf(embed)
-		typ := reflect.TypeOf(embed)
+	// Declare processStruct variable first to allow recursion
+	var processStruct func(interface{})
+
+	// Define the function after declaration
+	processStruct = func(structVal interface{}) {
+		val := reflect.ValueOf(structVal)
+		typ := reflect.TypeOf(structVal)
+
 		for i := 0; i < val.NumField(); i++ {
 			field := val.Field(i)
 
+			// Handle embedded structs (like L2OpchainDeployment)
+			if field.Kind() == reflect.Struct && typ.Field(i).Anonymous {
+				processStruct(field.Interface())
+				continue
+			}
+
+			// Skip if not common.Address
+			if field.Type() != reflect.TypeOf(common.Address{}) {
+				continue
+			}
+
+			// Get field name from JSON tag or struct field name
 			jsonTag := typ.Field(i).Tag.Get("json")
-			tagSplit := strings.Split(jsonTag, ",")
-			fieldName := tagSplit[0]
-			var omitEmpty bool
+			fieldName := strings.Split(jsonTag, ",")[0]
 			if fieldName == "" {
 				fieldName = typ.Field(i).Name
 			}
-			if len(tagSplit) > 1 {
-				omitEmpty = tagSplit[1] == "omitempty"
-			}
 
-			// Check for nil fields
-			if field.IsNil() {
-				if !omitEmpty {
-					allFields[fieldName] = nil
-				}
-				continue
+			// Include only non-zero addresses with proper checksumming
+			addr := field.Interface().(common.Address)
+			if addr != (common.Address{}) {
+				allFields[fieldName] = addr.Hex()
 			}
-
-			// Check for zero addresses
-			addrPtr := field.Interface().(*ChecksummedAddress)
-			if common.Address(*addrPtr) == (common.Address{}) {
-				if !omitEmpty {
-					allFields[fieldName] = nil
-				}
-				continue
-			}
-
-			// Always include non-nil, non-zero addresses
-			allFields[fieldName] = addrPtr
 		}
 	}
+
+	// Process both embedded structs
+	processStruct(a.Addresses)
+	processStruct(a.Roles)
 
 	return json.Marshal(allFields)
 }
