@@ -45,7 +45,7 @@ max_sequencer_drift = 600
   BatchSubmitter = "0x584D61A30C7Ef1E8D547eE02099dADC487f49889"
 
 [addresses]
-  AddressManager = "0x1B573Db1000eA419B6dE8eB482C6d394179Bd1A3" 
+  AddressManager = "0x1B573Db1000eA419B6dE8eB482C6d394179Bd1A3"
   L1CrossDomainMessengerProxy = "0xdaeab17598938A4f27E50AC771249Ad7df12Ea7D"
   L1ERC721BridgeProxy = "0xBafb1a6e54e7750aF29489D65888d1c96Dfd66Df"
   L1StandardBridgeProxy = "0x289179e9d43A35D47239456251F9c2fdbf9fbeA2"
