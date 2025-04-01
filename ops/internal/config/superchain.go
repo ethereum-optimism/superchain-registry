@@ -42,40 +42,43 @@ func MustParseSuperchain(in string) Superchain {
 // ValidateL1ChainID checks if the L1 RPC URL has the expected chain ID for the superchain
 func ValidateL1ChainID(l1RPCURL string, superchain Superchain) error {
 	// Determine expected chain ID based on superchain
-	var expectedChainID uint64
-	switch superchain {
-	case MainnetSuperchain:
-		expectedChainID = 1
-	case SepoliaSuperchain, SepoliaDev0Superchain:
-		expectedChainID = 11155111
-	default:
+	expectedChainID, ok := SuperchainChainIds[superchain]
+	if !ok {
 		return fmt.Errorf("unknown superchain: %s", superchain)
 	}
 
-	// Connect to Ethereum client
-	client, err := ethclient.Dial(l1RPCURL)
+	// Get the actual chain ID
+	chainID, err := GetL1ChainID(l1RPCURL)
 	if err != nil {
-		return fmt.Errorf("failed to connect to L1 RPC at %s: %w", l1RPCURL, err)
-	}
-	defer client.Close()
-
-	// Create a context with timeout for the RPC call
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	// Get chain ID from the connected client
-	chainID, err := client.ChainID(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to retrieve chain ID from L1 RPC: %w", err)
+		return fmt.Errorf("failed to get chain ID from L1 RPC at %s: %w", l1RPCURL, err)
 	}
 
 	// Compare with expected chain ID
-	if chainID.Uint64() != expectedChainID {
+	if chainID != expectedChainID {
 		return fmt.Errorf("L1 RPC chain ID mismatch: got %d, expected %d for superchain %s",
-			chainID.Uint64(), expectedChainID, superchain)
+			chainID, expectedChainID, superchain)
 	}
 
 	return nil
+}
+
+// GetL1ChainID connects to an Ethereum RPC endpoint and retrieves its chain ID
+func GetL1ChainID(rpcURL string) (uint64, error) {
+	client, err := ethclient.Dial(rpcURL)
+	if err != nil {
+		return 0, fmt.Errorf("failed to connect to L1 RPC: %w", err)
+	}
+	defer client.Close()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	chainID, err := client.ChainID(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get chain ID: %w", err)
+	}
+
+	return chainID.Uint64(), nil
 }
 
 func GetSuperchainChainId(superchain string) (uint64, error) {
