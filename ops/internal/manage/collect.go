@@ -11,6 +11,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/util"
 )
 
@@ -91,4 +92,27 @@ func CollectChainConfigs(p string) ([]DiskChainConfig, error) {
 	})
 
 	return out, nil
+}
+
+// FindChainConfig searches all superchains for given chain ID
+func FindChainConfig(wd string, chainId uint64) (*DiskChainConfig, config.Superchain, error) {
+	superchains, err := paths.Superchains(wd)
+	if err != nil {
+		return nil, "", fmt.Errorf("error getting superchains: %w", err)
+	}
+
+	for _, superchain := range superchains {
+		cfgs, err := CollectChainConfigs(paths.SuperchainDir(wd, superchain))
+		if err != nil {
+			return nil, "", fmt.Errorf("error collecting chain configs: %w", err)
+		}
+
+		for _, cfg := range cfgs {
+			if cfg.Config.ChainID == chainId {
+				return &cfg, superchain, nil
+			}
+		}
+	}
+
+	return nil, "", fmt.Errorf("chain with id %d not found", chainId)
 }

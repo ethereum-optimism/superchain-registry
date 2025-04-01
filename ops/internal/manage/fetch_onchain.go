@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch"
@@ -13,46 +12,31 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
+	"golang.org/x/sync/errgroup"
 )
 
 // FetchSingleChain fetches configuration for a single chain by ID
-func FetchSingleChain(lgr log.Logger, l1RpcUrls []string, chainIdStr string) (map[uint64]script.ChainConfig, error) {
+func FetchSingleChain(lgr log.Logger, wd string, l1RpcUrls []string, chainIdStr string) (map[uint64]script.ChainConfig, error) {
 	chainId, err := strconv.ParseUint(chainIdStr, 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse chainId: %w", err)
 	}
 
-	repoRoot, err := paths.FindRepoRoot()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get working directory: %w", err)
-	}
-
-	chainConfig, chainSuperchain, err := FindChainConfig(repoRoot, chainId)
+	chainConfig, chainSuperchain, err := FindChainConfig(wd, chainId)
 	if err != nil {
 		return nil, err
 	}
 
-	l1RpcUrl, err := FindValidL1URL(lgr, l1RpcUrls, chainSuperchain)
+	l1RpcUrl, err := config.FindValidL1URL(lgr, l1RpcUrls, chainSuperchain)
 	if err != nil {
 		return nil, err
 	}
 
-	fetcher, err := fetch.NewFetcher(
-		lgr,
-		l1RpcUrl,
-		common.HexToAddress(chainConfig.Config.Addresses.SystemConfigProxy.String()),
-		common.HexToAddress(chainConfig.Config.Addresses.L1StandardBridgeProxy.String()),
-	)
+	chainCfg, err := fetchChainInfo(context.Background(), lgr, l1RpcUrl, *chainConfig)
 	if err != nil {
-		return nil, fmt.Errorf("error creating fetcher: %w", err)
+		return nil, err
 	}
 
-	result, err := fetcher.FetchChainInfo(context.Background())
-	if err != nil {
-		return nil, fmt.Errorf("error fetching chain info for chain %d: %w", chainConfig.Config.ChainID, err)
-	}
-
-	chainCfg := script.CreateChainConfig(result)
 	lgr.Info("fetched chain config", "chainId", chainConfig.Config.ChainID)
 
 	return map[uint64]script.ChainConfig{
@@ -61,13 +45,8 @@ func FetchSingleChain(lgr log.Logger, l1RpcUrls []string, chainIdStr string) (ma
 }
 
 // FetchAllSuperchains fetches data for all superchains that are compatible with the given l1RpcUrls
-func FetchAllSuperchains(lgr log.Logger, l1RpcUrls []string) (map[uint64]script.ChainConfig, error) {
-	repoRoot, err := paths.FindRepoRoot()
-	if err != nil {
-		return nil, fmt.Errorf("error finding repo root: %w", err)
-	}
-
-	superchains, err := paths.Superchains(repoRoot)
+func FetchAllSuperchains(lgr log.Logger, wd string, l1RpcUrls []string) (map[uint64]script.ChainConfig, error) {
+	superchains, err := paths.Superchains(wd)
 	if err != nil {
 		return nil, fmt.Errorf("error getting superchains: %w", err)
 	}
@@ -80,13 +59,13 @@ func FetchAllSuperchains(lgr log.Logger, l1RpcUrls []string) (map[uint64]script.
 			continue
 		}
 
-		l1RpcUrl, err := FindValidL1URL(lgr, l1RpcUrls, superchain)
+		l1RpcUrl, err := config.FindValidL1URL(lgr, l1RpcUrls, superchain)
 		if err != nil {
 			lgr.Warn("skipping superchain - no valid L1 URL", "superchain", superchain, "error", err)
 			continue
 		}
 
-		chains, err := fetchSuperchainConfigs(lgr, l1RpcUrl, repoRoot, superchain)
+		chains, err := fetchSuperchainConfigs(lgr, l1RpcUrl, wd, superchain)
 		if err != nil {
 			return nil, fmt.Errorf("error fetching configs for superchain %s: %w", superchain, err)
 		}
@@ -107,104 +86,56 @@ func FetchAllSuperchains(lgr log.Logger, l1RpcUrls []string) (map[uint64]script.
 	return allChainConfigs, nil
 }
 
-// FindChainConfig finds a chain configuration by chain ID
-func FindChainConfig(repoRoot string, chainId uint64) (*DiskChainConfig, config.Superchain, error) {
-	superchains, err := paths.Superchains(repoRoot)
+// fetchChainInfo handles the common logic for creating a fetcher and getting chain info
+func fetchChainInfo(ctx context.Context, lgr log.Logger, l1RpcUrl string, cfg DiskChainConfig) (script.ChainConfig, error) {
+	fetcher, err := fetch.NewFetcher(
+		lgr,
+		l1RpcUrl,
+		common.HexToAddress(cfg.Config.Addresses.SystemConfigProxy.String()),
+		common.HexToAddress(cfg.Config.Addresses.L1StandardBridgeProxy.String()),
+	)
 	if err != nil {
-		return nil, "", fmt.Errorf("error getting superchains: %w", err)
+		return script.ChainConfig{}, fmt.Errorf("error creating fetcher for chain %d: %w", cfg.Config.ChainID, err)
 	}
 
-	for _, superchain := range superchains {
-		cfgs, err := CollectChainConfigs(paths.SuperchainDir(repoRoot, superchain))
-		if err != nil {
-			return nil, "", fmt.Errorf("error collecting chain configs: %w", err)
-		}
-
-		for _, cfg := range cfgs {
-			if cfg.Config.ChainID == chainId {
-				return &cfg, superchain, nil
-			}
-		}
+	result, err := fetcher.FetchChainInfo(ctx)
+	if err != nil {
+		return script.ChainConfig{}, fmt.Errorf("error fetching chain info for chain %d: %w", cfg.Config.ChainID, err)
 	}
 
-	return nil, "", fmt.Errorf("chain with id %d not found", chainId)
-}
-
-// FindValidL1URL finds a valid l1-rpc-url for a given superchain by finding matching l1 chainId
-func FindValidL1URL(lgr log.Logger, urls []string, superchain config.Superchain) (string, error) {
-	for i, url := range urls {
-		url = strings.TrimSpace(url)
-		if url == "" {
-			continue
-		}
-
-		if err := config.ValidateL1ChainID(url, superchain); err != nil {
-			lgr.Warn("l1-rpc-url has mismatched l1 chainId", "urlIndex", i, "error", err)
-			continue
-		}
-
-		lgr.Info("l1-rpc-url has matching l1 chainId", "urlIndex", i)
-		return url, nil
-	}
-	return "", fmt.Errorf("no valid L1 RPC URL found for superchain %s", superchain)
+	return script.CreateChainConfig(result), nil
 }
 
 // fetchSuperchainConfigs fetches all onchain configs for a specific superchain
-func fetchSuperchainConfigs(lgr log.Logger, l1RpcUrl, repoRoot string, superchain config.Superchain) (map[uint64]script.ChainConfig, error) {
-	cfgs, err := CollectChainConfigs(paths.SuperchainDir(repoRoot, superchain))
+func fetchSuperchainConfigs(lgr log.Logger, l1RpcUrl, wd string, superchain config.Superchain) (map[uint64]script.ChainConfig, error) {
+	cfgs, err := CollectChainConfigs(paths.SuperchainDir(wd, superchain))
 	if err != nil {
 		return nil, fmt.Errorf("error collecting chain configs: %w", err)
 	}
 
-	var wg sync.WaitGroup
-	var mu sync.Mutex
+	eg, ctx := errgroup.WithContext(context.Background())
 	chainConfigs := make(map[uint64]script.ChainConfig)
-	errChan := make(chan error, len(cfgs))
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	var mu sync.Mutex
 
 	for _, c := range cfgs {
-		wg.Add(1)
-		go func(cfg DiskChainConfig) {
-			defer wg.Done()
-			fetcher, err := fetch.NewFetcher(
-				lgr,
-				l1RpcUrl,
-				common.HexToAddress(cfg.Config.Addresses.SystemConfigProxy.String()),
-				common.HexToAddress(cfg.Config.Addresses.L1StandardBridgeProxy.String()),
-			)
+		cfg := c
+		eg.Go(func() error {
+			chainCfg, err := fetchChainInfo(ctx, lgr, l1RpcUrl, cfg)
 			if err != nil {
-				errChan <- fmt.Errorf("error creating fetcher for chain %d: %w", cfg.Config.ChainID, err)
-				cancel()
-				return
-			}
-
-			result, err := fetcher.FetchChainInfo(ctx)
-			if err != nil {
-				errChan <- fmt.Errorf("error fetching chain info for chain %d: %w", cfg.Config.ChainID, err)
-				cancel()
-				return
+				return err
 			}
 
 			mu.Lock()
-			chainCfg := script.CreateChainConfig(result)
 			chainConfigs[cfg.Config.ChainID] = chainCfg
 			mu.Unlock()
 
 			lgr.Info("fetched chain config", "chainId", cfg.Config.ChainID)
-		}(c)
+			return nil
+		})
 	}
 
-	wg.Wait()
-	close(errChan)
-
-	select {
-	case err := <-errChan:
-		if err != nil {
-			return nil, err
-		}
-	default:
+	if err := eg.Wait(); err != nil {
+		return nil, err
 	}
 
 	return chainConfigs, nil

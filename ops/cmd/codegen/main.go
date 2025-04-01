@@ -53,7 +53,7 @@ func CodegenCLI(cliCtx *cli.Context) error {
 
 	var onchainCfgs map[uint64]script.ChainConfig
 	if chainIdStr != "" {
-		onchainCfgs, err = manage.FetchSingleChain(lgr, l1RpcUrls, chainIdStr)
+		onchainCfgs, err = manage.FetchSingleChain(lgr, wd, l1RpcUrls, chainIdStr)
 		if err != nil {
 			return fmt.Errorf("error fetching onchain configs: %w", err)
 		}
@@ -65,7 +65,7 @@ func CodegenCLI(cliCtx *cli.Context) error {
 			return fmt.Errorf("error syncing codegen: %w", err)
 		}
 	} else {
-		onchainCfgs, err = manage.FetchAllSuperchains(lgr, l1RpcUrls)
+		onchainCfgs, err = manage.FetchAllSuperchains(lgr, wd, l1RpcUrls)
 		if err != nil {
 			return fmt.Errorf("error fetching onchain configs: %w", err)
 		}

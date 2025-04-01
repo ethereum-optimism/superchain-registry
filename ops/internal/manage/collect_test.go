@@ -33,3 +33,27 @@ func TestCollectChainConfigs(t *testing.T) {
 		},
 	}, chains)
 }
+
+func TestFindChainConfig(t *testing.T) {
+	t.Run("Chain exists", func(t *testing.T) {
+		cfg, superchain, err := FindChainConfig("testdata", 11155420)
+
+		require.NoError(t, err)
+		require.NotNil(t, cfg)
+		require.NotNil(t, cfg.Config.Addresses.SystemConfigProxy)
+		require.NotNil(t, cfg.Config.Addresses.L1StandardBridgeProxy)
+		require.NotNil(t, cfg.Config.Roles.OpChainProxyAdminOwner)
+		require.Equal(t, uint64(11155420), cfg.Config.ChainID)
+		require.Equal(t, config.SepoliaSuperchain, superchain)
+	})
+
+	t.Run("Chain does not exist", func(t *testing.T) {
+		nonExistentChainID := uint64(99999)
+		cfg, superchain, err := FindChainConfig("testdata", nonExistentChainID)
+
+		require.Error(t, err)
+		require.Nil(t, cfg)
+		require.Empty(t, superchain)
+		require.Contains(t, err.Error(), "not found")
+	})
+}

@@ -41,7 +41,7 @@ data_availability_type = "eth-da"
 
 [roles]
   SystemConfigOwner = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
-  ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
+  OpChainProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
   Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
   Challenger = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
   Proposer = "0x49277EE36A024120Ee218127354c4a3591dc90A9"

@@ -3,9 +3,11 @@ package config
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 type Superchain string
@@ -39,31 +41,47 @@ func MustParseSuperchain(in string) Superchain {
 	return sup
 }
 
-// ValidateL1ChainID checks if the L1 RPC URL has the expected chain ID for the superchain
-func ValidateL1ChainID(l1RPCURL string, superchain Superchain) error {
-	// Determine expected chain ID based on superchain
+// FindValidL1URL finds a valid l1-rpc-url for a given superchain by finding matching l1 chainId
+func FindValidL1URL(lgr log.Logger, urls []string, superchain Superchain) (string, error) {
+	for i, url := range urls {
+		url = strings.TrimSpace(url)
+		if url == "" {
+			continue
+		}
+
+		if err := validateL1ChainID(url, superchain); err != nil {
+			lgr.Warn("l1-rpc-url has mismatched l1 chainId", "urlIndex", i, "error", err)
+			continue
+		}
+
+		lgr.Info("l1-rpc-url has matching l1 chainId", "urlIndex", i)
+		return url, nil
+	}
+	return "", fmt.Errorf("no valid L1 RPC URL found for superchain %s", superchain)
+}
+
+// validateL1ChainID checks if the l1RpcUrl has the expected chain ID for the superchain
+func validateL1ChainID(l1RpcUrl string, superchain Superchain) error {
 	expectedChainID, ok := SuperchainChainIds[superchain]
 	if !ok {
 		return fmt.Errorf("unknown superchain: %s", superchain)
 	}
 
-	// Get the actual chain ID
-	chainID, err := GetL1ChainID(l1RPCURL)
+	chainID, err := getL1ChainId(l1RpcUrl)
 	if err != nil {
-		return fmt.Errorf("failed to get chain ID from L1 RPC at %s: %w", l1RPCURL, err)
+		return fmt.Errorf("failed to get chainId from l1RpcUrl: %w", err)
 	}
 
-	// Compare with expected chain ID
 	if chainID != expectedChainID {
-		return fmt.Errorf("L1 RPC chain ID mismatch: got %d, expected %d for superchain %s",
+		return fmt.Errorf("l1RpcUrl chainId mismatch: got %d, expected %d for superchain %s",
 			chainID, expectedChainID, superchain)
 	}
 
 	return nil
 }
 
-// GetL1ChainID connects to an Ethereum RPC endpoint and retrieves its chain ID
-func GetL1ChainID(rpcURL string) (uint64, error) {
+// getL1ChainId connects to an Ethereum RPC endpoint and retrieves its chain ID
+func getL1ChainId(rpcURL string) (uint64, error) {
 	client, err := ethclient.Dial(rpcURL)
 	if err != nil {
 		return 0, fmt.Errorf("failed to connect to L1 RPC: %w", err)
