@@ -124,6 +124,63 @@ jobs:
             cd ops
             go run ./cmd/print_staging_report/main.go
 
+  codegen-sync:
+    circleci_ip_ranges: true
+    docker:
+      - image: <<pipeline.parameters.default_docker_image>>
+    steps:
+      - utils/checkout-with-mise
+      - run:
+          name: Execute codegen
+          working_directory: ops
+          command: |
+            go run ./cmd/codegen/main.go --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>"
+      - run:
+          name: Create PR if changes detected
+          working_directory: .
+          command: |
+            # Check for changes
+            if [[ -n $(git status --porcelain) ]]; then
+              echo "Changes detected, creating PR"
+
+              # Enable safe error handling
+              set -e
+
+              git config --global user.email "optibot@oplabs.co"
+              git config --global user.name "OptimismBot"
+
+              DATE=$(date +%Y-%m-%d)
+              BRANCH="automated/codegen-sync-$DATE"
+              git checkout -b $BRANCH
+              git add .
+              git commit -m "chore: daily codegen sync $DATE"
+              git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/<< pipeline.parameters.github_repo >>.git
+              git push origin $BRANCH
+
+              # Create PR using GitHub API (without capturing response body at all)
+              PR_TITLE="codegen-sync: $DATE"
+              PR_BODY="Automated PR from daily codegen sync job"
+              JSON_DATA="{\"title\":\"$PR_TITLE\",\"body\":\"$PR_BODY\",\"head\":\"$BRANCH\",\"base\":\"main\"}"
+
+              # Make API request and only capture the status code
+              HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+                -X POST \
+                -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/<< pipeline.parameters.github_repo >>/pulls" \
+                -d "$JSON_DATA")
+
+              # Check HTTP status code for success (201 = Created)
+              if [[ "$HTTP_STATUS" == "201" ]]; then
+                echo "Successfully created PR for branch $BRANCH"
+              else
+                echo "Failed to create PR. HTTP Status: $HTTP_STATUS"
+                exit 1
+              fi
+            else
+              echo "No changes detected. Onchain configs match repo data."
+            fi
+
 workflows:
   main:
     jobs:
@@ -143,6 +200,7 @@ workflows:
       - run-tool:
           name: check-staging-synced
           tool: sync_staging
+          args: --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>"
           check_diff: true
       - check-staging-empty:
           name: check-staging-empty
@@ -155,4 +213,16 @@ workflows:
           tool: check_chainlist
       - run-staging-report:
           name: run-staging-report
+
+  daily-codegen-sync:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"  # Run at midnight UTC every day
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - codegen-sync
+
 
