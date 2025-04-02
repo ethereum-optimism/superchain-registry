@@ -89,6 +89,10 @@ github.com/ethereum-optimism/op-geth v1.101503.2-rc.2 h1:SihKdvBN4G0yW6pKb96CzXc
 github.com/ethereum-optimism/op-geth v1.101503.2-rc.2/go.mod h1:QUo3fn+45vWqJWzJW+rIzRHUV7NmhhHLPdI87mAn1M8=
 github.com/ethereum-optimism/optimism v1.12.3-0.20250328143132-f95021ff6a40 h1:tiujsnYyU7XEcstkLHC9LO5SnmK640pWZUPktiSleA0=
 github.com/ethereum-optimism/optimism v1.12.3-0.20250328143132-f95021ff6a40/go.mod h1:qcX3CDKEy4PGLtuaxHKYKWmw1NtXvdilyklQSXgIcFs=
+github.com/ethereum-optimism/optimism v1.12.3-0.20250402141624-60e46ff84291 h1:jWBDo6qoooVGm3ezwqVbR5eiTDbkS4i3itknqjntYfo=
+github.com/ethereum-optimism/optimism v1.12.3-0.20250402141624-60e46ff84291/go.mod h1:qcX3CDKEy4PGLtuaxHKYKWmw1NtXvdilyklQSXgIcFs=
+github.com/ethereum-optimism/optimism v1.12.3-0.20250402190332-4a1d16142ea4 h1:/RqWqjlr3Bp0+gxF9sN/10AfOiqJYMXah30vC4+1RDU=
+github.com/ethereum-optimism/optimism v1.12.3-0.20250402190332-4a1d16142ea4/go.mod h1:qcX3CDKEy4PGLtuaxHKYKWmw1NtXvdilyklQSXgIcFs=
 github.com/ethereum-optimism/superchain-registry/validation v0.0.0-20250314162817-2c60e5723c64 h1:teDhU4h4ryaE8rSBl+vJJiwKHjxdnnHPkKZ9iNr2R8k=
 github.com/ethereum-optimism/superchain-registry/validation v0.0.0-20250314162817-2c60e5723c64/go.mod h1:NZ816PzLU1TLv1RdAvYAb6KWOj4Zm5aInT0YpDVml2Y=
 github.com/ethereum/c-kzg-4844 v1.0.0 h1:0X1LBXxaEtYD9xsyj9B9ctQEZIpnvVDeoBx8aHEwTNA=
