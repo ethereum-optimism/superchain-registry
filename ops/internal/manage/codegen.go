@@ -23,12 +23,13 @@ import (
 
 // CodegenSyncer manages syncing of codegen files with on-chain data
 type CodegenSyncer struct {
-	lgr       log.Logger
-	ChainList []config.ChainListEntry
-	Addresses config.AddressesJSON
-	inputWd   string
-	outputWd  string
-	chainCfgs map[uint64]script.ChainConfig
+	lgr         log.Logger
+	ChainList   []config.ChainListEntry
+	Addresses   config.AddressesJSON
+	inputWd     string
+	outputWd    string
+	onchainCfgs map[uint64]script.ChainConfig
+	diskCfgs    map[uint64]DiskChainConfig
 }
 
 type CodegenSyncerOption func(*CodegenSyncer)
@@ -60,13 +61,26 @@ func NewCodegenSyncer(lgr log.Logger, wd string, chainCfgs map[uint64]script.Cha
 		return nil, fmt.Errorf("error unmarshaling chainList file: %w", err)
 	}
 
+	// Load disk chain configs
+	configsDir := path.Join(wd, "superchain", "configs")
+	diskChainCfgsSlice, err := CollectChainConfigs(configsDir)
+	lgr.Info("collected chains configs from disk", "numDiskCfgs", len(diskChainCfgsSlice))
+	if err != nil {
+		return nil, fmt.Errorf("error collecting chain configs: %w", err)
+	}
+	diskChainCfgs := make(map[uint64]DiskChainConfig)
+	for _, cfg := range diskChainCfgsSlice {
+		diskChainCfgs[cfg.Config.ChainID] = cfg
+	}
+
 	syncer := &CodegenSyncer{
-		lgr:       lgr,
-		ChainList: chainList,
-		Addresses: addresses,
-		inputWd:   wd,
-		outputWd:  wd,
-		chainCfgs: chainCfgs,
+		lgr:         lgr,
+		ChainList:   chainList,
+		Addresses:   addresses,
+		inputWd:     wd,
+		outputWd:    wd,
+		onchainCfgs: chainCfgs,
+		diskCfgs:    diskChainCfgs,
 	}
 
 	for _, opt := range opts {
@@ -82,11 +96,11 @@ func (s *CodegenSyncer) SyncSingleChain(chainId string) error {
 	if err != nil {
 		return fmt.Errorf("error converting chainID to uint64: %w", err)
 	}
-	cfg, ok := s.chainCfgs[chainIdUint64]
+	cfg, ok := s.onchainCfgs[chainIdUint64]
 	if !ok {
 		return fmt.Errorf("chain config not found for chain ID %s", chainId)
 	}
-	s.lgr.Info("found chain config", "chainId", chainId)
+	s.lgr.Info("found onchain config", "chainId", chainId)
 
 	if err := s.ProcessSingleChain(chainIdUint64, cfg); err != nil {
 		return err
@@ -105,25 +119,25 @@ func (s *CodegenSyncer) SyncAll() error {
 }
 
 // ProcessSingleChain updates syncer's internal data for a given chain
-func (s *CodegenSyncer) ProcessSingleChain(chainId uint64, cfg script.ChainConfig) error {
+func (s *CodegenSyncer) ProcessSingleChain(chainId uint64, onchainCfg script.ChainConfig) error {
+	s.lgr.Info("processing chain", "chainId", chainId)
 	chainIdStr := strconv.FormatUint(chainId, 10)
 	s.Addresses[chainIdStr] = &config.AddressesWithRoles{
-		Addresses: cfg.Addresses,
-		Roles:     cfg.Roles,
+		Addresses: onchainCfg.Addresses,
+		Roles:     onchainCfg.Roles,
 	}
 
-	if err := s.UpdateChainList(chainIdStr, cfg); err != nil {
+	if err := s.UpdateChainList(chainIdStr, onchainCfg); err != nil {
 		return err
 	}
 
+	s.lgr.Info("finished processing chain", "chainId", chainId)
 	return nil
 }
 
 // ProcessAllChains reads all input chain files and updates syncer's internal data accordingly
 func (s *CodegenSyncer) ProcessAllChains() error {
-	for chainId, cfg := range s.chainCfgs {
-		s.lgr.Info("processing chain", "chainId", chainId)
-
+	for chainId, cfg := range s.onchainCfgs {
 		if err := s.ProcessSingleChain(chainId, cfg); err != nil {
 			return err
 		}
@@ -132,17 +146,40 @@ func (s *CodegenSyncer) ProcessAllChains() error {
 }
 
 // UpdateChainList updates the ChainList entry for the given chain ID
-func (s *CodegenSyncer) UpdateChainList(chainID string, cfg script.ChainConfig) error {
+func (s *CodegenSyncer) UpdateChainList(chainID string, onchainCfg script.ChainConfig) error {
 	chainIdUint64, err := strconv.ParseUint(chainID, 10, 64)
 	if err != nil {
 		return fmt.Errorf("error converting chainID to uint64: %w", err)
 	}
 
+	diskCfg, ok := s.diskCfgs[chainIdUint64]
+	if !ok {
+		return fmt.Errorf("disk chain config not found for chain ID %s", chainID)
+	}
+
+	dir := filepath.Dir(diskCfg.Filepath)
+	lastDir := filepath.Base(dir)
+	superchain, err := config.ParseSuperchain(lastDir)
+	if err != nil {
+		return fmt.Errorf("error parsing superchain: %w", err)
+	}
+
+	found := false
+	chain := diskCfg.Config
+	chainListEntry := chain.ChainListEntry(superchain, diskCfg.ShortName)
+	chainListEntry.FaultProofStatus = onchainCfg.FaultProofStatus
+
 	for i, entry := range s.ChainList {
 		if entry.ChainID == chainIdUint64 {
-			s.ChainList[i].FaultProofStatus = cfg.FaultProofStatus
+			s.ChainList[i] = chainListEntry
+			s.lgr.Info("updating existing chainList entry", "chainID", chainID)
+			found = true
 			break
 		}
+	}
+	if !found {
+		s.ChainList = append(s.ChainList, chainListEntry)
+		s.lgr.Info("adding new chainList entry", "chainID", chainID)
 	}
 	return nil
 }
