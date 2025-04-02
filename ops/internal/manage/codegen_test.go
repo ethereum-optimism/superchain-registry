@@ -119,7 +119,7 @@ func TestCodegenSyncer_UpdateChainList(t *testing.T) {
 	require.NoError(t, err)
 
 	err = syncer.UpdateChainList(fmt.Sprintf("%d", testChainID), script.ChainConfig{
-		FaultProofStatus: script.FaultProofStatus{
+		FaultProofStatus: &script.FaultProofStatus{
 			RespectedGameType: 42,
 		},
 	})
@@ -150,7 +150,7 @@ func TestCodegenSyncer_SyncSingleChain(t *testing.T) {
 
 	// Modify the chain cfg
 	cfg := chainCfgs[testChainID]
-	cfg.FaultProofStatus = script.FaultProofStatus{
+	cfg.FaultProofStatus = &script.FaultProofStatus{
 		RespectedGameType: 42,
 	}
 	chainCfgs[testChainID] = cfg
@@ -174,7 +174,7 @@ func TestCodegenSyncer_SyncSingleChain(t *testing.T) {
 		if chain.ChainID == testChainID {
 			require.Equal(t, uint32(42), chain.FaultProofStatus.RespectedGameType)
 		} else {
-			require.Equal(t, uint32(0), chain.FaultProofStatus.RespectedGameType)
+			require.Nil(t, chain.FaultProofStatus)
 		}
 	}
 
@@ -193,7 +193,7 @@ func TestCodegenSyncer_SyncAll(t *testing.T) {
 
 	for chainID := range chainCfgs {
 		config := chainCfgs[chainID]
-		config.FaultProofStatus = script.FaultProofStatus{
+		config.FaultProofStatus = &script.FaultProofStatus{
 			RespectedGameType: 42,
 		}
 		chainCfgs[chainID] = config
