@@ -99,22 +99,6 @@ func getL1ChainId(rpcURL string) (uint64, error) {
 	return chainID.Uint64(), nil
 }
 
-func GetSuperchainChainId(superchain string) (uint64, error) {
-	validatedSuperchain, err := ParseSuperchain(superchain)
-	if err != nil {
-		return 0, fmt.Errorf("error parsing superchain: %w", err)
-	}
-
-	switch validatedSuperchain {
-	case MainnetSuperchain:
-		return 1, nil
-	case SepoliaSuperchain, SepoliaDev0Superchain:
-		return 11155111, nil
-	default:
-		return 0, fmt.Errorf("unknown superchain: '%s'", superchain)
-	}
-}
-
 func (s *Superchain) UnmarshalText(text []byte) error {
 	sup, err := ParseSuperchain(string(text))
 	if err != nil {
