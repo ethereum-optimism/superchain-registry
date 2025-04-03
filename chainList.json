@@ -579,6 +579,23 @@
     }
   },
   {
+    "name": "Radius Testnet",
+    "identifier": "sepolia/radius",
+    "chainId": 863,
+    "rpc": [
+      "https://dev-secure.rpc.theradius.xyz"
+    ],
+    "explorers": [
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Binary Sepolia",
     "identifier": "sepolia/tbn",
     "chainId": 625,
