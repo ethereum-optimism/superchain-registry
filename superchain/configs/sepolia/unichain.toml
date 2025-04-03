@@ -3,7 +3,7 @@ public_rpc = "https://sepolia.unichain.org"
 sequencer_rpc = "https://sepolia-sequencer.unichain.org"
 explorer = "https://sepolia.uniscan.xyz"
 superchain_level = 1
-governed_by_optimism = false
+governed_by_optimism = true
 superchain_time = 1734559200
 data_availability_type = "eth-da"
 chain_id = 1301
@@ -19,6 +19,8 @@ max_sequencer_drift = 600
   fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   holocene_time = 1734559200 # Wed 18 Dec 2024 22:00:00 UTC
+  pectra_blob_schedule_time = 1742486400 # Thu 20 Mar 2025 16:00:00 UTC
+  isthmus_time = 1744905600 # Thu 17 Apr 2025 16:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -57,7 +59,7 @@ max_sequencer_drift = 600
   OptimismPortalProxy = "0x0d83dab629f0e0F9d36c0Cbc89B69a489f0751bD"
   SystemConfigProxy = "0xaeE94b9aB7752D3F7704bDE212c0C6A0b701571D"
   ProxyAdmin = "0x2BF403E5353A7a082ef6bb3Ae2Be3B866D8D3ea4"
-  SuperchainConfig = "0xe7e23eBa32A6FD2aC79dd5EC72FE7f6217b41BDC"
+  SuperchainConfig = "0xC2Be75506d5724086DEB7245bd260Cc9753911Be"
   AnchorStateRegistryProxy = "0xf971F1b0D80eb769577135b490b913825BfcF00B"
   DisputeGameFactoryProxy = "0xeff73e5aa3B9AEC32c659Aa3E00444d20a84394b"
   MIPS = "0x1cEc5b1954302F6FAf45515145C72d7f7266546c"

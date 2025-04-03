@@ -345,6 +345,24 @@
     }
   },
   {
+    "name": "Settlus Mainnet",
+    "identifier": "mainnet/settlus-mainnet",
+    "chainId": 5371,
+    "rpc": [
+      "https://settlus-mainnet.g.alchemy.com/public"
+    ],
+    "explorers": [
+      "mainnet.settlus.network"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
     "name": "Shape",
     "identifier": "mainnet/shape",
     "chainId": 360,
@@ -355,6 +373,24 @@
       "https://shape-mainnet.explorer.alchemy.com/"
     ],
     "superchainLevel": 1,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "SnaxChain",
+    "identifier": "mainnet/snax",
+    "chainId": 2192,
+    "rpc": [
+      "https://mainnet.snaxchain.io"
+    ],
+    "explorers": [
+      "https://explorer.snaxchain.io"
+    ],
+    "superchainLevel": 0,
     "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
     "parent": {
@@ -445,7 +481,7 @@
       "https://explorer.unichain.org"
     ],
     "superchainLevel": 1,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -760,6 +796,24 @@
     }
   },
   {
+    "name": "Settlus Sepolia",
+    "identifier": "sepolia/settlus-sepolia",
+    "chainId": 5373,
+    "rpc": [
+      "https://settlus-septestnet.g.alchemy.com/public"
+    ],
+    "explorers": [
+      "sepolia.settlus.network"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Shape Sepolia Testnet",
     "identifier": "sepolia/shape",
     "chainId": 11011,
@@ -806,7 +860,7 @@
       "https://sepolia.uniscan.xyz"
     ],
     "superchainLevel": 1,
-    "governedByOptimism": false,
+    "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
