@@ -1,27 +1,23 @@
 name = "Boba Sepolia Testnet"
-chain_id = 28882
 public_rpc = "https://sepolia.boba.network"
 sequencer_rpc = "https://sepolia.boba.network"
 explorer = "https://testnet.bobascan.com"
-superchain_level = 1
+superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 28882
 batch_inbox_addr = "0xfFf0000000000000000000000000000000028882"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
-superchain = "sepolia"
-base_fee_vault_recipient = "0x7Aa0289De18100Ca74E00F545480776E820aC8a6"
-l1_fee_vault_recipient = "0x7Aa0289De18100Ca74E00F545480776E820aC8a6"
-sequencer_fee_vault_recipient = "0x7Aa0289De18100Ca74E00F545480776E820aC8a6"
 
 [hardforks]
-  regolith_time = 1705600788
   canyon_time = 1705600788 # Thu 18 Jan 2024 17:59:48 UTC
   delta_time = 1709078400 # Wed 28 Feb 2024 00:00:00 UTC
   ecotone_time = 1709078400 # Wed 28 Feb 2024 00:00:00 UTC
   fjord_time = 1722297600 # Tue 30 Jul 2024 00:00:00 UTC
   granite_time = 1726470000 # Mon 16 Sep 2024 07:00:00 UTC
-  holocene_time = 1736150400 # Mon Jan 06 08:00:00 UTC
+  holocene_time = 1736150400 # Mon 6 Jan 2025 08:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -52,13 +48,6 @@ sequencer_fee_vault_recipient = "0x7Aa0289De18100Ca74E00F545480776E820aC8a6"
   BatchSubmitter = "0xf598b6388eC06945021699F0bbb23dfCFc5edbE8"
 
 [addresses]
-  SystemConfigOwner = "0x17070B4AF21625106E7971983Aa524f59EA40c57"
-  ProxyAdminOwner = "0x17070B4AF21625106E7971983Aa524f59EA40c57"
-  Guardian = "0x66930dd34EA64bD4B9F32464e363511b49966C5D"
-  Challenger = "0x17070B4AF21625106E7971983Aa524f59EA40c57"
-  Proposer = "0x0AB197DdeE146c01A0C6Cadf3d91fbb4340A999A"
-  UnsafeBlockSigner = "0x274a47436C7C896827633805d924d41BBa1D19e9"
-  BatchSubmitter = "0xf598b6388eC06945021699F0bbb23dfCFc5edbE8"
   AddressManager = "0xC62C429390B7bCE9960fa647d5556CA7238168AB"
   L1CrossDomainMessengerProxy = "0x9253E76E2fA3f72aF18e08914b3528F725779495"
   L1ERC721BridgeProxy = "0x13B397A08322973B45e063F29746Fb278f189916"

@@ -12,7 +12,7 @@
 | Ethernity | ❌ | ✅ | https://ernscan.io | `https://mainnet.ethernitychain.io` | `https://mainnet.ethernitychain.io` |
 | Funki | ❌ | ❌ | https://funki.superscan.network | `https://rpc-mainnet.funkichain.com` | `https://rpc-mainnet.funkichain.com` |
 | HashKey Chain | ❌ | ❌ | https://explorer.hsk.xyz | `https://mainnet.hsk.xyz` | `https://hashkeychain-mainnet.alt.technology` |
-| Ink | ✅ | ❌ | https://explorer.inkonchain.com | `https://rpc-gel.inkonchain.com` | `https://rpc-gel.inkonchain.com` |
+| Ink | ✅ | ✅ | https://explorer.inkonchain.com | `https://rpc-gel.inkonchain.com` | `https://rpc-gel.inkonchain.com` |
 | Lisk | ❌ | ✅ | https://blockscout.lisk.com | `https://rpc.api.lisk.com` | `https://rpc.api.lisk.com` |
 | Lyra Chain | ❌ | ✅ | https://explorer.lyra.finance | `https://rpc.lyra.finance` | `https://rpc.lyra.finance` |
 | Metal L2 | ✅ | ✅ | https://explorer.metall2.com | `https://rpc.metall2.com` | `https://rpc.metall2.com` |
@@ -39,6 +39,7 @@
 |---|---|---|---|---|---|
 | Base Sepolia Testnet | ❌ | ✅ | https://sepolia-explorer.base.org | `https://sepolia.base.org` | `https://sepolia-sequencer.base.org` |
 | Binary Sepolia | ❌ | ❌ | https://explorer.sepolia.thebinaryholdings.com | `https://rpc.testnet.thebinaryholdings.com` | `https://sequencer.rpc.bnry.testnet.zeeve.net` |
+| Boba Sepolia Testnet | ❌ | ❌ | https://testnet.bobascan.com | `https://sepolia.boba.network` | `https://sepolia.boba.network` |
 | Creator Chain Testnet | ❌ | ✅ | https://explorer.creatorchain.io | `https://rpc.creatorchain.io` | `https://rpc.creatorchain.io` |
 | Cyber Testnet | ❌ | ❌ | https://testnet.cyberscan.co/ | `https://rpc.testnet.cyber.co` | `https://cyber.alt.technology/` |
 | Ethernity Testnet | ❌ | ✅ | https://testnet.ernscan.io | `https://testnet.ethernitychain.io` | `https://testnet.ethernitychain.io` |
