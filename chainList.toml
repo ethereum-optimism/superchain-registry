@@ -262,12 +262,38 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Settlus Mainnet"
+  identifier = "mainnet/settlus-mainnet"
+  chain_id = 5371
+  rpc = ["https://settlus-mainnet.g.alchemy.com/public"]
+  explorers = ["mainnet.settlus.network"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Shape"
   identifier = "mainnet/shape"
   chain_id = 360
   rpc = ["https://mainnet.shape.network/"]
   explorers = ["https://shape-mainnet.explorer.alchemy.com/"]
   superchain_level = 1
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "SnaxChain"
+  identifier = "mainnet/snax"
+  chain_id = 2192
+  rpc = ["https://mainnet.snaxchain.io"]
+  explorers = ["https://explorer.snaxchain.io"]
+  superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
@@ -554,6 +580,19 @@
   chain_id = 6806
   rpc = ["https://racetestnet.io"]
   explorers = ["https://testnet.racescan.io/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
+  name = "Settlus Sepolia"
+  identifier = "sepolia/settlus-sepolia"
+  chain_id = 5373
+  rpc = ["https://settlus-septestnet.g.alchemy.com/public"]
+  explorers = ["sepolia.settlus.network"]
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"

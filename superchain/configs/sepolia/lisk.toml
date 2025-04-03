@@ -4,6 +4,7 @@ sequencer_rpc = "https://rpc.sepolia-api.lisk.com"
 explorer = "https://sepolia-blockscout.lisk.com"
 superchain_level = 1
 governed_by_optimism = false
+superchain_time = 1708534800
 data_availability_type = "eth-da"
 chain_id = 4202
 batch_inbox_addr = "0xff00000000000000000000000000000000004202"
@@ -17,6 +18,9 @@ max_sequencer_drift = 600
   ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
   fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
   granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
+  holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
+  pectra_blob_schedule_time = 1742486400 # Thu 20 Mar 2025 16:00:00 UTC
+  isthmus_time = 1744905600 # Thu 17 Apr 2025 16:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 10
