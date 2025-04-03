@@ -109,7 +109,7 @@ func action(cliCtx *cli.Context) error {
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
 	l1RpcUrls := strings.Split(cliCtx.String("l1-rpc-urls"), ",")
 	chainIdStr := strconv.FormatUint(chainCfg.ChainID, 10)
-	onchainCfgs, err := manage.FetchSingleChain(lgr, wd, l1RpcUrls, chainIdStr)
+	onchainCfgs, err := manage.FetchChains(lgr, wd, l1RpcUrls, []string{chainIdStr})
 	if err != nil {
 		return fmt.Errorf("error fetching onchain configs: %w", err)
 	}
@@ -117,7 +117,7 @@ func action(cliCtx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("error creating codegen syncer: %w", err)
 	}
-	if err := syncer.SyncSingleChain(chainIdStr); err != nil {
+	if err := syncer.SyncAll(); err != nil {
 		return fmt.Errorf("error syncing codegen: %w", err)
 	}
 

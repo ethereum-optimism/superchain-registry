@@ -90,26 +90,7 @@ func NewCodegenSyncer(lgr log.Logger, wd string, chainCfgs map[uint64]script.Cha
 	return syncer, nil
 }
 
-// SyncSingleChain syncs only the specified chain
-func (s *CodegenSyncer) SyncSingleChain(chainId string) error {
-	chainIdUint64, err := strconv.ParseUint(chainId, 10, 64)
-	if err != nil {
-		return fmt.Errorf("error converting chainID to uint64: %w", err)
-	}
-	cfg, ok := s.onchainCfgs[chainIdUint64]
-	if !ok {
-		return fmt.Errorf("chain config not found for chain ID %s", chainId)
-	}
-	s.lgr.Info("found onchain config", "chainId", chainId)
-
-	if err := s.ProcessSingleChain(chainIdUint64, cfg); err != nil {
-		return err
-	}
-
-	return s.WriteFiles()
-}
-
-// SyncAll performs the complete sync process
+// SyncAll syncs codegen files with all entries in syncer.onchainCfgs
 func (s *CodegenSyncer) SyncAll() error {
 	if err := s.ProcessAllChains(); err != nil {
 		return err
@@ -122,10 +103,8 @@ func (s *CodegenSyncer) SyncAll() error {
 func (s *CodegenSyncer) ProcessSingleChain(chainId uint64, onchainCfg script.ChainConfig) error {
 	s.lgr.Info("processing chain", "chainId", chainId)
 	chainIdStr := strconv.FormatUint(chainId, 10)
-	s.Addresses[chainIdStr] = &config.AddressesWithRoles{
-		Addresses: onchainCfg.Addresses,
-		Roles:     onchainCfg.Roles,
-	}
+	addressesWithRoles := config.CreateAddressesWithRolesFromFetcher(onchainCfg.Addresses, onchainCfg.Roles)
+	s.Addresses[chainIdStr] = &addressesWithRoles
 
 	if err := s.UpdateChainList(chainIdStr, onchainCfg); err != nil {
 		return err

@@ -50,7 +50,7 @@ func FindValidL1URL(lgr log.Logger, urls []string, superchain Superchain) (strin
 		}
 
 		if err := validateL1ChainID(url, superchain); err != nil {
-			lgr.Warn("l1-rpc-url has mismatched l1 chainId", "urlIndex", i, "error", err)
+			lgr.Warn("l1-rpc-url has mismatched l1 chainId", "urlIndex", i)
 			continue
 		}
 

@@ -146,28 +146,81 @@ type Optimism struct {
 }
 
 type Roles struct {
-	SystemConfigOwner      *ChecksummedAddress `json:"SystemConfigOwner" toml:"SystemConfigOwner"`
-	OpChainProxyAdminOwner *ChecksummedAddress `json:"OpChainProxyAdminOwner" toml:"OpChainProxyAdminOwner"`
-	Guardian               *ChecksummedAddress `json:"Guardian" toml:"Guardian"`
-	Challenger             *ChecksummedAddress `json:"Challenger" toml:"Challenger"`
-	Proposer               *ChecksummedAddress `json:"Proposer" toml:"Proposer"`
-	UnsafeBlockSigner      *ChecksummedAddress `json:"UnsafeBlockSigner" toml:"UnsafeBlockSigner"`
-	BatchSubmitter         *ChecksummedAddress `json:"BatchSubmitter" toml:"BatchSubmitter"`
+	SystemConfigOwner *ChecksummedAddress `json:"SystemConfigOwner" toml:"SystemConfigOwner"`
+	ProxyAdminOwner   *ChecksummedAddress `json:"ProxyAdminOwner" toml:"ProxyAdminOwner"`
+	Guardian          *ChecksummedAddress `json:"Guardian" toml:"Guardian"`
+	Challenger        *ChecksummedAddress `json:"Challenger" toml:"Challenger"`
+	Proposer          *ChecksummedAddress `json:"Proposer" toml:"Proposer"`
+	UnsafeBlockSigner *ChecksummedAddress `json:"UnsafeBlockSigner" toml:"UnsafeBlockSigner"`
+	BatchSubmitter    *ChecksummedAddress `json:"BatchSubmitter" toml:"BatchSubmitter"`
 }
 
 type Addresses struct {
-	SystemConfigProxy           *ChecksummedAddress `toml:"SystemConfigProxy,omitempty" json:"SystemConfigProxy,omitempty"`
-	L1StandardBridgeProxy       *ChecksummedAddress `toml:"L1StandardBridgeProxy,omitempty" json:"L1StandardBridgeProxy,omitempty"`
-	OptimismPortalProxy         *ChecksummedAddress `toml:"OptimismPortalProxy,omitempty" json:"OptimismPortalProxy,omitempty"`
-	L1ERC721BridgeProxy         *ChecksummedAddress `toml:"L1ERC721BridgeProxy,omitempty" json:"L1ERC721BridgeProxy,omitempty"`
-	L1CrossDomainMessengerProxy *ChecksummedAddress `toml:"L1CrossDomainMessengerProxy,omitempty" json:"L1CrossDomainMessengerProxy,omitempty"`
+	AddressManager                    *ChecksummedAddress `toml:"AddressManager,omitempty" json:"AddressManager,omitempty"`
+	L1CrossDomainMessengerProxy       *ChecksummedAddress `toml:"L1CrossDomainMessengerProxy,omitempty" json:"L1CrossDomainMessengerProxy,omitempty"`
+	L1ERC721BridgeProxy               *ChecksummedAddress `toml:"L1ERC721BridgeProxy,omitempty" json:"L1ERC721BridgeProxy,omitempty"`
+	L1StandardBridgeProxy             *ChecksummedAddress `toml:"L1StandardBridgeProxy,omitempty" json:"L1StandardBridgeProxy,omitempty"`
+	L2OutputOracleProxy               *ChecksummedAddress `toml:"L2OutputOracleProxy,omitempty" json:"L2OutputOracleProxy,omitempty"`
+	OptimismMintableERC20FactoryProxy *ChecksummedAddress `toml:"OptimismMintableERC20FactoryProxy,omitempty" json:"OptimismMintableERC20FactoryProxy,omitempty"`
+	OptimismPortalProxy               *ChecksummedAddress `toml:"OptimismPortalProxy,omitempty" json:"OptimismPortalProxy,omitempty"`
+	SystemConfigProxy                 *ChecksummedAddress `toml:"SystemConfigProxy,omitempty" json:"SystemConfigProxy,omitempty"`
+	ProxyAdmin                        *ChecksummedAddress `toml:"ProxyAdmin,omitempty" json:"ProxyAdmin,omitempty"`
+	SuperchainConfig                  *ChecksummedAddress `toml:"SuperchainConfig,omitempty" json:"SuperchainConfig,omitempty"`
+	AnchorStateRegistryProxy          *ChecksummedAddress `toml:"AnchorStateRegistryProxy,omitempty" json:"AnchorStateRegistryProxy,omitempty"`
+	DelayedWETHProxy                  *ChecksummedAddress `toml:"DelayedWETHProxy,omitempty" json:"DelayedWETHProxy,omitempty"`
+	DisputeGameFactoryProxy           *ChecksummedAddress `toml:"DisputeGameFactoryProxy,omitempty" json:"DisputeGameFactoryProxy,omitempty"`
+	FaultDisputeGame                  *ChecksummedAddress `toml:"FaultDisputeGame,omitempty" json:"FaultDisputeGame,omitempty"`
+	MIPS                              *ChecksummedAddress `toml:"MIPS,omitempty" json:"MIPS,omitempty"`
+	PermissionedDisputeGame           *ChecksummedAddress `toml:"PermissionedDisputeGame,omitempty" json:"PermissionedDisputeGame,omitempty"`
+	PreimageOracle                    *ChecksummedAddress `toml:"PreimageOracle,omitempty" json:"PreimageOracle,omitempty"`
+	DAChallengeAddress                *ChecksummedAddress `toml:"DAChallengeAddress,omitempty" json:"DAChallengeAddress,omitempty"`
 }
 
 type AddressesJSON jsonutil.LazySortedJsonMap[string, *AddressesWithRoles]
 
 type AddressesWithRoles struct {
-	script.Addresses
-	script.Roles
+	Addresses
+	Roles
+}
+
+func CreateAddressesWithRolesFromFetcher(addresses script.Addresses, roles script.Roles) AddressesWithRoles {
+	addressesWithRoles := AddressesWithRoles{
+		Addresses: Addresses{
+			AddressManager:                    NewChecksummedAddress(addresses.AddressManager),
+			L1CrossDomainMessengerProxy:       NewChecksummedAddress(addresses.L1CrossDomainMessengerProxy),
+			L1ERC721BridgeProxy:               NewChecksummedAddress(addresses.L1ERC721BridgeProxy),
+			L1StandardBridgeProxy:             NewChecksummedAddress(addresses.L1StandardBridgeProxy),
+			L2OutputOracleProxy:               NewChecksummedAddress(addresses.L2OutputOracleProxy),
+			OptimismMintableERC20FactoryProxy: NewChecksummedAddress(addresses.OptimismMintableERC20FactoryProxy),
+			OptimismPortalProxy:               NewChecksummedAddress(addresses.OptimismPortalProxy),
+			SystemConfigProxy:                 NewChecksummedAddress(addresses.SystemConfigProxy),
+			ProxyAdmin:                        NewChecksummedAddress(addresses.OpChainProxyAdmin),
+			SuperchainConfig:                  NewChecksummedAddress(addresses.SuperchainConfig),
+			AnchorStateRegistryProxy:          NewChecksummedAddress(addresses.AnchorStateRegistryProxy),
+			DisputeGameFactoryProxy:           NewChecksummedAddress(addresses.DisputeGameFactoryProxy),
+			FaultDisputeGame:                  NewChecksummedAddress(addresses.FaultDisputeGame),
+			MIPS:                              NewChecksummedAddress(addresses.Mips),
+			PermissionedDisputeGame:           NewChecksummedAddress(addresses.PermissionedDisputeGame),
+			PreimageOracle:                    NewChecksummedAddress(addresses.PreimageOracle),
+		},
+		Roles: Roles{
+			SystemConfigOwner: NewChecksummedAddress(roles.SystemConfigOwner),
+			ProxyAdminOwner:   NewChecksummedAddress(roles.OpChainProxyAdminOwner),
+			Guardian:          NewChecksummedAddress(roles.Guardian),
+			Challenger:        NewChecksummedAddress(roles.Challenger),
+			Proposer:          NewChecksummedAddress(roles.Proposer),
+			UnsafeBlockSigner: NewChecksummedAddress(roles.UnsafeBlockSigner),
+			BatchSubmitter:    NewChecksummedAddress(roles.BatchSubmitter),
+		},
+	}
+	// Hack until we separate the permissioned and permissionless WETH proxies
+	if addresses.DelayedWETHPermissionlessGameProxy != (common.Address{}) {
+		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addresses.DelayedWETHPermissionlessGameProxy)
+	} else {
+		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addresses.DelayedWETHPermissionedGameProxy)
+	}
+
+	return addressesWithRoles
 }
 
 func (a AddressesWithRoles) MarshalJSON() ([]byte, error) {
@@ -177,7 +230,6 @@ func (a AddressesWithRoles) MarshalJSON() ([]byte, error) {
 	// Declare processStruct variable first to allow recursion
 	var processStruct func(interface{})
 
-	// Define the function after declaration
 	processStruct = func(structVal interface{}) {
 		val := reflect.ValueOf(structVal)
 		typ := reflect.TypeOf(structVal)
@@ -185,28 +237,32 @@ func (a AddressesWithRoles) MarshalJSON() ([]byte, error) {
 		for i := 0; i < val.NumField(); i++ {
 			field := val.Field(i)
 
-			// Handle embedded structs (like L2OpchainDeployment)
+			// Handle embedded structs
 			if field.Kind() == reflect.Struct && typ.Field(i).Anonymous {
 				processStruct(field.Interface())
 				continue
 			}
 
-			// Skip if not common.Address
-			if field.Type() != reflect.TypeOf(common.Address{}) {
+			// Process ChecksummedAddress pointers
+			if field.Type() == reflect.TypeOf((*ChecksummedAddress)(nil)) {
+				// Get field name from JSON tag or struct field name
+				jsonTag := typ.Field(i).Tag.Get("json")
+				fieldName := strings.Split(jsonTag, ",")[0]
+				if fieldName == "" {
+					fieldName = typ.Field(i).Name
+				}
+
+				// Skip nil pointers
+				if field.IsNil() {
+					continue
+				}
+
+				// Get the address as string
+				addrPtr := field.Interface().(*ChecksummedAddress)
+				if addrPtr != nil && *addrPtr != (ChecksummedAddress{}) {
+					allFields[fieldName] = addrPtr.String()
+				}
 				continue
-			}
-
-			// Get field name from JSON tag or struct field name
-			jsonTag := typ.Field(i).Tag.Get("json")
-			fieldName := strings.Split(jsonTag, ",")[0]
-			if fieldName == "" {
-				fieldName = typ.Field(i).Name
-			}
-
-			// Include only non-zero addresses with proper checksumming
-			addr := field.Interface().(common.Address)
-			if addr != (common.Address{}) {
-				allFields[fieldName] = addr.Hex()
 			}
 		}
 	}

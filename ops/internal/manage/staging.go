@@ -90,13 +90,13 @@ func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
 	}
 
 	cfg.Roles = config.Roles{
-		SystemConfigOwner:      config.NewChecksummedAddress(chainIntent.Roles.SystemConfigOwner),
-		OpChainProxyAdminOwner: config.NewChecksummedAddress(chainIntent.Roles.L1ProxyAdminOwner),
-		Guardian:               config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.Guardian),
-		Proposer:               config.NewChecksummedAddress(chainIntent.Roles.Proposer),
-		UnsafeBlockSigner:      config.NewChecksummedAddress(chainIntent.Roles.UnsafeBlockSigner),
-		BatchSubmitter:         config.NewChecksummedAddress(chainIntent.Roles.Batcher),
-		Challenger:             config.NewChecksummedAddress(chainIntent.Roles.Challenger),
+		SystemConfigOwner: config.NewChecksummedAddress(chainIntent.Roles.SystemConfigOwner),
+		ProxyAdminOwner:   config.NewChecksummedAddress(chainIntent.Roles.L1ProxyAdminOwner),
+		Guardian:          config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.Guardian),
+		Proposer:          config.NewChecksummedAddress(chainIntent.Roles.Proposer),
+		UnsafeBlockSigner: config.NewChecksummedAddress(chainIntent.Roles.UnsafeBlockSigner),
+		BatchSubmitter:    config.NewChecksummedAddress(chainIntent.Roles.Batcher),
+		Challenger:        config.NewChecksummedAddress(chainIntent.Roles.Challenger),
 	}
 
 	cfg.Addresses = config.Addresses{
