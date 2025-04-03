@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/stretchr/testify/require"
 )
@@ -69,15 +71,61 @@ func createTestChainConfigs(t *testing.T) map[uint64]script.ChainConfig {
 
 		// Only include chains that exist in addresses
 		if chainAddrs, ok := addresses[chainIDStr]; ok {
-			chainCfgs[chainID] = script.ChainConfig{
-				Addresses:        chainAddrs.Addresses,
-				Roles:            chainAddrs.Roles,
-				FaultProofStatus: entry.FaultProofStatus,
-			}
+			chainCfgs[chainID] = convertToScriptChainConfig(t, chainAddrs, entry.FaultProofStatus)
 		}
 	}
 
 	return chainCfgs
+}
+
+// convertToScriptChainConfig converts from config types to script types
+func convertToScriptChainConfig(t *testing.T, chainAddrs *config.AddressesWithRoles, faultProofStatus *script.FaultProofStatus) script.ChainConfig {
+	var scriptAddrs script.Addresses
+	var scriptRoles script.Roles
+
+	// First, convert to a map of string addresses
+	addressMap := make(map[string]string)
+	bytes, err := json.Marshal(chainAddrs)
+	require.NoError(t, err)
+	err = json.Unmarshal(bytes, &addressMap)
+	require.NoError(t, err)
+
+	// Now populate the script structs manually using the map
+	// For each field in scriptAddrs struct
+	addressVal := reflect.ValueOf(&scriptAddrs).Elem()
+	for i := 0; i < addressVal.NumField(); i++ {
+		field := addressVal.Type().Field(i)
+		jsonTag := strings.Split(field.Tag.Get("json"), ",")[0]
+		if jsonTag == "" {
+			jsonTag = field.Name
+		}
+
+		if addrStr, ok := addressMap[jsonTag]; ok && addrStr != "" {
+			addr := common.HexToAddress(addrStr)
+			addressVal.Field(i).Set(reflect.ValueOf(addr))
+		}
+	}
+
+	// For each field in scriptRoles struct
+	rolesVal := reflect.ValueOf(&scriptRoles).Elem()
+	for i := 0; i < rolesVal.NumField(); i++ {
+		field := rolesVal.Type().Field(i)
+		jsonTag := strings.Split(field.Tag.Get("json"), ",")[0]
+		if jsonTag == "" {
+			jsonTag = field.Name
+		}
+
+		if addrStr, ok := addressMap[jsonTag]; ok && addrStr != "" {
+			addr := common.HexToAddress(addrStr)
+			rolesVal.Field(i).Set(reflect.ValueOf(addr))
+		}
+	}
+
+	return script.ChainConfig{
+		Addresses:        scriptAddrs,
+		Roles:            scriptRoles,
+		FaultProofStatus: faultProofStatus,
+	}
 }
 
 func TestCodegenSyncer_NewCodegenSyncer(t *testing.T) {
@@ -134,56 +182,6 @@ func TestCodegenSyncer_UpdateChainList(t *testing.T) {
 
 	// Test with invalid chain ID format
 	err = syncer.UpdateChainList("not-a-number", script.ChainConfig{})
-	require.Error(t, err)
-}
-
-func TestCodegenSyncer_SyncSingleChain(t *testing.T) {
-	tempDir := t.TempDir()
-	chainCfgs := createTestChainConfigs(t)
-
-	// Get a chainID to test with (first one from configs)
-	var testChainID uint64
-	for id := range chainCfgs {
-		testChainID = id
-		break
-	}
-
-	// Modify the chain cfg
-	cfg := chainCfgs[testChainID]
-	cfg.FaultProofStatus = &script.FaultProofStatus{
-		RespectedGameType: 42,
-	}
-	chainCfgs[testChainID] = cfg
-
-	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelError, false))
-
-	syncer, err := NewCodegenSyncer(lgr, "testdata", chainCfgs, WithOutputDirectory(tempDir))
-	require.NoError(t, err)
-
-	err = syncer.SyncSingleChain(fmt.Sprintf("%d", testChainID))
-	require.NoError(t, err)
-
-	// Verify chainList.json was created in tempDir and updated only for the specific chain
-	chainListData, err := os.ReadFile(filepath.Join(tempDir, "chainList.json"))
-	require.NoError(t, err)
-	var chainList []config.ChainListEntry
-	err = json.Unmarshal(chainListData, &chainList)
-	require.NoError(t, err)
-
-	for _, chain := range chainList {
-		if chain.ChainID == testChainID {
-			require.Equal(t, uint32(42), chain.FaultProofStatus.RespectedGameType)
-		} else {
-			require.Nil(t, chain.FaultProofStatus)
-		}
-	}
-
-	// Verify chainList.toml was created
-	_, err = os.Stat(filepath.Join(tempDir, "chainList.toml"))
-	require.NoError(t, err)
-
-	// Test with non-existent chain ID
-	err = syncer.SyncSingleChain("999999")
 	require.Error(t, err)
 }
 

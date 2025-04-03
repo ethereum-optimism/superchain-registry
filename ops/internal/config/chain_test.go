@@ -8,8 +8,6 @@ import (
 	"testing"
 
 	"github.com/BurntSushi/toml"
-	"github.com/ethereum-optimism/optimism/op-chain-ops/interopgen"
-	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 )
@@ -66,35 +64,34 @@ func TestChain_Marshaling(t *testing.T) {
 
 func TestAddressesWithRoles_Marshaling(t *testing.T) {
 	testData := AddressesWithRoles{
-		Addresses: script.Addresses{
-			L2OpchainDeployment: interopgen.L2OpchainDeployment{
-				AddressManager:                     common.Address{'A'},
-				L1CrossDomainMessengerProxy:        common.Address{'B'},
-				L1ERC721BridgeProxy:                common.Address{'C'},
-				OptimismMintableERC20FactoryProxy:  common.Address{'D'},
-				SystemConfigProxy:                  common.Address{'E'},
-				L1StandardBridgeProxy:              common.Address{'F'},
-				OptimismPortalProxy:                common.Address{'G'},
-				OpChainProxyAdmin:                  common.Address{'H'},
-				AnchorStateRegistryProxy:           common.Address{'I'},
-				DelayedWETHPermissionedGameProxy:   common.Address{'J'},
-				DelayedWETHPermissionlessGameProxy: common.Address{'K'},
-				DisputeGameFactoryProxy:            common.Address{'L'},
-				FaultDisputeGame:                   common.Address{'M'},
-				PermissionedDisputeGame:            common.Address{'O'},
-			},
-			Mips:                common.Address{'P'},
-			SuperchainConfig:    common.Address{'Q'},
-			PreimageOracle:      common.Address{'R'},
-			L2OutputOracleProxy: common.Address{'S'},
+		Addresses: Addresses{
+			AddressManager:                    NewChecksummedAddress(common.Address{'A'}),
+			L1CrossDomainMessengerProxy:       NewChecksummedAddress(common.Address{'B'}),
+			L1ERC721BridgeProxy:               NewChecksummedAddress(common.Address{'C'}),
+			L1StandardBridgeProxy:             NewChecksummedAddress(common.Address{'D'}),
+			L2OutputOracleProxy:               NewChecksummedAddress(common.Address{'E'}),
+			OptimismMintableERC20FactoryProxy: NewChecksummedAddress(common.Address{'F'}),
+			OptimismPortalProxy:               NewChecksummedAddress(common.Address{'G'}),
+			SystemConfigProxy:                 NewChecksummedAddress(common.Address{'H'}),
+			ProxyAdmin:                        NewChecksummedAddress(common.Address{'I'}),
+			SuperchainConfig:                  NewChecksummedAddress(common.Address{'J'}),
+			AnchorStateRegistryProxy:          NewChecksummedAddress(common.Address{'K'}),
+			DelayedWETHProxy:                  NewChecksummedAddress(common.Address{'L'}),
+			DisputeGameFactoryProxy:           NewChecksummedAddress(common.Address{'M'}),
+			FaultDisputeGame:                  NewChecksummedAddress(common.Address{'N'}),
+			MIPS:                              NewChecksummedAddress(common.Address{'O'}),
+			PermissionedDisputeGame:           NewChecksummedAddress(common.Address{'P'}),
+			PreimageOracle:                    NewChecksummedAddress(common.Address{'Q'}),
+			DAChallengeAddress:                nil,
 		},
-		Roles: script.Roles{
-			SystemConfigOwner:      common.Address{'T'},
-			OpChainProxyAdminOwner: common.Address{'U'},
-			Guardian:               common.Address{'V'},
-			Challenger:             common.Address{'W'},
-			UnsafeBlockSigner:      common.Address{'X'},
-			BatchSubmitter:         common.Address{'Y'},
+		Roles: Roles{
+			SystemConfigOwner: NewChecksummedAddress(common.Address{'S'}),
+			ProxyAdminOwner:   NewChecksummedAddress(common.Address{'T'}),
+			Guardian:          NewChecksummedAddress(common.Address{'U'}),
+			Challenger:        NewChecksummedAddress(common.Address{'V'}),
+			Proposer:          nil,
+			UnsafeBlockSigner: NewChecksummedAddress(common.Address{'X'}),
+			BatchSubmitter:    NewChecksummedAddress(common.Address{'Y'}),
 		},
 	}
 

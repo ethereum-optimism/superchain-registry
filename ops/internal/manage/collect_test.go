@@ -42,7 +42,7 @@ func TestFindChainConfig(t *testing.T) {
 		require.NotNil(t, cfg)
 		require.NotNil(t, cfg.Config.Addresses.SystemConfigProxy)
 		require.NotNil(t, cfg.Config.Addresses.L1StandardBridgeProxy)
-		require.NotNil(t, cfg.Config.Roles.OpChainProxyAdminOwner)
+		require.NotNil(t, cfg.Config.Roles.ProxyAdminOwner)
 		require.Equal(t, uint64(11155420), cfg.Config.ChainID)
 		require.Equal(t, config.SepoliaSuperchain, superchain)
 	})
