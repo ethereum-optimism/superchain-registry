@@ -146,7 +146,14 @@ func (s *CodegenSyncer) UpdateChainList(chainID string, onchainCfg script.ChainC
 	found := false
 	chain := diskCfg.Config
 	chainListEntry := chain.ChainListEntry(superchain, diskCfg.ShortName)
-	chainListEntry.FaultProofStatus = onchainCfg.FaultProofStatus
+
+	if onchainCfg.FaultProofStatus == nil {
+		chainListEntry.FaultProofs = config.FaultProofs{Status: "none"}
+	} else if onchainCfg.FaultProofStatus.RespectedGameType == 1 {
+		chainListEntry.FaultProofs = config.FaultProofs{Status: "permissioned"}
+	} else {
+		chainListEntry.FaultProofs = config.FaultProofs{Status: "permissionless"}
+	}
 
 	for i, entry := range s.ChainList {
 		if entry.ChainID == chainIdUint64 {

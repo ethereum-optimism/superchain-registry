@@ -71,7 +71,7 @@ func createTestChainConfigs(t *testing.T) map[uint64]script.ChainConfig {
 
 		// Only include chains that exist in addresses
 		if chainAddrs, ok := addresses[chainIDStr]; ok {
-			chainCfgs[chainID] = convertToScriptChainConfig(t, chainAddrs, entry.FaultProofStatus)
+			chainCfgs[chainID] = convertToScriptChainConfig(t, chainAddrs, entry.FaultProofs)
 		}
 	}
 
@@ -79,7 +79,7 @@ func createTestChainConfigs(t *testing.T) map[uint64]script.ChainConfig {
 }
 
 // convertToScriptChainConfig converts from config types to script types
-func convertToScriptChainConfig(t *testing.T, chainAddrs *config.AddressesWithRoles, faultProofStatus *script.FaultProofStatus) script.ChainConfig {
+func convertToScriptChainConfig(t *testing.T, chainAddrs *config.AddressesWithRoles, faultProofStatus config.FaultProofs) script.ChainConfig {
 	var scriptAddrs script.Addresses
 	var scriptRoles script.Roles
 
@@ -121,11 +121,25 @@ func convertToScriptChainConfig(t *testing.T, chainAddrs *config.AddressesWithRo
 		}
 	}
 
-	return script.ChainConfig{
-		Addresses:        scriptAddrs,
-		Roles:            scriptRoles,
-		FaultProofStatus: faultProofStatus,
+	cfg := script.ChainConfig{
+		Addresses: scriptAddrs,
+		Roles:     scriptRoles,
 	}
+	if faultProofStatus.Status == "permissioned" {
+		cfg.FaultProofStatus = &script.FaultProofStatus{
+			Permissioned:      true,
+			RespectedGameType: 1,
+		}
+	} else if faultProofStatus.Status == "permissionless" {
+		cfg.FaultProofStatus = &script.FaultProofStatus{
+			Permissioned:      true,
+			Permissionless:    true,
+			RespectedGameType: 0,
+		}
+	} else {
+		cfg.FaultProofStatus = nil
+	}
+	return cfg
 }
 
 func TestCodegenSyncer_NewCodegenSyncer(t *testing.T) {
@@ -168,7 +182,7 @@ func TestCodegenSyncer_UpdateChainList(t *testing.T) {
 
 	err = syncer.UpdateChainList(fmt.Sprintf("%d", testChainID), script.ChainConfig{
 		FaultProofStatus: &script.FaultProofStatus{
-			RespectedGameType: 42,
+			RespectedGameType: 0,
 		},
 	})
 	require.NoError(t, err)
@@ -176,7 +190,7 @@ func TestCodegenSyncer_UpdateChainList(t *testing.T) {
 	// Verify the chain list was updated in memory
 	for _, chain := range syncer.ChainList {
 		if chain.ChainID == testChainID {
-			require.Equal(t, uint32(42), chain.FaultProofStatus.RespectedGameType)
+			require.Equal(t, "permissionless", chain.FaultProofs.Status)
 		}
 	}
 
@@ -192,7 +206,7 @@ func TestCodegenSyncer_SyncAll(t *testing.T) {
 	for chainID := range chainCfgs {
 		config := chainCfgs[chainID]
 		config.FaultProofStatus = &script.FaultProofStatus{
-			RespectedGameType: 42,
+			RespectedGameType: 1,
 		}
 		chainCfgs[chainID] = config
 	}
@@ -216,7 +230,7 @@ func TestCodegenSyncer_SyncAll(t *testing.T) {
 		foundUpdatedChain := false
 		for _, chain := range chainList {
 			if chain.ChainID == chainID {
-				require.Equal(t, uint32(42), chain.FaultProofStatus.RespectedGameType)
+				require.Equal(t, "permissioned", chain.FaultProofs.Status)
 				foundUpdatedChain = true
 			}
 		}
@@ -236,7 +250,7 @@ func TestCodegenSyncer_SyncAll(t *testing.T) {
 		foundUpdatedChain := false
 		for _, chain := range chainListToml.Chains {
 			if chain.ChainID == chainID {
-				require.Equal(t, uint32(42), chain.FaultProofStatus.RespectedGameType)
+				require.Equal(t, "permissioned", chain.FaultProofs.Status)
 				foundUpdatedChain = true
 			}
 		}
