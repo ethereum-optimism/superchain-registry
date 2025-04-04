@@ -37,6 +37,10 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = true
+    respected_game_type = 0
 
 [[chains]]
   name = "Binary Mainnet"
@@ -104,6 +108,10 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = true
+    respected_game_type = 1
 
 [[chains]]
   name = "Ink"
@@ -117,6 +125,10 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = true
+    respected_game_type = 0
 
 [[chains]]
   name = "Lisk"
@@ -195,6 +207,10 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = true
+    respected_game_type = 0
 
 [[chains]]
   name = "Orderly Mainnet"
@@ -260,6 +276,10 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = false
+    respected_game_type = 1
 
 [[chains]]
   name = "SnaxChain"
@@ -286,6 +306,10 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = false
+    respected_game_type = 1
 
 [[chains]]
   name = "Superseed"
@@ -325,6 +349,10 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = false
+    respected_game_type = 1
 
 [[chains]]
   name = "Unichain"
@@ -338,6 +366,10 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = true
+    respected_game_type = 0
 
 [[chains]]
   name = "World Chain"
@@ -351,6 +383,10 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = false
+    respected_game_type = 1
 
 [[chains]]
   name = "Xterio Chain (ETH)"
@@ -390,6 +426,10 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = false
+    respected_game_type = 1
 
 [[chains]]
   name = "Base Sepolia Testnet"
@@ -403,6 +443,10 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = true
+    respected_game_type = 0
 
 [[chains]]
   name = "Binary Sepolia"
@@ -482,6 +526,10 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = true
+    respected_game_type = 1
 
 [[chains]]
   name = "Lisk Sepolia Testnet"
@@ -534,6 +582,10 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = true
+    respected_game_type = 0
 
 [[chains]]
   name = "Pivotal Sepolia"
@@ -560,6 +612,10 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = false
+    respected_game_type = 1
 
 [[chains]]
   name = "Settlus Sepolia"
@@ -573,6 +629,10 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = false
+    respected_game_type = 1
 
 [[chains]]
   name = "Shape Sepolia Testnet"
@@ -586,6 +646,10 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = false
+    respected_game_type = 1
 
 [[chains]]
   name = "Soneium Testnet Minato"
@@ -599,6 +663,10 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = false
+    respected_game_type = 1
 
 [[chains]]
   name = "Unichain Sepolia Testnet"
@@ -612,6 +680,10 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = true
+    respected_game_type = 0
 
 [[chains]]
   name = "World Chain Sepolia Testnet"
@@ -625,6 +697,10 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = false
+    respected_game_type = 1
 
 [[chains]]
   name = "Zora Sepolia Testnet"
@@ -638,6 +714,10 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = false
+    respected_game_type = 1
 
 [[chains]]
   name = "arena-z-testnet"
@@ -664,6 +744,10 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia-dev-0"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = true
+    respected_game_type = 0
 
 [[chains]]
   name = "OP Labs Sepolia devnet 0"
@@ -677,3 +761,7 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia-dev-0"
+  [chains.fault_proofs]
+    permissioned = true
+    permissionless = true
+    respected_game_type = 0

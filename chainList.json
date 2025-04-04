@@ -52,6 +52,11 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": true,
+      "respectedGameType": 0
     }
   },
   {
@@ -144,7 +149,12 @@
       "type": "L2",
       "chain": "mainnet"
     },
-    "gasPayingToken": "0xE7C6BF469e97eEB0bFB74C8dbFF5BD47D4C1C98a"
+    "gasPayingToken": "0xE7C6BF469e97eEB0bFB74C8dbFF5BD47D4C1C98a",
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": true,
+      "respectedGameType": 1
+    }
   },
   {
     "name": "Ink",
@@ -162,6 +172,11 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": true,
+      "respectedGameType": 0
     }
   },
   {
@@ -270,6 +285,11 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": true,
+      "respectedGameType": 0
     }
   },
   {
@@ -360,6 +380,11 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": false,
+      "respectedGameType": 1
     }
   },
   {
@@ -396,6 +421,11 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": false,
+      "respectedGameType": 1
     }
   },
   {
@@ -450,6 +480,11 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": false,
+      "respectedGameType": 1
     }
   },
   {
@@ -468,6 +503,11 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": true,
+      "respectedGameType": 0
     }
   },
   {
@@ -486,6 +526,11 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": false,
+      "respectedGameType": 1
     }
   },
   {
@@ -540,6 +585,11 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": false,
+      "respectedGameType": 1
     }
   },
   {
@@ -558,6 +608,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": true,
+      "respectedGameType": 0
     }
   },
   {
@@ -667,6 +722,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": true,
+      "respectedGameType": 1
     }
   },
   {
@@ -739,6 +799,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": true,
+      "respectedGameType": 0
     }
   },
   {
@@ -775,6 +840,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": false,
+      "respectedGameType": 1
     }
   },
   {
@@ -793,6 +863,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": false,
+      "respectedGameType": 1
     }
   },
   {
@@ -811,6 +886,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": false,
+      "respectedGameType": 1
     }
   },
   {
@@ -829,6 +909,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": false,
+      "respectedGameType": 1
     }
   },
   {
@@ -847,6 +932,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": true,
+      "respectedGameType": 0
     }
   },
   {
@@ -865,6 +955,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": false,
+      "respectedGameType": 1
     }
   },
   {
@@ -883,6 +978,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": false,
+      "respectedGameType": 1
     }
   },
   {
@@ -919,6 +1019,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia-dev-0"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": true,
+      "respectedGameType": 0
     }
   },
   {
@@ -937,6 +1042,11 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia-dev-0"
+    },
+    "faultProofs": {
+      "permissioned": true,
+      "permissionless": true,
+      "respectedGameType": 0
     }
   }
 ]
