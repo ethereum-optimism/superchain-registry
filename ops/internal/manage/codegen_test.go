@@ -3,6 +3,7 @@ package manage
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -32,14 +33,10 @@ func TestGenChainList(t *testing.T) {
 		t.Run(ext, func(t *testing.T) {
 			t.Parallel()
 
-			outFile, err := os.CreateTemp("", fmt.Sprintf("chainList-*.%s", ext))
-			require.NoError(t, err)
-			defer outFile.Close()
-			t.Cleanup(func() {
-				require.NoError(t, os.Remove(outFile.Name()))
-			})
+			// Create a temporary directory
+			tempDir := t.TempDir()
+			outPath := filepath.Join(tempDir, fmt.Sprintf("chainList.%s", ext))
 
-			outPath := outFile.Name()
 			require.NoError(t, GenChainListFile("testdata", outPath))
 			actualBytes, err := os.ReadFile(outPath)
 			require.NoError(t, err)
@@ -58,18 +55,16 @@ func TestGenChainList(t *testing.T) {
 }
 
 func TestGenChainsReadme(t *testing.T) {
-	readmeFile, err := os.CreateTemp("", "chains-*.md")
-	require.NoError(t, err)
-	t.Cleanup(func() {
-		require.NoError(t, os.Remove(readmeFile.Name()))
-	})
+	// Create a temporary directory
+	tempDir := t.TempDir()
+	readmeFile := filepath.Join(tempDir, "chains.md")
 
-	require.NoError(t, GenChainsReadme("testdata", readmeFile.Name()))
+	require.NoError(t, GenChainsReadme("testdata", readmeFile))
 
 	expectedBytes, err := os.ReadFile("testdata/expected-chains.md")
 	require.NoError(t, err)
 
-	actualBytes, err := os.ReadFile(readmeFile.Name())
+	actualBytes, err := os.ReadFile(readmeFile)
 	require.NoError(t, err)
 
 	require.Equal(t, strings.TrimSpace(string(expectedBytes)), strings.TrimSpace(string(actualBytes)))
