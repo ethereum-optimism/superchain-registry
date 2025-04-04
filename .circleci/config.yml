@@ -289,6 +289,6 @@ workflows:
               only:
                 - main
     jobs:
-      - codegen-sync
+      - codegen-sync-all
 
 
