@@ -67,13 +67,12 @@ func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
 			DaResolveWindow:            dc.DAResolveWindow,
 			DaCommitmentType:           dc.DACommitmentType,
 		}
-		cfg.Addresses.DAChallengeAddress = config.NewChecksummedAddress(dc.DAChallengeProxy)
 		cfg.DataAvailabilityType = "alt-da"
 	}
 
 	chainState := st.Chains[0]
 	cfg.Genesis = config.Genesis{
-		L2Time: chainState.StartBlock.Time,
+		L2Time: uint64(chainState.StartBlock.Time),
 		L1: config.GenesisRef{
 			Hash:   rollup.Genesis.L1.Hash,
 			Number: rollup.Genesis.L1.Number,
@@ -101,19 +100,9 @@ func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
 	}
 
 	cfg.Addresses = config.Addresses{
-		AddressManager:                    config.NewChecksummedAddress(chainState.AddressManagerAddress),
-		L1CrossDomainMessengerProxy:       config.NewChecksummedAddress(chainState.L1CrossDomainMessengerProxyAddress),
-		L1ERC721BridgeProxy:               config.NewChecksummedAddress(chainState.L1ERC721BridgeProxyAddress),
-		L1StandardBridgeProxy:             config.NewChecksummedAddress(chainState.L1StandardBridgeProxyAddress),
-		OptimismMintableERC20FactoryProxy: config.NewChecksummedAddress(chainState.OptimismMintableERC20FactoryProxyAddress),
-		OptimismPortalProxy:               config.NewChecksummedAddress(chainState.OptimismPortalProxyAddress),
-		SystemConfigProxy:                 config.NewChecksummedAddress(chainState.SystemConfigProxyAddress),
-		ProxyAdmin:                        config.NewChecksummedAddress(chainState.ProxyAdminAddress),
-		SuperchainConfig:                  config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxyAddress),
-		AnchorStateRegistryProxy:          config.NewChecksummedAddress(chainState.AnchorStateRegistryProxyAddress),
-		DelayedWETHProxy:                  config.NewChecksummedAddress(chainState.DelayedWETHPermissionedGameProxyAddress),
-		DisputeGameFactoryProxy:           config.NewChecksummedAddress(chainState.DisputeGameFactoryProxyAddress),
-		PermissionedDisputeGame:           config.NewChecksummedAddress(chainState.PermissionedDisputeGameAddress),
+		L1StandardBridgeProxy: config.NewChecksummedAddress(chainState.L1StandardBridgeProxyAddress),
+		OptimismPortalProxy:   config.NewChecksummedAddress(chainState.OptimismPortalProxyAddress),
+		SystemConfigProxy:     config.NewChecksummedAddress(chainState.SystemConfigProxyAddress),
 	}
 
 	return cfg, nil

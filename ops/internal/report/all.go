@@ -37,14 +37,11 @@ func ScanAll(
 		return report
 	}
 
-	afacts, cleanup, err := artifacts.Download(ctx, chainCfg.DeploymentL2ContractsVersion, artifacts.NoopDownloadProgressor)
+	afacts, err := artifacts.Download(ctx, chainCfg.DeploymentL2ContractsVersion, artifacts.NoopProgressor(), "")
 	if err != nil {
 		report.L2Err = fmt.Errorf("error downloading L2 artifacts: %w", err)
 		return report
 	}
-	defer func() {
-		_ = cleanup()
-	}()
 
 	report.L2, err = ScanL2(
 		startBlock,

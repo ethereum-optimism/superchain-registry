@@ -124,6 +124,131 @@ jobs:
             cd ops
             go run ./cmd/print_staging_report/main.go
 
+  check-codegen:
+    circleci_ip_ranges: true
+    docker:
+      - image: <<pipeline.parameters.default_docker_image>>
+    steps:
+      - utils/checkout-with-mise
+      - run:
+          name: check-codegen-for-changed-chains
+          command: |
+            set -e
+
+            # Get list of changed files
+            CHANGED_FILES=$(git diff --name-only origin/main... | grep "^superchain/configs/.*\.toml$" || true)
+            if [ -z "$CHANGED_FILES" ]; then
+              echo "No .toml files changed in superchain/configs, skipping codegen check"
+              exit 0
+            fi
+
+            # Extract chain_ids from changed .toml files
+            CHAIN_IDS=""
+            CHAIN_ID_COUNT=0
+            CHANGED_FILE_COUNT=0
+
+            for file in $CHANGED_FILES; do
+              CHANGED_FILE_COUNT=$((CHANGED_FILE_COUNT + 1))
+              # Use yq to extract chain_id from TOML
+              CHAIN_ID=$(yq -p=toml -o=json '.chain_id' "$file" | grep -v "null" | tr -d '"')
+
+              if [ -n "$CHAIN_ID" ]; then
+                if [ -z "$CHAIN_IDS" ]; then
+                  CHAIN_IDS="$CHAIN_ID"
+                else
+                  CHAIN_IDS="$CHAIN_IDS,$CHAIN_ID"
+                fi
+                CHAIN_ID_COUNT=$((CHAIN_ID_COUNT + 1))
+                echo "Found chain_id $CHAIN_ID in $file"
+              fi
+            done
+            echo "Found $CHAIN_ID_COUNT chain_ids in $CHANGED_FILE_COUNT files"
+
+            cd ops
+            if [ "$CHAIN_ID_COUNT" -ne "$CHANGED_FILE_COUNT" ] && [ "$CHANGED_FILE_COUNT" -gt 0 ]; then
+              # This accounts for changes to superchain.toml files
+              echo "Running codegen for all chains\n"
+              go run ./cmd/codegen \
+                --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>"
+            else
+              echo "Running codegen for the following chain_ids: $CHAIN_IDS\n"
+              go run ./cmd/codegen \
+                --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>" \
+                --chain-ids="$CHAIN_IDS"
+            fi
+
+            if [ -n "$(git status --porcelain)" ] ; then
+              echo "\n❌ Changes detected after running codegen. Run the following command locally and commit the changes:\n"
+              echo "go run ./cmd/codegen \\"
+              # Show the appropriate command flags based on which mode was run
+              if [ "$CHAIN_ID_COUNT" -ne "$CHANGED_FILE_COUNT" ] && [ "$CHANGED_FILE_COUNT" -gt 0 ]; then
+                echo "  --l1-rpc-urls=\"<urls>\""
+              else
+                echo "  --l1-rpc-urls=\"<urls>\" \\"
+                echo "  --chain-ids=\"$CHAIN_IDS\""
+              fi
+              exit 1
+            else
+              echo "\n✅ All codegen files are up to date"
+            fi
+
+  codegen-sync-all:
+    circleci_ip_ranges: true
+    docker:
+      - image: <<pipeline.parameters.default_docker_image>>
+    steps:
+      - utils/checkout-with-mise
+      - run:
+          name: Execute codegen
+          working_directory: ops
+          command: |
+            go run ./cmd/codegen/main.go --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>"
+      - run:
+          name: Create PR if changes detected
+          working_directory: .
+          command: |
+            # Check for changes
+            if [[ -n $(git status --porcelain) ]]; then
+              echo "Changes detected, creating PR"
+
+              # Enable safe error handling
+              set -e
+
+              git config --global user.email "optibot@oplabs.co"
+              git config --global user.name "OptimismBot"
+
+              DATE=$(date +%Y-%m-%d)
+              BRANCH="automated/codegen-sync-$DATE"
+              git checkout -b $BRANCH
+              git add .
+              git commit -m "chore: daily codegen sync $DATE"
+              git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/<< pipeline.parameters.github_repo >>.git
+              git push origin $BRANCH
+
+              # Create PR using GitHub API (without capturing response body at all)
+              PR_TITLE="codegen-sync: $DATE"
+              PR_BODY="Automated PR from daily codegen sync job"
+              JSON_DATA="{\"title\":\"$PR_TITLE\",\"body\":\"$PR_BODY\",\"head\":\"$BRANCH\",\"base\":\"main\"}"
+
+              # Make API request and only capture the status code
+              HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+                -X POST \
+                -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/<< pipeline.parameters.github_repo >>/pulls" \
+                -d "$JSON_DATA")
+
+              # Check HTTP status code for success (201 = Created)
+              if [[ "$HTTP_STATUS" == "201" ]]; then
+                echo "Successfully created PR for branch $BRANCH"
+              else
+                echo "Failed to create PR. HTTP Status: $HTTP_STATUS"
+                exit 1
+              fi
+            else
+              echo "No changes detected. Onchain configs match repo data."
+            fi
+
 workflows:
   main:
     jobs:
@@ -136,13 +261,12 @@ workflows:
       - run-tool:
           name: check-genesis-integrity
           tool: check_genesis_integrity
-      - run-tool:
+      - check-codegen:
           name: check-codegen
-          tool: codegen
-          check_diff: true
       - run-tool:
           name: check-staging-synced
           tool: sync_staging
+          args: --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>"
           check_diff: true
       - check-staging-empty:
           name: check-staging-empty
@@ -155,4 +279,16 @@ workflows:
           tool: check_chainlist
       - run-staging-report:
           name: run-staging-report
+
+  daily-codegen-sync-all:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"  # Run at midnight UTC every day
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - codegen-sync-all
+
 
