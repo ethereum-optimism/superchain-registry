@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
@@ -20,16 +21,29 @@ func TestCollectChainConfigs(t *testing.T) {
 	require.NoError(t, paths.ReadTOMLFile(paths.ChainConfig("testdata", "sepolia", "op"), &opConfig))
 	require.NoError(t, paths.ReadTOMLFile(paths.ChainConfig("testdata", "sepolia", "testchain"), &testChainConfig))
 
-	require.Equal(t, []DiskChainConfig{
+	// Create expected chains using the same path generation but normalize the path separators
+	expectedChains := []DiskChainConfig{
 		{
 			ShortName: "op",
-			Filepath:  paths.ChainConfig("testdata", "sepolia", "op"),
+			Filepath:  filepath.ToSlash(paths.ChainConfig("testdata", "sepolia", "op")),
 			Config:    &opConfig,
 		},
 		{
 			ShortName: "testchain",
-			Filepath:  paths.ChainConfig("testdata", "sepolia", "testchain"),
+			Filepath:  filepath.ToSlash(paths.ChainConfig("testdata", "sepolia", "testchain")),
 			Config:    &testChainConfig,
 		},
-	}, chains)
+	}
+
+	// Convert actual paths to use forward slashes for consistent comparison
+	normalizedChains := make([]DiskChainConfig, len(chains))
+	for i, chain := range chains {
+		normalizedChains[i] = DiskChainConfig{
+			ShortName: chain.ShortName,
+			Filepath:  filepath.ToSlash(chain.Filepath),
+			Config:    chain.Config,
+		}
+	}
+
+	require.Equal(t, expectedChains, normalizedChains)
 }
