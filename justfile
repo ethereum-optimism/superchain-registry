@@ -47,8 +47,6 @@ print-staging-report: (_run_ops_bin 'print_staging_report')
 
 check-genesis-integrity: (_run_ops_bin 'check_genesis_integrity')
 
-codegen: (_run_ops_bin 'codegen')
-
 create-config SHORTNAME FILENAME:
 	@just _run_ops_bin "create_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{FILENAME}})"
 
