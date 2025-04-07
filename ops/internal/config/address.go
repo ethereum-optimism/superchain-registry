@@ -1,7 +1,6 @@
 package config
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -66,7 +65,7 @@ func (a *ChecksummedAddress) UnmarshalJSON(data []byte) error {
 }
 
 func (a *ChecksummedAddress) MarshalJSON() ([]byte, error) {
-	if bytes.Equal(common.Address(*a).Bytes(), common.Address{}.Bytes()) {
+	if common.Address(*a) == (common.Address{}) {
 		// Return null for zero addresses so it doesn't pollute the json output
 		return []byte("null"), nil
 	}
