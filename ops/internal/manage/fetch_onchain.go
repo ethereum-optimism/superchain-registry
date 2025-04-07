@@ -90,7 +90,7 @@ func collectChainsBySuperchain(wd string, chainIds []uint64) (map[config.Superch
 		}
 
 		for _, tuple := range chainConfigTuples {
-			chainsBySuperchain[tuple.Superchain] = append(chainsBySuperchain[tuple.Superchain], *tuple.Config)
+			chainsBySuperchain[tuple.Superchain] = append(chainsBySuperchain[tuple.Superchain], *tuple.Chain)
 		}
 	}
 

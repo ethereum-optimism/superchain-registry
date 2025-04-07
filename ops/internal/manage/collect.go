@@ -94,37 +94,18 @@ func CollectChainConfigs(p string) ([]DiskChainConfig, error) {
 	return out, nil
 }
 
-// FindChainConfig searches all superchains for given chain ID
-func FindChainConfig(wd string, chainId uint64) (*DiskChainConfig, config.Superchain, error) {
-	superchains, err := paths.Superchains(wd)
-	if err != nil {
-		return nil, "", fmt.Errorf("error getting superchains: %w", err)
-	}
-
-	for _, superchain := range superchains {
-		cfgs, err := CollectChainConfigs(paths.SuperchainDir(wd, superchain))
-		if err != nil {
-			return nil, "", fmt.Errorf("error collecting chain configs: %w", err)
-		}
-
-		for _, cfg := range cfgs {
-			if cfg.Config.ChainID == chainId {
-				return &cfg, superchain, nil
-			}
-		}
-	}
-
-	return nil, "", fmt.Errorf("chain with id %d not found", chainId)
-}
-
 type ChainConfigTuple struct {
-	Config     *DiskChainConfig
+	Chain      *DiskChainConfig
 	Superchain config.Superchain
 }
 
 // FindChainConfigs searches all superchains for the given chain IDs
 // - returns an error if any chain ID is not found
 func FindChainConfigs(wd string, chainIds []uint64) ([]ChainConfigTuple, error) {
+	if len(chainIds) == 0 {
+		return nil, fmt.Errorf("no chainIds provided")
+	}
+
 	superchains, err := paths.Superchains(wd)
 	if err != nil {
 		return nil, fmt.Errorf("error getting superchains: %w", err)
@@ -154,7 +135,7 @@ func FindChainConfigs(wd string, chainIds []uint64) ([]ChainConfigTuple, error) 
 		for _, cfg := range cfgs {
 			if remainingChainIds[cfg.Config.ChainID] {
 				results = append(results, ChainConfigTuple{
-					Config:     &cfg,
+					Chain:      &cfg,
 					Superchain: superchain,
 				})
 
