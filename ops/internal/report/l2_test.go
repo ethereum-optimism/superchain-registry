@@ -31,6 +31,9 @@ func TestScanL2(t *testing.T) {
 	downloadDir := t.TempDir()
 	afacts, err := artifacts.Download(ctx, artifacts.MustNewLocatorFromURL("tag://"+string(validation.Semver170)), artifacts.NoopProgressor(), downloadDir)
 	require.NoError(t, err)
+	t.Cleanup(func() {
+		require.NoError(t, os.RemoveAll(downloadDir))
+	})
 
 	testAddr := common.HexToAddress("0x4200000000000000000000000000000000000000")
 	standardGenesisHash := common.HexToHash("0xcd901673f97d59259fa09b0b01b8787f5d25d9f1808566990673519be65cc3ae")

@@ -93,6 +93,7 @@ func DiffL2Genesis(
 				Roles: state.ChainRoles{
 					L1ProxyAdminOwner: common.Address(standardRoles.L1ProxyAdminOwner),
 					L2ProxyAdminOwner: common.Address(standardRoles.L2ProxyAdminOwner),
+					SystemConfigOwner: common.Address(*chainCfg.Roles.SystemConfigOwner),
 					UnsafeBlockSigner: common.Address(*chainCfg.Roles.UnsafeBlockSigner),
 					Batcher:           common.Address(*chainCfg.Roles.BatchSubmitter),
 					Proposer:          common.Address(*chainCfg.Roles.Proposer),
@@ -122,9 +123,11 @@ func DiffL2Genesis(
 			Number:     hexutil.Uint64(startBlock.Number.Uint64()),
 			Time:       hexutil.Uint64(startBlock.Time),
 		},
-		L1StandardBridgeProxyAddress: common.Address(*chainCfg.Addresses.L1StandardBridgeProxy),
-		SystemConfigProxyAddress:     common.Address(*chainCfg.Addresses.SystemConfigProxy),
-		OptimismPortalProxyAddress:   common.Address(*chainCfg.Addresses.OptimismPortalProxy),
+		L1StandardBridgeProxyAddress:       common.Address(*chainCfg.Addresses.L1StandardBridgeProxy),
+		L1CrossDomainMessengerProxyAddress: common.Address(*chainCfg.Addresses.L1CrossDomainMessengerProxy),
+		L1ERC721BridgeProxyAddress:         common.Address(*chainCfg.Addresses.L1ERC721BridgeProxy),
+		SystemConfigProxyAddress:           common.Address(*chainCfg.Addresses.SystemConfigProxy),
+		OptimismPortalProxyAddress:         common.Address(*chainCfg.Addresses.OptimismPortalProxy),
 	}
 
 	standardDeployConfig, err := state.CombineDeployConfig(standardIntent, standardIntent.Chains[0], standardState, standardChainState)
