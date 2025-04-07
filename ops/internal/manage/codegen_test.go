@@ -49,7 +49,7 @@ func loadTestAddressesJSON(t *testing.T) config.AddressesJSON {
 
 // loadTestChainList loads the expected chain list from testdata
 func loadTestChainList(t *testing.T) []config.ChainListEntry {
-	data, err := os.ReadFile(filepath.Join("testdata", "chainList.json"))
+	data, err := os.ReadFile(paths.ChainListJsonFile("testdata"))
 	require.NoError(t, err)
 
 	var chainList []config.ChainListEntry
@@ -220,7 +220,7 @@ func TestCodegenSyncer_SyncAll(t *testing.T) {
 	require.NoError(t, err)
 
 	// Verify chainList files were created in tempDir and updated for all chains
-	chainListData, err := os.ReadFile(filepath.Join(tempDir, "chainList.json"))
+	chainListData, err := os.ReadFile(paths.ChainListJsonFile(tempDir))
 	require.NoError(t, err)
 	var chainList []config.ChainListEntry
 	err = json.Unmarshal(chainListData, &chainList)

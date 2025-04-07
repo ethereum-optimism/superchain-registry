@@ -53,7 +53,7 @@ func NewCodegenSyncer(lgr log.Logger, wd string, chainCfgs map[uint64]script.Cha
 
 	// Load chainList.json data
 	var chainList []config.ChainListEntry
-	chainListData, err := os.ReadFile(filepath.Join(wd, "chainList.json"))
+	chainListData, err := os.ReadFile(paths.ChainListJsonFile(wd))
 	if err != nil {
 		return nil, fmt.Errorf("error reading chainList file: %w", err)
 	}
@@ -194,7 +194,7 @@ func (s *CodegenSyncer) WriteFiles() error {
 	if err != nil {
 		return fmt.Errorf("error marshaling updated chainList: %w", err)
 	}
-	if err := os.WriteFile(filepath.Join(s.outputWd, "chainList.json"), updatedChainListData, 0o644); err != nil {
+	if err := os.WriteFile(paths.ChainListJsonFile(s.outputWd), updatedChainListData, 0o644); err != nil {
 		return fmt.Errorf("error writing updated chainList.json: %w", err)
 	}
 	s.lgr.Info("successfully updated chainList.json", "chainCount", len(s.ChainList))
@@ -212,13 +212,13 @@ func (s *CodegenSyncer) WriteFiles() error {
 		return fmt.Errorf("error marshaling updated chainList to TOML: %w", err)
 	}
 
-	if err := os.WriteFile(filepath.Join(s.outputWd, "chainList.toml"), []byte(buf.String()), 0o644); err != nil {
+	if err := os.WriteFile(paths.ChainListTomlFile(s.outputWd), []byte(buf.String()), 0o644); err != nil {
 		return fmt.Errorf("error writing updated chainList.toml: %w", err)
 	}
 	s.lgr.Info("successfully updated chainList.toml", "chainCount", len(s.ChainList))
 
 	// Write CHAINS.md
-	if err := GenChainsReadme(s.inputWd, path.Join(s.outputWd, "CHAINS.md")); err != nil {
+	if err := GenChainsReadme(s.inputWd, paths.ChainMdFile(s.outputWd)); err != nil {
 		return fmt.Errorf("error generating readme: %w", err)
 	}
 	s.lgr.Info("successfully updated CHAINS.md")

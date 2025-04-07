@@ -55,8 +55,12 @@ func SuperchainConfig(wd string, superchain config.Superchain) string {
 	return path.Join(SuperchainDir(wd, superchain), "superchain.toml")
 }
 
+func SuperchainConfigsDir(wd string) string {
+	return path.Join(wd, "superchain", "configs")
+}
+
 func Superchains(wd string) ([]config.Superchain, error) {
-	configsDir := path.Join(wd, "superchain", "configs")
+	configsDir := SuperchainConfigsDir(wd)
 
 	dir, err := os.ReadDir(configsDir)
 	if err != nil {
@@ -82,6 +86,18 @@ func GenesisFile(wd string, superchain config.Superchain, shortName string) stri
 
 func AddressesFile(wd string) string {
 	return path.Join(ExtraDir(wd), "addresses", "addresses.json")
+}
+
+func ChainListJsonFile(wd string) string {
+	return path.Join(wd, "chainList.json")
+}
+
+func ChainListTomlFile(wd string) string {
+	return path.Join(wd, "chainList.toml")
+}
+
+func ChainMdFile(wd string) string {
+	return path.Join(wd, "CHAINS.md")
 }
 
 func ValidationsDir(wd string) string {
