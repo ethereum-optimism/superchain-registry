@@ -73,7 +73,7 @@ func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
 
 	chainState := st.Chains[0]
 	cfg.Genesis = config.Genesis{
-		L2Time: chainState.StartBlock.Time,
+		L2Time: uint64(chainState.StartBlock.Time),
 		L1: config.GenesisRef{
 			Hash:   rollup.Genesis.L1.Hash,
 			Number: rollup.Genesis.L1.Number,
