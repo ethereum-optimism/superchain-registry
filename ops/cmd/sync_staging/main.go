@@ -109,7 +109,8 @@ func action(cliCtx *cli.Context) error {
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
 	l1RpcUrls := strings.Split(cliCtx.String("l1-rpc-urls"), ",")
 	chainIdStr := strconv.FormatUint(chainCfg.ChainID, 10)
-	onchainCfgs, err := manage.FetchChains(lgr, wd, l1RpcUrls, []string{chainIdStr})
+	ctx := cliCtx.Context
+	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, l1RpcUrls, []string{chainIdStr})
 	if err != nil {
 		return fmt.Errorf("error fetching onchain configs: %w", err)
 	}

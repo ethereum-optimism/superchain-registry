@@ -16,7 +16,7 @@ import (
 )
 
 // FetchChains fetches chain configurations for specified chain IDs or all chains if none specified
-func FetchChains(lgr log.Logger, wd string, l1RpcUrls []string, chainIdStrs []string) (map[uint64]script.ChainConfig, error) {
+func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []string, chainIdStrs []string) (map[uint64]script.ChainConfig, error) {
 	chainsBySuperchain, err := collectChainsBySuperchain(wd, chainIdStrs)
 	if err != nil {
 		return nil, err
@@ -24,11 +24,11 @@ func FetchChains(lgr log.Logger, wd string, l1RpcUrls []string, chainIdStrs []st
 
 	allChainConfigs := make(map[uint64]script.ChainConfig)
 	var mu sync.Mutex
-	eg, ctx := errgroup.WithContext(context.Background())
+	eg, egCtx := errgroup.WithContext(egCtx)
 
 	for superchain, chains := range chainsBySuperchain {
 		lgr.Info("fetching superchain", "superchain", superchain, "numChains", len(chains))
-		l1RpcUrl, err := config.FindValidL1URL(lgr, l1RpcUrls, superchain)
+		l1RpcUrl, err := config.FindValidL1URL(egCtx, lgr, l1RpcUrls, superchain)
 		if err != nil {
 			return nil, fmt.Errorf("missing L1 RPC URL for superchain %s", superchain)
 		}
@@ -39,7 +39,7 @@ func FetchChains(lgr log.Logger, wd string, l1RpcUrls []string, chainIdStrs []st
 			currentRpcUrl := l1RpcUrl
 
 			eg.Go(func() error {
-				result, err := fetchChainInfo(ctx, lgr, currentRpcUrl, currentConfig)
+				result, err := fetchChainInfo(egCtx, lgr, currentRpcUrl, currentConfig)
 				if err != nil {
 					return fmt.Errorf("failed to fetch chain info for chainId %d: %w", currentConfig.Config.ChainID, err)
 				}

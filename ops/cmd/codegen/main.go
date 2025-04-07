@@ -57,7 +57,8 @@ func CodegenCLI(cliCtx *cli.Context) error {
 	}
 
 	var onchainCfgs map[uint64]script.ChainConfig
-	onchainCfgs, err = manage.FetchChains(lgr, wd, l1RpcUrls, chainIds)
+	ctx := cliCtx.Context
+	onchainCfgs, err = manage.FetchChains(ctx, lgr, wd, l1RpcUrls, chainIds)
 	if err != nil {
 		return fmt.Errorf("error fetching onchain configs: %w", err)
 	}

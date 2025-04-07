@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/log"
@@ -42,14 +41,14 @@ func MustParseSuperchain(in string) Superchain {
 }
 
 // FindValidL1URL finds a valid l1-rpc-url for a given superchain by finding matching l1 chainId
-func FindValidL1URL(lgr log.Logger, urls []string, superchain Superchain) (string, error) {
+func FindValidL1URL(ctx context.Context, lgr log.Logger, urls []string, superchain Superchain) (string, error) {
 	for i, url := range urls {
 		url = strings.TrimSpace(url)
 		if url == "" {
 			continue
 		}
 
-		if err := validateL1ChainID(url, superchain); err != nil {
+		if err := validateL1ChainID(ctx, url, superchain); err != nil {
 			lgr.Warn("l1-rpc-url has mismatched l1 chainId", "urlIndex", i)
 			continue
 		}
@@ -61,13 +60,13 @@ func FindValidL1URL(lgr log.Logger, urls []string, superchain Superchain) (strin
 }
 
 // validateL1ChainID checks if the l1RpcUrl has the expected chain ID for the superchain
-func validateL1ChainID(l1RpcUrl string, superchain Superchain) error {
+func validateL1ChainID(ctx context.Context, l1RpcUrl string, superchain Superchain) error {
 	expectedChainID, ok := SuperchainChainIds[superchain]
 	if !ok {
 		return fmt.Errorf("unknown superchain: %s", superchain)
 	}
 
-	chainID, err := getL1ChainId(l1RpcUrl)
+	chainID, err := getL1ChainId(ctx, l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("failed to get chainId from l1RpcUrl: %w", err)
 	}
@@ -81,15 +80,12 @@ func validateL1ChainID(l1RpcUrl string, superchain Superchain) error {
 }
 
 // getL1ChainId connects to an Ethereum RPC endpoint and retrieves its chain ID
-func getL1ChainId(rpcURL string) (uint64, error) {
+func getL1ChainId(ctx context.Context, rpcURL string) (uint64, error) {
 	client, err := ethclient.Dial(rpcURL)
 	if err != nil {
 		return 0, fmt.Errorf("failed to connect to L1 RPC: %w", err)
 	}
 	defer client.Close()
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 
 	chainID, err := client.ChainID(ctx)
 	if err != nil {
