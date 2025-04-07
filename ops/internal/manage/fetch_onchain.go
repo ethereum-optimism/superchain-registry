@@ -3,7 +3,6 @@ package manage
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"sync"
 
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch"
@@ -16,8 +15,8 @@ import (
 )
 
 // FetchChains fetches chain configurations for specified chain IDs or all chains if none specified
-func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []string, chainIdStrs []string) (map[uint64]script.ChainConfig, error) {
-	chainsBySuperchain, err := collectChainsBySuperchain(wd, chainIdStrs)
+func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []string, chainIds []uint64) (map[uint64]script.ChainConfig, error) {
+	chainsBySuperchain, err := collectChainsBySuperchain(wd, chainIds)
 	if err != nil {
 		return nil, err
 	}
@@ -64,12 +63,12 @@ func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []s
 
 // collectChainsBySuperchain assembles a map of chains grouped by their superchain
 // based on provided chain IDs or all available chains if no IDs are specified
-func collectChainsBySuperchain(wd string, chainIdStrs []string) (map[config.Superchain][]DiskChainConfig, error) {
+func collectChainsBySuperchain(wd string, chainIds []uint64) (map[config.Superchain][]DiskChainConfig, error) {
 	// Map to track chains by superchain
 	chainsBySuperchain := make(map[config.Superchain][]DiskChainConfig)
 
 	// Collect chains to process - either all chains or specific ones
-	if len(chainIdStrs) == 0 {
+	if len(chainIds) == 0 {
 		// All chains mode
 		superchains, err := paths.Superchains(wd)
 		if err != nil {
@@ -85,15 +84,6 @@ func collectChainsBySuperchain(wd string, chainIdStrs []string) (map[config.Supe
 		}
 	} else {
 		// Specific chains mode
-		chainIds := make([]uint64, 0, len(chainIdStrs))
-		for _, idStr := range chainIdStrs {
-			chainId, err := strconv.ParseUint(idStr, 10, 64)
-			if err != nil {
-				return nil, fmt.Errorf("failed to parse chainId %s: %w", idStr, err)
-			}
-			chainIds = append(chainIds, chainId)
-		}
-
 		chainConfigTuples, err := FindChainConfigs(wd, chainIds)
 		if err != nil {
 			return nil, err

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
@@ -45,9 +46,18 @@ func main() {
 func CodegenCLI(cliCtx *cli.Context) error {
 	l1RpcUrls := strings.Split(cliCtx.String("l1-rpc-urls"), ",")
 	chainIdStr := cliCtx.String("chain-ids")
-	chainIds := []string{}
+	var chainIds []uint64
 	if chainIdStr != "" {
-		chainIds = strings.Split(chainIdStr, ",")
+		chainIdStrs := strings.Split(chainIdStr, ",")
+		// Convert each string to uint64
+		for _, idStr := range chainIdStrs {
+			idStr = strings.TrimSpace(idStr)
+			id, err := strconv.ParseUint(idStr, 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid chain ID '%s': %w", idStr, err)
+			}
+			chainIds = append(chainIds, id)
+		}
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))

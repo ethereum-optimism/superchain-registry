@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"strconv"
 	"strings"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
@@ -108,9 +107,8 @@ func action(cliCtx *cli.Context) error {
 	// Codegen
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
 	l1RpcUrls := strings.Split(cliCtx.String("l1-rpc-urls"), ",")
-	chainIdStr := strconv.FormatUint(chainCfg.ChainID, 10)
 	ctx := cliCtx.Context
-	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, l1RpcUrls, []string{chainIdStr})
+	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, l1RpcUrls, []uint64{chainCfg.ChainID})
 	if err != nil {
 		return fmt.Errorf("error fetching onchain configs: %w", err)
 	}
