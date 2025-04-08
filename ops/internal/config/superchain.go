@@ -17,12 +17,6 @@ const (
 	SepoliaDev0Superchain Superchain = "sepolia-dev-0"
 )
 
-var SuperchainChainIds = map[Superchain]uint64{
-	MainnetSuperchain:     1,
-	SepoliaSuperchain:     11155111,
-	SepoliaDev0Superchain: 11155111,
-}
-
 func ParseSuperchain(in string) (Superchain, error) {
 	switch Superchain(in) {
 	case MainnetSuperchain, SepoliaSuperchain, SepoliaDev0Superchain:
@@ -41,14 +35,15 @@ func MustParseSuperchain(in string) Superchain {
 }
 
 // FindValidL1URL finds a valid l1-rpc-url for a given superchain by finding matching l1 chainId
-func FindValidL1URL(ctx context.Context, lgr log.Logger, urls []string, superchain Superchain) (string, error) {
+func FindValidL1URL(ctx context.Context, lgr log.Logger, urls []string, superchainId uint64) (string, error) {
+	lgr.Info("searching for valid l1-rpc-url for superchain", "superchainId", superchainId)
 	for i, url := range urls {
 		url = strings.TrimSpace(url)
 		if url == "" {
 			continue
 		}
 
-		if err := validateL1ChainID(ctx, url, superchain); err != nil {
+		if err := validateL1ChainID(ctx, url, superchainId); err != nil {
 			lgr.Warn("l1-rpc-url has mismatched l1 chainId", "urlIndex", i)
 			continue
 		}
@@ -56,24 +51,18 @@ func FindValidL1URL(ctx context.Context, lgr log.Logger, urls []string, supercha
 		lgr.Info("l1-rpc-url has matching l1 chainId", "urlIndex", i)
 		return url, nil
 	}
-	return "", fmt.Errorf("no valid L1 RPC URL found for superchain %s", superchain)
+	return "", fmt.Errorf("no valid L1 RPC URL found for superchain %d", superchainId)
 }
 
 // validateL1ChainID checks if the l1RpcUrl has the expected chain ID for the superchain
-func validateL1ChainID(ctx context.Context, l1RpcUrl string, superchain Superchain) error {
-	expectedChainID, ok := SuperchainChainIds[superchain]
-	if !ok {
-		return fmt.Errorf("unknown superchain: %s", superchain)
-	}
-
+func validateL1ChainID(ctx context.Context, l1RpcUrl string, superchainId uint64) error {
 	chainID, err := getL1ChainId(ctx, l1RpcUrl)
 	if err != nil {
 		return fmt.Errorf("failed to get chainId from l1RpcUrl: %w", err)
 	}
 
-	if chainID != expectedChainID {
-		return fmt.Errorf("l1RpcUrl chainId mismatch: got %d, expected %d for superchain %s",
-			chainID, expectedChainID, superchain)
+	if chainID != superchainId {
+		return fmt.Errorf("l1RpcUrl chainId mismatch: got %d, expected %d", chainID, superchainId)
 	}
 
 	return nil
@@ -114,7 +103,7 @@ type SuperchainDefinition struct {
 }
 
 type SuperchainL1 struct {
-	ChainID   uint64
+	ChainID   uint64 `toml:"chain_id"`
 	PublicRPC string `toml:"public_rpc"`
 	Explorer  string `toml:"explorer"`
 }

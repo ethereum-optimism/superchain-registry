@@ -25,9 +25,19 @@ func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []s
 	var mu sync.Mutex
 	eg, egCtx := errgroup.WithContext(egCtx)
 
+	superchainIds, err := paths.SuperchainIds(wd)
+	if err != nil {
+		return nil, fmt.Errorf("error getting superchain chainIds: %w", err)
+	}
+
 	for superchain, chains := range chainsBySuperchain {
 		lgr.Info("fetching superchain", "superchain", superchain, "numChains", len(chains))
-		l1RpcUrl, err := config.FindValidL1URL(egCtx, lgr, l1RpcUrls, superchain)
+		superchainId, ok := superchainIds[superchain]
+		if !ok {
+			return nil, fmt.Errorf("missing superchain chainId for superchain %s", superchain)
+		}
+
+		l1RpcUrl, err := config.FindValidL1URL(egCtx, lgr, l1RpcUrls, superchainId)
 		if err != nil {
 			return nil, fmt.Errorf("missing L1 RPC URL for superchain %s", superchain)
 		}
