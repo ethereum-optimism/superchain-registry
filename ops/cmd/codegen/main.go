@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -25,6 +26,10 @@ var (
 		Name:  "chain-ids",
 		Usage: "comma-separated list of l2 chainIds to update (optional, fetches all chains if not provided)",
 	}
+	SuperchainsFlag = &cli.StringFlag{
+		Name:  "superchains",
+		Usage: "comma-separated list of superchains to update (cannot provide both chain-ids and superchains flags, default to all superchains if not provided)",
+	}
 )
 
 func main() {
@@ -34,6 +39,7 @@ func main() {
 		Flags: []cli.Flag{
 			L1RPCURLsFlag,
 			ChainIDFlag,
+			SuperchainsFlag,
 		},
 		Action: CodegenCLI,
 	}
@@ -46,6 +52,24 @@ func main() {
 func CodegenCLI(cliCtx *cli.Context) error {
 	l1RpcUrls := strings.Split(cliCtx.String("l1-rpc-urls"), ",")
 	chainIdStr := cliCtx.String("chain-ids")
+	superchainsStr := cliCtx.String("superchains")
+	if chainIdStr != "" && superchainsStr != "" {
+		return fmt.Errorf("cannot provide both chain-ids and superchains flags")
+	}
+
+	var superchains []config.Superchain
+	if superchainsStr != "" {
+		superchainStrs := strings.Split(superchainsStr, ",")
+		for _, superchainStr := range superchainStrs {
+			superchainStr = strings.TrimSpace(superchainStr)
+			superchain, err := config.ParseSuperchain(superchainStr)
+			if err != nil {
+				return err
+			}
+			superchains = append(superchains, superchain)
+		}
+	}
+
 	var chainIds []uint64
 	if chainIdStr != "" {
 		chainIdStrs := strings.Split(chainIdStr, ",")
@@ -68,7 +92,7 @@ func CodegenCLI(cliCtx *cli.Context) error {
 
 	var onchainCfgs map[uint64]script.ChainConfig
 	ctx := cliCtx.Context
-	onchainCfgs, err = manage.FetchChains(ctx, lgr, wd, l1RpcUrls, chainIds)
+	onchainCfgs, err = manage.FetchChains(ctx, lgr, wd, l1RpcUrls, chainIds, superchains)
 	if err != nil {
 		return fmt.Errorf("error fetching onchain configs: %w", err)
 	}

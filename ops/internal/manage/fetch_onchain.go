@@ -15,8 +15,8 @@ import (
 )
 
 // FetchChains fetches chain configurations for specified chain IDs or all chains if none specified
-func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []string, chainIds []uint64) (map[uint64]script.ChainConfig, error) {
-	chainsBySuperchain, err := collectChainsBySuperchain(wd, chainIds)
+func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []string, chainIds []uint64, superchains []config.Superchain) (map[uint64]script.ChainConfig, error) {
+	chainsBySuperchain, err := collectChainsBySuperchain(wd, chainIds, superchains)
 	if err != nil {
 		return nil, err
 	}
@@ -72,12 +72,20 @@ func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []s
 }
 
 // collectChainsBySuperchain assembles a map of chains grouped by their superchain
-// based on provided chain IDs or all available chains if no IDs are specified
-func collectChainsBySuperchain(wd string, chainIds []uint64) (map[config.Superchain][]DiskChainConfig, error) {
+// based on provided chainIds or superchains or all chains if neither are provided
+func collectChainsBySuperchain(wd string, chainIds []uint64, superchainsInput []config.Superchain) (map[config.Superchain][]DiskChainConfig, error) {
 	result := make(map[config.Superchain][]DiskChainConfig)
-	superchains, err := paths.Superchains(wd)
-	if err != nil {
-		return nil, fmt.Errorf("error getting superchains: %w", err)
+	if len(chainIds) > 0 && len(superchainsInput) > 0 {
+		return nil, fmt.Errorf("cannot provide both chainIds and superchains inputs")
+	}
+
+	superchains := superchainsInput
+	if len(superchains) == 0 {
+		var err error
+		superchains, err = paths.Superchains(wd)
+		if err != nil {
+			return nil, fmt.Errorf("error getting superchains: %w", err)
+		}
 	}
 
 	// Create a map for quick chain ID lookup if we're filtering

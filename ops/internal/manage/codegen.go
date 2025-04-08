@@ -184,7 +184,7 @@ func (s *CodegenSyncer) WriteFiles() error {
 	if err := os.WriteFile(addressesPath, updatedAddressesData, 0o644); err != nil {
 		return fmt.Errorf("error writing updated addresses.json: %w", err)
 	}
-	s.lgr.Info("successfully updated addresses.json", "chainCount", len(s.Addresses))
+	s.lgr.Info("successfully updated addresses.json", "updatedChains", len(s.onchainCfgs), "totalChains", len(s.Addresses))
 
 	// Write chainList.json
 	updatedChainListData, err := json.MarshalIndent(s.ChainList, "", "  ")
@@ -194,7 +194,7 @@ func (s *CodegenSyncer) WriteFiles() error {
 	if err := os.WriteFile(paths.ChainListJsonFile(s.outputWd), updatedChainListData, 0o644); err != nil {
 		return fmt.Errorf("error writing updated chainList.json: %w", err)
 	}
-	s.lgr.Info("successfully updated chainList.json", "chainCount", len(s.ChainList))
+	s.lgr.Info("successfully updated chainList.json", "updatedChains", len(s.onchainCfgs), "totalChains", len(s.ChainList))
 
 	// Write chainList.toml
 	chainListToml := struct {
@@ -212,7 +212,7 @@ func (s *CodegenSyncer) WriteFiles() error {
 	if err := os.WriteFile(paths.ChainListTomlFile(s.outputWd), []byte(buf.String()), 0o644); err != nil {
 		return fmt.Errorf("error writing updated chainList.toml: %w", err)
 	}
-	s.lgr.Info("successfully updated chainList.toml", "chainCount", len(s.ChainList))
+	s.lgr.Info("successfully updated chainList.toml", "updatedChains", len(s.onchainCfgs), "totalChains", len(s.ChainList))
 
 	// Write CHAINS.md
 	if err := GenChainsReadme(s.inputWd, paths.ChainMdFile(s.outputWd)); err != nil {
