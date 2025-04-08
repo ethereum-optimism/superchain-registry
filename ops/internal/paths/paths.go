@@ -145,6 +145,10 @@ func RequireDir(p string) error {
 	return nil
 }
 
+func EnsureDir(p string) error {
+	return os.MkdirAll(p, 0o755)
+}
+
 func RequireRoot(wd string) error {
 	p := StagingDir(wd)
 	if err := RequireDir(p); err != nil {

@@ -178,9 +178,8 @@ func (s *CodegenSyncer) WriteFiles() error {
 
 	// Ensure the addresses directory exists
 	addressesPath := paths.AddressesFile(s.outputWd)
-	addressesDir := filepath.Dir(addressesPath)
-	if err := os.MkdirAll(addressesDir, 0o755); err != nil {
-		return fmt.Errorf("error creating addresses directory: %w", err)
+	if err := paths.EnsureDir(filepath.Dir(addressesPath)); err != nil {
+		return fmt.Errorf("error creating addresses.json directory: %w", err)
 	}
 	if err := os.WriteFile(addressesPath, updatedAddressesData, 0o644); err != nil {
 		return fmt.Errorf("error writing updated addresses.json: %w", err)
