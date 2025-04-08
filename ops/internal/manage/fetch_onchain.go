@@ -74,40 +74,61 @@ func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []s
 // collectChainsBySuperchain assembles a map of chains grouped by their superchain
 // based on provided chain IDs or all available chains if no IDs are specified
 func collectChainsBySuperchain(wd string, chainIds []uint64) (map[config.Superchain][]DiskChainConfig, error) {
-	// Map to track chains by superchain
-	chainsBySuperchain := make(map[config.Superchain][]DiskChainConfig)
+	result := make(map[config.Superchain][]DiskChainConfig)
+	superchains, err := paths.Superchains(wd)
+	if err != nil {
+		return nil, fmt.Errorf("error getting superchains: %w", err)
+	}
 
-	// Collect chains to process - either all chains or specific ones
-	if len(chainIds) == 0 {
-		// All chains mode
-		superchains, err := paths.Superchains(wd)
+	// Create a map for quick chain ID lookup if we're filtering
+	chainIdMap := make(map[uint64]bool)
+	for _, id := range chainIds {
+		chainIdMap[id] = true
+	}
+
+	foundChainIdMap := make(map[uint64]bool)
+
+	// Process all superchains
+	for _, superchain := range superchains {
+		// Collect all chain configs from this superchain
+		configs, err := CollectChainConfigs(paths.SuperchainDir(wd, superchain))
 		if err != nil {
-			return nil, fmt.Errorf("error getting superchains: %w", err)
+			return nil, fmt.Errorf("error collecting chain configs for superchain %s: %w", superchain, err)
 		}
 
-		for _, superchain := range superchains {
-			cfgs, err := CollectChainConfigs(paths.SuperchainDir(wd, superchain))
-			if err != nil {
-				return nil, fmt.Errorf("error collecting chain configs for superchain %s: %w", superchain, err)
+		// Filter configs if chainIds is specified
+		if len(chainIds) > 0 {
+			var filteredConfigs []DiskChainConfig
+			for _, cfg := range configs {
+				if chainIdMap[cfg.Config.ChainID] {
+					filteredConfigs = append(filteredConfigs, cfg)
+					foundChainIdMap[cfg.Config.ChainID] = true
+				}
 			}
-			chainsBySuperchain[superchain] = cfgs
-		}
-	} else {
-		// Specific chains mode
-		chainConfigTuples, err := FindChainConfigs(wd, chainIds)
-		if err != nil {
-			return nil, err
-		}
 
-		for _, tuple := range chainConfigTuples {
-			chainsBySuperchain[tuple.Superchain] = append(chainsBySuperchain[tuple.Superchain], *tuple.Chain)
+			// Only add to map if we found matching chains for this superchain
+			if len(filteredConfigs) > 0 {
+				result[superchain] = filteredConfigs
+			}
+		} else {
+			// If no chain IDs specified, include all chains
+			result[superchain] = configs
 		}
 	}
 
-	return chainsBySuperchain, nil
+	if len(chainIds) > 0 {
+		// Ensure all requested chainIds were found
+		for _, chainId := range chainIds {
+			if !foundChainIdMap[chainId] {
+				return nil, fmt.Errorf("chainId %d not found", chainId)
+			}
+		}
+	}
+
+	return result, nil
 }
 
-// fetchChainInfo handles the common logic for creating a fetcher and getting chain info
+// fetchChainInfo handles the common logic for creating an op-fetcher instance using it to fetch chain info
 func fetchChainInfo(ctx context.Context, lgr log.Logger, l1RpcUrl string, cfg DiskChainConfig) (script.ChainConfig, error) {
 	fetcher, err := fetch.NewFetcher(
 		lgr,

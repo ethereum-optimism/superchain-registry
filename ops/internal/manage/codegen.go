@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -62,8 +61,7 @@ func NewCodegenSyncer(lgr log.Logger, wd string, chainCfgs map[uint64]script.Cha
 	}
 
 	// Load disk chain configs
-	configsDir := path.Join(wd, "superchain", "configs")
-	diskChainCfgsSlice, err := CollectChainConfigs(configsDir)
+	diskChainCfgsSlice, err := CollectChainConfigs(paths.SuperchainConfigsDir(wd))
 	lgr.Info("collected chains configs from disk", "numDiskCfgs", len(diskChainCfgsSlice))
 	if err != nil {
 		return nil, fmt.Errorf("error collecting chain configs: %w", err)
