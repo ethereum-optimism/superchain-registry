@@ -62,7 +62,7 @@ func NewCodegenSyncer(lgr log.Logger, wd string, chainCfgs map[uint64]script.Cha
 
 	// Load disk chain configs
 	diskChainCfgsSlice, err := CollectChainConfigs(paths.SuperchainConfigsDir(wd))
-	lgr.Info("collected chains configs from disk", "numDiskCfgs", len(diskChainCfgsSlice))
+	lgr.Info("collected chain configs from disk", "numDiskCfgs", len(diskChainCfgsSlice))
 	if err != nil {
 		return nil, fmt.Errorf("error collecting chain configs: %w", err)
 	}

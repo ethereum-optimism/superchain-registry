@@ -36,7 +36,7 @@ func MustParseSuperchain(in string) Superchain {
 
 // FindValidL1URL finds a valid l1-rpc-url for a given superchain by finding matching l1 chainId
 func FindValidL1URL(ctx context.Context, lgr log.Logger, urls []string, superchainId uint64) (string, error) {
-	lgr.Info("searching for valid l1-rpc-url for superchain", "superchainId", superchainId)
+	lgr.Info("searching for valid l1-rpc-url", "superchainId", superchainId)
 	for i, url := range urls {
 		url = strings.TrimSpace(url)
 		if url == "" {
