@@ -11,6 +11,11 @@ type ChainListEntry struct {
 	DataAvailabilityType string               `json:"dataAvailabilityType" toml:"data_availability_type"`
 	Parent               ChainListEntryParent `json:"parent" toml:"parent"`
 	GasPayingToken       *ChecksummedAddress  `json:"gasPayingToken,omitempty" toml:"gas_paying_token,omitempty"`
+	FaultProofs          FaultProofs          `json:"faultProofs,omitempty" toml:"fault_proofs,omitempty"`
+}
+
+type FaultProofs struct {
+	Status string `json:"status" toml:"status"`
 }
 
 type ChainListEntryParent struct {

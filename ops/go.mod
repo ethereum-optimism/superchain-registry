@@ -4,7 +4,7 @@ go 1.23.1
 
 require (
 	github.com/BurntSushi/toml v1.4.0
-	github.com/ethereum-optimism/optimism v1.13.1-0.20250402215013-5391bf29692d
+	github.com/ethereum-optimism/optimism v1.12.3-0.20250402215013-5391bf29692d
 	github.com/ethereum/go-ethereum v1.15.3
 	github.com/lmittmann/w3 v0.17.8
 	github.com/stretchr/testify v1.10.0
@@ -15,6 +15,7 @@ require (
 	github.com/ethereum-optimism/superchain-registry/validation v0.0.0-20250314162817-2c60e5723c64
 	github.com/google/go-github/v68 v68.0.0
 	github.com/klauspost/compress v1.18.0
+	golang.org/x/sync v0.10.0
 )
 
 require (
@@ -74,7 +75,6 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	golang.org/x/crypto v0.32.0 // indirect
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect
-	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/term v0.28.0 // indirect
 	golang.org/x/time v0.10.0 // indirect
