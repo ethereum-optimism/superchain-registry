@@ -148,6 +148,11 @@ jobs:
             CHANGED_FILE_COUNT=0
 
             for file in $CHANGED_FILES; do
+              # If the file is the superchain.toml file, skip it
+              if [[ "$file" == *"superchain.toml" ]]; then
+                continue
+              fi
+
               CHANGED_FILE_COUNT=$((CHANGED_FILE_COUNT + 1))
               # Use yq to extract chain_id from TOML
               CHAIN_ID=$(yq -p=toml -o=json '.chain_id' "$file" | grep -v "null" | tr -d '"')
