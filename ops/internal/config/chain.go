@@ -69,13 +69,11 @@ type Chain struct {
 	SuperchainTime       *uint64             `toml:"superchain_time"`
 	DataAvailabilityType string              `toml:"data_availability_type"`
 	ChainID              uint64              `toml:"chain_id"`
-	BatchInboxAddr       *ChecksummedAddress `toml:"batch_inbox_addr"`
 	BlockTime            uint64              `toml:"block_time"`
 	SeqWindowSize        uint64              `toml:"seq_window_size"`
 	MaxSequencerDrift    uint64              `toml:"max_sequencer_drift"`
 	GasPayingToken       *ChecksummedAddress `toml:"gas_paying_token,omitempty"`
 	Hardforks            Hardforks           `toml:"hardforks"`
-	Optimism             *FeeParams          `toml:"optimism"`
 	AltDA                *AltDA              `toml:"alt_da"`
 	Genesis              Genesis             `toml:"genesis"`
 	Roles                Roles               `toml:"roles"`
