@@ -1,0 +1,59 @@
+name = "Boba BNB Testnet"
+chain_id = 9728
+public_rpc = "https://testnet.bnb.boba.network"
+sequencer_rpc = "https://testnet.bnb.boba.network"
+explorer = "https://testnet.bnb.bobascan.com"
+superchain_level = 1
+batch_inbox_addr = "0xfFf0000000000000000000000000000000009728"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+data_availability_type = "eth-da"
+gas_paying_token = "0x875cD11fDf085e0E11B0EE6b814b6d0b38fA554C"
+
+[hardforks]
+  regolith_time = 1718920167
+  canyon_time = 1718920167 # Thu 20 Jun 2024 21:49:27 UTC
+  delta_time = 1718920167 # Thu 20 Jun 2024 21:49:27 UTC
+  ecotone_time = 1718920168 # Thu 20 Jun 2024 21:49:28 UTC
+  fjord_time = 1722297600 # Tue 30 Jul 2024 00:00:00 UTC
+  granite_time = 1726470000 # Mon 16 Sep 2024 07:00:00 UTC
+  holocene_time = 1736150400 # Mon Jan 06 08:00:00 UTC
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1718920167
+  [genesis.l1]
+    hash = "0x87063262e607919b1879aeca6a6652d2d601326518a58a0f85245c05b14f8666"
+    number = 41400663
+  [genesis.l2]
+    hash = "0x293763444b022de43fba94e90b95936ea0c360c02443379427c2f7b7fb21fe7e"
+    number = 675077
+  [genesis.system_config]
+    batcherAddress = "0xfCdd863D1D21f609f0C0737D07634B0B146EF266"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000834"
+    scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
+    gasLimit = 30000000
+
+[addresses]
+  SystemConfigOwner = "0xd3EdFbD01829c5A97B94B20F82DC17088Cc00031"
+  ProxyAdminOwner = "0xd3EdFbD01829c5A97B94B20F82DC17088Cc00031"
+  Guardian = "0xd3EdFbD01829c5A97B94B20F82DC17088Cc00031"
+  Challenger = "0xd3EdFbD01829c5A97B94B20F82DC17088Cc00031"
+  Proposer = "0xd0D2Cb0D7D1ab3D049B7bc1a928C66D83e68Ab21"
+  UnsafeBlockSigner = "0x747a375E6bea0735FC184a3A8FA0520435404347"
+  BatchSubmitter = "0xfCdd863D1D21f609f0C0737D07634B0B146EF266"
+  AddressManager = "0xAee1fb3f4353a9060aEC3943fE932b6Efe35CdAa"
+  L1CrossDomainMessengerProxy = "0x53aD38aE4a63Fe33a86E011F7AF4d3fDe3daD145"
+  L1ERC721BridgeProxy = "0x0a67b7638E5B3C32704aed03b3423a4cC1153887"
+  L1StandardBridgeProxy = "0xBf0939120b4F5E3196b9E12cAC291e03dD058e9a"
+  L2OutputOracleProxy = "0xD518C4883AdFBfd7501890e84B4fdA0357B0C73A"
+  OptimismMintableERC20FactoryProxy = "0x0124836C6DDD44E345dd291A68Ec521a8a66f398"
+  OptimismPortalProxy = "0xF48d08721D99E16D22Cc704991c2Ad064320aD5e"
+  SystemConfigProxy = "0x5e0Aa53122C29128FD1399998f7928F9BC603B27"
+  ProxyAdmin = "0xa6610FD227908329Ae473f10520e8A06EB9d2956"
+  SuperchainConfig = "0xf999bc2fE006A5A8c2E6Aa35C63eD0adf731E6de"

@@ -1,0 +1,15 @@
+name = "BNB Testnet"
+protocol_versions_addr = "0xEeDa515370b2A60B64Ecf35754bB5ff2C781e0be"
+superchain_config_addr = "0xf999bc2fE006A5A8c2E6Aa35C63eD0adf731E6de"
+
+[hardforks]
+canyon_time =  1718920167
+delta_time =   1718920167
+ecotone_time = 1718920168
+fjord_time =   1722297600
+granite_time = 1726470000
+
+[l1]
+  chain_id = 97
+  public_rpc = "https://bsc-testnet.public.blastapi.io"
+  explorer = "https://testnet.bscscan.com"
