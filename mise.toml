@@ -3,6 +3,7 @@
 # Core dependencies
 go = "1.23.1"
 just = "1.37.0"
+yq = "4.44.5"
 
 # Go dependencies
 "go:gotest.tools/gotestsum" = "1.12.0"
