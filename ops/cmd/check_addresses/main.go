@@ -34,8 +34,15 @@ func main() {
 		fixFlag  = flag.Bool("fix", false, "Fix incorrect addresses")
 		allFlag  = flag.Bool("all", false, "Check all TOML files in validation directory")
 		fileFlag = flag.String("file", "", "Check specific file")
+		ciMode   = os.Getenv("CI") != "" // Detect if running in CI environment
 	)
 	flag.Parse()
+
+	// In CI mode with check_diff, we should fix files
+	if ciMode && !*fixFlag {
+		fmt.Println("Running in CI mode with check_diff, enabling auto-fix")
+		*fixFlag = true
+	}
 
 	// Get the root directory of the repository
 	rootDir, err := findRepoRoot()
