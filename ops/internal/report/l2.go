@@ -87,9 +87,9 @@ func DiffL2Genesis(
 				BaseFeeVaultRecipient:      common.Address(chainCfg.BaseFeeVaultRecipient),
 				L1FeeVaultRecipient:        common.Address(chainCfg.L1FeeVaultRecipient),
 				SequencerFeeVaultRecipient: common.Address(chainCfg.SequencerFeeVaultRecipient),
-				Eip1559DenominatorCanyon:   chainCfg.Optimism.EIP1559DenominatorCanyon,
-				Eip1559Denominator:         chainCfg.Optimism.EIP1559Denominator,
-				Eip1559Elasticity:          chainCfg.Optimism.EIP1559Elasticity,
+				Eip1559DenominatorCanyon:   chainCfg.Genesis.FeeParams.EIP1559DenominatorCanyon,
+				Eip1559Denominator:         chainCfg.Genesis.FeeParams.EIP1559Denominator,
+				Eip1559Elasticity:          chainCfg.Genesis.FeeParams.EIP1559Elasticity,
 				Roles: state.ChainRoles{
 					L1ProxyAdminOwner: common.Address(standardRoles.L1ProxyAdminOwner),
 					L2ProxyAdminOwner: common.Address(standardRoles.L2ProxyAdminOwner),

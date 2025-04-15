@@ -6,7 +6,6 @@ explorer = "https://sepolia-optimistic.etherscan.io"
 superchain_level = 1
 governed_by_optimism = true
 superchain_time = 0
-batch_inbox_addr = "0xff00000000000000000000000000000011155420"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
@@ -20,11 +19,6 @@ data_availability_type = "eth-da"
   granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
   holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
 
-[optimism]
-  eip1559_elasticity = 6
-  eip1559_denominator = 50
-  eip1559_denominator_canyon = 250
-
 [genesis]
   l2_time = 1691802540
   [genesis.l1]
@@ -35,9 +29,14 @@ data_availability_type = "eth-da"
     number = 0
   [genesis.system_config]
     batcherAddress = "0x8F23BB38F531600e5d8FDDaAEC41F13FaB46E98c"
+    batch_inbox_addr = "0xff00000000000000000000000000000011155420"
     overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
+  [genesis.fee_params]
+    eip1559_elasticity = 6
+    eip1559_denominator = 50
+    eip1559_denominator_canyon = 250
 
 [roles]
   SystemConfigOwner = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"

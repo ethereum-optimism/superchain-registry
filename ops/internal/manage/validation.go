@@ -109,12 +109,12 @@ func ValidateGenesisIntegrity(cfg *config.Chain, genesis *core.Genesis) error {
 	}
 
 	out.Optimism = &params.OptimismConfig{
-		EIP1559Elasticity:  cfg.Optimism.EIP1559Elasticity,
-		EIP1559Denominator: cfg.Optimism.EIP1559Denominator,
+		EIP1559Elasticity:  cfg.Genesis.FeeParams.EIP1559Elasticity,
+		EIP1559Denominator: cfg.Genesis.FeeParams.EIP1559Denominator,
 	}
 
-	if cfg.Optimism.EIP1559DenominatorCanyon != 0 {
-		out.Optimism.EIP1559DenominatorCanyon = &cfg.Optimism.EIP1559DenominatorCanyon
+	if cfg.Genesis.FeeParams.EIP1559DenominatorCanyon != 0 {
+		out.Optimism.EIP1559DenominatorCanyon = &cfg.Genesis.FeeParams.EIP1559DenominatorCanyon
 	}
 
 	genCopy := &core.Genesis{

@@ -6,7 +6,6 @@ superchain_level = 1
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 360
-batch_inbox_addr = "0xfF00000000000000000000000000000000000360"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 1800
@@ -18,11 +17,6 @@ max_sequencer_drift = 1800
   fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   granite_time = 1727370000 # Thu 26 Sep 2024 17:00:00 UTC
 
-[optimism]
-  eip1559_elasticity = 6
-  eip1559_denominator = 50
-  eip1559_denominator_canyon = 250
-
 [genesis]
   l2_time = 1721744471
   [genesis.l1]
@@ -33,9 +27,14 @@ max_sequencer_drift = 1800
     number = 0
   [genesis.system_config]
     batcherAddress = "0xF7ca543d652E38692fD12f989eb55b5327eC9A20"
+    batch_inbox_addr = "0xfF00000000000000000000000000000000000360"
     overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
+  [genesis.fee_params]
+    eip1559_elasticity = 6
+    eip1559_denominator = 50
+    eip1559_denominator_canyon = 250
 
 [roles]
   SystemConfigOwner = "0xee1Af3f99AF8C5b93512FbE2A3f0dD5568CE087f"

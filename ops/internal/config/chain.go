@@ -69,13 +69,11 @@ type Chain struct {
 	SuperchainTime       *uint64             `toml:"superchain_time"`
 	DataAvailabilityType string              `toml:"data_availability_type"`
 	ChainID              uint64              `toml:"chain_id"`
-	BatchInboxAddr       *ChecksummedAddress `toml:"batch_inbox_addr"`
 	BlockTime            uint64              `toml:"block_time"`
 	SeqWindowSize        uint64              `toml:"seq_window_size"`
 	MaxSequencerDrift    uint64              `toml:"max_sequencer_drift"`
 	GasPayingToken       *ChecksummedAddress `toml:"gas_paying_token,omitempty"`
 	Hardforks            Hardforks           `toml:"hardforks"`
-	Optimism             Optimism            `toml:"optimism"`
 	AltDA                *AltDA              `toml:"alt_da"`
 	Genesis              Genesis             `toml:"genesis"`
 	Roles                Roles               `toml:"roles"`
@@ -116,6 +114,7 @@ type Genesis struct {
 	L1           GenesisRef   `toml:"l1"`
 	L2           GenesisRef   `toml:"l2"`
 	SystemConfig SystemConfig `toml:"system_config"`
+	FeeParams    *FeeParams   `toml:"fee_params,omitempty"`
 }
 
 type GenesisRef struct {
@@ -124,12 +123,13 @@ type GenesisRef struct {
 }
 
 type SystemConfig struct {
-	BatcherAddr       ChecksummedAddress `json:"batcherAddr" toml:"batcherAddress"`
-	Overhead          common.Hash        `json:"overhead" toml:"overhead"`
-	Scalar            common.Hash        `json:"scalar" toml:"scalar"`
-	GasLimit          uint64             `json:"gasLimit" toml:"gasLimit"`
-	BaseFeeScalar     *uint64            `json:"baseFeeScalar,omitempty" toml:"baseFeeScalar,omitempty"`
-	BlobBaseFeeScalar *uint64            `json:"blobBaseFeeScalar,omitempty" toml:"blobBaseFeeScalar,omitempty"`
+	BatcherAddr       ChecksummedAddress  `json:"batcherAddr" toml:"batcherAddress"`
+	BatchInboxAddr    *ChecksummedAddress `json:"batchInboxAddr" toml:"batch_inbox_addr"`
+	Overhead          common.Hash         `json:"overhead" toml:"overhead"`
+	Scalar            common.Hash         `json:"scalar" toml:"scalar"`
+	GasLimit          uint64              `json:"gasLimit" toml:"gasLimit"`
+	BaseFeeScalar     *uint64             `json:"baseFeeScalar,omitempty" toml:"baseFeeScalar,omitempty"`
+	BlobBaseFeeScalar *uint64             `json:"blobBaseFeeScalar,omitempty" toml:"blobBaseFeeScalar,omitempty"`
 }
 
 type AltDA struct {
@@ -139,7 +139,7 @@ type AltDA struct {
 	DaCommitmentType           string             `toml:"da_commitment_type"`
 }
 
-type Optimism struct {
+type FeeParams struct {
 	EIP1559Elasticity        uint64 `toml:"eip1559_elasticity"`
 	EIP1559Denominator       uint64 `toml:"eip1559_denominator"`
 	EIP1559DenominatorCanyon uint64 `toml:"eip1559_denominator_canyon"`
