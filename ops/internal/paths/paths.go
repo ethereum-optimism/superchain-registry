@@ -8,6 +8,7 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 )
 
@@ -51,12 +52,39 @@ func ChainConfig(wd string, superchain config.Superchain, shortName string) stri
 	return path.Join(SuperchainDir(wd, superchain), shortName+".toml")
 }
 
+func SuperchainIds(wd string) (map[config.Superchain]uint64, error) {
+	superchains, err := Superchains(wd)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get superchains: %w", err)
+	}
+
+	superchainIds := make(map[config.Superchain]uint64)
+	for _, superchain := range superchains {
+		superchainFile := SuperchainConfig(wd, superchain)
+		data, err := os.ReadFile(superchainFile)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read superchain config: %w", err)
+		}
+
+		var superchainDef config.SuperchainDefinition
+		if err := toml.Unmarshal(data, &superchainDef); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal superchain config: %w", err)
+		}
+		superchainIds[superchain] = superchainDef.L1.ChainID
+	}
+	return superchainIds, nil
+}
+
 func SuperchainConfig(wd string, superchain config.Superchain) string {
 	return path.Join(SuperchainDir(wd, superchain), "superchain.toml")
 }
 
+func SuperchainConfigsDir(wd string) string {
+	return path.Join(wd, "superchain", "configs")
+}
+
 func Superchains(wd string) ([]config.Superchain, error) {
-	configsDir := path.Join(wd, "superchain", "configs")
+	configsDir := SuperchainConfigsDir(wd)
 
 	dir, err := os.ReadDir(configsDir)
 	if err != nil {
@@ -84,6 +112,18 @@ func AddressesFile(wd string) string {
 	return path.Join(ExtraDir(wd), "addresses", "addresses.json")
 }
 
+func ChainListJsonFile(wd string) string {
+	return path.Join(wd, "chainList.json")
+}
+
+func ChainListTomlFile(wd string) string {
+	return path.Join(wd, "chainList.toml")
+}
+
+func ChainMdFile(wd string) string {
+	return path.Join(wd, "CHAINS.md")
+}
+
 func ValidationsDir(wd string) string {
 	return path.Join(wd, "validation", "standard")
 }
@@ -103,6 +143,10 @@ func RequireDir(p string) error {
 	}
 
 	return nil
+}
+
+func EnsureDir(p string) error {
+	return os.MkdirAll(p, 0o755)
 }
 
 func RequireRoot(wd string) error {
