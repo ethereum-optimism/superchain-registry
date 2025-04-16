@@ -1,24 +1,24 @@
 name = "Boba Mainnet"
-chain_id = 288
 public_rpc = "https://mainnet.boba.network"
 sequencer_rpc = "https://mainnet.boba.network"
 explorer = "https://bobascan.com"
 superchain_level = 0
 governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 288
 batch_inbox_addr = "0xfFF0000000000000000000000000000000000288"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
 
 [hardforks]
   regolith_time = 1713302879
   canyon_time = 1713302879 # Tue 16 Apr 2024 21:27:59 UTC
   delta_time = 1713302879 # Tue 16 Apr 2024 21:27:59 UTC
   ecotone_time = 1713302880 # Tue 16 Apr 2024 21:28:00 UTC
-  fjord_time = 1725951600 # Tue Sep 10 2024 07:00:00 UTC
-  granite_time = 1729753200 # Thu Oct 24 2024 07:00:00 UTC
-  holocene_time = 1738785600 # Wed Feb 05 2025 20:00:00 UTC
+  fjord_time = 1725951600 # Tue 10 Sep 2024 07:00:00 UTC
+  granite_time = 1729753200 # Thu 24 Oct 2024 07:00:00 UTC
+  holocene_time = 1738785600 # Wed 5 Feb 2025 20:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -39,7 +39,7 @@ data_availability_type = "eth-da"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0x56121a8612474C3eB65D69a3b871f284705b9bC4"
   ProxyAdminOwner = "0x56121a8612474C3eB65D69a3b871f284705b9bC4"
   Guardian = "0x56121a8612474C3eB65D69a3b871f284705b9bC4"
@@ -47,6 +47,8 @@ data_availability_type = "eth-da"
   Proposer = "0xbfBAB4363034A930687B9320599a69DfBf1D21d0"
   UnsafeBlockSigner = "0x4Ac69842680847e1135f514eE3d75172B685ECBf"
   BatchSubmitter = "0xe1B64045351B0B6e9821F19b39f81bc4711D2230"
+
+[addresses]
   AddressManager = "0x8376ac6C3f73a25Dd994E0b0669ca7ee0C02F089"
   L1CrossDomainMessengerProxy = "0x6D4528d192dB72E282265D6092F4B872f9Dff69e"
   L1ERC721BridgeProxy = "0xA6Ad22bb0E73DEF40a24E510cFbc93807d8bf87e"
