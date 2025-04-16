@@ -1,14 +1,15 @@
 name = "Boba BNB Testnet"
-chain_id = 9728
 public_rpc = "https://testnet.bnb.boba.network"
 sequencer_rpc = "https://testnet.bnb.boba.network"
 explorer = "https://testnet.bnb.bobascan.com"
-superchain_level = 1
+superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 9728
 batch_inbox_addr = "0xfFf0000000000000000000000000000000009728"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-data_availability_type = "eth-da"
 gas_paying_token = "0x875cD11fDf085e0E11B0EE6b814b6d0b38fA554C"
 
 [hardforks]
@@ -18,7 +19,7 @@ gas_paying_token = "0x875cD11fDf085e0E11B0EE6b814b6d0b38fA554C"
   ecotone_time = 1718920168 # Thu 20 Jun 2024 21:49:28 UTC
   fjord_time = 1722297600 # Tue 30 Jul 2024 00:00:00 UTC
   granite_time = 1726470000 # Mon 16 Sep 2024 07:00:00 UTC
-  holocene_time = 1736150400 # Mon Jan 06 08:00:00 UTC
+  holocene_time = 1736150400 # Mon 6 Jan 2025 08:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -39,7 +40,7 @@ gas_paying_token = "0x875cD11fDf085e0E11B0EE6b814b6d0b38fA554C"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
     gasLimit = 30000000
 
-[addresses]
+[roles]
   SystemConfigOwner = "0xd3EdFbD01829c5A97B94B20F82DC17088Cc00031"
   ProxyAdminOwner = "0xd3EdFbD01829c5A97B94B20F82DC17088Cc00031"
   Guardian = "0xd3EdFbD01829c5A97B94B20F82DC17088Cc00031"
@@ -47,6 +48,8 @@ gas_paying_token = "0x875cD11fDf085e0E11B0EE6b814b6d0b38fA554C"
   Proposer = "0xd0D2Cb0D7D1ab3D049B7bc1a928C66D83e68Ab21"
   UnsafeBlockSigner = "0x747a375E6bea0735FC184a3A8FA0520435404347"
   BatchSubmitter = "0xfCdd863D1D21f609f0C0737D07634B0B146EF266"
+
+[addresses]
   AddressManager = "0xAee1fb3f4353a9060aEC3943fE932b6Efe35CdAa"
   L1CrossDomainMessengerProxy = "0x53aD38aE4a63Fe33a86E011F7AF4d3fDe3daD145"
   L1ERC721BridgeProxy = "0x0a67b7638E5B3C32704aed03b3423a4cC1153887"
