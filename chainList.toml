@@ -1,4 +1,17 @@
 [[chains]]
+  name = "Boba BNB Testnet"
+  identifier = "bnb-testnet/boba"
+  chain_id = 9728
+  rpc = ["https://testnet.bnb.boba.network"]
+  explorers = ["https://testnet.bnb.bobascan.com"]
+  superchain_level = 1
+  data_availability_type = "eth-da"
+  gas_paying_token = "0x875cD11fDf085e0E11B0EE6b814b6d0b38fA554C"
+  [chains.parent]
+    type = "L2"
+    chain = "bnb-testnet"
+
+[[chains]]
   name = "Automata Mainnet"
   identifier = "mainnet/automata"
   chain_id = 65536
@@ -126,6 +139,18 @@
   explorers = ["https://blockscout.lisk.com"]
   superchain_level = 1
   governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
+  name = "Boba Mainnet"
+  identifier = "mainnet/boba"
+  chain_id = 288
+  rpc = ["https://mainnet.boba.network"]
+  explorers = ["https://bobascan.com"]
+  superchain_level = 1
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -484,6 +509,18 @@
     chain = "sepolia"
 
 [[chains]]
+  name = "Boba Sepolia Testnet"
+  identifier = "sepolia/boba"
+  chain_id = 28882
+  rpc = ["https://sepolia.boba.network"]
+  explorers = ["https://testnet.bobascan.com"]
+  superchain_level = 1
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+
+[[chains]]
   name = "Metal L2 Testnet"
   identifier = "sepolia/metal"
   chain_id = 1740
@@ -635,6 +672,19 @@
   superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia-dev-0"
+
+[[chains]]
+  name = "Boba Devnet"
+  identifier = "sepolia-dev-0/boba"
+  chain_id = 288882
+  rpc = ["https://devnet.boba.network"]
+  explorers = [""]
+  superchain_level = 1
+  data_availability_type = "eth-da"
+  gas_paying_token = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
   [chains.parent]
     type = "L2"
     chain = "sepolia-dev-0"

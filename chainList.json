@@ -1,5 +1,23 @@
 [
   {
+    "name": "Boba BNB Testnet",
+    "identifier": "bnb-testnet/boba",
+    "chainId": 9728,
+    "rpc": [
+      "https://testnet.bnb.boba.network"
+    ],
+    "explorers": [
+      "https://testnet.bnb.bobascan.com"
+    ],
+    "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "bnb-testnet"
+    },
+    "gasPayingToken": "0x875cD11fDf085e0E11B0EE6b814b6d0b38fA554C"
+  },
+  {
     "name": "Automata Mainnet",
     "identifier": "mainnet/automata",
     "chainId": 65536,
@@ -176,6 +194,23 @@
     ],
     "superchainLevel": 1,
     "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    }
+  },
+  {
+    "name": "Boba Mainnet",
+    "identifier": "mainnet/boba",
+    "chainId": 288,
+    "rpc": [
+      "https://mainnet.boba.network"
+    ],
+    "explorers": [
+      "https://bobascan.com"
+    ],
+    "superchainLevel": 1,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
@@ -670,6 +705,23 @@
     }
   },
   {
+    "name": "Boba Sepolia Testnet",
+    "identifier": "sepolia/boba",
+    "chainId": 28882,
+    "rpc": [
+      "https://sepolia.boba.network"
+    ],
+    "explorers": [
+      "https://testnet.bobascan.com"
+    ],
+    "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    }
+  },
+  {
     "name": "Metal L2 Testnet",
     "identifier": "sepolia/metal",
     "chainId": 1740,
@@ -884,6 +936,24 @@
       "type": "L2",
       "chain": "sepolia-dev-0"
     }
+  },
+  {
+    "name": "Boba Devnet",
+    "identifier": "sepolia-dev-0/boba",
+    "chainId": 288882,
+    "rpc": [
+      "https://devnet.boba.network"
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 1,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia-dev-0"
+    },
+    "gasPayingToken": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
   },
   {
     "name": "OP Labs Sepolia devnet 0",
