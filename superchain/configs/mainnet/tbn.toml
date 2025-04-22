@@ -4,7 +4,6 @@ sequencer_rpc = "https://sequencer.bnry.mainnet.zeeve.net"
 explorer = "https://explorer.thebinaryholdings.com"
 superchain_level = 0
 governed_by_optimism = false
-superchain_time = 1726070401
 data_availability_type = "eth-da"
 chain_id = 624
 batch_inbox_addr = "0xFF00000000000000000000000000000000000624"

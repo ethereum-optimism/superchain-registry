@@ -4,7 +4,6 @@ sequencer_rpc = "https://rpc.zora.energy"
 explorer = "https://explorer.zora.energy"
 superchain_level = 1
 governed_by_optimism = true
-superchain_time = 0
 data_availability_type = "eth-da"
 chain_id = 7777777
 batch_inbox_addr = "0x6F54Ca6F6EdE96662024Ffd61BFd18f3f4e34DFf"

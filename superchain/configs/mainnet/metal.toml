@@ -4,7 +4,6 @@ sequencer_rpc = "https://rpc.metall2.com"
 explorer = "https://explorer.metall2.com"
 superchain_level = 1
 governed_by_optimism = true
-superchain_time = 0
 data_availability_type = "eth-da"
 chain_id = 1750
 batch_inbox_addr = "0xc83f7D9F2D4A76E81145849381ABA02602373723"

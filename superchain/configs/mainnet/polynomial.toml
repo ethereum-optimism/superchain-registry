@@ -4,7 +4,6 @@ sequencer_rpc = "https://rpc.polynomial.fi"
 explorer = "https://polynomialscan.io"
 superchain_level = 1
 governed_by_optimism = false
-superchain_time = 0
 data_availability_type = "eth-da"
 chain_id = 8008
 batch_inbox_addr = "0x0bd57e83B5E0f9eCD84d559bB58e1EcFEEdD2565"

@@ -4,7 +4,6 @@ sequencer_rpc = "https://rpc.creatorchain.io"
 explorer = "https://explorer.creatorchain.io"
 superchain_level = 0
 governed_by_optimism = false
-superchain_time = 0
 data_availability_type = "eth-da"
 chain_id = 66665
 batch_inbox_addr = "0xFA5c2402828228a8Dd700bA1E71f5E1128876Fa8"
