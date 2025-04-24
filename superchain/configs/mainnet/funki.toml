@@ -6,7 +6,6 @@ superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 33979
-batch_inbox_addr = "0xfF00000000000000000000000000000084BB84Bb"
 block_time = 2
 seq_window_size = 8400
 max_sequencer_drift = 1800
@@ -16,11 +15,6 @@ max_sequencer_drift = 1800
   delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-
-[optimism]
-  eip1559_elasticity = 10
-  eip1559_denominator = 50
-  eip1559_denominator_canyon = 250
 
 [alt_da]
   da_challenge_contract_address = "0xF40b807c2407e1d7dabb85f3ceefd5EACc7bF3CD"
@@ -38,9 +32,14 @@ max_sequencer_drift = 1800
     number = 0
   [genesis.system_config]
     batcherAddress = "0x73c98Cf34AF1f7D798e8e6f34b16037530Bffc41"
+    batch_inbox_addr = "0xfF00000000000000000000000000000084BB84Bb"
     overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
     scalar = "0x0100000000000000000000000000000000000000000000000000000000003138"
     gasLimit = 30000000
+  [genesis.fee_params]
+    eip1559_elasticity = 10
+    eip1559_denominator = 50
+    eip1559_denominator_canyon = 250
 
 [roles]
   SystemConfigOwner = "0xc0CE2761d5cC92d25dB6ccD95e4b9483eD22D11B"
