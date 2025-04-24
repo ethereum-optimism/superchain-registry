@@ -449,7 +449,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "arena-z"
