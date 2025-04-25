@@ -10,7 +10,6 @@ batch_inbox_addr = "0x8612014a343089F1ddBACfD42baf4Afbf9133593"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-superchain_time = 0
 
 [hardforks]
   canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
