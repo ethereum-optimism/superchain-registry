@@ -10,12 +10,16 @@ batch_inbox_addr = "0x8612014a343089F1ddBACfD42baf4Afbf9133593"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
+superchain_time = 0
 
 [hardforks]
   canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 1726185601 # Fri Sep 13 2024 00:00:01 UTC
+  holocene_time = 1736445601 # Thu 9 Jan 2025 18:00:01 UTC
+  isthmus_time = 1746806401 # Fri 9 May 2025 16:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
