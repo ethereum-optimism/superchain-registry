@@ -1,0 +1,26 @@
+{
+  "chainId": 99999,
+  "domainId": 99999,
+  "name": "My Test Chain",
+  "shortName": "MTC",
+  "network": "mytestchain",
+  "rpcUrls": {
+    "default": {
+      "http": ["https://rpc.mytestchain.org"]
+    }
+  },
+  "explorers": [
+    {
+      "name": "My Test Explorer",
+      "url": "https://explorer.mytestchain.org",
+      "standard": "EIP3091"
+    }
+  ],
+  "nativeCurrency": {
+    "name": "My Test Token",
+    "symbol": "MTT",
+    "decimals": 18
+  },
+  "chainType": "OPStack",
+  "parentChain": "ethereum"
+}
