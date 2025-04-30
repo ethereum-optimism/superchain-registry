@@ -4,7 +4,7 @@ go 1.23.1
 
 require (
 	github.com/BurntSushi/toml v1.5.0
-	github.com/ethereum-optimism/optimism v1.13.3-0.20250430201324-568a567b158d
+	github.com/ethereum-optimism/optimism v1.13.3-0.20250430203933-225370c3419d
 	github.com/ethereum/go-ethereum v1.15.3
 	github.com/lmittmann/w3 v0.17.8
 	github.com/stretchr/testify v1.10.0
