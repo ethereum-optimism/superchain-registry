@@ -54,6 +54,7 @@ var versionsToCheck = []validation.Semver{
 	"op-contracts/v2.0.0",
 	"op-contracts/v3.0.0-rc.1",
 	"op-contracts/v3.0.0-rc.2",
+	"op-contracts/v3.0.0",
 }
 
 func TestVersionsIntegrity(t *testing.T) {
