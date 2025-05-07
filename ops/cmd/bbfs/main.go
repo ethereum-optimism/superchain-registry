@@ -31,6 +31,9 @@ type ChainConfig struct {
 // ABI definition for the blobBaseFeeScalar function
 const blobBaseFeeScalarABI = `[{"constant":true,"inputs":[],"name":"scalar","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]`
 
+// ABI definition for the version function
+const versionABI = `[{"constant":true,"inputs":[],"name":"version","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"}]`
+
 func main() {
 	// RPC URL for Optimism Mainnet
 	rpcURL := "https://ethereum-rpc.publicnode.com"
@@ -54,16 +57,21 @@ func main() {
 		log.Fatalf("Error: directory does not exist: %s", rootDir)
 	}
 
-	fmt.Printf("Using Superchain Registry directory: %s\n", rootDir)
-	fmt.Printf("%-30s | %-10s | %-42s | %-20s | %-10s | %s\n",
-		"Chain Name", "Chain ID", "SystemConfigProxy", "blobbasefeeScalar", "DA Type", "reverted")
-	fmt.Println(strings.Repeat("-", 130))
-
-	// Parse the ABI
+	// Parse the ABIs
 	parsedABI, err := abi.JSON(strings.NewReader(blobBaseFeeScalarABI))
 	if err != nil {
-		log.Fatalf("Failed to parse ABI: %v", err)
+		log.Fatalf("Failed to parse scalar ABI: %v", err)
 	}
+
+	parsedVersionABI, err := abi.JSON(strings.NewReader(versionABI))
+	if err != nil {
+		log.Fatalf("Failed to parse version ABI: %v", err)
+	}
+
+	fmt.Printf("Using Superchain Registry directory: %s\n", rootDir)
+	fmt.Printf("%-30s | %-10s | %-42s | %-20s | %-10s | %-10s | %s\n",
+		"Chain Name", "Chain ID", "SystemConfigProxy", "blobbasefeeScalar", "DA Type", "Version", "reverted")
+	fmt.Println(strings.Repeat("-", 145))
 
 	// Walk through the file tree
 	err = filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
@@ -103,7 +111,7 @@ func main() {
 				log.Printf("Error decoding call data for %s: %v\n", address.Hex(), err)
 				return nil
 			}
-			// Make the contract call
+			// Make the contract calls
 			var reverted bool
 			result, err := client.CallContract(context.Background(), ethereum.CallMsg{
 				To:   &address,
@@ -111,6 +119,26 @@ func main() {
 			}, nil)
 			if err != nil {
 				reverted = true
+			}
+
+			// Get version
+			versionCallData, err := hexutil.Decode("0x54fd4d50") // This is the method ID for version()
+			if err != nil {
+				log.Printf("Error decoding version call data for %s: %v\n", address.Hex(), err)
+				return nil
+			}
+
+			version := "unknown"
+			versionResult, err := client.CallContract(context.Background(), ethereum.CallMsg{
+				To:   &address,
+				Data: versionCallData,
+			}, nil)
+			if err == nil {
+				var versionStr string
+				err = parsedVersionABI.UnpackIntoInterface(&versionStr, "version", versionResult)
+				if err == nil {
+					version = versionStr
+				}
 			}
 
 			// Unpack the result
@@ -133,9 +161,9 @@ func main() {
 
 			if es.BlobBaseFeeScalar == 0 {
 				// Print the result
-				fmt.Printf("%-30s | %-10d | %-42s | %-20d | %-10s | %t\n",
+				fmt.Printf("%-30s | %-10d | %-42s | %-20d | %-10s | %-10s | %t\n",
 					config.Name, config.ChainID, config.Addresses.SystemConfigProxy,
-					es.BlobBaseFeeScalar, config.DataAvailabilityType, reverted)
+					es.BlobBaseFeeScalar, config.DataAvailabilityType, version, reverted)
 			}
 		}
 		return nil
