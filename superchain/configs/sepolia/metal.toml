@@ -46,7 +46,7 @@ max_sequencer_drift = 600
   ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
   Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
   Challenger = "0x45eFFbD799Ab49122eeEAB75B78D9C56A187F9A7"
-  Proposer = "0x2d70f9a866de34c0f738f8cb2af1361b5af18caa"
+  Proposer = "0x2D70F9A866dE34c0f738f8Cb2AF1361b5aF18Caa"
   BatchSubmitter = "0xdb80Eca386AC72a55510e33CF9CF7533e75916eE"
 
 [addresses]
