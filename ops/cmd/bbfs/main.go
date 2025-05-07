@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/binary"
 	"fmt"
 	"log"
+	"math/big"
 	"os"
 	"path/filepath"
 	"strings"
@@ -26,7 +28,7 @@ type ChainConfig struct {
 }
 
 // ABI definition for the blobBaseFeeScalar function
-const blobBaseFeeScalarABI = `[{"constant":true,"inputs":[],"name":"blobbasefeeScalar","outputs":[{"name":"","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"}]`
+const blobBaseFeeScalarABI = `[{"constant":true,"inputs":[],"name":"scalar","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]`
 
 func main() {
 	// RPC URL for Optimism Mainnet
@@ -94,7 +96,7 @@ func main() {
 
 			// Prepare the call to the blobBaseFeeScalar function
 
-			callData, err := hexutil.Decode("0xec707517") // This is the method ID for blobbasefeeScalar
+			callData, err := hexutil.Decode("0xf45e65d8") // This is the method ID for scalar
 			if err != nil {
 				log.Printf("Error decoding call data for %s: %v\n", address.Hex(), err)
 				return nil
@@ -110,18 +112,27 @@ func main() {
 			}
 
 			// Unpack the result
-			var blobBaseFeeScalar uint32
-
+			scalarbig := new(big.Int)
+			var es EcotoneScalars
 			if !reverted {
-				err = parsedABI.UnpackIntoInterface(&blobBaseFeeScalar, "blobbasefeeScalar", result)
+				err = parsedABI.UnpackIntoInterface(&scalarbig, "scalar", result)
 				if err != nil {
 					panic(err)
+				}
+
+				scalar := [32]byte{}
+				scalarbig.FillBytes(scalar[:])
+				es, err = DecodeScalar(scalar)
+				if err != nil {
+					log.Printf("Error decoding scalar for %s: %v\n", address.Hex(), err)
+					return nil
 				}
 			}
 
 			// Print the result
 			fmt.Printf("%-30s | %-10d | %-42s | %-20d | %t\n",
-				config.Name, config.ChainID, config.Addresses.SystemConfigProxy, blobBaseFeeScalar, reverted)
+				config.Name, config.ChainID, config.Addresses.SystemConfigProxy,
+				es.BlobBaseFeeScalar, reverted)
 		}
 		return nil
 	})
@@ -132,3 +143,36 @@ func main() {
 
 	fmt.Println("Done.")
 }
+
+// DecodeScalar decodes the blobBaseFeeScalar and baseFeeScalar from a 32-byte scalar value.
+// It uses the first byte to determine the scalar format.
+func DecodeScalar(scalar [32]byte) (EcotoneScalars, error) {
+	switch scalar[0] {
+	case L1ScalarBedrock:
+		return EcotoneScalars{
+			BlobBaseFeeScalar: 0,
+			BaseFeeScalar:     binary.BigEndian.Uint32(scalar[28:32]),
+		}, nil
+	case L1ScalarEcotone:
+		return EcotoneScalars{
+			BlobBaseFeeScalar: binary.BigEndian.Uint32(scalar[24:28]),
+			BaseFeeScalar:     binary.BigEndian.Uint32(scalar[28:32]),
+		}, nil
+	default:
+		return EcotoneScalars{}, fmt.Errorf("unexpected system config scalar: %x", scalar)
+	}
+}
+
+type EcotoneScalars struct {
+	BlobBaseFeeScalar uint32
+	BaseFeeScalar     uint32
+}
+
+// The Ecotone upgrade introduces a versioned L1 scalar format
+// that is backward-compatible with pre-Ecotone L1 scalar values.
+const (
+	// L1ScalarBedrock is implied pre-Ecotone, encoding just a regular-gas scalar.
+	L1ScalarBedrock = byte(0)
+	// L1ScalarEcotone is new in Ecotone, allowing configuration of both a regular and a blobs scalar.
+	L1ScalarEcotone = byte(1)
+)
