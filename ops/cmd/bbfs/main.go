@@ -129,10 +129,12 @@ func main() {
 				}
 			}
 
-			// Print the result
-			fmt.Printf("%-30s | %-10d | %-42s | %-20d | %t\n",
-				config.Name, config.ChainID, config.Addresses.SystemConfigProxy,
-				es.BlobBaseFeeScalar, reverted)
+			if es.BlobBaseFeeScalar == 0 {
+				// Print the result
+				fmt.Printf("%-30s | %-10d | %-42s | %-20d | %t\n",
+					config.Name, config.ChainID, config.Addresses.SystemConfigProxy,
+					es.BlobBaseFeeScalar, reverted)
+			}
 		}
 		return nil
 	})
