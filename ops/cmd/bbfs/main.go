@@ -20,9 +20,10 @@ import (
 
 // Minimal struct to unmarshal relevant fields
 type ChainConfig struct {
-	Name      string `toml:"name"`
-	ChainID   int    `toml:"chain_id"`
-	Addresses struct {
+	Name                 string `toml:"name"`
+	ChainID              int    `toml:"chain_id"`
+	DataAvailabilityType string `toml:"data_availability_type"`
+	Addresses            struct {
 		SystemConfigProxy string `toml:"SystemConfigProxy"`
 	} `toml:"addresses"`
 }
@@ -54,8 +55,9 @@ func main() {
 	}
 
 	fmt.Printf("Using Superchain Registry directory: %s\n", rootDir)
-	fmt.Printf("%-30s | %-10s | %-42s | %-20s | %s \n", "Chain Name", "Chain ID", "SystemConfigProxy", "blobbasefeeScalar", "reverted")
-	fmt.Println(strings.Repeat("-", 115))
+	fmt.Printf("%-30s | %-10s | %-42s | %-20s | %-10s | %s\n",
+		"Chain Name", "Chain ID", "SystemConfigProxy", "blobbasefeeScalar", "DA Type", "reverted")
+	fmt.Println(strings.Repeat("-", 130))
 
 	// Parse the ABI
 	parsedABI, err := abi.JSON(strings.NewReader(blobBaseFeeScalarABI))
@@ -131,9 +133,9 @@ func main() {
 
 			if es.BlobBaseFeeScalar == 0 {
 				// Print the result
-				fmt.Printf("%-30s | %-10d | %-42s | %-20d | %t\n",
+				fmt.Printf("%-30s | %-10d | %-42s | %-20d | %-10s | %t\n",
 					config.Name, config.ChainID, config.Addresses.SystemConfigProxy,
-					es.BlobBaseFeeScalar, reverted)
+					es.BlobBaseFeeScalar, config.DataAvailabilityType, reverted)
 			}
 		}
 		return nil
