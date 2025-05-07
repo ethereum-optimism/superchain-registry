@@ -69,9 +69,9 @@ func main() {
 	}
 
 	fmt.Printf("Using Superchain Registry directory: %s\n", rootDir)
-	fmt.Printf("%-30s | %-10s | %-42s | %-20s | %-20s | %-10s | %s\n",
-		"Chain Name", "Chain ID", "SystemConfigProxy", "blobbasefeeScalar", "baseFeeScalar", "DA Type", "Version")
-	fmt.Println(strings.Repeat("-", 150))
+	fmt.Printf("%-30s | %-10s | %-42s | %-20s | %-20s | %-10s | %-10s | %s\n",
+		"Chain Name", "Chain ID", "SystemConfigProxy", "blobbasefeeScalar", "baseFeeScalar", "DA Type", "Scalar Ver", "Version")
+	fmt.Println(strings.Repeat("-", 160))
 
 	// Walk through the file tree
 	err = filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
@@ -159,11 +159,27 @@ func main() {
 				}
 			}
 
-			if es.BlobBaseFeeScalar == 0 {
+			if es.BlobBaseFeeScalar == 0 && config.DataAvailabilityType == "eth-da" {
+				// Get scalar version string
+				scalarVersion := "unknown"
+				if !reverted {
+					scalarbig := new(big.Int)
+					err = parsedABI.UnpackIntoInterface(&scalarbig, "scalar", result)
+					if err == nil {
+						scalar := [32]byte{}
+						scalarbig.FillBytes(scalar[:])
+						if scalar[0] == L1ScalarBedrock {
+							scalarVersion = "Bedrock"
+						} else if scalar[0] == L1ScalarEcotone {
+							scalarVersion = "Ecotone"
+						}
+					}
+				}
+
 				// Print the result
-				fmt.Printf("%-30s | %-10d | %-42s | %-20d | %-20d | %-10s | %s\n",
+				fmt.Printf("%-30s | %-10d | %-42s | %-20d | %-20d | %-10s | %-10s | %s\n",
 					config.Name, config.ChainID, config.Addresses.SystemConfigProxy,
-					es.BlobBaseFeeScalar, es.BaseFeeScalar, config.DataAvailabilityType, version)
+					es.BlobBaseFeeScalar, es.BaseFeeScalar, config.DataAvailabilityType, scalarVersion, version)
 			}
 		}
 		return nil
