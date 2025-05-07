@@ -20,6 +20,8 @@ type ChainConfig struct {
 
 func main() {
 
+	data := map[int]ChainConfig{}
+
 	// Relative path to the superchain registry
 	relativePath := "../../.."
 
@@ -62,7 +64,10 @@ func main() {
 			fmt.Printf("Chain Name: %s\nChain ID: %d\nSystemConfigProxy: %s\n",
 				config.Name, config.ChainID, config.Addresses.SystemConfigProxy)
 			fmt.Println("------------------------------------------------")
+
+			data[config.ChainID] = config
 		}
+
 		return nil
 	})
 
