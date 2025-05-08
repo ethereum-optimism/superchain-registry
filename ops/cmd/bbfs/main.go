@@ -69,9 +69,9 @@ func main() {
 	}
 
 	fmt.Printf("Using Superchain Registry directory: %s\n", rootDir)
-	fmt.Printf("%-15s | %-8s | %-42s | %-8s | %-8s | %-6s | %-7s | %s\n",
-		"Chain", "ChainID", "SystemConfigProxy", "BlobFee", "BaseFee", "DA", "Scalar", "Ver")
-	fmt.Println(strings.Repeat("-", 110))
+	fmt.Printf("%-25s | %-8s | %-42s | %-8s | %-8s | %-6s | %-7s | %s\n",
+		"Chain", "ChainID", "SystemConfigProxy", "s_B", "s_C", "DA", "Scalar", "Ver")
+	fmt.Println(strings.Repeat("-", 120))
 
 	// Walk through the file tree
 	err = filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
@@ -112,13 +112,13 @@ func main() {
 				return nil
 			}
 			// Make the contract calls
-			var reverted bool
+
 			result, err := client.CallContract(context.Background(), ethereum.CallMsg{
 				To:   &address,
 				Data: callData,
 			}, nil)
 			if err != nil {
-				reverted = true
+				panic(err)
 			}
 
 			// Get version
@@ -144,40 +144,37 @@ func main() {
 			// Unpack the result
 			scalarbig := new(big.Int)
 			var es EcotoneScalars
-			if !reverted {
-				err = parsedABI.UnpackIntoInterface(&scalarbig, "scalar", result)
-				if err != nil {
-					panic(err)
-				}
-
-				scalar := [32]byte{}
-				scalarbig.FillBytes(scalar[:])
-				es, err = DecodeScalar(scalar)
-				if err != nil {
-					log.Printf("Error decoding scalar for %s: %v\n", address.Hex(), err)
-					return nil
-				}
+			err = parsedABI.UnpackIntoInterface(&scalarbig, "scalar", result)
+			if err != nil {
+				panic(err)
 			}
 
-			if es.BlobBaseFeeScalar == 0 && config.DataAvailabilityType == "eth-da" {
+			scalar := [32]byte{}
+			scalarbig.FillBytes(scalar[:])
+			es, err = DecodeScalar(scalar)
+			if err != nil {
+				log.Printf("Error decoding scalar for %s: %v\n", address.Hex(), err)
+				return nil
+			}
+
+			if config.DataAvailabilityType == "eth-da" {
 				// Get scalar version string
 				scalarVersion := "unknown"
-				if !reverted {
-					scalarbig := new(big.Int)
-					err = parsedABI.UnpackIntoInterface(&scalarbig, "scalar", result)
-					if err == nil {
-						scalar := [32]byte{}
-						scalarbig.FillBytes(scalar[:])
-						if scalar[0] == L1ScalarBedrock {
-							scalarVersion = "Bedrock"
-						} else if scalar[0] == L1ScalarEcotone {
-							scalarVersion = "Ecotone"
-						}
+
+				scalarbig := new(big.Int)
+				err = parsedABI.UnpackIntoInterface(&scalarbig, "scalar", result)
+				if err == nil {
+					scalar := [32]byte{}
+					scalarbig.FillBytes(scalar[:])
+					if scalar[0] == L1ScalarBedrock {
+						scalarVersion = "Bedrock"
+					} else if scalar[0] == L1ScalarEcotone {
+						scalarVersion = "Ecotone"
 					}
 				}
 
 				// Print the result
-				fmt.Printf("%-15s | %-8d | %-42s | %-8d | %-8d | %-6s | %-7s | %s\n",
+				fmt.Printf("%-25s | %-8d | %-42s | %-8d | %-8d | %-6s | %-7s | %s\n",
 					config.Name, config.ChainID, config.Addresses.SystemConfigProxy,
 					es.BlobBaseFeeScalar, es.BaseFeeScalar, config.DataAvailabilityType, scalarVersion, version)
 			}
