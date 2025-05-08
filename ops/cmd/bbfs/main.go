@@ -69,9 +69,9 @@ func main() {
 	}
 
 	fmt.Printf("Using Superchain Registry directory: %s\n", rootDir)
-	fmt.Printf("%-30s | %-10s | %-42s | %-20s | %-20s | %-10s | %-10s | %s\n",
-		"Chain Name", "Chain ID", "SystemConfigProxy", "blobbasefeeScalar", "baseFeeScalar", "DA Type", "Scalar Ver", "Version")
-	fmt.Println(strings.Repeat("-", 160))
+	fmt.Printf("%-15s | %-8s | %-42s | %-8s | %-8s | %-6s | %-7s | %s\n",
+		"Chain", "ChainID", "SystemConfigProxy", "BlobFee", "BaseFee", "DA", "Scalar", "Ver")
+	fmt.Println(strings.Repeat("-", 110))
 
 	// Walk through the file tree
 	err = filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
@@ -177,7 +177,7 @@ func main() {
 				}
 
 				// Print the result
-				fmt.Printf("%-30s | %-10d | %-42s | %-20d | %-20d | %-10s | %-10s | %s\n",
+				fmt.Printf("%-15s | %-8d | %-42s | %-8d | %-8d | %-6s | %-7s | %s\n",
 					config.Name, config.ChainID, config.Addresses.SystemConfigProxy,
 					es.BlobBaseFeeScalar, es.BaseFeeScalar, config.DataAvailabilityType, scalarVersion, version)
 			}
