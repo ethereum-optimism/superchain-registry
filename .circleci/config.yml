@@ -135,63 +135,52 @@ jobs:
           command: |
             set -e
 
-            # Get list of changed files
+            # Get list of changed files (including deleted ones)
             CHANGED_FILES=$(git diff --name-only origin/main... | grep "^superchain/configs/.*\.toml$" || true)
+
             if [ -z "$CHANGED_FILES" ]; then
               echo "No .toml files changed in superchain/configs, skipping codegen check"
               exit 0
             fi
 
-            # Extract chain_ids from changed .toml files
-            CHAIN_IDS=""
-            CHAIN_ID_COUNT=0
-            CHANGED_FILE_COUNT=0
+            # Extract superchain names from the file paths
+            SUPERCHAINS=""
 
             for file in $CHANGED_FILES; do
-              # If the file is the superchain.toml file, skip it
+              # Extract the superchain name (directory between configs/ and the filename)
+              SUPERCHAIN_NAME=$(echo "$file" | sed -n 's|^superchain/configs/\([^/]*\)/.*$|\1|p')
+
+              # If this is a superchain.toml file, skip it
               if [[ "$file" == *"superchain.toml" ]]; then
                 continue
               fi
 
-              CHANGED_FILE_COUNT=$((CHANGED_FILE_COUNT + 1))
-              # Use yq to extract chain_id from TOML
-              CHAIN_ID=$(yq -p=toml -o=json '.chain_id' "$file" | grep -v "null" | tr -d '"')
-
-              if [ -n "$CHAIN_ID" ]; then
-                if [ -z "$CHAIN_IDS" ]; then
-                  CHAIN_IDS="$CHAIN_ID"
+              # Check if this superchain is already in our list
+              if [[ ! $SUPERCHAINS =~ (^|,)$SUPERCHAIN_NAME(,|$) ]] && [ -n "$SUPERCHAIN_NAME" ]; then
+                if [ -z "$SUPERCHAINS" ]; then
+                  SUPERCHAINS="$SUPERCHAIN_NAME"
                 else
-                  CHAIN_IDS="$CHAIN_IDS,$CHAIN_ID"
+                  SUPERCHAINS="$SUPERCHAINS,$SUPERCHAIN_NAME"
                 fi
-                CHAIN_ID_COUNT=$((CHAIN_ID_COUNT + 1))
-                echo "Found chain_id $CHAIN_ID in $file"
+                echo "Found superchain $SUPERCHAIN_NAME affected by changes in $file"
               fi
             done
-            echo "Found $CHAIN_ID_COUNT chain_ids in $CHANGED_FILE_COUNT files"
+
+            echo "Found the following superchains with changes: $SUPERCHAINS"
 
             cd ops
-            if [ "$CHAIN_ID_COUNT" -ne "$CHANGED_FILE_COUNT" ] && [ "$CHANGED_FILE_COUNT" -gt 0 ]; then
-              # This accounts for changes to superchain.toml files
-              echo "Running codegen for all chains\n"
-              go run ./cmd/codegen \
-                --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>"
-            else
-              echo "Running codegen for the following chain_ids: $CHAIN_IDS\n"
+            if [ -n "$SUPERCHAINS" ]; then
+              echo "Running codegen for the following superchains: $SUPERCHAINS\n"
               go run ./cmd/codegen \
                 --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>" \
-                --chain-ids="$CHAIN_IDS"
+                --superchains="$SUPERCHAINS"
             fi
 
-            if [ -n "$(git status --porcelain)" ] ; then
+            if [ -n "$(git status --porcelain)" ]; then
               echo "\n❌ Changes detected after running codegen. Run the following command locally and commit the changes:\n"
               echo "go run ./cmd/codegen \\"
-              # Show the appropriate command flags based on which mode was run
-              if [ "$CHAIN_ID_COUNT" -ne "$CHANGED_FILE_COUNT" ] && [ "$CHANGED_FILE_COUNT" -gt 0 ]; then
-                echo "  --l1-rpc-urls=\"<urls>\""
-              else
-                echo "  --l1-rpc-urls=\"<urls>\" \\"
-                echo "  --chain-ids=\"$CHAIN_IDS\""
-              fi
+              echo "  --l1-rpc-urls=\"<urls>\""
+              echo "  --superchains=\"$SUPERCHAINS\""
               exit 1
             else
               echo "\n✅ All codegen files are up to date"
