@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"os"
 
+	"github.com/ethereum-optimism/optimism/op-chain-ops/addresses"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/foundry"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/broadcaster"
@@ -75,10 +76,10 @@ func DiffL2Genesis(
 		L2ContractsLocator: chainCfg.DeploymentL2ContractsVersion,
 		L1ChainID:          l1ChainID,
 
-		SuperchainRoles: &state.SuperchainRoles{
-			ProxyAdminOwner:       common.Address(standardRoles.L1ProxyAdminOwner),
-			Guardian:              common.Address(standardRoles.Guardian),
-			ProtocolVersionsOwner: common.Address(standardRoles.ProtocolVersionsOwner),
+		SuperchainRoles: &addresses.SuperchainRoles{
+			SuperchainProxyAdminOwner: common.Address(standardRoles.L1ProxyAdminOwner),
+			SuperchainGuardian:        common.Address(standardRoles.Guardian),
+			ProtocolVersionsOwner:     common.Address(standardRoles.ProtocolVersionsOwner),
 		},
 
 		Chains: []*state.ChainIntent{
@@ -112,8 +113,15 @@ func DiffL2Genesis(
 
 	standardState := &state.State{
 		// These values are not used in L2 genesis.
-		SuperchainDeployment: new(state.SuperchainDeployment),
+		SuperchainDeployment: new(addresses.SuperchainContracts),
 	}
+
+	opChainContracts := addresses.OpChainContracts{}
+	opChainContracts.L1StandardBridgeProxy = common.Address(*chainCfg.Addresses.L1StandardBridgeProxy)
+	opChainContracts.L1CrossDomainMessengerProxy = common.Address(*chainCfg.Addresses.L1CrossDomainMessengerProxy)
+	opChainContracts.L1Erc721BridgeProxy = common.Address(*chainCfg.Addresses.L1ERC721BridgeProxy)
+	opChainContracts.SystemConfigProxy = common.Address(*chainCfg.Addresses.SystemConfigProxy)
+	opChainContracts.OptimismPortalProxy = common.Address(*chainCfg.Addresses.OptimismPortalProxy)
 
 	standardChainState := &state.ChainState{
 		ID: common.BigToHash(new(big.Int).SetUint64(chainCfg.ChainID)),
@@ -123,11 +131,7 @@ func DiffL2Genesis(
 			Number:     hexutil.Uint64(startBlock.Number.Uint64()),
 			Time:       hexutil.Uint64(startBlock.Time),
 		},
-		L1StandardBridgeProxyAddress:       common.Address(*chainCfg.Addresses.L1StandardBridgeProxy),
-		L1CrossDomainMessengerProxyAddress: common.Address(*chainCfg.Addresses.L1CrossDomainMessengerProxy),
-		L1ERC721BridgeProxyAddress:         common.Address(*chainCfg.Addresses.L1ERC721BridgeProxy),
-		SystemConfigProxyAddress:           common.Address(*chainCfg.Addresses.SystemConfigProxy),
-		OptimismPortalProxyAddress:         common.Address(*chainCfg.Addresses.OptimismPortalProxy),
+		OpChainContracts: opChainContracts,
 	}
 
 	standardDeployConfig, err := state.CombineDeployConfig(standardIntent, standardIntent.Chains[0], standardState, standardChainState)
@@ -147,15 +151,50 @@ func DiffL2Genesis(
 		return standardHash, nil, fmt.Errorf("failed to create script host: %w", err)
 	}
 
-	if err := opcm.L2Genesis(host, &opcm.L2GenesisInput{
-		L1Deployments: opcm.L1Deployments{
-			L1CrossDomainMessengerProxy: common.Address(*chainCfg.Addresses.L1CrossDomainMessengerProxy),
-			L1StandardBridgeProxy:       common.Address(*chainCfg.Addresses.L1StandardBridgeProxy),
-			L1ERC721BridgeProxy:         common.Address(*chainCfg.Addresses.L1ERC721BridgeProxy),
-		},
-		L2Config: standardDeployConfig.L2InitializationConfig,
-	}); err != nil {
+	l2GenesisScript, err := opcm.NewL2GenesisScript(host)
+	if err != nil {
 		return standardHash, nil, fmt.Errorf("failed to call L2Genesis script: %w", err)
+	}
+
+	l1ChainId := new(big.Int).SetUint64(standardDeployConfig.L2InitializationConfig.L1ChainID)
+	l2ChainId := new(big.Int).SetUint64(standardDeployConfig.L2InitializationConfig.L2ChainID)
+
+	sequencerFeeVaultWithdrawalNetwork, baseFeeVaultWithdrawalNetwork, l1FeeVaultWithdrawalNetwork := l1ChainId, l1ChainId, l1ChainId
+	if standardDeployConfig.L2InitializationConfig.SequencerFeeVaultWithdrawalNetwork == "local" {
+		sequencerFeeVaultWithdrawalNetwork = l2ChainId
+	}
+
+	if standardDeployConfig.L2InitializationConfig.BaseFeeVaultWithdrawalNetwork == "local" {
+		baseFeeVaultWithdrawalNetwork = l2ChainId
+	}
+
+	if standardDeployConfig.L2InitializationConfig.L1FeeVaultWithdrawalNetwork == "local" {
+		l1FeeVaultWithdrawalNetwork = l2ChainId
+	}
+
+	if err := l2GenesisScript.Run(opcm.L2GenesisInput{
+		L1ChainID:                                l1ChainId,
+		L2ChainID:                                l2ChainId,
+		L1CrossDomainMessengerProxy:              common.Address(*chainCfg.Addresses.L1CrossDomainMessengerProxy),
+		L1StandardBridgeProxy:                    common.Address(*chainCfg.Addresses.L1StandardBridgeProxy),
+		L1ERC721BridgeProxy:                      common.Address(*chainCfg.Addresses.L1ERC721BridgeProxy),
+		OpChainProxyAdminOwner:                   standardDeployConfig.L2InitializationConfig.ProxyAdminOwner,
+		SequencerFeeVaultRecipient:               standardDeployConfig.L2InitializationConfig.SequencerFeeVaultRecipient,
+		SequencerFeeVaultMinimumWithdrawalAmount: standardDeployConfig.L2InitializationConfig.SequencerFeeVaultMinimumWithdrawalAmount.ToInt(),
+		SequencerFeeVaultWithdrawalNetwork:       sequencerFeeVaultWithdrawalNetwork,
+		BaseFeeVaultRecipient:                    standardDeployConfig.L2InitializationConfig.BaseFeeVaultRecipient,
+		BaseFeeVaultMinimumWithdrawalAmount:      standardDeployConfig.L2InitializationConfig.BaseFeeVaultMinimumWithdrawalAmount.ToInt(),
+		BaseFeeVaultWithdrawalNetwork:            baseFeeVaultWithdrawalNetwork,
+		L1FeeVaultRecipient:                      standardDeployConfig.L2InitializationConfig.L1FeeVaultRecipient,
+		L1FeeVaultMinimumWithdrawalAmount:        standardDeployConfig.L2InitializationConfig.L1FeeVaultMinimumWithdrawalAmount.ToInt(),
+		L1FeeVaultWithdrawalNetwork:              l1FeeVaultWithdrawalNetwork,
+		GovernanceTokenOwner:                     standardDeployConfig.L2InitializationConfig.GovernanceTokenOwner,
+		Fork:                                     new(big.Int).SetUint64(uint64(standardDeployConfig.L2InitializationConfig.UpgradeScheduleDeployConfig.SolidityForkNumber(0))),
+		UseInterop:                               standardDeployConfig.L2InitializationConfig.UseInterop,
+		EnableGovernance:                         standardDeployConfig.L2InitializationConfig.EnableGovernance,
+		FundDevAccounts:                          standardDeployConfig.L2InitializationConfig.FundDevAccounts,
+	}); err != nil {
+		return standardHash, nil, fmt.Errorf("failed to run L2Genesis script: %w", err)
 	}
 
 	host.Wipe(deployer)
