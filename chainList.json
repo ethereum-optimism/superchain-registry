@@ -120,7 +120,7 @@
     ],
     "superchainLevel": 0,
     "governedByOptimism": false,
-    "dataAvailabilityType": "eth-da",
+    "dataAvailabilityType": "alt-da",
     "parent": {
       "type": "L2",
       "chain": "mainnet"

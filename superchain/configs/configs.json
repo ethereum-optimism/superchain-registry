@@ -243,7 +243,7 @@
           "block_time": 2,
           "seq_window_size": 3600,
           "max_sequencer_drift": 600,
-          "DataAvailabilityType": "eth-da",
+          "DataAvailabilityType": "alt-da",
           "optimism": {
             "eip1559Elasticity": 10,
             "eip1559Denominator": 50,
