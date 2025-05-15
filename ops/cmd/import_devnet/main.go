@@ -7,6 +7,7 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -60,7 +61,8 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	type manifest struct {
-		L2 struct {
+		Name string `yaml:"name"`
+		L2   struct {
 			Chains []struct {
 				Name string `yaml:"name"`
 			} `yaml:"chains"`
@@ -87,6 +89,9 @@ func action(cliCtx *cli.Context) error {
 		// just use devnet name with numerical suffix
 		// OR parse the manifest.yaml file and get the name from there
 		cfg.ShortName = m.L2.Chains[i].Name
+		cfg.Name = m.L2.Chains[i].Name
+
+		cfg.Superchain = config.Superchain(m.Name) // Each devnet forms its own unique superchain
 
 		output.WriteOK("reading genesis")
 		genesis, _, err := inspect.GenesisAndRollup(&st, st.AppliedIntent.Chains[i].ID)
@@ -107,10 +112,25 @@ func action(cliCtx *cli.Context) error {
 		}
 	}
 
-	// TODO
-	// validate against existing superchain
-	// OR write a new superchain.toml file
-	// which will cause a new directory to be created when we sync_staging
+	output.WriteOK("writing superchain manifest")
+
+	sD := config.SuperchainDefinition{
+		Name:                   m.Name,
+		ProtocolVersionsAddr:   config.NewChecksummedAddress(st.SuperchainDeployment.ProtocolVersionsProxyAddress),
+		SuperchainConfigAddr:   config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxyAddress),
+		OPContractsManagerAddr: config.NewChecksummedAddress(st.ImplementationsDeployment.OpcmAddress),
+		Hardforks:              config.Hardforks{}, // superchain wide hardforks are added after chains are in the registry.
+		L1: config.SuperchainL1{
+			ChainID: st.AppliedIntent.L1ChainID,
+			// TODO grab this from a lookup or prompt user to fill it out afterwards
+		},
+	}
+
+	// We write this to {m.Name}.superchain.toml and when it gets sync'ed later
+	// it will be moved to the appropriate superchain directory and renamed
+	// to superchain.toml. Validation and conflict resolution will be handled
+	// by the sync staging command.
+	paths.WriteTOMLFile(path.Join(paths.StagingDir(wd), m.Name+".superchain.toml"), sD)
 
 	output.WriteOK("done")
 	return nil
