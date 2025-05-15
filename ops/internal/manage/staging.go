@@ -197,3 +197,22 @@ func StagedChainConfigs(rootP string) ([]*config.StagedChain, error) {
 	}
 	return chainCfgs, nil
 }
+
+// StagedSuperchainDefinition finds the first foo.superchain-toml file in the staging directory
+// and returns the "foo" part of the filename and the parsed SuperchainDefinition struct.
+func StagedSuperchainDefinition(rootP string) (string, *config.SuperchainDefinition, error) {
+	// find the first file with a .superchain.toml extension
+	files, err := paths.CollectFiles(paths.StagingDir(rootP), paths.FileExtMatcher(".superchain-toml"))
+	if err != nil {
+		return "", nil, fmt.Errorf("failed to collect staged superchain manifest: %w",
+			err)
+	}
+	if len(files) == 0 {
+		return "", nil, fmt.Errorf("no staged superchain definition found at %s", paths.StagingDir(rootP))
+	}
+	sM := new(config.SuperchainDefinition)
+	err = paths.ReadTOMLFile(files[0], sM)
+
+	superchainName := strings.TrimSuffix(filepath.Base(files[0]), ".superchain-toml")
+	return superchainName, sM, err
+}

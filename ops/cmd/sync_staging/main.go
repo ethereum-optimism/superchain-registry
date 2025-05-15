@@ -58,86 +58,95 @@ func action(cliCtx *cli.Context) error {
 
 	stagingDir := paths.StagingDir(wd)
 
+	superchainName, stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
+	if err != nil {
+		return fmt.Errorf("failed to get staged superchain definition: %w", err)
+	}
+	err = manage.WriteSuperchainDefinition(path.Join(wd, "superchain", "configs", superchainName, "superchain.toml"), stagedSuperchainDefinition)
+	if err != nil {
+		return fmt.Errorf("failed to write superchain definition: %w", err)
+	}
+	output.WriteOK("wrote superchain definition")
+
 	stagedChainCfgs, err := manage.StagedChainConfigs(wd)
-
-	if len(stagedChainCfgs) != 1 {
-		return manage.ErrMultipleConfigs
-	}
-
-	chainCfg := stagedChainCfgs[0]
-
-	if errors.Is(err, manage.ErrNoStagedConfig) {
-		output.WriteOK("no staged chain config found, exiting")
-		return nil
-	}
 	if err != nil {
-		return fmt.Errorf("failed to get staged chain config: %w", err)
+		return fmt.Errorf("failed to get staged chain configs: %w", err)
 	}
 
-	genesisFilename := path.Join(stagingDir, chainCfg.ShortName+".json.zst")
-	genesis, err := manage.ReadGenesis(wd, genesisFilename)
-	if err != nil {
-		return fmt.Errorf("failed to read genesis: %w", err)
-	}
-
-	superchainPath := paths.SuperchainDir(wd, chainCfg.Superchain)
-	chainCfgs, err := manage.CollectChainConfigs(superchainPath)
-	if err != nil {
-		return fmt.Errorf("failed to collect chain configs: %w", err)
-	}
-
-	if err := manage.ValidateUniqueness(chainCfg, chainCfgs); err != nil {
-		return fmt.Errorf("failed uniqueness check: %w", err)
-	}
-	output.WriteOK("internal uniqueness check passed")
-
-	if check {
-		output.WriteOK("validation successful")
-		return nil
-	}
-
-	if err := manage.WriteChainConfig(wd, chainCfg); err != nil {
-		return fmt.Errorf("failed to write chain config: %w", err)
-	}
-
-	output.WriteOK(
-		"wrote chain config %s.toml to %s superchain",
-		chainCfg.ShortName,
-		chainCfg.Superchain,
-	)
-
-	if err := manage.WriteSuperchainGenesis(wd, chainCfg.Superchain, chainCfg.ShortName, genesis); err != nil {
-		return fmt.Errorf("failed to compress genesis: %w", err)
-	}
-
-	output.WriteOK("wrote genesis files")
-
-	// Codegen
-	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	l1RpcUrls := strings.Split(cliCtx.String("l1-rpc-urls"), ",")
-	ctx := cliCtx.Context
-	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, l1RpcUrls, []uint64{chainCfg.ChainID}, []config.Superchain{})
-	if err != nil {
-		return fmt.Errorf("error fetching onchain configs: %w", err)
-	}
-	syncer, err := manage.NewCodegenSyncer(lgr, wd, onchainCfgs)
-	if err != nil {
-		return fmt.Errorf("error creating codegen syncer: %w", err)
-	}
-	if err := syncer.SyncAll(); err != nil {
-		return fmt.Errorf("error syncing codegen: %w", err)
-	}
-
-	if !noCleanup {
-		cfgFilename := path.Join(stagingDir, chainCfg.ShortName+".toml")
-		if err := os.Remove(cfgFilename); err != nil {
-			output.WriteNotOK("failed to remove %s: %v", cfgFilename, err)
+	for _, chainCfg := range stagedChainCfgs {
+		if errors.Is(err, manage.ErrNoStagedConfig) {
+			output.WriteOK("no staged chain config found, exiting")
+			return nil
 		}
-		if err := os.Remove(genesisFilename); err != nil {
-			output.WriteNotOK("failed to remove %s: %v", genesisFilename, err)
+		if err != nil {
+			return fmt.Errorf("failed to get staged chain config: %w", err)
 		}
 
-		output.WriteOK("cleaned up staging directory")
+		genesisFilename := path.Join(stagingDir, chainCfg.ShortName+".json.zst")
+		genesis, err := manage.ReadGenesis(wd, genesisFilename)
+		if err != nil {
+			return fmt.Errorf("failed to read genesis: %w", err)
+		}
+
+		superchainPath := paths.SuperchainDir(wd, chainCfg.Superchain)
+		chainCfgs, err := manage.CollectChainConfigs(superchainPath)
+		if err != nil {
+			return fmt.Errorf("failed to collect chain configs: %w", err)
+		}
+
+		if err := manage.ValidateUniqueness(chainCfg, chainCfgs); err != nil {
+			return fmt.Errorf("failed uniqueness check: %w", err)
+		}
+		output.WriteOK("internal uniqueness check passed")
+
+		if check {
+			output.WriteOK("validation successful")
+			continue
+		}
+
+		if err := manage.WriteChainConfig(wd, chainCfg); err != nil {
+			return fmt.Errorf("failed to write chain config: %w", err)
+		}
+
+		output.WriteOK(
+			"wrote chain config %s.toml to %s superchain",
+			chainCfg.ShortName,
+			chainCfg.Superchain,
+		)
+
+		if err := manage.WriteSuperchainGenesis(wd, chainCfg.Superchain, chainCfg.ShortName, genesis); err != nil {
+			return fmt.Errorf("failed to write genesis: %w", err)
+		}
+
+		output.WriteOK("wrote genesis files")
+
+		// Codegen
+		lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
+		l1RpcUrls := strings.Split(cliCtx.String("l1-rpc-urls"), ",")
+		ctx := cliCtx.Context
+		onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, l1RpcUrls, []uint64{chainCfg.ChainID}, []config.Superchain{})
+		if err != nil {
+			return fmt.Errorf("error fetching onchain configs: %w", err)
+		}
+		syncer, err := manage.NewCodegenSyncer(lgr, wd, onchainCfgs)
+		if err != nil {
+			return fmt.Errorf("error creating codegen syncer: %w", err)
+		}
+		if err := syncer.SyncAll(); err != nil {
+			return fmt.Errorf("error syncing codegen: %w", err)
+		}
+
+		if !noCleanup {
+			cfgFilename := path.Join(stagingDir, chainCfg.ShortName+".toml")
+			if err := os.Remove(cfgFilename); err != nil {
+				output.WriteNotOK("failed to remove %s: %v", cfgFilename, err)
+			}
+			if err := os.Remove(genesisFilename); err != nil {
+				output.WriteNotOK("failed to remove %s: %v", genesisFilename, err)
+			}
+
+			output.WriteOK("cleaned up staging directory")
+		}
 	}
 
 	return nil

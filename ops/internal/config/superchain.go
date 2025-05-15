@@ -18,12 +18,7 @@ const (
 )
 
 func ParseSuperchain(in string) (Superchain, error) {
-	switch Superchain(in) {
-	case MainnetSuperchain, SepoliaSuperchain, SepoliaDev0Superchain:
-		return Superchain(in), nil
-	default:
-		return "", fmt.Errorf("unknown superchain: '%s'", in)
-	}
+	return Superchain(in), nil
 }
 
 func MustParseSuperchain(in string) Superchain {

@@ -3,6 +3,7 @@ package manage
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
@@ -52,4 +53,30 @@ func ReadChainConfig(rootP string, superchain config.Superchain, shortName strin
 	}
 
 	return &out, nil
+}
+
+func WriteSuperchainDefinition(fname string, in *config.SuperchainDefinition) error {
+	exists, err := fs.FileExists(fname)
+	if err != nil {
+		return fmt.Errorf("failed to check if file exists: %w", err)
+	}
+	if exists {
+		return fmt.Errorf("file already exists: %s", fname)
+	}
+
+	// Ensure the directory exists
+	dir := filepath.Dir(fname)
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return fmt.Errorf("failed to create directory: %w", err)
+	}
+
+	data, err := toml.Marshal(in)
+	if err != nil {
+		return fmt.Errorf("failed to marshal toml: %w", err)
+	}
+
+	if err := fs.AtomicWrite(fname, 0o755, data); err != nil {
+		return fmt.Errorf("failed to write config: %w", err)
+	}
+	return nil
 }
