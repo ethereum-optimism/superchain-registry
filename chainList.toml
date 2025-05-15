@@ -78,6 +78,20 @@
     chain = "mainnet"
 
 [[chains]]
+  name = "Fraxtal"
+  identifier = "mainnet/fraxtal"
+  chain_id = 252
+  rpc = ["https://rpc.frax.com"]
+  explorers = ["https://fraxscan.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  gas_paying_token = "0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+
+[[chains]]
   name = "Funki"
   identifier = "mainnet/funki"
   chain_id = 33979
