@@ -21,6 +21,14 @@ var (
 		TakesFile: true,
 	}
 )
+var (
+	ManifestPath = &cli.StringFlag{
+		Name:      "manifest-path",
+		Usage:     "Path to a manifest.yaml file specifying chain names.",
+		Required:  true,
+		TakesFile: true,
+	}
+)
 
 func main() {
 	app := &cli.App{
@@ -28,6 +36,7 @@ func main() {
 		Usage: "Turns a state file into chain configs and superchain manifestin the stating directory.",
 		Flags: []cli.Flag{
 			StateFilename,
+			ManifestPath,
 		},
 		Action: action,
 	}
@@ -50,6 +59,24 @@ func action(cliCtx *cli.Context) error {
 		return fmt.Errorf("failed to read state file: %w", err)
 	}
 
+	type manifest struct {
+		L2 struct {
+			Chains []struct {
+				Name string `yaml:"name"`
+			} `yaml:"chains"`
+		} `yaml:"l2"`
+	}
+	var m manifest
+	if err := paths.ReadYAMLFile(cliCtx.String(ManifestPath.Name), &m); err != nil {
+		return fmt.Errorf("failed to read manifest file: %w", err)
+	}
+
+	if len(m.L2.Chains) != len(st.AppliedIntent.Chains) {
+		return fmt.Errorf(
+			"number of chains in manifest file (%d) does not match number of chains in state file (%d)",
+			len(m.L2.Chains), len(st.AppliedIntent.Chains))
+	}
+
 	output.WriteOK("inflating chain configs")
 	for i := 0; i < len(st.AppliedIntent.Chains); i++ {
 		cfg, err := manage.InflateChainConfig(&st, i)
@@ -59,7 +86,7 @@ func action(cliCtx *cli.Context) error {
 
 		// just use devnet name with numerical suffix
 		// OR parse the manifest.yaml file and get the name from there
-		cfg.ShortName = fmt.Sprintf("TODO-%d", i)
+		cfg.ShortName = m.L2.Chains[i].Name
 
 		output.WriteOK("reading genesis")
 		genesis, _, err := inspect.GenesisAndRollup(&st, st.AppliedIntent.Chains[i].ID)
