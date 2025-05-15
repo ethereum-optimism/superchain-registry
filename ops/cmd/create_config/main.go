@@ -58,7 +58,10 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	output.WriteOK("inflating chain config")
-	cfg, err := manage.InflateChainConfig(&st)
+	if len(st.AppliedIntent.Chains) != 1 {
+		return fmt.Errorf("expected exactly one chain in the state file, got %d", len(st.AppliedIntent.Chains))
+	}
+	cfg, err := manage.InflateChainConfig(&st, 0)
 	if err != nil {
 		return fmt.Errorf("failed to inflate chain config: %w", err)
 	}

@@ -15,12 +15,12 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
-	if len(st.AppliedIntent.Chains) != 1 {
-		return nil, errors.New("expected exactly one chain in state")
+func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
+	if idx > len(st.AppliedIntent.Chains)-1 {
+		return nil, errors.New("index out of bounds")
 	}
 
-	chainIntent := st.AppliedIntent.Chains[0]
+	chainIntent := st.AppliedIntent.Chains[idx]
 	chainID := chainIntent.ID
 	dc, err := inspect.DeployConfig(st, chainID)
 	if err != nil {
