@@ -58,7 +58,14 @@ func action(cliCtx *cli.Context) error {
 
 	stagingDir := paths.StagingDir(wd)
 
-	chainCfg, err := manage.StagedChainConfig(wd)
+	stagedChainCfgs, err := manage.StagedChainConfigs(wd)
+
+	if len(stagedChainCfgs) != 1 {
+		return manage.ErrMultipleConfigs
+	}
+
+	chainCfg := stagedChainCfgs[0]
+
 	if errors.Is(err, manage.ErrNoStagedConfig) {
 		output.WriteOK("no staged chain config found, exiting")
 		return nil

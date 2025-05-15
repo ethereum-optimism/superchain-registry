@@ -34,7 +34,7 @@ var (
 func main() {
 	app := &cli.App{
 		Name:  "create-config",
-		Usage: "Turns a state file into chain configs and superchain manifestin the stating directory.",
+		Usage: "Turns an op-deployer state.json file and a devnet manifest.yaml file into multiple chain configs and a superchain manifest file in the staging directory.",
 		Flags: []cli.Flag{
 			StateFilename,
 			ManifestPath,

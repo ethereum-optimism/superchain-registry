@@ -176,7 +176,7 @@ var (
 	ErrMultipleConfigs = errors.New("only one TOML file is allowed in the staging directory at a time")
 )
 
-func StagedChainConfig(rootP string) (*config.StagedChain, error) {
+func StagedChainConfigs(rootP string) ([]*config.StagedChain, error) {
 	tomls, err := paths.CollectFiles(paths.StagingDir(rootP), paths.FileExtMatcher(".toml"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to collect staged chain configs: %w", err)
@@ -184,15 +184,16 @@ func StagedChainConfig(rootP string) (*config.StagedChain, error) {
 	if len(tomls) == 0 {
 		return nil, ErrNoStagedConfig
 	}
-	if len(tomls) != 1 {
-		return nil, ErrMultipleConfigs
-	}
 
-	cfgFilename := tomls[0]
-	chainCfg := new(config.StagedChain)
-	if err := paths.ReadTOMLFile(cfgFilename, chainCfg); err != nil {
-		return nil, fmt.Errorf("failed to read %s: %w", cfgFilename, err)
+	chainCfgs := make([]*config.StagedChain, len(tomls))
+	for i, cfgFilename := range tomls {
+
+		chainCfg := new(config.StagedChain)
+		if err := paths.ReadTOMLFile(cfgFilename, chainCfg); err != nil {
+			return nil, fmt.Errorf("failed to read %s: %w", cfgFilename, err)
+		}
+		chainCfg.ShortName = strings.TrimSuffix(filepath.Base(cfgFilename), ".toml")
+		chainCfgs[i] = chainCfg
 	}
-	chainCfg.ShortName = strings.TrimSuffix(filepath.Base(cfgFilename), ".toml")
-	return chainCfg, nil
+	return chainCfgs, nil
 }
