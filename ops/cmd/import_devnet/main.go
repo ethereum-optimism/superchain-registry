@@ -21,8 +21,6 @@ var (
 		Required:  true,
 		TakesFile: true,
 	}
-)
-var (
 	ManifestPath = &cli.StringFlag{
 		Name:      "manifest-path",
 		Usage:     "Path to a manifest.yaml file specifying chain names.",
