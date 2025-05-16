@@ -10,6 +10,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
+	"github.com/ethereum-optimism/optimism/op-supervisor/supervisor/backend/depset"
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -61,26 +62,27 @@ type StagedChain struct {
 }
 
 type Chain struct {
-	Name                 string              `toml:"name"`
-	PublicRPC            string              `toml:"public_rpc"`
-	SequencerRPC         string              `toml:"sequencer_rpc"`
-	Explorer             string              `toml:"explorer"`
-	SuperchainLevel      SuperchainLevel     `toml:"superchain_level"`
-	GovernedByOptimism   bool                `toml:"governed_by_optimism"`
-	SuperchainTime       *uint64             `toml:"superchain_time"`
-	DataAvailabilityType string              `toml:"data_availability_type"`
-	ChainID              uint64              `toml:"chain_id"`
-	BatchInboxAddr       *ChecksummedAddress `toml:"batch_inbox_addr"`
-	BlockTime            uint64              `toml:"block_time"`
-	SeqWindowSize        uint64              `toml:"seq_window_size"`
-	MaxSequencerDrift    uint64              `toml:"max_sequencer_drift"`
-	GasPayingToken       *ChecksummedAddress `toml:"gas_paying_token,omitempty"`
-	Hardforks            Hardforks           `toml:"hardforks"`
-	Optimism             Optimism            `toml:"optimism"`
-	AltDA                *AltDA              `toml:"alt_da"`
-	Genesis              Genesis             `toml:"genesis"`
-	Roles                Roles               `toml:"roles"`
-	Addresses            Addresses           `toml:"addresses"`
+	Name                 string                            `toml:"name"`
+	PublicRPC            string                            `toml:"public_rpc"`
+	SequencerRPC         string                            `toml:"sequencer_rpc"`
+	Explorer             string                            `toml:"explorer"`
+	SuperchainLevel      SuperchainLevel                   `toml:"superchain_level"`
+	GovernedByOptimism   bool                              `toml:"governed_by_optimism"`
+	SuperchainTime       *uint64                           `toml:"superchain_time"`
+	DataAvailabilityType string                            `toml:"data_availability_type"`
+	ChainID              uint64                            `toml:"chain_id"`
+	BatchInboxAddr       *ChecksummedAddress               `toml:"batch_inbox_addr"`
+	BlockTime            uint64                            `toml:"block_time"`
+	SeqWindowSize        uint64                            `toml:"seq_window_size"`
+	MaxSequencerDrift    uint64                            `toml:"max_sequencer_drift"`
+	GasPayingToken       *ChecksummedAddress               `toml:"gas_paying_token,omitempty"`
+	Hardforks            Hardforks                         `toml:"hardforks"`
+	Interop              *depset.StaticConfigDependencySet `toml:"interop,omitempty"`
+	Optimism             Optimism                          `toml:"optimism"`
+	AltDA                *AltDA                            `toml:"alt_da"`
+	Genesis              Genesis                           `toml:"genesis"`
+	Roles                Roles                             `toml:"roles"`
+	Addresses            Addresses                         `toml:"addresses"`
 }
 
 func (c Chain) ChainListEntry(superchain Superchain, shortName string) ChainListEntry {
@@ -110,6 +112,7 @@ type Hardforks struct {
 	HoloceneTime           *HardforkTime `toml:"holocene_time"`
 	PectraBlobScheduleTime *HardforkTime `toml:"pectra_blob_schedule_time,omitempty"`
 	IsthmusTime            *HardforkTime `toml:"isthmus_time"`
+	InteropTime            *HardforkTime `toml:"interop_time"`
 }
 
 type Genesis struct {
@@ -169,6 +172,7 @@ type Addresses struct {
 	SuperchainConfig                  *ChecksummedAddress `toml:"SuperchainConfig,omitempty" json:"SuperchainConfig,omitempty"`
 	AnchorStateRegistryProxy          *ChecksummedAddress `toml:"AnchorStateRegistryProxy,omitempty" json:"AnchorStateRegistryProxy,omitempty"`
 	DelayedWETHProxy                  *ChecksummedAddress `toml:"DelayedWETHProxy,omitempty" json:"DelayedWETHProxy,omitempty"`
+	EthLockboxProxy                   *ChecksummedAddress `toml:"EthLockboxProxy,omitempty" json:"EthLockboxProxy,omitempty"`
 	DisputeGameFactoryProxy           *ChecksummedAddress `toml:"DisputeGameFactoryProxy,omitempty" json:"DisputeGameFactoryProxy,omitempty"`
 	FaultDisputeGame                  *ChecksummedAddress `toml:"FaultDisputeGame,omitempty" json:"FaultDisputeGame,omitempty"`
 	MIPS                              *ChecksummedAddress `toml:"MIPS,omitempty" json:"MIPS,omitempty"`
@@ -194,6 +198,7 @@ func CreateAddressesWithRolesFromFetcher(addrs script.Addresses, roles addresses
 			L2OutputOracleProxy:               NewChecksummedAddress(addrs.L2OutputOracleProxy),
 			OptimismMintableERC20FactoryProxy: NewChecksummedAddress(addrs.OptimismMintableErc20FactoryProxy),
 			OptimismPortalProxy:               NewChecksummedAddress(addrs.OptimismPortalProxy),
+			EthLockboxProxy:                   NewChecksummedAddress(addrs.EthLockboxProxy),
 			SystemConfigProxy:                 NewChecksummedAddress(addrs.SystemConfigProxy),
 			ProxyAdmin:                        NewChecksummedAddress(addrs.OpChainProxyAdminImpl),
 			SuperchainConfig:                  NewChecksummedAddress(addrs.SuperchainConfigProxy),
