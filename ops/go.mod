@@ -16,6 +16,7 @@ require (
 	github.com/google/go-github/v68 v68.0.0
 	github.com/klauspost/compress v1.18.0
 	golang.org/x/sync v0.10.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -79,7 +80,6 @@ require (
 	golang.org/x/term v0.28.0 // indirect
 	golang.org/x/time v0.10.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
 
