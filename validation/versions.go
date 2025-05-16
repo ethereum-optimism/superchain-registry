@@ -16,6 +16,8 @@ const (
 	Semver160 Semver = "op-contracts/v1.6.0"
 	Semver170 Semver = "op-contracts/v1.7.0-beta.1+l2-contracts"
 	Semver180 Semver = "op-contracts/v1.8.0-rc.4"
+	Semver200 Semver = "op-contracts/v2.0.0"
+	Semver300 Semver = "op-contracts/v3.0.0"
 )
 
 var validSemvers = []Semver{
@@ -24,6 +26,8 @@ var validSemvers = []Semver{
 	Semver160,
 	Semver170,
 	Semver180,
+	Semver200,
+	Semver300,
 }
 
 func IsValidContractSemver(s string) bool {
