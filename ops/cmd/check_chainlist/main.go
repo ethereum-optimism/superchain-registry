@@ -21,16 +21,14 @@ func mainErr() error {
 		return fmt.Errorf("failed to get working directory: %w", err)
 	}
 
-	chainCfg, err := manage.StagedChainConfig(wd)
+	stagedChainCfgs, err := manage.StagedChainConfigs(wd)
 	if errors.Is(err, manage.ErrNoStagedConfig) {
 		output.WriteOK("no staged chain config found, exiting")
 		return nil
 	}
 	if err != nil {
-		return fmt.Errorf("failed to get staged chain config: %w", err)
+		return fmt.Errorf("failed to get staged chain configs: %w", err)
 	}
-
-	output.WriteOK("validating uniqueness for chain ID %d and short name %s", chainCfg.ChainID, chainCfg.ShortName)
 
 	globalChainData, err := manage.FetchGlobalChainIDs()
 	if err != nil {
@@ -38,21 +36,25 @@ func mainErr() error {
 	}
 	output.WriteOK("fetched global chain IDs")
 
-	entry, ok := globalChainData[chainCfg.ChainID]
-	if !ok {
-		return fmt.Errorf("chain ID %d not found in global chain data", chainCfg.ChainID)
-	}
-	output.WriteOK("chain ID %d found in global chain data", chainCfg.ChainID)
+	for _, chainCfg := range stagedChainCfgs {
+		output.WriteOK("validating uniqueness for chain ID %d and short name %s", chainCfg.ChainID, chainCfg.ShortName)
 
-	if entry.ShortName != chainCfg.ShortName {
-		return fmt.Errorf("short name %s does not match global chain data short name %s", chainCfg.ShortName, entry.ShortName)
-	}
-	output.WriteOK("short name %s matches global chain data short name %s", chainCfg.ShortName, entry.ShortName)
+		entry, ok := globalChainData[chainCfg.ChainID]
+		if !ok {
+			return fmt.Errorf("chain ID %d not found in global chain data", chainCfg.ChainID)
+		}
+		output.WriteOK("chain ID %d found in global chain data", chainCfg.ChainID)
 
-	if entry.Name != chainCfg.Name {
-		return fmt.Errorf("name %s does not match global chain data name %s", chainCfg.Name, entry.Name)
+		if entry.ShortName != chainCfg.ShortName {
+			return fmt.Errorf("short name %s does not match global chain data short name %s", chainCfg.ShortName, entry.ShortName)
+		}
+		output.WriteOK("short name %s matches global chain data short name %s", chainCfg.ShortName, entry.ShortName)
+
+		if entry.Name != chainCfg.Name {
+			return fmt.Errorf("name %s does not match global chain data name %s", chainCfg.Name, entry.Name)
+		}
+		output.WriteOK("name %s matches global chain data name %s", chainCfg.Name, entry.Name)
 	}
-	output.WriteOK("name %s matches global chain data name %s", chainCfg.Name, entry.Name)
 	output.WriteOK("chainlist check passed")
 	return nil
 }

@@ -50,4 +50,7 @@ check-genesis-integrity: (_run_ops_bin 'check_genesis_integrity')
 create-config SHORTNAME FILENAME:
 	@just _run_ops_bin "create_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{FILENAME}})"
 
+import-devnet STATEFILE MANIFESTFILE:
+	@just _run_ops_bin "import_devnet" "--state-filename $(realpath {{STATEFILE}}) --manifest-path $(realpath {{MANIFESTFILE}})"
+
 check-chainlist: (_run_ops_bin 'check_chainlist')

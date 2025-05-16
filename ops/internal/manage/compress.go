@@ -24,6 +24,10 @@ func WriteSuperchainGenesis(rootP string, superchain config.Superchain, shortNam
 		return fmt.Errorf("genesis already exists: %s", genPath)
 	}
 
+	if err := os.MkdirAll(path.Dir(genPath), 0o755); err != nil {
+		return fmt.Errorf("failed to create directory: %w", err)
+	}
+
 	return WriteGenesis(rootP, genPath, gen)
 }
 
