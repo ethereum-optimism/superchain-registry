@@ -30,14 +30,14 @@ func mainErr() error {
 		return fmt.Errorf("failed to get staged chain configs: %w", err)
 	}
 
+	globalChainData, err := manage.FetchGlobalChainIDs()
+	if err != nil {
+		return fmt.Errorf("failed to fetch global chain IDs: %w", err)
+	}
+	output.WriteOK("fetched global chain IDs")
+
 	for _, chainCfg := range stagedChainCfgs {
 		output.WriteOK("validating uniqueness for chain ID %d and short name %s", chainCfg.ChainID, chainCfg.ShortName)
-
-		globalChainData, err := manage.FetchGlobalChainIDs()
-		if err != nil {
-			return fmt.Errorf("failed to fetch global chain IDs: %w", err)
-		}
-		output.WriteOK("fetched global chain IDs")
 
 		entry, ok := globalChainData[chainCfg.ChainID]
 		if !ok {
