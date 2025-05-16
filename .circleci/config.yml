@@ -201,6 +201,11 @@ workflows:
       - check-codegen:
           name: check-codegen
       - run-tool:
+          name: check-depsets
+          tool: check_depsets
+          requires:
+            - check-codegen
+      - run-tool:
           name: check-staging-synced
           tool: sync_staging
           args: --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>"
