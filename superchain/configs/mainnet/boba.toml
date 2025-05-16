@@ -6,14 +6,10 @@ superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 288
-superchain = "mainnet"
 batch_inbox_addr = "0xfFF0000000000000000000000000000000000288"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-base_fee_vault_recipient = "0xbF159Ba5E5917551c70E377ADf21eD3736209fCE"
-l1_fee_vault_recipient = "0xbF159Ba5E5917551c70E377ADf21eD3736209fCE"
-sequencer_fee_vault_recipient = "0xbF159Ba5E5917551c70E377ADf21eD3736209fCE"
 
 [hardforks]
   canyon_time = 1713302879 # Tue 16 Apr 2024 21:27:59 UTC
