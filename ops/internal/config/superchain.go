@@ -89,7 +89,7 @@ func (s *Superchain) UnmarshalText(text []byte) error {
 }
 
 type SuperchainDefinition struct {
-	Name                   string
+	Name                   string              `toml:"name"`
 	ProtocolVersionsAddr   *ChecksummedAddress `toml:"protocol_versions_addr"`
 	SuperchainConfigAddr   *ChecksummedAddress `toml:"superchain_config_addr"`
 	OPContractsManagerAddr *ChecksummedAddress `toml:"op_contracts_manager_addr"`
