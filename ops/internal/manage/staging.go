@@ -172,8 +172,9 @@ func CopyDeployConfigHFTimes(src *genesis.UpgradeScheduleDeployConfig, dst *conf
 }
 
 var (
-	ErrNoStagedConfig  = errors.New("no staged chain config found")
-	ErrMultipleConfigs = errors.New("only one TOML file is allowed in the staging directory at a time")
+	ErrNoStagedConfig               = errors.New("no staged chain config found")
+	ErrNoStagedSuperchainDefinition = errors.New("no staged superchain definition found")
+	ErrMultipleConfigs              = errors.New("only one TOML file is allowed in the staging directory at a time")
 )
 
 func StagedChainConfigs(rootP string) ([]*config.StagedChain, error) {
@@ -204,11 +205,11 @@ func StagedSuperchainDefinition(rootP string) (string, *config.SuperchainDefinit
 	// find the first file with a .superchain.toml extension
 	files, err := paths.CollectFiles(paths.StagingDir(rootP), paths.FileExtMatcher(".superchain-toml"))
 	if err != nil {
-		return "", nil, fmt.Errorf("failed to collect staged superchain manifest: %w",
+		return "", nil, fmt.Errorf("failed to collect staged superchain definition: %w",
 			err)
 	}
 	if len(files) == 0 {
-		return "", nil, fmt.Errorf("no staged superchain definition found at %s", paths.StagingDir(rootP))
+		return "", nil, ErrNoStagedSuperchainDefinition
 	}
 	sM := new(config.SuperchainDefinition)
 	err = paths.ReadTOMLFile(files[0], sM)

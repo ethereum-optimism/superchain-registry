@@ -59,29 +59,26 @@ func action(cliCtx *cli.Context) error {
 	stagingDir := paths.StagingDir(wd)
 
 	superchainName, stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
-	if err != nil {
+	if err == nil {
+		output.WriteOK("superchain definition found, syncing...")
+		err = manage.WriteSuperchainDefinition(
+			path.Join(wd, "superchain", "configs", superchainName, "superchain.toml"),
+			stagedSuperchainDefinition)
+		output.WriteOK("wrote superchain definition")
+	} else if !errors.Is(err, manage.ErrNoStagedSuperchainDefinition) { // on this error we don't don anything
 		return fmt.Errorf("failed to get staged superchain definition: %w", err)
 	}
-	err = manage.WriteSuperchainDefinition(path.Join(wd, "superchain", "configs", superchainName, "superchain.toml"), stagedSuperchainDefinition)
-	if err != nil {
-		return fmt.Errorf("failed to write superchain definition: %w", err)
-	}
-	output.WriteOK("wrote superchain definition")
 
 	stagedChainCfgs, err := manage.StagedChainConfigs(wd)
+	if errors.Is(err, manage.ErrNoStagedConfig) {
+		output.WriteOK("no staged chain config found, exiting")
+		return nil
+	}
 	if err != nil {
-		return fmt.Errorf("failed to get staged chain configs: %w", err)
+		return fmt.Errorf("failed to get staged chain config: %w", err)
 	}
 
 	for _, chainCfg := range stagedChainCfgs {
-		if errors.Is(err, manage.ErrNoStagedConfig) {
-			output.WriteOK("no staged chain config found, exiting")
-			return nil
-		}
-		if err != nil {
-			return fmt.Errorf("failed to get staged chain config: %w", err)
-		}
-
 		genesisFilename := path.Join(stagingDir, chainCfg.ShortName+".json.zst")
 		genesis, err := manage.ReadGenesis(wd, genesisFilename)
 		if err != nil {
