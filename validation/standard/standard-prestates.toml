@@ -1,6 +1,14 @@
 latest_stable = "1.6.0"
 latest_rc = "1.6.0-rc.2"
 
+[[prestates."1.6.1-rc.1"]]
+type = "cannon64"
+hash = "0x03eb07101fbdeaf3f04d9fb76526362c1eea2824e4c6e970bdb19675b72e4fc8"
+
+[[prestates."1.6.1-rc.1"]]
+  type = "interop"
+  hash = "0x03fc3b4d091527d53f1ff369ea8ed65e5e17cc7fc98ebf75380238151cdc949c"
+
 [[prestates."1.6.0"]]
 type = "cannon32"
 hash = "0x03513e996556589f633fe1d38d694f63bc93cca5df559af37631b30875a829e9"
