@@ -50,6 +50,7 @@ func (dc *DepsetChecker) Check() error {
 		}
 		if cfg.Config.Interop == nil {
 			// nothing to check for this chain
+			dc.lgr.Info("skipping chain with no interop config", "chainID", cfg.Config.ChainID)
 			dc.processedChains[cfg.Config.ChainID] = true
 			dc.chainsProcessed++
 			continue
@@ -76,6 +77,7 @@ func (dc *DepsetChecker) Check() error {
 
 		// mark all chains in the depset as processed to avoid repeats
 		for _, dep := range depsetCfgs {
+			dc.lgr.Info("processed chain", "chainID", dep.Config.ChainID)
 			dc.processedChains[dep.Config.ChainID] = true
 			dc.chainsProcessed++
 		}
