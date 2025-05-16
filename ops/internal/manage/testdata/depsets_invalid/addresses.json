@@ -1,0 +1,26 @@
+{
+  "901": {
+    "DisputeGameFactoryProxy": "0xe5965Ab5962eDc7477C8520243A95517CD252fA9",
+    "EthLockboxProxy": "0x4E7e6dC46CE003A1E353B6848BF5a4fc1FeAC8Ae"
+  },
+  "902": {
+    "DisputeGameFactoryProxy": "0x2F12d621a16e2d3285929C9996f478508951dFe4",
+    "EthLockboxProxy": "0x4E7e6dC46CE003A1E353B6848BF5a4fc1FeAC8Ae"
+  },
+  "903": {
+    "DisputeGameFactoryProxy": "0x0000000000000000000000000000000000000000",
+    "EthLockboxProxy": "0x4E7e6dC46CE003A1E353B6848BF5a4fc1FeAC8Ae"
+  },
+  "905": {
+    "DisputeGameFactoryProxy": "0x2F12d621a16e2d3285929C9996f478508951dFe4",
+    "EthLockboxProxy": "0xc9edb4E340f4E9683B4557bD9db8f9d932177C86"
+  },
+  "906": {
+    "DisputeGameFactoryProxy": "0x2F12d621a16e2d3285929C9996f478508951dFe4",
+    "EthLockboxProxy": "0xc9edb4E340f4E9683B4557bD9db8f9d932177C86"
+  },
+  "907": {
+    "DisputeGameFactoryProxy": "0x2F12d621a16e2d3285929C9996f478508951dFe4",
+    "EthLockboxProxy": "0xc9edb4E340f4E9683B4557bD9db8f9d932177C86"
+  }
+}

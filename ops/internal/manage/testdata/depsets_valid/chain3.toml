@@ -1,0 +1,5 @@
+name = "Test Chain 3"
+chain_id = 903
+
+[hardforks]
+interop_time = 4424

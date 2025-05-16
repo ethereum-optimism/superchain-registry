@@ -1,0 +1,9 @@
+name = "Test Chain 3"
+chain_id = 903
+
+[hardforks]
+interop_time = 3333
+
+[interop]
+dependencies."903" = { chain_index = 1, activation_time = 3333, history_min_time = 40 }
+dependencies."904" = { chain_index = 2, activation_time = 4444, history_min_time = 456 }
