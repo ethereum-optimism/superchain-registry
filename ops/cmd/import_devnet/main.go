@@ -81,11 +81,9 @@ func action(cliCtx *cli.Context) error {
 	for i := 0; i < len(st.AppliedIntent.Chains); i++ {
 		cfg, err := manage.InflateChainConfig(&st, i)
 		if err != nil {
-			return fmt.Errorf("failed to inflate chain config: %w", err)
+			return fmt.Errorf("failed to inflate chain config %d of %d: %w", i, len(st.AppliedIntent.Chains), err)
 		}
 
-		// just use devnet name with numerical suffix
-		// OR parse the manifest.yaml file and get the name from there
 		cfg.ShortName = m.L2.Chains[i].Name
 		cfg.Name = m.L2.Chains[i].Name
 
