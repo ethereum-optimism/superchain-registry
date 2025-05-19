@@ -14,6 +14,8 @@ import (
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/env"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -56,15 +58,35 @@ func DiffL2Genesis(
 	var standardHash common.Hash
 
 	var l1ChainID uint64
-	var standardRoles validation.RolesConfig
-	if chainCfg.Superchain == config.MainnetSuperchain {
-		standardRoles = validation.StandardConfigRolesMainnet
-		l1ChainID = 1
-	} else if chainCfg.Superchain == config.SepoliaSuperchain {
-		standardRoles = validation.StandardConfigRolesSepolia
-		l1ChainID = 11155111
+	// If there is a staged superchain definition, use that to get the L1 chain ID.
+	wd, err := paths.FindRepoRoot()
+	if err != nil {
+		return common.Hash{}, nil, fmt.Errorf("failed to get working directory: %w", err)
+	}
+	stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
+
+	if err != nil {
+		l1ChainID = stagedSuperchainDefinition.L1.ChainID
 	} else {
-		return standardHash, nil, fmt.Errorf("unsupported superchain: %s", chainCfg.Superchain)
+		if chainCfg.Superchain == config.MainnetSuperchain {
+			l1ChainID = 1
+		} else if chainCfg.Superchain == config.SepoliaSuperchain {
+			l1ChainID = 11155111
+		} else {
+			return standardHash, nil, fmt.Errorf("unsupported superchain: %s", chainCfg.Superchain)
+		}
+	}
+
+	// TODO here we are going to just the L1 chain ID to figure out which set of roles to use.
+	// This is not really correct, since there can be other sepolia-based superchains with different roles.
+	var standardRoles validation.RolesConfig
+	switch l1ChainID {
+	case 11155111:
+		standardRoles = validation.StandardConfigRolesSepolia
+	case 1:
+		standardRoles = validation.StandardConfigRolesMainnet
+	default:
+		return standardHash, nil, fmt.Errorf("unsupported L1 chain ID: %d", l1ChainID)
 	}
 
 	standardIntent := &state.Intent{
