@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"strings"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
@@ -24,7 +23,7 @@ var (
 		Name:  "preserve-input",
 		Usage: "Skip cleanup of staging directory.",
 	}
-	FlagL1RPCURLs = &cli.StringFlag{
+	FlagL1RPCURLs = &cli.StringSliceFlag{
 		Name:     "l1-rpc-urls",
 		Usage:    "Comma-separated list of L1 RPC URLs",
 		Required: true,
@@ -49,6 +48,8 @@ func main() {
 }
 
 func action(cliCtx *cli.Context) error {
+
+	l1RpcUrls := cliCtx.StringSlice(FlagL1RPCURLs.Name)
 	check := cliCtx.Bool(FlagCheck.Name)
 	noCleanup := cliCtx.Bool(FlagPreserveInput.Name)
 	wd, err := paths.FindRepoRoot()
@@ -59,6 +60,8 @@ func action(cliCtx *cli.Context) error {
 	stagingDir := paths.StagingDir(wd)
 
 	stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
+
+	stagedSuperchainDefinition.L1.PublicRPC = l1RpcUrls[0]
 	if err == nil {
 		output.WriteOK("superchain definition found, syncing...")
 		err = manage.WriteSuperchainDefinition(
@@ -119,7 +122,6 @@ func action(cliCtx *cli.Context) error {
 
 		// Codegen
 		lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-		l1RpcUrls := strings.Split(cliCtx.String("l1-rpc-urls"), ",")
 		ctx := cliCtx.Context
 		onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, l1RpcUrls, []uint64{chainCfg.ChainID}, []config.Superchain{})
 		if err != nil {

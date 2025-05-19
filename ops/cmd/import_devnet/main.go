@@ -95,7 +95,6 @@ func action(cliCtx *cli.Context) error {
 		Hardforks:              config.Hardforks{}, // superchain wide hardforks are added after chains are in the registry.
 		L1: config.SuperchainL1{
 			ChainID: st.AppliedIntent.L1ChainID,
-			// TODO grab this from a lookup or prompt user to fill it out afterwards
 		},
 	}
 
