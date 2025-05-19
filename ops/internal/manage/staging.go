@@ -16,7 +16,7 @@ import (
 )
 
 func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
-	if idx > len(st.AppliedIntent.Chains)-1 {
+	if idx >= len(st.AppliedIntent.Chains) {
 		return nil, errors.New("index out of bounds")
 	}
 
