@@ -15,9 +15,9 @@ import (
 )
 
 var (
-	StateFilename = &cli.StringFlag{
+	StatePath = &cli.StringFlag{
 		Name:      "state-filename",
-		Usage:     "Filename of an op-deployer state file.",
+		Usage:     "Path to an op-deployer state.json file.",
 		Required:  true,
 		TakesFile: true,
 	}
@@ -34,7 +34,7 @@ func main() {
 		Name:  "create-config",
 		Usage: "Turns an op-deployer state.json file and a devnet manifest.yaml file into multiple chain configs and a superchain manifest file in the staging directory.",
 		Flags: []cli.Flag{
-			StateFilename,
+			StatePath,
 			ManifestPath,
 		},
 		Action: action,
@@ -51,7 +51,7 @@ func action(cliCtx *cli.Context) error {
 		return fmt.Errorf("failed to get working directory: %w", err)
 	}
 
-	statePath := cliCtx.String(StateFilename.Name)
+	statePath := cliCtx.String(StatePath.Name)
 	output.WriteStderr("reading state file from %s", statePath)
 	var st state.State
 	if err := paths.ReadJSONFile(statePath, &st); err != nil {
