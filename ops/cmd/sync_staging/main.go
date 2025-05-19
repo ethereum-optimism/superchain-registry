@@ -48,7 +48,6 @@ func main() {
 }
 
 func action(cliCtx *cli.Context) error {
-
 	l1RpcUrls := cliCtx.StringSlice(FlagL1RPCURLs.Name)
 	check := cliCtx.Bool(FlagCheck.Name)
 	noCleanup := cliCtx.Bool(FlagPreserveInput.Name)
