@@ -62,7 +62,8 @@ func action(cliCtx *cli.Context) error {
 		Name string `yaml:"name"`
 		L2   struct {
 			Chains []struct {
-				Name string `yaml:"name"`
+				Name    string `yaml:"name"`
+				ChainID int64  `yaml:"chain_id"`
 			} `yaml:"chains"`
 		} `yaml:"l2"`
 	}
@@ -79,6 +80,11 @@ func action(cliCtx *cli.Context) error {
 
 	output.WriteOK("inflating chain configs")
 	for i := 0; i < len(st.AppliedIntent.Chains); i++ {
+		if m.L2.Chains[i].ChainID != int64(st.AppliedIntent.Chains[i].ID.Big().Int64()) {
+			return fmt.Errorf("chain ID mismatch for chain at index %d : manifest %d, state %d",
+				i,
+				m.L2.Chains[i].ChainID, st.AppliedIntent.Chains[i].ID.Big().Int64())
+		}
 		err = generate.Generate(st, wd, m.L2.Chains[i].Name, &m.L2.Chains[i].Name, &m.Name, i)
 		if err != nil {
 			return fmt.Errorf("failed to generate chain config: %w", err)
