@@ -72,6 +72,8 @@ func MergeStateV3(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard state: %w", err)
 	}
+	// V2 is correct here. V3's state is the same as V2, except with a
+	// slightly different intent that contains operator fee fields.
 	return mergeStateV2(userState, stdIntent, stdState)
 }
 
