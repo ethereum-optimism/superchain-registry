@@ -108,7 +108,7 @@ func action(cliCtx *cli.Context) error {
 		}
 	}
 
-	output.WriteOK("writing superchain manifest")
+	output.WriteOK("writing superchain definition file")
 
 	sD := config.SuperchainDefinition{
 		Name:                   m.Name,
@@ -128,7 +128,7 @@ func action(cliCtx *cli.Context) error {
 	// by the sync staging command.
 	err = paths.WriteTOMLFile(path.Join(paths.StagingDir(wd), m.Name+".superchain-toml"), sD)
 	if err != nil {
-		return fmt.Errorf("failed to write superchain manifest: %w", err)
+		return fmt.Errorf("failed to write superchain definition file: %w", err)
 	}
 
 	output.WriteOK("done")
