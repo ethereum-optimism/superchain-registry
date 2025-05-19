@@ -57,12 +57,18 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	stagingDir := paths.StagingDir(wd)
-
 	stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
 
+	l1RpcUrl := ""
 	if err == nil {
-		output.WriteOK("superchain definition found, injecting L1 RPC URL and syncing...")
-		stagedSuperchainDefinition.L1.PublicRPC = l1RpcUrls[0]
+		output.WriteOK("superchain definition found, finding L1 RPC URL...")
+		l1RpcUrl, err = config.FindValidL1URL(cliCtx.Context,
+			log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false)),
+			l1RpcUrls, stagedSuperchainDefinition.L1.ChainID)
+		if err != nil {
+			return fmt.Errorf("failed to find valid L1 RPC URL: %w", err)
+		}
+		stagedSuperchainDefinition.L1.PublicRPC = l1RpcUrl
 		err = manage.WriteSuperchainDefinition(
 			path.Join(wd, "superchain", "configs", stagedSuperchainDefinition.Name, "superchain.toml"),
 			stagedSuperchainDefinition)
@@ -148,7 +154,7 @@ func action(cliCtx *cli.Context) error {
 	// Codegen
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
 	ctx := cliCtx.Context
-	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, l1RpcUrls, chainIds, []config.Superchain{})
+	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, []string{l1RpcUrl}, chainIds, []config.Superchain{})
 	if err != nil {
 		return fmt.Errorf("error fetching onchain configs: %w", err)
 	}
