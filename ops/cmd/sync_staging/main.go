@@ -60,10 +60,10 @@ func action(cliCtx *cli.Context) error {
 	stagingDir := paths.StagingDir(wd)
 
 	stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
-	stagedSuperchainDefinition.L1.PublicRPC = l1RpcUrls[0]
 
 	if err == nil {
-		output.WriteOK("superchain definition found, syncing...")
+		output.WriteOK("superchain definition found, injecting L1 RPC URL and syncing...")
+		stagedSuperchainDefinition.L1.PublicRPC = l1RpcUrls[0]
 		err = manage.WriteSuperchainDefinition(
 			path.Join(wd, "superchain", "configs", stagedSuperchainDefinition.Name, "superchain.toml"),
 			stagedSuperchainDefinition)
