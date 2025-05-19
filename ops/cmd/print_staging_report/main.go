@@ -15,22 +15,17 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/report"
 	"github.com/ethereum-optimism/superchain-registry/validation"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/google/go-github/v68/github"
 	"github.com/urfave/cli/v2"
 )
 
 var (
-	SepoliaRPCURLFlag = &cli.StringFlag{
-		Name:     "sepolia-rpc-url",
-		Usage:    "The URL of the Sepolia RPC endpoint.",
-		EnvVars:  []string{"SEPOLIA_RPC_URL"},
-		Required: true,
-	}
-	MainnetRPCURLFlag = &cli.StringFlag{
-		Name:     "mainnet-rpc-url",
-		Usage:    "The URL of the mainnet RPC endpoint.",
-		EnvVars:  []string{"MAINNET_RPC_URL"},
+	L1RPCURLsFlag = &cli.StringSliceFlag{
+		Name:     "l1-rpc-urls",
+		Usage:    "Comma-separated list of L1 RPC URLs",
+		EnvVars:  []string{"L1_RPC_URLS"},
 		Required: true,
 	}
 	PRURLFlag = &cli.StringFlag{
@@ -63,8 +58,7 @@ func main() {
 		Name:  "print-staging-report",
 		Usage: "Prints a standards compliance report for the Standard Blockspace Charter.",
 		Flags: []cli.Flag{
-			SepoliaRPCURLFlag,
-			MainnetRPCURLFlag,
+			L1RPCURLsFlag,
 			PRURLFlag,
 			GitSHAFlag,
 			GithubTokenFlag,
@@ -118,25 +112,37 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		stdPrestate := validation.StandardPrestates.StablePrestate()
 		stdVersions := validation.StandardVersionsMainnet[contractsVersion]
 
+		var chainId uint64
+
+		// If there is a staged superchain definition, use that to get the L1 RPC URL.
+		stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
+		if err == nil {
+			chainId = stagedSuperchainDefinition.L1.ChainID
+		}
+
+		// TODO if there is no staged superchain definition, we need to infer the l1 chain id
+		// from an existing superchain
+
+		l1RpcUrls := cliCtx.StringSlice(L1RPCURLsFlag.Name)
+
+		l1RpcUrl, err := config.FindValidL1URL(cliCtx.Context,
+			log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false)),
+			l1RpcUrls, chainId)
+
 		var stdConfigs validation.ConfigParams
 		var stdRoles validation.RolesConfig
-		var l1RPCURL string
 		switch chainCfg.Superchain {
-		case config.MainnetSuperchain:
-			stdConfigs = validation.StandardConfigParamsMainnet
-			stdRoles = validation.StandardConfigRolesMainnet
-			l1RPCURL = cliCtx.String(MainnetRPCURLFlag.Name)
 		case config.SepoliaSuperchain:
 			stdConfigs = validation.StandardConfigParamsSepolia
 			stdRoles = validation.StandardConfigRolesSepolia
-			l1RPCURL = cliCtx.String(SepoliaRPCURLFlag.Name)
 		default:
-			return fmt.Errorf("unsupported superchain: %s", chainCfg.Superchain)
+			stdConfigs = validation.StandardConfigParamsMainnet
+			stdRoles = validation.StandardConfigRolesMainnet
 		}
 
-		rpcClient, err := rpc.Dial(l1RPCURL)
+		rpcClient, err := rpc.Dial(l1RpcUrl)
 		if err != nil {
-			return fmt.Errorf("failed to dial RPC client: %w", err)
+			return fmt.Errorf("failed to dial RPC client at %s: %w", l1RpcUrl, err)
 		}
 
 		var params validation.ConfigParams

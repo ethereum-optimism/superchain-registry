@@ -64,7 +64,6 @@ func DiffL2Genesis(
 		return common.Hash{}, nil, fmt.Errorf("failed to get working directory: %w", err)
 	}
 	stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
-
 	if err == nil {
 		l1ChainID = stagedSuperchainDefinition.L1.ChainID
 	} else if errors.Is(err, manage.ErrNoStagedSuperchainDefinition) {

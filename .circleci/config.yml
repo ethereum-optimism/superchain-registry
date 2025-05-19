@@ -117,8 +117,7 @@ jobs:
       - run:
           name: Run staging report
           environment:
-            SEPOLIA_RPC_URL: << pipeline.parameters.sepolia_rpc_url >>
-            MAINNET_RPC_URL: << pipeline.parameters.mainnet_rpc_url >>
+            L1_RPC_URLS << pipeline.parameters.mainnet_rpc_url >>,<<pipeline.parameters.sepolia_rpc_url>>
             GITHUB_REPO: << pipeline.parameters.github_repo >>
           command: |
             cd ops
