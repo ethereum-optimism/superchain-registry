@@ -235,6 +235,16 @@ l2:
 
 The ordering of chains in the manifest needs to match the ordering the `state.json` file.
 
+### Example usage
+
+```
+just import-devnet ../devnets/alphanets/interop-rc-alpha/op-deployer/state.json ../devnets/alphanets/interop-rc-alpha/manifest.yaml
+```
+
 `import_devnet` will generate a chain config for each chain in the staging directory, and also generate an appropriate `superchain.toml` superchain definition file specific to the devnet being added.
+
+```
+just sync-staging --l1-rpc-urls=https://ethereum-sepolia-rpc.publicnode.com
+```
 
 `sync_staging` will then copy all of the usual files over to the `superchain` directory, as well as the `superchain.toml` file. A new directory will be created if necessary.
