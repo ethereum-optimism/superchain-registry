@@ -9,12 +9,14 @@ import (
 	"github.com/ethereum-optimism/optimism/op-chain-ops/foundry"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/broadcaster"
-	opcmv170 "github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/opcm/v170"
+	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/opcm"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/env"
+	"github.com/ethereum-optimism/optimism/op-service/eth"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/log"
@@ -28,8 +30,8 @@ func ScanL2(
 ) (*L2Report, error) {
 	var report L2Report
 
-	if !chainCfg.DeploymentL2ContractsVersion.Canonical {
-		return nil, errors.New("contracts version is not canonical")
+	if !chainCfg.DeploymentL2ContractsVersion.IsTag() {
+		return nil, errors.New("contracts version is not a tag")
 	}
 
 	report.Release = chainCfg.DeploymentL2ContractsVersion.Tag
@@ -66,7 +68,7 @@ func DiffL2Genesis(
 	}
 
 	standardIntent := &state.Intent{
-		ConfigType:         state.IntentConfigTypeStrict,
+		ConfigType:         state.IntentTypeStandard,
 		FundDevAccounts:    false,
 		UseInterop:         false,
 		L1ContractsLocator: chainCfg.DeploymentL1ContractsVersion,
@@ -114,8 +116,13 @@ func DiffL2Genesis(
 	}
 
 	standardChainState := &state.ChainState{
-		ID:                                 common.BigToHash(new(big.Int).SetUint64(chainCfg.ChainID)),
-		StartBlock:                         startBlock,
+		ID: common.BigToHash(new(big.Int).SetUint64(chainCfg.ChainID)),
+		StartBlock: &state.L1BlockRefJSON{
+			Hash:       startBlock.Hash(),
+			ParentHash: startBlock.ParentHash,
+			Number:     hexutil.Uint64(startBlock.Number.Uint64()),
+			Time:       hexutil.Uint64(startBlock.Time),
+		},
 		L1StandardBridgeProxyAddress:       common.Address(*chainCfg.Addresses.L1StandardBridgeProxy),
 		L1CrossDomainMessengerProxyAddress: common.Address(*chainCfg.Addresses.L1CrossDomainMessengerProxy),
 		L1ERC721BridgeProxyAddress:         common.Address(*chainCfg.Addresses.L1ERC721BridgeProxy),
@@ -140,15 +147,15 @@ func DiffL2Genesis(
 		return standardHash, nil, fmt.Errorf("failed to create script host: %w", err)
 	}
 
-	if err := opcmv170.L2Genesis(host, &opcmv170.L2GenesisInput{
-		L1Deployments: opcmv170.L1Deployments{
+	if err := opcm.L2Genesis(host, &opcm.L2GenesisInput{
+		L1Deployments: opcm.L1Deployments{
 			L1CrossDomainMessengerProxy: common.Address(*chainCfg.Addresses.L1CrossDomainMessengerProxy),
 			L1StandardBridgeProxy:       common.Address(*chainCfg.Addresses.L1StandardBridgeProxy),
 			L1ERC721BridgeProxy:         common.Address(*chainCfg.Addresses.L1ERC721BridgeProxy),
 		},
 		L2Config: standardDeployConfig.L2InitializationConfig,
 	}); err != nil {
-		return standardHash, nil, fmt.Errorf("failed to call v170 L2Genesis script: %w", err)
+		return standardHash, nil, fmt.Errorf("failed to call L2Genesis script: %w", err)
 	}
 
 	host.Wipe(deployer)
@@ -158,7 +165,12 @@ func DiffL2Genesis(
 		return standardHash, nil, fmt.Errorf("failed to dump state: %w", err)
 	}
 
-	standardGenesis, err := genesis.BuildL2Genesis(&standardDeployConfig, standardAllocs, startBlock)
+	standardGenesis, err := genesis.BuildL2Genesis(&standardDeployConfig, standardAllocs, &eth.BlockRef{
+		Hash:       startBlock.Hash(),
+		Number:     startBlock.Number.Uint64(),
+		ParentHash: startBlock.ParentHash,
+		Time:       startBlock.Time,
+	})
 	if err != nil {
 		return standardHash, nil, fmt.Errorf("failed to build standard genesis: %w", err)
 	}

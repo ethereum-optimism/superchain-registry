@@ -16,7 +16,10 @@
       "type": "L2",
       "chain": "mainnet"
     },
-    "gasPayingToken": "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
+    "gasPayingToken": "0xA2120b9e674d3fC3875f415A7DF52e382F141225",
+    "faultProofs": {
+      "status": "none"
+    }
   },
   {
     "name": "BOB",
@@ -34,6 +37,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -52,6 +58,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissionless"
     }
   },
   {
@@ -71,7 +80,10 @@
       "type": "L2",
       "chain": "mainnet"
     },
-    "gasPayingToken": "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3"
+    "gasPayingToken": "0x04E9D7e336f79Cdab911b06133D3Ca2Cd0721ce3",
+    "faultProofs": {
+      "status": "none"
+    }
   },
   {
     "name": "Cyber Mainnet",
@@ -89,6 +101,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -107,6 +122,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -143,6 +161,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -162,7 +183,10 @@
       "type": "L2",
       "chain": "mainnet"
     },
-    "gasPayingToken": "0xE7C6BF469e97eEB0bFB74C8dbFF5BD47D4C1C98a"
+    "gasPayingToken": "0xE7C6BF469e97eEB0bFB74C8dbFF5BD47D4C1C98a",
+    "faultProofs": {
+      "status": "permissioned"
+    }
   },
   {
     "name": "Ink",
@@ -180,6 +204,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissionless"
     }
   },
   {
@@ -198,6 +225,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -216,6 +246,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -234,6 +267,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -252,6 +288,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -270,6 +309,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -288,6 +330,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissionless"
     }
   },
   {
@@ -306,6 +351,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -324,6 +372,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -342,6 +393,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -360,6 +414,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -378,6 +435,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -396,6 +456,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -414,6 +477,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -432,6 +498,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -450,6 +519,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -468,6 +540,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -486,6 +561,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -504,6 +582,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissionless"
     }
   },
   {
@@ -522,6 +603,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -540,6 +624,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -558,6 +645,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -576,6 +666,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -594,6 +687,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissionless"
     }
   },
   {
@@ -613,7 +709,31 @@
       "type": "L2",
       "chain": "sepolia"
     },
-    "gasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e"
+    "gasPayingToken": "0x46d878bf7BF62Ec542953CB89Ac0bF58d991181e",
+    "faultProofs": {
+      "status": "none"
+    }
+  },
+  {
+    "name": "Boba Sepolia Testnet",
+    "identifier": "sepolia/boba",
+    "chainId": 28882,
+    "rpc": [
+      "https://sepolia.boba.network"
+    ],
+    "explorers": [
+      "https://testnet.bobascan.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissionless"
+    }
   },
   {
     "name": "Creator Chain Testnet",
@@ -631,6 +751,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -649,6 +772,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -667,6 +793,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -685,6 +814,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -703,6 +835,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissionless"
     }
   },
   {
@@ -721,6 +856,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -739,6 +877,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -757,6 +898,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -775,6 +919,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissionless"
     }
   },
   {
@@ -793,6 +940,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {
@@ -811,6 +961,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -829,6 +982,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -847,6 +1003,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -865,6 +1024,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -883,6 +1045,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissionless"
     }
   },
   {
@@ -901,6 +1066,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -919,24 +1087,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia"
-    }
-  },
-  {
-    "name": "arena-z-testnet",
-    "identifier": "sepolia/arena-z-testnet",
-    "chainId": 9897,
-    "rpc": [
-      "https://rpc.arena-z.t.raas.gelato.cloud"
-    ],
-    "explorers": [
-      "https://arena-z.blockscout.com"
-    ],
-    "superchainLevel": 1,
-    "governedByOptimism": false,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissioned"
     }
   },
   {
@@ -955,6 +1108,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia-dev-0"
+    },
+    "faultProofs": {
+      "status": "permissionless"
     }
   },
   {
@@ -973,6 +1129,9 @@
     "parent": {
       "type": "L2",
       "chain": "sepolia-dev-0"
+    },
+    "faultProofs": {
+      "status": "permissionless"
     }
   }
 ]

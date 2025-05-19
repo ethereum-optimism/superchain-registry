@@ -124,6 +124,68 @@ jobs:
             cd ops
             go run ./cmd/print_staging_report/main.go
 
+  check-codegen:
+    circleci_ip_ranges: true
+    docker:
+      - image: <<pipeline.parameters.default_docker_image>>
+    steps:
+      - utils/checkout-with-mise
+      - run:
+          name: check-codegen-for-changed-chains
+          command: |
+            set -e
+
+            # Get list of changed files (including deleted ones)
+            CHANGED_FILES=$(git diff --name-only origin/main... | grep "^superchain/configs/.*\.toml$" || true)
+
+            if [ -z "$CHANGED_FILES" ]; then
+              echo "No .toml files changed in superchain/configs, skipping codegen check"
+              exit 0
+            fi
+
+            # Extract superchain names from the file paths
+            SUPERCHAINS=""
+
+            for file in $CHANGED_FILES; do
+              # Extract the superchain name (directory between configs/ and the filename)
+              SUPERCHAIN_NAME=$(echo "$file" | sed -n 's|^superchain/configs/\([^/]*\)/.*$|\1|p')
+
+              # If this is a superchain.toml file, skip it
+              if [[ "$file" == *"superchain.toml" ]]; then
+                continue
+              fi
+
+              # Check if this superchain is already in our list
+              if [[ ! $SUPERCHAINS =~ (^|,)$SUPERCHAIN_NAME(,|$) ]] && [ -n "$SUPERCHAIN_NAME" ]; then
+                if [ -z "$SUPERCHAINS" ]; then
+                  SUPERCHAINS="$SUPERCHAIN_NAME"
+                else
+                  SUPERCHAINS="$SUPERCHAINS,$SUPERCHAIN_NAME"
+                fi
+                echo "Found superchain $SUPERCHAIN_NAME affected by changes in $file"
+              fi
+            done
+
+            echo "Found the following superchains with changes: $SUPERCHAINS"
+
+            cd ops
+            if [ -n "$SUPERCHAINS" ]; then
+              echo "Running codegen for the following superchains: $SUPERCHAINS\n"
+              go run ./cmd/codegen \
+                --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>" \
+                --superchains="$SUPERCHAINS"
+            fi
+
+            if [ -n "$(git status --porcelain)" ]; then
+              echo "\n❌ Changes detected after running codegen. Run the following command locally and commit the changes:\n"
+              echo "go run ./cmd/codegen \\"
+              echo "  --l1-rpc-urls=\"<urls>\""
+              echo "  --superchains=\"$SUPERCHAINS\""
+              exit 1
+            else
+              echo "\n✅ All codegen files are up to date"
+            fi
+
 workflows:
   main:
     jobs:
@@ -136,13 +198,12 @@ workflows:
       - run-tool:
           name: check-genesis-integrity
           tool: check_genesis_integrity
-      - run-tool:
+      - check-codegen:
           name: check-codegen
-          tool: codegen
-          check_diff: true
       - run-tool:
           name: check-staging-synced
           tool: sync_staging
+          args: --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>"
           check_diff: true
       - check-staging-empty:
           name: check-staging-empty
@@ -155,4 +216,3 @@ workflows:
           tool: check_chainlist
       - run-staging-report:
           name: run-staging-report
-
