@@ -175,8 +175,24 @@ func CollectFiles(root string, matcher CollectorMatcher) ([]string, error) {
 	return out, nil
 }
 
+func ChainConfigMatcher() CollectorMatcher {
+	return func(s string) bool {
+		return filepath.Ext(s) == ".toml" && filepath.Base(s) != "superchain.toml"
+	}
+}
+
 func FileExtMatcher(ext string) CollectorMatcher {
 	return func(s string) bool {
 		return filepath.Ext(s) == ext
 	}
+}
+
+func FileNameMatcher(name string) CollectorMatcher {
+	return func(s string) bool {
+		return filepath.Base(s) == name
+	}
+}
+
+func SuperchainDefinitionMatcher() CollectorMatcher {
+	return FileNameMatcher("superchain.toml")
 }

@@ -99,11 +99,9 @@ func action(cliCtx *cli.Context) error {
 		},
 	}
 
-	// We write this to {m.Name}.superchain-toml and when it gets sync'ed later
-	// it will be moved to the appropriate superchain directory and renamed
-	// to superchain.toml. Validation and conflict resolution will be handled
+	// Validation and conflict resolution will be handled
 	// by the sync staging command.
-	err = paths.WriteTOMLFile(path.Join(paths.StagingDir(wd), m.Name+".superchain-toml"), sD)
+	err = paths.WriteTOMLFile(path.Join(paths.StagingDir(wd), "superchain.toml"), sD)
 	if err != nil {
 		return fmt.Errorf("failed to write superchain definition file: %w", err)
 	}
