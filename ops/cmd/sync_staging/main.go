@@ -91,6 +91,7 @@ func action(cliCtx *cli.Context) error {
 		return fmt.Errorf("failed to get staged chain config: %w", err)
 	}
 
+	var chainIds []uint64
 	for _, chainCfg := range stagedChainCfgs {
 		genesisFilename := path.Join(stagingDir, chainCfg.ShortName+".json.zst")
 		genesis, err := manage.ReadGenesis(wd, genesisFilename)
@@ -130,21 +131,6 @@ func action(cliCtx *cli.Context) error {
 
 		output.WriteOK("wrote genesis files")
 
-		// Codegen
-		lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-		ctx := cliCtx.Context
-		onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, l1RpcUrls, []uint64{chainCfg.ChainID}, []config.Superchain{})
-		if err != nil {
-			return fmt.Errorf("error fetching onchain configs: %w", err)
-		}
-		syncer, err := manage.NewCodegenSyncer(lgr, wd, onchainCfgs)
-		if err != nil {
-			return fmt.Errorf("error creating codegen syncer: %w", err)
-		}
-		if err := syncer.SyncAll(); err != nil {
-			return fmt.Errorf("error syncing codegen: %w", err)
-		}
-
 		if !noCleanup {
 			cfgFilename := path.Join(stagingDir, chainCfg.ShortName+".toml")
 			if err := os.Remove(cfgFilename); err != nil {
@@ -156,6 +142,22 @@ func action(cliCtx *cli.Context) error {
 
 			output.WriteOK("cleaned files from staging directory")
 		}
+		chainIds = append(chainIds, chainCfg.ChainID)
+	}
+
+	// Codegen
+	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
+	ctx := cliCtx.Context
+	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, l1RpcUrls, chainIds, []config.Superchain{})
+	if err != nil {
+		return fmt.Errorf("error fetching onchain configs: %w", err)
+	}
+	syncer, err := manage.NewCodegenSyncer(lgr, wd, onchainCfgs)
+	if err != nil {
+		return fmt.Errorf("error creating codegen syncer: %w", err)
+	}
+	if err := syncer.SyncAll(); err != nil {
+		return fmt.Errorf("error syncing codegen: %w", err)
 	}
 
 	return nil
