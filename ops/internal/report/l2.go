@@ -65,9 +65,9 @@ func DiffL2Genesis(
 	}
 	stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
 
-	if err != nil {
+	if err == nil {
 		l1ChainID = stagedSuperchainDefinition.L1.ChainID
-	} else {
+	} else if errors.Is(err, manage.ErrNoStagedSuperchainDefinition) {
 		if chainCfg.Superchain == config.MainnetSuperchain {
 			l1ChainID = 1
 		} else if chainCfg.Superchain == config.SepoliaSuperchain {
@@ -75,6 +75,8 @@ func DiffL2Genesis(
 		} else {
 			return standardHash, nil, fmt.Errorf("unsupported superchain: %s", chainCfg.Superchain)
 		}
+	} else {
+		return standardHash, nil, fmt.Errorf("failed to get staged superchain definition: %w", err)
 	}
 
 	// TODO here we are going to just the L1 chain ID to figure out which set of roles to use.
