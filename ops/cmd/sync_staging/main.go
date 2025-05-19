@@ -67,6 +67,9 @@ func action(cliCtx *cli.Context) error {
 		err = manage.WriteSuperchainDefinition(
 			path.Join(wd, "superchain", "configs", stagedSuperchainDefinition.Name, "superchain.toml"),
 			stagedSuperchainDefinition)
+		if err != nil {
+			return fmt.Errorf("failed to write superchain definition: %w", err)
+		}
 		output.WriteOK("wrote superchain definition")
 	} else if !errors.Is(err, manage.ErrNoStagedSuperchainDefinition) { // on this error we don't do anything
 		return fmt.Errorf("failed to get staged superchain definition: %w", err)
