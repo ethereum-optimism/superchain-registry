@@ -5,12 +5,12 @@ import (
 	"os"
 	"path"
 
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/generate"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
+
 	"github.com/urfave/cli/v2"
 )
 
@@ -79,32 +79,9 @@ func action(cliCtx *cli.Context) error {
 
 	output.WriteOK("inflating chain configs")
 	for i := 0; i < len(st.AppliedIntent.Chains); i++ {
-		cfg, err := manage.InflateChainConfig(&st, i)
+		err = generate.Generate(st, wd, m.L2.Chains[i].Name, &m.L2.Chains[i].Name, &m.Name, i)
 		if err != nil {
-			return fmt.Errorf("failed to inflate chain config %d of %d: %w", i, len(st.AppliedIntent.Chains), err)
-		}
-
-		cfg.ShortName = m.L2.Chains[i].Name
-		cfg.Name = m.L2.Chains[i].Name
-
-		cfg.Superchain = config.Superchain(m.Name) // Each devnet forms its own unique superchain
-
-		output.WriteOK("reading genesis")
-		genesis, _, err := inspect.GenesisAndRollup(&st, st.AppliedIntent.Chains[i].ID)
-		if err != nil {
-			return fmt.Errorf("failed to get genesis: %w", err)
-		}
-
-		stagingDir := paths.StagingDir(wd)
-
-		output.WriteOK("writing chain config")
-		if err := paths.WriteTOMLFile(path.Join(stagingDir, cfg.ShortName+".toml"), cfg); err != nil {
-			return fmt.Errorf("failed to write chain config: %w", err)
-		}
-
-		output.WriteOK("writing genesis")
-		if err := manage.WriteGenesis(wd, path.Join(stagingDir, cfg.ShortName+".json.zst"), genesis); err != nil {
-			return fmt.Errorf("failed to write genesis: %w", err)
+			return fmt.Errorf("failed to generate chain config: %w", err)
 		}
 	}
 
