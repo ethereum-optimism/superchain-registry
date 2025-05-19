@@ -147,7 +147,8 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 
 		var params validation.ConfigParams
 		if err := paths.ReadTOMLFile(paths.ValidationsFile(wd, string(chainCfg.Superchain)), &params); err != nil {
-			return fmt.Errorf("failed to read standard params: %w", err)
+			// TODO / HACK default to mainnet params if we can't find the superchain file
+			paths.ReadTOMLFile(paths.ValidationsFile(wd, "mainnet"), &params)
 		}
 
 		ctx, cancel := context.WithTimeout(cliCtx.Context, 5*time.Minute)
