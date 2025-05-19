@@ -60,8 +60,8 @@ func action(cliCtx *cli.Context) error {
 	stagingDir := paths.StagingDir(wd)
 
 	stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
-
 	stagedSuperchainDefinition.L1.PublicRPC = l1RpcUrls[0]
+
 	if err == nil {
 		output.WriteOK("superchain definition found, syncing...")
 		err = manage.WriteSuperchainDefinition(
@@ -70,6 +70,14 @@ func action(cliCtx *cli.Context) error {
 		output.WriteOK("wrote superchain definition")
 	} else if !errors.Is(err, manage.ErrNoStagedSuperchainDefinition) { // on this error we don't do anything
 		return fmt.Errorf("failed to get staged superchain definition: %w", err)
+	}
+
+	if !noCleanup {
+		superchainTomlPath := path.Join(stagingDir, "superchain.toml")
+		if err := os.Remove(superchainTomlPath); err != nil {
+			output.WriteNotOK("failed to remove %s: %v", superchainTomlPath, err)
+		}
+		output.WriteOK("cleaned superchain definition from staging directory")
 	}
 
 	stagedChainCfgs, err := manage.StagedChainConfigs(wd)
@@ -144,7 +152,7 @@ func action(cliCtx *cli.Context) error {
 				output.WriteNotOK("failed to remove %s: %v", genesisFilename, err)
 			}
 
-			output.WriteOK("cleaned up staging directory")
+			output.WriteOK("cleaned files from staging directory")
 		}
 	}
 
