@@ -1139,24 +1139,45 @@
     }
   },
   {
-    "name": "Boba Mainnet",
-    "identifier": "mainnet/boba",
-    "chainId": 288,
+    "name": "interop-rc-alpha-0",
+    "identifier": "interop-rc-alpha/interop-rc-alpha-0",
+    "chainId": 420120003,
     "rpc": [
-      "https://mainnet.boba.network"
+      ""
     ],
     "explorers": [
-      "https://bobascan.com"
+      ""
     ],
     "superchainLevel": 0,
     "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
     "parent": {
       "type": "L2",
-      "chain": "mainnet"
+      "chain": "interop-rc-alpha"
     },
     "faultProofs": {
-      "status": "none"
+      "status": "permissionless"
+    }
+  },
+  {
+    "name": "interop-rc-alpha-1",
+    "identifier": "interop-rc-alpha/interop-rc-alpha-1",
+    "chainId": 420120004,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "interop-rc-alpha"
+    },
+    "faultProofs": {
+      "status": "permissionless"
     }
   }
 ]

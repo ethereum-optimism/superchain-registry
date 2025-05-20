@@ -10,13 +10,6 @@ batch_inbox_addr = "0x0061ad255Fa9435322388D2d8e78207eD552D4B6"
 block_time = 1
 seq_window_size = 3600
 max_sequencer_drift = 600
-superchain = "interop-rc-alpha"
-base_fee_vault_recipient = "0x025d55a13DDeb96068B8a3AF39bB6a92bCfb93dd"
-l1_fee_vault_recipient = "0x20ebaB41517055e3181495258cB8574CAf572946"
-sequencer_fee_vault_recipient = "0xf59abB179464b6ADB403f13FdFf1746980bA3dEF"
-deployment_tx_hash = "0x0000000000000000000000000000000000000000000000000000000000000000"
-deployment_l1_contracts_version = "https://storage.googleapis.com/oplabs-contract-artifacts/artifacts-v1-f9a55787fd592c2fa6d4c253a3ad7904ce55f255ab59cc6d2a576c938f021896.tar.gz"
-deployment_l2_contracts_version = "https://storage.googleapis.com/oplabs-contract-artifacts/artifacts-v1-f9a55787fd592c2fa6d4c253a3ad7904ce55f255ab59cc6d2a576c938f021896.tar.gz"
 
 [hardforks]
   canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC

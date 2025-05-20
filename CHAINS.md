@@ -1,5 +1,11 @@
 # Superchain Ecosystem
 
+### interop-rc-alpha
+
+| Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
+|---|---|---|---|---|---|
+| interop-rc-alpha-0 | ❌ | ❌ |  | `` | `` |
+| interop-rc-alpha-1 | ❌ | ❌ |  | `` | `` |
 ### mainnet
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
