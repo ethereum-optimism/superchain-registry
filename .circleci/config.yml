@@ -52,6 +52,7 @@ jobs:
           files: ./<<parameters.package>>/coverage.out
 
   run-tool:
+    circleci_ip_ranges: true
     parameters:
       tool:
         type: string
