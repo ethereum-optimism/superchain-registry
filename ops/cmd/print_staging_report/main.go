@@ -46,17 +46,15 @@ var (
 		Required: true,
 	}
 	GithubTokenFlag = &cli.StringFlag{
-		Name:     "github-token",
-		Usage:    "The GitHub token to use for API requests.",
-		EnvVars:  []string{"GITHUB_TOKEN"},
-		Required: true,
+		Name:    "github-token",
+		Usage:   "The GitHub token to use for API requests.",
+		EnvVars: []string{"GITHUB_TOKEN"},
 	}
 	GithubRepoFlag = &cli.StringFlag{
-		Name:     "github-repo",
-		Usage:    "The GitHub repository to comment on.",
-		EnvVars:  []string{"GITHUB_REPO"},
-		Value:    "ethereum-optimism/superchain-registry",
-		Required: true,
+		Name:    "github-repo",
+		Usage:   "The GitHub repository to comment on.",
+		EnvVars: []string{"GITHUB_REPO"},
+		Value:   "ethereum-optimism/superchain-registry",
 	}
 )
 
@@ -150,13 +148,6 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	allReport := report.ScanAll(ctx, rpcClient, chainCfg, originalGenesis)
 	output.WriteOK("scanned L1 and L2")
 
-	ghClient := github.NewClient(nil).WithAuthToken(githubToken)
-
-	currUser, _, err := ghClient.Users.Get(ctx, "")
-	if err != nil {
-		return fmt.Errorf("failed to get authenticated GitHub user: %w", err)
-	}
-
 	comment, err := report.RenderComment(
 		&allReport,
 		stdConfigs,
@@ -167,6 +158,27 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	)
 	if err != nil {
 		return fmt.Errorf("failed to render comment: %w", err)
+	}
+
+	if githubToken == "" {
+		output.WriteOK("skipping GitHub comment, no token provided")
+	} else {
+		if err := postGithubComment(ctx, prURL, githubRepo, githubToken, comment); err != nil {
+			output.WriteNotOK("failed to post comment: %v", err)
+		}
+	}
+
+	_, _ = fmt.Fprintf(os.Stdout, "%s\n", comment)
+
+	return nil
+}
+
+func postGithubComment(ctx context.Context, prURL string, githubRepo string, ghToken string, comment string) error {
+	ghClient := github.NewClient(nil).WithAuthToken(ghToken)
+
+	currUser, _, err := ghClient.Users.Get(ctx, "")
+	if err != nil {
+		return fmt.Errorf("failed to get authenticated GitHub user: %w", err)
 	}
 
 	prNum, err := gh.GetPRNumberFromURL(prURL)
@@ -197,6 +209,5 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		}
 		output.WriteOK("edited comment on PR %d", prNum)
 	}
-
 	return nil
 }

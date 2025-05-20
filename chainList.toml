@@ -11,6 +11,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "BOB"
@@ -24,6 +26,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Base"
@@ -37,6 +41,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissionless"
 
 [[chains]]
   name = "Binary Mainnet"
@@ -51,6 +57,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Cyber Mainnet"
@@ -64,6 +72,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Ethernity"
@@ -77,6 +87,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Funki"
@@ -90,6 +102,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "HashKey Chain"
@@ -104,6 +118,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "Ink"
@@ -117,6 +133,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissionless"
 
 [[chains]]
   name = "Lisk"
@@ -130,6 +148,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Lyra Chain"
@@ -143,6 +163,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Metal L2"
@@ -156,6 +178,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Mint Mainnet"
@@ -169,6 +193,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Mode"
@@ -182,6 +208,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "OP Mainnet"
@@ -195,6 +223,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissionless"
 
 [[chains]]
   name = "Orderly Mainnet"
@@ -208,6 +238,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Polynomial"
@@ -221,6 +253,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "RACE Mainnet"
@@ -234,6 +268,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Redstone"
@@ -247,6 +283,23 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
+
+[[chains]]
+  name = "Settlus Mainnet"
+  identifier = "mainnet/settlus-mainnet"
+  chain_id = 5371
+  rpc = ["https://settlus-mainnet.g.alchemy.com/public"]
+  explorers = ["mainnet.settlus.network"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "Shape"
@@ -260,6 +313,23 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "SnaxChain"
+  identifier = "mainnet/snax"
+  chain_id = 2192
+  rpc = ["https://mainnet.snaxchain.io"]
+  explorers = ["https://explorer.snaxchain.io"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Soneium"
@@ -273,6 +343,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "Superseed"
@@ -286,6 +358,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Swan Chain Mainnet"
@@ -299,6 +373,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Swellchain"
@@ -312,6 +388,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "Unichain"
@@ -320,11 +398,13 @@
   rpc = ["https://mainnet.unichain.org"]
   explorers = ["https://explorer.unichain.org"]
   superchain_level = 1
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissionless"
 
 [[chains]]
   name = "World Chain"
@@ -338,6 +418,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "Xterio Chain (ETH)"
@@ -351,6 +433,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Zora"
@@ -364,6 +448,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "arena-z"
@@ -377,6 +463,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "Base Sepolia Testnet"
@@ -390,6 +478,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissionless"
 
 [[chains]]
   name = "Binary Sepolia"
@@ -404,6 +494,23 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
+
+[[chains]]
+  name = "Boba Sepolia Testnet"
+  identifier = "sepolia/boba"
+  chain_id = 28882
+  rpc = ["https://sepolia.boba.network"]
+  explorers = ["https://testnet.bobascan.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissionless"
 
 [[chains]]
   name = "Creator Chain Testnet"
@@ -417,6 +524,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Cyber Testnet"
@@ -430,6 +539,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Ethernity Testnet"
@@ -443,6 +554,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Funki Sepolia Testnet"
@@ -456,6 +569,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Ink Sepolia"
@@ -469,6 +584,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissionless"
 
 [[chains]]
   name = "Lisk Sepolia Testnet"
@@ -482,6 +599,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Metal L2 Testnet"
@@ -495,6 +614,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Mode Testnet"
@@ -508,6 +629,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "OP Sepolia Testnet"
@@ -521,6 +644,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissionless"
 
 [[chains]]
   name = "Ozean Poseidon Testnet"
@@ -548,6 +673,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "RACE Testnet"
@@ -561,6 +688,23 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "Settlus Sepolia"
+  identifier = "sepolia/settlus-sepolia"
+  chain_id = 5373
+  rpc = ["https://settlus-septestnet.g.alchemy.com/public"]
+  explorers = ["sepolia.settlus.network"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "Shape Sepolia Testnet"
@@ -574,6 +718,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "Soneium Testnet Minato"
@@ -587,6 +733,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "Unichain Sepolia Testnet"
@@ -595,11 +743,13 @@
   rpc = ["https://sepolia.unichain.org"]
   explorers = ["https://sepolia.uniscan.xyz"]
   superchain_level = 1
-  governed_by_optimism = false
+  governed_by_optimism = true
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissionless"
 
 [[chains]]
   name = "World Chain Sepolia Testnet"
@@ -613,6 +763,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "Zora Sepolia Testnet"
@@ -626,19 +778,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia"
-
-[[chains]]
-  name = "arena-z-testnet"
-  identifier = "sepolia/arena-z-testnet"
-  chain_id = 9897
-  rpc = ["https://rpc.arena-z.t.raas.gelato.cloud"]
-  explorers = ["https://arena-z.blockscout.com"]
-  superchain_level = 1
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
 
 [[chains]]
   name = "Base devnet 0"
@@ -652,6 +793,8 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia-dev-0"
+  [chains.fault_proofs]
+    status = "permissionless"
 
 [[chains]]
   name = "OP Labs Sepolia devnet 0"
@@ -665,3 +808,20 @@
   [chains.parent]
     type = "L2"
     chain = "sepolia-dev-0"
+  [chains.fault_proofs]
+    status = "permissionless"
+
+[[chains]]
+  name = "Boba Mainnet"
+  identifier = "mainnet/boba"
+  chain_id = 288
+  rpc = ["https://mainnet.boba.network"]
+  explorers = ["https://bobascan.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
