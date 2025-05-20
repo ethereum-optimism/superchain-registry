@@ -103,6 +103,7 @@ func ValidateGenesisIntegrity(cfg *config.Chain, genesis *core.Genesis) error {
 		FjordTime:               cfg.Hardforks.FjordTime.U64Ptr(),
 		GraniteTime:             cfg.Hardforks.GraniteTime.U64Ptr(),
 		HoloceneTime:            cfg.Hardforks.HoloceneTime.U64Ptr(),
+		InteropTime:             cfg.Hardforks.InteropTime.U64Ptr(),
 		TerminalTotalDifficulty: common.Big0,
 		Ethash:                  nil,
 		Clique:                  nil,
