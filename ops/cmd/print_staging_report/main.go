@@ -141,7 +141,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		}
 
 		var params validation.ConfigParams
-		if err := paths.ReadTOMLFile(paths.ValidationsFile(wd, string(chainCfg.Superchain)), &params); err != nil {
+		if err := paths.ReadTOMLFile(paths.ValidationsFile(wd, chainCfg.Superchain), &params); err != nil {
 			return fmt.Errorf("failed to read standard params: %w", err)
 		}
 
