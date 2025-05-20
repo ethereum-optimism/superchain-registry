@@ -66,6 +66,9 @@ func (dc *DepsetChecker) Check() error {
 			if err != nil {
 				return fmt.Errorf("chain ID cannot be converted to a uint64: %s", chainId)
 			}
+			if _, ok := dc.diskChainCfgs[chainIdUint64]; !ok {
+				return fmt.Errorf("chain ID %d not found in diskChainCfgs", chainIdUint64)
+			}
 			depsetCfgs = append(depsetCfgs, dc.diskChainCfgs[chainIdUint64])
 		}
 
