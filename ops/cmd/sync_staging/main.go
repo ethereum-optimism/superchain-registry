@@ -70,7 +70,7 @@ func action(cliCtx *cli.Context) error {
 		}
 		stagedSuperchainDefinition.L1.PublicRPC = l1RpcUrl
 		err = manage.WriteSuperchainDefinition(
-			path.Join(wd, "superchain", "configs", stagedSuperchainDefinition.Name, "superchain.toml"),
+			paths.SuperchainDefinitionPath(wd, config.Superchain(stagedSuperchainDefinition.Name)),
 			stagedSuperchainDefinition)
 		if err != nil {
 			return fmt.Errorf("failed to write superchain definition: %w", err)

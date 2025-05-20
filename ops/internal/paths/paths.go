@@ -83,6 +83,10 @@ func SuperchainConfigsDir(wd string) string {
 	return path.Join(wd, "superchain", "configs")
 }
 
+func SuperchainDefinitionPath(wd string, superchain config.Superchain) string {
+	return path.Join(SuperchainConfigsDir(wd), string(superchain), "superchain.toml")
+}
+
 func Superchains(wd string) ([]config.Superchain, error) {
 	configsDir := SuperchainConfigsDir(wd)
 
