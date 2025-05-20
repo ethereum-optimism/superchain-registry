@@ -174,7 +174,6 @@ func CopyDeployConfigHFTimes(src *genesis.UpgradeScheduleDeployConfig, dst *conf
 var (
 	ErrNoStagedConfig               = errors.New("no staged chain config found")
 	ErrNoStagedSuperchainDefinition = errors.New("no staged superchain definition found")
-	ErrMultipleConfigs              = errors.New("only one TOML file is allowed in the staging directory at a time")
 )
 
 func StagedChainConfigs(rootP string) ([]*config.StagedChain, error) {
