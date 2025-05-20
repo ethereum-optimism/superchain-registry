@@ -200,7 +200,7 @@ func StagedChainConfigs(rootP string) ([]*config.StagedChain, error) {
 }
 
 // StagedSuperchainDefinition finds a superchain.toml file in the staging directory
-// (if it exits) and returns the parsed SuperchainDefinition struct.
+// (if it exists) and returns the parsed SuperchainDefinition struct.
 func StagedSuperchainDefinition(rootP string) (*config.SuperchainDefinition, error) {
 	// find the superchain.toml file
 	files, err := paths.CollectFiles(paths.StagingDir(rootP), paths.SuperchainDefinitionMatcher())
