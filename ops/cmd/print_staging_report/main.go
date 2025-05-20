@@ -116,7 +116,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 			stdRoles = validation.StandardConfigRolesSepolia
 			l1RPCURL = cliCtx.String(SepoliaRPCURLFlag.Name)
 		default:
-			output.WriteNotOK("skipping staging report for chain %s in unsupported superchain: %s",
+			output.WriteOK("skipping staging report for chain %s in unsupported superchain: %s",
 				chainCfg.ShortName, chainCfg.Superchain)
 			continue
 		}
