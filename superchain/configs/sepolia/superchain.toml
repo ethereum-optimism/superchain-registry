@@ -9,6 +9,8 @@ ecotone_time = 1708534800 # Wed 21 Feb 2024 17:00:00 UTC
 fjord_time =   1716998400 # Wed 29 May 2024 16:00:00 UTC
 granite_time = 1723478400 # Mon Aug 12 16:00:00 UTC 2024
 holocene_time = 1732633200 # Tue Nov 26 15:00:00 UTC 2024
+pectra_blob_schedule_time = 1742486400 # Thu Mar 20 16:00:00 UTC 2025
+isthmus_time = 1744905600 # Thu Apr 17 16:00:00 UTC 2025
 
 [l1]
   chain_id = 11155111

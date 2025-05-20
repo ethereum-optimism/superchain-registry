@@ -22,14 +22,16 @@ func TestCollectChainConfigs(t *testing.T) {
 
 	require.Equal(t, []DiskChainConfig{
 		{
-			ShortName: "op",
-			Filepath:  paths.ChainConfig("testdata", "sepolia", "op"),
-			Config:    &opConfig,
+			ShortName:  "op",
+			Filepath:   paths.ChainConfig("testdata", "sepolia", "op"),
+			Superchain: config.SepoliaSuperchain,
+			Config:     &opConfig,
 		},
 		{
-			ShortName: "testchain",
-			Filepath:  paths.ChainConfig("testdata", "sepolia", "testchain"),
-			Config:    &testChainConfig,
+			ShortName:  "testchain",
+			Filepath:   paths.ChainConfig("testdata", "sepolia", "testchain"),
+			Superchain: config.SepoliaSuperchain,
+			Config:     &testChainConfig,
 		},
 	}, chains)
 }

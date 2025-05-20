@@ -19,6 +19,8 @@ max_sequencer_drift = 600
   fjord_time = 1716998400 # Wed 29 May 2024 16:00:00 UTC
   granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
   holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
+  pectra_blob_schedule_time = 1742486400 # Thu 20 Mar 2025 16:00:00 UTC
+  isthmus_time = 1744905600 # Thu 17 Apr 2025 16:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -57,10 +59,10 @@ max_sequencer_drift = 600
   OptimismPortalProxy = "0x16Fc5058F25648194471939df75CF27A2fdC48BC"
   SystemConfigProxy = "0x034edD2A225f7f429A63E0f1D2084B9E0A93b538"
   ProxyAdmin = "0x189aBAAaa82DfC015A588A7dbaD6F13b1D3485Bc"
-  AnchorStateRegistryProxy = "0x218CD9489199F321E1177b56385d333c5B598629"
-  DelayedWETHProxy = "0xcdFdC692a53B4aE9F81E0aEBd26107Da4a71dB84"
+  AnchorStateRegistryProxy = "0xDB2727Fc71176Bf8ED630F4142e0439733588e85"
+  DelayedWETHProxy = "0x9C7750C1c7b39E6b0eFeec06A1F2cf06190f6018"
   DisputeGameFactoryProxy = "0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1"
-  FaultDisputeGame = "0xF3CcF0C4b51D42cFe6073F0278c19A8D1900e856"
-  MIPS = "0x47B0E34C1054009e696BaBAAd56165e1e994144d"
-  PermissionedDisputeGame = "0xbbDBdfe37C02439764dE0e41C906e4396B5B3914"
-  PreimageOracle = "0x92240135b46fc1142dA181f550aE8f595B858854"
+  FaultDisputeGame = "0x38c2b9A214cDc3bBBc4915Dae8c2F0a7917952Dd"
+  MIPS = "0xF027F4A985560fb13324e943edf55ad6F1d15Dc1"
+  PermissionedDisputeGame = "0x3dbfB370be95Eb598C8b89B45d7c101dC1679AB9"
+  PreimageOracle = "0x1fb8cdFc6831fc866Ed9C51aF8817Da5c287aDD3"

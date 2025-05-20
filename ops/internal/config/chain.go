@@ -6,7 +6,9 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/ethereum-optimism/optimism/op-chain-ops/addresses"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
+	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -100,13 +102,14 @@ func (c Chain) ChainListEntry(superchain Superchain, shortName string) ChainList
 }
 
 type Hardforks struct {
-	CanyonTime   *HardforkTime `toml:"canyon_time"`
-	DeltaTime    *HardforkTime `toml:"delta_time"`
-	EcotoneTime  *HardforkTime `toml:"ecotone_time"`
-	FjordTime    *HardforkTime `toml:"fjord_time"`
-	GraniteTime  *HardforkTime `toml:"granite_time"`
-	HoloceneTime *HardforkTime `toml:"holocene_time"`
-	IsthmusTime  *HardforkTime `toml:"isthmus_time"`
+	CanyonTime             *HardforkTime `toml:"canyon_time"`
+	DeltaTime              *HardforkTime `toml:"delta_time"`
+	EcotoneTime            *HardforkTime `toml:"ecotone_time"`
+	FjordTime              *HardforkTime `toml:"fjord_time"`
+	GraniteTime            *HardforkTime `toml:"granite_time"`
+	HoloceneTime           *HardforkTime `toml:"holocene_time"`
+	PectraBlobScheduleTime *HardforkTime `toml:"pectra_blob_schedule_time,omitempty"`
+	IsthmusTime            *HardforkTime `toml:"isthmus_time"`
 }
 
 type Genesis struct {
@@ -148,8 +151,8 @@ type Roles struct {
 	ProxyAdminOwner   *ChecksummedAddress `json:"ProxyAdminOwner" toml:"ProxyAdminOwner"`
 	Guardian          *ChecksummedAddress `json:"Guardian" toml:"Guardian"`
 	Challenger        *ChecksummedAddress `json:"Challenger" toml:"Challenger"`
-	Proposer          *ChecksummedAddress `json:"Proposer,omitempty" toml:"Proposer,omitempty"`
-	UnsafeBlockSigner *ChecksummedAddress `json:"UnsafeBlockSigner,omitempty" toml:"UnsafeBlockSigner,omitempty"`
+	Proposer          *ChecksummedAddress `json:"Proposer" toml:"Proposer"`
+	UnsafeBlockSigner *ChecksummedAddress `json:"UnsafeBlockSigner" toml:"UnsafeBlockSigner"`
 	BatchSubmitter    *ChecksummedAddress `json:"BatchSubmitter" toml:"BatchSubmitter"`
 }
 
@@ -181,34 +184,93 @@ type AddressesWithRoles struct {
 	Roles
 }
 
-func (a AddressesWithRoles) MarshalJSON() ([]byte, error) {
-	// Create a map to hold all fields
-	allFields := make(map[string]*ChecksummedAddress)
+func CreateAddressesWithRolesFromFetcher(addrs script.Addresses, roles addresses.OpChainRoles) AddressesWithRoles {
+	addressesWithRoles := AddressesWithRoles{
+		Addresses: Addresses{
+			AddressManager:                    NewChecksummedAddress(addrs.AddressManagerImpl),
+			L1CrossDomainMessengerProxy:       NewChecksummedAddress(addrs.L1CrossDomainMessengerProxy),
+			L1ERC721BridgeProxy:               NewChecksummedAddress(addrs.L1Erc721BridgeProxy),
+			L1StandardBridgeProxy:             NewChecksummedAddress(addrs.L1StandardBridgeProxy),
+			L2OutputOracleProxy:               NewChecksummedAddress(addrs.L2OutputOracleProxy),
+			OptimismMintableERC20FactoryProxy: NewChecksummedAddress(addrs.OptimismMintableErc20FactoryProxy),
+			OptimismPortalProxy:               NewChecksummedAddress(addrs.OptimismPortalProxy),
+			SystemConfigProxy:                 NewChecksummedAddress(addrs.SystemConfigProxy),
+			ProxyAdmin:                        NewChecksummedAddress(addrs.OpChainProxyAdminImpl),
+			SuperchainConfig:                  NewChecksummedAddress(addrs.SuperchainConfigProxy),
+			AnchorStateRegistryProxy:          NewChecksummedAddress(addrs.AnchorStateRegistryProxy),
+			DisputeGameFactoryProxy:           NewChecksummedAddress(addrs.DisputeGameFactoryProxy),
+			FaultDisputeGame:                  NewChecksummedAddress(addrs.FaultDisputeGameImpl),
+			MIPS:                              NewChecksummedAddress(addrs.MipsImpl),
+			PermissionedDisputeGame:           NewChecksummedAddress(addrs.PermissionedDisputeGameImpl),
+			PreimageOracle:                    NewChecksummedAddress(addrs.PreimageOracleImpl),
+		},
+		Roles: Roles{
+			SystemConfigOwner: NewChecksummedAddress(roles.SystemConfigOwner),
+			ProxyAdminOwner:   NewChecksummedAddress(roles.OpChainProxyAdminOwner),
+			Guardian:          NewChecksummedAddress(roles.Guardian),
+			Challenger:        NewChecksummedAddress(roles.Challenger),
+			Proposer:          NewChecksummedAddress(roles.Proposer),
+			UnsafeBlockSigner: NewChecksummedAddress(roles.UnsafeBlockSigner),
+			BatchSubmitter:    NewChecksummedAddress(roles.BatchSubmitter),
+		},
+	}
+	// Hack until we separate the permissioned and permissionless WETH proxies
+	if addrs.DelayedWethPermissionlessGameProxy != (common.Address{}) {
+		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addrs.DelayedWethPermissionlessGameProxy)
+	} else {
+		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addrs.DelayedWethPermissionedGameProxy)
+	}
 
-	for _, embed := range []any{a.Addresses, a.Roles} {
-		val := reflect.ValueOf(embed)
-		typ := reflect.TypeOf(embed)
+	return addressesWithRoles
+}
+
+func (a AddressesWithRoles) MarshalJSON() ([]byte, error) {
+	// Create a map to hold non-zero address fields
+	allFields := make(map[string]string)
+
+	// Declare processStruct variable first to allow recursion
+	var processStruct func(interface{})
+
+	processStruct = func(structVal interface{}) {
+		val := reflect.ValueOf(structVal)
+		typ := reflect.TypeOf(structVal)
+
 		for i := 0; i < val.NumField(); i++ {
 			field := val.Field(i)
 
-			jsonTag := typ.Field(i).Tag.Get("json")
-			tagSplit := strings.Split(jsonTag, ",")
-			fieldName := tagSplit[0]
-			var omitEmpty bool
-			if fieldName == "" {
-				fieldName = typ.Field(i).Name
-			}
-			if len(tagSplit) > 1 {
-				omitEmpty = tagSplit[1] == "omitempty"
+			// Handle embedded structs
+			if field.Kind() == reflect.Struct && typ.Field(i).Anonymous {
+				processStruct(field.Interface())
+				continue
 			}
 
-			if !omitEmpty && field.IsNil() {
-				allFields[fieldName] = nil
-			} else if !field.IsNil() {
-				allFields[fieldName] = field.Interface().(*ChecksummedAddress)
+			// Process ChecksummedAddress pointers
+			if field.Type() == reflect.TypeOf((*ChecksummedAddress)(nil)) {
+				// Get field name from JSON tag or struct field name
+				jsonTag := typ.Field(i).Tag.Get("json")
+				fieldName := strings.Split(jsonTag, ",")[0]
+				if fieldName == "" {
+					fieldName = typ.Field(i).Name
+				}
+
+				// Skip nil pointers
+				if field.IsNil() {
+					continue
+				}
+
+				// Get the address as string
+				addrPtr := field.Interface().(*ChecksummedAddress)
+				if addrPtr != nil && *addrPtr != (ChecksummedAddress{}) {
+					allFields[fieldName] = addrPtr.String()
+				}
+				continue
 			}
 		}
 	}
+
+	// Process both embedded structs
+	processStruct(a.Addresses)
+	processStruct(a.Roles)
 
 	return json.Marshal(allFields)
 }

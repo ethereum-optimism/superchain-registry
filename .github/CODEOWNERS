@@ -1,2 +1,4 @@
 # Default code-owner
 * @ethereum-optimism/superchain-registry-reviewers
+
+/validation/standard/standard-prestates.toml @ethereum-optimism/proofs @ethereum-optimism/superchain-registry-reviewers
