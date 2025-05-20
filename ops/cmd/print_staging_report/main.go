@@ -95,85 +95,87 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 
 	stagedChainCfgs, err := manage.StagedChainConfigs(wd)
 
-	for _, chainCfg := range stagedChainCfgs {
-		if errors.Is(err, manage.ErrNoStagedConfig) {
-			output.WriteOK("no staged chain config found, exiting")
-			return nil
-		}
-		if err != nil {
-			return fmt.Errorf("failed to get staged chain config: %w", err)
-		}
-		var stdConfigs validation.ConfigParams
-		var stdRoles validation.RolesConfig
-		var l1RPCURL string
-		switch chainCfg.Superchain {
-		case config.MainnetSuperchain:
-			stdConfigs = validation.StandardConfigParamsMainnet
-			stdRoles = validation.StandardConfigRolesMainnet
-			l1RPCURL = cliCtx.String(MainnetRPCURLFlag.Name)
-		case config.SepoliaSuperchain:
-			stdConfigs = validation.StandardConfigParamsSepolia
-			stdRoles = validation.StandardConfigRolesSepolia
-			l1RPCURL = cliCtx.String(SepoliaRPCURLFlag.Name)
-		default:
-			output.WriteOK("skipping staging report for chain %s in unsupported superchain: %s",
-				chainCfg.ShortName, chainCfg.Superchain)
-			continue
-		}
-
-		genesisFilename := chainCfg.ShortName + ".json.zst"
-		originalGenesis, err := manage.ReadGenesis(wd, path.Join(paths.StagingDir(wd), genesisFilename))
-		if err != nil {
-			return fmt.Errorf("failed to read genesis: %w", err)
-		}
-
-		if chainCfg.DeploymentTxHash == nil {
-			return fmt.Errorf("deployment tx hash is required")
-		}
-
-		contractsVersion := validation.Semver(chainCfg.DeploymentL1ContractsVersion.Tag)
-		stdPrestate := validation.StandardPrestates.StablePrestate()
-		stdVersions := validation.StandardVersionsMainnet[contractsVersion]
-
-		rpcClient, err := rpc.Dial(l1RPCURL)
-		if err != nil {
-			return fmt.Errorf("failed to dial RPC client: %w", err)
-		}
-
-		var params validation.ConfigParams
-		if err := paths.ReadTOMLFile(paths.ValidationsFile(wd, chainCfg.Superchain), &params); err != nil {
-			return fmt.Errorf("failed to read standard params: %w", err)
-		}
-
-		ctx, cancel := context.WithTimeout(cliCtx.Context, 5*time.Minute)
-		defer cancel()
-
-		allReport := report.ScanAll(ctx, rpcClient, chainCfg, originalGenesis)
-		output.WriteOK("scanned L1 and L2")
-
-		comment, err := report.RenderComment(
-			&allReport,
-			stdConfigs,
-			stdRoles,
-			stdPrestate,
-			stdVersions,
-			gitSHA,
-		)
-		if err != nil {
-			return fmt.Errorf("failed to render comment: %w", err)
-		}
-
-		if githubToken == "" {
-			output.WriteOK("skipping GitHub comment, no token provided")
-		} else {
-			if err := postGithubComment(ctx, prURL, githubRepo, githubToken, comment); err != nil {
-				output.WriteNotOK("failed to post comment: %v", err)
-			}
-		}
-
-		_, _ = fmt.Fprintf(os.Stdout, "%s\n", comment)
+	if len(stagedChainCfgs) > 1 {
+		output.WriteWarn("multiple staged chain configs found, only the first one will be used")
 	}
 
+	chainCfg := stagedChainCfgs[0]
+	if errors.Is(err, manage.ErrNoStagedConfig) {
+		output.WriteOK("no staged chain config found, exiting")
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("failed to get staged chain config: %w", err)
+	}
+	var stdConfigs validation.ConfigParams
+	var stdRoles validation.RolesConfig
+	var l1RPCURL string
+	switch chainCfg.Superchain {
+	case config.MainnetSuperchain:
+		stdConfigs = validation.StandardConfigParamsMainnet
+		stdRoles = validation.StandardConfigRolesMainnet
+		l1RPCURL = cliCtx.String(MainnetRPCURLFlag.Name)
+	case config.SepoliaSuperchain:
+		stdConfigs = validation.StandardConfigParamsSepolia
+		stdRoles = validation.StandardConfigRolesSepolia
+		l1RPCURL = cliCtx.String(SepoliaRPCURLFlag.Name)
+	default:
+		output.WriteWarn("skipping staging report for chain %s in unsupported superchain: %s",
+			chainCfg.ShortName, chainCfg.Superchain)
+		return nil
+	}
+
+	genesisFilename := chainCfg.ShortName + ".json.zst"
+	originalGenesis, err := manage.ReadGenesis(wd, path.Join(paths.StagingDir(wd), genesisFilename))
+	if err != nil {
+		return fmt.Errorf("failed to read genesis: %w", err)
+	}
+
+	if chainCfg.DeploymentTxHash == nil {
+		return fmt.Errorf("deployment tx hash is required")
+	}
+
+	contractsVersion := validation.Semver(chainCfg.DeploymentL1ContractsVersion.Tag)
+	stdPrestate := validation.StandardPrestates.StablePrestate()
+	stdVersions := validation.StandardVersionsMainnet[contractsVersion]
+
+	rpcClient, err := rpc.Dial(l1RPCURL)
+	if err != nil {
+		return fmt.Errorf("failed to dial RPC client: %w", err)
+	}
+
+	var params validation.ConfigParams
+	if err := paths.ReadTOMLFile(paths.ValidationsFile(wd, chainCfg.Superchain), &params); err != nil {
+		return fmt.Errorf("failed to read standard params: %w", err)
+	}
+
+	ctx, cancel := context.WithTimeout(cliCtx.Context, 5*time.Minute)
+	defer cancel()
+
+	allReport := report.ScanAll(ctx, rpcClient, chainCfg, originalGenesis)
+	output.WriteOK("scanned L1 and L2")
+
+	comment, err := report.RenderComment(
+		&allReport,
+		stdConfigs,
+		stdRoles,
+		stdPrestate,
+		stdVersions,
+		gitSHA,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to render comment: %w", err)
+	}
+
+	if githubToken == "" {
+		output.WriteOK("skipping GitHub comment, no token provided")
+	} else {
+		if err := postGithubComment(ctx, prURL, githubRepo, githubToken, comment); err != nil {
+			output.WriteNotOK("failed to post comment: %v", err)
+		}
+	}
+
+	_, _ = fmt.Fprintf(os.Stdout, "%s\n", comment)
 	return nil
 }
 
