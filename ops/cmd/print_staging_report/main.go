@@ -161,6 +161,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		stdPrestate,
 		stdVersions,
 		gitSHA,
+		chainCfg.ShortName,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to render comment: %w", err)
