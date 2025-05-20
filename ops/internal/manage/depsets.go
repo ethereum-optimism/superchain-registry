@@ -72,10 +72,9 @@ func (dc *DepsetChecker) Check() error {
 		if err := dc.checkOffchain(depsetCfgs); err != nil {
 			return fmt.Errorf("invalid depset (offchain consistency): %w", err)
 		}
-		// TODO: re-enable this once we can pull in the updated op-fetcher from monorepo
-		//if err := dc.checkOnchain(depsetCfgs); err != nil {
-		//return fmt.Errorf("invalid depset (onchain addresses): %w", err)
-		//}
+		if err := dc.checkOnchain(depsetCfgs); err != nil {
+			return fmt.Errorf("invalid depset (onchain addresses): %w", err)
+		}
 
 		// mark all chains in the depset as processed to avoid repeats
 		for _, dep := range depsetCfgs {
@@ -193,7 +192,8 @@ func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 	}
 
 	firstDisputeGameFactoryProxy := strings.ToLower((*firstAddrs.DisputeGameFactoryProxy).String())
-	firstEthLockboxProxy := strings.ToLower((*firstAddrs.EthLockboxProxy).String())
+	// TODO: re-enable this once we can pull in the updated op-fetcher from monorepo
+	// firstEthLockboxProxy := strings.ToLower((*firstAddrs.EthLockboxProxy).String())
 
 	// Check all chains in the dependency set
 	for _, cfg := range cfgs {
@@ -206,10 +206,11 @@ func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 			return fmt.Errorf("DisputeGameFactoryProxy address mismatch for chain %d, expected %s, got %s",
 				cfg.Config.ChainID, firstDisputeGameFactoryProxy, addrs.DisputeGameFactoryProxy)
 		}
-		if strings.ToLower((*addrs.EthLockboxProxy).String()) != firstEthLockboxProxy {
-			return fmt.Errorf("EthLockboxProxy address mismatch for chain %d, expected %s, got %s",
-				cfg.Config.ChainID, firstEthLockboxProxy, addrs.EthLockboxProxy)
-		}
+		// TODO: re-enable this once we can pull in the updated op-fetcher from monorepo
+		//if strings.ToLower((*addrs.EthLockboxProxy).String()) != firstEthLockboxProxy {
+		//	return fmt.Errorf("EthLockboxProxy address mismatch for chain %d, expected %s, got %s",
+		//		cfg.Config.ChainID, firstEthLockboxProxy, addrs.EthLockboxProxy)
+		//}
 	}
 
 	return nil
@@ -231,8 +232,9 @@ func (dc *DepsetChecker) getAndValidateAddresses(chainID uint64) (*config.Addres
 	if addrs.DisputeGameFactoryProxy == nil || *addrs.DisputeGameFactoryProxy == zeroAddress {
 		return nil, fmt.Errorf("%w: no DisputeGameFactoryProxy found for chain %d", errMissingAddress, chainID)
 	}
-	if addrs.EthLockboxProxy == nil || *addrs.EthLockboxProxy == zeroAddress {
-		return nil, fmt.Errorf("%w: no EthLockboxProxy found for chain %d", errMissingAddress, chainID)
-	}
+	// TODO: re-enable this once we can pull in the updated op-fetcher from monorepo
+	//if addrs.EthLockboxProxy == nil || *addrs.EthLockboxProxy == zeroAddress {
+	//return nil, fmt.Errorf("%w: no EthLockboxProxy found for chain %d", errMissingAddress, chainID)
+	//}
 	return addrs, nil
 }
