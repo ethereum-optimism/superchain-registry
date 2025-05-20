@@ -10,7 +10,6 @@ import (
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
-	"github.com/ethereum-optimism/optimism/op-supervisor/supervisor/backend/depset"
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -61,28 +60,37 @@ type StagedChain struct {
 	DeploymentL2ContractsVersion *artifacts.Locator `toml:"deployment_l2_contracts_version"`
 }
 
+type Dependency struct {
+	ChainIndex     uint32 `json:"chainIndex" toml:"chain_index"`
+	ActivationTime uint64 `json:"activationTime" toml:"activation_time"`
+}
+
+type Interop struct {
+	Dependencies map[string]Dependency `json:"dependencies" toml:"dependencies"`
+}
+
 type Chain struct {
-	Name                 string                            `toml:"name"`
-	PublicRPC            string                            `toml:"public_rpc"`
-	SequencerRPC         string                            `toml:"sequencer_rpc"`
-	Explorer             string                            `toml:"explorer"`
-	SuperchainLevel      SuperchainLevel                   `toml:"superchain_level"`
-	GovernedByOptimism   bool                              `toml:"governed_by_optimism"`
-	SuperchainTime       *uint64                           `toml:"superchain_time"`
-	DataAvailabilityType string                            `toml:"data_availability_type"`
-	ChainID              uint64                            `toml:"chain_id"`
-	BatchInboxAddr       *ChecksummedAddress               `toml:"batch_inbox_addr"`
-	BlockTime            uint64                            `toml:"block_time"`
-	SeqWindowSize        uint64                            `toml:"seq_window_size"`
-	MaxSequencerDrift    uint64                            `toml:"max_sequencer_drift"`
-	GasPayingToken       *ChecksummedAddress               `toml:"gas_paying_token,omitempty"`
-	Hardforks            Hardforks                         `toml:"hardforks"`
-	Interop              *depset.StaticConfigDependencySet `toml:"interop,omitempty"`
-	Optimism             Optimism                          `toml:"optimism"`
-	AltDA                *AltDA                            `toml:"alt_da"`
-	Genesis              Genesis                           `toml:"genesis"`
-	Roles                Roles                             `toml:"roles"`
-	Addresses            Addresses                         `toml:"addresses"`
+	Name                 string              `toml:"name"`
+	PublicRPC            string              `toml:"public_rpc"`
+	SequencerRPC         string              `toml:"sequencer_rpc"`
+	Explorer             string              `toml:"explorer"`
+	SuperchainLevel      SuperchainLevel     `toml:"superchain_level"`
+	GovernedByOptimism   bool                `toml:"governed_by_optimism"`
+	SuperchainTime       *uint64             `toml:"superchain_time"`
+	DataAvailabilityType string              `toml:"data_availability_type"`
+	ChainID              uint64              `toml:"chain_id"`
+	BatchInboxAddr       *ChecksummedAddress `toml:"batch_inbox_addr"`
+	BlockTime            uint64              `toml:"block_time"`
+	SeqWindowSize        uint64              `toml:"seq_window_size"`
+	MaxSequencerDrift    uint64              `toml:"max_sequencer_drift"`
+	GasPayingToken       *ChecksummedAddress `toml:"gas_paying_token,omitempty"`
+	Hardforks            Hardforks           `toml:"hardforks"`
+	Interop              *Interop            `toml:"interop,omitempty"`
+	Optimism             Optimism            `toml:"optimism"`
+	AltDA                *AltDA              `toml:"alt_da"`
+	Genesis              Genesis             `toml:"genesis"`
+	Roles                Roles               `toml:"roles"`
+	Addresses            Addresses           `toml:"addresses"`
 }
 
 func (c Chain) ChainListEntry(superchain Superchain, shortName string) ChainListEntry {

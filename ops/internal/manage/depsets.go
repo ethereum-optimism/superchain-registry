@@ -3,10 +3,10 @@ package manage
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-service/eth"
-	"github.com/ethereum-optimism/optimism/op-supervisor/supervisor/backend/depset"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum/go-ethereum/log"
 )
@@ -16,6 +16,7 @@ var (
 	errDepsetLengths         = errors.New("inconsistent depset lengths")
 	errInconsistentDepsets   = errors.New("inconsistent depset values")
 	errMissingAddress        = errors.New("missing address")
+	errDuplicateChainIndex   = errors.New("duplicate chain index")
 )
 
 type DepsetChecker struct {
@@ -58,12 +59,12 @@ func (dc *DepsetChecker) Check() error {
 
 		// collect all chains in the depset, then process them
 		depsetCfgs := []DiskChainConfig{}
-		depset := cfg.Config.Interop.Dependencies()
+		depset := cfg.Config.Interop.Dependencies
 
 		for chainId := range depset {
-			chainIdUint64, ok := chainId.Uint64()
-			if !ok {
-				return fmt.Errorf("chain ID is not a uint64: %v", chainId)
+			chainIdUint64, err := strconv.ParseUint(chainId, 10, 64)
+			if err != nil {
+				return fmt.Errorf("chain ID cannot be converted to a uint64: %s", chainId)
 			}
 			depsetCfgs = append(depsetCfgs, dc.diskChainCfgs[chainIdUint64])
 		}
@@ -71,9 +72,10 @@ func (dc *DepsetChecker) Check() error {
 		if err := dc.checkOffchain(depsetCfgs); err != nil {
 			return fmt.Errorf("invalid depset (offchain consistency): %w", err)
 		}
-		if err := dc.checkOnchain(depsetCfgs); err != nil {
-			return fmt.Errorf("invalid depset (onchain addresses): %w", err)
-		}
+		// TODO: re-enable this once we can pull in the updated op-fetcher from monorepo
+		//if err := dc.checkOnchain(depsetCfgs); err != nil {
+		//return fmt.Errorf("invalid depset (onchain addresses): %w", err)
+		//}
 
 		// mark all chains in the depset as processed to avoid repeats
 		for _, dep := range depsetCfgs {
@@ -100,11 +102,22 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 	}
 
 	var firstSuperchain string
-	var firstDepset map[eth.ChainID]*depset.StaticConfigDependency
+	var firstDepset map[string]config.Dependency
 	for i, cfg := range cfgs {
 		if i == 0 {
 			firstSuperchain = cfg.Superchain
-			firstDepset = cfg.Config.Interop.Dependencies()
+			firstDepset = cfg.Config.Interop.Dependencies
+
+			// Check for duplicate chain indices in the first config
+			chainIndices := make(map[uint32]string, len(firstDepset))
+			for chainID, dep := range firstDepset {
+				if existingChainID, exists := chainIndices[dep.ChainIndex]; exists {
+					return fmt.Errorf("%w: index %d used for chains %s and %s",
+						errDuplicateChainIndex, dep.ChainIndex, existingChainID, chainID)
+				}
+				chainIndices[dep.ChainIndex] = chainID
+			}
+
 		}
 
 		// check that all chains in the depset are part of the same superchain
@@ -113,8 +126,8 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 		}
 
 		// check that activation_time is valid
-		thisDepset := cfg.Config.Interop.Dependencies()
-		chainId := eth.ChainIDFromUInt64(cfg.Config.ChainID)
+		thisDepset := cfg.Config.Interop.Dependencies
+		chainId := strconv.FormatUint(cfg.Config.ChainID, 10)
 		if cfg.Config.Hardforks.InteropTime == nil {
 			return fmt.Errorf("chain %d has no hardfork timestamp for interop", cfg.Config.ChainID)
 		}
@@ -154,11 +167,6 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 					return fmt.Errorf("%w: chain %d has different activation time for dependency %s (%d vs %d)",
 						errInconsistentDepsets,
 						cfg.Config.ChainID, chainID, otherDep.ActivationTime, dep.ActivationTime)
-				}
-				if dep.HistoryMinTime != otherDep.HistoryMinTime {
-					return fmt.Errorf("%w: chain %d has different history min time for dependency %s (%d vs %d)",
-						errInconsistentDepsets,
-						cfg.Config.ChainID, chainID, otherDep.HistoryMinTime, dep.HistoryMinTime)
 				}
 			}
 		}
