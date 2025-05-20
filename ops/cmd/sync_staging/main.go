@@ -48,6 +48,7 @@ func main() {
 }
 
 func action(cliCtx *cli.Context) error {
+	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
 	l1RpcUrls := cliCtx.StringSlice(FlagL1RPCURLs.Name)
 	check := cliCtx.Bool(FlagCheck.Name)
 	noCleanup := cliCtx.Bool(FlagPreserveInput.Name)
@@ -63,7 +64,7 @@ func action(cliCtx *cli.Context) error {
 	if err == nil {
 		output.WriteOK("superchain definition found, finding L1 RPC URL...")
 		l1RpcUrl, err = config.FindValidL1URL(cliCtx.Context,
-			log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false)),
+			lgr,
 			l1RpcUrls, stagedSuperchainDefinition.L1.ChainID)
 		if err != nil {
 			return fmt.Errorf("failed to find valid L1 RPC URL: %w", err)
@@ -152,7 +153,6 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	// Codegen
-	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
 	ctx := cliCtx.Context
 	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, []string{l1RpcUrl}, chainIds, []config.Superchain{})
 	if err != nil {
