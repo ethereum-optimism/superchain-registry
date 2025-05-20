@@ -9,25 +9,13 @@ import (
 	"github.com/ethereum/go-ethereum/log"
 )
 
-type Superchain string
+type Superchain = string
 
 const (
 	MainnetSuperchain     Superchain = "mainnet"
 	SepoliaSuperchain     Superchain = "sepolia"
 	SepoliaDev0Superchain Superchain = "sepolia-dev-0"
 )
-
-func ParseSuperchain(in string) (Superchain, error) {
-	return Superchain(in), nil
-}
-
-func MustParseSuperchain(in string) Superchain {
-	sup, err := ParseSuperchain(in)
-	if err != nil {
-		panic(err)
-	}
-	return sup
-}
 
 // FindValidL1URL finds a valid l1-rpc-url for a given superchain by finding matching l1 chainId
 func FindValidL1URL(ctx context.Context, lgr log.Logger, urls []string, superchainId uint64) (string, error) {
@@ -77,15 +65,6 @@ func getL1ChainId(ctx context.Context, rpcURL string) (uint64, error) {
 	}
 
 	return chainID.Uint64(), nil
-}
-
-func (s *Superchain) UnmarshalText(text []byte) error {
-	sup, err := ParseSuperchain(string(text))
-	if err != nil {
-		return err
-	}
-	*s = sup
-	return nil
 }
 
 type SuperchainDefinition struct {

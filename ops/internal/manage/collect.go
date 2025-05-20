@@ -62,10 +62,9 @@ func CollectChainConfigs(p string) ([]DiskChainConfig, error) {
 				return
 			}
 
-			superchainStr := filepath.Base(filepath.Dir(file))
-			superchain, err := config.ParseSuperchain(superchainStr)
+			superchain := filepath.Base(filepath.Dir(file))
 			if err != nil {
-				firstErr.Set(fmt.Errorf("failed to parse superchain %s: %w", superchainStr, err))
+				firstErr.Set(fmt.Errorf("failed to parse superchain %s: %w", superchain, err))
 				return
 			}
 

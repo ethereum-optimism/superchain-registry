@@ -60,12 +60,8 @@ func CodegenCLI(cliCtx *cli.Context) error {
 	var superchains []config.Superchain
 	if superchainsStr != "" {
 		superchainStrs := strings.Split(superchainsStr, ",")
-		for _, superchainStr := range superchainStrs {
-			superchainStr = strings.TrimSpace(superchainStr)
-			superchain, err := config.ParseSuperchain(superchainStr)
-			if err != nil {
-				return err
-			}
+		for _, superchain := range superchainStrs {
+			superchain = strings.TrimSpace(superchain)
 			superchains = append(superchains, superchain)
 		}
 	}
