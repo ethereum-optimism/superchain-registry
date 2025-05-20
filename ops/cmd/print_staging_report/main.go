@@ -103,6 +103,23 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		if err != nil {
 			return fmt.Errorf("failed to get staged chain config: %w", err)
 		}
+		var stdConfigs validation.ConfigParams
+		var stdRoles validation.RolesConfig
+		var l1RPCURL string
+		switch chainCfg.Superchain {
+		case config.MainnetSuperchain:
+			stdConfigs = validation.StandardConfigParamsMainnet
+			stdRoles = validation.StandardConfigRolesMainnet
+			l1RPCURL = cliCtx.String(MainnetRPCURLFlag.Name)
+		case config.SepoliaSuperchain:
+			stdConfigs = validation.StandardConfigParamsSepolia
+			stdRoles = validation.StandardConfigRolesSepolia
+			l1RPCURL = cliCtx.String(SepoliaRPCURLFlag.Name)
+		default:
+			output.WriteNotOK("skipping staging report for chain %s in unsupported superchain: %s",
+				chainCfg.ShortName, chainCfg.Superchain)
+			continue
+		}
 
 		genesisFilename := chainCfg.ShortName + ".json.zst"
 		originalGenesis, err := manage.ReadGenesis(wd, path.Join(paths.StagingDir(wd), genesisFilename))
@@ -117,22 +134,6 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		contractsVersion := validation.Semver(chainCfg.DeploymentL1ContractsVersion.Tag)
 		stdPrestate := validation.StandardPrestates.StablePrestate()
 		stdVersions := validation.StandardVersionsMainnet[contractsVersion]
-
-		var stdConfigs validation.ConfigParams
-		var stdRoles validation.RolesConfig
-		var l1RPCURL string
-		switch chainCfg.Superchain {
-		case config.MainnetSuperchain:
-			stdConfigs = validation.StandardConfigParamsMainnet
-			stdRoles = validation.StandardConfigRolesMainnet
-			l1RPCURL = cliCtx.String(MainnetRPCURLFlag.Name)
-		case config.SepoliaSuperchain:
-			stdConfigs = validation.StandardConfigParamsSepolia
-			stdRoles = validation.StandardConfigRolesSepolia
-			l1RPCURL = cliCtx.String(SepoliaRPCURLFlag.Name)
-		default:
-			return fmt.Errorf("unsupported superchain: %s", chainCfg.Superchain)
-		}
 
 		rpcClient, err := rpc.Dial(l1RPCURL)
 		if err != nil {
