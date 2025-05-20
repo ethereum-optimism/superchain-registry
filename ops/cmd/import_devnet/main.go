@@ -7,7 +7,7 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/generate"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 
@@ -85,7 +85,7 @@ func action(cliCtx *cli.Context) error {
 				i,
 				m.L2.Chains[i].ChainID, st.AppliedIntent.Chains[i].ID.Big().Int64())
 		}
-		err = generate.Generate(st, wd, m.L2.Chains[i].Name, &m.L2.Chains[i].Name, &m.Name, i)
+		err = manage.GenerateChainArtifacts(st, wd, m.L2.Chains[i].Name, &m.L2.Chains[i].Name, &m.Name, i)
 		if err != nil {
 			return fmt.Errorf("failed to generate chain config: %w", err)
 		}

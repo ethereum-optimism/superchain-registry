@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/generate"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/urfave/cli/v2"
@@ -59,7 +59,7 @@ func action(cliCtx *cli.Context) error {
 		return fmt.Errorf("expected exactly one chain in the state file, got %d", len(st.AppliedIntent.Chains))
 	}
 
-	err = generate.Generate(st, wd, cliCtx.String(Shortname.Name), nil, nil, 0)
+	err = manage.GenerateChainArtifacts(st, wd, cliCtx.String(Shortname.Name), nil, nil, 0)
 	if err != nil {
 		return fmt.Errorf("failed to generate chain config: %w", err)
 	}
