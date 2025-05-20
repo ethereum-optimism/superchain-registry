@@ -94,12 +94,6 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	}
 
 	stagedChainCfgs, err := manage.StagedChainConfigs(wd)
-
-	if len(stagedChainCfgs) > 1 {
-		output.WriteWarn("multiple staged chain configs found, only the first one will be used")
-	}
-
-	chainCfg := stagedChainCfgs[0]
 	if errors.Is(err, manage.ErrNoStagedConfig) {
 		output.WriteOK("no staged chain config found, exiting")
 		return nil
@@ -107,6 +101,11 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to get staged chain config: %w", err)
 	}
+	if len(stagedChainCfgs) > 1 {
+		output.WriteWarn("multiple staged chain configs found, only the first one will be used")
+	}
+
+	chainCfg := stagedChainCfgs[0]
 	var stdConfigs validation.ConfigParams
 	var stdRoles validation.RolesConfig
 	var l1RPCURL string
