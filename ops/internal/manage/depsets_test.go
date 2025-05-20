@@ -1,7 +1,6 @@
 package manage
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -52,7 +51,6 @@ func TestDepsetChecker(t *testing.T) {
 		require.NotNil(t, rootDir)
 
 		superchainCfgsDir := paths.SuperchainConfigsDir(rootDir)
-		fmt.Println("superchainCfgsDir", superchainCfgsDir)
 		require.DirExists(t, superchainCfgsDir)
 
 		addrs := loadAddresses(t, paths.AddressesFile(rootDir))
@@ -62,13 +60,6 @@ func TestDepsetChecker(t *testing.T) {
 		checker, err := NewDepsetChecker(lgr, cfgs, addrs)
 		require.NoError(t, err)
 		require.NoError(t, checker.Check())
-	})
-
-	t.Run("duplicate chain index", func(t *testing.T) {
-		var cfg config.Chain
-		err := paths.ReadTOMLFile("testdata/depsets_invalid/duplicate_chain_index.toml", &cfg)
-		require.Error(t, err)
-		require.Contains(t, err.Error(), "duplicate chain index")
 	})
 
 	t.Run("invalid depsets", func(t *testing.T) {
@@ -112,6 +103,23 @@ func TestDepsetChecker_checkOffchain(t *testing.T) {
 		err = checker.checkOffchain(chains)
 		require.Error(t, err)
 		require.ErrorIs(t, err, errInvalidActivationTime)
+	})
+
+	t.Run("duplicate chain index", func(t *testing.T) {
+		addrs := loadAddresses(t, validAddressesPath)
+		var cfg config.Chain
+		err := paths.ReadTOMLFile("testdata/depsets_invalid/duplicate_chain_index.toml", &cfg)
+		require.NoError(t, err)
+
+		chains := []DiskChainConfig{
+			{Config: &cfg, Superchain: "test"},
+		}
+
+		checker, err := NewDepsetChecker(lgr, chains, addrs)
+		require.NoError(t, err)
+		err = checker.checkOffchain(chains)
+		require.Error(t, err)
+		require.ErrorIs(t, err, errDuplicateChainIndex)
 	})
 
 	t.Run("inconsistent depset lengths", func(t *testing.T) {
