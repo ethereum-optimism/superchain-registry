@@ -648,6 +648,22 @@
     status = "permissionless"
 
 [[chains]]
+  name = "Ozean Poseidon Testnet"
+  identifier = "sepolia/ozean"
+  chain_id = 7849306
+  rpc = ["https://ozean-testnet.rpc.caldera.xyz/http"]
+  explorers = ["https://ozean-testnet.explorer.caldera.xyz"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  gas_paying_token = "0x43bd82D1e29a1bEC03AfD11D5a3252779b8c760c"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
+
+[[chains]]
   name = "Pivotal Sepolia"
   identifier = "sepolia/pivotal"
   chain_id = 16481
