@@ -79,6 +79,7 @@ func TestDepsetChecker(t *testing.T) {
 	t.Run("invalid depsets (transience)", func(t *testing.T) {
 		addrs := loadAddresses(t, "testdata/transience_invalid/addresses.json")
 		chains, err := CollectChainConfigs("testdata/transience_invalid")
+		require.NoError(t, err)
 
 		checker, err := NewDepsetChecker(lgr, chains, addrs)
 		require.NoError(t, err)
