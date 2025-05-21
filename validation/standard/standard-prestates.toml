@@ -1,5 +1,25 @@
-latest_stable = "1.5.0"
+latest_stable = "1.6.0"
 latest_rc = "1.6.0-rc.2"
+
+[[prestates."1.6.1-rc.1"]]
+type = "cannon64"
+hash = "0x03eb07101fbdeaf3f04d9fb76526362c1eea2824e4c6e970bdb19675b72e4fc8"
+
+[[prestates."1.6.1-rc.1"]]
+  type = "interop"
+  hash = "0x03fc3b4d091527d53f1ff369ea8ed65e5e17cc7fc98ebf75380238151cdc949c"
+
+[[prestates."1.6.0"]]
+type = "cannon32"
+hash = "0x03513e996556589f633fe1d38d694f63bc93cca5df559af37631b30875a829e9"
+
+[[prestates."1.6.0"]]
+type = "cannon64"
+hash = "0x03682932cec7ce0a3874b19675a6bbc923054a7b321efc7d3835187b172494b6"
+
+[[prestates."1.6.0"]]
+  type = "interop"
+  hash = "0x0399cfb018011977a027d1e7a85eb7ff101aec9bfc7d6500abac944c47a4581f"
 
 [[prestates."1.6.0-rc.2"]]
 type = "cannon32"
@@ -9,6 +29,10 @@ hash = "0x03513e996556589f633fe1d38d694f63bc93cca5df559af37631b30875a829e9"
 type = "cannon64"
 hash = "0x03682932cec7ce0a3874b19675a6bbc923054a7b321efc7d3835187b172494b6"
 
+[[prestates."1.6.0-rc.2"]]
+  type = "interop"
+  hash = "0x0399cfb018011977a027d1e7a85eb7ff101aec9bfc7d6500abac944c47a4581f"
+
 [[prestates."1.6.0-rc.1"]]
 type = "cannon32"
 hash = "0x03526dfe02ab00a178e0ab77f7539561aaf5b5e3b46cd3be358f1e501b06d8a9"
@@ -17,6 +41,10 @@ hash = "0x03526dfe02ab00a178e0ab77f7539561aaf5b5e3b46cd3be358f1e501b06d8a9"
 type = "cannon64"
 hash = "0x03394563dd4a36e95e6d51ce7267ecceeb05fad23e68d2f9eed1affa73e5641a"
 
+[[prestates."1.6.0-rc.1"]]
+  type = "interop"
+  hash = "0x03ada038f8a81526c68596586dfc762eb5412d4d5bb7cb46110d8c47ee570d7e"
+
 [[prestates."1.5.1-rc.1"]]
 type = "cannon32"
 hash = "0x0354eee87a1775d96afee8977ef6d5d6bd3612b256170952a01bf1051610ee01"
@@ -24,6 +52,10 @@ hash = "0x0354eee87a1775d96afee8977ef6d5d6bd3612b256170952a01bf1051610ee01"
 [[prestates."1.5.1-rc.1"]]
 type = "cannon64"
 hash = "0x03ee2917da962ec266b091f4b62121dc9682bb0db534633707325339f99ee405"
+
+[[prestates."1.5.1-rc.1"]]
+  type = "interop"
+  hash = "0x03673e05a48799e6613325a3f194114c0427d5889cefc8f423eed02dfb881f23"
 
 [[prestates."1.5.0"]]
 type = "cannon32"
@@ -33,6 +65,10 @@ hash = "0x039facea52b20c605c05efb0a33560a92de7074218998f75bcdf61e8989cb5d9"
 type = "cannon64"
 hash = "0x039970872142f48b189d18dcbc03a3737338d098b0101713dc2d6710f9deb5ef"
 
+[[prestates."1.5.0"]]
+  type = "interop"
+  hash = "0x03a806c966e97816f1ff8d4f04a8ec823099e8f9c32e1d0cfca814f545b85115"
+
 [[prestates."1.5.0-rc.4"]]
 type = "cannon32"
 hash = "0x0354eee87a1775d96afee8977ef6d5d6bd3612b256170952a01bf1051610ee01"
@@ -41,6 +77,10 @@ hash = "0x0354eee87a1775d96afee8977ef6d5d6bd3612b256170952a01bf1051610ee01"
 type = "cannon64"
 hash = "0x03ee2917da962ec266b091f4b62121dc9682bb0db534633707325339f99ee405"
 
+[[prestates."1.5.0-rc.4"]]
+  type = "interop"
+  hash = "0x03673e05a48799e6613325a3f194114c0427d5889cefc8f423eed02dfb881f23"
+
 [[prestates."1.5.0-rc.3"]]
 type = "cannon32"
 hash = "0x039facea52b20c605c05efb0a33560a92de7074218998f75bcdf61e8989cb5d9"
@@ -48,6 +88,10 @@ hash = "0x039facea52b20c605c05efb0a33560a92de7074218998f75bcdf61e8989cb5d9"
 [[prestates."1.5.0-rc.3"]]
 type = "cannon64"
 hash = "0x039970872142f48b189d18dcbc03a3737338d098b0101713dc2d6710f9deb5ef"
+
+[[prestates."1.5.0-rc.3"]]
+  type = "interop"
+  hash = "0x03a806c966e97816f1ff8d4f04a8ec823099e8f9c32e1d0cfca814f545b85115"
 
 [[prestates."1.5.0-rc.2"]]
 type = "cannon32"
@@ -57,6 +101,10 @@ hash = "0x035ac388b5cb22acf52a2063cfde108d09b1888655d21f02f595f9c3ea6cbdcd"
 type = "cannon64"
 hash = "0x03a7d967025dc434a9ca65154acdb88a7b658147b9b049f0b2f5ecfb9179b0fe"
 
+[[prestates."1.5.0-rc.2"]]
+  type = "interop"
+  hash = "0x0379d61de1833af6766f07b4ed931d85b3f6282508bbcbf9f4637398d97b61c1"
+
 [[prestates."1.5.0-rc.1"]]
 type = "cannon32"
 hash = "0x03dfa3b3ac66e8fae9f338824237ebacff616df928cf7dada0e14be2531bc1f4"
@@ -65,6 +113,10 @@ hash = "0x03dfa3b3ac66e8fae9f338824237ebacff616df928cf7dada0e14be2531bc1f4"
 type = "cannon64"
 hash = "0x03f83792f653160f3274b0888e998077a27e1f74cb35bcb20d86021e769340aa"
 
+[[prestates."1.5.0-rc.1"]]
+  type = "interop"
+  hash = "0x03b7658b889796c1e372f57439e48eb46a5b008f6e6a4b7e5c8c2d3bddffa797"
+
 [[prestates."1.4.1-rc.3"]]
 type = "cannon64"
 hash = "0x03d7f817d7bb1321533aeeee5e0f2031cc69d167c4a17bf2816b4cc8b1be4077"
@@ -72,6 +124,10 @@ hash = "0x03d7f817d7bb1321533aeeee5e0f2031cc69d167c4a17bf2816b4cc8b1be4077"
 [[prestates."1.4.1-rc.3"]]
 type = "cannon32"
 hash = "0x03ea123151750b03569369130a73c390b0b5e10c722ab42d762d116318325bb7"
+
+[[prestates."1.4.1-rc.3"]]
+  type = "interop"
+  hash = "0x03865d2bf928cd692480154ce0f20c4f7658018189404d10e4f70f0daae1b695"
 
 [[prestates."1.4.1-rc.2"]]
 type = "cannon64"

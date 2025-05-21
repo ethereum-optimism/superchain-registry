@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/ethereum-optimism/optimism/op-chain-ops/addresses"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
@@ -183,25 +184,25 @@ type AddressesWithRoles struct {
 	Roles
 }
 
-func CreateAddressesWithRolesFromFetcher(addresses script.Addresses, roles script.Roles) AddressesWithRoles {
+func CreateAddressesWithRolesFromFetcher(addrs script.Addresses, roles addresses.OpChainRoles) AddressesWithRoles {
 	addressesWithRoles := AddressesWithRoles{
 		Addresses: Addresses{
-			AddressManager:                    NewChecksummedAddress(addresses.AddressManager),
-			L1CrossDomainMessengerProxy:       NewChecksummedAddress(addresses.L1CrossDomainMessengerProxy),
-			L1ERC721BridgeProxy:               NewChecksummedAddress(addresses.L1ERC721BridgeProxy),
-			L1StandardBridgeProxy:             NewChecksummedAddress(addresses.L1StandardBridgeProxy),
-			L2OutputOracleProxy:               NewChecksummedAddress(addresses.L2OutputOracleProxy),
-			OptimismMintableERC20FactoryProxy: NewChecksummedAddress(addresses.OptimismMintableERC20FactoryProxy),
-			OptimismPortalProxy:               NewChecksummedAddress(addresses.OptimismPortalProxy),
-			SystemConfigProxy:                 NewChecksummedAddress(addresses.SystemConfigProxy),
-			ProxyAdmin:                        NewChecksummedAddress(addresses.OpChainProxyAdmin),
-			SuperchainConfig:                  NewChecksummedAddress(addresses.SuperchainConfig),
-			AnchorStateRegistryProxy:          NewChecksummedAddress(addresses.AnchorStateRegistryProxy),
-			DisputeGameFactoryProxy:           NewChecksummedAddress(addresses.DisputeGameFactoryProxy),
-			FaultDisputeGame:                  NewChecksummedAddress(addresses.FaultDisputeGame),
-			MIPS:                              NewChecksummedAddress(addresses.Mips),
-			PermissionedDisputeGame:           NewChecksummedAddress(addresses.PermissionedDisputeGame),
-			PreimageOracle:                    NewChecksummedAddress(addresses.PreimageOracle),
+			AddressManager:                    NewChecksummedAddress(addrs.AddressManagerImpl),
+			L1CrossDomainMessengerProxy:       NewChecksummedAddress(addrs.L1CrossDomainMessengerProxy),
+			L1ERC721BridgeProxy:               NewChecksummedAddress(addrs.L1Erc721BridgeProxy),
+			L1StandardBridgeProxy:             NewChecksummedAddress(addrs.L1StandardBridgeProxy),
+			L2OutputOracleProxy:               NewChecksummedAddress(addrs.L2OutputOracleProxy),
+			OptimismMintableERC20FactoryProxy: NewChecksummedAddress(addrs.OptimismMintableErc20FactoryProxy),
+			OptimismPortalProxy:               NewChecksummedAddress(addrs.OptimismPortalProxy),
+			SystemConfigProxy:                 NewChecksummedAddress(addrs.SystemConfigProxy),
+			ProxyAdmin:                        NewChecksummedAddress(addrs.OpChainProxyAdminImpl),
+			SuperchainConfig:                  NewChecksummedAddress(addrs.SuperchainConfigProxy),
+			AnchorStateRegistryProxy:          NewChecksummedAddress(addrs.AnchorStateRegistryProxy),
+			DisputeGameFactoryProxy:           NewChecksummedAddress(addrs.DisputeGameFactoryProxy),
+			FaultDisputeGame:                  NewChecksummedAddress(addrs.FaultDisputeGameImpl),
+			MIPS:                              NewChecksummedAddress(addrs.MipsImpl),
+			PermissionedDisputeGame:           NewChecksummedAddress(addrs.PermissionedDisputeGameImpl),
+			PreimageOracle:                    NewChecksummedAddress(addrs.PreimageOracleImpl),
 		},
 		Roles: Roles{
 			SystemConfigOwner: NewChecksummedAddress(roles.SystemConfigOwner),
@@ -214,10 +215,10 @@ func CreateAddressesWithRolesFromFetcher(addresses script.Addresses, roles scrip
 		},
 	}
 	// Hack until we separate the permissioned and permissionless WETH proxies
-	if addresses.DelayedWETHPermissionlessGameProxy != (common.Address{}) {
-		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addresses.DelayedWETHPermissionlessGameProxy)
+	if addrs.DelayedWethPermissionlessGameProxy != (common.Address{}) {
+		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addrs.DelayedWethPermissionlessGameProxy)
 	} else {
-		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addresses.DelayedWETHPermissionedGameProxy)
+		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addrs.DelayedWethPermissionedGameProxy)
 	}
 
 	return addressesWithRoles

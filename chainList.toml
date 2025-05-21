@@ -449,7 +449,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "arena-z"
@@ -648,6 +648,22 @@
     status = "permissionless"
 
 [[chains]]
+  name = "Ozean Poseidon Testnet"
+  identifier = "sepolia/ozean"
+  chain_id = 7849306
+  rpc = ["https://ozean-testnet.rpc.caldera.xyz/http"]
+  explorers = ["https://ozean-testnet.explorer.caldera.xyz"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  gas_paying_token = "0x43bd82D1e29a1bEC03AfD11D5a3252779b8c760c"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
+
+[[chains]]
   name = "Pivotal Sepolia"
   identifier = "sepolia/pivotal"
   chain_id = 16481
@@ -768,21 +784,6 @@
     status = "permissioned"
 
 [[chains]]
-  name = "arena-z-testnet"
-  identifier = "sepolia/arena-z-testnet"
-  chain_id = 9897
-  rpc = ["https://rpc.arena-z.t.raas.gelato.cloud"]
-  explorers = ["https://arena-z.blockscout.com"]
-  superchain_level = 1
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-  [chains.fault_proofs]
-    status = "none"
-
-[[chains]]
   name = "Base devnet 0"
   identifier = "sepolia-dev-0/base-devnet-0"
   chain_id = 11763072
@@ -826,3 +827,18 @@
     chain = "sepolia"
   [chains.fault_proofs]
     status = "permissioned"
+
+[[chains]]
+  name = "Boba Mainnet"
+  identifier = "mainnet/boba"
+  chain_id = 288
+  rpc = ["https://mainnet.boba.network"]
+  explorers = ["https://bobascan.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
