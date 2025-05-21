@@ -814,21 +814,6 @@
     status = "permissionless"
 
 [[chains]]
-  name = "Radius testnet"
-  identifier = "sepolia/radius_testnet"
-  chain_id = 863
-  rpc = ["testnet-rpc.theradius.xyz"]
-  explorers = ["https://testnet-rpc.theradius.xyz/"]
-  superchain_level = 0
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
   name = "Boba Mainnet"
   identifier = "mainnet/boba"
   chain_id = 288
@@ -842,3 +827,18 @@
     chain = "mainnet"
   [chains.fault_proofs]
     status = "none"
+
+[[chains]]
+  name = "Radius testnet"
+  identifier = "sepolia/radius_testnet"
+  chain_id = 863
+  rpc = ["testnet-rpc.theradius.xyz"]
+  explorers = ["https://testnet-rpc.theradius.xyz/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
