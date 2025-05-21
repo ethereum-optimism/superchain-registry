@@ -809,3 +809,18 @@
     chain = "sepolia-dev-0"
   [chains.fault_proofs]
     status = "permissionless"
+
+[[chains]]
+  name = "Boba Mainnet"
+  identifier = "mainnet/boba"
+  chain_id = 288
+  rpc = ["https://mainnet.boba.network"]
+  explorers = ["https://bobascan.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
