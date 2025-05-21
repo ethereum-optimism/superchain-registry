@@ -60,6 +60,7 @@ type VersionConfig struct {
 	OPContractsManager           *ContractData `toml:"op_contracts_manager,omitempty"`
 	SuperchainConfig             *ContractData `toml:"superchain_config,omitempty"`
 	ProtocolVersions             *ContractData `toml:"protocol_versions,omitempty"`
+	EthLockbox                   *ContractData `toml:"eth_lockbox,omitempty"`
 }
 
 // Versions maps release tags to their contract configurations

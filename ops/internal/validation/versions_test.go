@@ -20,7 +20,7 @@ import (
 
 var (
 	versionFn = w3.MustNewFunc("version()", "string")
-	implsFn   = w3.MustNewFunc("implementations()", "(address superchainConfig,address protocolVersions,address l1ERC721Bridge,address optimismPortal,address systemConfig,address optimismMintableERC20Factory,address l1CrossDomainMessenger,address l1StandardBridge,address disputeGameFactory,address anchorStateRegistry,address delayedWeth,address mips)")
+	implsFn   = w3.MustNewFunc("implementations()", "(address superchainConfig,address protocolVersions,address l1ERC721Bridge,address optimismPortal,address ethLockbox,address systemConfig,address optimismMintableERC20Factory,address l1CrossDomainMessenger,address l1StandardBridge,address disputeGameFactory,address anchorStateRegistry,address delayedWeth,address mips)")
 	oracleFn  = w3.MustNewFunc("oracle()", "address")
 )
 
@@ -29,6 +29,7 @@ type opcmImpls struct {
 	ProtocolVersions             common.Address
 	L1ERC721Bridge               common.Address
 	OptimismPortal               common.Address
+	EthLockbox                   common.Address
 	SystemConfig                 common.Address
 	OptimismMintableERC20Factory common.Address
 	L1CrossDomainMessenger       common.Address
@@ -50,11 +51,10 @@ var versionMappings = map[string]validation.Versions{
 }
 
 var versionsToCheck = []validation.Semver{
-	"op-contracts/v2.0.0-rc.1",
-	"op-contracts/v2.0.0",
-	"op-contracts/v3.0.0-rc.1",
-	"op-contracts/v3.0.0-rc.2",
-	"op-contracts/v3.0.0",
+	// NOTE: older versions are no longer checked since the ABI changed at v4.0.0. The deployments for those older versions
+	// are immutable, so there's no need to continue validating them as long as we don't change their definitions in the
+	// standard versions files.
+	"op-contracts/v4.0.0-rc.6",
 }
 
 func TestVersionsIntegrity(t *testing.T) {
@@ -118,6 +118,7 @@ func testVersionIntegrity(t *testing.T, stdVer validation.VersionConfig, w3Clien
 		"AnchorStateRegistry",
 		"DelayedWeth",
 		"Mips",
+		"EthLockbox",
 	}
 
 	for _, field := range fields {
@@ -125,6 +126,7 @@ func testVersionIntegrity(t *testing.T, stdVer validation.VersionConfig, w3Clien
 		require.True(t, implsField.IsValid(), "field %s not found", field)
 
 		address := implsField.Interface().(common.Address)
+
 		contractData := vValue.FieldByName(field).Interface().(*validation.ContractData)
 		require.NotNil(t, contractData)
 
