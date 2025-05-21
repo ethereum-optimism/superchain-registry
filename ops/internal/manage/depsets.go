@@ -76,7 +76,7 @@ func (dc *DepsetChecker) Check() error {
 			return fmt.Errorf("invalid depset (offchain consistency): %w", err)
 		}
 		if err := dc.checkOnchain(depsetCfgs); err != nil {
-			// return fmt.Errorf("invalid depset (onchain addresses): %w", err)
+			return fmt.Errorf("invalid depset (onchain addresses): %w", err)
 		}
 
 		// mark all chains in the depset as processed to avoid repeats
