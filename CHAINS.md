@@ -52,6 +52,7 @@
 | Metal L2 Testnet | ✅ | ✅ | https://testnet.explorer.metall2.com | `https://testnet.rpc.metall2.com` | `https://testnet.rpc.metall2.com` |
 | Mode Testnet | ✅ | ✅ | https://sepolia.explorer.mode.network | `https://sepolia.mode.network` | `https://sepolia.mode.network` |
 | OP Sepolia Testnet | ✅ | ✅ | https://sepolia-optimistic.etherscan.io | `https://sepolia.optimism.io` | `https://sepolia-sequencer.optimism.io` |
+| Ozean Poseidon Testnet | ❌ | ❌ | https://ozean-testnet.explorer.caldera.xyz | `https://ozean-testnet.rpc.caldera.xyz/http` | `https://ozean-testnet.rpc.caldera.xyz/http` |
 | Pivotal Sepolia | ❌ | ❌ | https://sepolia.pivotalscan.org/ | `https://sepolia.pivotalprotocol.com/` | `https://sepolia.pivotalprotocol.com/` |
 | RACE Testnet | ❌ | ❌ | https://testnet.racescan.io/ | `https://racetestnet.io` | `https://racetestnet.io` |
 | Settlus Sepolia | ❌ | ❌ | sepolia.settlus.network | `https://settlus-septestnet.g.alchemy.com/public` | `https://settlus-sep-testnet-sequencer.g.alchemy.com/` |
