@@ -46,7 +46,7 @@ func NewDepsetChecker(logger log.Logger, cfgs []DiskChainConfig, addrs config.Ad
 func (dc *DepsetChecker) Check() error {
 	for _, cfg := range dc.diskChainCfgs {
 		if dc.processedChains[cfg.Config.ChainID] {
-			// already processed this chain
+			// already processed this chain (it may be revisited during checkOffchain)
 			continue
 		}
 		if cfg.Config.Interop == nil {
@@ -89,7 +89,7 @@ func (dc *DepsetChecker) Check() error {
 
 	numChains := len(dc.diskChainCfgs)
 	if dc.chainsProcessed != numChains {
-		return fmt.Errorf("chainsProcessed (%d) does not match totalChainCgs (%d)", dc.chainsProcessed, numChains)
+		return fmt.Errorf("chainsProcessed (%d) does not match totalChainCfgs (%d)", dc.chainsProcessed, numChains)
 	}
 	dc.lgr.Info("processed all chains", "numChains", numChains)
 
@@ -196,6 +196,7 @@ func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 
 	firstDisputeGameFactoryProxy := strings.ToLower((*firstAddrs.DisputeGameFactoryProxy).String())
 	// TODO: re-enable this once we can pull in the updated op-fetcher from monorepo
+	// issue: https://github.com/ethereum-optimism/optimism/issues/16058
 	// firstEthLockboxProxy := strings.ToLower((*firstAddrs.EthLockboxProxy).String())
 
 	// Check all chains in the dependency set
@@ -210,6 +211,7 @@ func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 				cfg.Config.ChainID, firstDisputeGameFactoryProxy, addrs.DisputeGameFactoryProxy)
 		}
 		// TODO: re-enable this once we can pull in the updated op-fetcher from monorepo
+		// issue: https://github.com/ethereum-optimism/optimism/issues/16058
 		//if strings.ToLower((*addrs.EthLockboxProxy).String()) != firstEthLockboxProxy {
 		//	return fmt.Errorf("EthLockboxProxy address mismatch for chain %d, expected %s, got %s",
 		//		cfg.Config.ChainID, firstEthLockboxProxy, addrs.EthLockboxProxy)
@@ -236,6 +238,7 @@ func (dc *DepsetChecker) getAndValidateAddresses(chainID uint64) (*config.Addres
 		return nil, fmt.Errorf("%w: no DisputeGameFactoryProxy found for chain %d", errMissingAddress, chainID)
 	}
 	// TODO: re-enable this once we can pull in the updated op-fetcher from monorepo
+	// issue: https://github.com/ethereum-optimism/optimism/issues/16058
 	//if addrs.EthLockboxProxy == nil || *addrs.EthLockboxProxy == zeroAddress {
 	//return nil, fmt.Errorf("%w: no EthLockboxProxy found for chain %d", errMissingAddress, chainID)
 	//}
