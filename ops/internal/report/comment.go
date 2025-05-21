@@ -100,24 +100,27 @@ func RenderComment(
 	stdPrestate validation.Prestate,
 	stdVersions validation.VersionConfig,
 	gitSHA string,
+	chainShortName string,
 ) (string, error) {
 	var buf bytes.Buffer
 	data := struct {
-		Report      *Report
-		StdConfig   validation.ConfigParams
-		StdVersions validation.VersionConfig
-		StdRoles    validation.RolesConfig
-		StdPrestate validation.Prestate
-		Magic       string
-		GitSHA      string
+		Report         *Report
+		StdConfig      validation.ConfigParams
+		StdVersions    validation.VersionConfig
+		StdRoles       validation.RolesConfig
+		StdPrestate    validation.Prestate
+		Magic          string
+		GitSHA         string
+		ChainShortName string
 	}{
-		Report:      report,
-		StdConfig:   stdConfigs,
-		StdRoles:    stdRoles,
-		StdPrestate: stdPrestate,
-		StdVersions: stdVersions,
-		Magic:       CommentMagic,
-		GitSHA:      gitSHA,
+		Report:         report,
+		StdConfig:      stdConfigs,
+		StdRoles:       stdRoles,
+		StdPrestate:    stdPrestate,
+		StdVersions:    stdVersions,
+		Magic:          CommentMagic,
+		GitSHA:         gitSHA,
+		ChainShortName: chainShortName,
 	}
 	if err := tmpl.Execute(&buf, data); err != nil {
 		return "", err

@@ -59,6 +59,7 @@ func TestRenderComment(t *testing.T) {
 			},
 			validation.StandardVersionsSepolia[validation.Semver160],
 			"1234567890abcdef",
+			"testChainShortName",
 		)
 		require.NoError(t, err)
 
@@ -77,6 +78,7 @@ func TestRenderComment(t *testing.T) {
 			validation.StandardPrestates.StablePrestate(),
 			validation.StandardVersionsSepolia[validation.Semver160],
 			"1234567890abcdef",
+			"testChainShortName",
 		)
 		require.NoError(t, err)
 

@@ -18,6 +18,7 @@ require (
 	github.com/klauspost/compress v1.18.0
 	github.com/tomwright/dasel v1.27.3
 	golang.org/x/sync v0.14.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -96,7 +97,6 @@ require (
 	golang.org/x/time v0.10.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
 

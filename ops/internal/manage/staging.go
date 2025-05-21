@@ -15,12 +15,12 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
-	if len(st.AppliedIntent.Chains) != 1 {
-		return nil, errors.New("expected exactly one chain in state")
+func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
+	if idx >= len(st.AppliedIntent.Chains) {
+		return nil, errors.New("index out of bounds")
 	}
 
-	chainIntent := st.AppliedIntent.Chains[0]
+	chainIntent := st.AppliedIntent.Chains[idx]
 	chainID := chainIntent.ID
 	dc, err := inspect.DeployConfig(st, chainID)
 	if err != nil {
@@ -172,27 +172,46 @@ func CopyDeployConfigHFTimes(src *genesis.UpgradeScheduleDeployConfig, dst *conf
 }
 
 var (
-	ErrNoStagedConfig  = errors.New("no staged chain config found")
-	ErrMultipleConfigs = errors.New("only one TOML file is allowed in the staging directory at a time")
+	ErrNoStagedConfig               = errors.New("no staged chain config found")
+	ErrNoStagedSuperchainDefinition = errors.New("no staged superchain definition found")
 )
 
-func StagedChainConfig(rootP string) (*config.StagedChain, error) {
-	tomls, err := paths.CollectFiles(paths.StagingDir(rootP), paths.FileExtMatcher(".toml"))
+func StagedChainConfigs(rootP string) ([]*config.StagedChain, error) {
+	tomls, err := paths.CollectFiles(paths.StagingDir(rootP), paths.ChainConfigMatcher())
 	if err != nil {
 		return nil, fmt.Errorf("failed to collect staged chain configs: %w", err)
 	}
 	if len(tomls) == 0 {
 		return nil, ErrNoStagedConfig
 	}
-	if len(tomls) != 1 {
-		return nil, ErrMultipleConfigs
-	}
 
-	cfgFilename := tomls[0]
-	chainCfg := new(config.StagedChain)
-	if err := paths.ReadTOMLFile(cfgFilename, chainCfg); err != nil {
-		return nil, fmt.Errorf("failed to read %s: %w", cfgFilename, err)
+	chainCfgs := make([]*config.StagedChain, len(tomls))
+	for i, cfgFilename := range tomls {
+
+		chainCfg := new(config.StagedChain)
+		if err := paths.ReadTOMLFile(cfgFilename, chainCfg); err != nil {
+			return nil, fmt.Errorf("failed to read %s: %w", cfgFilename, err)
+		}
+		chainCfg.ShortName = strings.TrimSuffix(filepath.Base(cfgFilename), ".toml")
+		chainCfgs[i] = chainCfg
 	}
-	chainCfg.ShortName = strings.TrimSuffix(filepath.Base(cfgFilename), ".toml")
-	return chainCfg, nil
+	return chainCfgs, nil
+}
+
+// StagedSuperchainDefinition finds a superchain.toml file in the staging directory
+// (if it exists) and returns the parsed SuperchainDefinition struct.
+func StagedSuperchainDefinition(rootP string) (*config.SuperchainDefinition, error) {
+	// find the superchain.toml file
+	files, err := paths.CollectFiles(paths.StagingDir(rootP), paths.SuperchainDefinitionMatcher())
+	if err != nil {
+		return nil, fmt.Errorf("failed to collect staged superchain definition: %w",
+			err)
+	}
+	if len(files) == 0 {
+		return nil, ErrNoStagedSuperchainDefinition
+	}
+	sM := new(config.SuperchainDefinition)
+	err = paths.ReadTOMLFile(files[0], sM)
+
+	return sM, err
 }
