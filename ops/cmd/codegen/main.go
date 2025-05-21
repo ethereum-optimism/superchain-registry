@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -26,7 +25,7 @@ var (
 		Name:  "chain-ids",
 		Usage: "comma-separated list of l2 chainIds to update (optional, fetches all chains if not provided)",
 	}
-	SuperchainsFlag = &cli.StringFlag{
+	SuperchainsFlag = &cli.StringSliceFlag{
 		Name:  "superchains",
 		Usage: "comma-separated list of superchains to update (cannot provide both chain-ids and superchains flags, default to all superchains if not provided)",
 	}
@@ -52,18 +51,9 @@ func main() {
 func CodegenCLI(cliCtx *cli.Context) error {
 	l1RpcUrls := strings.Split(cliCtx.String("l1-rpc-urls"), ",")
 	chainIdStr := cliCtx.String("chain-ids")
-	superchainsStr := cliCtx.String("superchains")
-	if chainIdStr != "" && superchainsStr != "" {
+	superchains := cliCtx.StringSlice("superchains")
+	if chainIdStr != "" && len(superchains) > 0 {
 		return fmt.Errorf("cannot provide both chain-ids and superchains flags")
-	}
-
-	var superchains []config.Superchain
-	if superchainsStr != "" {
-		superchainStrs := strings.Split(superchainsStr, ",")
-		for _, superchain := range superchainStrs {
-			superchain = strings.TrimSpace(superchain)
-			superchains = append(superchains, superchain)
-		}
 	}
 
 	var chainIds []uint64
