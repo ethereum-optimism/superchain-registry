@@ -155,9 +155,9 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 			for chainID, dep := range firstDepset {
 				otherDep, exists := thisDepset[chainID]
 				if !exists {
-					return fmt.Errorf("%w: chain %d is missing dependency for chain ID %s that exists in first chain",
+					return fmt.Errorf("%w: chain %d is missing (transitive) dependency for chain ID %s (direct dependency of %d)",
 						errInconsistentDepsets,
-						cfg.Config.ChainID, chainID)
+						cfg.Config.ChainID, chainID, cfgs[0].Config.ChainID)
 				}
 
 				if dep.ChainIndex != otherDep.ChainIndex {
