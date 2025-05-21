@@ -95,7 +95,7 @@ func ValidateGenesisIntegrity(cfg *config.Chain, genesis *core.Genesis) error {
 		MergeNetsplitBlock:      common.Big0,
 		ShanghaiTime:            cfg.Hardforks.CanyonTime.U64Ptr(),  // Shanghai activates with Canyon
 		CancunTime:              cfg.Hardforks.EcotoneTime.U64Ptr(), // Cancun activates with Ecotone
-		PragueTime:              nil,
+		PragueTime:              cfg.Hardforks.IsthmusTime.U64Ptr(), // Prague activates with Isthmus
 		BedrockBlock:            common.Big0,
 		RegolithTime:            &genesisActivation,
 		CanyonTime:              cfg.Hardforks.CanyonTime.U64Ptr(),
@@ -103,7 +103,9 @@ func ValidateGenesisIntegrity(cfg *config.Chain, genesis *core.Genesis) error {
 		FjordTime:               cfg.Hardforks.FjordTime.U64Ptr(),
 		GraniteTime:             cfg.Hardforks.GraniteTime.U64Ptr(),
 		HoloceneTime:            cfg.Hardforks.HoloceneTime.U64Ptr(),
+		IsthmusTime:             cfg.Hardforks.IsthmusTime.U64Ptr(),
 		InteropTime:             cfg.Hardforks.InteropTime.U64Ptr(),
+		JovianTime:              cfg.Hardforks.JovianTime.U64Ptr(),
 		TerminalTotalDifficulty: common.Big0,
 		Ethash:                  nil,
 		Clique:                  nil,
