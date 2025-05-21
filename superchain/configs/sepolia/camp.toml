@@ -10,21 +10,14 @@ batch_inbox_addr = "0xFf00000000000000000000000000000000325000"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-superchain = "sepolia"
-base_fee_vault_recipient = "0xDA477C3d6faD3C0fCE508a6cF791967D7cf14aFb"
-l1_fee_vault_recipient = "0xDA477C3d6faD3C0fCE508a6cF791967D7cf14aFb"
-sequencer_fee_vault_recipient = "0xDA477C3d6faD3C0fCE508a6cF791967D7cf14aFb"
-deployment_tx_hash = "0x124b0011271c5810826f74bf8767467009e136fecf0f8e80327b0000fb0456e5"
-deployment_l1_contracts_version = "tag://op-contracts/v1.8.0-rc.4"
-deployment_l2_contracts_version = "tag://op-contracts/v1.7.0-beta.1+l2-contracts"
 
 [hardforks]
-  canyon_time = 0
-  delta_time = 0
-  ecotone_time = 0
-  fjord_time = 0
-  granite_time = 1723478400
-  holocene_time = 1732633200
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
+  holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 10
@@ -54,14 +47,7 @@ deployment_l2_contracts_version = "tag://op-contracts/v1.7.0-beta.1+l2-contracts
   UnsafeBlockSigner = "0x8dEa38366Bc426C6822AebE51210212542544C77"
   BatchSubmitter = "0x624811105f39936D5cE277d93292061ABfEDD4D5"
 
-  [addresses]
-  SystemConfigOwner = "0xDA477C3d6faD3C0fCE508a6cF791967D7cf14aFb"
-  ProxyAdminOwner = "0x6DCd6421558F1478251231798fe7500fB23a1E84"
-  Guardian = "0xDA477C3d6faD3C0fCE508a6cF791967D7cf14aFb"
-  Challenger = "0xDA477C3d6faD3C0fCE508a6cF791967D7cf14aFb"
-  Proposer = "0x2bECfba7B2BE6182e9BD2eF10E83414e22fAB673"
-  UnsafeBlockSigner = "0x8dEa38366Bc426C6822AebE51210212542544C77"
-  BatchSubmitter = "0x624811105f39936D5cE277d93292061ABfEDD4D5"
+[addresses]
   AddressManager = "0x2677986E7f92cBBfC0D96C23a2e2897E9d7F240f"
   L1CrossDomainMessengerProxy = "0x3f4A9443DdC60a0d0Dcea92C627849045B5A840f"
   L1ERC721BridgeProxy = "0x1239F374612F4674305ba7c60332b16e5396e125"

@@ -1158,5 +1158,26 @@
     "faultProofs": {
       "status": "none"
     }
+  },
+  {
+    "name": "Camp Network Testnet V2",
+    "identifier": "sepolia/camp",
+    "chainId": 325000,
+    "rpc": [
+      "https://rpc.camp-network-testnet.gelato.digital"
+    ],
+    "explorers": [
+      "https://camp-network-testnet.blockscout.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "none"
+    }
   }
 ]
