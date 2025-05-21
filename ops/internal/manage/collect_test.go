@@ -24,13 +24,13 @@ func TestCollectChainConfigs(t *testing.T) {
 		{
 			ShortName:  "op",
 			Filepath:   paths.ChainConfig("testdata", "sepolia", "op"),
-			Superchain: "sepolia",
+			Superchain: config.SepoliaSuperchain,
 			Config:     &opConfig,
 		},
 		{
 			ShortName:  "testchain",
 			Filepath:   paths.ChainConfig("testdata", "sepolia", "testchain"),
-			Superchain: "sepolia",
+			Superchain: config.SepoliaSuperchain,
 			Config:     &testChainConfig,
 		},
 	}, chains)

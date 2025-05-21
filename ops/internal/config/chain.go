@@ -121,6 +121,7 @@ type Hardforks struct {
 	PectraBlobScheduleTime *HardforkTime `toml:"pectra_blob_schedule_time,omitempty"`
 	IsthmusTime            *HardforkTime `toml:"isthmus_time"`
 	InteropTime            *HardforkTime `toml:"interop_time"`
+	JovianTime             *HardforkTime `toml:"jovian_time"`
 }
 
 type Genesis struct {

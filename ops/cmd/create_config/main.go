@@ -3,9 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"path"
 
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
@@ -57,29 +55,13 @@ func action(cliCtx *cli.Context) error {
 		return fmt.Errorf("failed to read state file: %w", err)
 	}
 
-	output.WriteOK("inflating chain config")
-	cfg, err := manage.InflateChainConfig(&st)
+	if len(st.AppliedIntent.Chains) != 1 {
+		return fmt.Errorf("expected exactly one chain in the state file, got %d", len(st.AppliedIntent.Chains))
+	}
+
+	err = manage.GenerateChainArtifacts(st, wd, cliCtx.String(Shortname.Name), nil, nil, 0)
 	if err != nil {
-		return fmt.Errorf("failed to inflate chain config: %w", err)
-	}
-	cfg.ShortName = cliCtx.String(Shortname.Name)
-
-	output.WriteOK("reading genesis")
-	genesis, _, err := inspect.GenesisAndRollup(&st, st.AppliedIntent.Chains[0].ID)
-	if err != nil {
-		return fmt.Errorf("failed to get genesis: %w", err)
-	}
-
-	stagingDir := paths.StagingDir(wd)
-
-	output.WriteOK("writing chain config")
-	if err := paths.WriteTOMLFile(path.Join(stagingDir, cfg.ShortName+".toml"), cfg); err != nil {
-		return fmt.Errorf("failed to write chain config: %w", err)
-	}
-
-	output.WriteOK("writing genesis")
-	if err := manage.WriteGenesis(wd, path.Join(stagingDir, cfg.ShortName+".json.zst"), genesis); err != nil {
-		return fmt.Errorf("failed to write genesis: %w", err)
+		return fmt.Errorf("failed to generate chain config: %w", err)
 	}
 
 	output.WriteOK("done")

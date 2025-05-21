@@ -19,7 +19,7 @@ const CollectorConcurrency = 8
 type DiskChainConfig struct {
 	ShortName  string
 	Filepath   string
-	Superchain string
+	Superchain config.Superchain
 	Config     *config.Chain
 }
 
@@ -62,13 +62,13 @@ func CollectChainConfigs(p string) ([]DiskChainConfig, error) {
 				return
 			}
 
-			superchainStr := filepath.Base(filepath.Dir(file))
+			superchain := filepath.Base(filepath.Dir(file))
 
 			mtx.Lock()
 			out = append(out, DiskChainConfig{
 				ShortName:  strings.TrimSuffix(basename, ".toml"),
 				Filepath:   file,
-				Superchain: superchainStr,
+				Superchain: superchain,
 				Config:     &chain,
 			})
 			mtx.Unlock()
