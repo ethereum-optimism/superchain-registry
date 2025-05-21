@@ -38,15 +38,11 @@ func CheckDepsetsCLI(cliCtx *cli.Context) error {
 	}
 
 	var addrs config.AddressesJSON
-	err = paths.ReadJSONFile(paths.AddressesFile(wd), &addrs)
-	if err != nil {
+	if err := paths.ReadJSONFile(paths.AddressesFile(wd), &addrs); err != nil {
 		return fmt.Errorf("failed to read addresses.json file: %w", err)
 	}
 
-	checker, err := manage.NewDepsetChecker(lgr, cfgs, addrs)
-	if err != nil {
-		return fmt.Errorf("failed to create depset checker: %w", err)
-	}
+	checker := manage.NewDepsetChecker(lgr, cfgs, addrs)
 	if err := checker.Check(); err != nil {
 		return fmt.Errorf("failed to validate depsets: %w", err)
 	}

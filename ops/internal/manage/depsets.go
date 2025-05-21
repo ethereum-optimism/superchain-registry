@@ -27,7 +27,7 @@ type DepsetChecker struct {
 	chainsProcessed int
 }
 
-func NewDepsetChecker(logger log.Logger, cfgs []DiskChainConfig, addrs config.AddressesJSON) (*DepsetChecker, error) {
+func NewDepsetChecker(logger log.Logger, cfgs []DiskChainConfig, addrs config.AddressesJSON) *DepsetChecker {
 	dc := &DepsetChecker{
 		lgr:             logger,
 		addrs:           addrs,
@@ -40,7 +40,7 @@ func NewDepsetChecker(logger log.Logger, cfgs []DiskChainConfig, addrs config.Ad
 	}
 
 	logger.Info("loaded depset checker instance with chain configs", "numDiskCfgs", len(cfgs))
-	return dc, nil
+	return dc
 }
 
 func (dc *DepsetChecker) Check() error {
