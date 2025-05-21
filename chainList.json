@@ -923,7 +923,10 @@
       "type": "L2",
       "chain": "sepolia"
     },
-    "gasPayingToken": "0x43bd82D1e29a1bEC03AfD11D5a3252779b8c760c"
+    "gasPayingToken": "0x43bd82D1e29a1bEC03AfD11D5a3252779b8c760c",
+    "faultProofs": {
+      "status": ""
+    }
   },
   {
     "name": "Pivotal Sepolia",
