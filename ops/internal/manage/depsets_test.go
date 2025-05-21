@@ -143,6 +143,43 @@ func TestDepsetChecker_checkOffchain(t *testing.T) {
 		require.Error(t, err)
 		require.ErrorIs(t, err, errDepsetLengths)
 	})
+	t.Run("violation of transience", func(t *testing.T) {
+		addrs := loadAddresses(t, validAddressesPath)
+		var cfg1 config.Chain
+		err := paths.ReadTOMLFile("testdata/george/chain1.toml", &cfg1)
+		require.NoError(t, err)
+
+		var cfg2 config.Chain
+		err = paths.ReadTOMLFile("testdata/george/chain2.toml", &cfg2)
+		require.NoError(t, err)
+
+		var cfg3 config.Chain
+		err = paths.ReadTOMLFile("testdata/george/chain3.toml", &cfg3)
+		require.NoError(t, err)
+
+		var cfg4 config.Chain
+		err = paths.ReadTOMLFile("testdata/george/chain4.toml", &cfg4)
+		require.NoError(t, err)
+
+		var cfg5 config.Chain
+		err = paths.ReadTOMLFile("testdata/george/chain5.toml", &cfg5)
+		require.NoError(t, err)
+
+		chains := []DiskChainConfig{
+			{Config: &cfg1, Superchain: "test"},
+			{Config: &cfg2, Superchain: "test"},
+			{Config: &cfg3, Superchain: "test"},
+			{Config: &cfg4, Superchain: "test"},
+			{Config: &cfg5, Superchain: "test"},
+		}
+
+		checker, err := NewDepsetChecker(lgr, chains, addrs)
+		require.NoError(t, err)
+		err = checker.Check()
+		// err = checker.checkOffchain(chains)
+		require.Error(t, err)
+		require.ErrorIs(t, err, errDepsetLengths)
+	})
 
 	t.Run("inconsistent depset activation times", func(t *testing.T) {
 		addrs := loadAddresses(t, validAddressesPath)
