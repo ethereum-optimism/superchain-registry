@@ -60,6 +60,15 @@ type StagedChain struct {
 	DeploymentL2ContractsVersion *artifacts.Locator `toml:"deployment_l2_contracts_version"`
 }
 
+type Dependency struct {
+	ChainIndex     uint32 `json:"chainIndex" toml:"chain_index"`
+	ActivationTime uint64 `json:"activationTime" toml:"activation_time"`
+}
+
+type Interop struct {
+	Dependencies map[string]Dependency `json:"dependencies" toml:"dependencies"`
+}
+
 type Chain struct {
 	Name                 string              `toml:"name"`
 	PublicRPC            string              `toml:"public_rpc"`
@@ -76,6 +85,7 @@ type Chain struct {
 	MaxSequencerDrift    uint64              `toml:"max_sequencer_drift"`
 	GasPayingToken       *ChecksummedAddress `toml:"gas_paying_token,omitempty"`
 	Hardforks            Hardforks           `toml:"hardforks"`
+	Interop              *Interop            `toml:"interop,omitempty"`
 	Optimism             Optimism            `toml:"optimism"`
 	AltDA                *AltDA              `toml:"alt_da"`
 	Genesis              Genesis             `toml:"genesis"`
@@ -171,6 +181,7 @@ type Addresses struct {
 	SuperchainConfig                  *ChecksummedAddress `toml:"SuperchainConfig,omitempty" json:"SuperchainConfig,omitempty"`
 	AnchorStateRegistryProxy          *ChecksummedAddress `toml:"AnchorStateRegistryProxy,omitempty" json:"AnchorStateRegistryProxy,omitempty"`
 	DelayedWETHProxy                  *ChecksummedAddress `toml:"DelayedWETHProxy,omitempty" json:"DelayedWETHProxy,omitempty"`
+	EthLockboxProxy                   *ChecksummedAddress `toml:"EthLockboxProxy,omitempty" json:"EthLockboxProxy,omitempty"`
 	DisputeGameFactoryProxy           *ChecksummedAddress `toml:"DisputeGameFactoryProxy,omitempty" json:"DisputeGameFactoryProxy,omitempty"`
 	FaultDisputeGame                  *ChecksummedAddress `toml:"FaultDisputeGame,omitempty" json:"FaultDisputeGame,omitempty"`
 	MIPS                              *ChecksummedAddress `toml:"MIPS,omitempty" json:"MIPS,omitempty"`
@@ -196,6 +207,7 @@ func CreateAddressesWithRolesFromFetcher(addrs script.Addresses, roles addresses
 			L2OutputOracleProxy:               NewChecksummedAddress(addrs.L2OutputOracleProxy),
 			OptimismMintableERC20FactoryProxy: NewChecksummedAddress(addrs.OptimismMintableErc20FactoryProxy),
 			OptimismPortalProxy:               NewChecksummedAddress(addrs.OptimismPortalProxy),
+			EthLockboxProxy:                   NewChecksummedAddress(addrs.EthLockboxProxy),
 			SystemConfigProxy:                 NewChecksummedAddress(addrs.SystemConfigProxy),
 			ProxyAdmin:                        NewChecksummedAddress(addrs.OpChainProxyAdminImpl),
 			SuperchainConfig:                  NewChecksummedAddress(addrs.SuperchainConfigProxy),
