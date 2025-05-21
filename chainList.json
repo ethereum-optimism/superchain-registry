@@ -143,6 +143,9 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "none"
     }
   },
   {

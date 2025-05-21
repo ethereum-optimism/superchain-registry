@@ -102,6 +102,8 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Funki"
