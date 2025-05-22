@@ -95,9 +95,9 @@ func action(cliCtx *cli.Context) error {
 
 	sD := config.SuperchainDefinition{
 		Name:                   m.Name,
-		ProtocolVersionsAddr:   config.NewChecksummedAddress(st.SuperchainDeployment.ProtocolVersionsProxyAddress),
-		SuperchainConfigAddr:   config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxyAddress),
-		OPContractsManagerAddr: config.NewChecksummedAddress(st.ImplementationsDeployment.OpcmAddress),
+		ProtocolVersionsAddr:   config.NewChecksummedAddress(st.SuperchainDeployment.ProtocolVersionsProxy),
+		SuperchainConfigAddr:   config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxy),
+		OPContractsManagerAddr: config.NewChecksummedAddress(st.ImplementationsDeployment.OpcmImpl),
 		Hardforks:              config.Hardforks{}, // superchain wide hardforks are added after chains are in the registry.
 		L1: config.SuperchainL1{
 			ChainID: st.AppliedIntent.L1ChainID,

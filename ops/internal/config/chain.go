@@ -221,7 +221,7 @@ func CreateAddressesWithRolesFromFetcher(addrs script.Addresses, roles addresses
 		Roles: Roles{
 			SystemConfigOwner: NewChecksummedAddress(roles.SystemConfigOwner),
 			ProxyAdminOwner:   NewChecksummedAddress(roles.OpChainProxyAdminOwner),
-			Guardian:          NewChecksummedAddress(roles.Guardian),
+			Guardian:          NewChecksummedAddress(roles.OpChainGuardian),
 			Challenger:        NewChecksummedAddress(roles.Challenger),
 			Proposer:          NewChecksummedAddress(roles.Proposer),
 			UnsafeBlockSigner: NewChecksummedAddress(roles.UnsafeBlockSigner),

@@ -102,7 +102,7 @@ func ScanL1(
 		return nil, fmt.Errorf("failed to get chain ID: %w", err)
 	}
 
-	opcmAddr, err := standard.ManagerImplementationAddrFor(chainID.Uint64(), release.Tag)
+	opcmAddr, err := standard.OPCMImplAddressFor(chainID.Uint64(), release.Tag)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get OPCM address: %w", err)
 	}
