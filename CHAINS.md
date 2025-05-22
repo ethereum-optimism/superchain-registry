@@ -11,6 +11,7 @@
 | Boba Mainnet | ❌ | ❌ | https://bobascan.com | `https://mainnet.boba.network` | `https://mainnet.boba.network` |
 | Cyber Mainnet | ❌ | ❌ | https://cyberscan.co/ | `https://rpc.cyber.co` | `https://cyber.alt.technology/` |
 | Ethernity | ❌ | ✅ | https://ernscan.io | `https://mainnet.ethernitychain.io` | `https://mainnet.ethernitychain.io` |
+| Fraxtal | ❌ | ❌ | https://fraxscan.com | `https://rpc.frax.com` | `https://rpc.frax.com` |
 | Funki | ❌ | ❌ | https://funki.superscan.network | `https://rpc-mainnet.funkichain.com` | `https://rpc-mainnet.funkichain.com` |
 | HashKey Chain | ❌ | ❌ | https://explorer.hsk.xyz | `https://mainnet.hsk.xyz` | `https://hashkeychain-mainnet.alt.technology` |
 | Ink | ✅ | ✅ | https://explorer.inkonchain.com | `https://rpc-gel.inkonchain.com` | `https://rpc-gel.inkonchain.com` |
