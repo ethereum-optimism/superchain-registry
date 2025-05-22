@@ -51,7 +51,7 @@ func mainErr() error {
 
 			if err := manage.ValidateGenesisIntegrity(cfg.Config, genesis); err != nil {
 				integrityCheckFailed = true
-				output.WriteNotOK("genesis integrity check failed for %s: %v", cfg.ShortName, err)
+				output.WriteNotOK("genesis integrity check failed for %s/%s: %v", superchain, cfg.ShortName, err)
 			} else {
 				output.WriteOK("genesis integrity check passed for %s/%s", superchain, cfg.ShortName)
 			}

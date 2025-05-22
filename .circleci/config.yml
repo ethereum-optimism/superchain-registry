@@ -52,6 +52,7 @@ jobs:
           files: ./<<parameters.package>>/coverage.out
 
   run-tool:
+    circleci_ip_ranges: true
     parameters:
       tool:
         type: string
@@ -179,7 +180,7 @@ jobs:
             if [ -n "$(git status --porcelain)" ]; then
               echo "\n❌ Changes detected after running codegen. Run the following command locally and commit the changes:\n"
               echo "go run ./cmd/codegen \\"
-              echo "  --l1-rpc-urls=\"<urls>\""
+              echo "  --l1-rpc-urls=\"<urls>\" \\"
               echo "  --superchains=\"$SUPERCHAINS\""
               exit 1
             else
@@ -200,6 +201,11 @@ workflows:
           tool: check_genesis_integrity
       - check-codegen:
           name: check-codegen
+      - run-tool:
+          name: check-depsets
+          tool: check_depsets
+          requires:
+            - check-codegen
       - run-tool:
           name: check-staging-synced
           tool: sync_staging
