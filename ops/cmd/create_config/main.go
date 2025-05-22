@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -50,13 +50,17 @@ func action(cliCtx *cli.Context) error {
 
 	statePath := cliCtx.String(StateFilename.Name)
 	output.WriteStderr("reading state file from %s", statePath)
-	var st state.State
+	var st deployer.OpaqueMapping
 	if err := paths.ReadJSONFile(statePath, &st); err != nil {
 		return fmt.Errorf("failed to read state file: %w", err)
 	}
 
-	if len(st.AppliedIntent.Chains) != 1 {
-		return fmt.Errorf("expected exactly one chain in the state file, got %d", len(st.AppliedIntent.Chains))
+	numChains, err := deployer.GetNumChains(st)
+	if err != nil {
+		return fmt.Errorf("failed to get number of chains: %w", err)
+	}
+	if numChains != 1 {
+		return fmt.Errorf("expected exactly one chain in the state file, got %d", numChains)
 	}
 
 	err = manage.GenerateChainArtifacts(st, wd, cliCtx.String(Shortname.Name), nil, nil, 0)
