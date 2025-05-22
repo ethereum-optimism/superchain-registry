@@ -829,6 +829,21 @@
     status = "none"
 
 [[chains]]
+  name = "Radius testnet"
+  identifier = "sepolia/radius_testnet"
+  chain_id = 863
+  rpc = ["testnet-rpc.theradius.xyz"]
+  explorers = ["https://testnet-rpc.theradius.xyz/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
   name = "Camp Network Testnet V2"
   identifier = "sepolia/camp"
   chain_id = 325000
