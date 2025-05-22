@@ -9,13 +9,13 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
+func InflateChainConfig(st deployer.OpaqueMapping, idx int) (*config.StagedChain, error) {
 	if idx >= len(st.AppliedIntent.Chains) {
 		return nil, errors.New("index out of bounds")
 	}

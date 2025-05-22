@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/tomwright/dasel"
 )
 
@@ -58,4 +59,25 @@ func getNumChainsV2(st OpaqueMapping) (int, error) {
 		return 0, errors.New("failed to cast appliedIntent.chains to []interface{}")
 	}
 	return len(slice), nil
+}
+
+func GetChainID(st OpaqueMapping, idx int) (common.Hash, error) {
+	switch GetSchemaVersion(st) {
+	case V3, V2:
+		return getChainIDV2(st, idx)
+	default:
+		return common.Hash{}, fmt.Errorf("unsupported schema version")
+	}
+}
+func getChainIDV2(st OpaqueMapping, idx int) (common.Hash, error) {
+	node, err := dasel.New(st).Query(fmt.Sprintf("appliedIntent.chains.[%d].id", idx))
+	if err != nil {
+		return common.Hash{}, fmt.Errorf("failed to query chain ID %d: %w", idx, err)
+	}
+	chainIDStr, ok := node.InterfaceValue().(string)
+	if !ok {
+		return common.Hash{}, fmt.Errorf("failed to cast chain ID %d to string", idx)
+	}
+	return common.HexToHash(chainIDStr), nil
+
 }

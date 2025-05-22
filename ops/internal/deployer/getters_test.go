@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetNumChains(t *testing.T) {
+func TestGetters(t *testing.T) {
 	tests := []struct {
 		Version int
 	}{
@@ -23,6 +23,11 @@ func TestGetNumChains(t *testing.T) {
 			numChains, err := GetNumChains(input)
 			require.NoError(t, err)
 			require.Equal(t, 1, numChains, "expected 1 chain in state file")
+
+			chainId, err := GetChainID(input, 0)
+			require.NoError(t, err)
+			require.Equal(t, "0x00000000000000000000000000000000000000000000000000000000000004d2", chainId.Hex(), "expected chain ID to be 0x1")
+
 		})
 	}
 
