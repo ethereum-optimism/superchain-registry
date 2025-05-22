@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/ethereum-optimism/optimism/devnet-sdk/proofs/prestate"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
@@ -116,6 +117,12 @@ func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
 		PermissionedDisputeGame:           config.NewChecksummedAddress(chainState.PermissionedDisputeGameAddress),
 	}
 
+	// Dependency Set Inflation
+	if isChainInDependencySet(chainID, st.InteropDepSet) {
+		cfg.Interop = new(config.Interop)
+		cfg.Interop.Dependencies = convertToSCRDepset(st.InteropDepSet)
+	}
+
 	return cfg, nil
 }
 
@@ -214,4 +221,40 @@ func StagedSuperchainDefinition(rootP string) (*config.SuperchainDefinition, err
 	err = paths.ReadTOMLFile(files[0], sM)
 
 	return sM, err
+}
+
+// isChainInDependencySet checks if a chain ID is in the supplied dependency set
+func isChainInDependencySet(chainID common.Hash, depSet *prestate.DependencySet) bool {
+	if depSet == nil {
+		return false
+	}
+	for id := range depSet.Dependencies {
+		if id == chainID.Hex() {
+			return true
+		}
+	}
+	return false
+}
+
+// convertToSCRDepset converts a prestate.DependencySet to a config.DependencySet
+func convertToSCRDepset(depSet *prestate.DependencySet) map[string]config.Dependency {
+	if depSet == nil {
+		return nil
+	}
+	if depSet.Dependencies == nil {
+		return nil
+	}
+	ds := make(map[string]config.Dependency, len(depSet.Dependencies))
+	for k, v := range depSet.Dependencies {
+		decimalChainId, err := common.HexToHash(k).Big().MarshalText()
+		if err != nil {
+			panic(fmt.Sprintf("failed to convert chain ID %s to decimal: %v", k, err))
+		}
+		ds[string(decimalChainId)] = config.Dependency{
+			ChainIndex:     v.ChainIndex,
+			ActivationTime: v.ActivationTime,
+			// HistoryMinTime ignored
+		}
+	}
+	return ds
 }
