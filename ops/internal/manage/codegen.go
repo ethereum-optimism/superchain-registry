@@ -135,11 +135,7 @@ func (s *CodegenSyncer) UpdateChainList(chainID string, onchainCfg script.ChainC
 	}
 
 	dir := filepath.Dir(diskCfg.Filepath)
-	lastDir := filepath.Base(dir)
-	superchain, err := config.ParseSuperchain(lastDir)
-	if err != nil {
-		return fmt.Errorf("error parsing superchain: %w", err)
-	}
+	superchain := filepath.Base(dir)
 
 	found := false
 	chain := diskCfg.Config

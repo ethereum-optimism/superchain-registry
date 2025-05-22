@@ -93,13 +93,35 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		return fmt.Errorf("root directory error: %w", err)
 	}
 
-	chainCfg, err := manage.StagedChainConfig(wd)
+	stagedChainCfgs, err := manage.StagedChainConfigs(wd)
 	if errors.Is(err, manage.ErrNoStagedConfig) {
 		output.WriteOK("no staged chain config found, exiting")
 		return nil
 	}
 	if err != nil {
 		return fmt.Errorf("failed to get staged chain config: %w", err)
+	}
+	if len(stagedChainCfgs) > 1 {
+		output.WriteWarn("multiple staged chain configs found, only the first one will be used")
+	}
+
+	chainCfg := stagedChainCfgs[0]
+	var stdConfigs validation.ConfigParams
+	var stdRoles validation.RolesConfig
+	var l1RPCURL string
+	switch chainCfg.Superchain {
+	case config.MainnetSuperchain:
+		stdConfigs = validation.StandardConfigParamsMainnet
+		stdRoles = validation.StandardConfigRolesMainnet
+		l1RPCURL = cliCtx.String(MainnetRPCURLFlag.Name)
+	case config.SepoliaSuperchain:
+		stdConfigs = validation.StandardConfigParamsSepolia
+		stdRoles = validation.StandardConfigRolesSepolia
+		l1RPCURL = cliCtx.String(SepoliaRPCURLFlag.Name)
+	default:
+		output.WriteWarn("skipping staging report for chain %s in unsupported superchain: %s",
+			chainCfg.ShortName, chainCfg.Superchain)
+		return nil
 	}
 
 	genesisFilename := chainCfg.ShortName + ".json.zst"
@@ -116,29 +138,13 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	stdPrestate := validation.StandardPrestates.StablePrestate()
 	stdVersions := validation.StandardVersionsMainnet[contractsVersion]
 
-	var stdConfigs validation.ConfigParams
-	var stdRoles validation.RolesConfig
-	var l1RPCURL string
-	switch chainCfg.Superchain {
-	case config.MainnetSuperchain:
-		stdConfigs = validation.StandardConfigParamsMainnet
-		stdRoles = validation.StandardConfigRolesMainnet
-		l1RPCURL = cliCtx.String(MainnetRPCURLFlag.Name)
-	case config.SepoliaSuperchain:
-		stdConfigs = validation.StandardConfigParamsSepolia
-		stdRoles = validation.StandardConfigRolesSepolia
-		l1RPCURL = cliCtx.String(SepoliaRPCURLFlag.Name)
-	default:
-		return fmt.Errorf("unsupported superchain: %s", chainCfg.Superchain)
-	}
-
 	rpcClient, err := rpc.Dial(l1RPCURL)
 	if err != nil {
 		return fmt.Errorf("failed to dial RPC client: %w", err)
 	}
 
 	var params validation.ConfigParams
-	if err := paths.ReadTOMLFile(paths.ValidationsFile(wd, string(chainCfg.Superchain)), &params); err != nil {
+	if err := paths.ReadTOMLFile(paths.ValidationsFile(wd, chainCfg.Superchain), &params); err != nil {
 		return fmt.Errorf("failed to read standard params: %w", err)
 	}
 
@@ -155,6 +161,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		stdPrestate,
 		stdVersions,
 		gitSHA,
+		chainCfg.ShortName,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to render comment: %w", err)
@@ -169,7 +176,6 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	}
 
 	_, _ = fmt.Fprintf(os.Stdout, "%s\n", comment)
-
 	return nil
 }
 

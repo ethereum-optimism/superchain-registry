@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"strings"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
@@ -24,7 +23,7 @@ var (
 		Name:  "preserve-input",
 		Usage: "Skip cleanup of staging directory.",
 	}
-	FlagL1RPCURLs = &cli.StringFlag{
+	FlagL1RPCURLs = &cli.StringSliceFlag{
 		Name:     "l1-rpc-urls",
 		Usage:    "Comma-separated list of L1 RPC URLs",
 		Required: true,
@@ -49,6 +48,8 @@ func main() {
 }
 
 func action(cliCtx *cli.Context) error {
+	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
+	l1RpcUrls := cliCtx.StringSlice(FlagL1RPCURLs.Name)
 	check := cliCtx.Bool(FlagCheck.Name)
 	noCleanup := cliCtx.Bool(FlagPreserveInput.Name)
 	wd, err := paths.FindRepoRoot()
@@ -57,8 +58,38 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	stagingDir := paths.StagingDir(wd)
+	stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
 
-	chainCfg, err := manage.StagedChainConfig(wd)
+	l1RpcUrl := ""
+	if err == nil {
+		output.WriteOK("superchain definition found, finding L1 RPC URL...")
+		l1RpcUrl, err = config.FindValidL1URL(cliCtx.Context,
+			lgr,
+			l1RpcUrls, stagedSuperchainDefinition.L1.ChainID)
+		if err != nil {
+			return fmt.Errorf("failed to find valid L1 RPC URL: %w", err)
+		}
+		stagedSuperchainDefinition.L1.PublicRPC = l1RpcUrl
+		err = manage.WriteSuperchainDefinition(
+			paths.SuperchainDefinitionPath(wd, config.Superchain(stagedSuperchainDefinition.Name)),
+			stagedSuperchainDefinition)
+		if err != nil {
+			return fmt.Errorf("failed to write superchain definition: %w", err)
+		}
+		output.WriteOK("wrote superchain definition")
+	} else if !errors.Is(err, manage.ErrNoStagedSuperchainDefinition) { // on this error we don't do anything
+		return fmt.Errorf("failed to get staged superchain definition: %w", err)
+	}
+
+	if !noCleanup {
+		superchainTomlPath := path.Join(stagingDir, "superchain.toml")
+		if err := os.Remove(superchainTomlPath); err != nil {
+			output.WriteNotOK("failed to remove %s: %v", superchainTomlPath, err)
+		}
+		output.WriteOK("cleaned superchain definition from staging directory")
+	}
+
+	stagedChainCfgs, err := manage.StagedChainConfigs(wd)
 	if errors.Is(err, manage.ErrNoStagedConfig) {
 		output.WriteOK("no staged chain config found, exiting")
 		return nil
@@ -67,49 +98,63 @@ func action(cliCtx *cli.Context) error {
 		return fmt.Errorf("failed to get staged chain config: %w", err)
 	}
 
-	genesisFilename := path.Join(stagingDir, chainCfg.ShortName+".json.zst")
-	genesis, err := manage.ReadGenesis(wd, genesisFilename)
-	if err != nil {
-		return fmt.Errorf("failed to read genesis: %w", err)
+	var chainIds []uint64
+	for _, chainCfg := range stagedChainCfgs {
+		genesisFilename := path.Join(stagingDir, chainCfg.ShortName+".json.zst")
+		genesis, err := manage.ReadGenesis(wd, genesisFilename)
+		if err != nil {
+			return fmt.Errorf("failed to read genesis: %w", err)
+		}
+
+		superchainPath := paths.SuperchainDir(wd, chainCfg.Superchain)
+		chainCfgs, err := manage.CollectChainConfigs(superchainPath)
+		if err != nil {
+			return fmt.Errorf("failed to collect chain configs: %w", err)
+		}
+
+		if err := manage.ValidateUniqueness(chainCfg, chainCfgs); err != nil {
+			return fmt.Errorf("failed uniqueness check: %w", err)
+		}
+		output.WriteOK("internal uniqueness check passed")
+
+		if check {
+			output.WriteOK("validation successful")
+			continue
+		}
+
+		if err := manage.WriteChainConfig(wd, chainCfg); err != nil {
+			return fmt.Errorf("failed to write chain config: %w", err)
+		}
+
+		output.WriteOK(
+			"wrote chain config %s.toml to %s superchain",
+			chainCfg.ShortName,
+			chainCfg.Superchain,
+		)
+
+		if err := manage.WriteSuperchainGenesis(wd, chainCfg.Superchain, chainCfg.ShortName, genesis); err != nil {
+			return fmt.Errorf("failed to write genesis: %w", err)
+		}
+
+		output.WriteOK("wrote genesis files")
+
+		if !noCleanup {
+			cfgFilename := path.Join(stagingDir, chainCfg.ShortName+".toml")
+			if err := os.Remove(cfgFilename); err != nil {
+				output.WriteNotOK("failed to remove %s: %v", cfgFilename, err)
+			}
+			if err := os.Remove(genesisFilename); err != nil {
+				output.WriteNotOK("failed to remove %s: %v", genesisFilename, err)
+			}
+
+			output.WriteOK("cleaned files from staging directory")
+		}
+		chainIds = append(chainIds, chainCfg.ChainID)
 	}
-
-	superchainPath := paths.SuperchainDir(wd, chainCfg.Superchain)
-	chainCfgs, err := manage.CollectChainConfigs(superchainPath)
-	if err != nil {
-		return fmt.Errorf("failed to collect chain configs: %w", err)
-	}
-
-	if err := manage.ValidateUniqueness(chainCfg, chainCfgs); err != nil {
-		return fmt.Errorf("failed uniqueness check: %w", err)
-	}
-	output.WriteOK("internal uniqueness check passed")
-
-	if check {
-		output.WriteOK("validation successful")
-		return nil
-	}
-
-	if err := manage.WriteChainConfig(wd, chainCfg); err != nil {
-		return fmt.Errorf("failed to write chain config: %w", err)
-	}
-
-	output.WriteOK(
-		"wrote chain config %s.toml to %s superchain",
-		chainCfg.ShortName,
-		chainCfg.Superchain,
-	)
-
-	if err := manage.WriteSuperchainGenesis(wd, chainCfg.Superchain, chainCfg.ShortName, genesis); err != nil {
-		return fmt.Errorf("failed to compress genesis: %w", err)
-	}
-
-	output.WriteOK("wrote genesis files")
 
 	// Codegen
-	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	l1RpcUrls := strings.Split(cliCtx.String("l1-rpc-urls"), ",")
 	ctx := cliCtx.Context
-	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, l1RpcUrls, []uint64{chainCfg.ChainID}, []config.Superchain{})
+	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, []string{l1RpcUrl}, chainIds, []config.Superchain{})
 	if err != nil {
 		return fmt.Errorf("error fetching onchain configs: %w", err)
 	}
@@ -119,18 +164,6 @@ func action(cliCtx *cli.Context) error {
 	}
 	if err := syncer.SyncAll(); err != nil {
 		return fmt.Errorf("error syncing codegen: %w", err)
-	}
-
-	if !noCleanup {
-		cfgFilename := path.Join(stagingDir, chainCfg.ShortName+".toml")
-		if err := os.Remove(cfgFilename); err != nil {
-			output.WriteNotOK("failed to remove %s: %v", cfgFilename, err)
-		}
-		if err := os.Remove(genesisFilename); err != nil {
-			output.WriteNotOK("failed to remove %s: %v", genesisFilename, err)
-		}
-
-		output.WriteOK("cleaned up staging directory")
 	}
 
 	return nil
