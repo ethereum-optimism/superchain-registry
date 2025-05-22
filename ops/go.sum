@@ -104,6 +104,8 @@ github.com/ethereum-optimism/op-geth v1.101503.2-rc.5.0.20250401164435-02dfe8692
 github.com/ethereum-optimism/op-geth v1.101503.2-rc.5.0.20250401164435-02dfe8692a3c/go.mod h1:QUo3fn+45vWqJWzJW+rIzRHUV7NmhhHLPdI87mAn1M8=
 github.com/ethereum-optimism/optimism v1.13.3-0.20250430203933-225370c3419d h1:1h3Ov6uWaxzX4kqgrpKg/OwtNHXGBE+WQ3DEOP0pySs=
 github.com/ethereum-optimism/optimism v1.13.3-0.20250430203933-225370c3419d/go.mod h1:/GqvIKnHezaiugTjhamK8UmhqxVHDDskwb21FEUGucY=
+github.com/ethereum-optimism/optimism v1.13.3 h1:rfPx7OembMnoEASU1ozA/Foa7Am7UA+h0SB+OUrxn7s=
+github.com/ethereum-optimism/optimism v1.13.3/go.mod h1:WrVFtk3cP45tvHs7MARn9KGQu35XIoXo/IOWU6K/rzk=
 github.com/ethereum-optimism/superchain-registry/validation v0.0.0-20250314162817-2c60e5723c64 h1:teDhU4h4ryaE8rSBl+vJJiwKHjxdnnHPkKZ9iNr2R8k=
 github.com/ethereum-optimism/superchain-registry/validation v0.0.0-20250314162817-2c60e5723c64/go.mod h1:NZ816PzLU1TLv1RdAvYAb6KWOj4Zm5aInT0YpDVml2Y=
 github.com/ethereum/c-kzg-4844 v1.0.0 h1:0X1LBXxaEtYD9xsyj9B9ctQEZIpnvVDeoBx8aHEwTNA=
@@ -321,8 +323,11 @@ github.com/syndtr/goleveldb v1.0.1-0.20220614013038-64ee5596c38a h1:1ur3QoCqvE5f
 github.com/syndtr/goleveldb v1.0.1-0.20220614013038-64ee5596c38a/go.mod h1:RRCYJbIwD5jmqPI9XoAFR0OcDxqUctll6zUj/+B4S48=
 github.com/tklauser/go-sysconf v0.3.12 h1:0QaGUFOdQaIVdPgfITYzaTegZvdCjmYO52cSFAEVmqU=
 github.com/tklauser/go-sysconf v0.3.12/go.mod h1:Ho14jnntGE1fpdOqQEEaiKRpvIavV0hSfmBq8nJbHYI=
+github.com/tklauser/go-sysconf v0.3.14/go.mod h1:1ym4lWMLUOhuBOPGtRcJm7tEGX4SCYNEEEtghGG/8uY=
 github.com/tklauser/numcpus v0.6.1 h1:ng9scYS7az0Bk4OZLvrNXNSAO2Pxr1XXRAPyjhIx+Fk=
 github.com/tklauser/numcpus v0.6.1/go.mod h1:1XfjsgE2zo8GVw7POkMbHENHzVg3GzmoZ9fESEdAacY=
+github.com/tklauser/numcpus v0.8.0 h1:Mx4Wwe/FjZLeQsK/6kt2EOepwwSl7SmJrK5bV/dXYgY=
+github.com/tklauser/numcpus v0.8.0/go.mod h1:ZJZlAY+dmR4eut8epnzf0u/VwodKmryxR8txiloSqBE=
 github.com/tomwright/dasel v1.27.3 h1:vnoaZsG8hbubcdh2IioRVjOt2DTg+txLtDGKQn1cdA8=
 github.com/tomwright/dasel v1.27.3/go.mod h1:/rESPoTvQxRkrtEH8lhSU8CB2UWPh/bM0kDrKVGf1kQ=
 github.com/tyler-smith/go-bip39 v1.1.0 h1:5eUemwrMargf3BSLRRCalXT93Ns6pQJIjYQN2nyfOP8=
@@ -335,6 +340,8 @@ github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 h1:gEOO8jv9F4OT7lGC
 github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1/go.mod h1:Ohn+xnUBiLI6FVj/9LpzZWtj1/D6lUovWYBkxHVV3aM=
 github.com/yusufpapurcu/wmi v1.2.3 h1:E1ctvB7uKFMOJw3fdOW32DwGE9I7t++CRUEMKvFoFiw=
 github.com/yusufpapurcu/wmi v1.2.3/go.mod h1:SBZ9tNy3G9/m5Oi98Zks0QjeHVDvuK0qfxQmPyzfmi0=
+github.com/yusufpapurcu/wmi v1.2.4 h1:zFUKzehAFReQwLys1b/iSMl+JQGSCSjtVqQn9bBrPo0=
+github.com/yusufpapurcu/wmi v1.2.4/go.mod h1:SBZ9tNy3G9/m5Oi98Zks0QjeHVDvuK0qfxQmPyzfmi0=
 golang.org/x/crypto v0.0.0-20170930174604-9419663f5a44/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
