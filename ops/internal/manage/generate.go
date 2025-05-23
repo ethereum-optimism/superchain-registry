@@ -31,6 +31,7 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
+
 	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, statePath, wd)
 	if err != nil {
 		return fmt.Errorf("failed to create op-deployer: %w", err)
@@ -39,11 +40,6 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 	_, err = opd.BuildBinary()
 	if err != nil {
 		return fmt.Errorf("failed to build op-deployer: %w", err)
-	}
-
-	err = opd.SetupOutputState(wd)
-	if err != nil {
-		return fmt.Errorf("failed to setup output state: %w", err)
 	}
 
 	// output.WriteOK("inflating chain config %d of %d", idx, len(st.AppliedIntent.Chains))
@@ -64,7 +60,7 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 
 	output.WriteOK("reading genesis")
 
-	genesis, err := opd.InspectGenesis(wd, chainId)
+	genesis, err := opd.InspectGenesis(statePath, chainId)
 
 	if err != nil {
 		return fmt.Errorf("failed to get genesis: %w", err)

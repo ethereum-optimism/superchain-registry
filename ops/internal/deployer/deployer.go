@@ -82,27 +82,20 @@ func (d *OpDeployer) BuildBinary() (string, error) {
 	return deployerVersion, nil
 }
 
-// SetupOutputState copies the d.inputStatePath to the working directory.
-// Use this if you want to inspect an output state file.
-func (d *OpDeployer) SetupOutputState(workdir string) error {
-	// Read the state file
-	state, err := ReadOpaqueMappingFile(d.inputStatePath)
+func (d *OpDeployer) getBinaryPath() (string, error) {
+	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return fmt.Errorf("failed to read state file: %w", err)
+		return "", fmt.Errorf("failed to get home directory: %w", err)
 	}
+	deployerPath := filepath.Join(homeDir, ".cache/binaries", d.deployerVersion, "op-deployer")
+	if _, err := os.Stat(deployerPath); os.IsNotExist(err) {
+		return "", fmt.Errorf("deployer binary not found at path: %s", deployerPath)
+	}
+	return deployerPath, nil
 
-	// Write state.json in the temp directory
-	stateJSON, err := json.MarshalIndent(state, "", "  ")
-	if err != nil {
-		return fmt.Errorf("failed to marshal state to JSON: %w", err)
-	}
-	stateTempPath := filepath.Join(workdir, "state.json")
-	if err := os.WriteFile(stateTempPath, stateJSON, 0o644); err != nil {
-		return fmt.Errorf("failed to write state to temp file: %w", err)
-	}
-	d.lgr.Info("Wrote state to temporary file", "path", stateTempPath)
-	return nil
 }
+
+// GetDeployerVersion returns the deployer version.
 
 // SetupStateAndIntent prepares the deployer environment by creating merged state and intent files
 // in the specified working directory.
@@ -152,11 +145,10 @@ func (d *OpDeployer) SetupStateAndIntent(workdir string) error {
 
 // GenerateGenesis runs op-deployer binary to generate a genesis
 func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
-	homeDir, err := os.UserHomeDir()
+	deployerPath, err := d.getBinaryPath()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get home directory: %w", err)
+		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
 	}
-	deployerPath := filepath.Join(homeDir, ".cache/binaries", d.deployerVersion, "op-deployer")
 
 	// Run `op-deployer apply` to generate the expected genesis
 	d.lgr.Info("Running `op-deployer apply`")
@@ -185,14 +177,35 @@ func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
 	return &genesis, nil
 }
 
-func (d *OpDeployer) InspectGenesis(workdir string, chainId string) (*core.Genesis, error) {
+func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*core.Genesis, error) {
 	// Run `op-deployer inspect genesis` to read the expected genesis
 	d.lgr.Info("Running `op-deployer inspect genesis`")
-	homeDir, err := os.UserHomeDir()
+
+	deployerPath, err := d.getBinaryPath()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get home directory: %w", err)
+		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
 	}
-	deployerPath := filepath.Join(homeDir, ".cache/binaries", d.deployerVersion, "op-deployer")
+
+	state, err := ReadOpaqueMappingFile(statePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read state file: %w", err)
+	}
+
+	// Write state.json in the temp directory
+	stateJSON, err := json.MarshalIndent(state, "", "  ")
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal state to JSON: %w", err)
+	}
+
+	workdir, err := os.MkdirTemp("", "op-deployer")
+	defer os.RemoveAll(workdir)
+
+	stateTempPath := filepath.Join(workdir, "state.json")
+	if err := os.WriteFile(stateTempPath, stateJSON, 0o644); err != nil {
+
+		return nil, fmt.Errorf("failed to write state to temp file: %w", err)
+	}
+	d.lgr.Info("Wrote state to temporary file", "path", stateTempPath)
 
 	cmd := exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir, chainId)
 	stderr := bytes.Buffer{}
