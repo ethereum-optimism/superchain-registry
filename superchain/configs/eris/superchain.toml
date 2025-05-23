@@ -7,5 +7,5 @@ op_contracts_manager_addr = "0xF48BfE972Bdf79bEC7d7DcEDd32692157e542C3a"
 
 [l1]
   chain_id = 11155111
-  public_rpc = ""
+  public_rpc = "https://ethereum-sepolia-rpc.publicnode.com"
   explorer = ""

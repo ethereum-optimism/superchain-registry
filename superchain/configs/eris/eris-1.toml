@@ -10,13 +10,6 @@ batch_inbox_addr = "0x009c62DE7567dC0c5e956F7465aDF594ab2ba006"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-superchain = "eris"
-base_fee_vault_recipient = "0x433eB871dE65cB762fea4a6e4d23716806551C0A"
-l1_fee_vault_recipient = "0xAF4126dfbC1874342b2AaE0ECf1ff7A04714706C"
-sequencer_fee_vault_recipient = "0x007a60e159607b0FcFBe6c2F9b2c45cac85f0220"
-deployment_tx_hash = "0x0000000000000000000000000000000000000000000000000000000000000000"
-deployment_l1_contracts_version = "tag://op-contracts/v3.0.0-rc.2"
-deployment_l2_contracts_version = "tag://op-contracts/v3.0.0-rc.2"
 
 [hardforks]
   canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC

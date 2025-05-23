@@ -1179,5 +1179,47 @@
     "faultProofs": {
       "status": "none"
     }
+  },
+  {
+    "name": "eris-0",
+    "identifier": "eris/eris-0",
+    "chainId": 420110011,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "eris"
+    },
+    "faultProofs": {
+      "status": "permissioned"
+    }
+  },
+  {
+    "name": "eris-1",
+    "identifier": "eris/eris-1",
+    "chainId": 420110012,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "eris"
+    },
+    "faultProofs": {
+      "status": "permissionless"
+    }
   }
 ]

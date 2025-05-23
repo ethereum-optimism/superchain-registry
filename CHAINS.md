@@ -1,5 +1,11 @@
 # Superchain Ecosystem
 
+### eris
+
+| Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
+|---|---|---|---|---|---|
+| eris-0 | ❌ | ❌ |  | `` | `` |
+| eris-1 | ❌ | ❌ |  | `` | `` |
 ### mainnet
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC

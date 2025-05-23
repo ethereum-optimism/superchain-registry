@@ -842,3 +842,33 @@
     chain = "sepolia"
   [chains.fault_proofs]
     status = "none"
+
+[[chains]]
+  name = "eris-0"
+  identifier = "eris/eris-0"
+  chain_id = 420110011
+  rpc = [""]
+  explorers = [""]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "eris"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "eris-1"
+  identifier = "eris/eris-1"
+  chain_id = 420110012
+  rpc = [""]
+  explorers = [""]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "eris"
+  [chains.fault_proofs]
+    status = "permissionless"
