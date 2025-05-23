@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/log"
@@ -270,4 +271,51 @@ func (d *OpDeployer) InspectRollup(statePath, chainId string) (*rollup.Config, e
 	}
 
 	return &rollup, nil
+}
+
+func (d *OpDeployer) InspectDeployConfig(statePath, chainId string) (*genesis.DeployConfig, error) {
+	// Run `op-deployer inspect deploy-config` to read the expected deploy config
+	d.lgr.Info("Running `op-deployer inspect deploy-config`")
+
+	deployerPath, err := d.getBinaryPath()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
+	}
+
+	state, err := ReadOpaqueMappingFile(statePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read state file: %w", err)
+	}
+
+	// Write state.json in the temp directory
+	stateJSON, err := json.MarshalIndent(state, "", "  ")
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal state to JSON: %w", err)
+	}
+
+	workdir, err := os.MkdirTemp("", "op-deployer")
+	defer os.RemoveAll(workdir)
+
+	stateTempPath := filepath.Join(workdir, "state.json")
+	if err := os.WriteFile(stateTempPath, stateJSON, 0o644); err != nil {
+
+		return nil, fmt.Errorf("failed to write state to temp file: %w", err)
+	}
+	d.lgr.Info("Wrote state to temporary file", "path", stateTempPath)
+
+	cmd := exec.Command(deployerPath, "inspect", "deploy-config", "--workdir", workdir, chainId)
+	stderr := bytes.Buffer{}
+	cmd.Stderr = &stderr
+	output, err := cmd.Output()
+	if err != nil {
+		d.lgr.Error(stderr.ReadString(0))
+		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
+	}
+
+	var deployConfig genesis.DeployConfig
+	if err := json.Unmarshal(output, &deployConfig); err != nil {
+		return nil, fmt.Errorf("failed to parse op-deployer inspect deploy-config output: %w", err)
+	}
+
+	return &deployConfig, nil
 }

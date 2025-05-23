@@ -15,19 +15,16 @@ import (
 )
 
 func InflateChainConfig(opd *deployer.OpDeployer, statePath, chainId string, idx int) (*config.StagedChain, error) {
-	// if idx >= len(st.AppliedIntent.Chains) {
-	// 	return nil, errors.New("index out of bounds")
-	// }
 
 	rollup, err := opd.InspectRollup(statePath, chainId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to inspect rollup: %w", err)
 	}
 
-	// dc, err := inspect.DeployConfig(statePath, chainId)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to inspect deploy config: %w", err)
-	// }
+	dc, err := opd.InspectDeployConfig(statePath, chainId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to inspect deploy config: %w", err)
+	}
 
 	cfg := new(config.StagedChain)
 
@@ -52,22 +49,22 @@ func InflateChainConfig(opd *deployer.OpDeployer, statePath, chainId string, idx
 	// 	return nil, fmt.Errorf("failed to copy deploy config hardfork times: %w", err)
 	// }
 
-	// cfg.Optimism = config.Optimism{
-	// 	EIP1559Elasticity:        dc.EIP1559Elasticity,
-	// 	EIP1559Denominator:       dc.EIP1559Denominator,
-	// 	EIP1559DenominatorCanyon: dc.EIP1559DenominatorCanyon,
-	// }
+	cfg.Optimism = config.Optimism{
+		EIP1559Elasticity:        dc.EIP1559Elasticity,
+		EIP1559Denominator:       dc.EIP1559Denominator,
+		EIP1559DenominatorCanyon: dc.EIP1559DenominatorCanyon,
+	}
 
-	// if dc.UseAltDA {
-	// 	cfg.AltDA = &config.AltDA{
-	// 		DaChallengeContractAddress: config.ChecksummedAddress(dc.DAChallengeProxy),
-	// 		DaChallengeWindow:          dc.DAChallengeWindow,
-	// 		DaResolveWindow:            dc.DAResolveWindow,
-	// 		DaCommitmentType:           dc.DACommitmentType,
-	// 	}
-	// 	cfg.Addresses.DAChallengeAddress = config.NewChecksummedAddress(dc.DAChallengeProxy)
-	// 	cfg.DataAvailabilityType = "alt-da"
-	// }
+	if dc.UseAltDA {
+		cfg.AltDA = &config.AltDA{
+			DaChallengeContractAddress: config.ChecksummedAddress(dc.DAChallengeProxy),
+			DaChallengeWindow:          dc.DAChallengeWindow,
+			DaResolveWindow:            dc.DAResolveWindow,
+			DaCommitmentType:           dc.DACommitmentType,
+		}
+		cfg.Addresses.DAChallengeAddress = config.NewChecksummedAddress(dc.DAChallengeProxy)
+		cfg.DataAvailabilityType = "alt-da"
+	}
 
 	// chainState := st.Chains[0]
 	cfg.Genesis = config.Genesis{
