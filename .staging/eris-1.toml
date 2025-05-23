@@ -1,0 +1,71 @@
+name = "eris-1"
+public_rpc = ""
+sequencer_rpc = ""
+explorer = ""
+superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 420110012
+batch_inbox_addr = "0x009c62DE7567dC0c5e956F7465aDF594ab2ba006"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+superchain = "eris"
+base_fee_vault_recipient = "0x433eB871dE65cB762fea4a6e4d23716806551C0A"
+l1_fee_vault_recipient = "0xAF4126dfbC1874342b2AaE0ECf1ff7A04714706C"
+sequencer_fee_vault_recipient = "0x007a60e159607b0FcFBe6c2F9b2c45cac85f0220"
+deployment_tx_hash = "0x0000000000000000000000000000000000000000000000000000000000000000"
+deployment_l1_contracts_version = "tag://op-contracts/v3.0.0-rc.2"
+deployment_l2_contracts_version = "tag://op-contracts/v3.0.0-rc.2"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  isthmus_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1747865460
+  [genesis.l1]
+    hash = "0x62383eda938194971cf8631e4cea2d59a1b4ae7560af05345ad43a5aedfbb82b"
+    number = 8377836
+  [genesis.l2]
+    hash = "0x6cd758619a411db1aad667e9ba5926ef006347b6857b5a48d453804865949057"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x56B4E58BCB2336D11677eF1BAA7A978E14b1718c"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
+    gasLimit = 60000000
+
+[roles]
+  SystemConfigOwner = "0xD97a42cb0703574cA174128300b295939bb6dF1a"
+  ProxyAdminOwner = "0x17Be380a565115424A1FEad3Ee4E08a11c9fB540"
+  Guardian = "0xFbBE1d8bd1Efc1Aa2895ae60581019a92b2Df1F2"
+  Challenger = "0x6cD7A9DD153f8bD687340B3e1D9d62090CC44475"
+  Proposer = "0x22d563772E26C6591462233aDE5FA6155a64261f"
+  UnsafeBlockSigner = "0xBeaD9ad2C90162048AaD643d096c413e52209730"
+  BatchSubmitter = "0x56B4E58BCB2336D11677eF1BAA7A978E14b1718c"
+
+[addresses]
+  AddressManager = "0xCff0512e9f60dfA8CD718F2C70f210437388F84d"
+  L1CrossDomainMessengerProxy = "0xe8fd2B58e15B73dd9FB67ED72e05Af2A9f17a230"
+  L1ERC721BridgeProxy = "0xaf033Cb0C2ed9F80130d13434aFA6576178348AA"
+  L1StandardBridgeProxy = "0x63d682Ef30E18c5484A8A6445B92B3db8405c342"
+  OptimismMintableERC20FactoryProxy = "0xd987Fc7a0c8b2653f50C32094a31897eba8F84Fb"
+  OptimismPortalProxy = "0x2D109a476bC3De3E7dA5cBa3C53903aaa33325e5"
+  SystemConfigProxy = "0x4f272Aab5854c57d39726ec5F74226b11d5fFC0b"
+  ProxyAdmin = "0xa4C88be40F3c13C8539CF735E08996AD55A1ef86"
+  SuperchainConfig = "0x5a39b33b354E7E9a8D4d212CBDeB7b9B645d8e6e"
+  AnchorStateRegistryProxy = "0x3A15c5E0F032086E175d7593087AC97942a10797"
+  DelayedWETHProxy = "0x267056D536Fc09dE863237db1719B6613c81984c"
+  DisputeGameFactoryProxy = "0x0d368963d4A6221497807128d4db63120844155C"
+  PermissionedDisputeGame = "0x8E43ECF4b5e8DFFCE538279d90606eB52BEb8d9b"

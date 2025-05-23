@@ -1,0 +1,11 @@
+name = "eris"
+protocol_versions_addr = "0x16870d66B90942864E5D65B00534429F12c6CF5e"
+superchain_config_addr = "0x5a39b33b354E7E9a8D4d212CBDeB7b9B645d8e6e"
+op_contracts_manager_addr = "0xF48BfE972Bdf79bEC7d7DcEDd32692157e542C3a"
+
+[hardforks]
+
+[l1]
+  chain_id = 11155111
+  public_rpc = ""
+  explorer = ""
