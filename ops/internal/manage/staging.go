@@ -8,72 +8,70 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
-	if idx >= len(st.AppliedIntent.Chains) {
-		return nil, errors.New("index out of bounds")
+func InflateChainConfig(opd *deployer.OpDeployer, statePath, chainId string, idx int) (*config.StagedChain, error) {
+	// if idx >= len(st.AppliedIntent.Chains) {
+	// 	return nil, errors.New("index out of bounds")
+	// }
+
+	rollup, err := opd.InspectRollup(statePath, chainId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to inspect rollup: %w", err)
 	}
 
-	chainIntent := st.AppliedIntent.Chains[idx]
-	chainID := chainIntent.ID
-	dc, err := inspect.DeployConfig(st, chainID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to inspect deploy config: %w", err)
-	}
-
-	_, rollup, err := inspect.GenesisAndRollup(st, chainID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to inspect genesis and rollup: %w", err)
-	}
+	// dc, err := inspect.DeployConfig(statePath, chainId)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to inspect deploy config: %w", err)
+	// }
 
 	cfg := new(config.StagedChain)
-	cfg.ChainID = chainID.Big().Uint64()
-	cfg.BatchInboxAddr = config.NewChecksummedAddress(dc.BatchInboxAddress)
-	cfg.BlockTime = dc.L2BlockTime
-	cfg.SeqWindowSize = dc.SequencerWindowSize
-	cfg.MaxSequencerDrift = dc.MaxSequencerDrift
-	cfg.DataAvailabilityType = "eth-da"
-	cfg.DeploymentL1ContractsVersion = st.AppliedIntent.L1ContractsLocator
-	cfg.DeploymentL2ContractsVersion = st.AppliedIntent.L2ContractsLocator
-	cfg.DeploymentTxHash = new(common.Hash)
-	cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.BaseFeeVaultRecipient)
-	cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.L1FeeVaultRecipient)
-	cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.SequencerFeeVaultRecipient)
 
-	if dc.CustomGasTokenAddress != (common.Address{}) {
-		cfg.GasPayingToken = config.NewChecksummedAddress(dc.CustomGasTokenAddress)
-	}
+	// cfg.ChainID = chainID.Big().Uint64()
+	// cfg.BatchInboxAddr = config.NewChecksummedAddress(dc.BatchInboxAddress)
+	// cfg.BlockTime = dc.L2BlockTime
+	// cfg.SeqWindowSize = dc.SequencerWindowSize
+	// cfg.MaxSequencerDrift = dc.MaxSequencerDrift
+	// cfg.DataAvailabilityType = "eth-da"
+	// cfg.DeploymentL1ContractsVersion = st.AppliedIntent.L1ContractsLocator
+	// cfg.DeploymentL2ContractsVersion = st.AppliedIntent.L2ContractsLocator
+	// cfg.DeploymentTxHash = new(common.Hash)
+	// cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.BaseFeeVaultRecipient)
+	// cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.L1FeeVaultRecipient)
+	// cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.SequencerFeeVaultRecipient)
 
-	if err := CopyDeployConfigHFTimes(&dc.UpgradeScheduleDeployConfig, &cfg.Hardforks); err != nil {
-		return nil, fmt.Errorf("failed to copy deploy config hardfork times: %w", err)
-	}
+	// if dc.CustomGasTokenAddress != (common.Address{}) {
+	// 	cfg.GasPayingToken = config.NewChecksummedAddress(dc.CustomGasTokenAddress)
+	// }
 
-	cfg.Optimism = config.Optimism{
-		EIP1559Elasticity:        dc.EIP1559Elasticity,
-		EIP1559Denominator:       dc.EIP1559Denominator,
-		EIP1559DenominatorCanyon: dc.EIP1559DenominatorCanyon,
-	}
+	// if err := CopyDeployConfigHFTimes(&dc.UpgradeScheduleDeployConfig, &cfg.Hardforks); err != nil {
+	// 	return nil, fmt.Errorf("failed to copy deploy config hardfork times: %w", err)
+	// }
 
-	if dc.UseAltDA {
-		cfg.AltDA = &config.AltDA{
-			DaChallengeContractAddress: config.ChecksummedAddress(dc.DAChallengeProxy),
-			DaChallengeWindow:          dc.DAChallengeWindow,
-			DaResolveWindow:            dc.DAResolveWindow,
-			DaCommitmentType:           dc.DACommitmentType,
-		}
-		cfg.Addresses.DAChallengeAddress = config.NewChecksummedAddress(dc.DAChallengeProxy)
-		cfg.DataAvailabilityType = "alt-da"
-	}
+	// cfg.Optimism = config.Optimism{
+	// 	EIP1559Elasticity:        dc.EIP1559Elasticity,
+	// 	EIP1559Denominator:       dc.EIP1559Denominator,
+	// 	EIP1559DenominatorCanyon: dc.EIP1559DenominatorCanyon,
+	// }
 
-	chainState := st.Chains[0]
+	// if dc.UseAltDA {
+	// 	cfg.AltDA = &config.AltDA{
+	// 		DaChallengeContractAddress: config.ChecksummedAddress(dc.DAChallengeProxy),
+	// 		DaChallengeWindow:          dc.DAChallengeWindow,
+	// 		DaResolveWindow:            dc.DAResolveWindow,
+	// 		DaCommitmentType:           dc.DACommitmentType,
+	// 	}
+	// 	cfg.Addresses.DAChallengeAddress = config.NewChecksummedAddress(dc.DAChallengeProxy)
+	// 	cfg.DataAvailabilityType = "alt-da"
+	// }
+
+	// chainState := st.Chains[0]
 	cfg.Genesis = config.Genesis{
-		L2Time: uint64(chainState.StartBlock.Time),
+		// 	L2Time: uint64(chainState.StartBlock.Time),
 		L1: config.GenesisRef{
 			Hash:   rollup.Genesis.L1.Hash,
 			Number: rollup.Genesis.L1.Number,
@@ -83,38 +81,38 @@ func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
 			Number: rollup.Genesis.L2.Number,
 		},
 		SystemConfig: config.SystemConfig{
-			BatcherAddr: *config.NewChecksummedAddress(rollup.Genesis.SystemConfig.BatcherAddr),
-			Overhead:    common.Hash(rollup.Genesis.SystemConfig.Overhead),
-			Scalar:      common.Hash(rollup.Genesis.SystemConfig.Scalar),
-			GasLimit:    rollup.Genesis.SystemConfig.GasLimit,
+			// 		BatcherAddr: *config.NewChecksummedAddress(rollup.Genesis.SystemConfig.BatcherAddr),
+			Overhead: common.Hash(rollup.Genesis.SystemConfig.Overhead),
+			Scalar:   common.Hash(rollup.Genesis.SystemConfig.Scalar),
+			GasLimit: rollup.Genesis.SystemConfig.GasLimit,
 		},
 	}
 
-	cfg.Roles = config.Roles{
-		SystemConfigOwner: config.NewChecksummedAddress(chainIntent.Roles.SystemConfigOwner),
-		ProxyAdminOwner:   config.NewChecksummedAddress(chainIntent.Roles.L1ProxyAdminOwner),
-		Guardian:          config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.Guardian),
-		Proposer:          config.NewChecksummedAddress(chainIntent.Roles.Proposer),
-		UnsafeBlockSigner: config.NewChecksummedAddress(chainIntent.Roles.UnsafeBlockSigner),
-		BatchSubmitter:    config.NewChecksummedAddress(chainIntent.Roles.Batcher),
-		Challenger:        config.NewChecksummedAddress(chainIntent.Roles.Challenger),
-	}
+	// cfg.Roles = config.Roles{
+	// 	SystemConfigOwner: config.NewChecksummedAddress(chainIntent.Roles.SystemConfigOwner),
+	// 	ProxyAdminOwner:   config.NewChecksummedAddress(chainIntent.Roles.L1ProxyAdminOwner),
+	// 	Guardian:          config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.Guardian),
+	// 	Proposer:          config.NewChecksummedAddress(chainIntent.Roles.Proposer),
+	// 	UnsafeBlockSigner: config.NewChecksummedAddress(chainIntent.Roles.UnsafeBlockSigner),
+	// 	BatchSubmitter:    config.NewChecksummedAddress(chainIntent.Roles.Batcher),
+	// 	Challenger:        config.NewChecksummedAddress(chainIntent.Roles.Challenger),
+	// }
 
-	cfg.Addresses = config.Addresses{
-		AddressManager:                    config.NewChecksummedAddress(chainState.AddressManagerAddress),
-		L1CrossDomainMessengerProxy:       config.NewChecksummedAddress(chainState.L1CrossDomainMessengerProxyAddress),
-		L1ERC721BridgeProxy:               config.NewChecksummedAddress(chainState.L1ERC721BridgeProxyAddress),
-		L1StandardBridgeProxy:             config.NewChecksummedAddress(chainState.L1StandardBridgeProxyAddress),
-		OptimismMintableERC20FactoryProxy: config.NewChecksummedAddress(chainState.OptimismMintableERC20FactoryProxyAddress),
-		OptimismPortalProxy:               config.NewChecksummedAddress(chainState.OptimismPortalProxyAddress),
-		SystemConfigProxy:                 config.NewChecksummedAddress(chainState.SystemConfigProxyAddress),
-		ProxyAdmin:                        config.NewChecksummedAddress(chainState.ProxyAdminAddress),
-		SuperchainConfig:                  config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxyAddress),
-		AnchorStateRegistryProxy:          config.NewChecksummedAddress(chainState.AnchorStateRegistryProxyAddress),
-		DelayedWETHProxy:                  config.NewChecksummedAddress(chainState.DelayedWETHPermissionedGameProxyAddress),
-		DisputeGameFactoryProxy:           config.NewChecksummedAddress(chainState.DisputeGameFactoryProxyAddress),
-		PermissionedDisputeGame:           config.NewChecksummedAddress(chainState.PermissionedDisputeGameAddress),
-	}
+	// cfg.Addresses = config.Addresses{
+	// 	AddressManager:                    config.NewChecksummedAddress(chainState.AddressManagerAddress),
+	// 	L1CrossDomainMessengerProxy:       config.NewChecksummedAddress(chainState.L1CrossDomainMessengerProxyAddress),
+	// 	L1ERC721BridgeProxy:               config.NewChecksummedAddress(chainState.L1ERC721BridgeProxyAddress),
+	// 	L1StandardBridgeProxy:             config.NewChecksummedAddress(chainState.L1StandardBridgeProxyAddress),
+	// 	OptimismMintableERC20FactoryProxy: config.NewChecksummedAddress(chainState.OptimismMintableERC20FactoryProxyAddress),
+	// 	OptimismPortalProxy:               config.NewChecksummedAddress(chainState.OptimismPortalProxyAddress),
+	// 	SystemConfigProxy:                 config.NewChecksummedAddress(chainState.SystemConfigProxyAddress),
+	// 	ProxyAdmin:                        config.NewChecksummedAddress(chainState.ProxyAdminAddress),
+	// 	SuperchainConfig:                  config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxyAddress),
+	// 	AnchorStateRegistryProxy:          config.NewChecksummedAddress(chainState.AnchorStateRegistryProxyAddress),
+	// 	DelayedWETHProxy:                  config.NewChecksummedAddress(chainState.DelayedWETHPermissionedGameProxyAddress),
+	// 	DisputeGameFactoryProxy:           config.NewChecksummedAddress(chainState.DisputeGameFactoryProxyAddress),
+	// 	PermissionedDisputeGame:           config.NewChecksummedAddress(chainState.PermissionedDisputeGameAddress),
+	// }
 
 	return cfg, nil
 }

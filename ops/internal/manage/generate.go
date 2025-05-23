@@ -42,12 +42,12 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 		return fmt.Errorf("failed to build op-deployer: %w", err)
 	}
 
-	// output.WriteOK("inflating chain config %d of %d", idx, len(st.AppliedIntent.Chains))
+	output.WriteOK("inflating chain config at index %d", idx)
 
-	// cfg, err := InflateChainConfig(&st, idx)
-	// if err != nil {
-	// 	return fmt.Errorf("failed to inflate chain config %d of %d: %w", idx, len(st.AppliedIntent.Chains), err)
-	// }
+	cfg, err := InflateChainConfig(opd, statePath, chainId, idx)
+	if err != nil {
+		return fmt.Errorf("failed to inflate chain config at index %d: %w", idx, err)
+	}
 	// cfg.ShortName = shortName
 
 	// if name != nil {
@@ -68,14 +68,14 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 
 	stagingDir := paths.StagingDir(wd)
 
-	// output.WriteOK("writing chain config")
-	// if err := paths.WriteTOMLFile(path.Join(stagingDir, cfg.ShortName+".toml"), cfg); err != nil {
-	// 	return fmt.Errorf("failed to write chain config %d of %d: %w", idx, len(st.AppliedIntent.Chains), err)
-	// }
+	output.WriteOK("writing chain config")
+	if err := paths.WriteTOMLFile(path.Join(stagingDir, shortName+".toml"), cfg); err != nil {
+		return fmt.Errorf("failed to write chain config at index %d: %w", idx, err)
+	}
 
 	output.WriteOK("writing genesis")
-	if err := WriteGenesis(wd, path.Join(stagingDir, "test.json.zst"), genesis); err != nil {
-		return fmt.Errorf("failed to write genesis: %w", err)
+	if err := WriteGenesis(wd, path.Join(stagingDir, shortName+".json.zst"), genesis); err != nil {
+		return fmt.Errorf("failed to write genesis at index %d: %w", idx, err)
 	}
 	return nil
 }
