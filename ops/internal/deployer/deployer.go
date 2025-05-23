@@ -211,6 +211,9 @@ func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*core.Genesis, e
 	}
 
 	workdir, err := d.copyStateFileToTemporaryDir(statePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy state file: %w", err)
+	}
 	defer os.RemoveAll(workdir)
 
 	cmd := exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir, chainId)
