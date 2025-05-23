@@ -179,6 +179,32 @@ func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
 	return &genesis, nil
 }
 
+func (d *OpDeployer) copyStateFileToTemporaryDir(statePath string) (string, error) {
+	// Create a temporary directory
+	workdir, err := os.MkdirTemp("", "op-deployer")
+	if err != nil {
+		return "", fmt.Errorf("failed to create temporary directory: %w", err)
+	}
+
+	state, err := ReadOpaqueMappingFile(statePath)
+	if err != nil {
+		return "", fmt.Errorf("failed to read state file: %w", err)
+	}
+
+	// Write state.json in the temp directory
+	stateJSON, err := json.MarshalIndent(state, "", "  ")
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal state to JSON: %w", err)
+	}
+
+	stateTempPath := filepath.Join(workdir, "state.json")
+	if err := os.WriteFile(stateTempPath, stateJSON, 0o644); err != nil {
+		return "", fmt.Errorf("failed to write state to temp file: %w", err)
+	}
+	d.lgr.Info("Copied state file to temporary directory", "path", stateTempPath)
+	return workdir, nil
+}
+
 func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*core.Genesis, error) {
 	// Run `op-deployer inspect genesis` to read the expected genesis
 	d.lgr.Info("Running `op-deployer inspect genesis`")
@@ -188,26 +214,8 @@ func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*core.Genesis, e
 		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
 	}
 
-	state, err := ReadOpaqueMappingFile(statePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read state file: %w", err)
-	}
-
-	// Write state.json in the temp directory
-	stateJSON, err := json.MarshalIndent(state, "", "  ")
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal state to JSON: %w", err)
-	}
-
-	workdir, err := os.MkdirTemp("", "op-deployer")
+	workdir, err := d.copyStateFileToTemporaryDir(statePath)
 	defer os.RemoveAll(workdir)
-
-	stateTempPath := filepath.Join(workdir, "state.json")
-	if err := os.WriteFile(stateTempPath, stateJSON, 0o644); err != nil {
-
-		return nil, fmt.Errorf("failed to write state to temp file: %w", err)
-	}
-	d.lgr.Info("Wrote state to temporary file", "path", stateTempPath)
 
 	cmd := exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir, chainId)
 	stderr := bytes.Buffer{}
@@ -235,26 +243,11 @@ func (d *OpDeployer) InspectRollup(statePath, chainId string) (*rollup.Config, e
 		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
 	}
 
-	state, err := ReadOpaqueMappingFile(statePath)
+	workdir, err := d.copyStateFileToTemporaryDir(statePath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read state file: %w", err)
+		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
 	}
-
-	// Write state.json in the temp directory
-	stateJSON, err := json.MarshalIndent(state, "", "  ")
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal state to JSON: %w", err)
-	}
-
-	workdir, err := os.MkdirTemp("", "op-deployer")
 	defer os.RemoveAll(workdir)
-
-	stateTempPath := filepath.Join(workdir, "state.json")
-	if err := os.WriteFile(stateTempPath, stateJSON, 0o644); err != nil {
-
-		return nil, fmt.Errorf("failed to write state to temp file: %w", err)
-	}
-	d.lgr.Info("Wrote state to temporary file", "path", stateTempPath)
 
 	cmd := exec.Command(deployerPath, "inspect", "rollup", "--workdir", workdir, chainId)
 	stderr := bytes.Buffer{}
@@ -282,26 +275,11 @@ func (d *OpDeployer) InspectDeployConfig(statePath, chainId string) (*genesis.De
 		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
 	}
 
-	state, err := ReadOpaqueMappingFile(statePath)
+	workdir, err := d.copyStateFileToTemporaryDir(statePath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read state file: %w", err)
+		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
 	}
-
-	// Write state.json in the temp directory
-	stateJSON, err := json.MarshalIndent(state, "", "  ")
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal state to JSON: %w", err)
-	}
-
-	workdir, err := os.MkdirTemp("", "op-deployer")
 	defer os.RemoveAll(workdir)
-
-	stateTempPath := filepath.Join(workdir, "state.json")
-	if err := os.WriteFile(stateTempPath, stateJSON, 0o644); err != nil {
-
-		return nil, fmt.Errorf("failed to write state to temp file: %w", err)
-	}
-	d.lgr.Info("Wrote state to temporary file", "path", stateTempPath)
 
 	cmd := exec.Command(deployerPath, "inspect", "deploy-config", "--workdir", workdir, chainId)
 	stderr := bytes.Buffer{}
