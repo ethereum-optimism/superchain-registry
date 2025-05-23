@@ -1,6 +1,7 @@
 package deployer
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -10,6 +11,8 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
+	"github.com/ethereum-optimism/optimism/op-node/rollup"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/log"
 )
@@ -81,6 +84,18 @@ func (d *OpDeployer) BuildBinary() (string, error) {
 	return deployerVersion, nil
 }
 
+func (d *OpDeployer) getBinaryPath() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("failed to get home directory: %w", err)
+	}
+	deployerPath := filepath.Join(homeDir, ".cache/binaries", d.deployerVersion, "op-deployer")
+	if _, err := os.Stat(deployerPath); os.IsNotExist(err) {
+		return "", fmt.Errorf("deployer binary not found at path: %s", deployerPath)
+	}
+	return deployerPath, nil
+}
+
 // SetupStateAndIntent prepares the deployer environment by creating merged state and intent files
 // in the specified working directory.
 func (d *OpDeployer) SetupStateAndIntent(workdir string) error {
@@ -129,11 +144,10 @@ func (d *OpDeployer) SetupStateAndIntent(workdir string) error {
 
 // GenerateGenesis runs op-deployer binary to generate a genesis
 func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
-	homeDir, err := os.UserHomeDir()
+	deployerPath, err := d.getBinaryPath()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get home directory: %w", err)
+		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
 	}
-	deployerPath := filepath.Join(homeDir, ".cache/binaries", d.deployerVersion, "op-deployer")
 
 	// Run `op-deployer apply` to generate the expected genesis
 	d.lgr.Info("Running `op-deployer apply`")
@@ -147,6 +161,7 @@ func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
 	// Run `op-deployer inspect genesis` to read the expected genesis
 	d.lgr.Info("Running `op-deployer inspect genesis`")
 	cmd = exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir)
+
 	output, err := cmd.Output()
 	if err != nil {
 		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
@@ -158,4 +173,126 @@ func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
 	}
 
 	return &genesis, nil
+}
+
+func (d *OpDeployer) copyStateFileToTemporaryDir(statePath string) (string, error) {
+	// Create a temporary directory
+	workdir, err := os.MkdirTemp("", "op-deployer")
+	if err != nil {
+		return "", fmt.Errorf("failed to create temporary directory: %w", err)
+	}
+
+	state, err := ReadOpaqueMappingFile(statePath)
+	if err != nil {
+		return "", fmt.Errorf("failed to read state file: %w", err)
+	}
+
+	// Write state.json in the temp directory
+	stateJSON, err := json.MarshalIndent(state, "", "  ")
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal state to JSON: %w", err)
+	}
+
+	stateTempPath := filepath.Join(workdir, "state.json")
+	if err := os.WriteFile(stateTempPath, stateJSON, 0o644); err != nil {
+		return "", fmt.Errorf("failed to write state to temp file: %w", err)
+	}
+	d.lgr.Info("Copied state file to temporary directory", "path", stateTempPath)
+	return workdir, nil
+}
+
+func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*core.Genesis, error) {
+	// Run `op-deployer inspect genesis` to read the expected genesis
+	d.lgr.Info("Running `op-deployer inspect genesis`")
+
+	deployerPath, err := d.getBinaryPath()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
+	}
+
+	workdir, err := d.copyStateFileToTemporaryDir(statePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy state file: %w", err)
+	}
+	defer os.RemoveAll(workdir)
+
+	cmd := exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir, chainId)
+	stderr := bytes.Buffer{}
+	cmd.Stderr = &stderr
+	output, err := cmd.Output()
+	if err != nil {
+		d.lgr.Error(stderr.ReadString(0))
+		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
+	}
+
+	var genesis core.Genesis
+	if err := json.Unmarshal(output, &genesis); err != nil {
+		return nil, fmt.Errorf("failed to parse op-deployer inspect genesis output: %w", err)
+	}
+
+	return &genesis, nil
+}
+
+func (d *OpDeployer) InspectRollup(statePath, chainId string) (*rollup.Config, error) {
+	// Run `op-deployer inspect rollup` to read the expected rollup config
+	d.lgr.Info("Running `op-deployer inspect rollup`")
+
+	deployerPath, err := d.getBinaryPath()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
+	}
+
+	workdir, err := d.copyStateFileToTemporaryDir(statePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
+	}
+	defer os.RemoveAll(workdir)
+
+	cmd := exec.Command(deployerPath, "inspect", "rollup", "--workdir", workdir, chainId)
+	stderr := bytes.Buffer{}
+	cmd.Stderr = &stderr
+	output, err := cmd.Output()
+	if err != nil {
+		d.lgr.Error(stderr.ReadString(0))
+		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
+	}
+
+	var rollup rollup.Config
+	if err := json.Unmarshal(output, &rollup); err != nil {
+		return nil, fmt.Errorf("failed to parse op-deployer inspect rollup output: %w", err)
+	}
+
+	return &rollup, nil
+}
+
+func (d *OpDeployer) InspectDeployConfig(statePath, chainId string) (*genesis.DeployConfig, error) {
+	// Run `op-deployer inspect deploy-config` to read the expected deploy config
+	d.lgr.Info("Running `op-deployer inspect deploy-config`")
+
+	deployerPath, err := d.getBinaryPath()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
+	}
+
+	workdir, err := d.copyStateFileToTemporaryDir(statePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
+	}
+	defer os.RemoveAll(workdir)
+
+	cmd := exec.Command(deployerPath, "inspect", "deploy-config", "--workdir", workdir, chainId)
+	stderr := bytes.Buffer{}
+	cmd.Stderr = &stderr
+	output, err := cmd.Output()
+	if err != nil {
+		d.lgr.Error(stderr.ReadString(0))
+		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
+	}
+
+	var deployConfig genesis.DeployConfig
+	if err := json.Unmarshal(output, &deployConfig); err != nil {
+		return nil, fmt.Errorf("failed to parse op-deployer inspect deploy-config output: %w", err)
+	}
+
+	return &deployConfig, nil
 }
