@@ -241,9 +241,6 @@ func convertToSCRDepset(depSet *depset.StaticConfigDependencySet) map[string]con
 	if depSet == nil {
 		return nil
 	}
-	if depSet.Dependencies == nil {
-		return nil
-	}
 	ds := make(map[string]config.Dependency, len(depSet.Dependencies()))
 	for k, v := range depSet.Dependencies() {
 		ds[k.String()] = config.Dependency{
