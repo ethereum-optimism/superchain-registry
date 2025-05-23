@@ -57,7 +57,6 @@
 | Ozean Poseidon Testnet | ❌ | ❌ | https://ozean-testnet.explorer.caldera.xyz | `https://ozean-testnet.rpc.caldera.xyz/http` | `https://ozean-testnet.rpc.caldera.xyz/http` |
 | Pivotal Sepolia | ❌ | ❌ | https://sepolia.pivotalscan.org/ | `https://sepolia.pivotalprotocol.com/` | `https://sepolia.pivotalprotocol.com/` |
 | RACE Testnet | ❌ | ❌ | https://testnet.racescan.io/ | `https://racetestnet.io` | `https://racetestnet.io` |
-| Radius testnet | ❌ | ❌ | https://testnet-rpc.theradius.xyz/ | `testnet-rpc.theradius.xyz` | `dev-secure.rpc.theradius.xyz` |
 | Settlus Sepolia | ❌ | ❌ | sepolia.settlus.network | `https://settlus-septestnet.g.alchemy.com/public` | `https://settlus-sep-testnet-sequencer.g.alchemy.com/` |
 | Shape Sepolia Testnet | ❌ | ❌ | https://shape-sepolia.explorer.alchemy.com/ | `https://sepolia.shape.network/` | `https://shape-sepolia-sequencer.g.alchemy.com` |
 | Soneium Testnet Minato | ✅ | ✅ | https://soneium-minato.blockscout.com/ | `https://rpc.minato.soneium.org` | `https://rpc.minato.soneium.org` |
