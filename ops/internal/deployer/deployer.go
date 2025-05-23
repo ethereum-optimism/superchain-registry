@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -45,8 +46,8 @@ func (d *OpDeployer) BuildBinary() (string, error) {
 	// 1. Remove tag:// prefix if present
 	// 2. Remove any -rc.X suffix for version matching
 	contractsKey := strings.TrimPrefix(d.l1ContractsRelease, "tag://")
-	// rcSuffixRegex := regexp.MustCompile(`-rc\.[0-9]+$`)
-	// contractsKey = rcSuffixRegex.ReplaceAllString(contractsKey, "")
+	rcSuffixRegex := regexp.MustCompile(`-rc\.[0-9]+$`)
+	contractsKey = rcSuffixRegex.ReplaceAllString(contractsKey, "")
 
 	// Read and parse versions.json
 	d.lgr.Info("Reading versions.json")
