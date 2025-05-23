@@ -3,7 +3,6 @@ package deployer
 import (
 	_ "embed"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -27,8 +26,6 @@ var standardV3State []byte
 //go:embed configs/v3-intent.toml
 var standardV3Intent []byte
 
-type OpaqueMapping map[string]any
-
 func ReadOpaqueMappingFile(p string) (OpaqueMapping, error) {
 	f, err := os.Open(p)
 	if err != nil {
@@ -44,7 +41,7 @@ func ReadOpaqueMappingFile(p string) (OpaqueMapping, error) {
 }
 
 func MergeStateV2(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error) {
-	l1ChainID, err := readL1ChainID(dasel.New(userState))
+	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
 	}
@@ -60,7 +57,7 @@ func MergeStateV2(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error)
 }
 
 func MergeStateV3(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error) {
-	l1ChainID, err := readL1ChainID(dasel.New(userState))
+	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
 	}
@@ -247,40 +244,4 @@ func copyValue(src *dasel.Node, dest *dasel.Node, sel string) error {
 		return fmt.Errorf("failed to read value: %w", err)
 	}
 	return dest.Put(sel, val.InterfaceValue())
-}
-
-func readL1ChainID(node *dasel.Node) (uint64, error) {
-	l1ChainIDNode, err := node.Query("appliedIntent.l1ChainID")
-	if err != nil {
-		return 0, fmt.Errorf("failed to read L1 chain ID: %w", err)
-	}
-	l1ChainIDFloat, ok := l1ChainIDNode.InterfaceValue().(float64)
-	if !ok {
-		return 0, errors.New("failed to parse L1 chain ID")
-	}
-	return uint64(l1ChainIDFloat), nil
-}
-
-func ReadL1ContractsRelease(node *dasel.Node) (string, error) {
-	l1ContractsReleaseNode, err := node.Query("appliedIntent.l1ContractsLocator")
-	if err != nil {
-		return "", fmt.Errorf("failed to read L1 contracts release: %w", err)
-	}
-	l1ContractsRelease, ok := l1ContractsReleaseNode.InterfaceValue().(string)
-	if !ok {
-		return "", errors.New("failed to parse L1 contracts release")
-	}
-	return l1ContractsRelease, nil
-}
-
-func ReadL2ChainId(node *dasel.Node, idx int) (string, error) {
-	l2ChainIdNode, err := node.Query(fmt.Sprintf("appliedIntent.chains.[%d].id", idx))
-	if err != nil {
-		return "", fmt.Errorf("failed to read L2 chain ID: %w", err)
-	}
-	l2ChainId, ok := l2ChainIdNode.InterfaceValue().(string)
-	if !ok {
-		return "", errors.New("failed to parse L2 chain ID")
-	}
-	return l2ChainId, nil
 }
