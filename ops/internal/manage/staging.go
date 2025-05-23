@@ -71,7 +71,7 @@ func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
 		cfg.DataAvailabilityType = "alt-da"
 	}
 
-	chainState := st.Chains[0]
+	chainState := st.Chains[idx]
 	cfg.Genesis = config.Genesis{
 		L2Time: uint64(chainState.StartBlock.Time),
 		L1: config.GenesisRef{
