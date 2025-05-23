@@ -1,12 +1,12 @@
 package deployer
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -45,8 +45,8 @@ func (d *OpDeployer) BuildBinary() (string, error) {
 	// 1. Remove tag:// prefix if present
 	// 2. Remove any -rc.X suffix for version matching
 	contractsKey := strings.TrimPrefix(d.l1ContractsRelease, "tag://")
-	rcSuffixRegex := regexp.MustCompile(`-rc\.[0-9]+$`)
-	contractsKey = rcSuffixRegex.ReplaceAllString(contractsKey, "")
+	// rcSuffixRegex := regexp.MustCompile(`-rc\.[0-9]+$`)
+	// contractsKey = rcSuffixRegex.ReplaceAllString(contractsKey, "")
 
 	// Read and parse versions.json
 	d.lgr.Info("Reading versions.json")
@@ -79,6 +79,28 @@ func (d *OpDeployer) BuildBinary() (string, error) {
 	}
 
 	return deployerVersion, nil
+}
+
+// SetupOutputState copies the d.inputStatePath to the working directory.
+// Use this if you want to inspect an output state file.
+func (d *OpDeployer) SetupOutputState(workdir string) error {
+	// Read the state file
+	state, err := ReadOpaqueMappingFile(d.inputStatePath)
+	if err != nil {
+		return fmt.Errorf("failed to read state file: %w", err)
+	}
+
+	// Write state.json in the temp directory
+	stateJSON, err := json.MarshalIndent(state, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal state to JSON: %w", err)
+	}
+	stateTempPath := filepath.Join(workdir, "state.json")
+	if err := os.WriteFile(stateTempPath, stateJSON, 0o644); err != nil {
+		return fmt.Errorf("failed to write state to temp file: %w", err)
+	}
+	d.lgr.Info("Wrote state to temporary file", "path", stateTempPath)
+	return nil
 }
 
 // SetupStateAndIntent prepares the deployer environment by creating merged state and intent files
@@ -147,8 +169,36 @@ func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
 	// Run `op-deployer inspect genesis` to read the expected genesis
 	d.lgr.Info("Running `op-deployer inspect genesis`")
 	cmd = exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir)
+
 	output, err := cmd.Output()
 	if err != nil {
+
+		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
+	}
+
+	var genesis core.Genesis
+	if err := json.Unmarshal(output, &genesis); err != nil {
+		return nil, fmt.Errorf("failed to parse op-deployer inspect genesis output: %w", err)
+	}
+
+	return &genesis, nil
+}
+
+func (d *OpDeployer) InspectGenesis(workdir string, chainId string) (*core.Genesis, error) {
+	// Run `op-deployer inspect genesis` to read the expected genesis
+	d.lgr.Info("Running `op-deployer inspect genesis`")
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get home directory: %w", err)
+	}
+	deployerPath := filepath.Join(homeDir, ".cache/binaries", d.deployerVersion, "op-deployer")
+
+	cmd := exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir, chainId)
+	stderr := bytes.Buffer{}
+	cmd.Stderr = &stderr
+	output, err := cmd.Output()
+	if err != nil {
+		d.lgr.Error(stderr.ReadString(0))
 		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
 	}
 

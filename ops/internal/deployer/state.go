@@ -260,3 +260,27 @@ func readL1ChainID(node *dasel.Node) (uint64, error) {
 	}
 	return uint64(l1ChainIDFloat), nil
 }
+
+func ReadL1ContractsRelease(node *dasel.Node) (string, error) {
+	l1ContractsReleaseNode, err := node.Query("appliedIntent.l1ContractsLocator")
+	if err != nil {
+		return "", fmt.Errorf("failed to read L1 contracts release: %w", err)
+	}
+	l1ContractsRelease, ok := l1ContractsReleaseNode.InterfaceValue().(string)
+	if !ok {
+		return "", errors.New("failed to parse L1 contracts release")
+	}
+	return l1ContractsRelease, nil
+}
+
+func ReadL2ChainId(node *dasel.Node, idx int) (string, error) {
+	l2ChainIdNode, err := node.Query(fmt.Sprintf("appliedIntent.chains.[%d].id", idx))
+	if err != nil {
+		return "", fmt.Errorf("failed to read L2 chain ID: %w", err)
+	}
+	l2ChainId, ok := l2ChainIdNode.InterfaceValue().(string)
+	if !ok {
+		return "", errors.New("failed to parse L2 chain ID")
+	}
+	return l2ChainId, nil
+}
