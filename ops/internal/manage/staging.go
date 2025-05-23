@@ -28,18 +28,18 @@ func InflateChainConfig(opd *deployer.OpDeployer, statePath, chainId string, idx
 
 	cfg := new(config.StagedChain)
 
-	// cfg.ChainID = chainID.Big().Uint64()
+	cfg.ChainID = uint64(common.HexToHash(chainId).Big().Int64())
 	cfg.BatchInboxAddr = config.NewChecksummedAddress(dc.BatchInboxAddress)
 	cfg.BlockTime = dc.L2BlockTime
 	cfg.SeqWindowSize = dc.SequencerWindowSize
 	cfg.MaxSequencerDrift = dc.MaxSequencerDrift
 	cfg.DataAvailabilityType = "eth-da"
-	// cfg.DeploymentL1ContractsVersion = st.AppliedIntent.L1ContractsLocator
-	// cfg.DeploymentL2ContractsVersion = st.AppliedIntent.L2ContractsLocator
-	// cfg.DeploymentTxHash = new(common.Hash)
-	// cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.BaseFeeVaultRecipient)
-	// cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.L1FeeVaultRecipient)
-	// cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.SequencerFeeVaultRecipient)
+	// cfg.DeploymentL1ContractsVersion = st.AppliedIntent.L1ContractsLocator // TODO
+	// cfg.DeploymentL2ContractsVersion = st.AppliedIntent.L2ContractsLocator // TODO
+	cfg.DeploymentTxHash = new(common.Hash)
+	cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(dc.BaseFeeVaultRecipient)
+	cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(dc.L1FeeVaultRecipient)
+	cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(dc.SequencerFeeVaultRecipient)
 
 	if dc.CustomGasTokenAddress != (common.Address{}) {
 		cfg.GasPayingToken = config.NewChecksummedAddress(dc.CustomGasTokenAddress)
@@ -68,7 +68,7 @@ func InflateChainConfig(opd *deployer.OpDeployer, statePath, chainId string, idx
 
 	// chainState := st.Chains[0]
 	cfg.Genesis = config.Genesis{
-		// 	L2Time: uint64(chainState.StartBlock.Time),
+		// L2Time: uint64(chainState.StartBlock.Time),
 		L1: config.GenesisRef{
 			Hash:   rollup.Genesis.L1.Hash,
 			Number: rollup.Genesis.L1.Number,
@@ -85,17 +85,17 @@ func InflateChainConfig(opd *deployer.OpDeployer, statePath, chainId string, idx
 		},
 	}
 
-	// cfg.Roles = config.Roles{
-	// 	SystemConfigOwner: config.NewChecksummedAddress(chainIntent.Roles.SystemConfigOwner),
-	// 	ProxyAdminOwner:   config.NewChecksummedAddress(chainIntent.Roles.L1ProxyAdminOwner),
-	// 	Guardian:          config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.Guardian),
-	// 	Proposer:          config.NewChecksummedAddress(chainIntent.Roles.Proposer),
-	// 	UnsafeBlockSigner: config.NewChecksummedAddress(chainIntent.Roles.UnsafeBlockSigner),
-	// 	BatchSubmitter:    config.NewChecksummedAddress(chainIntent.Roles.Batcher),
-	// 	Challenger:        config.NewChecksummedAddress(chainIntent.Roles.Challenger),
-	// }
+	cfg.Roles = config.Roles{
+		SystemConfigOwner: config.NewChecksummedAddress(dc.FinalSystemOwner),
+		ProxyAdminOwner:   config.NewChecksummedAddress(dc.ProxyAdminOwner),
+		Guardian:          config.NewChecksummedAddress(dc.SuperchainConfigGuardian),
+		Proposer:          config.NewChecksummedAddress(dc.L2OutputOracleProposer),
+		UnsafeBlockSigner: config.NewChecksummedAddress(dc.P2PSequencerAddress),
+		BatchSubmitter:    config.NewChecksummedAddress(dc.BatchSenderAddress),
+		// Challenger:        config.NewChecksummedAddress(chainIntent.Roles.Challenger), // TODO
+	}
 
-	// cfg.Addresses = config.Addresses{
+	// cfg.Addresses = config.Addresses{ // TODO
 	// 	AddressManager:                    config.NewChecksummedAddress(chainState.AddressManagerAddress),
 	// 	L1CrossDomainMessengerProxy:       config.NewChecksummedAddress(chainState.L1CrossDomainMessengerProxyAddress),
 	// 	L1ERC721BridgeProxy:               config.NewChecksummedAddress(chainState.L1ERC721BridgeProxyAddress),
