@@ -29,11 +29,11 @@ func InflateChainConfig(opd *deployer.OpDeployer, statePath, chainId string, idx
 	cfg := new(config.StagedChain)
 
 	// cfg.ChainID = chainID.Big().Uint64()
-	// cfg.BatchInboxAddr = config.NewChecksummedAddress(dc.BatchInboxAddress)
-	// cfg.BlockTime = dc.L2BlockTime
-	// cfg.SeqWindowSize = dc.SequencerWindowSize
-	// cfg.MaxSequencerDrift = dc.MaxSequencerDrift
-	// cfg.DataAvailabilityType = "eth-da"
+	cfg.BatchInboxAddr = config.NewChecksummedAddress(dc.BatchInboxAddress)
+	cfg.BlockTime = dc.L2BlockTime
+	cfg.SeqWindowSize = dc.SequencerWindowSize
+	cfg.MaxSequencerDrift = dc.MaxSequencerDrift
+	cfg.DataAvailabilityType = "eth-da"
 	// cfg.DeploymentL1ContractsVersion = st.AppliedIntent.L1ContractsLocator
 	// cfg.DeploymentL2ContractsVersion = st.AppliedIntent.L2ContractsLocator
 	// cfg.DeploymentTxHash = new(common.Hash)
@@ -41,13 +41,13 @@ func InflateChainConfig(opd *deployer.OpDeployer, statePath, chainId string, idx
 	// cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.L1FeeVaultRecipient)
 	// cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.SequencerFeeVaultRecipient)
 
-	// if dc.CustomGasTokenAddress != (common.Address{}) {
-	// 	cfg.GasPayingToken = config.NewChecksummedAddress(dc.CustomGasTokenAddress)
-	// }
+	if dc.CustomGasTokenAddress != (common.Address{}) {
+		cfg.GasPayingToken = config.NewChecksummedAddress(dc.CustomGasTokenAddress)
+	}
 
-	// if err := CopyDeployConfigHFTimes(&dc.UpgradeScheduleDeployConfig, &cfg.Hardforks); err != nil {
-	// 	return nil, fmt.Errorf("failed to copy deploy config hardfork times: %w", err)
-	// }
+	if err := CopyDeployConfigHFTimes(&dc.UpgradeScheduleDeployConfig, &cfg.Hardforks); err != nil {
+		return nil, fmt.Errorf("failed to copy deploy config hardfork times: %w", err)
+	}
 
 	cfg.Optimism = config.Optimism{
 		EIP1559Elasticity:        dc.EIP1559Elasticity,
@@ -78,10 +78,10 @@ func InflateChainConfig(opd *deployer.OpDeployer, statePath, chainId string, idx
 			Number: rollup.Genesis.L2.Number,
 		},
 		SystemConfig: config.SystemConfig{
-			// 		BatcherAddr: *config.NewChecksummedAddress(rollup.Genesis.SystemConfig.BatcherAddr),
-			Overhead: common.Hash(rollup.Genesis.SystemConfig.Overhead),
-			Scalar:   common.Hash(rollup.Genesis.SystemConfig.Scalar),
-			GasLimit: rollup.Genesis.SystemConfig.GasLimit,
+			BatcherAddr: *config.NewChecksummedAddress(rollup.Genesis.SystemConfig.BatcherAddr),
+			Overhead:    common.Hash(rollup.Genesis.SystemConfig.Overhead),
+			Scalar:      common.Hash(rollup.Genesis.SystemConfig.Scalar),
+			GasLimit:    rollup.Genesis.SystemConfig.GasLimit,
 		},
 	}
 

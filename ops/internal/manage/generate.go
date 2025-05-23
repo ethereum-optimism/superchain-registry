@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -48,15 +49,15 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 	if err != nil {
 		return fmt.Errorf("failed to inflate chain config at index %d: %w", idx, err)
 	}
-	// cfg.ShortName = shortName
+	cfg.ShortName = shortName
 
-	// if name != nil {
-	// 	cfg.Name = *name
-	// }
+	if name != nil {
+		cfg.Name = *name
+	}
 
-	// if superchain != nil {
-	// 	cfg.Superchain = config.Superchain(*superchain)
-	// }
+	if superchain != nil {
+		cfg.Superchain = config.Superchain(*superchain)
+	}
 
 	output.WriteOK("reading genesis")
 
