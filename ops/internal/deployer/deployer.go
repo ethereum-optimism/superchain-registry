@@ -94,10 +94,7 @@ func (d *OpDeployer) getBinaryPath() (string, error) {
 		return "", fmt.Errorf("deployer binary not found at path: %s", deployerPath)
 	}
 	return deployerPath, nil
-
 }
-
-// GetDeployerVersion returns the deployer version.
 
 // SetupStateAndIntent prepares the deployer environment by creating merged state and intent files
 // in the specified working directory.
@@ -167,7 +164,6 @@ func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
 
 	output, err := cmd.Output()
 	if err != nil {
-
 		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
 	}
 
@@ -215,6 +211,9 @@ func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*core.Genesis, e
 	}
 
 	workdir, err := d.copyStateFileToTemporaryDir(statePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy state file: %w", err)
+	}
 	defer os.RemoveAll(workdir)
 
 	cmd := exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir, chainId)

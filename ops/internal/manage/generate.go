@@ -4,35 +4,29 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strconv"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/log"
-	"github.com/tomwright/dasel"
 )
 
 // GenerateChainArtifacts creates a chain config and genesis file for the chain at index idx in the given state file
 // using the given shortName (and optionally, name and superchain identifier).
 // It writes these files to the staging directory.
 func GenerateChainArtifacts(statePath string, wd string, shortName string, name *string, superchain *string, idx int) error {
-
-	om, err := deployer.ReadOpaqueMappingFile(statePath)
+	st, err := deployer.ReadOpaqueMappingFile(statePath)
 	if err != nil {
 		return fmt.Errorf("failed to read opaque mapping file: %w", err)
 	}
-	l1contractsrelease, err := deployer.ReadL1ContractsRelease(dasel.New(om))
+	l1contractsrelease, err := st.ReadL1ContractsLocator()
 	if err != nil {
 		return fmt.Errorf("failed to read L1 contracts release: %w", err)
 	}
-	chainId, err := deployer.ReadL2ChainId(dasel.New(om), idx)
-	if err != nil {
-		return fmt.Errorf("failed to read chain ID: %w", err)
-	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-
 	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, statePath, wd)
 	if err != nil {
 		return fmt.Errorf("failed to create op-deployer: %w", err)
@@ -45,7 +39,7 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 
 	output.WriteOK("inflating chain config at index %d", idx)
 
-	cfg, err := InflateChainConfig(opd, statePath, chainId, idx)
+	cfg, err := InflateChainConfig(opd, st, statePath, idx)
 	if err != nil {
 		return fmt.Errorf("failed to inflate chain config at index %d: %w", idx, err)
 	}
@@ -61,8 +55,7 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 
 	output.WriteOK("reading genesis")
 
-	genesis, err := opd.InspectGenesis(statePath, chainId)
-
+	genesis, err := opd.InspectGenesis(statePath, strconv.FormatUint(cfg.ChainID, 10))
 	if err != nil {
 		return fmt.Errorf("failed to get genesis: %w", err)
 	}
