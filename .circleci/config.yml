@@ -220,5 +220,10 @@ workflows:
       - run-tool:
           name: check-chainlist
           tool: check_chainlist
+      - run-tool:
+          name: check-addresses
+          tool: check_addresses
+          args: "-all"
+          check_diff: true
       - run-staging-report:
           name: run-staging-report
