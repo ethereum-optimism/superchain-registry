@@ -24,11 +24,10 @@ type OpDeployer struct {
 	DeployerVersion    string
 	lgr                log.Logger
 	l1ContractsRelease string
-	inputStatePath     string
 }
 
 // NewOpDeployer creates a new OpDeployer instance.
-func NewOpDeployer(lgr log.Logger, l1ContractsRelease, inputStatePath string) (*OpDeployer, error) {
+func NewOpDeployer(lgr log.Logger, l1ContractsRelease string) (*OpDeployer, error) {
 	if l1ContractsRelease == "" {
 		return nil, fmt.Errorf("l1ContractsRelease cannot be empty")
 	}
@@ -36,7 +35,6 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease, inputStatePath string) (*
 	opd := OpDeployer{
 		lgr:                lgr,
 		l1ContractsRelease: l1ContractsRelease,
-		inputStatePath:     inputStatePath,
 	}
 
 	err := opd.buildBinary()
@@ -106,23 +104,21 @@ func (d *OpDeployer) getBinaryPath() (string, error) {
 	return deployerPath, nil
 }
 
-// SetupStateAndIntent prepares the deployer environment by creating merged state and intent files
+// setupStateAndIntent prepares the deployer environment by creating merged state and intent files
 // in the specified working directory.
-func (d *OpDeployer) SetupStateAndIntent(workdir string) error {
+func (d *OpDeployer) setupStateAndIntent(inputStatePath, workdir string) error {
 	// Read the state file
-	state, err := ReadOpaqueMappingFile(d.inputStatePath)
+	state, err := ReadOpaqueMappingFile(inputStatePath)
 	if err != nil {
 		return fmt.Errorf("failed to read state file: %w", err)
 	}
 
-	// Determine version based on deployer version and call appropriate merge function
-	var mergedIntent, mergedState OpaqueMapping
-	// Parse deployer version to determine which merge function to use
-	if strings.Contains(d.DeployerVersion, ".3.") {
-		mergedIntent, mergedState, err = MergeStateV3(state)
-	} else {
-		mergedIntent, mergedState, err = MergeStateV2(state)
+	// Get state merge function based on deployer version
+	mergeFunc, err := getMergeStateFunc(d.DeployerVersion)
+	if err != nil {
+		return fmt.Errorf("failed to determine merge function: %w", err)
 	}
+	mergedIntent, mergedState, err := mergeFunc(state)
 	if err != nil {
 		return fmt.Errorf("failed to merge state: %w", err)
 	}
@@ -139,6 +135,7 @@ func (d *OpDeployer) SetupStateAndIntent(workdir string) error {
 	d.lgr.Info("Wrote state to temporary file", "path", stateTempPath)
 
 	// Write intent.toml in the temp directory
+	useInts(mergedIntent)
 	intentTOML, err := toml.Marshal(mergedIntent)
 	if err != nil {
 		return fmt.Errorf("failed to marshal intent to TOML: %w", err)
@@ -152,8 +149,18 @@ func (d *OpDeployer) SetupStateAndIntent(workdir string) error {
 	return nil
 }
 
-// GenerateGenesis runs op-deployer binary to generate a genesis
-func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
+// GenerateStandardGenesis runs op-deployer binary to generate a genesis
+func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId string) (*core.Genesis, error) {
+	workdir, err := d.copyStateFileToTempDir(statePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
+	}
+	defer os.RemoveAll(workdir)
+
+	if err := d.setupStateAndIntent(statePath, workdir); err != nil {
+		return nil, fmt.Errorf("failed to setup state and intent: %w", err)
+	}
+
 	deployerPath, err := d.getBinaryPath()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
@@ -161,7 +168,7 @@ func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
 
 	// Run `op-deployer apply` to generate the expected genesis
 	d.lgr.Info("Running `op-deployer apply`")
-	cmd := exec.Command(deployerPath, "apply", "--workdir", workdir)
+	cmd := exec.Command(deployerPath, "apply", "--workdir", workdir, "--deployment-target", "genesis")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -170,7 +177,7 @@ func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
 
 	// Run `op-deployer inspect genesis` to read the expected genesis
 	d.lgr.Info("Running `op-deployer inspect genesis`")
-	cmd = exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir)
+	cmd = exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir, chainId)
 
 	output, err := cmd.Output()
 	if err != nil {
@@ -185,7 +192,7 @@ func (d *OpDeployer) GenerateGenesis(workdir string) (*core.Genesis, error) {
 	return &genesis, nil
 }
 
-func (d *OpDeployer) copyStateFileToTemporaryDir(statePath string) (string, error) {
+func (d *OpDeployer) copyStateFileToTempDir(statePath string) (string, error) {
 	// Create a temporary directory
 	workdir, err := os.MkdirTemp("", "op-deployer")
 	if err != nil {
@@ -220,7 +227,7 @@ func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*core.Genesis, e
 		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
 	}
 
-	workdir, err := d.copyStateFileToTemporaryDir(statePath)
+	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file: %w", err)
 	}
@@ -252,7 +259,7 @@ func (d *OpDeployer) InspectRollup(statePath, chainId string) (*rollup.Config, e
 		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
 	}
 
-	workdir, err := d.copyStateFileToTemporaryDir(statePath)
+	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
 	}
@@ -284,7 +291,7 @@ func (d *OpDeployer) InspectDeployConfig(statePath, chainId string) (*genesis.De
 		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
 	}
 
-	workdir, err := d.copyStateFileToTemporaryDir(statePath)
+	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
 	}

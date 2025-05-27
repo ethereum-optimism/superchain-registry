@@ -27,7 +27,7 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, statePath)
+	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease)
 	if err != nil {
 		return fmt.Errorf("failed to create op-deployer: %w", err)
 	}
@@ -49,7 +49,6 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 	}
 
 	output.WriteOK("reading genesis")
-
 	genesis, err := opd.InspectGenesis(statePath, strconv.FormatUint(cfg.ChainID, 10))
 	if err != nil {
 		return fmt.Errorf("failed to get genesis: %w", err)
@@ -65,6 +64,17 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 	output.WriteOK("writing genesis")
 	if err := WriteGenesis(wd, path.Join(stagingDir, shortName+".json.zst"), genesis); err != nil {
 		return fmt.Errorf("failed to write genesis at index %d: %w", idx, err)
+	}
+
+	// Copy state file to staging directory
+	output.WriteOK("writing state.json")
+	stateData, err := os.ReadFile(statePath)
+	if err != nil {
+		return fmt.Errorf("failed to read state file: %w", err)
+	}
+
+	if err := os.WriteFile(path.Join(stagingDir, "state.json"), stateData, 0o644); err != nil {
+		return fmt.Errorf("failed to write state file to staging directory: %w", err)
 	}
 	return nil
 }

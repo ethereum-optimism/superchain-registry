@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -13,6 +15,12 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/tomwright/dasel"
 )
+
+//go:embed configs/v1-state.json
+var standardV1State []byte
+
+//go:embed configs/v1-intent.toml
+var standardV1Intent []byte
 
 //go:embed configs/v2-state.json
 var standardV2State []byte
@@ -38,6 +46,50 @@ func ReadOpaqueMappingFile(p string) (OpaqueMapping, error) {
 		return nil, fmt.Errorf("failed to unmarshal JSON: %w", err)
 	}
 	return out, nil
+}
+
+func getMergeStateFunc(version string) (func(state OpaqueMapping) (OpaqueMapping, OpaqueMapping, error), error) {
+	// Extract the version number using regex
+	re := regexp.MustCompile(`op-deployer/v\d+\.(\d+)\.\d+`)
+	match := re.FindStringSubmatch(version)
+
+	if len(match) < 2 {
+		return nil, fmt.Errorf("invalid deployer version format: %s", version)
+	}
+
+	// Get the middle version number
+	versionNum, err := strconv.Atoi(match[1])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse version number: %w", err)
+	}
+
+	// Return the appropriate merge function
+	switch versionNum {
+	case 0, 1:
+		return MergeStateV1, nil
+	case 2:
+		return MergeStateV2, nil
+	case 3:
+		return MergeStateV3, nil
+	default:
+		return nil, fmt.Errorf("unsupported deployer version: %d", versionNum)
+	}
+}
+
+func MergeStateV1(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error) {
+	l1ChainID, err := userState.ReadL1ChainID()
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
+	}
+	stdIntent, err := StandardIntentV1(l1ChainID)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create standard intent: %w", err)
+	}
+	stdState, err := StandardStateV1(l1ChainID)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create standard state: %w", err)
+	}
+	return mergeStateV2(userState, stdIntent, stdState)
 }
 
 func MergeStateV2(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error) {
@@ -146,6 +198,10 @@ func StandardIntentV2(l1ChainID uint64) (OpaqueMapping, error) {
 	return standardIntentV2(l1ChainID, standardV2Intent)
 }
 
+func StandardIntentV1(l1ChainID uint64) (OpaqueMapping, error) {
+	return standardIntentV1(l1ChainID, standardV1Intent)
+}
+
 func standardIntentV2(l1ChainID uint64, data []byte) (OpaqueMapping, error) {
 	intent := make(OpaqueMapping)
 	if err := toml.Unmarshal(data, &intent); err != nil {
@@ -170,12 +226,35 @@ func standardIntentV2(l1ChainID uint64, data []byte) (OpaqueMapping, error) {
 	return intent, nil
 }
 
+// Add this type near the top of the file
+type stringWrapper string
+
+func (s stringWrapper) String() string {
+	return string(s)
+}
+
+func standardIntentV1(l1ChainID uint64, data []byte) (OpaqueMapping, error) {
+	intent, err := standardIntentV2(l1ChainID, data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create standard intent: %w", err)
+	}
+
+	root := dasel.New(intent)
+	mustPutString(root, "superchainRoles.protocolVersionsOwner", stringWrapper("0x79ADD5713B383DAa0a138d3C4780C7A1804a8090"))
+
+	return intent, nil
+}
+
 func StandardStateV3(l1ChainID uint64) (OpaqueMapping, error) {
 	return standardState(l1ChainID, validation.Semver300, standardV3State)
 }
 
 func StandardStateV2(l1ChainID uint64) (OpaqueMapping, error) {
 	return standardState(l1ChainID, validation.Semver200, standardV2State)
+}
+
+func StandardStateV1(l1ChainID uint64) (OpaqueMapping, error) {
+	return standardState(l1ChainID, validation.Semver180, standardV1State)
 }
 
 func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (OpaqueMapping, error) {
@@ -207,7 +286,9 @@ func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (Opa
 	root := dasel.New(state)
 	mustPutLowerString(root, "superchainDeployment.superchainConfigProxyAddress", sc.SuperchainConfigAddr)
 	mustPutLowerString(root, "superchainDeployment.protocolVersionsProxyAddress", sc.ProtocolVersionsAddr)
-	mustPutLowerString(root, "implementationsDeployment.opcmAddress", v2Info.OPContractsManager.Address)
+	if v2Info.OPContractsManager != nil && v2Info.OPContractsManager.Address != nil {
+		mustPutLowerString(root, "implementationsDeployment.opcmAddress", v2Info.OPContractsManager.Address)
+	}
 	mustPutLowerString(root, "implementationsDeployment.delayedWETHImplAddress", v2Info.DelayedWeth.ImplementationAddress)
 	mustPutLowerString(root, "implementationsDeployment.optimismPortalImplAddress", v2Info.OptimismPortal.ImplementationAddress)
 	mustPutLowerString(root, "implementationsDeployment.preimageOracleSingletonAddress", v2Info.PreimageOracle.Address)
