@@ -27,18 +27,13 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, statePath, wd)
+	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, statePath)
 	if err != nil {
 		return fmt.Errorf("failed to create op-deployer: %w", err)
 	}
-
-	_, err = opd.BuildBinary()
-	if err != nil {
-		return fmt.Errorf("failed to build op-deployer: %w", err)
-	}
+	output.WriteOK("created op-deployer instance: %s", opd.DeployerVersion)
 
 	output.WriteOK("inflating chain config at index %d", idx)
-
 	cfg, err := InflateChainConfig(opd, st, statePath, idx)
 	if err != nil {
 		return fmt.Errorf("failed to inflate chain config at index %d: %w", idx, err)

@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -20,30 +21,35 @@ import (
 // OpDeployer manages the process of building, setting up, and running the op-deployer
 // binary to generate genesis states for L2 chains.
 type OpDeployer struct {
+	DeployerVersion    string
 	lgr                log.Logger
 	l1ContractsRelease string
 	inputStatePath     string
-	rootDir            string
-	deployerVersion    string
 }
 
 // NewOpDeployer creates a new OpDeployer instance.
-func NewOpDeployer(lgr log.Logger, l1ContractsRelease, stateFilepath, rootDir string) (*OpDeployer, error) {
+func NewOpDeployer(lgr log.Logger, l1ContractsRelease, inputStatePath string) (*OpDeployer, error) {
 	if l1ContractsRelease == "" {
 		return nil, fmt.Errorf("l1ContractsRelease cannot be empty")
 	}
 
-	return &OpDeployer{
+	opd := OpDeployer{
 		lgr:                lgr,
 		l1ContractsRelease: l1ContractsRelease,
-		inputStatePath:     stateFilepath,
-		rootDir:            rootDir,
-	}, nil
+		inputStatePath:     inputStatePath,
+	}
+
+	err := opd.buildBinary()
+	if err != nil {
+		return nil, fmt.Errorf("failed to build op-deployer binary: %w", err)
+	}
+
+	return &opd, nil
 }
 
 // BuildDeployerBinary builds the appropriate op-deployer binary for the specified
 // contracts release and returns the deployer version.
-func (d *OpDeployer) BuildBinary() (string, error) {
+func (d *OpDeployer) buildBinary() error {
 	// Normalize the contracts string before lookup in versions.json
 	// 1. Remove tag:// prefix if present
 	// 2. Remove any -rc.X suffix for version matching
@@ -53,35 +59,39 @@ func (d *OpDeployer) BuildBinary() (string, error) {
 
 	// Read and parse versions.json
 	d.lgr.Info("Reading versions.json")
-	versionsPath := filepath.Join(d.rootDir, "ops/internal/deployer/versions.json")
+	// Get the directory containing this file (deployer.go)
+	_, filename, _, _ := runtime.Caller(0)
+	deployerDir := filepath.Dir(filename)
+
+	versionsPath := filepath.Join(deployerDir, "versions.json")
 	versionsData, err := os.ReadFile(versionsPath)
 	if err != nil {
-		return "", fmt.Errorf("failed to read versions.json: %w", err)
+		return fmt.Errorf("failed to read versions.json: %w", err)
 	}
 
 	var versions map[string]string
 	if err := json.Unmarshal(versionsData, &versions); err != nil {
-		return "", fmt.Errorf("failed to parse versions.json: %w", err)
+		return fmt.Errorf("failed to parse versions.json: %w", err)
 	}
 
 	deployerVersion, ok := versions[contractsKey]
 	if !ok {
-		return "", fmt.Errorf("no deployer version found for contracts: %s", contractsKey)
+		return fmt.Errorf("no deployer version found for contracts: %s", contractsKey)
 	}
 	d.lgr.Info("Found deployer version", "version", deployerVersion)
-	d.deployerVersion = deployerVersion
+	d.DeployerVersion = deployerVersion
 
 	// Run the build-deployer script with the appropriate deployer version
 	d.lgr.Info("Running build-deployer script")
-	scriptPath := filepath.Join(d.rootDir, "scripts", "build-deployer.sh")
+	scriptPath := filepath.Join(deployerDir, "scripts", "build-deployer.sh")
 	cmd := exec.Command(scriptPath, deployerVersion)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("failed to run build-deployer script: %w", err)
+		return fmt.Errorf("failed to run build-deployer script: %w", err)
 	}
 
-	return deployerVersion, nil
+	return nil
 }
 
 func (d *OpDeployer) getBinaryPath() (string, error) {
@@ -89,7 +99,7 @@ func (d *OpDeployer) getBinaryPath() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to get home directory: %w", err)
 	}
-	deployerPath := filepath.Join(homeDir, ".cache/binaries", d.deployerVersion, "op-deployer")
+	deployerPath := filepath.Join(homeDir, ".cache/binaries", d.DeployerVersion, "op-deployer")
 	if _, err := os.Stat(deployerPath); os.IsNotExist(err) {
 		return "", fmt.Errorf("deployer binary not found at path: %s", deployerPath)
 	}
@@ -108,7 +118,7 @@ func (d *OpDeployer) SetupStateAndIntent(workdir string) error {
 	// Determine version based on deployer version and call appropriate merge function
 	var mergedIntent, mergedState OpaqueMapping
 	// Parse deployer version to determine which merge function to use
-	if strings.Contains(d.deployerVersion, ".3.") {
+	if strings.Contains(d.DeployerVersion, ".3.") {
 		mergedIntent, mergedState, err = MergeStateV3(state)
 	} else {
 		mergedIntent, mergedState, err = MergeStateV2(state)

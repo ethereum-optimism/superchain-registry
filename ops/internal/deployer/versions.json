@@ -1,5 +1,5 @@
 {
-  "op-contracts/v2.0.0": "op-deployer/v0.2.0",
-  "op-contracts/v3.0.0-rc.2": "op-deployer/v0.3.0-rc.5",
-  "op-contracts/v4.0.0-rc.6": "op-deployer/v0.4.0-rc.2"
+  "op-contracts/v2.0.0": "op-deployer/v0.2.1",
+  "op-contracts/v3.0.0": "op-deployer/v0.3.0-rc.6",
+  "op-contracts/v4.0.0": "op-deployer/v0.4.0-rc.2"
 }
