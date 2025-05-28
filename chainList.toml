@@ -872,7 +872,7 @@
     chain = "sepolia"
   [chains.fault_proofs]
     status = "none"
-  
+
 [[chains]]
   name = "Celo"
   identifier = "mainnet/celo"
