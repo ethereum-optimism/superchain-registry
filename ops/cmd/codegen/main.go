@@ -3,11 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -16,17 +13,17 @@ import (
 )
 
 var (
-	L1RPCURLsFlag = &cli.StringFlag{
+	L1RPCURLsFlag = &cli.StringSliceFlag{
 		Name:     "l1-rpc-urls",
 		Usage:    "comma-separated list of L1 RPC URLs (only need multiple if fetching from multiple superchains)",
 		EnvVars:  []string{"L1_RPC_URLS"},
 		Required: true,
 	}
-	ChainIDFlag = &cli.StringFlag{
+	ChainIDFlag = &cli.Uint64SliceFlag{
 		Name:  "chain-ids",
 		Usage: "comma-separated list of l2 chainIds to update (optional, fetches all chains if not provided)",
 	}
-	SuperchainsFlag = &cli.StringFlag{
+	SuperchainsFlag = &cli.StringSliceFlag{
 		Name:  "superchains",
 		Usage: "comma-separated list of superchains to update (cannot provide both chain-ids and superchains flags, default to all superchains if not provided)",
 	}
@@ -50,38 +47,11 @@ func main() {
 }
 
 func CodegenCLI(cliCtx *cli.Context) error {
-	l1RpcUrls := strings.Split(cliCtx.String("l1-rpc-urls"), ",")
-	chainIdStr := cliCtx.String("chain-ids")
-	superchainsStr := cliCtx.String("superchains")
-	if chainIdStr != "" && superchainsStr != "" {
+	l1RpcUrls := cliCtx.StringSlice("l1-rpc-urls")
+	chainIds := cliCtx.Uint64Slice("chain-ids")
+	superchains := cliCtx.StringSlice("superchains")
+	if len(chainIds) > 0 && len(superchains) > 0 {
 		return fmt.Errorf("cannot provide both chain-ids and superchains flags")
-	}
-
-	var superchains []config.Superchain
-	if superchainsStr != "" {
-		superchainStrs := strings.Split(superchainsStr, ",")
-		for _, superchainStr := range superchainStrs {
-			superchainStr = strings.TrimSpace(superchainStr)
-			superchain, err := config.ParseSuperchain(superchainStr)
-			if err != nil {
-				return err
-			}
-			superchains = append(superchains, superchain)
-		}
-	}
-
-	var chainIds []uint64
-	if chainIdStr != "" {
-		chainIdStrs := strings.Split(chainIdStr, ",")
-		// Convert each string to uint64
-		for _, idStr := range chainIdStrs {
-			idStr = strings.TrimSpace(idStr)
-			id, err := strconv.ParseUint(idStr, 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid chain ID '%s': %w", idStr, err)
-			}
-			chainIds = append(chainIds, id)
-		}
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))

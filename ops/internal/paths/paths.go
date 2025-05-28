@@ -83,7 +83,11 @@ func SuperchainConfigsDir(wd string) string {
 	return path.Join(wd, "superchain", "configs")
 }
 
-func Superchains(wd string) ([]config.Superchain, error) {
+func SuperchainDefinitionPath(wd string, superchain config.Superchain) string {
+	return path.Join(SuperchainConfigsDir(wd), string(superchain), "superchain.toml")
+}
+
+func Superchains(wd string) ([]string, error) {
 	configsDir := SuperchainConfigsDir(wd)
 
 	dir, err := os.ReadDir(configsDir)
@@ -91,10 +95,10 @@ func Superchains(wd string) ([]config.Superchain, error) {
 		return nil, fmt.Errorf("failed to read dir %s: %w", configsDir, err)
 	}
 
-	var superchains []config.Superchain
+	var superchains []string
 	for _, entry := range dir {
 		if entry.IsDir() {
-			superchains = append(superchains, config.MustParseSuperchain(entry.Name()))
+			superchains = append(superchains, entry.Name())
 		}
 	}
 	return superchains, nil
@@ -175,8 +179,24 @@ func CollectFiles(root string, matcher CollectorMatcher) ([]string, error) {
 	return out, nil
 }
 
+func ChainConfigMatcher() CollectorMatcher {
+	return func(s string) bool {
+		return filepath.Ext(s) == ".toml" && filepath.Base(s) != "superchain.toml"
+	}
+}
+
 func FileExtMatcher(ext string) CollectorMatcher {
 	return func(s string) bool {
 		return filepath.Ext(s) == ext
 	}
+}
+
+func FileNameMatcher(name string) CollectorMatcher {
+	return func(s string) bool {
+		return filepath.Base(s) == name
+	}
+}
+
+func SuperchainDefinitionMatcher() CollectorMatcher {
+	return FileNameMatcher("superchain.toml")
 }

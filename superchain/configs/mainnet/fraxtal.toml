@@ -1,0 +1,58 @@
+name = "Fraxtal"
+public_rpc = "https://rpc.frax.com"
+sequencer_rpc = "https://rpc.frax.com"
+explorer = "https://fraxscan.com"
+superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "alt-da"
+chain_id = 252
+batch_inbox_addr = "0xfF000000000000000000000000000000000420fC"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 1717002001 # Wed 29 May 2024 17:00:01 UTC
+  ecotone_time = 1717009201 # Wed 29 May 2024 19:00:01 UTC
+  fjord_time = 1733947201 # Wed 11 Dec 2024 20:00:01 UTC
+  granite_time = 1738958401 # Fri 7 Feb 2025 20:00:01 UTC
+
+[optimism]
+  eip1559_elasticity = 10
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1706810711
+  [genesis.l1]
+    hash = "0x728dfc57386f6c2a646e03b7346f567b3117b7f487c6f590392abd1509248053"
+    number = 19135251
+  [genesis.l2]
+    hash = "0x521982bd54239dc71269eefb58601762cc15cfb2978e0becb46af7962ed6bfaa"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x6017f75108f251a488B045A7ce2a7C15b179d1f2"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000834"
+    scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
+    gasLimit = 30000000
+
+[roles]
+  SystemConfigOwner = "0xe0d7755252873c4eF5788f7f45764E0e17610508"
+  ProxyAdminOwner = "0xe0d7755252873c4eF5788f7f45764E0e17610508"
+  Guardian = "0xe0d7755252873c4eF5788f7f45764E0e17610508"
+  Challenger = "0xe0d7755252873c4eF5788f7f45764E0e17610508"
+  Proposer = "0xFb90465f3064fF63FC460F01A6307eC73d64bc50"
+  UnsafeBlockSigner = "0xc88138f5c82DD1bD327708C7F1c15E44Ce7FdA0C"
+  BatchSubmitter = "0x6017f75108f251a488B045A7ce2a7C15b179d1f2"
+
+[addresses]
+  AddressManager = "0x8c5D64d10394cFa070066e70Ec19E67398b4dABE"
+  L1CrossDomainMessengerProxy = "0x126bcc31Bc076B3d515f60FBC81FddE0B0d542Ed"
+  L1ERC721BridgeProxy = "0xa9B5Fb84B7aeAF0D51C95DB04a76B1D4738D0eC5"
+  L1StandardBridgeProxy = "0x34C0bD5877A5Ee7099D0f5688D65F4bB9158BDE2"
+  L2OutputOracleProxy = "0x66CC916Ed5C6C2FA97014f7D1cD141528Ae171e4"
+  OptimismMintableERC20FactoryProxy = "0x11FE3be54aC01C13Dd985cE2BdD10eD77e1376cc"
+  OptimismPortalProxy = "0x36cb65c1967A0Fb0EEE11569C51C2f2aA1Ca6f6D"
+  SystemConfigProxy = "0x34a9f273cbD847d49c3De015FC26c3E66825f8b2"
+  ProxyAdmin = "0x13Fe62cB24aEa5afd179F20D362c056c3881ABcA"

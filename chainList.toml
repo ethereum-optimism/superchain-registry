@@ -91,6 +91,21 @@
     status = "none"
 
 [[chains]]
+  name = "Fraxtal"
+  identifier = "mainnet/fraxtal"
+  chain_id = 252
+  rpc = ["https://rpc.frax.com"]
+  explorers = ["https://fraxscan.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
+
+[[chains]]
   name = "Funki"
   identifier = "mainnet/funki"
   chain_id = 33979
@@ -648,6 +663,22 @@
     status = "permissionless"
 
 [[chains]]
+  name = "Ozean Poseidon Testnet"
+  identifier = "sepolia/ozean"
+  chain_id = 7849306
+  rpc = ["https://ozean-testnet.rpc.caldera.xyz/http"]
+  explorers = ["https://ozean-testnet.explorer.caldera.xyz"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  gas_paying_token = "0x43bd82D1e29a1bEC03AfD11D5a3252779b8c760c"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
+
+[[chains]]
   name = "Pivotal Sepolia"
   identifier = "sepolia/pivotal"
   chain_id = 16481
@@ -768,21 +799,6 @@
     status = "permissioned"
 
 [[chains]]
-  name = "arena-z-testnet"
-  identifier = "sepolia/arena-z-testnet"
-  chain_id = 9897
-  rpc = ["https://rpc.arena-z.t.raas.gelato.cloud"]
-  explorers = ["https://arena-z.blockscout.com"]
-  superchain_level = 1
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-  [chains.fault_proofs]
-    status = "none"
-
-[[chains]]
   name = "Base devnet 0"
   identifier = "sepolia-dev-0/base-devnet-0"
   chain_id = 11763072
@@ -812,6 +828,51 @@
   [chains.fault_proofs]
     status = "permissionless"
 
+[[chains]]
+  name = "Boba Mainnet"
+  identifier = "mainnet/boba"
+  chain_id = 288
+  rpc = ["https://mainnet.boba.network"]
+  explorers = ["https://bobascan.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
+
+[[chains]]
+  name = "Radius testnet"
+  identifier = "sepolia/radius_testnet"
+  chain_id = 863
+  rpc = ["testnet-rpc.theradius.xyz"]
+  explorers = ["https://testnet-rpc.theradius.xyz/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "Camp Network Testnet V2"
+  identifier = "sepolia/camp"
+  chain_id = 325000
+  rpc = ["https://rpc.camp-network-testnet.gelato.digital"]
+  explorers = ["https://camp-network-testnet.blockscout.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
+  
 [[chains]]
   name = "Celo"
   identifier = "mainnet/celo"
