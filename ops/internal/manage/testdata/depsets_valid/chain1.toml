@@ -5,5 +5,5 @@ chain_id = 901
 interop_time = 1234
 
 [interop]
-dependencies."901" = { chain_index = 0, activation_time = 1234, history_min_time = 40 }
-dependencies."902" = { chain_index = 1, activation_time = 4424, history_min_time = 456 }
+dependencies."901" = {}
+dependencies."902" = {}

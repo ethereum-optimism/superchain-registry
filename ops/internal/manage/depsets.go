@@ -12,11 +12,10 @@ import (
 )
 
 var (
-	errInvalidActivationTime = errors.New("activation_time is before interop_time")
-	errDepsetLengths         = errors.New("inconsistent depset lengths")
-	errInconsistentDepsets   = errors.New("inconsistent depset values")
-	errMissingAddress        = errors.New("missing address")
-	errDuplicateChainIndex   = errors.New("duplicate chain index")
+	errDepsetLengths       = errors.New("inconsistent depset lengths")
+	errInconsistentDepsets = errors.New("inconsistent depset values")
+	errMissingInteropTime  = errors.New("missing interop_time hardfork timestamp")
+	errMissingAddress      = errors.New("missing address")
 )
 
 type DepsetChecker struct {
@@ -104,22 +103,11 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 	}
 
 	var firstSuperchain string
-	var firstDepset map[string]config.Dependency
+	var firstDepset map[string]config.StaticConfigDependency
 	for i, cfg := range cfgs {
 		if i == 0 {
 			firstSuperchain = cfg.Superchain
 			firstDepset = cfg.Config.Interop.Dependencies
-
-			// Check for duplicate chain indices in the first config
-			chainIndices := make(map[uint32]string, len(firstDepset))
-			for chainID, dep := range firstDepset {
-				if existingChainID, exists := chainIndices[dep.ChainIndex]; exists {
-					return fmt.Errorf("%w: index %d used for chains %s and %s",
-						errDuplicateChainIndex, dep.ChainIndex, existingChainID, chainID)
-				}
-				chainIndices[dep.ChainIndex] = chainID
-			}
-
 		}
 
 		// check that all chains in the depset are part of the same superchain
@@ -127,22 +115,13 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 			return fmt.Errorf("chain %d is part of superchain %s, expected superchain %s", cfg.Config.ChainID, cfg.Superchain, firstSuperchain)
 		}
 
-		// check that activation_time is valid
+		// check that interop_time is set for this chain
 		thisDepset := cfg.Config.Interop.Dependencies
-		chainId := strconv.FormatUint(cfg.Config.ChainID, 10)
 		if cfg.Config.Hardforks.InteropTime == nil {
-			return fmt.Errorf("chain %d has no hardfork timestamp for interop", cfg.Config.ChainID)
-		}
-		interopTime := *cfg.Config.Hardforks.InteropTime.U64Ptr()
-		if thisDepset[chainId].ActivationTime < interopTime {
-			return fmt.Errorf("%w: chainId %d, activation_time %d interop_time %d",
-				errInvalidActivationTime,
-				cfg.Config.ChainID,
-				thisDepset[chainId].ActivationTime,
-				interopTime)
+			return fmt.Errorf("%w: chainId %d", errMissingInteropTime, cfg.Config.ChainID)
 		}
 
-		// check deep equality of dependency sets
+		// check equality of dependency sets
 		if i > 0 {
 			// 1. check if the maps have the same length
 			if len(firstDepset) != len(thisDepset) {
@@ -151,24 +130,13 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 					cfg.Config.ChainID, len(thisDepset), len(firstDepset))
 			}
 
-			// 2. check for deep equality of dependency values
-			for chainID, dep := range firstDepset {
-				otherDep, exists := thisDepset[chainID]
+			// 2. check that depset members are the same across all configs
+			for chainID := range firstDepset {
+				_, exists := thisDepset[chainID]
 				if !exists {
 					return fmt.Errorf("%w: chain %d is missing (transitive) dependency for chain ID %s (direct dependency of %d)",
 						errInconsistentDepsets,
 						cfg.Config.ChainID, chainID, cfgs[0].Config.ChainID)
-				}
-
-				if dep.ChainIndex != otherDep.ChainIndex {
-					return fmt.Errorf("%w: chain %d has different chain index for dependency %s (%d vs %d)",
-						errInconsistentDepsets,
-						cfg.Config.ChainID, chainID, otherDep.ChainIndex, dep.ChainIndex)
-				}
-				if dep.ActivationTime != otherDep.ActivationTime {
-					return fmt.Errorf("%w: chain %d has different activation time for dependency %s (%d vs %d)",
-						errInconsistentDepsets,
-						cfg.Config.ChainID, chainID, otherDep.ActivationTime, dep.ActivationTime)
 				}
 			}
 		}
