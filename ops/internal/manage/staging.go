@@ -10,6 +10,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
+	"github.com/ethereum-optimism/optimism/op-supervisor/supervisor/backend/depset"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
@@ -93,7 +94,7 @@ func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
 	cfg.Roles = config.Roles{
 		SystemConfigOwner: config.NewChecksummedAddress(chainIntent.Roles.SystemConfigOwner),
 		ProxyAdminOwner:   config.NewChecksummedAddress(chainIntent.Roles.L1ProxyAdminOwner),
-		Guardian:          config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.Guardian),
+		Guardian:          config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.SuperchainGuardian),
 		Proposer:          config.NewChecksummedAddress(chainIntent.Roles.Proposer),
 		UnsafeBlockSigner: config.NewChecksummedAddress(chainIntent.Roles.UnsafeBlockSigner),
 		BatchSubmitter:    config.NewChecksummedAddress(chainIntent.Roles.Batcher),
@@ -101,19 +102,25 @@ func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
 	}
 
 	cfg.Addresses = config.Addresses{
-		AddressManager:                    config.NewChecksummedAddress(chainState.AddressManagerAddress),
-		L1CrossDomainMessengerProxy:       config.NewChecksummedAddress(chainState.L1CrossDomainMessengerProxyAddress),
-		L1ERC721BridgeProxy:               config.NewChecksummedAddress(chainState.L1ERC721BridgeProxyAddress),
-		L1StandardBridgeProxy:             config.NewChecksummedAddress(chainState.L1StandardBridgeProxyAddress),
-		OptimismMintableERC20FactoryProxy: config.NewChecksummedAddress(chainState.OptimismMintableERC20FactoryProxyAddress),
-		OptimismPortalProxy:               config.NewChecksummedAddress(chainState.OptimismPortalProxyAddress),
-		SystemConfigProxy:                 config.NewChecksummedAddress(chainState.SystemConfigProxyAddress),
-		ProxyAdmin:                        config.NewChecksummedAddress(chainState.ProxyAdminAddress),
-		SuperchainConfig:                  config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxyAddress),
-		AnchorStateRegistryProxy:          config.NewChecksummedAddress(chainState.AnchorStateRegistryProxyAddress),
-		DelayedWETHProxy:                  config.NewChecksummedAddress(chainState.DelayedWETHPermissionedGameProxyAddress),
-		DisputeGameFactoryProxy:           config.NewChecksummedAddress(chainState.DisputeGameFactoryProxyAddress),
-		PermissionedDisputeGame:           config.NewChecksummedAddress(chainState.PermissionedDisputeGameAddress),
+		AddressManager:                    config.NewChecksummedAddress(chainState.AddressManagerImpl),
+		L1CrossDomainMessengerProxy:       config.NewChecksummedAddress(chainState.L1CrossDomainMessengerProxy),
+		L1ERC721BridgeProxy:               config.NewChecksummedAddress(chainState.L1Erc721BridgeProxy),
+		L1StandardBridgeProxy:             config.NewChecksummedAddress(chainState.L1StandardBridgeProxy),
+		OptimismMintableERC20FactoryProxy: config.NewChecksummedAddress(chainState.OptimismMintableErc20FactoryProxy),
+		OptimismPortalProxy:               config.NewChecksummedAddress(chainState.OptimismPortalProxy),
+		SystemConfigProxy:                 config.NewChecksummedAddress(chainState.SystemConfigProxy),
+		ProxyAdmin:                        config.NewChecksummedAddress(chainState.OpChainProxyAdminImpl),
+		SuperchainConfig:                  config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxy),
+		AnchorStateRegistryProxy:          config.NewChecksummedAddress(chainState.AnchorStateRegistryProxy),
+		DelayedWETHProxy:                  config.NewChecksummedAddress(chainState.DelayedWethPermissionedGameProxy),
+		DisputeGameFactoryProxy:           config.NewChecksummedAddress(chainState.DisputeGameFactoryProxy),
+		PermissionedDisputeGame:           config.NewChecksummedAddress(chainState.PermissionedDisputeGameImpl),
+	}
+
+	// Dependency Set Inflation
+	if isChainInDependencySet(chainID, st.InteropDepSet) {
+		cfg.Interop = new(config.Interop)
+		cfg.Interop.Dependencies = convertToSCRDepset(st.InteropDepSet)
 	}
 
 	return cfg, nil
@@ -214,4 +221,32 @@ func StagedSuperchainDefinition(rootP string) (*config.SuperchainDefinition, err
 	err = paths.ReadTOMLFile(files[0], sM)
 
 	return sM, err
+}
+
+// isChainInDependencySet checks if a chain ID is in the supplied dependency set
+func isChainInDependencySet(chainID common.Hash, depSet *depset.StaticConfigDependencySet) bool {
+	if depSet == nil {
+		return false
+	}
+	for id := range depSet.Dependencies() {
+		if id.ToBig() == chainID.Big() {
+			return true
+		}
+	}
+	return false
+}
+
+// convertToSCRDepset converts a prestate.DependencySet to a config.DependencySet
+func convertToSCRDepset(depSet *depset.StaticConfigDependencySet) map[string]config.Dependency {
+	if depSet == nil {
+		return nil
+	}
+	ds := make(map[string]config.Dependency, len(depSet.Dependencies()))
+	for k, v := range depSet.Dependencies() {
+		ds[k.String()] = config.Dependency{
+			ChainIndex:     uint32(v.ChainIndex),
+			ActivationTime: v.ActivationTime,
+		}
+	}
+	return ds
 }
