@@ -872,3 +872,19 @@
     chain = "sepolia"
   [chains.fault_proofs]
     status = "none"
+
+[[chains]]
+  name = "Celo"
+  identifier = "mainnet/celo"
+  chain_id = 42220
+  rpc = ["https://forno.celo.org"]
+  explorers = ["https://celoscan.io/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  gas_paying_token = "0x057898f3C43F129a17517B9056D23851F124b19f"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
