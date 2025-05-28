@@ -1,9 +1,0 @@
-name = "Test Chain 6"
-chain_id = 906
-
-[hardforks]
-interop_time = 6666
-
-[interop]
-dependencies."906" = { chain_index = 1, activation_time = 6666, history_min_time = 40 }
-dependencies."905" = { chain_index = 2, activation_time = 5555, history_min_time = 456 }

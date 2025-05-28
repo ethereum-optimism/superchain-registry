@@ -2,9 +2,7 @@ name = "Test Chain 6"
 chain_id = 906
 
 [hardforks]
-interop_time = 6666
 
 [interop]
 dependencies."905" = {}
 dependencies."906" = {}
-dependencies."907" = {}
