@@ -3,9 +3,10 @@ package deployer
 import (
 	_ "embed"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -14,6 +15,12 @@ import (
 	"github.com/hashicorp/go-multierror"
 	"github.com/tomwright/dasel"
 )
+
+//go:embed configs/v1-state.json
+var standardV1State []byte
+
+//go:embed configs/v1-intent.toml
+var standardV1Intent []byte
 
 //go:embed configs/v2-state.json
 var standardV2State []byte
@@ -26,8 +33,6 @@ var standardV3State []byte
 
 //go:embed configs/v3-intent.toml
 var standardV3Intent []byte
-
-type OpaqueMapping map[string]any
 
 func ReadOpaqueMappingFile(p string) (OpaqueMapping, error) {
 	f, err := os.Open(p)
@@ -43,8 +48,52 @@ func ReadOpaqueMappingFile(p string) (OpaqueMapping, error) {
 	return out, nil
 }
 
+func getMergeStateFunc(version string) (func(state OpaqueMapping) (OpaqueMapping, OpaqueMapping, error), error) {
+	// Extract the version number using regex
+	re := regexp.MustCompile(`op-deployer/v\d+\.(\d+)\.\d+`)
+	match := re.FindStringSubmatch(version)
+
+	if len(match) < 2 {
+		return nil, fmt.Errorf("invalid deployer version format: %s", version)
+	}
+
+	// Get the middle version number
+	versionNum, err := strconv.Atoi(match[1])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse version number: %w", err)
+	}
+
+	// Return the appropriate merge function
+	switch versionNum {
+	case 0, 1:
+		return MergeStateV1, nil
+	case 2:
+		return MergeStateV2, nil
+	case 3:
+		return MergeStateV3, nil
+	default:
+		return nil, fmt.Errorf("unsupported deployer version: %d", versionNum)
+	}
+}
+
+func MergeStateV1(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error) {
+	l1ChainID, err := userState.ReadL1ChainID()
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
+	}
+	stdIntent, err := StandardIntentV1(l1ChainID)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create standard intent: %w", err)
+	}
+	stdState, err := StandardStateV1(l1ChainID)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create standard state: %w", err)
+	}
+	return mergeStateV2(userState, stdIntent, stdState)
+}
+
 func MergeStateV2(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error) {
-	l1ChainID, err := readL1ChainID(dasel.New(userState))
+	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
 	}
@@ -60,7 +109,7 @@ func MergeStateV2(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error)
 }
 
 func MergeStateV3(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error) {
-	l1ChainID, err := readL1ChainID(dasel.New(userState))
+	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
 	}
@@ -124,6 +173,7 @@ func mergeStateV2(userState OpaqueMapping, stdIntent OpaqueMapping, stdState Opa
 	guard(copyValue(userStateNode, stdStateNode, "opChainDeployments.[0].faultDisputeGameAddress"))
 	guard(copyValue(userStateNode, stdStateNode, "opChainDeployments.[0].permissionedDisputeGameAddress"))
 	guard(copyValue(userStateNode, stdStateNode, "opChainDeployments.[0].delayedWETHPermissionedGameProxyAddress"))
+	guard(copyValue(userStateNode, stdStateNode, "opChainDeployments.[0].startBlock"))
 
 	if copyErrs != nil {
 		return nil, nil, copyErrs
@@ -147,6 +197,10 @@ func StandardIntentV3(l1ChainID uint64) (OpaqueMapping, error) {
 
 func StandardIntentV2(l1ChainID uint64) (OpaqueMapping, error) {
 	return standardIntentV2(l1ChainID, standardV2Intent)
+}
+
+func StandardIntentV1(l1ChainID uint64) (OpaqueMapping, error) {
+	return standardIntentV1(l1ChainID, standardV1Intent)
 }
 
 func standardIntentV2(l1ChainID uint64, data []byte) (OpaqueMapping, error) {
@@ -173,12 +227,37 @@ func standardIntentV2(l1ChainID uint64, data []byte) (OpaqueMapping, error) {
 	return intent, nil
 }
 
+// Add this type near the top of the file
+type stringWrapper string
+
+func (s stringWrapper) String() string {
+	return string(s)
+}
+
+func standardIntentV1(l1ChainID uint64, data []byte) (OpaqueMapping, error) {
+	intent, err := standardIntentV2(l1ChainID, data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create standard intent: %w", err)
+	}
+
+	root := dasel.New(intent)
+	// This is a hack to workaround an op-deployer bug where the protocolVersionsOwner is incorrectly
+	// set to the protocolVersionsImpl address. So we mirror that value here so we can pass the intent validation.
+	mustPutString(root, "superchainRoles.protocolVersionsOwner", stringWrapper("0x79ADD5713B383DAa0a138d3C4780C7A1804a8090"))
+
+	return intent, nil
+}
+
 func StandardStateV3(l1ChainID uint64) (OpaqueMapping, error) {
 	return standardState(l1ChainID, validation.Semver300, standardV3State)
 }
 
 func StandardStateV2(l1ChainID uint64) (OpaqueMapping, error) {
 	return standardState(l1ChainID, validation.Semver200, standardV2State)
+}
+
+func StandardStateV1(l1ChainID uint64) (OpaqueMapping, error) {
+	return standardState(l1ChainID, validation.Semver180, standardV1State)
 }
 
 func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (OpaqueMapping, error) {
@@ -200,7 +279,10 @@ func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (Opa
 		return nil, fmt.Errorf("unsupported L1 chain ID: %d", l1ChainID)
 	}
 
-	v2Info := stdVersions[semver]
+	stdVals, ok := stdVersions[semver]
+	if !ok {
+		return nil, fmt.Errorf("semver not found in stdVersions: %s", semver)
+	}
 
 	sc, err := superchain.GetSuperchain(scNetwork)
 	if err != nil {
@@ -210,17 +292,19 @@ func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (Opa
 	root := dasel.New(state)
 	mustPutLowerString(root, "superchainDeployment.superchainConfigProxyAddress", sc.SuperchainConfigAddr)
 	mustPutLowerString(root, "superchainDeployment.protocolVersionsProxyAddress", sc.ProtocolVersionsAddr)
-	mustPutLowerString(root, "implementationsDeployment.opcmAddress", v2Info.OPContractsManager.Address)
-	mustPutLowerString(root, "implementationsDeployment.delayedWETHImplAddress", v2Info.DelayedWeth.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.optimismPortalImplAddress", v2Info.OptimismPortal.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.preimageOracleSingletonAddress", v2Info.PreimageOracle.Address)
-	mustPutLowerString(root, "implementationsDeployment.mipsSingletonAddress", v2Info.Mips.Address)
-	mustPutLowerString(root, "implementationsDeployment.systemConfigImplAddress", v2Info.SystemConfig.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.l1CrossDomainMessengerImplAddress", v2Info.L1CrossDomainMessenger.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.l1ERC721BridgeImplAddress", v2Info.L1ERC721Bridge.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.l1StandardBridgeImplAddress", v2Info.L1StandardBridge.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.optimismMintableERC20FactoryImplAddress", v2Info.OptimismMintableERC20Factory.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.disputeGameFactoryImplAddress", v2Info.DisputeGameFactory.ImplementationAddress)
+	if stdVals.OPContractsManager != nil && stdVals.OPContractsManager.Address != nil {
+		mustPutLowerString(root, "implementationsDeployment.opcmAddress", stdVals.OPContractsManager.Address)
+	}
+	mustPutLowerString(root, "implementationsDeployment.delayedWETHImplAddress", stdVals.DelayedWeth.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.optimismPortalImplAddress", stdVals.OptimismPortal.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.preimageOracleSingletonAddress", stdVals.PreimageOracle.Address)
+	mustPutLowerString(root, "implementationsDeployment.mipsSingletonAddress", stdVals.Mips.Address)
+	mustPutLowerString(root, "implementationsDeployment.systemConfigImplAddress", stdVals.SystemConfig.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.l1CrossDomainMessengerImplAddress", stdVals.L1CrossDomainMessenger.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.l1ERC721BridgeImplAddress", stdVals.L1ERC721Bridge.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.l1StandardBridgeImplAddress", stdVals.L1StandardBridge.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.optimismMintableERC20FactoryImplAddress", stdVals.OptimismMintableERC20Factory.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.disputeGameFactoryImplAddress", stdVals.DisputeGameFactory.ImplementationAddress)
 
 	return state, nil
 }
@@ -247,16 +331,4 @@ func copyValue(src *dasel.Node, dest *dasel.Node, sel string) error {
 		return fmt.Errorf("failed to read value: %w", err)
 	}
 	return dest.Put(sel, val.InterfaceValue())
-}
-
-func readL1ChainID(node *dasel.Node) (uint64, error) {
-	l1ChainIDNode, err := node.Query("appliedIntent.l1ChainID")
-	if err != nil {
-		return 0, fmt.Errorf("failed to read L1 chain ID: %w", err)
-	}
-	l1ChainIDFloat, ok := l1ChainIDNode.InterfaceValue().(float64)
-	if !ok {
-		return 0, errors.New("failed to parse L1 chain ID")
-	}
-	return uint64(l1ChainIDFloat), nil
 }
