@@ -4,6 +4,12 @@ orbs:
   codecov: codecov/codecov@5.0.3
   utils: ethereum-optimism/circleci-utils@1.0.8
 
+executors:
+  default:
+    machine:
+      image: ubuntu-2204:2024.08.1
+    resource_class: medium
+
 parameters:
   default_docker_image:
     type: string
@@ -187,6 +193,44 @@ jobs:
               echo "\n✅ All codegen files are up to date"
             fi
 
+  notify-when-chain-is-added-to-registry:
+    executor: default
+    parameters:
+      branch:
+        type: string
+        default: test-branch
+    steps:
+      - checkout
+      - run:
+          name: Notify when chain is added to registry
+          command: |
+            set -e
+
+            # Get list of added files between main and current branch
+            ADDED_FILES=$(git diff --name-only --diff-filter=A origin/<< parameters.branch >>... | grep -E "^superchain/configs/(mainnet|sepolia)/.*\.toml$" | grep -v "superchain.toml" || true)
+
+            if [ -z "$ADDED_FILES" ]; then
+              echo "No new chains detected"
+              exit 0
+            fi
+
+            echo "🎉 New chains detected in the registry:"
+            echo "======================================"
+
+            for file in $ADDED_FILES; do
+              # Extract chain name from filename (remove .toml extension)
+              CHAIN_NAME=$(basename "$file" .toml)
+
+              # Extract network from path
+              NETWORK=$(echo "$file" | sed -n 's|^superchain/configs/\([^/]*\)/.*$|\1|p')
+
+              echo "✅ Chain '$CHAIN_NAME' added to $NETWORK network"
+              echo "   File: $file"
+            done
+
+            echo "======================================"
+            echo "Total new chains: $(echo "$ADDED_FILES" | wc -l)"
+
 workflows:
   main:
     jobs:
@@ -222,3 +266,7 @@ workflows:
           tool: check_chainlist
       - run-staging-report:
           name: run-staging-report
+
+  notify-when-chain-is-added-to-registry:
+    jobs:
+      - notify-when-chain-is-added-to-registry
