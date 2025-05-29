@@ -205,7 +205,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check if running on target branch
+          name: Check if running on main branch
           command: |
             if [ "$CIRCLE_BRANCH" != "<< parameters.branch >>" ]; then
               echo "Not running on << parameters.branch >> branch (current: $CIRCLE_BRANCH), skipping notification"
