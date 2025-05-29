@@ -202,15 +202,23 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Check if running on main branch
+          command: |
+            if [ "$CIRCLE_BRANCH" != "<< parameters.branch >>" ]; then
+              echo "Not running on << parameters.branch >> branch (current: $CIRCLE_BRANCH), skipping notification"
+              circleci-agent step halt
+            fi
+      - run:
           name: Notify when chain is added to registry
           command: |
             set -e
 
-            # Get list of added files between main and current branch
-            ADDED_FILES=$(git diff --name-only --diff-filter=A origin/<< parameters.branch >>... | grep -E "^superchain/configs/(mainnet|sepolia)/.*\.toml$" | grep -v "superchain.toml" || true)
+            # Get the previous commit on main to compare against
+            # This will show files added in the most recent merge/commit to main
+            ADDED_FILES=$(git diff --name-only --diff-filter=A HEAD~1 HEAD | grep -E "^superchain/configs/(mainnet|sepolia)/.*\.toml$" | grep -v "superchain.toml" || true)
 
             if [ -z "$ADDED_FILES" ]; then
-              echo "No new chains detected"
+              echo "No new chains detected in this merge to << parameters.branch >>"
               exit 0
             fi
 
