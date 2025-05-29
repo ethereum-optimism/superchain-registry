@@ -202,9 +202,6 @@ jobs:
       slack_webhook_url:
         type: env_var_name
         default: SLACK_WEBHOOK_URL
-      github_token:
-        type: env_var_name
-        default: GITHUB_TOKEN
     steps:
       - checkout
       - run:
@@ -233,9 +230,8 @@ jobs:
             echo "🔄 Chain changes detected in the registry:"
             echo "=========================================="
 
-            # Prepare messages for both Slack and GitHub
+            # Prepare Slack message
             SLACK_MESSAGE="🔄 *Chain changes in Superchain Registry!*\n\n"
-            GITHUB_MESSAGE="## 🔄 Chain Changes in Superchain Registry\n\n"
             TOTAL_CHANGES=0
 
             # Process added chains
@@ -243,7 +239,6 @@ jobs:
               echo ""
               echo "➕ ADDED CHAINS:"
               SLACK_MESSAGE="${SLACK_MESSAGE}*➕ Added Chains:*\n"
-              GITHUB_MESSAGE="${GITHUB_MESSAGE}### ➕ Added Chains\n\n"
 
               for file in $ADDED_FILES; do
                 CHAIN_NAME=$(basename "$file" .toml)
@@ -251,11 +246,9 @@ jobs:
 
                 echo "  ✅ Chain '$CHAIN_NAME' added to $NETWORK network"
                 SLACK_MESSAGE="${SLACK_MESSAGE}  ✅ \`${CHAIN_NAME}\` added to *${NETWORK}* network\n"
-                GITHUB_MESSAGE="${GITHUB_MESSAGE}- ✅ \`${CHAIN_NAME}\` added to **${NETWORK}** network\n"
                 TOTAL_CHANGES=$((TOTAL_CHANGES + 1))
               done
               SLACK_MESSAGE="${SLACK_MESSAGE}\n"
-              GITHUB_MESSAGE="${GITHUB_MESSAGE}\n"
             fi
 
             # Process deleted chains
@@ -263,7 +256,6 @@ jobs:
               echo ""
               echo "➖ REMOVED CHAINS:"
               SLACK_MESSAGE="${SLACK_MESSAGE}*➖ Removed Chains:*\n"
-              GITHUB_MESSAGE="${GITHUB_MESSAGE}### ➖ Removed Chains\n\n"
 
               for file in $DELETED_FILES; do
                 CHAIN_NAME=$(basename "$file" .toml)
@@ -271,11 +263,9 @@ jobs:
 
                 echo "  ❌ Chain '$CHAIN_NAME' removed from $NETWORK network"
                 SLACK_MESSAGE="${SLACK_MESSAGE}  ❌ \`${CHAIN_NAME}\` removed from *${NETWORK}* network\n"
-                GITHUB_MESSAGE="${GITHUB_MESSAGE}- ❌ \`${CHAIN_NAME}\` removed from **${NETWORK}** network\n"
                 TOTAL_CHANGES=$((TOTAL_CHANGES + 1))
               done
               SLACK_MESSAGE="${SLACK_MESSAGE}\n"
-              GITHUB_MESSAGE="${GITHUB_MESSAGE}\n"
             fi
 
             # Process modified chains
@@ -283,7 +273,6 @@ jobs:
               echo ""
               echo "🔧 MODIFIED CHAINS:"
               SLACK_MESSAGE="${SLACK_MESSAGE}*🔧 Modified Chains:*\n"
-              GITHUB_MESSAGE="${GITHUB_MESSAGE}### 🔧 Modified Chains\n\n"
 
               for file in $MODIFIED_FILES; do
                 CHAIN_NAME=$(basename "$file" .toml)
@@ -291,30 +280,22 @@ jobs:
 
                 echo "  🔧 Chain '$CHAIN_NAME' modified in $NETWORK network"
                 SLACK_MESSAGE="${SLACK_MESSAGE}  🔧 \`${CHAIN_NAME}\` modified in *${NETWORK}* network\n"
-                GITHUB_MESSAGE="${GITHUB_MESSAGE}- 🔧 \`${CHAIN_NAME}\` modified in **${NETWORK}** network\n"
                 TOTAL_CHANGES=$((TOTAL_CHANGES + 1))
               done
               SLACK_MESSAGE="${SLACK_MESSAGE}\n"
-              GITHUB_MESSAGE="${GITHUB_MESSAGE}\n"
             fi
 
             echo "=========================================="
             echo "Total chain changes: $TOTAL_CHANGES"
 
-            # Finalize messages
+            # Finalize Slack message
             SLACK_MESSAGE="${SLACK_MESSAGE}📊 *Total changes:* ${TOTAL_CHANGES}"
             SLACK_MESSAGE="${SLACK_MESSAGE}\n🔗 *Commit:* <${CIRCLE_BUILD_URL}|View in CircleCI>"
+            SLACK_MESSAGE="${SLACK_MESSAGE}\n🔗 *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1:0:7}>"
 
-            GITHUB_MESSAGE="${GITHUB_MESSAGE}---\n"
-            GITHUB_MESSAGE="${GITHUB_MESSAGE}📊 **Total changes:** ${TOTAL_CHANGES}\n"
-            GITHUB_MESSAGE="${GITHUB_MESSAGE}🔗 **CircleCI Build:** [View Build](${CIRCLE_BUILD_URL})\n"
-            GITHUB_MESSAGE="${GITHUB_MESSAGE}🔗 **Commit:** [\`${CIRCLE_SHA1:0:7}\`](https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1})"
-
-            # Export for notifications
+            # Export for Slack notification
             echo "export SLACK_PARAM_MESSAGE='${SLACK_MESSAGE}'" >> $BASH_ENV
-            echo "export GITHUB_PARAM_MESSAGE='${GITHUB_MESSAGE}'" >> $BASH_ENV
             echo "export CHAIN_CHANGES_DETECTED=true" >> $BASH_ENV
-            echo "export TOTAL_CHANGES='${TOTAL_CHANGES}'" >> $BASH_ENV
       - run:
           name: Send Slack notification
           command: |
@@ -327,60 +308,9 @@ jobs:
                 --data "{\"text\":\"$FORMATTED_MESSAGE\"}" \
                 "$<< parameters.slack_webhook_url >>"
 
-              echo "✅ Slack notification sent successfully"
+              echo "Slack notification sent successfully"
             else
               echo "No changes detected, skipping Slack notification"
-            fi
-      - run:
-          name: Send GitHub commit comment
-          command: |
-            if [ "$CHAIN_CHANGES_DETECTED" = "true" ]; then
-              # Convert \n to actual newlines for GitHub markdown
-              FORMATTED_GITHUB_MESSAGE=$(echo -e "$GITHUB_PARAM_MESSAGE")
-
-              # Create JSON payload for GitHub API
-              GITHUB_PAYLOAD=$(jq -n \
-                --arg body "$FORMATTED_GITHUB_MESSAGE" \
-                '{body: $body}')
-
-              # Post comment to the commit
-              curl -X POST \
-                -H "Authorization: token $<< parameters.github_token >>" \
-                -H "Accept: application/vnd.github.v3+json" \
-                -H "Content-Type: application/json" \
-                -d "$GITHUB_PAYLOAD" \
-                "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commits/${CIRCLE_SHA1}/comments"
-
-              echo "✅ GitHub commit comment posted successfully"
-            else
-              echo "No changes detected, skipping GitHub notification"
-            fi
-      - run:
-          name: Create GitHub issue (optional)
-          command: |
-            if [ "$CHAIN_CHANGES_DETECTED" = "true" ] && [ "$TOTAL_CHANGES" -gt 0 ]; then
-              # Create a summary issue for significant changes
-              ISSUE_TITLE="🔄 Chain Registry Changes - $(date '+%Y-%m-%d')"
-              ISSUE_BODY="$GITHUB_PARAM_MESSAGE"
-              ISSUE_BODY="${ISSUE_BODY}\n\n---\n*This issue was automatically created by CircleCI when chain changes were detected.*"
-
-              ISSUE_PAYLOAD=$(jq -n \
-                --arg title "$ISSUE_TITLE" \
-                --arg body "$(echo -e "$ISSUE_BODY")" \
-                --argjson labels '["automated", "chain-registry", "notification"]' \
-                '{title: $title, body: $body, labels: $labels}')
-
-              # Create the issue
-              curl -X POST \
-                -H "Authorization: token $<< parameters.github_token >>" \
-                -H "Accept: application/vnd.github.v3+json" \
-                -H "Content-Type: application/json" \
-                -d "$ISSUE_PAYLOAD" \
-                "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues"
-
-              echo "✅ GitHub issue created successfully"
-            else
-              echo "Skipping GitHub issue creation"
             fi
 
 workflows:
