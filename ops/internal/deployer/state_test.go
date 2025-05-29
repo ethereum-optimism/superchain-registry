@@ -14,6 +14,7 @@ func TestMergeState(t *testing.T) {
 		Version int
 		Merger  func(mapping OpaqueMapping) (OpaqueMapping, OpaqueMapping, error)
 	}{
+		{1, MergeStateV1},
 		{2, MergeStateV2},
 		{3, MergeStateV3},
 	}
