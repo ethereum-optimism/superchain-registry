@@ -212,55 +212,105 @@ jobs:
               circleci-agent step halt
             fi
       - run:
-          name: Notify when chain is added to registry
+          name: Notify when chains are changed in registry
           command: |
             set -e
 
-            # Get the previous commit to compare against
-            # This will show files added in the most recent merge/commit
+            # Get added, deleted, and modified files
             ADDED_FILES=$(git diff --name-only --diff-filter=A HEAD~1 HEAD | grep -E "^superchain/configs/(mainnet|sepolia)/.*\.toml$" | grep -v "superchain.toml" || true)
+            DELETED_FILES=$(git diff --name-only --diff-filter=D HEAD~1 HEAD | grep -E "^superchain/configs/(mainnet|sepolia)/.*\.toml$" | grep -v "superchain.toml" || true)
+            MODIFIED_FILES=$(git diff --name-only --diff-filter=M HEAD~1 HEAD | grep -E "^superchain/configs/(mainnet|sepolia)/.*\.toml$" | grep -v "superchain.toml" || true)
 
-            if [ -z "$ADDED_FILES" ]; then
-              echo "No new chains detected in this merge to << parameters.branch >>"
+            # Check if any changes detected
+            if [ -z "$ADDED_FILES" ] && [ -z "$DELETED_FILES" ] && [ -z "$MODIFIED_FILES" ]; then
+              echo "No chain changes detected in this merge to << parameters.branch >>"
               exit 0
             fi
 
-            echo "🎉 New chains detected in the registry:"
-            echo "======================================"
+            echo "🔄 Chain changes detected in the registry:"
+            echo "=========================================="
 
             # Prepare Slack message
-            SLACK_MESSAGE="🎉 *New chains added to Superchain Registry!*\n\n"
-            CHAIN_COUNT=0
+            SLACK_MESSAGE="🔄 *Chain changes in Superchain Registry!*\n\n"
+            TOTAL_CHANGES=0
 
-            for file in $ADDED_FILES; do
-              # Extract chain name from filename (remove .toml extension)
-              CHAIN_NAME=$(basename "$file" .toml)
+            # Process added chains
+            if [ -n "$ADDED_FILES" ]; then
+              echo ""
+              echo "➕ ADDED CHAINS:"
+              SLACK_MESSAGE="${SLACK_MESSAGE}*➕ Added Chains:*\n"
 
-              # Extract network from path
-              NETWORK=$(echo "$file" | sed -n 's|^superchain/configs/\([^/]*\)/.*$|\1|p')
+              for file in $ADDED_FILES; do
+                CHAIN_NAME=$(basename "$file" .toml)
+                NETWORK=$(echo "$file" | sed -n 's|^superchain/configs/\([^/]*\)/.*$|\1|p')
 
-              echo "✅ Chain '$CHAIN_NAME' added to $NETWORK network"
-              echo "   File: $file"
+                echo "  ✅ Chain '$CHAIN_NAME' added to $NETWORK network"
+                SLACK_MESSAGE="${SLACK_MESSAGE}  ✅ \`${CHAIN_NAME}\` added to *${NETWORK}* network\n"
+                TOTAL_CHANGES=$((TOTAL_CHANGES + 1))
+              done
+              SLACK_MESSAGE="${SLACK_MESSAGE}\n"
+            fi
 
-              # Add to Slack message
-              SLACK_MESSAGE="${SLACK_MESSAGE}✅ \`${CHAIN_NAME}\` added to *${NETWORK}* network\n"
-              CHAIN_COUNT=$((CHAIN_COUNT + 1))
-            done
+            # Process deleted chains
+            if [ -n "$DELETED_FILES" ]; then
+              echo ""
+              echo "➖ REMOVED CHAINS:"
+              SLACK_MESSAGE="${SLACK_MESSAGE}*➖ Removed Chains:*\n"
 
-            echo "======================================"
-            echo "Total new chains: $CHAIN_COUNT"
+              for file in $DELETED_FILES; do
+                CHAIN_NAME=$(basename "$file" .toml)
+                NETWORK=$(echo "$file" | sed -n 's|^superchain/configs/\([^/]*\)/.*$|\1|p')
+
+                echo "  ❌ Chain '$CHAIN_NAME' removed from $NETWORK network"
+                SLACK_MESSAGE="${SLACK_MESSAGE}  ❌ \`${CHAIN_NAME}\` removed from *${NETWORK}* network\n"
+                TOTAL_CHANGES=$((TOTAL_CHANGES + 1))
+              done
+              SLACK_MESSAGE="${SLACK_MESSAGE}\n"
+            fi
+
+            # Process modified chains
+            if [ -n "$MODIFIED_FILES" ]; then
+              echo ""
+              echo "🔧 MODIFIED CHAINS:"
+              SLACK_MESSAGE="${SLACK_MESSAGE}*🔧 Modified Chains:*\n"
+
+              for file in $MODIFIED_FILES; do
+                CHAIN_NAME=$(basename "$file" .toml)
+                NETWORK=$(echo "$file" | sed -n 's|^superchain/configs/\([^/]*\)/.*$|\1|p')
+
+                echo "  🔧 Chain '$CHAIN_NAME' modified in $NETWORK network"
+                SLACK_MESSAGE="${SLACK_MESSAGE}  🔧 \`${CHAIN_NAME}\` modified in *${NETWORK}* network\n"
+                TOTAL_CHANGES=$((TOTAL_CHANGES + 1))
+              done
+              SLACK_MESSAGE="${SLACK_MESSAGE}\n"
+            fi
+
+            echo "=========================================="
+            echo "Total chain changes: $TOTAL_CHANGES"
 
             # Finalize Slack message
-            SLACK_MESSAGE="${SLACK_MESSAGE}\n📊 *Total new chains:* ${CHAIN_COUNT}"
+            SLACK_MESSAGE="${SLACK_MESSAGE}📊 *Total changes:* ${TOTAL_CHANGES}"
             SLACK_MESSAGE="${SLACK_MESSAGE}\n🔗 *Commit:* <${CIRCLE_BUILD_URL}|View in CircleCI>"
 
             # Export for Slack notification
             echo "export SLACK_PARAM_MESSAGE='${SLACK_MESSAGE}'" >> $BASH_ENV
-            echo "export NEW_CHAINS_DETECTED=true" >> $BASH_ENV
+            echo "export CHAIN_CHANGES_DETECTED=true" >> $BASH_ENV
       - run:
-          name: Notify when chain is added to registry
+          name: Send Slack notification
           command: |
-            curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${SLACK_PARAM_MESSAGE}\"}" "$<< parameters.slack_webhook_url >>"
+            if [ "$CHAIN_CHANGES_DETECTED" = "true" ]; then
+              # Convert \n to actual newlines for better formatting
+              FORMATTED_MESSAGE=$(echo -e "$SLACK_PARAM_MESSAGE")
+
+              # Send to Slack using webhook
+              curl -X POST -H 'Content-type: application/json' \
+                --data "{\"text\":\"$FORMATTED_MESSAGE\"}" \
+                "$<< parameters.slack_webhook_url >>"
+
+              echo "Slack notification sent successfully"
+            else
+              echo "No changes detected, skipping Slack notification"
+            fi
 
 workflows:
   main:
