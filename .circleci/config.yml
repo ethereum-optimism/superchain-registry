@@ -199,6 +199,9 @@ jobs:
       branch:
         type: string
         default: test-branch
+      slack_webhook_url:
+        type: env_var_name
+        default: SLACK_WEBHOOK_URL
     steps:
       - checkout
       - run:
@@ -213,8 +216,8 @@ jobs:
           command: |
             set -e
 
-            # Get the previous commit on main to compare against
-            # This will show files added in the most recent merge/commit to main
+            # Get the previous commit to compare against
+            # This will show files added in the most recent merge/commit
             ADDED_FILES=$(git diff --name-only --diff-filter=A HEAD~1 HEAD | grep -E "^superchain/configs/(mainnet|sepolia)/.*\.toml$" | grep -v "superchain.toml" || true)
 
             if [ -z "$ADDED_FILES" ]; then
@@ -225,6 +228,10 @@ jobs:
             echo "🎉 New chains detected in the registry:"
             echo "======================================"
 
+            # Prepare Slack message
+            SLACK_MESSAGE="🎉 *New chains added to Superchain Registry!*\n\n"
+            CHAIN_COUNT=0
+
             for file in $ADDED_FILES; do
               # Extract chain name from filename (remove .toml extension)
               CHAIN_NAME=$(basename "$file" .toml)
@@ -234,10 +241,26 @@ jobs:
 
               echo "✅ Chain '$CHAIN_NAME' added to $NETWORK network"
               echo "   File: $file"
+
+              # Add to Slack message
+              SLACK_MESSAGE="${SLACK_MESSAGE}✅ \`${CHAIN_NAME}\` added to *${NETWORK}* network\n"
+              CHAIN_COUNT=$((CHAIN_COUNT + 1))
             done
 
             echo "======================================"
-            echo "Total new chains: $(echo "$ADDED_FILES" | wc -l)"
+            echo "Total new chains: $CHAIN_COUNT"
+
+            # Finalize Slack message
+            SLACK_MESSAGE="${SLACK_MESSAGE}\n📊 *Total new chains:* ${CHAIN_COUNT}"
+            SLACK_MESSAGE="${SLACK_MESSAGE}\n🔗 *Commit:* <${CIRCLE_BUILD_URL}|View in CircleCI>"
+
+            # Export for Slack notification
+            echo "export SLACK_PARAM_MESSAGE='${SLACK_MESSAGE}'" >> $BASH_ENV
+            echo "export NEW_CHAINS_DETECTED=true" >> $BASH_ENV
+      - run:
+          name: Notify when chain is added to registry
+          command: |
+            curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${SLACK_PARAM_MESSAGE}\"}" << parameters.slack_webhook_url >>
 
 workflows:
   main:
@@ -277,4 +300,5 @@ workflows:
 
   notify-when-chain-is-added-to-registry:
     jobs:
-      - notify-when-chain-is-added-to-registry
+      - notify-when-chain-is-added-to-registry:
+          context: circleci-repo-superchain-registry
