@@ -353,3 +353,7 @@ workflows:
     jobs:
       - notify-when-chain-is-added-to-registry:
           context: circleci-repo-superchain-registry
+          filters:
+            branches:
+              only:
+                - test-branch
