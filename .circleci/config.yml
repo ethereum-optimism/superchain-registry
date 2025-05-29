@@ -198,7 +198,7 @@ jobs:
     parameters:
       branch:
         type: string
-        default: test-branch
+        default: main
       slack_webhook_url:
         type: env_var_name
         default: SLACK_WEBHOOK_URL
@@ -356,4 +356,4 @@ workflows:
           filters:
             branches:
               only:
-                - test-branch
+                - main
