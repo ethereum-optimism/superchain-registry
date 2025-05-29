@@ -2,6 +2,9 @@ package deployer
 
 import (
 	"bytes"
+	"crypto/ecdsa"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -14,12 +17,12 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
-	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/log"
 )
 
-// OpDeployer manages the process of building, setting up, and running the op-deployer
-// binary to generate genesis states for L2 chains.
+// OpDeployer manages the process of building a specific binary of op-deployer,
+// then shelling out to that binary for various cli commands
 type OpDeployer struct {
 	DeployerVersion    string
 	lgr                log.Logger
@@ -150,7 +153,8 @@ func (d *OpDeployer) setupStateAndIntent(inputStatePath, workdir string) error {
 }
 
 // GenerateStandardGenesis runs op-deployer binary to generate a genesis
-func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId string) (*core.Genesis, error) {
+// - l1RpcUrl must match the state's L1 and is required by op-deployer, even though we aren't sending any txs
+func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string) (*OpaqueMapping, error) {
 	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
@@ -166,9 +170,24 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId string) (*core.G
 		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
 	}
 
+	// We don't want to use a funded account here, because there should not be any txs sent.
+	// All contracts should have already been deployed, and the 'apply' command should skip
+	// those pipeline steps, then only generate the genesis.
+	privateKey, err := ecdsa.GenerateKey(crypto.S256(), rand.Reader)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate random private key: %w", err)
+	}
+	privateKeyBytes := crypto.FromECDSA(privateKey)
+	privateKeyHex := "0x" + hex.EncodeToString(privateKeyBytes)
+
 	// Run `op-deployer apply` to generate the expected genesis
 	d.lgr.Info("Running `op-deployer apply`")
-	cmd := exec.Command(deployerPath, "apply", "--workdir", workdir, "--deployment-target", "genesis")
+	cmd := exec.Command(deployerPath, "apply",
+		"--workdir", workdir,
+		"--deployment-target", "live",
+		"--l1-rpc-url", l1RpcUrl,
+		"--private-key", privateKeyHex,
+	)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -184,7 +203,7 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId string) (*core.G
 		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
 	}
 
-	var genesis core.Genesis
+	var genesis OpaqueMapping
 	if err := json.Unmarshal(output, &genesis); err != nil {
 		return nil, fmt.Errorf("failed to parse op-deployer inspect genesis output: %w", err)
 	}
@@ -214,11 +233,12 @@ func (d *OpDeployer) copyStateFileToTempDir(statePath string) (string, error) {
 	if err := os.WriteFile(stateTempPath, stateJSON, 0o644); err != nil {
 		return "", fmt.Errorf("failed to write state to temp file: %w", err)
 	}
+
 	d.lgr.Info("Copied state file to temporary directory", "path", stateTempPath)
 	return workdir, nil
 }
 
-func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*core.Genesis, error) {
+func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*OpaqueMapping, error) {
 	// Run `op-deployer inspect genesis` to read the expected genesis
 	d.lgr.Info("Running `op-deployer inspect genesis`")
 
@@ -242,7 +262,7 @@ func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*core.Genesis, e
 		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
 	}
 
-	var genesis core.Genesis
+	var genesis OpaqueMapping
 	if err := json.Unmarshal(output, &genesis); err != nil {
 		return nil, fmt.Errorf("failed to parse op-deployer inspect genesis output: %w", err)
 	}

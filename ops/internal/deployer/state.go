@@ -173,6 +173,7 @@ func mergeStateV2(userState OpaqueMapping, stdIntent OpaqueMapping, stdState Opa
 	guard(copyValue(userStateNode, stdStateNode, "opChainDeployments.[0].faultDisputeGameAddress"))
 	guard(copyValue(userStateNode, stdStateNode, "opChainDeployments.[0].permissionedDisputeGameAddress"))
 	guard(copyValue(userStateNode, stdStateNode, "opChainDeployments.[0].delayedWETHPermissionedGameProxyAddress"))
+	guard(copyValue(userStateNode, stdStateNode, "opChainDeployments.[0].startBlock"))
 
 	if copyErrs != nil {
 		return nil, nil, copyErrs
@@ -240,6 +241,8 @@ func standardIntentV1(l1ChainID uint64, data []byte) (OpaqueMapping, error) {
 	}
 
 	root := dasel.New(intent)
+	// This is a hack to workaround an op-deployer bug where the protocolVersionsOwner is incorrectly
+	// set to the protocolVersionsImpl address. So we mirror that value here so we can pass the intent validation.
 	mustPutString(root, "superchainRoles.protocolVersionsOwner", stringWrapper("0x79ADD5713B383DAa0a138d3C4780C7A1804a8090"))
 
 	return intent, nil
@@ -276,7 +279,10 @@ func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (Opa
 		return nil, fmt.Errorf("unsupported L1 chain ID: %d", l1ChainID)
 	}
 
-	v2Info := stdVersions[semver]
+	stdVals, ok := stdVersions[semver]
+	if !ok {
+		return nil, fmt.Errorf("semver not found in stdVersions: %s", semver)
+	}
 
 	sc, err := superchain.GetSuperchain(scNetwork)
 	if err != nil {
@@ -286,19 +292,19 @@ func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (Opa
 	root := dasel.New(state)
 	mustPutLowerString(root, "superchainDeployment.superchainConfigProxyAddress", sc.SuperchainConfigAddr)
 	mustPutLowerString(root, "superchainDeployment.protocolVersionsProxyAddress", sc.ProtocolVersionsAddr)
-	if v2Info.OPContractsManager != nil && v2Info.OPContractsManager.Address != nil {
-		mustPutLowerString(root, "implementationsDeployment.opcmAddress", v2Info.OPContractsManager.Address)
+	if stdVals.OPContractsManager != nil && stdVals.OPContractsManager.Address != nil {
+		mustPutLowerString(root, "implementationsDeployment.opcmAddress", stdVals.OPContractsManager.Address)
 	}
-	mustPutLowerString(root, "implementationsDeployment.delayedWETHImplAddress", v2Info.DelayedWeth.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.optimismPortalImplAddress", v2Info.OptimismPortal.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.preimageOracleSingletonAddress", v2Info.PreimageOracle.Address)
-	mustPutLowerString(root, "implementationsDeployment.mipsSingletonAddress", v2Info.Mips.Address)
-	mustPutLowerString(root, "implementationsDeployment.systemConfigImplAddress", v2Info.SystemConfig.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.l1CrossDomainMessengerImplAddress", v2Info.L1CrossDomainMessenger.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.l1ERC721BridgeImplAddress", v2Info.L1ERC721Bridge.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.l1StandardBridgeImplAddress", v2Info.L1StandardBridge.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.optimismMintableERC20FactoryImplAddress", v2Info.OptimismMintableERC20Factory.ImplementationAddress)
-	mustPutLowerString(root, "implementationsDeployment.disputeGameFactoryImplAddress", v2Info.DisputeGameFactory.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.delayedWETHImplAddress", stdVals.DelayedWeth.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.optimismPortalImplAddress", stdVals.OptimismPortal.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.preimageOracleSingletonAddress", stdVals.PreimageOracle.Address)
+	mustPutLowerString(root, "implementationsDeployment.mipsSingletonAddress", stdVals.Mips.Address)
+	mustPutLowerString(root, "implementationsDeployment.systemConfigImplAddress", stdVals.SystemConfig.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.l1CrossDomainMessengerImplAddress", stdVals.L1CrossDomainMessenger.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.l1ERC721BridgeImplAddress", stdVals.L1ERC721Bridge.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.l1StandardBridgeImplAddress", stdVals.L1StandardBridge.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.optimismMintableERC20FactoryImplAddress", stdVals.OptimismMintableERC20Factory.ImplementationAddress)
+	mustPutLowerString(root, "implementationsDeployment.disputeGameFactoryImplAddress", stdVals.DisputeGameFactory.ImplementationAddress)
 
 	return state, nil
 }
