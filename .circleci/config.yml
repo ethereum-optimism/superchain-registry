@@ -260,7 +260,7 @@ jobs:
       - run:
           name: Notify when chain is added to registry
           command: |
-            curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${SLACK_PARAM_MESSAGE}\"}" << parameters.slack_webhook_url >>
+            curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${SLACK_PARAM_MESSAGE}\"}" "$<< parameters.slack_webhook_url >>"
 
 workflows:
   main:
