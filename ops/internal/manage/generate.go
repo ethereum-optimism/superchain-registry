@@ -29,7 +29,7 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease)
+	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, deployer.CacheDir)
 	if err != nil {
 		return fmt.Errorf("failed to create op-deployer: %w", err)
 	}
