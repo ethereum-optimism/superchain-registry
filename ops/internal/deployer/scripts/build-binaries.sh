@@ -204,21 +204,14 @@ main() {
   detect_os
   get_versions
 
-  local failed=0
-
   # Process each version
   for version in $VERSIONS; do
     echo "Processing $version..."
     if ! download_and_install "$version"; then
       echo "Failed to process $version"
-      failed=1
+      exit 1
     fi
   done
-
-  if [ $failed -eq 1 ]; then
-    echo "One or more binaries could not be downloaded or installed"
-    exit 1
-  fi
 
   echo "All binaries are successfully installed!"
   exit 0
