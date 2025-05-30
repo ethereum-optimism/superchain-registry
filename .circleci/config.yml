@@ -17,6 +17,16 @@ parameters:
   github_repo:
     type: string
     default: ethereum-optimism/superchain-registry
+  deployer_cache_dir:
+    type: string
+    default: /tmp/deployer-cache
+
+executors:
+  default:
+    docker:
+      - image: << pipeline.parameters.default_docker_image >>
+    environment:
+      DEPLOYER_CACHE_DIR: << pipeline.parameters.deployer_cache_dir >>
 
 jobs:
   go-lint-test:

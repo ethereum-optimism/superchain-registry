@@ -23,10 +23,15 @@ var versionsJSON []byte
 // contractVersions maps contract versions to deployer versions
 var contractVersions map[string]string
 
+// cacheDirEnvVar is the environment variable that contains the path to the op-deployer cache directory
+var cacheDirEnvVar = "DEPLOYER_CACHE_DIR"
+var CACHE_DIR string
+
 func init() {
 	if err := json.Unmarshal(versionsJSON, &contractVersions); err != nil {
 		panic(fmt.Sprintf("failed to parse versions.json: %v", err))
 	}
+	CACHE_DIR = os.Getenv(cacheDirEnvVar)
 }
 
 // OpDeployer manages the process of building a specific binary of op-deployer,

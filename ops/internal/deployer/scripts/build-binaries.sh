@@ -3,11 +3,12 @@ set -euo pipefail
 
 # build-deployer.sh
 #   Downloads pre-built op-deployer binaries for specified versions from GitHub releases
-#   and caches them in $HOME/.cache/op-deployer/$VERSION/op-deployer
+#   and caches them in $DEPLOYER_CACHE_DIR/$VERSION/op-deployer
 #   where $VERSION is the version number (e.g., v0.4.0) without the op-deployer/ prefix.
+#   If DEPLOYER_CACHE_DIR is not set, it will default to $HOME/.cache/op-deployer
 #   If a pre-built binary isn't available, falls back to building from source.
 
-CACHE_DIR=${1:-"$HOME/.cache/op-deployer"}
+CACHE_DIR=${DEPLOYER_CACHE_DIR:-"$HOME/.cache/op-deployer"}
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VERSIONS_JSON="$SCRIPT_DIR/../versions.json"
 TEMP_DIR=$(mktemp -d)
