@@ -8,7 +8,10 @@ import (
 	"github.com/tomwright/dasel"
 )
 
-type OpaqueMapping map[string]any
+type (
+	OpaqueMap   map[string]any
+	OpaqueState OpaqueMap
+)
 
 // useInts converts all float64 values without fractional parts to int64 values in a map
 // so that they are properly marshaled to TOML
@@ -36,7 +39,7 @@ func useInts(m map[string]any) {
 	}
 }
 
-func (om OpaqueMapping) ReadL1ChainID() (uint64, error) {
+func (om OpaqueState) ReadL1ChainID() (uint64, error) {
 	node := dasel.New(om)
 	l1ChainIDNode, err := node.Query("appliedIntent.l1ChainID")
 	if err != nil {
@@ -49,7 +52,7 @@ func (om OpaqueMapping) ReadL1ChainID() (uint64, error) {
 	return uint64(l1ChainIDFloat), nil
 }
 
-func (om OpaqueMapping) ReadL1ContractsLocator() (string, error) {
+func (om OpaqueState) ReadL1ContractsLocator() (string, error) {
 	node := dasel.New(om)
 	l1ContractsReleaseNode, err := node.Query("appliedIntent.l1ContractsLocator")
 	if err != nil {
@@ -62,7 +65,7 @@ func (om OpaqueMapping) ReadL1ContractsLocator() (string, error) {
 	return l1ContractsRelease, nil
 }
 
-func (om OpaqueMapping) ReadL2ContractsLocator() (string, error) {
+func (om OpaqueState) ReadL2ContractsLocator() (string, error) {
 	node := dasel.New(om)
 	l2ContractsReleaseNode, err := node.Query("appliedIntent.l2ContractsLocator")
 	if err != nil {
@@ -75,7 +78,7 @@ func (om OpaqueMapping) ReadL2ContractsLocator() (string, error) {
 	return l2ContractsRelease, nil
 }
 
-func (om OpaqueMapping) ReadL2ChainId(idx int) (string, error) {
+func (om OpaqueState) ReadL2ChainId(idx int) (string, error) {
 	node := dasel.New(om)
 	l2ChainIdNode, err := node.Query(fmt.Sprintf("appliedIntent.chains.[%d].id", idx))
 	if err != nil {
@@ -88,7 +91,7 @@ func (om OpaqueMapping) ReadL2ChainId(idx int) (string, error) {
 	return l2ChainId, nil
 }
 
-func (om OpaqueMapping) ReadSystemConfigProxy(idx int) (common.Address, error) {
+func (om OpaqueState) ReadSystemConfigProxy(idx int) (common.Address, error) {
 	node := dasel.New(om)
 	systemConfigProxyNode, err := node.Query(fmt.Sprintf("appliedIntent.opChainDeployments.[%d].SystemConfigProxy", idx))
 	if err == nil {
@@ -112,7 +115,7 @@ func (om OpaqueMapping) ReadSystemConfigProxy(idx int) (common.Address, error) {
 	return common.HexToAddress(systemConfigProxy), nil
 }
 
-func (om OpaqueMapping) ReadL1StandardBridgeProxy(idx int) (common.Address, error) {
+func (om OpaqueState) ReadL1StandardBridgeProxy(idx int) (common.Address, error) {
 	node := dasel.New(om)
 	l1StandardBridgeProxyNode, err := node.Query(fmt.Sprintf("appliedIntent.opChainDeployments.[%d].L1StandardBridgeProxy", idx))
 	if err == nil {

@@ -34,21 +34,21 @@ var standardV3State []byte
 //go:embed configs/v3-intent.toml
 var standardV3Intent []byte
 
-func ReadOpaqueMappingFile(p string) (OpaqueMapping, error) {
+func ReadOpaqueStateFile(p string) (OpaqueState, error) {
 	f, err := os.Open(p)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open JSON file: %w", err)
 	}
 	defer f.Close()
 
-	var out OpaqueMapping
+	var out OpaqueState
 	if err := json.NewDecoder(f).Decode(&out); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal JSON: %w", err)
 	}
 	return out, nil
 }
 
-func getMergeStateFunc(version string) (func(state OpaqueMapping) (OpaqueMapping, OpaqueMapping, error), error) {
+func getMergeStateFunc(version string) (func(state OpaqueState) (OpaqueMap, OpaqueState, error), error) {
 	// Extract the version number using regex
 	re := regexp.MustCompile(`op-deployer/v\d+\.(\d+)\.\d+`)
 	match := re.FindStringSubmatch(version)
@@ -76,7 +76,7 @@ func getMergeStateFunc(version string) (func(state OpaqueMapping) (OpaqueMapping
 	}
 }
 
-func MergeStateV1(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error) {
+func MergeStateV1(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -92,7 +92,7 @@ func MergeStateV1(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error)
 	return mergeStateV2(userState, stdIntent, stdState)
 }
 
-func MergeStateV2(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error) {
+func MergeStateV2(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -108,7 +108,7 @@ func MergeStateV2(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error)
 	return mergeStateV2(userState, stdIntent, stdState)
 }
 
-func MergeStateV3(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error) {
+func MergeStateV3(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -126,7 +126,7 @@ func MergeStateV3(userState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error)
 	return mergeStateV2(userState, stdIntent, stdState)
 }
 
-func mergeStateV2(userState OpaqueMapping, stdIntent OpaqueMapping, stdState OpaqueMapping) (OpaqueMapping, OpaqueMapping, error) {
+func mergeStateV2(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	userStateNode := dasel.New(userState)
 	stdIntentNode := dasel.New(stdIntent)
 	stdStateNode := dasel.New(stdState)
@@ -179,11 +179,11 @@ func mergeStateV2(userState OpaqueMapping, stdIntent OpaqueMapping, stdState Opa
 		return nil, nil, copyErrs
 	}
 
-	intentResult, okIntent := stdIntentNode.InterfaceValue().(OpaqueMapping)
+	intentResult, okIntent := stdIntentNode.InterfaceValue().(OpaqueMap)
 	if !okIntent {
 		return nil, nil, fmt.Errorf("internal error: synthesized intent is not OpaqueMapping, but %T", stdIntentNode.InterfaceValue())
 	}
-	stateResult, okState := stdStateNode.InterfaceValue().(OpaqueMapping)
+	stateResult, okState := stdStateNode.InterfaceValue().(OpaqueState)
 	if !okState {
 		return nil, nil, fmt.Errorf("internal error: synthesized state is not OpaqueMapping, but %T", stdStateNode.InterfaceValue())
 	}
@@ -191,20 +191,20 @@ func mergeStateV2(userState OpaqueMapping, stdIntent OpaqueMapping, stdState Opa
 	return intentResult, stateResult, nil
 }
 
-func StandardIntentV3(l1ChainID uint64) (OpaqueMapping, error) {
+func StandardIntentV3(l1ChainID uint64) (OpaqueMap, error) {
 	return standardIntentV2(l1ChainID, standardV3Intent)
 }
 
-func StandardIntentV2(l1ChainID uint64) (OpaqueMapping, error) {
+func StandardIntentV2(l1ChainID uint64) (OpaqueMap, error) {
 	return standardIntentV2(l1ChainID, standardV2Intent)
 }
 
-func StandardIntentV1(l1ChainID uint64) (OpaqueMapping, error) {
+func StandardIntentV1(l1ChainID uint64) (OpaqueMap, error) {
 	return standardIntentV1(l1ChainID, standardV1Intent)
 }
 
-func standardIntentV2(l1ChainID uint64, data []byte) (OpaqueMapping, error) {
-	intent := make(OpaqueMapping)
+func standardIntentV2(l1ChainID uint64, data []byte) (OpaqueMap, error) {
+	intent := make(OpaqueMap)
 	if err := toml.Unmarshal(data, &intent); err != nil {
 		panic(err)
 	}
@@ -234,7 +234,7 @@ func (s stringWrapper) String() string {
 	return string(s)
 }
 
-func standardIntentV1(l1ChainID uint64, data []byte) (OpaqueMapping, error) {
+func standardIntentV1(l1ChainID uint64, data []byte) (OpaqueMap, error) {
 	intent, err := standardIntentV2(l1ChainID, data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create standard intent: %w", err)
@@ -248,20 +248,20 @@ func standardIntentV1(l1ChainID uint64, data []byte) (OpaqueMapping, error) {
 	return intent, nil
 }
 
-func StandardStateV3(l1ChainID uint64) (OpaqueMapping, error) {
+func StandardStateV3(l1ChainID uint64) (OpaqueState, error) {
 	return standardState(l1ChainID, validation.Semver300, standardV3State)
 }
 
-func StandardStateV2(l1ChainID uint64) (OpaqueMapping, error) {
+func StandardStateV2(l1ChainID uint64) (OpaqueState, error) {
 	return standardState(l1ChainID, validation.Semver200, standardV2State)
 }
 
-func StandardStateV1(l1ChainID uint64) (OpaqueMapping, error) {
+func StandardStateV1(l1ChainID uint64) (OpaqueState, error) {
 	return standardState(l1ChainID, validation.Semver180, standardV1State)
 }
 
-func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (OpaqueMapping, error) {
-	state := make(OpaqueMapping)
+func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (OpaqueState, error) {
+	state := make(OpaqueState)
 	if err := json.Unmarshal(data, &state); err != nil {
 		panic(err)
 	}
