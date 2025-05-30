@@ -229,8 +229,8 @@ func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*OpaqueMap, erro
 	defer os.RemoveAll(workdir)
 
 	cmd := exec.Command(d.binaryPath, "inspect", "genesis", "--workdir", workdir, chainId)
-	stderr := bytes.Buffer{}
-	cmd.Stderr = &stderr
+	stderr := new(bytes.Buffer)
+	cmd.Stderr = stderr
 	output, err := cmd.Output()
 	if err != nil {
 		d.lgr.Error(stderr.ReadString(0))
@@ -256,8 +256,8 @@ func (d *OpDeployer) InspectRollup(statePath, chainId string) (*rollup.Config, e
 	defer os.RemoveAll(workdir)
 
 	cmd := exec.Command(d.binaryPath, "inspect", "rollup", "--workdir", workdir, chainId)
-	stderr := bytes.Buffer{}
-	cmd.Stderr = &stderr
+	stderr := new(bytes.Buffer)
+	cmd.Stderr = stderr
 	output, err := cmd.Output()
 	if err != nil {
 		d.lgr.Error(stderr.ReadString(0))
@@ -283,8 +283,8 @@ func (d *OpDeployer) InspectDeployConfig(statePath, chainId string) (*genesis.De
 	defer os.RemoveAll(workdir)
 
 	cmd := exec.Command(d.binaryPath, "inspect", "deploy-config", "--workdir", workdir, chainId)
-	stderr := bytes.Buffer{}
-	cmd.Stderr = &stderr
+	stderr := new(bytes.Buffer)
+	cmd.Stderr = stderr
 	output, err := cmd.Output()
 	if err != nil {
 		d.lgr.Error(stderr.ReadString(0))
