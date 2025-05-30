@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path"
@@ -10,6 +11,7 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
+	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/log"
 )
 
@@ -17,9 +19,9 @@ import (
 // using the given shortName (and optionally, name and superchain identifier).
 // It writes these files to the staging directory.
 func GenerateChainArtifacts(statePath string, wd string, shortName string, name *string, superchain *string, idx int) error {
-	st, err := deployer.ReadOpaqueMappingFile(statePath)
+	st, err := deployer.ReadOpaqueStateFile(statePath)
 	if err != nil {
-		return fmt.Errorf("failed to read opaque mapping file: %w", err)
+		return fmt.Errorf("failed to read opaque state file: %w", err)
 	}
 	l1contractsrelease, err := st.ReadL1ContractsLocator()
 	if err != nil {
@@ -49,7 +51,7 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 	}
 
 	output.WriteOK("reading genesis")
-	genesis, err := opd.InspectGenesis(statePath, strconv.FormatUint(cfg.ChainID, 10))
+	opaqueGenesis, err := opd.InspectGenesis(statePath, strconv.FormatUint(cfg.ChainID, 10))
 	if err != nil {
 		return fmt.Errorf("failed to get genesis: %w", err)
 	}
@@ -61,7 +63,13 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 		return fmt.Errorf("failed to write chain config at index %d: %w", idx, err)
 	}
 
+	// TODO: determine if the genesis is deterministic through these conversions
 	output.WriteOK("writing genesis")
+	genesis, err := opaqueToGenesis(opaqueGenesis)
+	if err != nil {
+		return fmt.Errorf("failed to convert opaque genesis to core.Genesis: %w", err)
+	}
+
 	if err := WriteGenesis(wd, path.Join(stagingDir, shortName+".json.zst"), genesis); err != nil {
 		return fmt.Errorf("failed to write genesis at index %d: %w", idx, err)
 	}
@@ -77,4 +85,21 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 		return fmt.Errorf("failed to write state file to staging directory: %w", err)
 	}
 	return nil
+}
+
+// Convert OpaqueMapping to core.Genesis
+func opaqueToGenesis(opaque *deployer.OpaqueMap) (*core.Genesis, error) {
+	// Step 1: Marshal the OpaqueMapping to JSON
+	jsonData, err := json.Marshal(opaque)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal OpaqueMapping to JSON: %w", err)
+	}
+
+	// Step 2: Unmarshal the JSON data into a core.Genesis struct
+	var genesis core.Genesis
+	if err := json.Unmarshal(jsonData, &genesis); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal JSON to Genesis: %w", err)
+	}
+
+	return &genesis, nil
 }

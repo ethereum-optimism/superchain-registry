@@ -15,7 +15,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueMapping, statePath string, idx int) (*config.StagedChain, error) {
+func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, statePath string, idx int) (*config.StagedChain, error) {
 	chainId, err := st.ReadL2ChainId(idx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read chain ID: %w", err)
