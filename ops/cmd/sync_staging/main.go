@@ -176,7 +176,7 @@ func action(cliCtx *cli.Context) error {
 
 	// Codegen
 	ctx := cliCtx.Context
-	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, []string{l1RpcUrl}, chainIds, []config.Superchain{})
+	onchainCfgs, err := manage.FetchChains(ctx, lgr, wd, l1RpcUrls, chainIds, []config.Superchain{})
 	if err != nil {
 		return fmt.Errorf("error fetching onchain configs: %w", err)
 	}
