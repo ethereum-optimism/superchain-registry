@@ -86,18 +86,16 @@ func TestNewOpDeployer(t *testing.T) {
 }
 
 func TestVersionsMapInitialization(t *testing.T) {
-	// Test a known key-value pair from versions.json
-	expectedVersion := "v0.0.14"
-	actualVersion, exists := contractVersions["op-contracts/v1.6.0"]
-	if !exists {
-		t.Error("expected key 'op-contracts/v1.6.0' not found in contractVersions map")
-	}
-	if actualVersion != "op-deployer/"+expectedVersion {
-		t.Errorf("expected version %q for op-contracts/v1.6.0, got %q", "op-deployer/"+expectedVersion, actualVersion)
-	}
-
 	// Verify the map is not empty
 	if len(contractVersions) == 0 {
 		t.Error("contractVersions map is empty, expected it to be populated from versions.json")
 	}
+
+	// Test a known key-value pair from versions.json
+	expectedVersion := "op-deployer/v0.0.14"
+	actualVersion, exists := contractVersions["op-contracts/v1.6.0"]
+
+	require.True(t, exists, "expected key 'op-contracts/v1.6.0' not found in contractVersions map")
+	require.Equal(t, actualVersion, expectedVersion)
+
 }
