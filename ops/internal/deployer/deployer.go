@@ -43,7 +43,7 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease string) (*OpDeployer, erro
 
 	err := opd.checkBinary()
 	if err != nil {
-		return nil, fmt.Errorf("failed to build op-deployer binary: %w", err)
+		return nil, fmt.Errorf("failed binary check: %w", err)
 	}
 
 	return &opd, nil
@@ -106,7 +106,7 @@ func (d *OpDeployer) checkBinary() error {
 // in the specified working directory.
 func (d *OpDeployer) setupStateAndIntent(inputStatePath, workdir string) error {
 	// Read the state file
-	state, err := ReadOpaqueMappingFile(inputStatePath)
+	state, err := ReadOpaqueStateFile(inputStatePath)
 	if err != nil {
 		return fmt.Errorf("failed to read state file: %w", err)
 	}
@@ -149,7 +149,7 @@ func (d *OpDeployer) setupStateAndIntent(inputStatePath, workdir string) error {
 
 // GenerateStandardGenesis runs op-deployer binary to generate a genesis
 // - l1RpcUrl must match the state's L1 and is required by op-deployer, even though we aren't sending any txs
-func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string) (*OpaqueMapping, error) {
+func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string) (*OpaqueMap, error) {
 	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
@@ -193,7 +193,7 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string
 		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
 	}
 
-	var genesis OpaqueMapping
+	var genesis OpaqueMap
 	if err := json.Unmarshal(output, &genesis); err != nil {
 		return nil, fmt.Errorf("failed to parse op-deployer inspect genesis output: %w", err)
 	}
@@ -208,7 +208,7 @@ func (d *OpDeployer) copyStateFileToTempDir(statePath string) (string, error) {
 		return "", fmt.Errorf("failed to create temporary directory: %w", err)
 	}
 
-	state, err := ReadOpaqueMappingFile(statePath)
+	state, err := ReadOpaqueStateFile(statePath)
 	if err != nil {
 		return "", fmt.Errorf("failed to read state file: %w", err)
 	}
@@ -228,7 +228,7 @@ func (d *OpDeployer) copyStateFileToTempDir(statePath string) (string, error) {
 	return workdir, nil
 }
 
-func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*OpaqueMapping, error) {
+func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*OpaqueMap, error) {
 	// Run `op-deployer inspect genesis` to read the expected genesis
 	d.lgr.Info("Running `op-deployer inspect genesis`")
 
@@ -247,7 +247,7 @@ func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*OpaqueMapping, 
 		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
 	}
 
-	var genesis OpaqueMapping
+	var genesis OpaqueMap
 	if err := json.Unmarshal(output, &genesis); err != nil {
 		return nil, fmt.Errorf("failed to parse op-deployer inspect genesis output: %w", err)
 	}
