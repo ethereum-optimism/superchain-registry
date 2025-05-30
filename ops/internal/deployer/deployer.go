@@ -3,7 +3,6 @@ package deployer
 import (
 	"bytes"
 	_ "embed"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -15,7 +14,6 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/log"
 )
 
@@ -156,15 +154,11 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string
 		return nil, fmt.Errorf("failed to setup state and intent: %w", err)
 	}
 
-	// We don't want to use a funded account here, because there should not be any txs sent.
+	// We don't need a funded account here, because there should not be any txs sent.
 	// All contracts should have already been deployed, and the 'apply' command should skip
-	// those pipeline steps, then only generate the genesis.
-	seed := []byte("seed phrase")
-	hash := crypto.Keccak256(seed)
-	privateKey, _ := crypto.ToECDSA(hash[:32]) // Use first 32 bytes as private key
-
-	privateKeyBytes := crypto.FromECDSA(privateKey)
-	privateKeyHex := "0x" + hex.EncodeToString(privateKeyBytes)
+	// those pipeline steps, then only generate the genesis. Therefore use the first account
+	// from the test test ... junk mnemonic:
+	privateKeyHex := "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 
 	// Run `op-deployer apply` to generate the expected genesis
 	d.lgr.Info("Running `op-deployer apply`")
