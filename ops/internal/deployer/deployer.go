@@ -39,7 +39,7 @@ type OpDeployer struct {
 }
 
 // NewOpDeployer creates a new OpDeployer instance.
-func NewOpDeployer(lgr log.Logger, l1ContractsRelease string) (*OpDeployer, error) {
+func NewOpDeployer(lgr log.Logger, l1ContractsRelease string, binDir string) (*OpDeployer, error) {
 	if l1ContractsRelease == "" {
 		return nil, fmt.Errorf("l1ContractsRelease cannot be empty")
 	}
@@ -49,7 +49,7 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease string) (*OpDeployer, erro
 		l1ContractsRelease: l1ContractsRelease,
 	}
 
-	err := opd.checkBinary()
+	err := opd.checkBinary(binDir)
 	if err != nil {
 		return nil, fmt.Errorf("failed binary check: %w", err)
 	}
@@ -58,7 +58,7 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease string) (*OpDeployer, erro
 }
 
 // checkBinary checks if the op-deployer binary exists and is executable
-func (d *OpDeployer) checkBinary() error {
+func (d *OpDeployer) checkBinary(binDir string) error {
 	// Normalize the contracts string before lookup in versions map
 	// 1. Remove tag:// prefix if present
 	// 2. Remove any -rc.X suffix for version matching
@@ -74,12 +74,7 @@ func (d *OpDeployer) checkBinary() error {
 	d.lgr.Info("Found deployer version", "version", deployerVersion)
 	d.DeployerVersion = deployerVersion
 
-	// Check if the op-deployer binary already exists
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("failed to get home directory: %w", err)
-	}
-	binaryPath := filepath.Join(homeDir, ".cache", deployerVersion, "op-deployer")
+	binaryPath := filepath.Join(binDir, fmt.Sprintf("op-deployer_%s", strings.TrimPrefix(deployerVersion, "op-deployer/")))
 
 	// Check if the binary exists and is executable
 	if info, err := os.Stat(binaryPath); err == nil && info.Mode()&0o111 != 0 {

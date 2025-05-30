@@ -1,8 +1,10 @@
 package deployer
 
 import (
+	"fmt"
 	"os"
-	"path/filepath"
+	"path"
+	"strings"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/log"
@@ -49,10 +51,19 @@ func TestNewOpDeployer(t *testing.T) {
 		},
 	}
 
+	tmpDir := t.TempDir()
+	for _, val := range contractVersions {
+		stripped := strings.TrimPrefix(val, "op-deployer/")
+		fp := path.Join(tmpDir, fmt.Sprintf("op-deployer_%s", stripped))
+		_, err := os.Create(fp)
+		require.NoError(t, err)
+		require.NoError(t, os.Chmod(fp, 0o755))
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			deployer, err := NewOpDeployer(lgr, tt.l1ContractsRelease)
+			deployer, err := NewOpDeployer(lgr, tt.l1ContractsRelease, tmpDir)
 
 			if tt.shouldError {
 				require.Error(t, err)
@@ -62,14 +73,6 @@ func TestNewOpDeployer(t *testing.T) {
 				require.NotNil(t, deployer)
 				require.Equal(t, tt.l1ContractsRelease, deployer.l1ContractsRelease)
 				require.NotEmpty(t, deployer.DeployerVersion)
-
-				// Verify the binary exists
-				homeDir, err := os.UserHomeDir()
-				require.NoError(t, err)
-
-				binaryPath := filepath.Join(homeDir, ".cache", deployer.DeployerVersion, "op-deployer")
-				_, err = os.Stat(binaryPath)
-				require.NoError(t, err, "Binary should exist at %s", binaryPath)
 			}
 		})
 	}
