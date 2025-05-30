@@ -19,14 +19,8 @@ parameters:
     default: ethereum-optimism/superchain-registry
   deployer_cache_dir:
     type: string
-    default: /tmp/deployer-cache
+    default: /home/circleci/tmp/deployer-cache
 
-executors:
-  default:
-    docker:
-      - image: << pipeline.parameters.default_docker_image >>
-    environment:
-      DEPLOYER_CACHE_DIR: << pipeline.parameters.deployer_cache_dir >>
 
 jobs:
   go-lint-test:
@@ -36,10 +30,12 @@ jobs:
         type: string
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
+    environment:
+      DEPLOYER_CACHE_DIR: << pipeline.parameters.deployer_cache_dir >>
     steps:
       - utils/checkout-with-mise
       - attach_workspace:
-          at: ~/.cache
+          at: /home/circleci
       - run:
           name: Tidy mod
           command: |
@@ -203,10 +199,12 @@ jobs:
     circleci_ip_ranges: true
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
+    environment:
+      DEPLOYER_CACHE_DIR: << pipeline.parameters.deployer_cache_dir >>
     steps:
       - utils/checkout-with-mise
       - restore_cache:
-          key: op-deployer-binaries
+          key: op-deployer-binaries-{{ checksum "ops/internal/deployer/versions.json" }}-4
       - run:
           name: Build deployer binaries
           command: |
@@ -214,13 +212,13 @@ jobs:
             chmod +x build-binaries.sh
             ./build-binaries.sh
       - save_cache:
-          key: op-deployer-binaries
+          key: op-deployer-binaries-{{ checksum "ops/internal/deployer/versions.json" }}-4
           paths:
-            - ~/.cache/op-deployer
+            - << pipeline.parameters.deployer_cache_dir >>
       - persist_to_workspace:
-          root: ~/.cache
+          root: /home/circleci
           paths:
-            - op-deployer/**
+            - tmp/deployer-cache
 
 workflows:
   main:
