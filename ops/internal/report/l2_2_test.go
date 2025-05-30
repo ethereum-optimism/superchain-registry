@@ -5,6 +5,7 @@ import (
 	"path"
 	"testing"
 
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
@@ -59,7 +60,7 @@ func TestScanL2_2(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			report, err := ScanL2_2(tt.statePath, tt.chainId, l1RpcUrl)
+			report, err := ScanL2_2(tt.statePath, tt.chainId, l1RpcUrl, deployer.CacheDir)
 
 			if tt.wantErr == "" {
 				require.NoError(t, err)

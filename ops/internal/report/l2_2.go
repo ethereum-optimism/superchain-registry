@@ -17,6 +17,7 @@ func ScanL2_2(
 	statePath string,
 	l2ChainId uint64,
 	l1RpcUrl string,
+	deployerCacheDir string,
 ) (*L2Report, error) {
 	st, err := deployer.ReadOpaqueStateFile(statePath)
 	if err != nil {
@@ -28,7 +29,7 @@ func ScanL2_2(
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, deployer.CacheDir)
+	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, deployerCacheDir)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create op-deployer: %w", err)
 	}

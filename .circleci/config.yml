@@ -129,6 +129,7 @@ jobs:
             SEPOLIA_RPC_URL: << pipeline.parameters.sepolia_rpc_url >>
             MAINNET_RPC_URL: << pipeline.parameters.mainnet_rpc_url >>
             GITHUB_REPO: << pipeline.parameters.github_repo >>
+            DEPLOYER_CACHE_DIR: << pipeline.parameters.deployer_cache_dir >>
           command: |
             cd ops
             go run ./cmd/print_staging_report/main.go

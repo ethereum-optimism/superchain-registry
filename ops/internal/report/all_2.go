@@ -14,6 +14,7 @@ func ScanAll_2(
 	rpcClient *rpc.Client,
 	statePath string,
 	chainCfg *config.StagedChain,
+	deployerCacheDir string,
 ) Report {
 	var report Report
 	var err error
@@ -30,6 +31,7 @@ func ScanAll_2(
 		statePath,
 		chainCfg.ChainID,
 		l1RpcUrl,
+		deployerCacheDir,
 	)
 	if err != nil {
 		report.L2Err = err
