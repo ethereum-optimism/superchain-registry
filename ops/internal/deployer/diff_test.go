@@ -1,9 +1,8 @@
-package report
+package deployer
 
 import (
 	"testing"
 
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/stretchr/testify/require"
 )
 
@@ -11,18 +10,18 @@ func TestDiffOpaqueMaps(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name     string
-		map1     deployer.OpaqueMap
-		map2     deployer.OpaqueMap
+		map1     OpaqueMap
+		map2     OpaqueMap
 		expected []string
 	}{
 		{
 			name: "identical maps",
-			map1: deployer.OpaqueMap{
+			map1: OpaqueMap{
 				"key1": "value1",
 				"key2": 42,
 				"key3": true,
 			},
-			map2: deployer.OpaqueMap{
+			map2: OpaqueMap{
 				"key1": "value1",
 				"key2": 42,
 				"key3": true,
@@ -31,12 +30,12 @@ func TestDiffOpaqueMaps(t *testing.T) {
 		},
 		{
 			name: "different values",
-			map1: deployer.OpaqueMap{
+			map1: OpaqueMap{
 				"key1": "value1",
 				"key2": 42,
 				"key3": true,
 			},
-			map2: deployer.OpaqueMap{
+			map2: OpaqueMap{
 				"key1": "different",
 				"key2": 42,
 				"key3": false,
@@ -48,12 +47,12 @@ func TestDiffOpaqueMaps(t *testing.T) {
 		},
 		{
 			name: "missing keys",
-			map1: deployer.OpaqueMap{
+			map1: OpaqueMap{
 				"key1": "value1",
 				"key2": 42,
 				"key3": true,
 			},
-			map2: deployer.OpaqueMap{
+			map2: OpaqueMap{
 				"key1": "value1",
 				"key4": "new",
 			},
@@ -65,13 +64,13 @@ func TestDiffOpaqueMaps(t *testing.T) {
 		},
 		{
 			name: "nested maps",
-			map1: deployer.OpaqueMap{
+			map1: OpaqueMap{
 				"key1": map[string]interface{}{
 					"nested1": "value1",
 					"nested2": 42,
 				},
 			},
-			map2: deployer.OpaqueMap{
+			map2: OpaqueMap{
 				"key1": map[string]interface{}{
 					"nested1": "different",
 					"nested3": true,
@@ -85,7 +84,7 @@ func TestDiffOpaqueMaps(t *testing.T) {
 		},
 		{
 			name: "deeply nested fields",
-			map1: deployer.OpaqueMap{
+			map1: OpaqueMap{
 				"level1": map[string]interface{}{
 					"level2": map[string]interface{}{
 						"level3": map[string]interface{}{
@@ -100,7 +99,7 @@ func TestDiffOpaqueMaps(t *testing.T) {
 					},
 				},
 			},
-			map2: deployer.OpaqueMap{
+			map2: OpaqueMap{
 				"level1": map[string]interface{}{
 					"level2": map[string]interface{}{
 						"level3": map[string]interface{}{
@@ -125,10 +124,10 @@ func TestDiffOpaqueMaps(t *testing.T) {
 		},
 		{
 			name: "arrays",
-			map1: deployer.OpaqueMap{
+			map1: OpaqueMap{
 				"array": []interface{}{1, 2, 3},
 			},
-			map2: deployer.OpaqueMap{
+			map2: OpaqueMap{
 				"array": []interface{}{1, 4, 3},
 			},
 			expected: []string{
@@ -137,10 +136,10 @@ func TestDiffOpaqueMaps(t *testing.T) {
 		},
 		{
 			name: "array length mismatch",
-			map1: deployer.OpaqueMap{
+			map1: OpaqueMap{
 				"array": []interface{}{1, 2, 3},
 			},
-			map2: deployer.OpaqueMap{
+			map2: OpaqueMap{
 				"array": []interface{}{1, 2},
 			},
 			expected: []string{
@@ -149,11 +148,11 @@ func TestDiffOpaqueMaps(t *testing.T) {
 		},
 		{
 			name: "type mismatch",
-			map1: deployer.OpaqueMap{
+			map1: OpaqueMap{
 				"key1": map[string]interface{}{"nested": "value"},
 				"key2": []interface{}{1, 2, 3},
 			},
-			map2: deployer.OpaqueMap{
+			map2: OpaqueMap{
 				"key1": "not a map",
 				"key2": "not an array",
 			},
@@ -164,8 +163,8 @@ func TestDiffOpaqueMaps(t *testing.T) {
 		},
 		{
 			name:     "empty maps",
-			map1:     deployer.OpaqueMap{},
-			map2:     deployer.OpaqueMap{},
+			map1:     OpaqueMap{},
+			map2:     OpaqueMap{},
 			expected: []string{},
 		},
 	}

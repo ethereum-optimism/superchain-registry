@@ -1,13 +1,11 @@
-package report
+package deployer
 
 import (
 	"fmt"
 	"reflect"
-
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 )
 
-func DiffOpaqueMaps(path string, map1, map2 deployer.OpaqueMap) []string {
+func DiffOpaqueMaps(path string, map1, map2 OpaqueMap) []string {
 	differences := []string{}
 
 	// Check keys in map1
@@ -36,8 +34,8 @@ func diffValues(path string, val1, val2 interface{}) []string {
 	case map[string]interface{}:
 		if v2, ok := val2.(map[string]interface{}); ok {
 			// Convert to OpaqueMapping and recurse
-			om1 := deployer.OpaqueMap(v1)
-			om2 := deployer.OpaqueMap(v2)
+			om1 := OpaqueMap(v1)
+			om2 := OpaqueMap(v2)
 			differences = append(differences, DiffOpaqueMaps(path, om1, om2)...)
 		} else {
 			differences = append(differences, fmt.Sprintf("%s: type mismatch (map vs %T)", path, val2))
