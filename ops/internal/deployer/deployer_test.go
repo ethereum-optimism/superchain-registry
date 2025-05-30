@@ -3,7 +3,6 @@ package deployer
 import (
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/log"
@@ -12,9 +11,6 @@ import (
 
 func TestNewOpDeployer(t *testing.T) {
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	homeDir, err := os.UserHomeDir()
-	require.NoError(t, err)
-	binariesDir := filepath.Join(homeDir, ".cache", "op-deployer")
 
 	tests := []struct {
 		name               string
@@ -53,17 +49,10 @@ func TestNewOpDeployer(t *testing.T) {
 		},
 	}
 
-	// Test empty binary dir separately
-	t.Run("empty binary dir", func(t *testing.T) {
-		deployer, err := NewOpDeployer(lgr, "tag://op-contracts/v1.6.0", "")
-		require.Error(t, err)
-		require.Nil(t, deployer)
-	})
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			deployer, err := NewOpDeployer(lgr, tt.l1ContractsRelease, binariesDir)
+			deployer, err := NewOpDeployer(lgr, tt.l1ContractsRelease)
 
 			if tt.shouldError {
 				require.Error(t, err)
@@ -74,12 +63,13 @@ func TestNewOpDeployer(t *testing.T) {
 				require.Equal(t, tt.l1ContractsRelease, deployer.l1ContractsRelease)
 				require.NotEmpty(t, deployer.DeployerVersion)
 
-				// Verify the binary exists and matches expected path
-				strippedVersion := strings.TrimPrefix(deployer.DeployerVersion, "op-deployer/")
-				expectedPath := filepath.Join(binariesDir, strippedVersion, "op-deployer") // e.g. ~/.cache/op-deployer/v0.0.14/op-deployer
-				require.Equal(t, expectedPath, deployer.binaryPath)
-				_, err = os.Stat(deployer.binaryPath)
-				require.NoError(t, err, "Binary should exist at %s", deployer.binaryPath)
+				// Verify the binary exists
+				homeDir, err := os.UserHomeDir()
+				require.NoError(t, err)
+
+				binaryPath := filepath.Join(homeDir, ".cache", deployer.DeployerVersion, "op-deployer")
+				_, err = os.Stat(binaryPath)
+				require.NoError(t, err, "Binary should exist at %s", binaryPath)
 			}
 		})
 	}
