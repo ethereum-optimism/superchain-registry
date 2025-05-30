@@ -2,19 +2,18 @@ package report
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 )
 
 func ScanAll(
 	ctx context.Context,
+	l1RpcUrl string,
 	rpcClient *rpc.Client,
+	statePath string,
 	chainCfg *config.StagedChain,
 	originalGenesis *core.Genesis,
 ) Report {
@@ -29,25 +28,10 @@ func ScanAll(
 	if err != nil {
 		report.L1Err = err
 	}
-
-	startBlockHash := chainCfg.Genesis.L1.Hash
-	startBlock, err := ethclient.NewClient(rpcClient).HeaderByHash(ctx, startBlockHash)
-	if err != nil {
-		report.L2Err = fmt.Errorf("error getting start block %s: %w", startBlockHash, err)
-		return report
-	}
-
-	afacts, err := artifacts.Download(ctx, chainCfg.DeploymentL2ContractsVersion, artifacts.NoopProgressor(), "")
-	if err != nil {
-		report.L2Err = fmt.Errorf("error downloading L2 artifacts: %w", err)
-		return report
-	}
-
 	report.L2, err = ScanL2(
-		startBlock,
-		chainCfg,
-		originalGenesis,
-		afacts,
+		statePath,
+		chainCfg.ChainID,
+		l1RpcUrl,
 	)
 	if err != nil {
 		report.L2Err = err

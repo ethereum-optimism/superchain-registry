@@ -1,136 +1,64 @@
 package report
 
 import (
-	"bytes"
-	"maps"
-	"slices"
+	"fmt"
+	"reflect"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 )
 
-func DiffAllocs(a types.GenesisAlloc, b types.GenesisAlloc) []AccountDiff {
-	bCopy := maps.Clone(b)
+func DiffOpaqueMaps(path string, map1, map2 deployer.OpaqueMap) []string {
+	differences := []string{}
 
-	out := make([]AccountDiff, 0)
-
-	for addrA, accA := range a {
-		accB, ok := bCopy[addrA]
-		if !ok {
-			diff := AccountDiff{
-				Address: addrA,
-				Removed: true,
-
-				CodeChanged:    true,
-				BalanceChanged: true,
-				NonceChanged:   true,
-
-				OldCode:    accA.Code,
-				OldBalance: accA.Balance,
-				OldNonce:   accA.Nonce,
-
-				StorageChanges: computeStorageDiff(accA.Storage, nil),
-			}
-			out = append(out, diff)
-			continue
+	// Check keys in map1
+	for key, val1 := range map1 {
+		if val2, exists := map2[key]; !exists {
+			differences = append(differences, fmt.Sprintf("%s.%s: exists in first map but not in second (value: %v)", path, key, val1))
+		} else {
+			differences = append(differences, diffValues(path+"."+key, val1, val2)...)
 		}
-
-		diff := AccountDiff{
-			Address:        addrA,
-			CodeChanged:    !bytes.Equal(accA.Code, accB.Code),
-			BalanceChanged: accA.Balance.Cmp(accB.Balance) != 0,
-			NonceChanged:   accA.Nonce != accB.Nonce,
-			StorageChanges: computeStorageDiff(accA.Storage, accB.Storage),
-		}
-
-		if diff.CodeChanged {
-			diff.OldCode = accA.Code
-			diff.NewCode = accB.Code
-		}
-
-		if diff.BalanceChanged {
-			diff.OldBalance = accA.Balance
-			diff.NewBalance = accB.Balance
-		}
-
-		if diff.NonceChanged {
-			diff.OldNonce = accA.Nonce
-			diff.NewNonce = accB.Nonce
-		}
-
-		if diff.CodeChanged || diff.BalanceChanged || diff.NonceChanged || len(diff.StorageChanges) > 0 {
-			out = append(out, diff)
-		}
-
-		delete(bCopy, addrA)
 	}
 
-	for addrB, accB := range bCopy {
-		diff := AccountDiff{
-			Address: addrB,
-			Added:   true,
-
-			CodeChanged:    true,
-			BalanceChanged: true,
-			NonceChanged:   true,
-
-			NewCode:        accB.Code,
-			NewBalance:     accB.Balance,
-			NewNonce:       accB.Nonce,
-			StorageChanges: computeStorageDiff(nil, accB.Storage),
+	// Check for keys in map2 that aren't in map1
+	for key, val2 := range map2 {
+		if _, exists := map1[key]; !exists {
+			differences = append(differences, fmt.Sprintf("%s.%s: exists in second map but not in first (value: %v)", path, key, val2))
 		}
-
-		out = append(out, diff)
 	}
 
-	return out
+	return differences
 }
 
-func computeStorageDiff(a map[common.Hash]common.Hash, b map[common.Hash]common.Hash) []StorageDiff {
-	out := make([]StorageDiff, 0)
+func diffValues(path string, val1, val2 interface{}) []string {
+	var differences []string
 
-	bCopy := maps.Clone(b)
-
-	for keyA, valueA := range a {
-		valueB, ok := bCopy[keyA]
-		if !ok {
-			diff := StorageDiff{
-				Key:      keyA,
-				Removed:  true,
-				OldValue: valueA,
+	switch v1 := val1.(type) {
+	case map[string]interface{}:
+		if v2, ok := val2.(map[string]interface{}); ok {
+			// Convert to OpaqueMapping and recurse
+			om1 := deployer.OpaqueMap(v1)
+			om2 := deployer.OpaqueMap(v2)
+			differences = append(differences, DiffOpaqueMaps(path, om1, om2)...)
+		} else {
+			differences = append(differences, fmt.Sprintf("%s: type mismatch (map vs %T)", path, val2))
+		}
+	case []interface{}:
+		if v2, ok := val2.([]interface{}); ok {
+			if len(v1) != len(v2) {
+				differences = append(differences, fmt.Sprintf("%s: array length mismatch (%d vs %d)", path, len(v1), len(v2)))
+			} else {
+				for i := range v1 {
+					differences = append(differences, diffValues(fmt.Sprintf("%s[%d]", path, i), v1[i], v2[i])...)
+				}
 			}
-			out = append(out, diff)
-			continue
+		} else {
+			differences = append(differences, fmt.Sprintf("%s: type mismatch (array vs %T)", path, val2))
 		}
-
-		if valueA != valueB {
-			diff := StorageDiff{
-				Key:      keyA,
-				OldValue: valueA,
-				NewValue: valueB,
-			}
-			out = append(out, diff)
+	default:
+		if !reflect.DeepEqual(val1, val2) {
+			differences = append(differences, fmt.Sprintf("%s: value mismatch (%v vs %v)", path, val1, val2))
 		}
-
-		delete(bCopy, keyA)
 	}
 
-	for keyB, valueB := range bCopy {
-		diff := StorageDiff{
-			Key:      keyB,
-			Added:    true,
-			NewValue: valueB,
-		}
-		out = append(out, diff)
-	}
-
-	slices.SortFunc(out, func(a, b StorageDiff) int {
-		return bytes.Compare(a.Key.Bytes(), b.Key.Bytes())
-	})
-
-	if len(out) == 0 {
-		return nil
-	}
-
-	return out
+	return differences
 }
