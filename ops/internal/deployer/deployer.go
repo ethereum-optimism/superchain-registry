@@ -2,6 +2,7 @@ package deployer
 
 import (
 	"bytes"
+	_ "embed"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -9,7 +10,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -18,6 +18,18 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/log"
 )
+
+//go:embed versions.json
+var versionsJSON []byte
+
+// contractVersions maps contract versions to deployer versions
+var contractVersions map[string]string
+
+func init() {
+	if err := json.Unmarshal(versionsJSON, &contractVersions); err != nil {
+		panic(fmt.Sprintf("failed to parse versions.json: %v", err))
+	}
+}
 
 // OpDeployer manages the process of building a specific binary of op-deployer,
 // then shelling out to that binary for various cli commands
@@ -49,31 +61,15 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease string) (*OpDeployer, erro
 
 // checkBinary checks if the op-deployer binary exists and is executable
 func (d *OpDeployer) checkBinary() error {
-	// Normalize the contracts string before lookup in versions.json
+	// Normalize the contracts string before lookup in versions map
 	// 1. Remove tag:// prefix if present
 	// 2. Remove any -rc.X suffix for version matching
 	contractsKey := strings.TrimPrefix(d.l1ContractsRelease, "tag://")
 	rcSuffixRegex := regexp.MustCompile(`-rc\.[0-9]+$`)
 	contractsKey = rcSuffixRegex.ReplaceAllString(contractsKey, "")
 
-	// Read and parse versions.json
-	d.lgr.Info("Reading versions.json")
-	// Get the directory containing this file (deployer.go)
-	_, filename, _, _ := runtime.Caller(0)
-	deployerDir := filepath.Dir(filename)
-
-	versionsPath := filepath.Join(deployerDir, "versions.json")
-	versionsData, err := os.ReadFile(versionsPath)
-	if err != nil {
-		return fmt.Errorf("failed to read versions.json: %w", err)
-	}
-
-	var versions map[string]string
-	if err := json.Unmarshal(versionsData, &versions); err != nil {
-		return fmt.Errorf("failed to parse versions.json: %w", err)
-	}
-
-	deployerVersion, ok := versions[contractsKey]
+	// Look up deployer version in the embedded map
+	deployerVersion, ok := contractVersions[contractsKey]
 	if !ok {
 		return fmt.Errorf("no deployer version found for contracts: %s", contractsKey)
 	}
