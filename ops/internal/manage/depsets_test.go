@@ -60,19 +60,6 @@ func TestDepsetChecker(t *testing.T) {
 		require.NoError(t, checker.Check())
 	})
 
-	t.Run("invalid depsets", func(t *testing.T) {
-		addrs := loadAddresses(t, validAddressesPath)
-
-		var cfgs []DiskChainConfig
-		chain1 := loadChainConfig(t, "testdata/depsets_invalid/depset_value_1.toml")
-		chain2 := loadChainConfig(t, "testdata/depsets_invalid/depset_value_2.toml")
-		cfgs = append(cfgs, DiskChainConfig{Config: chain1, Superchain: "test"})
-		cfgs = append(cfgs, DiskChainConfig{Config: chain2, Superchain: "test"})
-
-		checker := NewDepsetChecker(lgr, cfgs, addrs)
-		require.Error(t, checker.Check())
-	})
-
 	t.Run("invalid depsets (transience)", func(t *testing.T) {
 		addrs := loadAddresses(t, "testdata/depsets_invalid/transience/addresses.json")
 		chains, err := CollectChainConfigs("testdata/depsets_invalid/transience")
@@ -93,38 +80,6 @@ func TestDepsetChecker_checkOffchain(t *testing.T) {
 		err := checker.checkOffchain(nil)
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "no chain configs provided to checkOffchain")
-	})
-
-	t.Run("invalid activation_time", func(t *testing.T) {
-		addrs := loadAddresses(t, validAddressesPath)
-		var cfg config.Chain
-		err := paths.ReadTOMLFile("testdata/depsets_invalid/activation_time.toml", &cfg)
-		require.NoError(t, err)
-
-		chains := []DiskChainConfig{
-			{Config: &cfg, Superchain: "test"},
-		}
-
-		checker := NewDepsetChecker(lgr, chains, addrs)
-		err = checker.checkOffchain(chains)
-		require.Error(t, err)
-		require.ErrorIs(t, err, errInvalidActivationTime)
-	})
-
-	t.Run("duplicate chain index", func(t *testing.T) {
-		addrs := loadAddresses(t, validAddressesPath)
-		var cfg config.Chain
-		err := paths.ReadTOMLFile("testdata/depsets_invalid/duplicate_chain_index.toml", &cfg)
-		require.NoError(t, err)
-
-		chains := []DiskChainConfig{
-			{Config: &cfg, Superchain: "test"},
-		}
-
-		checker := NewDepsetChecker(lgr, chains, addrs)
-		err = checker.checkOffchain(chains)
-		require.Error(t, err)
-		require.ErrorIs(t, err, errDuplicateChainIndex)
 	})
 
 	t.Run("inconsistent depset lengths", func(t *testing.T) {
@@ -148,14 +103,14 @@ func TestDepsetChecker_checkOffchain(t *testing.T) {
 		require.ErrorIs(t, err, errDepsetLengths)
 	})
 
-	t.Run("inconsistent depset activation times", func(t *testing.T) {
+	t.Run("missing interop_time", func(t *testing.T) {
 		addrs := loadAddresses(t, validAddressesPath)
 		var cfg1 config.Chain
-		err := paths.ReadTOMLFile("testdata/depsets_invalid/depset_value_1.toml", &cfg1)
+		err := paths.ReadTOMLFile("testdata/depsets_invalid/missing_interop_time_1.toml", &cfg1)
 		require.NoError(t, err)
 
 		var cfg2 config.Chain
-		err = paths.ReadTOMLFile("testdata/depsets_invalid/depset_value_2.toml", &cfg2)
+		err = paths.ReadTOMLFile("testdata/depsets_invalid/missing_interop_time_2.toml", &cfg2)
 		require.NoError(t, err)
 
 		chains := []DiskChainConfig{
@@ -166,7 +121,7 @@ func TestDepsetChecker_checkOffchain(t *testing.T) {
 		checker := NewDepsetChecker(lgr, chains, addrs)
 		err = checker.checkOffchain(chains)
 		require.Error(t, err)
-		require.ErrorIs(t, err, errInconsistentDepsets)
+		require.ErrorIs(t, err, errMissingInteropTime)
 	})
 }
 

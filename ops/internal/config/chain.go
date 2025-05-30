@@ -60,13 +60,10 @@ type StagedChain struct {
 	DeploymentL2ContractsVersion *artifacts.Locator `toml:"deployment_l2_contracts_version"`
 }
 
-type Dependency struct {
-	ChainIndex     uint32 `json:"chainIndex" toml:"chain_index"`
-	ActivationTime uint64 `json:"activationTime" toml:"activation_time"`
-}
+type StaticConfigDependency struct{}
 
 type Interop struct {
-	Dependencies map[string]Dependency `json:"dependencies" toml:"dependencies"`
+	Dependencies map[string]StaticConfigDependency `json:"dependencies" toml:"dependencies"`
 }
 
 type Chain struct {
