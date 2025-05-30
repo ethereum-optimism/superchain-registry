@@ -119,14 +119,14 @@ func (om OpaqueState) ReadL2ChainId(idx int) (string, error) {
 
 func (om OpaqueState) ReadSystemConfigProxy(idx int) (common.Address, error) {
 	return om.queryAddress(
-		fmt.Sprintf("appliedIntent.opChainDeployments.[%d].SystemConfigProxy", idx),
-		fmt.Sprintf("appliedIntent.opChainDeployments.[%d].systemConfigProxyAddress", idx),
+		fmt.Sprintf("opChainDeployments.[%d].SystemConfigProxy", idx),
+		fmt.Sprintf("opChainDeployments.[%d].systemConfigProxyAddress", idx),
 	)
 }
 
 func (om OpaqueState) ReadL1StandardBridgeProxy(idx int) (common.Address, error) {
 	return om.queryAddress(
-		fmt.Sprintf("appliedIntent.opChainDeployments.[%d].L1StandardBridgeProxy", idx),
-		fmt.Sprintf("appliedIntent.opChainDeployments.[%d].l1StandardBridgeProxyAddress", idx),
+		fmt.Sprintf("opChainDeployments.[%d].L1StandardBridgeProxy", idx),
+		fmt.Sprintf("opChainDeployments.[%d].l1StandardBridgeProxyAddress", idx),
 	)
 }
