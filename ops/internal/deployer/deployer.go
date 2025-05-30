@@ -34,16 +34,21 @@ func init() {
 // OpDeployer manages the process of building a specific binary of op-deployer,
 // then shelling out to that binary for various cli commands
 type OpDeployer struct {
-	DeployerVersion    string
+	DeployerVersion    string // full version including op-deployer/ prefix
 	binaryPath         string
 	lgr                log.Logger
 	l1ContractsRelease string
 }
 
 // NewOpDeployer creates a new OpDeployer instance.
-func NewOpDeployer(lgr log.Logger, l1ContractsRelease string) (*OpDeployer, error) {
+// binariesDir is the directory where the op-deployer binaries are stored,
+// each in a subdirectory named after the deployer version as in ~/.cache/op-deployer/v0.0.14/op-deployer
+func NewOpDeployer(lgr log.Logger, l1ContractsRelease string, binariesDir string) (*OpDeployer, error) {
 	if l1ContractsRelease == "" {
 		return nil, fmt.Errorf("l1ContractsRelease cannot be empty")
+	}
+	if binariesDir == "" {
+		return nil, fmt.Errorf("binariesDir cannot be empty")
 	}
 
 	opd := OpDeployer{
@@ -51,7 +56,7 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease string) (*OpDeployer, erro
 		l1ContractsRelease: l1ContractsRelease,
 	}
 
-	err := opd.checkBinary()
+	err := opd.checkBinary(binariesDir)
 	if err != nil {
 		return nil, fmt.Errorf("failed binary check: %w", err)
 	}
@@ -59,8 +64,8 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease string) (*OpDeployer, erro
 	return &opd, nil
 }
 
-// checkBinary checks if the op-deployer binary exists and is executable
-func (d *OpDeployer) checkBinary() error {
+// checkBinary checks if the required op-deployer binary exists and is executable
+func (d *OpDeployer) checkBinary(binariesDir string) error {
 	// Normalize the contracts string before lookup in versions map
 	// 1. Remove tag:// prefix if present
 	// 2. Remove any -rc.X suffix for version matching
@@ -76,12 +81,9 @@ func (d *OpDeployer) checkBinary() error {
 	d.lgr.Info("Found deployer version", "version", deployerVersion)
 	d.DeployerVersion = deployerVersion
 
-	// Check if the op-deployer binary already exists
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("failed to get home directory: %w", err)
-	}
-	binaryPath := filepath.Join(homeDir, ".cache", deployerVersion, "op-deployer")
+	// Strip the op-deployer/ prefix for path construction
+	strippedVersion := strings.TrimPrefix(deployerVersion, "op-deployer/")
+	binaryPath := filepath.Join(binariesDir, strippedVersion, "op-deployer")
 
 	// Check if the binary exists and is executable
 	if info, err := os.Stat(binaryPath); err == nil && info.Mode()&0o111 != 0 {

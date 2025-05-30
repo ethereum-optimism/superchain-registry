@@ -3,15 +3,18 @@ set -euo pipefail
 
 # build-deployer.sh
 #   Downloads pre-built op-deployer binaries for specified versions from GitHub releases
-#   and caches them in $HOME/.cache/op-deployer/$VERSION/op-deployer
+#   and caches them in $BINARIES_DIR/$VERSION (BINARIES_DIR defaults to ~/.cache/op-deployer)
 #   where $VERSION is the version number (e.g., v0.4.0) without the op-deployer/ prefix.
 #   If a pre-built binary isn't available, falls back to building from source.
 
-CACHE_DIR="$HOME/.cache/op-deployer"
+# Use BINARIES_DIR from environment if set, otherwise default to ~/.cache/op-deployer
+BINARIES_DIR="${BINARIES_DIR:-$HOME/.cache/op-deployer}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VERSIONS_JSON="$SCRIPT_DIR/../versions.json"
 TEMP_DIR=$(mktemp -d)
 trap "rm -rf $TEMP_DIR" EXIT
+
+echo "Using binaries directory: $BINARIES_DIR"
 
 # Determine OS type and architecture
 detect_os() {
@@ -52,7 +55,7 @@ download_and_install() {
   local full_version=$1
   # Strip the op-deployer/ prefix for the cache directory
   local stripped_version=$(echo "$full_version" | grep -o 'v[0-9][^"]*')
-  local binary_path="$CACHE_DIR/$stripped_version/op-deployer"
+  local binary_path="$BINARIES_DIR/$stripped_version/op-deployer"
 
   # Check if binary already exists
   if [[ -f "$binary_path" && -x "$binary_path" ]]; then
