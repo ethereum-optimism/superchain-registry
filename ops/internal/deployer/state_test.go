@@ -12,15 +12,16 @@ import (
 func TestMergeState(t *testing.T) {
 	tests := []struct {
 		Version int
-		Merger  func(mapping OpaqueMapping) (OpaqueMapping, OpaqueMapping, error)
+		Merger  func(state OpaqueState) (OpaqueMap, OpaqueState, error)
 	}{
+		{1, MergeStateV1},
 		{2, MergeStateV2},
 		{3, MergeStateV3},
 	}
 
 	for _, tt := range tests {
 		t.Run(fmt.Sprintf("v%d", tt.Version), func(t *testing.T) {
-			input, err := ReadOpaqueMappingFile(fmt.Sprintf("testdata/v%d-state-input.json", tt.Version))
+			input, err := ReadOpaqueStateFile(fmt.Sprintf("testdata/v%d-state-input.json", tt.Version))
 			require.NoError(t, err)
 
 			expectedState, err := os.ReadFile(fmt.Sprintf("testdata/v%d-state-output.json", tt.Version))
