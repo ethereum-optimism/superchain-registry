@@ -141,6 +141,31 @@ func (d *OpDeployer) setupStateAndIntent(inputStatePath, workdir string) error {
 	return nil
 }
 
+// runCommand executes a command and returns its output, handling stderr capture
+func (d *OpDeployer) runCommand(args ...string) ([]byte, error) {
+	cmd := exec.Command(d.binaryPath, args...)
+	stderr := new(bytes.Buffer)
+	cmd.Stderr = stderr
+	output, err := cmd.Output()
+	if err != nil {
+		d.lgr.Error(stderr.String())
+		return nil, fmt.Errorf("failed to run %s: %w", strings.Join(args, " "), err)
+	}
+	return output, nil
+}
+
+// inspectCommand runs an inspect command and unmarshals the output
+func (d *OpDeployer) inspectCommand(workdir, chainId, subcommand string, result interface{}) error {
+	output, err := d.runCommand("inspect", subcommand, "--workdir", workdir, chainId)
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(output, result); err != nil {
+		return fmt.Errorf("failed to parse op-deployer inspect %s output: %w", subcommand, err)
+	}
+	return nil
+}
+
 // GenerateStandardGenesis runs op-deployer binary to generate a genesis
 // - l1RpcUrl must match the state's L1 and is required by op-deployer, even though we aren't sending any txs
 func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string) (*OpaqueMap, error) {
@@ -162,30 +187,19 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string
 
 	// Run `op-deployer apply` to generate the expected genesis
 	d.lgr.Info("Running `op-deployer apply`")
-	cmd := exec.Command(d.binaryPath, "apply",
+	if _, err := d.runCommand("apply",
 		"--workdir", workdir,
 		"--deployment-target", "live",
 		"--l1-rpc-url", l1RpcUrl,
-		"--private-key", privateKeyHex,
-	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		return nil, fmt.Errorf("failed to run op-deployer apply: %w", err)
+		"--private-key", privateKeyHex); err != nil {
+		return nil, err
 	}
 
 	// Run `op-deployer inspect genesis` to read the expected genesis
 	d.lgr.Info("Running `op-deployer inspect genesis`")
-	cmd = exec.Command(d.binaryPath, "inspect", "genesis", "--workdir", workdir, chainId)
-
-	output, err := cmd.Output()
-	if err != nil {
-		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
-	}
-
 	var genesis OpaqueMap
-	if err := json.Unmarshal(output, &genesis); err != nil {
-		return nil, fmt.Errorf("failed to parse op-deployer inspect genesis output: %w", err)
+	if err := d.inspectCommand(workdir, chainId, "genesis", &genesis); err != nil {
+		return nil, err
 	}
 
 	return &genesis, nil
@@ -219,81 +233,45 @@ func (d *OpDeployer) copyStateFileToTempDir(statePath string) (string, error) {
 }
 
 func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*OpaqueMap, error) {
-	// Run `op-deployer inspect genesis` to read the expected genesis
-	d.lgr.Info("Running `op-deployer inspect genesis`")
-
 	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file: %w", err)
 	}
 	defer os.RemoveAll(workdir)
 
-	cmd := exec.Command(d.binaryPath, "inspect", "genesis", "--workdir", workdir, chainId)
-	stderr := new(bytes.Buffer)
-	cmd.Stderr = stderr
-	output, err := cmd.Output()
-	if err != nil {
-		d.lgr.Error(stderr.ReadString(0))
-		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
-	}
-
 	var genesis OpaqueMap
-	if err := json.Unmarshal(output, &genesis); err != nil {
-		return nil, fmt.Errorf("failed to parse op-deployer inspect genesis output: %w", err)
+	if err := d.inspectCommand(workdir, chainId, "genesis", &genesis); err != nil {
+		return nil, err
 	}
 
 	return &genesis, nil
 }
 
 func (d *OpDeployer) InspectRollup(statePath, chainId string) (*rollup.Config, error) {
-	// Run `op-deployer inspect rollup` to read the expected rollup config
-	d.lgr.Info("Running `op-deployer inspect rollup`")
-
 	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
+		return nil, fmt.Errorf("failed to copy state file: %w", err)
 	}
 	defer os.RemoveAll(workdir)
 
-	cmd := exec.Command(d.binaryPath, "inspect", "rollup", "--workdir", workdir, chainId)
-	stderr := new(bytes.Buffer)
-	cmd.Stderr = stderr
-	output, err := cmd.Output()
-	if err != nil {
-		d.lgr.Error(stderr.ReadString(0))
-		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
+	var rollupConfig rollup.Config
+	if err := d.inspectCommand(workdir, chainId, "rollup", &rollupConfig); err != nil {
+		return nil, err
 	}
 
-	var rollup rollup.Config
-	if err := json.Unmarshal(output, &rollup); err != nil {
-		return nil, fmt.Errorf("failed to parse op-deployer inspect rollup output: %w", err)
-	}
-
-	return &rollup, nil
+	return &rollupConfig, nil
 }
 
 func (d *OpDeployer) InspectDeployConfig(statePath, chainId string) (*genesis.DeployConfig, error) {
-	// Run `op-deployer inspect deploy-config` to read the expected deploy config
-	d.lgr.Info("Running `op-deployer inspect deploy-config`")
-
 	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
+		return nil, fmt.Errorf("failed to copy state file: %w", err)
 	}
 	defer os.RemoveAll(workdir)
 
-	cmd := exec.Command(d.binaryPath, "inspect", "deploy-config", "--workdir", workdir, chainId)
-	stderr := new(bytes.Buffer)
-	cmd.Stderr = stderr
-	output, err := cmd.Output()
-	if err != nil {
-		d.lgr.Error(stderr.ReadString(0))
-		return nil, fmt.Errorf("failed to run op-deployer inspect genesis: %w", err)
-	}
-
 	var deployConfig genesis.DeployConfig
-	if err := json.Unmarshal(output, &deployConfig); err != nil {
-		return nil, fmt.Errorf("failed to parse op-deployer inspect deploy-config output: %w", err)
+	if err := d.inspectCommand(workdir, chainId, "deploy-config", &deployConfig); err != nil {
+		return nil, err
 	}
 
 	return &deployConfig, nil
