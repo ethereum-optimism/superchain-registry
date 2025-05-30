@@ -72,7 +72,6 @@ type L2Report struct {
 	ChainID             common.Hash
 	ProvidedGenesisHash common.Hash
 	StandardGenesisHash common.Hash
-	GenesisDiffs        []string
 	AccountDiffs        []AccountDiff
 }
 

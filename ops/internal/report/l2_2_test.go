@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/validation"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 )
 
@@ -24,8 +25,10 @@ func TestScanL2_2(t *testing.T) {
 			chainId:   uint64(1952805748),
 			statePath: path.Join("testdata", "state_v1.json"),
 			wantReport: L2Report{
-				Release:      string(validation.Semver170),
-				GenesisDiffs: []string{},
+				Release:             string(validation.Semver170),
+				ProvidedGenesisHash: common.HexToHash("0x86da5aa4d6badbfcde840e0de7b239002c802ca0cfc2a97c7a964c3c5777cfc6"),
+				StandardGenesisHash: common.HexToHash("0x86da5aa4d6badbfcde840e0de7b239002c802ca0cfc2a97c7a964c3c5777cfc6"),
+				AccountDiffs:        []AccountDiff{},
 			},
 		},
 		{
@@ -33,8 +36,10 @@ func TestScanL2_2(t *testing.T) {
 			chainId:   uint64(336),
 			statePath: path.Join("testdata", "state_v2.json"),
 			wantReport: L2Report{
-				Release:      string(validation.Semver170),
-				GenesisDiffs: []string{},
+				Release:             string(validation.Semver170),
+				ProvidedGenesisHash: common.HexToHash("0x49bbc2daef1e2d5e8c9bf233525e80a3e087e56d11cbae65cc7e2fbce2c1ee65"),
+				StandardGenesisHash: common.HexToHash("0x49bbc2daef1e2d5e8c9bf233525e80a3e087e56d11cbae65cc7e2fbce2c1ee65"),
+				AccountDiffs:        []AccountDiff{},
 			},
 		},
 		{
@@ -42,8 +47,10 @@ func TestScanL2_2(t *testing.T) {
 			chainId:   uint64(336),
 			statePath: path.Join("testdata", "state_v3.json"),
 			wantReport: L2Report{
-				Release:      string(validation.Semver300),
-				GenesisDiffs: []string{},
+				Release:             string(validation.Semver300),
+				ProvidedGenesisHash: common.HexToHash("0x3496699b84c93be3963120ba6bbb00cae10780031a421dd9a83db752154f23e4"),
+				StandardGenesisHash: common.HexToHash("0x3496699b84c93be3963120ba6bbb00cae10780031a421dd9a83db752154f23e4"),
+				AccountDiffs:        []AccountDiff{},
 			},
 		},
 	}
