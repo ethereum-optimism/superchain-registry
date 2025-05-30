@@ -153,7 +153,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	defer cancel()
 
 	statePath := path.Join(paths.StagingDir(wd), "state.json")
-	allReport := report.ScanAll_2(ctx, l1RPCURL, rpcClient, statePath, chainCfg, deployerCacheDir)
+	allReport := report.ScanAll(ctx, l1RPCURL, rpcClient, statePath, chainCfg, deployerCacheDir)
 	output.WriteOK("scanned L1 and L2")
 
 	comment, err := report.RenderComment(
