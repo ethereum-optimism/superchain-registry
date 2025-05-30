@@ -48,7 +48,9 @@ func ReadOpaqueStateFile(p string) (OpaqueState, error) {
 	return out, nil
 }
 
-func getMergeStateFunc(version string) (func(state OpaqueState) (OpaqueMap, OpaqueState, error), error) {
+type stateMerger = func(state OpaqueState) (OpaqueMap, OpaqueState, error)
+
+func getMergeStateFunc(version string) (stateMerger, error) {
 	// Extract the version number using regex
 	re := regexp.MustCompile(`op-deployer/v\d+\.(\d+)\.\d+`)
 	match := re.FindStringSubmatch(version)
