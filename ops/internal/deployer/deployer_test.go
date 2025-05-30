@@ -67,7 +67,7 @@ func TestNewOpDeployer(t *testing.T) {
 				homeDir, err := os.UserHomeDir()
 				require.NoError(t, err)
 
-				binaryPath := filepath.Join(homeDir, ".cache/binaries", deployer.DeployerVersion, "op-deployer")
+				binaryPath := filepath.Join(homeDir, ".cache", deployer.DeployerVersion, "op-deployer")
 				_, err = os.Stat(binaryPath)
 				require.NoError(t, err, "Binary should exist at %s", binaryPath)
 			}

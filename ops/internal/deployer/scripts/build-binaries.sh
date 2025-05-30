@@ -3,7 +3,7 @@ set -euo pipefail
 
 # build-deployer.sh
 #   Downloads pre-built op-deployer binaries for specified versions from GitHub releases
-#   and caches them in $HOME/.cache/deployer/$VERSION/op-deployer
+#   and caches them in $HOME/.cache/op-deployer/$VERSION/op-deployer
 #   where $VERSION is the version number (e.g., v0.4.0) without the op-deployer/ prefix.
 #   If a pre-built binary isn't available, falls back to building from source.
 
@@ -173,24 +173,22 @@ build_from_source() {
     return 1
   fi
 
+  # Trust the source directory
+  echo "Trusting source directory for mise..."
+  mise trust "$source_dir"
+
+  # Explicitly install Go using mise
+  echo "Installing Go with mise..."
+  mise install go
+
   # Navigate to the op-deployer directory
   cd "$source_dir/op-deployer"
 
   # Build the binary
   echo "Building op-deployer..."
-  if command -v just &>/dev/null; then
-    # Use 'just' if available
-    if ! just build; then
-      echo "Failed to build using 'just build'"
-      return 1
-    fi
-  else
-    # Fall back to Go build directly
-    echo "'just' command not found, using 'go build' directly..."
-    if ! go build -o bin/op-deployer ./cmd/main.go; then
-      echo "Failed to build using 'go build'"
-      return 1
-    fi
+  if ! mise exec -- go build -o bin/op-deployer ./cmd/op-deployer/main.go; then
+    echo "Failed to build using 'go build'"
+    return 1
   fi
 
   # Copy the binary to the destination
