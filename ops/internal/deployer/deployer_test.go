@@ -97,5 +97,4 @@ func TestVersionsMapInitialization(t *testing.T) {
 
 	require.True(t, exists, "expected key 'op-contracts/v1.6.0' not found in contractVersions map")
 	require.Equal(t, actualVersion, expectedVersion)
-
 }
