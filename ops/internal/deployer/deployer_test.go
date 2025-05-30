@@ -93,11 +93,11 @@ func TestVersionsMapInitialization(t *testing.T) {
 }
 
 func TestBinaryInvocation(t *testing.T) {
-	if CACHE_DIR == "" {
+	if CacheDir == "" {
 		t.Skip(cacheDirEnvVar + " is not set")
 	}
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	deployer, err := NewOpDeployer(lgr, "tag://op-contracts/v1.6.0", CACHE_DIR)
+	deployer, err := NewOpDeployer(lgr, "tag://op-contracts/v1.6.0", CacheDir)
 	require.NoError(t, err)
 
 	output, err := deployer.runCommand("--help")
