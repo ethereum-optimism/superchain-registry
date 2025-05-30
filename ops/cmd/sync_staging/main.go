@@ -48,7 +48,7 @@ func main() {
 }
 
 func action(cliCtx *cli.Context) error {
-	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
+	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stdout, log.LevelInfo, true))
 	l1RpcUrls := cliCtx.StringSlice(FlagL1RPCURLs.Name)
 	check := cliCtx.Bool(FlagCheck.Name)
 	preserveInput := cliCtx.Bool(FlagPreserveInput.Name)
