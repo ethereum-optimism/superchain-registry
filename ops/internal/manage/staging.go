@@ -8,43 +8,61 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
+	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
-	if idx >= len(st.AppliedIntent.Chains) {
-		return nil, errors.New("index out of bounds")
+func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, statePath string, idx int) (*config.StagedChain, error) {
+	chainId, err := st.ReadL2ChainId(idx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read chain ID: %w", err)
 	}
 
-	chainIntent := st.AppliedIntent.Chains[idx]
-	chainID := chainIntent.ID
-	dc, err := inspect.DeployConfig(st, chainID)
+	rollup, err := opd.InspectRollup(statePath, chainId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to inspect rollup: %w", err)
+	}
+
+	dc, err := opd.InspectDeployConfig(statePath, chainId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to inspect deploy config: %w", err)
 	}
 
-	_, rollup, err := inspect.GenesisAndRollup(st, chainID)
+	l1Contracts, err := st.ReadL1ContractsLocator()
 	if err != nil {
-		return nil, fmt.Errorf("failed to inspect genesis and rollup: %w", err)
+		return nil, fmt.Errorf("failed to read L1 contracts locator: %w", err)
+	}
+	l1ContractsLocator, err := artifacts.NewLocatorFromURL(l1Contracts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse L1 contracts locator: %w", err)
+	}
+
+	l2contracts, err := st.ReadL2ContractsLocator()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read L2 contracts locator: %w", err)
+	}
+	l2contractsLocator, err := artifacts.NewLocatorFromURL(l2contracts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse L2 contracts locator: %w", err)
 	}
 
 	cfg := new(config.StagedChain)
-	cfg.ChainID = chainID.Big().Uint64()
+
+	cfg.ChainID = uint64(common.HexToHash(chainId).Big().Int64())
 	cfg.BatchInboxAddr = config.NewChecksummedAddress(dc.BatchInboxAddress)
 	cfg.BlockTime = dc.L2BlockTime
 	cfg.SeqWindowSize = dc.SequencerWindowSize
 	cfg.MaxSequencerDrift = dc.MaxSequencerDrift
 	cfg.DataAvailabilityType = "eth-da"
-	cfg.DeploymentL1ContractsVersion = st.AppliedIntent.L1ContractsLocator
-	cfg.DeploymentL2ContractsVersion = st.AppliedIntent.L2ContractsLocator
+	cfg.DeploymentL1ContractsVersion = l1ContractsLocator
+	cfg.DeploymentL2ContractsVersion = l2contractsLocator
 	cfg.DeploymentTxHash = new(common.Hash)
-	cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.BaseFeeVaultRecipient)
-	cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.L1FeeVaultRecipient)
-	cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.SequencerFeeVaultRecipient)
+	cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(dc.BaseFeeVaultRecipient)
+	cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(dc.L1FeeVaultRecipient)
+	cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(dc.SequencerFeeVaultRecipient)
 
 	if dc.CustomGasTokenAddress != (common.Address{}) {
 		cfg.GasPayingToken = config.NewChecksummedAddress(dc.CustomGasTokenAddress)
@@ -71,9 +89,8 @@ func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
 		cfg.DataAvailabilityType = "alt-da"
 	}
 
-	chainState := st.Chains[idx]
 	cfg.Genesis = config.Genesis{
-		L2Time: uint64(chainState.StartBlock.Time),
+		L2Time: rollup.Genesis.L2Time,
 		L1: config.GenesisRef{
 			Hash:   rollup.Genesis.L1.Hash,
 			Number: rollup.Genesis.L1.Number,
@@ -91,29 +108,27 @@ func InflateChainConfig(st *state.State, idx int) (*config.StagedChain, error) {
 	}
 
 	cfg.Roles = config.Roles{
-		SystemConfigOwner: config.NewChecksummedAddress(chainIntent.Roles.SystemConfigOwner),
-		ProxyAdminOwner:   config.NewChecksummedAddress(chainIntent.Roles.L1ProxyAdminOwner),
-		Guardian:          config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.Guardian),
-		Proposer:          config.NewChecksummedAddress(chainIntent.Roles.Proposer),
-		UnsafeBlockSigner: config.NewChecksummedAddress(chainIntent.Roles.UnsafeBlockSigner),
-		BatchSubmitter:    config.NewChecksummedAddress(chainIntent.Roles.Batcher),
-		Challenger:        config.NewChecksummedAddress(chainIntent.Roles.Challenger),
+		SystemConfigOwner: config.NewChecksummedAddress(dc.FinalSystemOwner),
+		ProxyAdminOwner:   config.NewChecksummedAddress(dc.ProxyAdminOwner),
+		Guardian:          config.NewChecksummedAddress(dc.SuperchainConfigGuardian),
+		Proposer:          config.NewChecksummedAddress(dc.L2OutputOracleProposer),
+		UnsafeBlockSigner: config.NewChecksummedAddress(dc.P2PSequencerAddress),
+		BatchSubmitter:    config.NewChecksummedAddress(dc.BatchSenderAddress),
+		// Challenger:        config.NewChecksummedAddress(chainIntent.Roles.Challenger), // TODO
+	}
+
+	systemConfigProxy, err := st.ReadSystemConfigProxy(idx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read SystemConfigProxy: %w", err)
+	}
+	l1StandardBridgeProxy, err := st.ReadL1StandardBridgeProxy(idx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read L1StandardBridgeProxy: %w", err)
 	}
 
 	cfg.Addresses = config.Addresses{
-		AddressManager:                    config.NewChecksummedAddress(chainState.AddressManagerAddress),
-		L1CrossDomainMessengerProxy:       config.NewChecksummedAddress(chainState.L1CrossDomainMessengerProxyAddress),
-		L1ERC721BridgeProxy:               config.NewChecksummedAddress(chainState.L1ERC721BridgeProxyAddress),
-		L1StandardBridgeProxy:             config.NewChecksummedAddress(chainState.L1StandardBridgeProxyAddress),
-		OptimismMintableERC20FactoryProxy: config.NewChecksummedAddress(chainState.OptimismMintableERC20FactoryProxyAddress),
-		OptimismPortalProxy:               config.NewChecksummedAddress(chainState.OptimismPortalProxyAddress),
-		SystemConfigProxy:                 config.NewChecksummedAddress(chainState.SystemConfigProxyAddress),
-		ProxyAdmin:                        config.NewChecksummedAddress(chainState.ProxyAdminAddress),
-		SuperchainConfig:                  config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxyAddress),
-		AnchorStateRegistryProxy:          config.NewChecksummedAddress(chainState.AnchorStateRegistryProxyAddress),
-		DelayedWETHProxy:                  config.NewChecksummedAddress(chainState.DelayedWETHPermissionedGameProxyAddress),
-		DisputeGameFactoryProxy:           config.NewChecksummedAddress(chainState.DisputeGameFactoryProxyAddress),
-		PermissionedDisputeGame:           config.NewChecksummedAddress(chainState.PermissionedDisputeGameAddress),
+		SystemConfigProxy:     config.NewChecksummedAddress(systemConfigProxy),
+		L1StandardBridgeProxy: config.NewChecksummedAddress(l1StandardBridgeProxy),
 	}
 
 	return cfg, nil
