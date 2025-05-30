@@ -2,8 +2,6 @@ package deployer
 
 import (
 	"bytes"
-	"crypto/ecdsa"
-	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -163,10 +161,10 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string
 	// We don't want to use a funded account here, because there should not be any txs sent.
 	// All contracts should have already been deployed, and the 'apply' command should skip
 	// those pipeline steps, then only generate the genesis.
-	privateKey, err := ecdsa.GenerateKey(crypto.S256(), rand.Reader)
-	if err != nil {
-		return nil, fmt.Errorf("failed to generate random private key: %w", err)
-	}
+	seed := []byte("seed phrase")
+	hash := crypto.Keccak256(seed)
+	privateKey, _ := crypto.ToECDSA(hash[:32]) // Use first 32 bytes as private key
+
 	privateKeyBytes := crypto.FromECDSA(privateKey)
 	privateKeyHex := "0x" + hex.EncodeToString(privateKeyBytes)
 
