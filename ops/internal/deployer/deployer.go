@@ -25,6 +25,7 @@ import (
 // then shelling out to that binary for various cli commands
 type OpDeployer struct {
 	DeployerVersion    string
+	binaryPath         string
 	lgr                log.Logger
 	l1ContractsRelease string
 }
@@ -40,7 +41,7 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease string) (*OpDeployer, erro
 		l1ContractsRelease: l1ContractsRelease,
 	}
 
-	err := opd.buildBinary()
+	err := opd.checkBinary()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build op-deployer binary: %w", err)
 	}
@@ -48,9 +49,8 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease string) (*OpDeployer, erro
 	return &opd, nil
 }
 
-// BuildDeployerBinary builds the appropriate op-deployer binary for the specified
-// contracts release and returns the deployer version.
-func (d *OpDeployer) buildBinary() error {
+// checkBinary checks if the op-deployer binary exists and is executable
+func (d *OpDeployer) checkBinary() error {
 	// Normalize the contracts string before lookup in versions.json
 	// 1. Remove tag:// prefix if present
 	// 2. Remove any -rc.X suffix for version matching
@@ -82,29 +82,24 @@ func (d *OpDeployer) buildBinary() error {
 	d.lgr.Info("Found deployer version", "version", deployerVersion)
 	d.DeployerVersion = deployerVersion
 
-	// Run the build-deployer script with the appropriate deployer version
-	d.lgr.Info("Running build-deployer script")
-	scriptPath := filepath.Join(deployerDir, "scripts", "build-deployer.sh")
-	cmd := exec.Command(scriptPath, deployerVersion)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to run build-deployer script: %w", err)
+	// Check if the op-deployer binary already exists
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get home directory: %w", err)
+	}
+	binaryPath := filepath.Join(homeDir, ".cache", deployerVersion, "op-deployer")
+
+	// Check if the binary exists and is executable
+	if info, err := os.Stat(binaryPath); err == nil && info.Mode()&0o111 != 0 {
+		d.lgr.Info("Found op-deployer binary", "path", binaryPath)
+		d.binaryPath = binaryPath
+	} else {
+		// Binary doesn't exist or isn't executable
+		d.lgr.Error("Required op-deployer binary not found", "version", deployerVersion, "expected_path", binaryPath)
+		return fmt.Errorf("op-deployer binary not found at %s", binaryPath)
 	}
 
 	return nil
-}
-
-func (d *OpDeployer) getBinaryPath() (string, error) {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return "", fmt.Errorf("failed to get home directory: %w", err)
-	}
-	deployerPath := filepath.Join(homeDir, ".cache/binaries", d.DeployerVersion, "op-deployer")
-	if _, err := os.Stat(deployerPath); os.IsNotExist(err) {
-		return "", fmt.Errorf("deployer binary not found at path: %s", deployerPath)
-	}
-	return deployerPath, nil
 }
 
 // setupStateAndIntent prepares the deployer environment by creating merged state and intent files
@@ -165,11 +160,6 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string
 		return nil, fmt.Errorf("failed to setup state and intent: %w", err)
 	}
 
-	deployerPath, err := d.getBinaryPath()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
-	}
-
 	// We don't want to use a funded account here, because there should not be any txs sent.
 	// All contracts should have already been deployed, and the 'apply' command should skip
 	// those pipeline steps, then only generate the genesis.
@@ -182,7 +172,7 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string
 
 	// Run `op-deployer apply` to generate the expected genesis
 	d.lgr.Info("Running `op-deployer apply`")
-	cmd := exec.Command(deployerPath, "apply",
+	cmd := exec.Command(d.binaryPath, "apply",
 		"--workdir", workdir,
 		"--deployment-target", "live",
 		"--l1-rpc-url", l1RpcUrl,
@@ -196,7 +186,7 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string
 
 	// Run `op-deployer inspect genesis` to read the expected genesis
 	d.lgr.Info("Running `op-deployer inspect genesis`")
-	cmd = exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir, chainId)
+	cmd = exec.Command(d.binaryPath, "inspect", "genesis", "--workdir", workdir, chainId)
 
 	output, err := cmd.Output()
 	if err != nil {
@@ -242,18 +232,13 @@ func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*OpaqueMapping, 
 	// Run `op-deployer inspect genesis` to read the expected genesis
 	d.lgr.Info("Running `op-deployer inspect genesis`")
 
-	deployerPath, err := d.getBinaryPath()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
-	}
-
 	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file: %w", err)
 	}
 	defer os.RemoveAll(workdir)
 
-	cmd := exec.Command(deployerPath, "inspect", "genesis", "--workdir", workdir, chainId)
+	cmd := exec.Command(d.binaryPath, "inspect", "genesis", "--workdir", workdir, chainId)
 	stderr := bytes.Buffer{}
 	cmd.Stderr = &stderr
 	output, err := cmd.Output()
@@ -274,18 +259,13 @@ func (d *OpDeployer) InspectRollup(statePath, chainId string) (*rollup.Config, e
 	// Run `op-deployer inspect rollup` to read the expected rollup config
 	d.lgr.Info("Running `op-deployer inspect rollup`")
 
-	deployerPath, err := d.getBinaryPath()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
-	}
-
 	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
 	}
 	defer os.RemoveAll(workdir)
 
-	cmd := exec.Command(deployerPath, "inspect", "rollup", "--workdir", workdir, chainId)
+	cmd := exec.Command(d.binaryPath, "inspect", "rollup", "--workdir", workdir, chainId)
 	stderr := bytes.Buffer{}
 	cmd.Stderr = &stderr
 	output, err := cmd.Output()
@@ -306,18 +286,13 @@ func (d *OpDeployer) InspectDeployConfig(statePath, chainId string) (*genesis.De
 	// Run `op-deployer inspect deploy-config` to read the expected deploy config
 	d.lgr.Info("Running `op-deployer inspect deploy-config`")
 
-	deployerPath, err := d.getBinaryPath()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get deployer binary path: %w", err)
-	}
-
 	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
 	}
 	defer os.RemoveAll(workdir)
 
-	cmd := exec.Command(deployerPath, "inspect", "deploy-config", "--workdir", workdir, chainId)
+	cmd := exec.Command(d.binaryPath, "inspect", "deploy-config", "--workdir", workdir, chainId)
 	stderr := bytes.Buffer{}
 	cmd.Stderr = &stderr
 	output, err := cmd.Output()
