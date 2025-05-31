@@ -2,7 +2,7 @@
   "op-contracts/v1.6.0": "op-deployer/v0.0.14",
   "op-contracts/v1.7.0-beta.1+l2-contracts": "op-deployer/v0.0.14",
   "op-contracts/v1.8.0": "op-deployer/v0.0.14",
-  "op-contracts/v2.0.0": "op-deployer/v0.2.2",
-  "op-contracts/v3.0.0": "op-deployer/v0.3.1",
+  "op-contracts/v2.0.0": "op-deployer/v0.2.3",
+  "op-contracts/v3.0.0": "op-deployer/v0.3.2",
   "op-contracts/v4.0.0": "op-deployer/v0.4.0-rc.2"
 }

@@ -73,6 +73,7 @@ type L2Report struct {
 	ProvidedGenesisHash common.Hash
 	StandardGenesisHash common.Hash
 	AccountDiffs        []AccountDiff
+	GenesisDiffs        []string
 }
 
 type StorageDiff struct {

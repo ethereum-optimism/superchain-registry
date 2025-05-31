@@ -12,7 +12,7 @@
     },
     "fundDevAccounts": false,
     "useInterop": false,
-    "l1ContractsLocator": "tag://op-contracts/v1.6.0",
+    "l1ContractsLocator": "tag://op-contracts/v1.8.0-rc.4",
     "l2ContractsLocator": "tag://op-contracts/v1.7.0-beta.1+l2-contracts",
     "chains": [
       {
@@ -97,10 +97,10 @@
         "receiptsRoot": "0x10d65a8fe3b33cb7169d0d055dd9df64f80623c99c4e6f2e06d4e51c8a186ee9",
         "logsBloom": "0x04040844c804550b88548636e2390220400b84413103561ae1a409f25c82249260c0e1900c0904180101217440a401b896542012624e2c221a003a8206a4a5110508c108170c1c484120200a401ac600440f8002a2062400d44440a7906013182664006422e1206888e620a336286af40a2978c66d0c00a80e629078848ad055826038001594444170ca1004637e835a94c10181d40ac200b0810b0d0ec800500ea8605a2000303c470943c120e5005c03e7e02b10123fe2e280300766a878611104952320088246410228d11c9700084dd40201c5088e478322f2f828446142505200200c88084c10301a01f4040e0893e2103448f600501601098938084b98",
         "difficulty": "0x0",
-        "number": "0x700910",
+        "number": 7342352,
         "gasLimit": "0x2255100",
         "gasUsed": "0x1b7c590",
-        "timestamp": "0x676a1f60",
+        "timestamp": 1735008096,
         "extraData": "0x",
         "mixHash": "0xea5f2240cfe00e065cf8822a6534d761c126de3626094de9ca82cb9842842bf0",
         "nonce": "0x0000000000000000",
@@ -116,4 +116,3 @@
   ],
   "l1StateDump": null
 }
-
