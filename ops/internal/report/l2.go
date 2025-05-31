@@ -1,14 +1,12 @@
 package report
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
-	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/log"
 )
 
@@ -57,35 +55,8 @@ func ScanL2(
 	var report L2Report
 	report.Release = tagValue
 
-	originalCoreGenesis := &core.Genesis{}
-	originalGenesisByte, err := json.Marshal(originalGenesis)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal original genesis: %w", err)
-	}
-	if err := json.Unmarshal(originalGenesisByte, originalCoreGenesis); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal original genesis: %w", err)
-	}
-	originalGenesisHash := originalCoreGenesis.ToBlock().Hash()
-
-	standardCoreGenesis := &core.Genesis{}
-	standardGenesisByte, err := json.Marshal(standardGenesis)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal standard genesis: %w", err)
-	}
-	if err := json.Unmarshal(standardGenesisByte, standardCoreGenesis); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal standard genesis: %w", err)
-	}
-	standardGenesisHash := standardCoreGenesis.ToBlock().Hash()
-
-	if originalGenesisHash != standardGenesisHash {
-		return nil, fmt.Errorf("original genesis hash does not match standard genesis hash")
-	}
-
-	report.ProvidedGenesisHash = originalGenesisHash
-	report.StandardGenesisHash = standardGenesisHash
-
-	accountDiffs := DiffAllocs(standardCoreGenesis.Alloc, originalCoreGenesis.Alloc)
-	report.AccountDiffs = accountDiffs
+	genesisDiffs := deployer.DiffOpaqueMaps("genesis", *originalGenesis, *standardGenesis)
+	report.GenesisDiffs = genesisDiffs
 
 	return &report, nil
 }
