@@ -34,6 +34,13 @@ func init() {
 		panic(fmt.Sprintf("failed to parse versions.json: %v", err))
 	}
 	CacheDir = os.Getenv(cacheDirEnvVar)
+	if CacheDir == "" {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			panic(fmt.Sprintf("failed to get user home directory: %v", err))
+		}
+		CacheDir = filepath.Join(homeDir, ".cache/op-deployer")
+	}
 }
 
 // OpDeployer manages the process of building a specific binary of op-deployer,

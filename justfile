@@ -47,10 +47,13 @@ print-staging-report: (_run_ops_bin 'print_staging_report')
 
 check-genesis-integrity: (_run_ops_bin 'check_genesis_integrity')
 
-create-config SHORTNAME FILENAME:
+create-config SHORTNAME FILENAME: build-deployer-binaries
 	@just _run_ops_bin "create_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{FILENAME}})"
 
-import-devnet STATEFILE MANIFESTFILE:
+import-devnet STATEFILE MANIFESTFILE: build-deployer-binaries
 	@just _run_ops_bin "import_devnet" "--state-filename $(realpath {{STATEFILE}}) --manifest-path $(realpath {{MANIFESTFILE}})"
+
+build-deployer-binaries:
+  @bash ops/internal/deployer/scripts/build-binaries.sh
 
 check-chainlist: (_run_ops_bin 'check_chainlist')
