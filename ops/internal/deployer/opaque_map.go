@@ -38,42 +38,39 @@ func useInts(m map[string]any) {
 	}
 }
 
-// queryString retrieves a string value from the given path
-func (om OpaqueState) queryString(path string) (string, error) {
+// QueryOpaqueMap queries the OpaqueState for the given paths in order,
+// and returns the first successful result (and an error otherwise)
+func QueryOpaqueMap[T any](om OpaqueState, paths ...string) (T, error) {
 	node := dasel.New(om)
-	resultNode, err := node.Query(path)
-	if err != nil {
-		return "", fmt.Errorf("failed to read path %s: %w", path, err)
+	resultNode := new(dasel.Node)
+	err := fmt.Errorf("not found")
+	for _, path := range paths {
+		resultNode, err = node.Query(path)
+		if err == nil {
+			break
+		}
 	}
-	result, ok := resultNode.InterfaceValue().(string)
+
+	var zero T
+	if err != nil {
+		return zero, fmt.Errorf("failed to read path  %w", err)
+	}
+
+	result, ok := resultNode.InterfaceValue().(T)
 	if !ok {
-		return "", fmt.Errorf("failed to parse string at path %s", path)
+		return zero, fmt.Errorf("failed to parse string at path")
 	}
 	return result, nil
 }
 
+// queryString retrieves a string value from the given path
+func (om OpaqueState) queryString(paths ...string) (string, error) {
+	return QueryOpaqueMap[string](om, paths...)
+}
+
 // queryAddress retrieves an address from the given path, with an optional fallback path
-func (om OpaqueState) queryAddress(path, fallbackPath string) (common.Address, error) {
-	node := dasel.New(om)
-	resultNode, err := node.Query(path)
-	if err == nil {
-		if result, ok := resultNode.InterfaceValue().(string); ok {
-			return common.HexToAddress(result), nil
-		}
-		return common.Address{}, fmt.Errorf("failed to parse address at path %s", path)
-	}
-
-	if fallbackPath != "" {
-		resultNode, err = node.Query(fallbackPath)
-		if err != nil {
-			return common.Address{}, fmt.Errorf("failed to read address at both paths %s and %s: %w", path, fallbackPath, err)
-		}
-		if result, ok := resultNode.InterfaceValue().(string); ok {
-			return common.HexToAddress(result), nil
-		}
-	}
-
-	return common.Address{}, fmt.Errorf("failed to parse address at path %s", fallbackPath)
+func (om OpaqueState) queryAddress(paths ...string) (common.Address, error) {
+	return QueryOpaqueMap[common.Address](om, paths...)
 }
 
 // queryInt retrieves a uint64 value from the given path
