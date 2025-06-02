@@ -130,3 +130,45 @@ func (om OpaqueState) ReadL1StandardBridgeProxy(idx int) (common.Address, error)
 		fmt.Sprintf("opChainDeployments.[%d].l1StandardBridgeProxyAddress", idx),
 	)
 }
+
+func (om OpaqueState) ReadProtocolVersionsProxy() (common.Address, error) {
+	return om.queryAddress(
+		"superchainDeployments.ProtocolVersionsProxyAddress",
+		"superchainContracts.ProtocolVersionsProxy",
+	)
+}
+
+func (om OpaqueState) ReadSuperchainConfigProxy() (common.Address, error) {
+	return om.queryAddress(
+		"superchainDeployments.SuperchainConfigProxyAddress",
+		"superchainContracts.SuperchainConfigProxy",
+	)
+}
+
+func (om OpaqueState) ReadOpcmAddress() (common.Address, error) {
+	return om.queryAddress(
+		"implementationsDeployment.OpcmAddress",
+		"implementationsDeployment.OpcmImpl",
+	)
+}
+
+func (om OpaqueState) GetNumChains() (int, error) {
+	val, err := dasel.New(om).Query("appliedIntent.chains")
+	if err != nil {
+		return 0, fmt.Errorf("failed to read number of chains: %w", err)
+	}
+	chains, ok := val.InterfaceValue().([]any)
+	if !ok {
+		return 0, fmt.Errorf("failed to parse chains")
+	}
+	return len(chains), nil
+}
+
+func (om OpaqueState) GetChainID(idx int) (uint64, error) {
+	val, err := om.queryString(fmt.Sprintf("appliedIntent.chains.[%d].id", idx))
+	if err != nil {
+		return 0, fmt.Errorf("failed to read chain id: %w", err)
+	}
+	h := common.HexToHash(val)
+	return h.Big().Uint64(), nil
+}

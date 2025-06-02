@@ -191,6 +191,39 @@ var (
 	ErrNoStagedSuperchainDefinition = errors.New("no staged superchain definition found")
 )
 
+func InflateSuperchainDefinition(name string, st deployer.OpaqueState) (*config.SuperchainDefinition, error) {
+	protocolVersionsProxyAddress, err := st.ReadProtocolVersionsProxy()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read protocol versions proxy address: %w", err)
+	}
+	superchainConfigProxyAddress, err := st.ReadSuperchainConfigProxy()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read superchain config proxy address: %w", err)
+	}
+	opcmAddress, err := st.ReadOpcmAddress()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read opcm address: %w", err)
+	}
+
+	l1ChainID, err := st.ReadL1ChainID()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read l1 chain id: %w", err)
+	}
+
+	sD := config.SuperchainDefinition{
+		Name:                   name,
+		ProtocolVersionsAddr:   config.NewChecksummedAddress(protocolVersionsProxyAddress),
+		SuperchainConfigAddr:   config.NewChecksummedAddress(superchainConfigProxyAddress),
+		OPContractsManagerAddr: config.NewChecksummedAddress(opcmAddress),
+		Hardforks:              config.Hardforks{}, // superchain wide hardforks are added after chains are in the registry.
+		L1: config.SuperchainL1{
+			ChainID: l1ChainID,
+		},
+	}
+
+	return &sD, nil
+}
+
 func StagedChainConfigs(rootP string) ([]*config.StagedChain, error) {
 	tomls, err := paths.CollectFiles(paths.StagingDir(rootP), paths.ChainConfigMatcher())
 	if err != nil {
