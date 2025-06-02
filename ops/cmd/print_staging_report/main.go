@@ -56,6 +56,11 @@ var (
 		EnvVars: []string{"GITHUB_REPO"},
 		Value:   "ethereum-optimism/superchain-registry",
 	}
+	DeployerCacheDirFlag = &cli.StringFlag{
+		Name:    "deployer-cache-dir",
+		Usage:   "The path to the op-deployer binaries cache directory.",
+		EnvVars: []string{"DEPLOYER_CACHE_DIR"},
+	}
 )
 
 func main() {
@@ -69,6 +74,7 @@ func main() {
 			GitSHAFlag,
 			GithubTokenFlag,
 			GithubRepoFlag,
+			DeployerCacheDirFlag,
 		},
 		Action: PrintStagingReport,
 	}
@@ -83,6 +89,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	gitSHA := cliCtx.String(GitSHAFlag.Name)
 	githubToken := cliCtx.String(GithubTokenFlag.Name)
 	githubRepo := cliCtx.String(GithubRepoFlag.Name)
+	deployerCacheDir := cliCtx.String(DeployerCacheDirFlag.Name)
 
 	wd, err := paths.FindRepoRoot()
 	if err != nil {
@@ -124,12 +131,6 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		return nil
 	}
 
-	genesisFilename := chainCfg.ShortName + ".json.zst"
-	originalGenesis, err := manage.ReadGenesis(wd, path.Join(paths.StagingDir(wd), genesisFilename))
-	if err != nil {
-		return fmt.Errorf("failed to read genesis: %w", err)
-	}
-
 	if chainCfg.DeploymentTxHash == nil {
 		return fmt.Errorf("deployment tx hash is required")
 	}
@@ -151,7 +152,8 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	ctx, cancel := context.WithTimeout(cliCtx.Context, 5*time.Minute)
 	defer cancel()
 
-	allReport := report.ScanAll(ctx, rpcClient, chainCfg, originalGenesis)
+	statePath := path.Join(paths.StagingDir(wd), "state.json")
+	allReport := report.ScanAll(ctx, l1RPCURL, rpcClient, statePath, chainCfg, deployerCacheDir)
 	output.WriteOK("scanned L1 and L2")
 
 	comment, err := report.RenderComment(

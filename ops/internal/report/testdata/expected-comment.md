@@ -56,12 +56,10 @@
 **⚠️ Genesis does not match standard.** The state diff is listed below:
 
 ```diff
-+0x0000000000000000000000000000000000000123
-+code:0x010203
-+balance:100
-+nonce:1
-+storage:
-+  0x0000000000000000000000000000000000000000000000000000000000000456:0x0000000000000000000000000000000000000000000000000000000000000789
+genesis.alloc.0x0000000000000000000000000000000000000123: exists in second map but not in first (value: map[balance:0x64 code:0x010203 nonce:0x1 storage:map[0x456:0x789]])
+genesis.config.chainId: 1 => 11155111
+genesis.timestamp: 0x0 => 0x64
+genesis.difficulty: 0x1 => 0x0
 ```
 
 <small>Report generated on 1970-01-01T00:20:34Z for commit `1234567890abcdef`</small>

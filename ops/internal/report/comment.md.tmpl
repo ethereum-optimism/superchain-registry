@@ -59,15 +59,15 @@
 ## L2 Deployment
 
 {{ if .Report.L2 -}}
-{{- if eq .Report.L2.ProvidedGenesisHash .Report.L2.StandardGenesisHash -}}
+{{- if or (not .Report.L2.GenesisDiffs) (eq (len .Report.L2.GenesisDiffs) 0) -}}
 **✅ Genesis matches standard!**
 {{ else -}}
 **⚠️ Genesis does not match standard.** The state diff is listed below:
 
 ```diff
-{{- range .Report.L2.AccountDiffs }}
-{{ .AsMarkdown }}
-{{- end -}}
+{{- range .Report.L2.GenesisDiffs }}
+{{ . }}
+{{- end }}
 ```
 {{- end }}
 {{- else -}}

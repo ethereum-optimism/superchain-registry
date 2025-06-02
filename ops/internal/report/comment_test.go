@@ -3,7 +3,6 @@ package report
 import (
 	"encoding/json"
 	"errors"
-	"math/big"
 	"os"
 	"testing"
 	"time"
@@ -25,24 +24,12 @@ func TestRenderComment(t *testing.T) {
 		require.NoError(t, json.Unmarshal(l1ReportJSON, &l1Report))
 
 		l2Report := &L2Report{
-			Release:             string(validation.Semver170),
-			ProvidedGenesisHash: common.HexToHash("0x1234567890abcdef"),
-			StandardGenesisHash: common.HexToHash("0xabcdef1234567890"),
-			AccountDiffs: []AccountDiff{
-				{
-					Address:    common.HexToAddress("0x123"),
-					Added:      true,
-					NewCode:    []byte{1, 2, 3},
-					NewBalance: big.NewInt(100),
-					NewNonce:   1,
-					StorageChanges: []StorageDiff{
-						{
-							Added:    true,
-							Key:      common.HexToHash("0x456"),
-							NewValue: common.HexToHash("0x789"),
-						},
-					},
-				},
+			Release: string(validation.Semver170),
+			GenesisDiffs: []string{
+				"genesis.alloc.0x0000000000000000000000000000000000000123: exists in second map but not in first (value: map[balance:0x64 code:0x010203 nonce:0x1 storage:map[0x456:0x789]])",
+				"genesis.config.chainId: 1 => 11155111",
+				"genesis.timestamp: 0x0 => 0x64",
+				"genesis.difficulty: 0x1 => 0x0",
 			},
 		}
 
