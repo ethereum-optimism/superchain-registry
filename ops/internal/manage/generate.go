@@ -93,7 +93,6 @@ var ErrNotLossless = errors.New("conversion is not lossless, consider updating o
 
 // Convert OpaqueMapping to core.Genesis
 func opaqueToGenesis(opaque *deployer.OpaqueMap) (*core.Genesis, error) {
-
 	// Step 1: Marshal the OpaqueMapping to JSON
 	jsonData, err := json.MarshalIndent(opaque, "", "  ")
 	if err != nil {
