@@ -153,6 +153,12 @@ func (om OpaqueState) ReadOpcmAddress() (common.Address, error) {
 	)
 }
 
+func (om OpaqueState) ReadChallenger(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("appliedIntent.chains.[%d].roles.challenger", idx),
+	)
+}
+
 func (om OpaqueState) GetNumChains() (int, error) {
 	return QueryOpaqueMap[int](om, "appliedIntent.chains.[#]")
 }

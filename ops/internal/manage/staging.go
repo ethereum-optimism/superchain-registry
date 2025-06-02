@@ -107,6 +107,11 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 		},
 	}
 
+	challenger, err := st.ReadChallenger(idx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read challenger: %w", err)
+	}
+
 	cfg.Roles = config.Roles{
 		SystemConfigOwner: config.NewChecksummedAddress(dc.FinalSystemOwner),
 		ProxyAdminOwner:   config.NewChecksummedAddress(dc.ProxyAdminOwner),
@@ -114,7 +119,7 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 		Proposer:          config.NewChecksummedAddress(dc.L2OutputOracleProposer),
 		UnsafeBlockSigner: config.NewChecksummedAddress(dc.P2PSequencerAddress),
 		BatchSubmitter:    config.NewChecksummedAddress(dc.BatchSenderAddress),
-		// Challenger:        config.NewChecksummedAddress(chainIntent.Roles.Challenger), // TODO
+		Challenger:        config.NewChecksummedAddress(challenger),
 	}
 
 	systemConfigProxy, err := st.ReadSystemConfigProxy(idx)
