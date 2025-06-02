@@ -122,20 +122,12 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 		Challenger:        config.NewChecksummedAddress(challenger),
 	}
 
-	systemConfigProxy, err := st.ReadSystemConfigProxy(idx)
+	addresses, err := GetContractAddressesFromState(st, idx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read SystemConfigProxy: %w", err)
-	}
-	l1StandardBridgeProxy, err := st.ReadL1StandardBridgeProxy(idx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read L1StandardBridgeProxy: %w", err)
+		return nil, fmt.Errorf("failed to read addresses from OpaqueState: %w", err)
 	}
 
-	cfg.Addresses = config.Addresses{
-		SystemConfigProxy:     config.NewChecksummedAddress(systemConfigProxy),
-		L1StandardBridgeProxy: config.NewChecksummedAddress(l1StandardBridgeProxy),
-	}
-
+	cfg.Addresses = addresses
 	return cfg, nil
 }
 
@@ -205,7 +197,7 @@ func InflateSuperchainDefinition(name string, st deployer.OpaqueState) (*config.
 	if err != nil {
 		return nil, fmt.Errorf("failed to read superchain config proxy address: %w", err)
 	}
-	opcmAddress, err := st.ReadOpcmAddress()
+	opcmAddress, err := st.ReadOpcmImpl()
 	if err != nil {
 		return nil, fmt.Errorf("failed to read opcm address: %w", err)
 	}
@@ -267,4 +259,89 @@ func StagedSuperchainDefinition(rootP string) (*config.SuperchainDefinition, err
 	err = paths.ReadTOMLFile(files[0], sM)
 
 	return sM, err
+}
+
+func GetContractAddressesFromState(st deployer.OpaqueState, idx int) (config.Addresses, error) {
+	var addresses config.Addresses
+	var err error
+
+	addressManager, err := st.ReadAddressManagerImpl(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read AddressManager: %w", err)
+	}
+	addresses.AddressManager = config.NewChecksummedAddress(addressManager)
+
+	l1CrossDomainMessengerProxy, err := st.ReadL1CrossDomainMessengerProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read L1CrossDomainMessengerProxy: %w", err)
+	}
+	addresses.L1CrossDomainMessengerProxy = config.NewChecksummedAddress(l1CrossDomainMessengerProxy)
+
+	l1ERC721BridgeProxy, err := st.ReadL1Erc721BridgeProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read L1ERC721BridgeProxy: %w", err)
+	}
+	addresses.L1ERC721BridgeProxy = config.NewChecksummedAddress(l1ERC721BridgeProxy)
+
+	l1StandardBridgeProxy, err := st.ReadL1StandardBridgeProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read L1StandardBridgeProxy: %w", err)
+	}
+	addresses.L1StandardBridgeProxy = config.NewChecksummedAddress(l1StandardBridgeProxy)
+
+	optimismMintableERC20FactoryProxy, err := st.ReadOptimismMintableErc20FactoryProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read OptimismMintableERC20FactoryProxy: %w", err)
+	}
+	addresses.OptimismMintableERC20FactoryProxy = config.NewChecksummedAddress(optimismMintableERC20FactoryProxy)
+
+	optimismPortalProxy, err := st.ReadOptimismPortalProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read OptimismPortalProxy: %w", err)
+	}
+	addresses.OptimismPortalProxy = config.NewChecksummedAddress(optimismPortalProxy)
+
+	systemConfigProxy, err := st.ReadSystemConfigProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read SystemConfigProxy: %w", err)
+	}
+	addresses.SystemConfigProxy = config.NewChecksummedAddress(systemConfigProxy)
+
+	proxyAdmin, err := st.ReadProxyAdminImpl(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read ProxyAdmin: %w", err)
+	}
+	addresses.ProxyAdmin = config.NewChecksummedAddress(proxyAdmin)
+
+	superchainConfigProxy, err := st.ReadSuperchainConfigProxy()
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read SuperchainConfig: %w", err)
+	}
+	addresses.SuperchainConfig = config.NewChecksummedAddress(superchainConfigProxy)
+
+	anchorStateRegistryProxy, err := st.ReadAnchorStateRegistryProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read AnchorStateRegistryProxy: %w", err)
+	}
+	addresses.AnchorStateRegistryProxy = config.NewChecksummedAddress(anchorStateRegistryProxy)
+
+	delayedWETHProxy, err := st.ReadDelayedWethPermissionedGameProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read DelayedWETHProxy: %w", err)
+	}
+	addresses.DelayedWETHProxy = config.NewChecksummedAddress(delayedWETHProxy)
+
+	disputeGameFactoryProxy, err := st.ReadDisputeGameFactoryProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read DisputeGameFactoryProxy: %w", err)
+	}
+	addresses.DisputeGameFactoryProxy = config.NewChecksummedAddress(disputeGameFactoryProxy)
+
+	permissionedDisputeGame, err := st.ReadPermissionedDisputeGameImpl(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read PermissionedDisputeGame: %w", err)
+	}
+	addresses.PermissionedDisputeGame = config.NewChecksummedAddress(permissionedDisputeGame)
+
+	return addresses, nil
 }

@@ -132,23 +132,93 @@ func (om OpaqueState) ReadL1StandardBridgeProxy(idx int) (common.Address, error)
 	)
 }
 
+func (om OpaqueState) ReadAddressManagerImpl(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].AddressManagerImpl", idx),
+		fmt.Sprintf("opChainDeployments.[%d].addressManagerAddress", idx),
+	)
+}
+
+func (om OpaqueState) ReadOptimismPortalProxy(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].OptimismPortalProxy", idx),
+		fmt.Sprintf("opChainDeployments.[%d].optimismPortalProxyAddress", idx),
+	)
+}
+
+func (om OpaqueState) ReadL1CrossDomainMessengerProxy(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].L1CrossDomainMessengerProxy", idx),
+		fmt.Sprintf("opChainDeployments.[%d].l1CrossDomainMessengerProxyAddress", idx),
+	)
+}
+
+func (om OpaqueState) ReadOptimismMintableErc20FactoryProxy(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].OptimismMintableErc20FactoryProxy", idx),
+		fmt.Sprintf("opChainDeployments.[%d].optimismMintableERC20FactoryProxyAddress", idx),
+	)
+}
+
+func (om OpaqueState) ReadProxyAdminImpl(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].OpChainProxyAdminImpl", idx),
+		fmt.Sprintf("opChainDeployments.[%d].proxyAdminAddress", idx),
+	)
+}
+
+func (om OpaqueState) ReadL1Erc721BridgeProxy(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].L1Erc721BridgeProxy", idx),
+		fmt.Sprintf("opChainDeployments.[%d].l1ERC721BridgeProxyAddress", idx),
+	)
+}
+
+func (om OpaqueState) ReadAnchorStateRegistryProxy(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].AnchorStateRegistryProxy", idx),
+		fmt.Sprintf("opChainDeployments.[%d].anchorStateRegistryProxyAddress", idx),
+	)
+}
+
+func (om OpaqueState) ReadDelayedWethPermissionedGameProxy(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].DelayedWethPermissionedGameProxy", idx),
+		fmt.Sprintf("opChainDeployments.[%d].delayedWETHPermissionedGameProxyAddress", idx),
+	)
+}
+
+func (om OpaqueState) ReadDisputeGameFactoryProxy(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].DisputeGameFactoryProxy", idx),
+		fmt.Sprintf("opChainDeployments.[%d].disputeGameFactoryProxyAddress", idx),
+	)
+}
+
+func (om OpaqueState) ReadPermissionedDisputeGameImpl(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].PermissionedDisputeGameImpl", idx),
+		fmt.Sprintf("opChainDeployments.[%d].permissionedDisputeGameAddress", idx),
+	)
+}
+
 func (om OpaqueState) ReadProtocolVersionsProxy() (common.Address, error) {
 	return om.queryAddress(
-		"superchainDeployments.ProtocolVersionsProxyAddress",
+		"superchainContracts.ProtocolVersionsProxy",
 		"superchainDeployment.protocolVersionsProxyAddress",
 	)
 }
 
 func (om OpaqueState) ReadSuperchainConfigProxy() (common.Address, error) {
 	return om.queryAddress(
-		"superchainDeployments.SuperchainConfigProxyAddress",
+		"superchainContracts.SuperchainConfigProxy",
 		"superchainDeployment.superchainConfigProxyAddress",
 	)
 }
 
-func (om OpaqueState) ReadOpcmAddress() (common.Address, error) {
+func (om OpaqueState) ReadOpcmImpl() (common.Address, error) {
 	return om.queryAddress(
-		"implementationsDeployment.OpcmAddress",
+		"implementationsDeployment.OpcmImpl",
 		"implementationsDeployment.opcmAddress",
 	)
 }
