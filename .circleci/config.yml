@@ -4,6 +4,12 @@ orbs:
   codecov: codecov/codecov@5.0.3
   utils: ethereum-optimism/circleci-utils@1.0.8
 
+executors:
+  default:
+    machine:
+      image: ubuntu-2204:2024.08.1
+    resource_class: medium
+
 parameters:
   default_docker_image:
     type: string
@@ -129,6 +135,7 @@ jobs:
             SEPOLIA_RPC_URL: << pipeline.parameters.sepolia_rpc_url >>
             MAINNET_RPC_URL: << pipeline.parameters.mainnet_rpc_url >>
             GITHUB_REPO: << pipeline.parameters.github_repo >>
+            DEPLOYER_CACHE_DIR: << pipeline.parameters.deployer_cache_dir >>
           command: |
             cd ops
             go run ./cmd/print_staging_report/main.go
@@ -195,6 +202,125 @@ jobs:
               echo "\n✅ All codegen files are up to date"
             fi
 
+  notify-when-chain-is-added-to-registry:
+    executor: default
+    parameters:
+      branch:
+        type: string
+        default: main
+      slack_webhook_url:
+        type: env_var_name
+        default: SLACK_WEBHOOK_URL
+    steps:
+      - checkout
+      - run:
+          name: Check if running on main branch
+          command: |
+            if [ "$CIRCLE_BRANCH" != "<< parameters.branch >>" ]; then
+              echo "Not running on << parameters.branch >> branch (current: $CIRCLE_BRANCH), skipping notification"
+              circleci-agent step halt
+            fi
+      - run:
+          name: Notify when chains are changed in registry
+          command: |
+            set -e
+
+            # Get added, deleted, and modified files
+            ADDED_FILES=$(git diff --name-only --diff-filter=A HEAD~1 HEAD | grep -E "^superchain/configs/(mainnet|sepolia)/.*\.toml$" | grep -v "superchain.toml" || true)
+            DELETED_FILES=$(git diff --name-only --diff-filter=D HEAD~1 HEAD | grep -E "^superchain/configs/(mainnet|sepolia)/.*\.toml$" | grep -v "superchain.toml" || true)
+            MODIFIED_FILES=$(git diff --name-only --diff-filter=M HEAD~1 HEAD | grep -E "^superchain/configs/(mainnet|sepolia)/.*\.toml$" | grep -v "superchain.toml" || true)
+
+            # Check if any changes detected
+            if [ -z "$ADDED_FILES" ] && [ -z "$DELETED_FILES" ] && [ -z "$MODIFIED_FILES" ]; then
+              echo "No chain changes detected in this merge to << parameters.branch >>"
+              exit 0
+            fi
+
+            echo "🔄 Chain changes detected in the registry:"
+            echo "=========================================="
+
+            # Prepare Slack message
+            SLACK_MESSAGE="🔄 *Chain changes in Superchain Registry!*\n\n"
+            TOTAL_CHANGES=0
+
+            # Process added chains
+            if [ -n "$ADDED_FILES" ]; then
+              echo ""
+              echo "➕ ADDED CHAINS:"
+              SLACK_MESSAGE="${SLACK_MESSAGE}*➕ Added Chains:*\n"
+
+              for file in $ADDED_FILES; do
+                CHAIN_NAME=$(basename "$file" .toml)
+                NETWORK=$(echo "$file" | sed -n 's|^superchain/configs/\([^/]*\)/.*$|\1|p')
+
+                echo "  ✅ Chain '$CHAIN_NAME' added to $NETWORK network"
+                SLACK_MESSAGE="${SLACK_MESSAGE}  ✅ \`${CHAIN_NAME}\` added to *${NETWORK}* network\n"
+                TOTAL_CHANGES=$((TOTAL_CHANGES + 1))
+              done
+              SLACK_MESSAGE="${SLACK_MESSAGE}\n"
+            fi
+
+            # Process deleted chains
+            if [ -n "$DELETED_FILES" ]; then
+              echo ""
+              echo "➖ REMOVED CHAINS:"
+              SLACK_MESSAGE="${SLACK_MESSAGE}*➖ Removed Chains:*\n"
+
+              for file in $DELETED_FILES; do
+                CHAIN_NAME=$(basename "$file" .toml)
+                NETWORK=$(echo "$file" | sed -n 's|^superchain/configs/\([^/]*\)/.*$|\1|p')
+
+                echo "  ❌ Chain '$CHAIN_NAME' removed from $NETWORK network"
+                SLACK_MESSAGE="${SLACK_MESSAGE}  ❌ \`${CHAIN_NAME}\` removed from *${NETWORK}* network\n"
+                TOTAL_CHANGES=$((TOTAL_CHANGES + 1))
+              done
+              SLACK_MESSAGE="${SLACK_MESSAGE}\n"
+            fi
+
+            # Process modified chains
+            if [ -n "$MODIFIED_FILES" ]; then
+              echo ""
+              echo "🔧 MODIFIED CHAINS:"
+              SLACK_MESSAGE="${SLACK_MESSAGE}*🔧 Modified Chains:*\n"
+
+              for file in $MODIFIED_FILES; do
+                CHAIN_NAME=$(basename "$file" .toml)
+                NETWORK=$(echo "$file" | sed -n 's|^superchain/configs/\([^/]*\)/.*$|\1|p')
+
+                echo "  🔧 Chain '$CHAIN_NAME' modified in $NETWORK network"
+                SLACK_MESSAGE="${SLACK_MESSAGE}  🔧 \`${CHAIN_NAME}\` modified in *${NETWORK}* network\n"
+                TOTAL_CHANGES=$((TOTAL_CHANGES + 1))
+              done
+              SLACK_MESSAGE="${SLACK_MESSAGE}\n"
+            fi
+
+            echo "=========================================="
+            echo "Total chain changes: $TOTAL_CHANGES"
+
+            # Finalize Slack message
+            SLACK_MESSAGE="${SLACK_MESSAGE}📊 *Total changes:* ${TOTAL_CHANGES}"
+            SLACK_MESSAGE="${SLACK_MESSAGE}\n🔗 *Commit:* <${CIRCLE_BUILD_URL}|View in CircleCI>"
+            SLACK_MESSAGE="${SLACK_MESSAGE}\n🔗 *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1:0:7}>"
+
+            # Export for Slack notification
+            echo "export SLACK_PARAM_MESSAGE='${SLACK_MESSAGE}'" >> $BASH_ENV
+            echo "export CHAIN_CHANGES_DETECTED=true" >> $BASH_ENV
+      - run:
+          name: Send Slack notification
+          command: |
+            if [ "$CHAIN_CHANGES_DETECTED" = "true" ]; then
+              # Convert \n to actual newlines for better formatting
+              FORMATTED_MESSAGE=$(echo -e "$SLACK_PARAM_MESSAGE")
+
+              # Send to Slack using webhook
+              curl -X POST -H 'Content-type: application/json' \
+                --data "{\"text\":\"$FORMATTED_MESSAGE\"}" \
+                "$<< parameters.slack_webhook_url >>"
+
+              echo "Slack notification sent successfully"
+            else
+              echo "No changes detected, skipping Slack notification"
+            fi
   build-deployer-binaries:
     circleci_ip_ranges: true
     docker:
@@ -272,3 +398,12 @@ workflows:
           name: run-staging-report
           requires:
             - build-deployer-binaries
+
+  notify-when-chain-is-added-to-registry:
+    jobs:
+      - notify-when-chain-is-added-to-registry:
+          context: circleci-repo-superchain-registry
+          filters:
+            branches:
+              only:
+                - main
