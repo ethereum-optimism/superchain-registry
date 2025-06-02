@@ -53,12 +53,12 @@ func QueryOpaqueMap[T any](om OpaqueState, paths ...string) (T, error) {
 
 	var zero T
 	if err != nil {
-		return zero, fmt.Errorf("failed to read path  %w", err)
+		return zero, fmt.Errorf("failed to successfully query any of the paths: %w", err)
 	}
 
 	result, ok := resultNode.InterfaceValue().(T)
 	if !ok {
-		return zero, fmt.Errorf("failed to parse string at path")
+		return zero, fmt.Errorf("failed to assert type of result %T as %T", resultNode.InterfaceValue(), zero)
 	}
 	return result, nil
 }

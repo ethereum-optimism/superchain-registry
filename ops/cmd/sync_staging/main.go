@@ -62,7 +62,7 @@ func action(cliCtx *cli.Context) error {
 	stagedSuperchainDefinition, err := manage.StagedSuperchainDefinition(wd)
 	if err != nil {
 		if errors.Is(err, manage.ErrNoStagedSuperchainDefinition) {
-			// allow this error: we don't do anything if superchain definition exists
+			// allow this error: we don't need to do anything if no superchain definition is staged
 		} else {
 			return fmt.Errorf("failed to get staged superchain definition: %w", err)
 		}
