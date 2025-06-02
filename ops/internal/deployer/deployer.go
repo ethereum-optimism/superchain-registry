@@ -66,7 +66,6 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease string, binDir string, opD
 
 // checkBinary checks if the op-deployer binary exists and is executable
 func (d *OpDeployer) checkBinary(binDir string, opDeployerVersion string) error {
-
 	if opDeployerVersion != "" {
 		d.DeployerVersion = opDeployerVersion
 	} else {
