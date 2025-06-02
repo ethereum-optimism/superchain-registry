@@ -66,7 +66,6 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 		return fmt.Errorf("failed to write chain config at index %d: %w", idx, err)
 	}
 
-	// TODO: determine if the genesis is deterministic through these conversions
 	output.WriteOK("writing genesis")
 	genesis, err := opaqueToGenesis(opaqueGenesis)
 	if err != nil {
