@@ -98,7 +98,11 @@ func Superchains(wd string) ([]string, error) {
 	var superchains []string
 	for _, entry := range dir {
 		if entry.IsDir() {
-			superchains = append(superchains, entry.Name())
+			superchainToml := path.Join(configsDir, entry.Name(), "superchain.toml")
+			// only add if we find a superchain.toml file in the dir
+			if _, err := os.Stat(superchainToml); err == nil {
+				superchains = append(superchains, entry.Name())
+			}
 		}
 	}
 	return superchains, nil
