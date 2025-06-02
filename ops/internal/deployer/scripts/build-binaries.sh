@@ -52,7 +52,7 @@ get_versions() {
 download_and_install() {
   local full_version=$1
   # Strip the op-deployer/ prefix for the cache directory
-  local stripped_version=${full_version#op-deployer/}
+  local stripped_version=$(echo "$full_version" | grep -o 'v[0-9][^"]*')
   local binary_path="$CACHE_DIR/op-deployer_$stripped_version"
 
   # Check if binary already exists
@@ -167,22 +167,10 @@ build_from_source() {
   local source_dir="$TEMP_DIR/source"
   mkdir -p "$source_dir"
 
-  # Check if directory is empty before cloning
-  if [ -z "$(ls -A "$source_dir")" ]; then
-    # Clone the repository at the specific tag
-    echo "Cloning repository at tag $full_version..."
-    if ! git clone https://github.com/ethereum-optimism/optimism.git "$source_dir"; then
-      echo "Failed to clone repository at tag $full_version"
-      return 1
-    fi
-  else
-    echo "Source directory already exists, skipping clone..."
-  fi
-
-  # Checkout the specific tag
-  cd "$source_dir"
-  if ! git checkout "$full_version"; then
-    echo "Failed to checkout tag $full_version"
+  # Clone the repository at the specific tag
+  echo "Cloning repository at tag $full_version..."
+  if ! git clone --depth 1 --branch "$full_version" https://github.com/ethereum-optimism/optimism.git "$source_dir"; then
+    echo "Failed to clone repository at tag $full_version"
     return 1
   fi
 
@@ -195,7 +183,7 @@ build_from_source() {
   mise install go
 
   # Navigate to the op-deployer directory
-  cd "op-deployer"
+  cd "$source_dir/op-deployer"
 
   # Build the binary
   echo "Building op-deployer..."
