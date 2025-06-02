@@ -15,6 +15,7 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/google/go-cmp/cmp"
+	"github.com/tomwright/dasel"
 )
 
 // GenerateChainArtifacts creates a chain config and genesis file for the chain at index idx in the given state file
@@ -93,7 +94,6 @@ var ErrNotLossless = errors.New("conversion is not lossless, consider updating o
 
 // Convert OpaqueMapping to core.Genesis
 func opaqueToGenesis(opaque *deployer.OpaqueMap) (*core.Genesis, error) {
-
 	// Step 1: Marshal the OpaqueMapping to JSON
 	jsonData, err := json.MarshalIndent(opaque, "", "  ")
 	if err != nil {
@@ -118,12 +118,17 @@ func opaqueToGenesis(opaque *deployer.OpaqueMap) (*core.Genesis, error) {
 		return nil, fmt.Errorf("failed to unmarshal JSON to OpaqueMap: %w", err)
 	}
 
+	// The terminalTotalDifficultyPassed field was removed from the core.Genesis type
+	// here https://github.com/ethereum/go-ethereum/pull/30609 (also in op-geth)
+	// so we expect op-geth to drop this field, if the input data is old enough to have it there.
+	err = dasel.New(opaque).Put("config.terminalTotalDifficultyPassed", nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to put terminalTotalDifficultyPassed to OpaqueMap: %w", err)
+	}
+
 	if !containsAll(*checkOpaque, *opaque) {
 		return nil, fmt.Errorf("conversion is not lossless, consider updating op-geth dependency. \n %s",
 			cmp.Diff(*checkOpaque, *opaque))
-		// Note that the terminalTotalDifficultyPassed field was removed from the core.Genesis type here https://github.com/ethereum/go-ethereum/pull/30609
-		// (also in op-geth)
-		// so we expect op-geth to drop this field, if the input data is old enough to have it there.
 	}
 
 	return &genesis, nil
