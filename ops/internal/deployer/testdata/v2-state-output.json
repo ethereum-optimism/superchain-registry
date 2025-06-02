@@ -38,7 +38,31 @@
       "faultDisputeGameAddress": "0x0000000000000000000000000000000000000000",
       "permissionedDisputeGameAddress": "0x85d78e9b0c7dfae439f56b0ebcea8dedf26dc2ef",
       "delayedWETHPermissionedGameProxyAddress": "0x5116f52185ae827880e6b508f6a4c86409f2a15b",
-      "delayedWETHPermissionlessGameProxyAddress": "0x0000000000000000000000000000000000000000"
+      "delayedWETHPermissionlessGameProxyAddress": "0x0000000000000000000000000000000000000000",
+      "startBlock": {
+        "parentHash": "0x011dd348d10523a85d6e6cef0eafdc397fd2168b63801592ede9da39b9683b45",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "miner": "0x1268ad189526ac0b386faf06effc46779c340ee6",
+        "stateRoot": "0x6600e8f098d446219208c5872735e4036e2a654647c5a324961fc8c5ee0c463a",
+        "transactionsRoot": "0x6fd9fdad0362ed129942e9222b22207f6f01109d0803ed272811209b19a63427",
+        "receiptsRoot": "0x3bed950aa3fe7ffc6aef7a29b3f23a4e91474b0a58b3a05a6bce875507f4833c",
+        "logsBloom": "0x2f37be4c4c54c69e72f8a7b2abd4e5d6759614629f59048e65efefd6cd076d8bf0cb799d325b32e521876bab70b6b4badb5b3ff0e6c3ba51d854ba6bceeca312a892ebedbdeec71a5933e18e0ae3fb3af7930a808c4f2d6c93d37e81698b120bebbee9476addbdc298eb1f19af240942e44df5e4d468be596758d278a5eecbc763ee05edb2b27c29f6f8f18525a59818136a26855843c4c91f752cc8dec66cdf6659a38ae3682a7f5fe3478af8b5de3d25eed30f8ec269d23ceddfcf6dcc45abd956122266040782418fc03d389e87233ed6368e94a4a819853fb5c6f012613790125d17d4e58003e57d99be797b210c280301addcba46190fe689aa3aebe7ea",
+        "difficulty": "0x0",
+        "number": "0x7f4176",
+        "gasLimit": "0x392a1ae",
+        "gasUsed": "0x25e1940",
+        "timestamp": "0x68275278",
+        "extraData": "0xd883010f05846765746888676f312e32342e31856c696e7578",
+        "mixHash": "0x5d1711a736d5290d37c58c132e49c1d64ea919a055773c2086d563cd6798f0da",
+        "nonce": "0x0000000000000000",
+        "baseFeePerGas": "0x12105df62",
+        "withdrawalsRoot": "0x08a0f846aef34bba1007ddb96c256382c84c6dda94e860c5e71cb84f154fedef",
+        "blobGasUsed": "0xc0000",
+        "excessBlobGas": "0x60000",
+        "parentBeaconBlockRoot": "0xcb0d8b53c5b53316100648080b78b9f35cd5855a65e236e43d173b2bfe451fff",
+        "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "hash": "0x689f13093fa3bbde79bc5bea7025638512d58c051f2507db764430d805473b43"
+      }
     }
   ]
 }

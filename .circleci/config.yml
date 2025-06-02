@@ -23,6 +23,10 @@ parameters:
   github_repo:
     type: string
     default: ethereum-optimism/superchain-registry
+  deployer_cache_dir:
+    type: string
+    default: /home/circleci/tmp/deployer-cache
+
 
 jobs:
   go-lint-test:
@@ -32,8 +36,12 @@ jobs:
         type: string
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
+    environment:
+      DEPLOYER_CACHE_DIR: << pipeline.parameters.deployer_cache_dir >>
     steps:
       - utils/checkout-with-mise
+      - attach_workspace:
+          at: /home/circleci
       - run:
           name: Tidy mod
           command: |
@@ -312,42 +320,83 @@ jobs:
             else
               echo "No changes detected, skipping Slack notification"
             fi
+  build-deployer-binaries:
+    circleci_ip_ranges: true
+    docker:
+      - image: <<pipeline.parameters.default_docker_image>>
+    environment:
+      DEPLOYER_CACHE_DIR: << pipeline.parameters.deployer_cache_dir >>
+    steps:
+      - utils/checkout-with-mise
+      - restore_cache:
+          key: op-deployer-binaries-{{ checksum "ops/internal/deployer/versions.json" }}-4
+      - run:
+          name: Build deployer binaries
+          command: |
+            cd ops/internal/deployer/scripts
+            chmod +x build-binaries.sh
+            ./build-binaries.sh
+      - save_cache:
+          key: op-deployer-binaries-{{ checksum "ops/internal/deployer/versions.json" }}-4
+          paths:
+            - << pipeline.parameters.deployer_cache_dir >>
+      - persist_to_workspace:
+          root: /home/circleci
+          paths:
+            - tmp/deployer-cache
 
 workflows:
   main:
     jobs:
+      - build-deployer-binaries:
+          name: build-deployer-binaries
       - go-lint-test:
           name: go-lint-test-ops
           package: ops
+          requires:
+            - build-deployer-binaries
       - go-lint-test:
           name: go-lint-test-validation
           package: validation
       - run-tool:
           name: check-genesis-integrity
           tool: check_genesis_integrity
+          requires:
+            - build-deployer-binaries
       - check-codegen:
           name: check-codegen
+          requires:
+            - build-deployer-binaries
       - run-tool:
           name: check-depsets
           tool: check_depsets
           requires:
             - check-codegen
+            - build-deployer-binaries
       - run-tool:
           name: check-staging-synced
           tool: sync_staging
           args: --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>"
           check_diff: true
+          requires:
+            - build-deployer-binaries
       - check-staging-empty:
           name: check-staging-empty
       - run-tool:
           name: check-apply-hardforks
           tool: apply_hardforks
           check_diff: true
+          requires:
+            - build-deployer-binaries
       - run-tool:
           name: check-chainlist
           tool: check_chainlist
+          requires:
+            - build-deployer-binaries
       - run-staging-report:
           name: run-staging-report
+          requires:
+            - build-deployer-binaries
 
   notify-when-chain-is-added-to-registry:
     jobs:
