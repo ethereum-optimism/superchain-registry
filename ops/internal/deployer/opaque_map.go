@@ -135,21 +135,21 @@ func (om OpaqueState) ReadL1StandardBridgeProxy(idx int) (common.Address, error)
 func (om OpaqueState) ReadProtocolVersionsProxy() (common.Address, error) {
 	return om.queryAddress(
 		"superchainDeployments.ProtocolVersionsProxyAddress",
-		"superchainContracts.ProtocolVersionsProxy",
+		"superchainDeployment.protocolVersionsProxyAddress",
 	)
 }
 
 func (om OpaqueState) ReadSuperchainConfigProxy() (common.Address, error) {
 	return om.queryAddress(
 		"superchainDeployments.SuperchainConfigProxyAddress",
-		"superchainContracts.SuperchainConfigProxy",
+		"superchainDeployment.superchainConfigProxyAddress",
 	)
 }
 
 func (om OpaqueState) ReadOpcmAddress() (common.Address, error) {
 	return om.queryAddress(
 		"implementationsDeployment.OpcmAddress",
-		"implementationsDeployment.OpcmImpl",
+		"implementationsDeployment.opcmAddress",
 	)
 }
 
