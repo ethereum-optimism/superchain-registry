@@ -70,7 +70,11 @@ func (om OpaqueState) queryString(paths ...string) (string, error) {
 
 // queryAddress retrieves an address from the given path, with an optional fallback path
 func (om OpaqueState) queryAddress(paths ...string) (common.Address, error) {
-	return QueryOpaqueMap[common.Address](om, paths...)
+	val, err := QueryOpaqueMap[string](om, paths...)
+	if err != nil {
+		return common.Address{}, err
+	}
+	return common.HexToAddress(val), nil
 }
 
 // queryInt retrieves a uint64 value from the given path
@@ -150,15 +154,7 @@ func (om OpaqueState) ReadOpcmAddress() (common.Address, error) {
 }
 
 func (om OpaqueState) GetNumChains() (int, error) {
-	val, err := dasel.New(om).Query("appliedIntent.chains")
-	if err != nil {
-		return 0, fmt.Errorf("failed to read number of chains: %w", err)
-	}
-	chains, ok := val.InterfaceValue().([]any)
-	if !ok {
-		return 0, fmt.Errorf("failed to parse chains")
-	}
-	return len(chains), nil
+	return QueryOpaqueMap[int](om, "appliedIntent.chains.[#]")
 }
 
 func (om OpaqueState) GetChainID(idx int) (uint64, error) {
