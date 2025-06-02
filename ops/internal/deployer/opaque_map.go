@@ -132,7 +132,7 @@ func (om OpaqueState) ReadL1StandardBridgeProxy(idx int) (common.Address, error)
 	)
 }
 
-func (om OpaqueState) ReadAddressManager(idx int) (common.Address, error) {
+func (om OpaqueState) ReadAddressManagerImpl(idx int) (common.Address, error) {
 	return om.queryAddress(
 		fmt.Sprintf("opChainDeployments.[%d].AddressManagerImpl", idx),
 		fmt.Sprintf("opChainDeployments.[%d].addressManagerAddress", idx),
@@ -153,14 +153,14 @@ func (om OpaqueState) ReadL1CrossDomainMessengerProxy(idx int) (common.Address, 
 	)
 }
 
-func (om OpaqueState) ReadOptimismMintableERC20FactoryProxy(idx int) (common.Address, error) {
+func (om OpaqueState) ReadOptimismMintableErc20FactoryProxy(idx int) (common.Address, error) {
 	return om.queryAddress(
 		fmt.Sprintf("opChainDeployments.[%d].OptimismMintableErc20FactoryProxy", idx),
 		fmt.Sprintf("opChainDeployments.[%d].optimismMintableERC20FactoryProxyAddress", idx),
 	)
 }
 
-func (om OpaqueState) ReadProxyAdmin(idx int) (common.Address, error) {
+func (om OpaqueState) ReadProxyAdminImpl(idx int) (common.Address, error) {
 	return om.queryAddress(
 		fmt.Sprintf("opChainDeployments.[%d].OpChainProxyAdminImpl", idx),
 		fmt.Sprintf("opChainDeployments.[%d].proxyAdminAddress", idx),
@@ -195,7 +195,7 @@ func (om OpaqueState) ReadDisputeGameFactoryProxy(idx int) (common.Address, erro
 	)
 }
 
-func (om OpaqueState) ReadPermissionedDisputeGame(idx int) (common.Address, error) {
+func (om OpaqueState) ReadPermissionedDisputeGameImpl(idx int) (common.Address, error) {
 	return om.queryAddress(
 		fmt.Sprintf("opChainDeployments.[%d].PermissionedDisputeGameImpl", idx),
 		fmt.Sprintf("opChainDeployments.[%d].permissionedDisputeGameAddress", idx),
@@ -216,7 +216,7 @@ func (om OpaqueState) ReadSuperchainConfigProxy() (common.Address, error) {
 	)
 }
 
-func (om OpaqueState) ReadOpcmAddress() (common.Address, error) {
+func (om OpaqueState) ReadOpcmImpl() (common.Address, error) {
 	return om.queryAddress(
 		"implementationsDeployment.OpcmImpl",
 		"implementationsDeployment.opcmAddress",
