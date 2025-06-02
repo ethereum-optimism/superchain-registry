@@ -27,6 +27,11 @@ var (
 		Required:  true,
 		TakesFile: true,
 	}
+	OpDeployerVersion = &cli.StringFlag{
+		Name:     "op-deployer-version",
+		Usage:    "Version of op-deployer used to deploy the chain(s). If not provided, the version will be inferred from the state file.",
+		Required: false,
+	}
 )
 
 func main() {
@@ -36,6 +41,7 @@ func main() {
 		Flags: []cli.Flag{
 			StatePath,
 			ManifestPath,
+			OpDeployerVersion,
 		},
 		Action: action,
 	}
@@ -79,13 +85,14 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	output.WriteOK("inflating chain configs")
+	opDeployerVersion := cliCtx.String(OpDeployerVersion.Name)
 	for i := 0; i < len(st.AppliedIntent.Chains); i++ {
 		if m.L2.Chains[i].ChainID != int64(st.AppliedIntent.Chains[i].ID.Big().Int64()) {
 			return fmt.Errorf("chain ID mismatch for chain at index %d : manifest %d, state %d",
 				i,
 				m.L2.Chains[i].ChainID, st.AppliedIntent.Chains[i].ID.Big().Int64())
 		}
-		err = manage.GenerateChainArtifacts(statePath, wd, m.L2.Chains[i].Name, &m.L2.Chains[i].Name, &m.Name, i)
+		err = manage.GenerateChainArtifacts(statePath, wd, m.L2.Chains[i].Name, &m.L2.Chains[i].Name, &m.Name, i, opDeployerVersion)
 		if err != nil {
 			return fmt.Errorf("failed to generate chain config: %w", err)
 		}

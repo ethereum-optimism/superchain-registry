@@ -49,7 +49,7 @@ func action(cliCtx *cli.Context) error {
 
 	statePath := cliCtx.String(StateFilename.Name)
 
-	err = manage.GenerateChainArtifacts(statePath, wd, cliCtx.String(Shortname.Name), nil, nil, 0)
+	err = manage.GenerateChainArtifacts(statePath, wd, cliCtx.String(Shortname.Name), nil, nil, 0, "")
 	if err != nil {
 		return fmt.Errorf("failed to generate chain config: %w", err)
 	}

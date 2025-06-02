@@ -18,7 +18,7 @@ import (
 // GenerateChainArtifacts creates a chain config and genesis file for the chain at index idx in the given state file
 // using the given shortName (and optionally, name and superchain identifier).
 // It writes these files to the staging directory.
-func GenerateChainArtifacts(statePath string, wd string, shortName string, name *string, superchain *string, idx int) error {
+func GenerateChainArtifacts(statePath string, wd string, shortName string, name *string, superchain *string, idx int, opDeployerVersion string) error {
 	st, err := deployer.ReadOpaqueStateFile(statePath)
 	if err != nil {
 		return fmt.Errorf("failed to read opaque state file: %w", err)
@@ -29,7 +29,7 @@ func GenerateChainArtifacts(statePath string, wd string, shortName string, name 
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, deployer.CacheDir)
+	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, deployer.CacheDir, opDeployerVersion)
 	if err != nil {
 		return fmt.Errorf("failed to create op-deployer: %w", err)
 	}

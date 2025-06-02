@@ -46,7 +46,7 @@ type OpDeployer struct {
 }
 
 // NewOpDeployer creates a new OpDeployer instance.
-func NewOpDeployer(lgr log.Logger, l1ContractsRelease string, binDir string) (*OpDeployer, error) {
+func NewOpDeployer(lgr log.Logger, l1ContractsRelease string, binDir string, opDeployerVersion string) (*OpDeployer, error) {
 	if l1ContractsRelease == "" {
 		return nil, fmt.Errorf("l1ContractsRelease cannot be empty")
 	}
@@ -56,7 +56,7 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease string, binDir string) (*O
 		l1ContractsRelease: l1ContractsRelease,
 	}
 
-	err := opd.checkBinary(binDir)
+	err := opd.checkBinary(binDir, opDeployerVersion)
 	if err != nil {
 		return nil, fmt.Errorf("failed binary check: %w", err)
 	}
@@ -65,23 +65,28 @@ func NewOpDeployer(lgr log.Logger, l1ContractsRelease string, binDir string) (*O
 }
 
 // checkBinary checks if the op-deployer binary exists and is executable
-func (d *OpDeployer) checkBinary(binDir string) error {
-	// Normalize the contracts string before lookup in versions map
-	// 1. Remove tag:// prefix if present
-	// 2. Remove any -rc.X suffix for version matching
-	contractsKey := strings.TrimPrefix(d.l1ContractsRelease, "tag://")
-	rcSuffixRegex := regexp.MustCompile(`-rc\.[0-9]+$`)
-	contractsKey = rcSuffixRegex.ReplaceAllString(contractsKey, "")
+func (d *OpDeployer) checkBinary(binDir string, opDeployerVersion string) error {
 
-	// Look up deployer version in the embedded map
-	deployerVersion, ok := contractVersions[contractsKey]
-	if !ok {
-		return fmt.Errorf("no deployer version found for contracts: %s", contractsKey)
+	if opDeployerVersion != "" {
+		d.DeployerVersion = opDeployerVersion
+	} else {
+		// Normalize the contracts string before lookup in versions map
+		// 1. Remove tag:// prefix if present
+		// 2. Remove any -rc.X suffix for version matching
+		contractsKey := strings.TrimPrefix(d.l1ContractsRelease, "tag://")
+		rcSuffixRegex := regexp.MustCompile(`-rc\.[0-9]+$`)
+		contractsKey = rcSuffixRegex.ReplaceAllString(contractsKey, "")
+
+		// Look up deployer version in the embedded map
+		deployerVersion, ok := contractVersions[contractsKey]
+		if !ok {
+			return fmt.Errorf("no deployer version found for contracts: %s", contractsKey)
+		}
+		d.lgr.Info("Found deployer version", "version", deployerVersion)
+		d.DeployerVersion = deployerVersion
 	}
-	d.lgr.Info("Found deployer version", "version", deployerVersion)
-	d.DeployerVersion = deployerVersion
 
-	binaryPath := filepath.Join(binDir, fmt.Sprintf("op-deployer_%s", strings.TrimPrefix(deployerVersion, "op-deployer/")))
+	binaryPath := filepath.Join(binDir, fmt.Sprintf("op-deployer_%s", strings.TrimPrefix(d.DeployerVersion, "op-deployer/")))
 
 	// Check if the binary exists and is executable
 	if info, err := os.Stat(binaryPath); err == nil && info.Mode()&0o111 != 0 {
@@ -89,7 +94,7 @@ func (d *OpDeployer) checkBinary(binDir string) error {
 		d.binaryPath = binaryPath
 	} else {
 		// Binary doesn't exist or isn't executable
-		d.lgr.Error("Required op-deployer binary not found", "version", deployerVersion, "expected_path", binaryPath)
+		d.lgr.Error("Required op-deployer binary not found", "version", d.DeployerVersion, "expected_path", binaryPath)
 		return fmt.Errorf("op-deployer binary not found at %s", binaryPath)
 	}
 
