@@ -71,16 +71,6 @@ type L2Report struct {
 	GenesisDiffs []string
 }
 
-type StorageDiff struct {
-	Key common.Hash
-
-	Added   bool
-	Removed bool
-
-	OldValue common.Hash
-	NewValue common.Hash
-}
-
 type Report struct {
 	L1          *L1Report
 	L1Err       error
