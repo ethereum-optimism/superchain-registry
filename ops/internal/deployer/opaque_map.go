@@ -43,7 +43,7 @@ func useInts(m map[string]any) {
 func QueryOpaqueMap[T any](om OpaqueState, paths ...string) (T, error) {
 	node := dasel.New(om)
 	resultNode := new(dasel.Node)
-	err := fmt.Errorf("not found")
+	var err error
 	for _, path := range paths {
 		resultNode, err = node.Query(path)
 		if err == nil {

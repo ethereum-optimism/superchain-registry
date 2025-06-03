@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
@@ -31,6 +32,13 @@ var (
 		Usage:    "Version of op-deployer used to deploy the chain(s). If not provided, the version will be inferred from the state file.",
 		Required: false,
 	}
+	OpDeployerBinDir = &cli.StringFlag{
+		Name:     "op-deployer-bin-dir",
+		Usage:    "Path to the directory containing op-deployer binaries.",
+		Required: true,
+		EnvVars:  []string{"DEPLOYER_CACHE_DIR"},
+		Value:    defaultBinDir(),
+	}
 )
 
 func main() {
@@ -41,6 +49,7 @@ func main() {
 			StatePath,
 			ManifestPath,
 			OpDeployerVersion,
+			OpDeployerBinDir,
 		},
 		Action: action,
 	}
@@ -88,18 +97,28 @@ func action(cliCtx *cli.Context) error {
 
 	output.WriteOK("inflating chain configs")
 	opDeployerVersion := cliCtx.String(OpDeployerVersion.Name)
+	opDeployerBinDir := cliCtx.String(OpDeployerBinDir.Name)
 	for i := 0; i < numChains; i++ {
 		chainID, err := st.GetChainID(i)
 		if err != nil {
 			return fmt.Errorf("failed to read chain id: %w", err)
 		}
-		if m.L2.Chains[i].ChainID != int64(chainID) {
+		chain := m.L2.Chains[i]
+		if chain.ChainID != int64(chainID) {
 			return fmt.Errorf("chain ID mismatch for chain at index %d : manifest %d, state %d",
 				i,
-				m.L2.Chains[i].ChainID, chainID)
+				chain.ChainID, chainID)
 		}
-		err = manage.GenerateChainArtifacts(statePath, wd, m.L2.Chains[i].Name, &m.L2.Chains[i].Name, &m.Name, i, opDeployerVersion)
-		if err != nil {
+		if err := manage.GenerateChainArtifacts(
+			statePath,
+			wd,
+			chain.Name,
+			&chain.Name,
+			&m.Name,
+			i,
+			opDeployerVersion,
+			opDeployerBinDir,
+		); err != nil {
 			return fmt.Errorf("failed to generate chain config: %w", err)
 		}
 	}
@@ -120,4 +139,13 @@ func action(cliCtx *cli.Context) error {
 
 	output.WriteOK("done")
 	return nil
+}
+
+func defaultBinDir() string {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(fmt.Sprintf("failed to get home directory: %v", err))
+	}
+
+	return filepath.Join(homeDir, ".cache", "op-deployer")
 }

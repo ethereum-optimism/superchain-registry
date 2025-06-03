@@ -21,22 +21,51 @@ import (
 // GenerateChainArtifacts creates a chain config and genesis file for the chain at index idx in the given state file
 // using the given shortName (and optionally, name and superchain identifier).
 // It writes these files to the staging directory.
-func GenerateChainArtifacts(statePath string, wd string, shortName string, name *string, superchain *string, idx int, opDeployerVersion string) error {
+func GenerateChainArtifacts(
+	statePath string,
+	wd string,
+	shortName string,
+	name *string,
+	superchain *string,
+	idx int,
+	opDeployerVersion string,
+	opDeployerBinDir string,
+) error {
 	st, err := deployer.ReadOpaqueStateFile(statePath)
 	if err != nil {
 		return fmt.Errorf("failed to read opaque state file: %w", err)
 	}
-	l1contractsrelease, err := st.ReadL1ContractsLocator()
-	if err != nil {
-		return fmt.Errorf("failed to read L1 contracts release: %w", err)
+
+	var picker deployer.BinaryPicker
+	if opDeployerVersion == "" {
+		// If no op-deployer version is specified, use the version specified in the state file.
+		// The library will autodetect the correct binary.
+		l1ContractsRelease, err := st.ReadL1ContractsLocator()
+		if err != nil {
+			return fmt.Errorf("failed to read L1 contracts release: %w", err)
+		}
+
+		picker, err = deployer.WithReleaseBinary(opDeployerBinDir, l1ContractsRelease)
+		if err != nil {
+			return fmt.Errorf("failed to autodetect binary: %w", err)
+		}
+	} else {
+		// Otherwise, use the specified op-deployer version. The correct state merger to use will be
+		// autodetected based on the provided op-deployer version.
+		merger, err := deployer.GetStateMerger(opDeployerVersion)
+		if err != nil {
+			return fmt.Errorf("failed to get state merger: %w", err)
+		}
+
+		binPath := deployer.VersionedBinaryPath(opDeployerBinDir, opDeployerVersion)
+		picker = deployer.WithFixedBinary(binPath, merger)
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, deployer.CacheDir, opDeployerVersion)
+	opd, err := deployer.NewOpDeployer(lgr, picker)
 	if err != nil {
 		return fmt.Errorf("failed to create op-deployer: %w", err)
 	}
-	output.WriteOK("created op-deployer instance: %s", opd.DeployerVersion)
 
 	output.WriteOK("inflating chain config at index %d", idx)
 	cfg, err := InflateChainConfig(opd, st, statePath, idx)

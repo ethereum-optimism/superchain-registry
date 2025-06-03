@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
@@ -22,6 +23,13 @@ var (
 		Usage:    "Shortname of the chain.",
 		Required: true,
 		Value:    "newchain",
+	}
+	OpDeployerBinDir = &cli.StringFlag{
+		Name:     "op-deployer-bin-dir",
+		Usage:    "Path to the directory containing op-deployer binaries.",
+		Required: true,
+		EnvVars:  []string{"DEPLOYER_CACHE_DIR"},
+		Value:    defaultBinDir(),
 	}
 )
 
@@ -48,12 +56,22 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	statePath := cliCtx.String(StateFilename.Name)
+	opDeployerBinDir := cliCtx.String(OpDeployerBinDir.Name)
 
-	err = manage.GenerateChainArtifacts(statePath, wd, cliCtx.String(Shortname.Name), nil, nil, 0, "")
+	err = manage.GenerateChainArtifacts(statePath, wd, cliCtx.String(Shortname.Name), nil, nil, 0, "", opDeployerBinDir)
 	if err != nil {
 		return fmt.Errorf("failed to generate chain config: %w", err)
 	}
 
 	output.WriteOK("done")
 	return nil
+}
+
+func defaultBinDir() string {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(fmt.Sprintf("failed to get home directory: %v", err))
+	}
+
+	return filepath.Join(homeDir, ".cache", "op-deployer")
 }

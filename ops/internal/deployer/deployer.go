@@ -23,88 +23,85 @@ var versionsJSON []byte
 // contractVersions maps contract versions to deployer versions
 var contractVersions map[string]string
 
-// cacheDirEnvVar is the environment variable that contains the path to the op-deployer cache directory
-var (
-	cacheDirEnvVar = "DEPLOYER_CACHE_DIR"
-	CacheDir       string
-)
+type BinaryPicker interface {
+	Path() string
+	Merger() StateMerger
+}
+
+type FixedBinaryPicker struct {
+	binaryPath string
+	merger     StateMerger
+}
+
+func (f *FixedBinaryPicker) Path() string {
+	return f.binaryPath
+}
+
+func (f *FixedBinaryPicker) Merger() StateMerger {
+	return f.merger
+}
+
+func WithFixedBinary(binaryPath string, merger StateMerger) *FixedBinaryPicker {
+	return &FixedBinaryPicker{
+		binaryPath: binaryPath,
+		merger:     merger,
+	}
+}
+
+func WithReleaseBinary(binDir string, l1ContractsRelease string) (*FixedBinaryPicker, error) {
+	// Normalize the contracts string before lookup in versions map
+	// 1. Remove tag:// prefix if present
+	// 2. Remove any -rc.X suffix for version matching
+	contractsKey := strings.TrimPrefix(l1ContractsRelease, "tag://")
+	rcSuffixRegex := regexp.MustCompile(`-rc\.[0-9]+$`)
+	contractsKey = rcSuffixRegex.ReplaceAllString(contractsKey, "")
+
+	// Look up deployer version in the embedded map
+	deployerVersion, ok := contractVersions[contractsKey]
+	if !ok {
+		return nil, fmt.Errorf("no deployer version found for contracts: %s", contractsKey)
+	}
+
+	binaryPath := VersionedBinaryPath(binDir, deployerVersion)
+
+	merger, err := GetStateMerger(deployerVersion)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get state merger: %w", err)
+	}
+
+	return WithFixedBinary(binaryPath, merger), nil
+}
+
+func VersionedBinaryPath(binDir string, deployerVersion string) string {
+	return filepath.Join(binDir, fmt.Sprintf("op-deployer_%s", strings.TrimPrefix(deployerVersion, "op-deployer/")))
+}
 
 func init() {
 	if err := json.Unmarshal(versionsJSON, &contractVersions); err != nil {
 		panic(fmt.Sprintf("failed to parse versions.json: %v", err))
-	}
-	CacheDir = os.Getenv(cacheDirEnvVar)
-	if CacheDir == "" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			panic(fmt.Sprintf("failed to get user home directory: %v", err))
-		}
-		CacheDir = filepath.Join(homeDir, ".cache/op-deployer")
 	}
 }
 
 // OpDeployer manages the process of building a specific binary of op-deployer,
 // then shelling out to that binary for various cli commands
 type OpDeployer struct {
-	DeployerVersion    string
-	binaryPath         string
-	lgr                log.Logger
-	l1ContractsRelease string
+	binaryPath string
+	merger     StateMerger
+	lgr        log.Logger
 }
 
 // NewOpDeployer creates a new OpDeployer instance.
-func NewOpDeployer(lgr log.Logger, l1ContractsRelease string, binDir string, opDeployerVersion string) (*OpDeployer, error) {
-	if l1ContractsRelease == "" {
-		return nil, fmt.Errorf("l1ContractsRelease cannot be empty")
+func NewOpDeployer(lgr log.Logger, binaryPicker BinaryPicker) (*OpDeployer, error) {
+	binaryPath := binaryPicker.Path()
+	if info, err := os.Stat(binaryPath); err != nil || info.Mode()&0o111 == 0 {
+		return nil, fmt.Errorf("op-deployer binary not found or not executable at %s", binaryPath)
 	}
 
-	opd := OpDeployer{
-		lgr:                lgr,
-		l1ContractsRelease: l1ContractsRelease,
-	}
-
-	err := opd.checkBinary(binDir, opDeployerVersion)
-	if err != nil {
-		return nil, fmt.Errorf("failed binary check: %w", err)
-	}
-
-	return &opd, nil
-}
-
-// checkBinary checks if the op-deployer binary exists and is executable
-func (d *OpDeployer) checkBinary(binDir string, opDeployerVersion string) error {
-	if opDeployerVersion != "" {
-		d.DeployerVersion = opDeployerVersion
-	} else {
-		// Normalize the contracts string before lookup in versions map
-		// 1. Remove tag:// prefix if present
-		// 2. Remove any -rc.X suffix for version matching
-		contractsKey := strings.TrimPrefix(d.l1ContractsRelease, "tag://")
-		rcSuffixRegex := regexp.MustCompile(`-rc\.[0-9]+$`)
-		contractsKey = rcSuffixRegex.ReplaceAllString(contractsKey, "")
-
-		// Look up deployer version in the embedded map
-		deployerVersion, ok := contractVersions[contractsKey]
-		if !ok {
-			return fmt.Errorf("no deployer version found for contracts: %s", contractsKey)
-		}
-		d.lgr.Info("Found deployer version", "version", deployerVersion)
-		d.DeployerVersion = deployerVersion
-	}
-
-	binaryPath := filepath.Join(binDir, fmt.Sprintf("op-deployer_%s", strings.TrimPrefix(d.DeployerVersion, "op-deployer/")))
-
-	// Check if the binary exists and is executable
-	if info, err := os.Stat(binaryPath); err == nil && info.Mode()&0o111 != 0 {
-		d.lgr.Info("Found op-deployer binary", "path", binaryPath)
-		d.binaryPath = binaryPath
-	} else {
-		// Binary doesn't exist or isn't executable
-		d.lgr.Error("Required op-deployer binary not found", "version", d.DeployerVersion, "expected_path", binaryPath)
-		return fmt.Errorf("op-deployer binary not found at %s", binaryPath)
-	}
-
-	return nil
+	return &OpDeployer{
+		binaryPath: binaryPath,
+		merger:     binaryPicker.Merger(),
+		lgr:        lgr,
+	}, nil
 }
 
 // setupStateAndIntent prepares the deployer environment by creating merged state and intent files
@@ -116,12 +113,7 @@ func (d *OpDeployer) setupStateAndIntent(inputStatePath, workdir string) error {
 		return fmt.Errorf("failed to read state file: %w", err)
 	}
 
-	// Get state merge function based on deployer version
-	mergeFunc, err := getMergeStateFunc(d.DeployerVersion)
-	if err != nil {
-		return fmt.Errorf("failed to determine merge function: %w", err)
-	}
-	mergedIntent, mergedState, err := mergeFunc(state)
+	mergedIntent, mergedState, err := d.merger(state)
 	if err != nil {
 		return fmt.Errorf("failed to merge state: %w", err)
 	}
