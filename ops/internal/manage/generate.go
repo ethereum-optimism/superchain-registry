@@ -38,8 +38,8 @@ func GenerateChainArtifacts(
 
 	var picker deployer.BinaryPicker
 	if opDeployerVersion == "" {
-		// If no op-deployer version is specified, use the version specified in the state file.
-		// The library will autodetect the correct binary.
+		// If no op-deployer version is specified, an appropriate version will be
+		// inferred from the state file.
 		l1ContractsRelease, err := st.ReadL1ContractsLocator()
 		if err != nil {
 			return fmt.Errorf("failed to read L1 contracts release: %w", err)
