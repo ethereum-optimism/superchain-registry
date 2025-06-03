@@ -241,3 +241,17 @@ func (om OpaqueState) GetChainID(idx int) (uint64, error) {
 	h := common.HexToHash(val)
 	return h.Big().Uint64(), nil
 }
+
+func (s OpaqueState) ReadInteropDepSet() (map[string]interface{}, error) {
+	interopDepSet, ok := s["interopDepSet"]
+	if !ok || interopDepSet == nil {
+		return nil, nil
+	}
+
+	depSet, ok := interopDepSet.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("interopDepSet is not a map[string]interface{}")
+	}
+
+	return depSet, nil
+}
