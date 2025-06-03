@@ -132,7 +132,7 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 	// Check for depsets in the state.json
 	interop, err := ExtractInteropDepSet(st)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to extract interop dep set from state: %w", err)
 	}
 
 	cfg.Interop = interop
@@ -366,14 +366,23 @@ func ExtractInteropDepSet(st deployer.OpaqueState) (*config.Interop, error) {
 		return nil, nil
 	}
 
+	// Check if dependencies exists and is a map
+	deps, ok := interopDepSet["dependencies"].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("dependencies field is not a map or is missing")
+	}
+
+	// Return nil if dependencies map is empty
+	if len(deps) == 0 {
+		return nil, nil
+	}
+
 	interop := &config.Interop{
 		Dependencies: make(map[string]config.StaticConfigDependency),
 	}
 
-	if deps, ok := interopDepSet["dependencies"].(map[string]interface{}); ok {
-		for key := range deps {
-			interop.Dependencies[key] = config.StaticConfigDependency{}
-		}
+	for key := range deps {
+		interop.Dependencies[key] = config.StaticConfigDependency{}
 	}
 
 	return interop, nil

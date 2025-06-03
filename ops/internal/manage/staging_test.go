@@ -74,9 +74,7 @@ func TestExtractInteropDepSet(t *testing.T) {
 					"dependencies": {}
 				}
 			}`,
-			expected: &config.Interop{
-				Dependencies: map[string]config.StaticConfigDependency{},
-			},
+			expected:    nil,
 			expectError: false,
 		},
 		{
@@ -86,10 +84,8 @@ func TestExtractInteropDepSet(t *testing.T) {
 					"dependencies": "not a map"
 				}
 			}`,
-			expected: &config.Interop{
-				Dependencies: map[string]config.StaticConfigDependency{},
-			},
-			expectError: false,
+			expected:    nil,
+			expectError: true,
 		},
 		{
 			name: "interopDepSet not a map",
