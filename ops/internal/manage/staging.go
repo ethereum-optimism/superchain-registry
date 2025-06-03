@@ -128,6 +128,15 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 	}
 
 	cfg.Addresses = addresses
+
+	// Check for depsets in the state.json
+	interop, err := ExtractInteropDepSet(st)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract interop dep set from state: %w", err)
+	}
+
+	cfg.Interop = interop
+
 	return cfg, nil
 }
 
@@ -344,4 +353,37 @@ func GetContractAddressesFromState(st deployer.OpaqueState, idx int) (config.Add
 	addresses.PermissionedDisputeGame = config.NewChecksummedAddress(permissionedDisputeGame)
 
 	return addresses, nil
+}
+
+// ExtractInteropDepSet reads the interop dependency set from state and converts it to config.Interop
+func ExtractInteropDepSet(st deployer.OpaqueState) (*config.Interop, error) {
+	interopDepSet, err := st.ReadInteropDepSet()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read interop dep set: %w", err)
+	}
+
+	if interopDepSet == nil {
+		return nil, nil
+	}
+
+	// Check if dependencies exists and is a map
+	deps, ok := interopDepSet["dependencies"].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("dependencies field is not a map or is missing")
+	}
+
+	// Return nil if dependencies map is empty
+	if len(deps) == 0 {
+		return nil, nil
+	}
+
+	interop := &config.Interop{
+		Dependencies: make(map[string]config.StaticConfigDependency),
+	}
+
+	for key := range deps {
+		interop.Dependencies[key] = config.StaticConfigDependency{}
+	}
+
+	return interop, nil
 }
