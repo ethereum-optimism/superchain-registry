@@ -27,7 +27,7 @@ func ScanL2(
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, deployerCacheDir)
+	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, deployerCacheDir, "")
 	if err != nil {
 		return nil, fmt.Errorf("failed to create op-deployer: %w", err)
 	}

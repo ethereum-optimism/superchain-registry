@@ -1,38 +1,49 @@
 {
-  "nonce": 0,
-  "timestamp": 1722432480,
-  "extraData": "QkVEUk9DSw==",
-  "gasLimit": 30000000,
-  "difficulty": "0x2",
+  "config": {
+    "chainId": 1952805748,
+    "homesteadBlock": 0,
+    "eip150Block": 0,
+    "eip155Block": 0,
+    "eip158Block": 0,
+    "byzantiumBlock": 0,
+    "constantinopleBlock": 0,
+    "petersburgBlock": 0,
+    "istanbulBlock": 0,
+    "muirGlacierBlock": 0,
+    "berlinBlock": 0,
+    "londonBlock": 0,
+    "arrowGlacierBlock": 0,
+    "grayGlacierBlock": 0,
+    "mergeNetsplitBlock": 0,
+    "shanghaiTime": 0,
+    "cancunTime": 0,
+    "bedrockBlock": 0,
+    "regolithTime": 0,
+    "canyonTime": 0,
+    "ecotoneTime": 0,
+    "fjordTime": 0,
+    "graniteTime": 0,
+    "terminalTotalDifficulty": 0,
+    "terminalTotalDifficultyPassed": true,
+    "depositContractAddress": "0x0000000000000000000000000000000000000000",
+    "optimism": {
+      "eip1559Elasticity": 6,
+      "eip1559Denominator": 50,
+      "eip1559DenominatorCanyon": 250
+    }
+  },
+  "nonce": "0x0",
+  "timestamp": "0x676a1f60",
+  "extraData": "0x",
+  "gasLimit": "0x3938700",
+  "difficulty": "0x0",
   "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
   "coinbase": "0x4200000000000000000000000000000000000011",
-  "number": 2,
-  "gasUsed": 3,
-  "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000001",
-  "baseFeePerGas": "0x4",
-  "excessBlobGas": 5,
-  "blobGasUsed": 6,
-  "alloc": {
-    "0x0100000000000000000000000000000000000000": {
-      "codeHash": "0x6cb950f950e01fa9e5a5e36521d85d52ae0a6b1cece0c153f0346cfbedb68c54",
-      "storage": {
-        "0x0000000000000000000000000000000000000000000000000000000000000001": "0x0000000000000000000000000000000000000000000000000000000000000002"
-      }
-    },
-    "0x0200000000000000000000000000000000000000": {
-      "codeHash": "0xeb0aecc157d217cecbb14961f9af812579b4214d4c5a7687492d5945f5b5ddc4"
-    },
-    "0x0300000000000000000000000000000000000000": {
-      "codeHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-      "storage": {
-        "0x0000000000000000000000000000000000000000000000000000000000000003": "0x0000000000000000000000000000000000000000000000000000000000000004"
-      },
-      "balance": "0x5",
-      "nonce": 2
-    },
-    "0x0400000000000000000000000000000000000000": {
-      "codeHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-      "nonce": 2
-    }
-  }
+  "alloc": {},
+  "number": "0x0",
+  "gasUsed": "0x0",
+  "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "baseFeePerGas": "0x3b9aca00",
+  "excessBlobGas": "0x0",
+  "blobGasUsed": "0x0"
 }

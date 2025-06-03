@@ -63,7 +63,7 @@ func TestNewOpDeployer(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			deployer, err := NewOpDeployer(lgr, tt.l1ContractsRelease, tmpDir)
+			deployer, err := NewOpDeployer(lgr, tt.l1ContractsRelease, tmpDir, "")
 
 			if tt.shouldError {
 				require.Error(t, err)
@@ -97,7 +97,7 @@ func TestBinaryInvocation(t *testing.T) {
 		t.Skip(cacheDirEnvVar + " is not set")
 	}
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	deployer, err := NewOpDeployer(lgr, "tag://op-contracts/v1.6.0", CacheDir)
+	deployer, err := NewOpDeployer(lgr, "tag://op-contracts/v1.6.0", CacheDir, "")
 	require.NoError(t, err)
 
 	output, err := deployer.runCommand("--help")
