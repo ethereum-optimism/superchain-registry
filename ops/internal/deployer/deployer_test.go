@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -11,33 +13,39 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewOpDeployer(t *testing.T) {
-	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-
+func TestAutodetectBinary(t *testing.T) {
 	tests := []struct {
 		name               string
 		l1ContractsRelease string
+		merger             StateMerger
+		binPath            string
 		shouldError        bool
 	}{
 		{
 			name:               "op-contracts/v1.6.0",
 			l1ContractsRelease: "tag://op-contracts/v1.6.0",
+			merger:             MergeStateV1,
+			binPath:            "op-deployer_v0.0.14",
 			shouldError:        false,
 		},
 		{
 			name:               "op-contracts/v2.0.0",
 			l1ContractsRelease: "tag://op-contracts/v2.0.0",
+			merger:             MergeStateV2,
+			binPath:            "op-deployer_v0.2.3",
 			shouldError:        false,
 		},
 		{
 			name:               "op-contracts/v3.0.0",
 			l1ContractsRelease: "tag://op-contracts/v3.0.0",
+			merger:             MergeStateV3,
+			binPath:            "op-deployer_v0.3.2",
 			shouldError:        false,
 		},
 		{
 			name:               "op-contracts/v4.0.0",
 			l1ContractsRelease: "tag://op-contracts/v4.0.0",
-			shouldError:        false,
+			shouldError:        true,
 		},
 		{
 			name:               "non-existent version",
@@ -63,16 +71,18 @@ func TestNewOpDeployer(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			deployer, err := NewOpDeployer(lgr, tt.l1ContractsRelease, tmpDir, "")
+
+			picker, err := WithReleaseBinary(tmpDir, tt.l1ContractsRelease)
 
 			if tt.shouldError {
 				require.Error(t, err)
-				require.Nil(t, deployer)
+				require.Nil(t, picker)
 			} else {
 				require.NoError(t, err)
-				require.NotNil(t, deployer)
-				require.Equal(t, tt.l1ContractsRelease, deployer.l1ContractsRelease)
-				require.NotEmpty(t, deployer.DeployerVersion)
+				require.NotNil(t, picker)
+
+				require.Equal(t, reflect.ValueOf(tt.merger).Pointer(), reflect.ValueOf(picker.Merger()).Pointer())
+				require.Equal(t, tt.binPath, filepath.Base(picker.Path()))
 			}
 		})
 	}
@@ -93,11 +103,14 @@ func TestVersionsMapInitialization(t *testing.T) {
 }
 
 func TestBinaryInvocation(t *testing.T) {
-	if CacheDir == "" {
-		t.Skip(cacheDirEnvVar + " is not set")
-	}
+	cacheDir := os.Getenv("DEPLOYER_CACHE_DIR")
+	require.NotEmpty(t, cacheDir)
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	deployer, err := NewOpDeployer(lgr, "tag://op-contracts/v1.6.0", CacheDir, "")
+
+	picker, err := WithReleaseBinary(cacheDir, "tag://op-contracts/v1.6.0")
+	require.NoError(t, err)
+
+	deployer, err := NewOpDeployer(lgr, picker)
 	require.NoError(t, err)
 
 	output, err := deployer.runCommand("--help")

@@ -21,13 +21,18 @@ func ScanL2(
 	if err != nil {
 		return nil, fmt.Errorf("failed to read opaque state file: %w", err)
 	}
-	l1contractsrelease, err := st.ReadL1ContractsLocator()
+	l1ContractsRelease, err := st.ReadL1ContractsLocator()
 	if err != nil {
 		return nil, fmt.Errorf("failed to read L1 contracts release: %w", err)
 	}
 
+	picker, err := deployer.WithReleaseBinary(deployerCacheDir, l1ContractsRelease)
+	if err != nil {
+		return nil, fmt.Errorf("failed to autodetect binary: %w", err)
+	}
+
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	opd, err := deployer.NewOpDeployer(lgr, l1contractsrelease, deployerCacheDir, "")
+	opd, err := deployer.NewOpDeployer(lgr, picker)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create op-deployer: %w", err)
 	}
