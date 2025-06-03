@@ -40,6 +40,7 @@ func main() {
 		Flags: []cli.Flag{
 			StateFilename,
 			Shortname,
+			OpDeployerBinDir,
 		},
 		Action: action,
 	}
