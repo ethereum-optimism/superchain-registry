@@ -10,7 +10,6 @@ import (
 	"path"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/optimism/op-service/testlog"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/testutil/mockrpc"
 	"github.com/ethereum/go-ethereum/common"
@@ -86,7 +85,7 @@ func TestScanL1(t *testing.T) {
 			ctx,
 			client,
 			deploymentTx,
-			&artifacts.Locator{Tag: release},
+			release,
 		)
 		require.ErrorContains(t, err, expErr)
 		mock.AssertExpectations(t)

@@ -6,7 +6,6 @@ import (
 	"math"
 	"math/big"
 
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/standard"
 	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/ethereum/go-ethereum/common"
@@ -93,7 +92,7 @@ func ScanL1(
 	ctx context.Context,
 	rpcClient *rpc.Client,
 	deploymentTx common.Hash,
-	release *artifacts.Locator,
+	release string,
 ) (*L1Report, error) {
 	client := ethclient.NewClient(rpcClient)
 
@@ -102,7 +101,7 @@ func ScanL1(
 		return nil, fmt.Errorf("failed to get chain ID: %w", err)
 	}
 
-	opcmAddr, err := standard.ManagerImplementationAddrFor(chainID.Uint64(), release.Tag)
+	opcmAddr, err := standard.ManagerImplementationAddrFor(chainID.Uint64(), release)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get OPCM address: %w", err)
 	}
@@ -152,13 +151,13 @@ func ScanL1(
 		return nil, fmt.Errorf("failed to validate permissioned dispute game: %w", err)
 	}
 
-	systemConfigReport, err := ScanSystemConfig(ctx, rpcClient, release.Tag, deployedEvent.DeployOutput.SystemConfigProxy)
+	systemConfigReport, err := ScanSystemConfig(ctx, rpcClient, release, deployedEvent.DeployOutput.SystemConfigProxy)
 	if err != nil {
 		return nil, fmt.Errorf("failed to validate system config: %w", err)
 	}
 
 	return &L1Report{
-		Release:           release.Tag,
+		Release:           release,
 		DeploymentTxHash:  deploymentTx,
 		DeploymentChainID: chainID.Uint64(),
 		Semvers:           semversReport,
