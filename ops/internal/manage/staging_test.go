@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
@@ -29,21 +30,21 @@ func TestCopyDeployConfigHFTimes(t *testing.T) {
 
 func TestExtractInteropDepSet(t *testing.T) {
 	tests := []struct {
-		name        string
-		stateData   deployer.OpaqueState
-		expected    *config.Interop
-		expectError bool
+		name          string
+		stateDataJSON string
+		expected      *config.Interop
+		expectError   bool
 	}{
 		{
 			name: "valid interop dependencies",
-			stateData: deployer.OpaqueState{
-				"interopDepSet": map[string]interface{}{
-					"dependencies": map[string]interface{}{
-						"123": map[string]interface{}{},
-						"456": map[string]interface{}{},
-					},
-				},
-			},
+			stateDataJSON: `{
+				"interopDepSet": {
+					"dependencies": {
+						"123": {},
+						"456": {}
+					}
+				}
+			}`,
 			expected: &config.Interop{
 				Dependencies: map[string]config.StaticConfigDependency{
 					"123": {},
@@ -53,18 +54,26 @@ func TestExtractInteropDepSet(t *testing.T) {
 			expectError: false,
 		},
 		{
-			name:        "nil interopDepSet",
-			stateData:   deployer.OpaqueState{},
+			name:          "missing interopDepSet",
+			stateDataJSON: `{}`,
+			expected:      nil,
+			expectError:   false,
+		},
+		{
+			name: "null interopDepSet",
+			stateDataJSON: `{
+				"interopDepSet": null
+			}`,
 			expected:    nil,
 			expectError: false,
 		},
 		{
 			name: "empty dependencies",
-			stateData: deployer.OpaqueState{
-				"interopDepSet": map[string]interface{}{
-					"dependencies": map[string]interface{}{},
-				},
-			},
+			stateDataJSON: `{
+				"interopDepSet": {
+					"dependencies": {}
+				}
+			}`,
 			expected: &config.Interop{
 				Dependencies: map[string]config.StaticConfigDependency{},
 			},
@@ -72,11 +81,11 @@ func TestExtractInteropDepSet(t *testing.T) {
 		},
 		{
 			name: "non-map dependencies",
-			stateData: deployer.OpaqueState{
-				"interopDepSet": map[string]interface{}{
-					"dependencies": "not a map",
-				},
-			},
+			stateDataJSON: `{
+				"interopDepSet": {
+					"dependencies": "not a map"
+				}
+			}`,
 			expected: &config.Interop{
 				Dependencies: map[string]config.StaticConfigDependency{},
 			},
@@ -84,9 +93,9 @@ func TestExtractInteropDepSet(t *testing.T) {
 		},
 		{
 			name: "interopDepSet not a map",
-			stateData: deployer.OpaqueState{
-				"interopDepSet": "not a map",
-			},
+			stateDataJSON: `{
+				"interopDepSet": "not a map"
+			}`,
 			expected:    nil,
 			expectError: true,
 		},
@@ -94,7 +103,11 @@ func TestExtractInteropDepSet(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := ExtractInteropDepSet(tt.stateData)
+			os := new(deployer.OpaqueState)
+			err := json.Unmarshal([]byte(tt.stateDataJSON), os)
+			require.NoError(t, err, "failed to unmarshal testdata")
+			require.NotNil(t, os)
+			result, err := ExtractInteropDepSet(*os)
 
 			if tt.expectError {
 				require.Error(t, err)
