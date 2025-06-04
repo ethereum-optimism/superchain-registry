@@ -63,7 +63,6 @@ require (
 	github.com/holiman/uint256 v1.3.2 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
-	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/mmcloughlin/addchain v0.4.0 // indirect
@@ -79,7 +78,6 @@ require (
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/schollz/progressbar/v3 v3.18.0 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/spf13/cast v1.8.0 // indirect

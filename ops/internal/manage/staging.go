@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -35,18 +34,10 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 	if err != nil {
 		return nil, fmt.Errorf("failed to read L1 contracts locator: %w", err)
 	}
-	l1ContractsLocator, err := artifacts.NewLocatorFromURL(l1Contracts)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse L1 contracts locator: %w", err)
-	}
 
-	l2contracts, err := st.ReadL2ContractsLocator()
+	l2Contracts, err := st.ReadL2ContractsLocator()
 	if err != nil {
 		return nil, fmt.Errorf("failed to read L2 contracts locator: %w", err)
-	}
-	l2contractsLocator, err := artifacts.NewLocatorFromURL(l2contracts)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse L2 contracts locator: %w", err)
 	}
 
 	cfg := new(config.StagedChain)
@@ -57,8 +48,8 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 	cfg.SeqWindowSize = dc.SequencerWindowSize
 	cfg.MaxSequencerDrift = dc.MaxSequencerDrift
 	cfg.DataAvailabilityType = "eth-da"
-	cfg.DeploymentL1ContractsVersion = l1ContractsLocator
-	cfg.DeploymentL2ContractsVersion = l2contractsLocator
+	cfg.DeploymentL1ContractsVersion = l1Contracts
+	cfg.DeploymentL2ContractsVersion = l2Contracts
 	cfg.DeploymentTxHash = new(common.Hash)
 	cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(dc.BaseFeeVaultRecipient)
 	cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(dc.L1FeeVaultRecipient)

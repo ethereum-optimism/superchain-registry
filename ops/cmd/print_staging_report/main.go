@@ -135,7 +135,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		return fmt.Errorf("deployment tx hash is required")
 	}
 
-	contractsVersion := validation.Semver(chainCfg.DeploymentL1ContractsVersion.Tag)
+	contractsVersion := validation.Semver(chainCfg.DeploymentL1ContractsVersion)
 	stdPrestate := validation.StandardPrestates.StablePrestate()
 	stdVersions := validation.StandardVersionsMainnet[contractsVersion]
 

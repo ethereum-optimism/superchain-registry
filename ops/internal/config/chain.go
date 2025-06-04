@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/addresses"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum/go-ethereum/common"
@@ -56,8 +55,8 @@ type StagedChain struct {
 	L1FeeVaultRecipient          ChecksummedAddress `toml:"l1_fee_vault_recipient"`
 	SequencerFeeVaultRecipient   ChecksummedAddress `toml:"sequencer_fee_vault_recipient"`
 	DeploymentTxHash             *common.Hash       `toml:"deployment_tx_hash"`
-	DeploymentL1ContractsVersion *artifacts.Locator `toml:"deployment_l1_contracts_version"`
-	DeploymentL2ContractsVersion *artifacts.Locator `toml:"deployment_l2_contracts_version"`
+	DeploymentL1ContractsVersion string             `toml:"deployment_l1_contracts_version"`
+	DeploymentL2ContractsVersion string             `toml:"deployment_l2_contracts_version"`
 }
 
 type StaticConfigDependency struct{}

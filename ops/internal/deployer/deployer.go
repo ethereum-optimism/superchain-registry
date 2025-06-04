@@ -97,6 +97,8 @@ func NewOpDeployer(lgr log.Logger, binaryPicker BinaryPicker) (*OpDeployer, erro
 		return nil, fmt.Errorf("op-deployer binary not found or not executable at %s", binaryPath)
 	}
 
+	lgr.Info("Using op-deployer binary", "path", binaryPath)
+
 	return &OpDeployer{
 		binaryPath: binaryPath,
 		merger:     binaryPicker.Merger(),
@@ -147,6 +149,8 @@ func (d *OpDeployer) setupStateAndIntent(inputStatePath, workdir string) error {
 // runCommand executes a command and returns its output, handling stderr capture
 func (d *OpDeployer) runCommand(args ...string) ([]byte, error) {
 	cmd := exec.Command(d.binaryPath, args...)
+
+	d.lgr.Info("Running command", "command", args[0])
 	stderr := new(bytes.Buffer)
 	cmd.Stderr = stderr
 	output, err := cmd.Output()
@@ -154,6 +158,7 @@ func (d *OpDeployer) runCommand(args ...string) ([]byte, error) {
 		d.lgr.Error(stderr.String())
 		return nil, fmt.Errorf("failed to run %s: %w", strings.Join(args, " "), err)
 	}
+	d.lgr.Info("Command success", "command", args[0])
 	return output, nil
 }
 
@@ -189,7 +194,6 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string
 	privateKeyHex := "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 
 	// Run `op-deployer apply` to generate the expected genesis
-	d.lgr.Info("Running `op-deployer apply`")
 	if _, err := d.runCommand("apply",
 		"--workdir", workdir,
 		"--deployment-target", "live",
@@ -199,7 +203,6 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string
 	}
 
 	// Run `op-deployer inspect genesis` to read the expected genesis
-	d.lgr.Info("Running `op-deployer inspect genesis`")
 	var genesis OpaqueMap
 	if err := d.inspectCommand(workdir, chainId, "genesis", &genesis); err != nil {
 		return nil, err
