@@ -35,7 +35,7 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 		return nil, fmt.Errorf("failed to read L1 contracts locator: %w", err)
 	}
 
-	l2contracts, err := st.ReadL2ContractsLocator()
+	l2Contracts, err := st.ReadL2ContractsLocator()
 	if err != nil {
 		return nil, fmt.Errorf("failed to read L2 contracts locator: %w", err)
 	}
@@ -49,7 +49,7 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 	cfg.MaxSequencerDrift = dc.MaxSequencerDrift
 	cfg.DataAvailabilityType = "eth-da"
 	cfg.DeploymentL1ContractsVersion = l1Contracts
-	cfg.DeploymentL2ContractsVersion = l2contracts
+	cfg.DeploymentL2ContractsVersion = l2Contracts
 	cfg.DeploymentTxHash = new(common.Hash)
 	cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(dc.BaseFeeVaultRecipient)
 	cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(dc.L1FeeVaultRecipient)
