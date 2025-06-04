@@ -10,13 +10,6 @@ batch_inbox_addr = "0x00aA742D2EEf0B65Eb1dC7633cbAf8Ef24A945B3"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-superchain = "rehearsal-0-bn"
-base_fee_vault_recipient = "0x9Dd4901D2D82E9a6Fdc4342c55f715362c08D8F4"
-l1_fee_vault_recipient = "0xd4Ed1bB68D2A40673A12592FE97b6D52b53835A2"
-sequencer_fee_vault_recipient = "0xC08ab32d88205F5EE72dE0629a41Ca0282c7Fb82"
-deployment_tx_hash = "0x0000000000000000000000000000000000000000000000000000000000000000"
-deployment_l1_contracts_version = "tag://op-contracts/v4.0.0-rc.7"
-deployment_l2_contracts_version = "tag://op-contracts/v4.0.0-rc.7"
 
 [hardforks]
   canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC

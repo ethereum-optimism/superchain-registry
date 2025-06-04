@@ -7,5 +7,5 @@ op_contracts_manager_addr = "0x0fcD165e2531C934a186e3a412D58Daa241E0Ad0"
 
 [l1]
   chain_id = 11155111
-  public_rpc = ""
+  public_rpc = "https://ci-sepolia-l1.optimism.io"
   explorer = ""
