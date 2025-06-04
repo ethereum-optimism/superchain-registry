@@ -237,6 +237,7 @@ func (om OpaqueState) ReadProxyAdminOwner(idx int) (common.Address, error) {
 
 func (om OpaqueState) ReadGuardian(idx int) (common.Address, error) {
 	return om.queryAddress(
+		"appliedIntent.superchainRoles.guardian",
 		"superchainRoles.SuperchainGuardian",
 	)
 }
