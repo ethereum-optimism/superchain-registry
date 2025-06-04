@@ -98,20 +98,12 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 		},
 	}
 
-	challenger, err := st.ReadChallenger(idx)
+	roles, err := GetRolesFromState(st, idx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read challenger: %w", err)
+		return nil, fmt.Errorf("failed to read roles from state: %w", err)
 	}
 
-	cfg.Roles = config.Roles{
-		SystemConfigOwner: config.NewChecksummedAddress(dc.FinalSystemOwner),
-		ProxyAdminOwner:   config.NewChecksummedAddress(dc.ProxyAdminOwner),
-		Guardian:          config.NewChecksummedAddress(dc.SuperchainConfigGuardian),
-		Proposer:          config.NewChecksummedAddress(dc.L2OutputOracleProposer),
-		UnsafeBlockSigner: config.NewChecksummedAddress(dc.P2PSequencerAddress),
-		BatchSubmitter:    config.NewChecksummedAddress(dc.BatchSenderAddress),
-		Challenger:        config.NewChecksummedAddress(challenger),
-	}
+	cfg.Roles = roles
 
 	addresses, err := GetContractAddressesFromState(st, idx)
 	if err != nil {
@@ -259,6 +251,54 @@ func StagedSuperchainDefinition(rootP string) (*config.SuperchainDefinition, err
 	err = paths.ReadTOMLFile(files[0], sM)
 
 	return sM, err
+}
+
+func GetRolesFromState(st deployer.OpaqueState, idx int) (config.Roles, error) {
+	roles := config.Roles{}
+
+	systemConfigOwner, err := st.ReadSystemConfigOwner(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read system config owner: %w", err)
+	}
+	roles.SystemConfigOwner = config.NewChecksummedAddress(systemConfigOwner)
+
+	proxyAdminOwner, err := st.ReadProxyAdminOwner(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read proxy admin owner: %w", err)
+	}
+	roles.ProxyAdminOwner = config.NewChecksummedAddress(proxyAdminOwner)
+
+	guardian, err := st.ReadGuardian(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read guardian: %w", err)
+	}
+	roles.Guardian = config.NewChecksummedAddress(guardian)
+
+	challenger, err := st.ReadChallenger(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read challenger: %w", err)
+	}
+	roles.Challenger = config.NewChecksummedAddress(challenger)
+
+	proposer, err := st.ReadProposer(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read proposer: %w", err)
+	}
+	roles.Proposer = config.NewChecksummedAddress(proposer)
+
+	unsafeBlockSigner, err := st.ReadUnsafeBlockSigner(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read unsafe block signer: %w", err)
+	}
+	roles.UnsafeBlockSigner = config.NewChecksummedAddress(unsafeBlockSigner)
+
+	batchSubmitter, err := st.ReadBatchSubmitter(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read batch submitter: %w", err)
+	}
+	roles.BatchSubmitter = config.NewChecksummedAddress(batchSubmitter)
+
+	return roles, nil
 }
 
 func GetContractAddressesFromState(st deployer.OpaqueState, idx int) (config.Addresses, error) {
