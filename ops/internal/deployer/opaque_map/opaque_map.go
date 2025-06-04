@@ -1,9 +1,6 @@
 package opaque_map
 
-type (
-	OpaqueMap   map[string]any
-	OpaqueState OpaqueMap
-)
+type OpaqueMap map[string]any
 
 // UseInts converts all float64 values without fractional parts to int64 values in a map
 // so that they are properly marshaled to TOML
