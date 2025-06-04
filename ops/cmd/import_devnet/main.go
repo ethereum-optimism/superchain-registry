@@ -33,11 +33,10 @@ var (
 		Required: false,
 	}
 	OpDeployerBinDir = &cli.StringFlag{
-		Name:     "op-deployer-bin-dir",
-		Usage:    "Path to the directory containing op-deployer binaries.",
-		Required: true,
-		EnvVars:  []string{"DEPLOYER_CACHE_DIR"},
-		Value:    defaultBinDir(),
+		Name:    "op-deployer-bin-dir",
+		Usage:   "Path to the directory containing op-deployer binaries.",
+		EnvVars: []string{"DEPLOYER_CACHE_DIR"},
+		Value:   defaultBinDir(),
 	}
 )
 

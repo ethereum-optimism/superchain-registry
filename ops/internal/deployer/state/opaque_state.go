@@ -195,9 +195,46 @@ func (om OpaqueState) ReadOpcmImpl() (common.Address, error) {
 	)
 }
 
+func (om OpaqueState) ReadSystemConfigOwner(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("appliedIntent.chains.[%d].roles.systemConfigOwner", idx),
+	)
+}
+
+func (om OpaqueState) ReadProxyAdminOwner(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("appliedIntent.chains.[%d].roles.l1ProxyAdminOwner", idx),
+	)
+}
+
+func (om OpaqueState) ReadGuardian(idx int) (common.Address, error) {
+	return om.queryAddress(
+		"appliedIntent.superchainRoles.guardian",
+		"superchainRoles.SuperchainGuardian",
+	)
+}
+
 func (om OpaqueState) ReadChallenger(idx int) (common.Address, error) {
 	return om.queryAddress(
 		fmt.Sprintf("appliedIntent.chains.[%d].roles.challenger", idx),
+	)
+}
+
+func (om OpaqueState) ReadProposer(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("appliedIntent.chains.[%d].roles.proposer", idx),
+	)
+}
+
+func (om OpaqueState) ReadUnsafeBlockSigner(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("appliedIntent.chains.[%d].roles.unsafeBlockSigner", idx),
+	)
+}
+
+func (om OpaqueState) ReadBatchSubmitter(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("appliedIntent.chains.[%d].roles.batcher", idx),
 	)
 }
 
