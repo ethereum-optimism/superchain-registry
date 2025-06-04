@@ -10,9 +10,9 @@ import (
 
 type OpaqueState opaque_map.OpaqueMap
 
-// QueryOpaqueMap queries the OpaqueState for the given paths in order,
+// QueryOpaqueState queries the OpaqueState for the given paths in order,
 // and returns the first successful result (and an error otherwise)
-func QueryOpaqueMap[T any](om OpaqueState, paths ...string) (T, error) {
+func QueryOpaqueState[T any](om OpaqueState, paths ...string) (T, error) {
 	node := dasel.New(om)
 	resultNode := new(dasel.Node)
 	var err error
@@ -37,12 +37,12 @@ func QueryOpaqueMap[T any](om OpaqueState, paths ...string) (T, error) {
 
 // queryString retrieves a string value from the given path
 func (om OpaqueState) queryString(paths ...string) (string, error) {
-	return QueryOpaqueMap[string](om, paths...)
+	return QueryOpaqueState[string](om, paths...)
 }
 
 // queryAddress retrieves an address from the given path, with an optional fallback path
 func (om OpaqueState) queryAddress(paths ...string) (common.Address, error) {
-	val, err := QueryOpaqueMap[string](om, paths...)
+	val, err := QueryOpaqueState[string](om, paths...)
 	if err != nil {
 		return common.Address{}, err
 	}
@@ -202,7 +202,7 @@ func (om OpaqueState) ReadChallenger(idx int) (common.Address, error) {
 }
 
 func (om OpaqueState) GetNumChains() (int, error) {
-	return QueryOpaqueMap[int](om, "appliedIntent.chains.[#]")
+	return QueryOpaqueState[int](om, "appliedIntent.chains.[#]")
 }
 
 func (om OpaqueState) GetChainID(idx int) (uint64, error) {
