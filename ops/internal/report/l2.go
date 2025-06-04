@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/opaque_map"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/state"
 	"github.com/ethereum/go-ethereum/log"
 )
 
@@ -17,7 +19,7 @@ func ScanL2(
 	l1RpcUrl string,
 	deployerCacheDir string,
 ) (*L2Report, error) {
-	st, err := deployer.ReadOpaqueStateFile(statePath)
+	st, err := state.ReadOpaqueStateFile(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read opaque state file: %w", err)
 	}
@@ -60,7 +62,7 @@ func ScanL2(
 	var report L2Report
 	report.Release = tagValue
 
-	genesisDiffs := deployer.DiffOpaqueMaps("genesis", *originalGenesis, *standardGenesis)
+	genesisDiffs := opaque_map.DiffOpaqueMaps("genesis", *originalGenesis, *standardGenesis)
 	report.GenesisDiffs = genesisDiffs
 
 	return &report, nil

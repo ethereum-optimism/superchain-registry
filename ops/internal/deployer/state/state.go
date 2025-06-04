@@ -1,4 +1,4 @@
-package deployer
+package state
 
 import (
 	_ "embed"
@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/opaque_map"
 	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/ethereum/go-ethereum/superchain"
 	"github.com/hashicorp/go-multierror"
@@ -54,7 +55,7 @@ func ReadOpaqueStateFile(p string) (OpaqueState, error) {
 	return out, nil
 }
 
-type StateMerger = func(state OpaqueState) (OpaqueMap, OpaqueState, error)
+type StateMerger = func(state OpaqueState) (opaque_map.OpaqueMap, OpaqueState, error)
 
 func GetStateMerger(version string) (StateMerger, error) {
 	// Extract the version number using regex
@@ -86,7 +87,7 @@ func GetStateMerger(version string) (StateMerger, error) {
 	}
 }
 
-func MergeStateV1(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func MergeStateV1(userState OpaqueState) (opaque_map.OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -102,7 +103,7 @@ func MergeStateV1(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	return mergeStateV2(userState, stdIntent, stdState)
 }
 
-func MergeStateV2(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func MergeStateV2(userState OpaqueState) (opaque_map.OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -118,7 +119,7 @@ func MergeStateV2(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	return mergeStateV2(userState, stdIntent, stdState)
 }
 
-func MergeStateV3(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func MergeStateV3(userState OpaqueState) (opaque_map.OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -136,7 +137,7 @@ func MergeStateV3(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	return mergeStateV2(userState, stdIntent, stdState)
 }
 
-func MergeStateV4(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func MergeStateV4(userState OpaqueState) (opaque_map.OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -152,7 +153,7 @@ func MergeStateV4(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	return mergeStateV4(userState, stdIntent, stdState)
 }
 
-func mergeStateV4(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func mergeStateV4(userState OpaqueState, stdIntent opaque_map.OpaqueMap, stdState OpaqueState) (opaque_map.OpaqueMap, OpaqueState, error) {
 	userStateNode := dasel.New(userState)
 	stdIntentNode := dasel.New(stdIntent)
 	stdStateNode := dasel.New(stdState)
@@ -206,7 +207,7 @@ func mergeStateV4(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueSta
 		return nil, nil, copyErrs
 	}
 
-	intentResult, okIntent := stdIntentNode.InterfaceValue().(OpaqueMap)
+	intentResult, okIntent := stdIntentNode.InterfaceValue().(opaque_map.OpaqueMap)
 	if !okIntent {
 		return nil, nil, fmt.Errorf("internal error: synthesized intent is not OpaqueMapping, but %T", stdIntentNode.InterfaceValue())
 	}
@@ -218,7 +219,7 @@ func mergeStateV4(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueSta
 	return intentResult, stateResult, nil
 }
 
-func mergeStateV2(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func mergeStateV2(userState OpaqueState, stdIntent opaque_map.OpaqueMap, stdState OpaqueState) (opaque_map.OpaqueMap, OpaqueState, error) {
 	userStateNode := dasel.New(userState)
 	stdIntentNode := dasel.New(stdIntent)
 	stdStateNode := dasel.New(stdState)
@@ -271,7 +272,7 @@ func mergeStateV2(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueSta
 		return nil, nil, copyErrs
 	}
 
-	intentResult, okIntent := stdIntentNode.InterfaceValue().(OpaqueMap)
+	intentResult, okIntent := stdIntentNode.InterfaceValue().(opaque_map.OpaqueMap)
 	if !okIntent {
 		return nil, nil, fmt.Errorf("internal error: synthesized intent is not OpaqueMapping, but %T", stdIntentNode.InterfaceValue())
 	}
@@ -283,24 +284,24 @@ func mergeStateV2(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueSta
 	return intentResult, stateResult, nil
 }
 
-func StandardIntentV4(l1ChainID uint64) (OpaqueMap, error) {
+func StandardIntentV4(l1ChainID uint64) (opaque_map.OpaqueMap, error) {
 	return standardIntentV4(l1ChainID, standardV4Intent)
 }
 
-func StandardIntentV3(l1ChainID uint64) (OpaqueMap, error) {
+func StandardIntentV3(l1ChainID uint64) (opaque_map.OpaqueMap, error) {
 	return standardIntentV2(l1ChainID, standardV3Intent)
 }
 
-func StandardIntentV2(l1ChainID uint64) (OpaqueMap, error) {
+func StandardIntentV2(l1ChainID uint64) (opaque_map.OpaqueMap, error) {
 	return standardIntentV2(l1ChainID, standardV2Intent)
 }
 
-func StandardIntentV1(l1ChainID uint64) (OpaqueMap, error) {
+func StandardIntentV1(l1ChainID uint64) (opaque_map.OpaqueMap, error) {
 	return standardIntentV1(l1ChainID, standardV1Intent)
 }
 
-func standardIntentV4(l1ChainID uint64, data []byte) (OpaqueMap, error) {
-	intent := make(OpaqueMap)
+func standardIntentV4(l1ChainID uint64, data []byte) (opaque_map.OpaqueMap, error) {
+	intent := make(opaque_map.OpaqueMap)
 	if err := toml.Unmarshal(data, &intent); err != nil {
 		panic(err)
 	}
@@ -323,8 +324,8 @@ func standardIntentV4(l1ChainID uint64, data []byte) (OpaqueMap, error) {
 	return intent, nil
 }
 
-func standardIntentV2(l1ChainID uint64, data []byte) (OpaqueMap, error) {
-	intent := make(OpaqueMap)
+func standardIntentV2(l1ChainID uint64, data []byte) (opaque_map.OpaqueMap, error) {
+	intent := make(opaque_map.OpaqueMap)
 	if err := toml.Unmarshal(data, &intent); err != nil {
 		panic(err)
 	}
@@ -354,7 +355,7 @@ func (s stringWrapper) String() string {
 	return string(s)
 }
 
-func standardIntentV1(l1ChainID uint64, data []byte) (OpaqueMap, error) {
+func standardIntentV1(l1ChainID uint64, data []byte) (opaque_map.OpaqueMap, error) {
 	intent, err := standardIntentV2(l1ChainID, data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create standard intent: %w", err)

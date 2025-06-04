@@ -6,7 +6,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -82,7 +82,7 @@ func action(cliCtx *cli.Context) error {
 		return fmt.Errorf("failed to read manifest file: %w", err)
 	}
 
-	st, err := deployer.ReadOpaqueStateFile(statePath)
+	st, err := state.ReadOpaqueStateFile(statePath)
 	if err != nil {
 		return fmt.Errorf("failed to read opaque state file: %w", err)
 	}
