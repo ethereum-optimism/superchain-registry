@@ -9,7 +9,6 @@
 | Base | ❌ | ✅ | https://explorer.base.org | `https://mainnet.base.org` | `https://mainnet-sequencer.base.org` |
 | Binary Mainnet | ❌ | ✅ | https://explorer.thebinaryholdings.com | `https://rpc.zero.thebinaryholdings.com` | `https://sequencer.bnry.mainnet.zeeve.net` |
 | Boba Mainnet | ❌ | ❌ | https://bobascan.com | `https://mainnet.boba.network` | `https://mainnet.boba.network` |
-| Celo | ❌ | ❌ | https://celoscan.io/ | `https://forno.celo.org` | `https://cel2-sequencer.celo.org/` |
 | Cyber Mainnet | ❌ | ❌ | https://cyberscan.co/ | `https://rpc.cyber.co` | `https://cyber.alt.technology/` |
 | Ethernity | ❌ | ✅ | https://ernscan.io | `https://mainnet.ethernitychain.io` | `https://mainnet.ethernitychain.io` |
 | Fraxtal | ❌ | ❌ | https://fraxscan.com | `https://rpc.frax.com` | `https://rpc.frax.com` |
