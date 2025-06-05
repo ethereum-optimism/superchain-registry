@@ -80,6 +80,9 @@ func GenerateChainArtifacts(
 
 	if superchain != nil {
 		cfg.Superchain = config.Superchain(*superchain)
+		// assume when a superchain is created, the chains created with it will
+		// want to inherit standard hardfork times
+		cfg.SuperchainTime = new(uint64)
 	}
 
 	output.WriteOK("reading genesis")
