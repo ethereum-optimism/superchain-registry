@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
@@ -14,7 +15,6 @@ import (
 var (
 	errDepsetLengths       = errors.New("inconsistent depset lengths")
 	errInconsistentDepsets = errors.New("inconsistent depset values")
-	errMissingInteropTime  = errors.New("missing interop_time hardfork timestamp")
 	errMissingAddress      = errors.New("missing address")
 )
 
@@ -115,13 +115,8 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 			return fmt.Errorf("chain %d is part of superchain %s, expected superchain %s", cfg.Config.ChainID, cfg.Superchain, firstSuperchain)
 		}
 
-		// check that interop_time is set for this chain
-		thisDepset := cfg.Config.Interop.Dependencies
-		if cfg.Config.Hardforks.InteropTime == nil {
-			return fmt.Errorf("%w: chainId %d", errMissingInteropTime, cfg.Config.ChainID)
-		}
-
 		// check equality of dependency sets
+		thisDepset := cfg.Config.Interop.Dependencies
 		if i > 0 {
 			// 1. check if the maps have the same length
 			if len(firstDepset) != len(thisDepset) {
@@ -146,7 +141,8 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 }
 
 // checkOnchain ensures that DisputeGameFactoryProxy and EthLockboxProxy addresses read from onchain
-// are the same for all chains in a depset
+// are the same for all chains in a depset. These checks are only performed for chains who have
+// already activated interop (i.e. interop_time < current unix timestamp).
 func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 	if len(cfgs) == 0 {
 		return fmt.Errorf("no chain configs provided to checkOnchain")
@@ -156,8 +152,25 @@ func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 		return nil
 	}
 
-	// Get and validate the first chain's addresses
-	firstAddrs, err := dc.getAndValidateAddresses(cfgs[0].Config.ChainID)
+	// Find chains that have already activated interop
+	now := time.Now().Unix()
+	var activatedChains []DiskChainConfig
+	for _, cfg := range cfgs {
+		interopTime := cfg.Config.Hardforks.InteropTime
+		if interopTime == nil || *interopTime.U64Ptr() > uint64(now) {
+			continue
+		}
+		activatedChains = append(activatedChains, cfg)
+	}
+
+	// If we have fewer than 2 activated chains, no comparison needed
+	if len(activatedChains) < 2 {
+		dc.lgr.Info("skipping onchain checks for depset")
+		return nil
+	}
+
+	// Get and validate the first valid chain's addresses
+	firstAddrs, err := dc.getAndValidateAddresses(activatedChains[0].Config.ChainID)
 	if err != nil {
 		return err
 	}
@@ -167,8 +180,9 @@ func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 	// issue: https://github.com/ethereum-optimism/optimism/issues/16058
 	// firstEthLockboxProxy := strings.ToLower((*firstAddrs.EthLockboxProxy).String())
 
-	// Check all chains in the dependency set
-	for _, cfg := range cfgs {
+	// Check all remaining valid chains in the dependency set
+	for i := 1; i < len(activatedChains); i++ {
+		cfg := activatedChains[i]
 		addrs, err := dc.getAndValidateAddresses(cfg.Config.ChainID)
 		if err != nil {
 			return err

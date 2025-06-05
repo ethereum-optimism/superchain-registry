@@ -102,27 +102,6 @@ func TestDepsetChecker_checkOffchain(t *testing.T) {
 		require.Error(t, err)
 		require.ErrorIs(t, err, errDepsetLengths)
 	})
-
-	t.Run("missing interop_time", func(t *testing.T) {
-		addrs := loadAddresses(t, validAddressesPath)
-		var cfg1 config.Chain
-		err := paths.ReadTOMLFile("testdata/depsets_invalid/missing_interop_time_1.toml", &cfg1)
-		require.NoError(t, err)
-
-		var cfg2 config.Chain
-		err = paths.ReadTOMLFile("testdata/depsets_invalid/missing_interop_time_2.toml", &cfg2)
-		require.NoError(t, err)
-
-		chains := []DiskChainConfig{
-			{Config: &cfg1, Superchain: "test"},
-			{Config: &cfg2, Superchain: "test"},
-		}
-
-		checker := NewDepsetChecker(lgr, chains, addrs)
-		err = checker.checkOffchain(chains)
-		require.Error(t, err)
-		require.ErrorIs(t, err, errMissingInteropTime)
-	})
 }
 
 func TestDepsetChecker_checkOnchain(t *testing.T) {
@@ -176,8 +155,8 @@ func TestDepsetChecker_checkOnchain(t *testing.T) {
 
 	t.Run("missing proxy addresses", func(t *testing.T) {
 		addrs := loadAddresses(t, invalidAddressesPath)
-		chain1 := loadChainConfig(t, "testdata/depsets_valid/chain2.toml")
-		chain2 := loadChainConfig(t, "testdata/depsets_valid/chain4.toml")
+		chain1 := loadChainConfig(t, "testdata/depsets_invalid/missing_address_1.toml")
+		chain2 := loadChainConfig(t, "testdata/depsets_invalid/missing_address_2.toml")
 		chains := []DiskChainConfig{
 			{Config: chain1, Superchain: "test"},
 			{Config: chain2, Superchain: "test"},
