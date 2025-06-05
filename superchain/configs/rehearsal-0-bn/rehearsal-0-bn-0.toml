@@ -1,0 +1,71 @@
+name = "rehearsal-0-bn-0"
+public_rpc = ""
+sequencer_rpc = ""
+explorer = ""
+superchain_level = 0
+governed_by_optimism = false
+superchain_time = 0
+data_availability_type = "eth-da"
+chain_id = 420120009
+batch_inbox_addr = "0x00aA742D2EEf0B65Eb1dC7633cbAf8Ef24A945B3"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  isthmus_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  interop_time = 1749150000 # Thu 5 Jun 2025 19:00:00 UTC
+
+[interop]
+  [interop.dependencies]
+    [interop.dependencies.420120009]
+    [interop.dependencies.420120010]
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1748984964
+  [genesis.l1]
+    hash = "0x9011befaa62e1a920aa3d14e9165107d522b709049c475843725f712bbf693f1"
+    number = 8470494
+  [genesis.l2]
+    hash = "0x1055187f2eb4e8be192ee7e65756efa290267543bad721d3d8a6135addbe75a0"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0xD059234409A70327B48c03F7BbD5317a758E315B"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
+    gasLimit = 60000000
+
+[roles]
+  SystemConfigOwner = "0xFBe0D73aaa16Fbe849F6dEf6711C08F69B289df8"
+  ProxyAdminOwner = "0x26DF14a0C889de2448d228Ee23B2530550b5B774"
+  Guardian = "0x26DF14a0C889de2448d228Ee23B2530550b5B774"
+  Challenger = "0xFa5C793E4dc44e7381602Fe35d151d7aA9218489"
+  Proposer = "0x26f1f39fF980546b85dd5Dc8864364c230c30687"
+  UnsafeBlockSigner = "0xF17e730FcebbFB2166654F7E6ed22Fd18F3B8032"
+  BatchSubmitter = "0xD059234409A70327B48c03F7BbD5317a758E315B"
+
+[addresses]
+  AddressManager = "0x9303f8c050813BbC6C0425F6db4cdEF67c1981fb"
+  L1CrossDomainMessengerProxy = "0xF7711AD8EB822B8C95179746F0D63Ca2A0c06A52"
+  L1ERC721BridgeProxy = "0x65EF317d11ed21438952b08415B8Bc2Ba0524a99"
+  L1StandardBridgeProxy = "0x1b0Bf2AEA5acDF3c7e0EfeDe9389411333aAF9F9"
+  OptimismMintableERC20FactoryProxy = "0x2e7af83b472198eD1C93753D20245f57ad06af8E"
+  OptimismPortalProxy = "0xf26C2E762C0447443b951a74DfA5Bf380BcB8361"
+  SystemConfigProxy = "0xC5D517463C38567A644f2FCcEFC0e534CC991a57"
+  ProxyAdmin = "0x7577A54b97EC3367edC9f22AE93c4Bd6988F2c2B"
+  SuperchainConfig = "0x672F11f34b7bE67C13A6FCba819c339bc3B0a585"
+  AnchorStateRegistryProxy = "0xc4866DD45a6bC8E94A407F4F4c0D4FdB0A9e04F6"
+  DelayedWETHProxy = "0x3589cA16ACaD14d4C582a18F9FB3994D0c7c544c"
+  DisputeGameFactoryProxy = "0x27e4C2Cf04d24a6263E341Fe866Da2c6eccd1b0E"
+  PermissionedDisputeGame = "0xF86e5E830433A80284c895fF502aEa97DFE194bd"

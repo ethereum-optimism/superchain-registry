@@ -38,6 +38,12 @@
 | Xterio Chain (ETH) | ❌ | ❌ | https://eth.xterscan.io/ | `https://xterio-eth.alt.technology/` | `https://xterio-eth.alt.technology/` |
 | Zora | ✅ | ✅ | https://explorer.zora.energy | `https://rpc.zora.energy` | `https://rpc.zora.energy` |
 | arena-z | ✅ | ✅ | https://explorer.arena-z.gg | `https://rpc.arena-z.gg` | `https://rpc.arena-z.gg` |
+### rehearsal-0-bn
+
+| Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
+|---|---|---|---|---|---|
+| rehearsal-0-bn-0 | ❌ | ✅ |  | `` | `` |
+| rehearsal-0-bn-1 | ❌ | ✅ |  | `` | `` |
 ### sepolia
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC

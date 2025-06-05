@@ -1243,5 +1243,47 @@
     "faultProofs": {
       "status": "permissioned"
     }
+  },
+  {
+    "name": "rehearsal-0-bn-0",
+    "identifier": "rehearsal-0-bn/rehearsal-0-bn-0",
+    "chainId": 420120009,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "rehearsal-0-bn"
+    },
+    "faultProofs": {
+      "status": "permissionless"
+    }
+  },
+  {
+    "name": "rehearsal-0-bn-1",
+    "identifier": "rehearsal-0-bn/rehearsal-0-bn-1",
+    "chainId": 420120010,
+    "rpc": [
+      ""
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "rehearsal-0-bn"
+    },
+    "faultProofs": {
+      "status": "permissionless"
+    }
   }
 ]
