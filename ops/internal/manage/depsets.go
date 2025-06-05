@@ -154,23 +154,23 @@ func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 
 	// Find chains that have already activated interop
 	now := time.Now().Unix()
-	var validChains []DiskChainConfig
+	var activatedChains []DiskChainConfig
 	for _, cfg := range cfgs {
 		interopTime := cfg.Config.Hardforks.InteropTime
 		if interopTime == nil || *interopTime.U64Ptr() > uint64(now) {
 			continue
 		}
-		validChains = append(validChains, cfg)
+		activatedChains = append(activatedChains, cfg)
 	}
 
 	// If we have fewer than 2 activated chains, no comparison needed
-	if len(validChains) < 2 {
+	if len(activatedChains) < 2 {
 		dc.lgr.Info("skipping onchain checks for depset")
 		return nil
 	}
 
 	// Get and validate the first valid chain's addresses
-	firstAddrs, err := dc.getAndValidateAddresses(validChains[0].Config.ChainID)
+	firstAddrs, err := dc.getAndValidateAddresses(activatedChains[0].Config.ChainID)
 	if err != nil {
 		return err
 	}
@@ -181,8 +181,8 @@ func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 	// firstEthLockboxProxy := strings.ToLower((*firstAddrs.EthLockboxProxy).String())
 
 	// Check all remaining valid chains in the dependency set
-	for i := 1; i < len(validChains); i++ {
-		cfg := validChains[i]
+	for i := 1; i < len(activatedChains); i++ {
+		cfg := activatedChains[i]
 		addrs, err := dc.getAndValidateAddresses(cfg.Config.ChainID)
 		if err != nil {
 			return err
