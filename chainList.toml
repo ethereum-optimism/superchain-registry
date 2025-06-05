@@ -630,7 +630,7 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Mode Testnet"
@@ -645,7 +645,7 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "OP Sepolia Testnet"

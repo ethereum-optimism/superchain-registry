@@ -882,7 +882,7 @@
       "chain": "sepolia"
     },
     "faultProofs": {
-      "status": "none"
+      "status": "permissioned"
     }
   },
   {
@@ -903,7 +903,7 @@
       "chain": "sepolia"
     },
     "faultProofs": {
-      "status": "none"
+      "status": "permissioned"
     }
   },
   {
