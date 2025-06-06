@@ -47,6 +47,9 @@ print-staging-report: (_run_ops_bin 'print_staging_report')
 
 check-genesis-integrity: (_run_ops_bin 'check_genesis_integrity')
 
+codegen L1_RPC_URLS SUPERCHAINS="":
+  @just _run_ops_bin "codegen" "--l1-rpc-urls {{L1_RPC_URLS}} --superchains={{SUPERCHAINS}}"
+
 create-config SHORTNAME FILENAME: build-deployer-binaries
 	@just _run_ops_bin "create_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{FILENAME}})"
 
