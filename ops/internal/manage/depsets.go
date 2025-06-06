@@ -176,9 +176,7 @@ func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 	}
 
 	firstDisputeGameFactoryProxy := strings.ToLower((*firstAddrs.DisputeGameFactoryProxy).String())
-	// TODO: re-enable this once we can pull in the updated op-fetcher from monorepo
-	// issue: https://github.com/ethereum-optimism/optimism/issues/16058
-	// firstEthLockboxProxy := strings.ToLower((*firstAddrs.EthLockboxProxy).String())
+	firstEthLockboxProxy := strings.ToLower((*firstAddrs.EthLockboxProxy).String())
 
 	// Check all remaining valid chains in the dependency set
 	for i := 1; i < len(activatedChains); i++ {
@@ -192,12 +190,10 @@ func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 			return fmt.Errorf("DisputeGameFactoryProxy address mismatch for chain %d, expected %s, got %s",
 				cfg.Config.ChainID, firstDisputeGameFactoryProxy, addrs.DisputeGameFactoryProxy)
 		}
-		// TODO: re-enable this once we can pull in the updated op-fetcher from monorepo
-		// issue: https://github.com/ethereum-optimism/optimism/issues/16058
-		//if strings.ToLower((*addrs.EthLockboxProxy).String()) != firstEthLockboxProxy {
-		//	return fmt.Errorf("EthLockboxProxy address mismatch for chain %d, expected %s, got %s",
-		//		cfg.Config.ChainID, firstEthLockboxProxy, addrs.EthLockboxProxy)
-		//}
+		if strings.ToLower((*addrs.EthLockboxProxy).String()) != firstEthLockboxProxy {
+			return fmt.Errorf("EthLockboxProxy address mismatch for chain %d, expected %s, got %s",
+				cfg.Config.ChainID, firstEthLockboxProxy, addrs.EthLockboxProxy)
+		}
 	}
 
 	return nil
@@ -219,10 +215,8 @@ func (dc *DepsetChecker) getAndValidateAddresses(chainID uint64) (*config.Addres
 	if addrs.DisputeGameFactoryProxy == nil || *addrs.DisputeGameFactoryProxy == zeroAddress {
 		return nil, fmt.Errorf("%w: no DisputeGameFactoryProxy found for chain %d", errMissingAddress, chainID)
 	}
-	// TODO: re-enable this once we can pull in the updated op-fetcher from monorepo
-	// issue: https://github.com/ethereum-optimism/optimism/issues/16058
-	//if addrs.EthLockboxProxy == nil || *addrs.EthLockboxProxy == zeroAddress {
-	//return nil, fmt.Errorf("%w: no EthLockboxProxy found for chain %d", errMissingAddress, chainID)
-	//}
+	if addrs.EthLockboxProxy == nil || *addrs.EthLockboxProxy == zeroAddress {
+		return nil, fmt.Errorf("%w: no EthLockboxProxy found for chain %d", errMissingAddress, chainID)
+	}
 	return addrs, nil
 }
