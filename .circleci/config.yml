@@ -400,6 +400,8 @@ workflows:
             - build-deployer-binaries
 
   notify-when-chain-is-added-to-registry:
+    when:
+      equal: ["webhook", << pipeline.trigger_source >>]
     jobs:
       - notify-when-chain-is-added-to-registry:
           context: circleci-repo-superchain-registry
