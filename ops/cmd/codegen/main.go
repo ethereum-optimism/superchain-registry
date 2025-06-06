@@ -49,7 +49,15 @@ func main() {
 func CodegenCLI(cliCtx *cli.Context) error {
 	l1RpcUrls := cliCtx.StringSlice("l1-rpc-urls")
 	chainIds := cliCtx.Uint64Slice("chain-ids")
-	superchains := cliCtx.StringSlice("superchains")
+	superchainsRaw := cliCtx.StringSlice("superchains")
+	// Filter out empty strings from superchains
+	var superchains []string
+	for _, sc := range superchainsRaw {
+		if sc != "" {
+			superchains = append(superchains, sc)
+		}
+	}
+
 	if len(chainIds) > 0 && len(superchains) > 0 {
 		return fmt.Errorf("cannot provide both chain-ids and superchains flags")
 	}
