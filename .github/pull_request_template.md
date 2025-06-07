@@ -11,6 +11,7 @@ This PR adds [Chain Name Here] to the registry.
 ## Checklist
 
 - [ ] I have declared the chain at the appropriate [Superchain Level](../docs/glossary.md#superchain-level-and-rollup-stage).
+- [ ] I confirm I have set `superchain_time` to an appropriate value if I want my chain to receive hardfork times with the rest of the superchain. See [hardfork activation inheritance](../docs/hardfork-activation-inheritance.md) and [CHAINS.md](../CHAINS.md) for details.
 - [ ] I have run `just codegen` to ensure that all generated files are created.
 - [ ] I have run `just codegen` to ensure that the chainlist and other generated files are up-to-date and include my chain.
 - [ ] I have checked `Allow edits from maintainers` on this PR.
