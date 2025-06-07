@@ -4,7 +4,6 @@ sequencer_rpc = "https://mainnet-sequencer.mode.network"
 explorer = "https://explorer.mode.network"
 superchain_level = 1
 governed_by_optimism = true
-superchain_time = 0
 data_availability_type = "eth-da"
 chain_id = 34443
 batch_inbox_addr = "0x24E59d9d3Bd73ccC28Dc54062AF7EF7bFF58Bd67"
