@@ -194,7 +194,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Mint Mainnet"
@@ -224,7 +224,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "OP Mainnet"
