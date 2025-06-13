@@ -1,4 +1,8 @@
 # Default code-owner
 * @ethereum-optimism/superchain-registry-reviewers
 
+# go files require go-reviewers
+*.go @ethereum-optimism/go-reviewers
+*.go @ethereum-optimism/superchain-registry-reviewers
+
 /validation/standard/standard-prestates.toml @ethereum-optimism/proofs @ethereum-optimism/superchain-registry-reviewers
