@@ -1,46 +1,18 @@
-package deployer
+package state
 
 import (
 	"fmt"
 
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/opaque_map"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/tomwright/dasel"
 )
 
-type (
-	OpaqueMap   map[string]any
-	OpaqueState OpaqueMap
-)
+type OpaqueState opaque_map.OpaqueMap
 
-// useInts converts all float64 values without fractional parts to int64 values in a map
-// so that they are properly marshaled to TOML
-func useInts(m map[string]any) {
-	for k, v := range m {
-		switch val := v.(type) {
-		case float64:
-			// If the float has no fractional part, convert to int
-			if val == float64(int64(val)) {
-				m[k] = int64(val)
-			}
-		case map[string]any:
-			// Recursively process nested maps
-			useInts(val)
-		case []any:
-			// Process arrays
-			for i, item := range val {
-				if fItem, ok := item.(float64); ok && fItem == float64(int64(fItem)) {
-					val[i] = int64(fItem)
-				} else if mapItem, ok := item.(map[string]any); ok {
-					useInts(mapItem)
-				}
-			}
-		}
-	}
-}
-
-// QueryOpaqueMap queries the OpaqueState for the given paths in order,
+// QueryOpaqueState queries the OpaqueState for the given paths in order,
 // and returns the first successful result (and an error otherwise)
-func QueryOpaqueMap[T any](om OpaqueState, paths ...string) (T, error) {
+func QueryOpaqueState[T any](om OpaqueState, paths ...string) (T, error) {
 	node := dasel.New(om)
 	resultNode := new(dasel.Node)
 	var err error
@@ -65,12 +37,12 @@ func QueryOpaqueMap[T any](om OpaqueState, paths ...string) (T, error) {
 
 // queryString retrieves a string value from the given path
 func (om OpaqueState) queryString(paths ...string) (string, error) {
-	return QueryOpaqueMap[string](om, paths...)
+	return QueryOpaqueState[string](om, paths...)
 }
 
 // queryAddress retrieves an address from the given path, with an optional fallback path
 func (om OpaqueState) queryAddress(paths ...string) (common.Address, error) {
-	val, err := QueryOpaqueMap[string](om, paths...)
+	val, err := QueryOpaqueState[string](om, paths...)
 	if err != nil {
 		return common.Address{}, err
 	}
@@ -267,7 +239,7 @@ func (om OpaqueState) ReadBatchSubmitter(idx int) (common.Address, error) {
 }
 
 func (om OpaqueState) GetNumChains() (int, error) {
-	return QueryOpaqueMap[int](om, "appliedIntent.chains.[#]")
+	return QueryOpaqueState[int](om, "appliedIntent.chains.[#]")
 }
 
 func (om OpaqueState) GetChainID(idx int) (uint64, error) {
