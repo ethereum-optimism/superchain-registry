@@ -19,7 +19,7 @@ l1_cross_domain_messenger = { version = "2.9.0", implementation_address = "0xd26
 l1_erc721_bridge = { version = "2.7.0", implementation_address = "0x25d6cedeb277ad7ebee71226ed7877768e0b7a2f" }
 l1_standard_bridge = { version = "2.6.0", implementation_address = "0x44afb7722af276a601d524f429016a18b6923df0" }
 optimism_mintable_erc20_factory = { version = "1.10.1", implementation_address = "0x5493f4677a186f64805fe7317d6993ba4863988f" }
-op_contracts_manager = { version = "2.4.0", address = "0xbf2b39c755526dadcbc844778cba9cd14d4a146d" }
+op_contracts_manager = { version = "2.4.0", address = "0x56ebc5c4870f5367b836081610592241ad3e0734" }
 superchain_config = { version = "2.3.0", implementation_address = "0xce28685eb204186b557133766eca00334eb441e4" }
 protocol_versions = { version = "1.1.0", implementation_address = "0x37e15e4d6dffa9e5e320ee1ec036922e563cb76c" }
 
