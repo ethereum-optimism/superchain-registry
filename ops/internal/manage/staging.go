@@ -55,10 +55,6 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 	cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(dc.L1FeeVaultRecipient)
 	cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(dc.SequencerFeeVaultRecipient)
 
-	if dc.CustomGasTokenAddress != (common.Address{}) {
-		cfg.GasPayingToken = config.NewChecksummedAddress(dc.CustomGasTokenAddress)
-	}
-
 	if err := CopyDeployConfigHFTimes(&dc.UpgradeScheduleDeployConfig, &cfg.Hardforks); err != nil {
 		return nil, fmt.Errorf("failed to copy deploy config hardfork times: %w", err)
 	}
