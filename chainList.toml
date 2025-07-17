@@ -540,7 +540,7 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Cyber Testnet"

@@ -756,7 +756,7 @@
       "chain": "sepolia"
     },
     "faultProofs": {
-      "status": "none"
+      "status": "permissioned"
     }
   },
   {
