@@ -14,4 +14,4 @@ isthmus_time = 1746806401 # Fri 9 May 2025 16:00:01 UTC
 [l1]
   chain_id = 1
   public_rpc = "https://ethereum-rpc.publicnode.com"
-  explorer = "https://etherscan.io"
+  explorer = "https://eth.blockscout.com"

@@ -21,12 +21,12 @@ var funcMap = template.FuncMap{
 		return t.UTC().Format(time.RFC3339)
 	},
 	"deploymentTxLink": func(report L1Report) string {
-		var subdomain string
+		subdomain := "eth."
 		if report.DeploymentChainID != 1 {
-			subdomain = "sepolia."
+			subdomain = "eth-sepolia."
 		}
 
-		return fmt.Sprintf("[%s](https://%setherscan.io/tx/%s)", report.DeploymentTxHash, subdomain, report.DeploymentTxHash)
+		return fmt.Sprintf("[%s](https://%sblockscout.com/tx/%s)", report.DeploymentTxHash, subdomain, report.DeploymentTxHash)
 	},
 	"checkmark": func(a, b string) string {
 		if a == b {

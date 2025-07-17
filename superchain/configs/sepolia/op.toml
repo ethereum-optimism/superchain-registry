@@ -1,7 +1,7 @@
 name = "OP Sepolia Testnet"
 public_rpc = "https://sepolia.optimism.io"
 sequencer_rpc = "https://sepolia-sequencer.optimism.io"
-explorer = "https://sepolia-optimistic.etherscan.io"
+explorer = "https://testnet-explorer.optimism.io"
 superchain_level = 1
 governed_by_optimism = true
 superchain_time = 0
