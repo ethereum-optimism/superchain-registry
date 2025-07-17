@@ -756,7 +756,7 @@
       "chain": "sepolia"
     },
     "faultProofs": {
-      "status": "none"
+      "status": "permissioned"
     }
   },
   {
@@ -914,7 +914,7 @@
       "https://sepolia.optimism.io"
     ],
     "explorers": [
-      "https://sepolia-optimistic.etherscan.io"
+      "https://testnet-explorer.optimism.io"
     ],
     "superchainLevel": 1,
     "governedByOptimism": true,

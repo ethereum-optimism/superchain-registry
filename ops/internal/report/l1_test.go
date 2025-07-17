@@ -19,7 +19,7 @@ import (
 )
 
 func TestParseDeployedEvent(t *testing.T) {
-	// Taken from the deployment at https://etherscan.io/tx/0x18c55303075270503bec79e66c444c15d943598f25fbf467044b3c5dda9e7d58.
+	// Taken from the deployment at https://eth.blockscout.com/tx/0x18c55303075270503bec79e66c444c15d943598f25fbf467044b3c5dda9e7d58.
 	rawLogF, err := os.Open("testdata/tx-18c55303075270503bec79e66c444c15d943598f25fbf467044b3c5dda9e7d58.bin")
 	require.NoError(t, err)
 	defer rawLogF.Close()

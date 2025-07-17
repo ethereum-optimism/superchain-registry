@@ -4,7 +4,7 @@
 
 **Release**: `op-contracts/v1.6.0`
 
-**Deployment Transaction Hash**: [0x0193884dc77ba74ca9ae23079edf91b81d49b0243c486fab5bbecd415d2dad68](https://sepolia.etherscan.io/tx/0x0193884dc77ba74ca9ae23079edf91b81d49b0243c486fab5bbecd415d2dad68)
+**Deployment Transaction Hash**: [0x0193884dc77ba74ca9ae23079edf91b81d49b0243c486fab5bbecd415d2dad68](https://eth-sepolia.blockscout.com/tx/0x0193884dc77ba74ca9ae23079edf91b81d49b0243c486fab5bbecd415d2dad68)
 
 <details open>
 

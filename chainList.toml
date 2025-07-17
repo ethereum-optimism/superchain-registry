@@ -540,7 +540,7 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Cyber Testnet"
@@ -652,7 +652,7 @@
   identifier = "sepolia/op"
   chain_id = 11155420
   rpc = ["https://sepolia.optimism.io"]
-  explorers = ["https://sepolia-optimistic.etherscan.io"]
+  explorers = ["https://testnet-explorer.optimism.io"]
   superchain_level = 1
   governed_by_optimism = true
   data_availability_type = "eth-da"

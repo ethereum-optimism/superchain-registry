@@ -59,7 +59,7 @@ state file, however you will need to populate the following yourself:
 - `sequencer_rpc`: Sequencer RPC endpoint for your chain.
 - `explorer`: Block explorer for your chain.
 - `deployment_tx_hash`: Transaction hash of the transaction OP Deployer generated to deploy your chain. You'll need
-  to look this up on Etherscan for now. It will be automatically populated in the future.
+  to look this up on Blockscout for now. It will be automatically populated in the future.
 
 Don't forget to double-check the config for any inaccuracies.
 
