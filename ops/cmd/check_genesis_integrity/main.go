@@ -37,7 +37,8 @@ func mainErr() error {
 		for _, cfg := range cfgs {
 			if (cfg.ShortName == "op" && superchain == "mainnet") ||
 				(cfg.ShortName == "boba" && superchain == "mainnet") ||
-				(cfg.ShortName == "boba" && superchain == "sepolia") {
+				(cfg.ShortName == "boba" && superchain == "sepolia") ||
+				(cfg.ShortName == "celo" && superchain == "mainnet") {
 				output.WriteWarn("skipping %s %s - chain was migrated from a legacy state", cfg.ShortName, superchain)
 				continue
 			}
