@@ -6,7 +6,7 @@ import (
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/state"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/stretchr/testify/require"
 )
@@ -99,7 +99,7 @@ func TestExtractInteropDepSet(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			os := new(deployer.OpaqueState)
+			os := new(state.OpaqueState)
 			err := json.Unmarshal([]byte(tt.stateDataJSON), os)
 			require.NoError(t, err, "failed to unmarshal testdata")
 			require.NotNil(t, os)
