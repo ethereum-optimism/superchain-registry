@@ -6,7 +6,7 @@ block_time = [1, 2]
 
 [optimism_portal_2]
 proof_maturity_delay_seconds = [604800, 604800]        # 7 days
-dispute_game_finality_delay_seconds = [302400, 302400] # 2.5 days
+dispute_game_finality_delay_seconds = [302400, 302400] # 3.5 days
 respected_game_type = 0
 
 [resource_config]
