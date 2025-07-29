@@ -18,6 +18,8 @@ gas_paying_token = "0x057898f3C43F129a17517B9056D23851F124b19f"
   ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 1752073200 # Wed 9 Jul 2025 15:00:00 UTC
+  isthmus_time = 1752073200 # Wed 9 Jul 2025 15:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 5

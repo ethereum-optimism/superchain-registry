@@ -179,7 +179,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Metal L2"
@@ -209,7 +209,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Mode"
@@ -254,7 +254,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Polynomial"
@@ -269,7 +269,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "RACE Mainnet"
@@ -344,7 +344,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Soneium"
@@ -374,7 +374,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Swan Chain Mainnet"
