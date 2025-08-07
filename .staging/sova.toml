@@ -1,7 +1,7 @@
 name = "Sova Sepolia Testnet"
 public_rpc = "https://rpc.testnet.sova.io"
 sequencer_rpc = "https://rpc.testnet.sova.io"
-explorer = "explorer.testnet.sova.io"
+explorer = "https://explorer.testnet.sova.io/"
 superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
