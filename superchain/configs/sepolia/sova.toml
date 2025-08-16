@@ -1,0 +1,65 @@
+name = "Sova Sepolia Testnet"
+public_rpc = "https://rpc.testnet.sova.io"
+sequencer_rpc = "https://rpc.testnet.sova.io"
+explorer = "https://explorer.testnet.sova.io/"
+superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 120893
+batch_inbox_addr = "0x00E0CeEb893940a2B32A8bF223BcfD40F1d687aF"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  isthmus_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  interop_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1753730532
+  [genesis.l1]
+    hash = "0x5122eb3e3fdf97ac7c34563da4522ffe6fe09df9bba2665086173d425ac4cfb1"
+    number = 8862943
+  [genesis.l2]
+    hash = "0x182bf02279c76f46a878c434ae12b47087402471a4a2c75103921a846658ccca"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0xdCe653bB7a2e5110d4C37224890D0F9e553e6165"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
+    gasLimit = 60000000
+
+[roles]
+  SystemConfigOwner = "0xe87fDe144392e1d8cFf496b907830E77badc2914"
+  ProxyAdminOwner = "0x360AE051bBF8681d6Bcd8e26b3e0E3bC92543c19"
+  Guardian = "0x360AE051bBF8681d6Bcd8e26b3e0E3bC92543c19"
+  Challenger = "0x054dD688B09202Ff00Ce7aFeD640C8B55534BB02"
+  Proposer = "0x2A1add78145B73E785045198FA2C103B63A4aB45"
+  UnsafeBlockSigner = "0x3F6Ac186e05b23eeFbA684c8A111Bd67f3980D3e"
+  BatchSubmitter = "0xdCe653bB7a2e5110d4C37224890D0F9e553e6165"
+
+[addresses]
+  AddressManager = "0x5069B432C8ee51b08d25eaC79Eec3221c9d38ce7"
+  L1CrossDomainMessengerProxy = "0xcD90a7fe885D26490AEF71c029F8b27Be5cC2679"
+  L1ERC721BridgeProxy = "0x78664b3F62fc3f51b2e1FC57F30BD46BBfb8de82"
+  L1StandardBridgeProxy = "0x22E040d829Ed86E8f01f2906F6f4FD395c81a342"
+  OptimismMintableERC20FactoryProxy = "0xB1373cf1806c6334C9A93AA5B1aE0AcE015dbD45"
+  OptimismPortalProxy = "0x54467A873AB70934CC5119dec447dF0A5b733e31"
+  SystemConfigProxy = "0xE389B608DA827F58249675C541a0B53781F4Fcfd"
+  ProxyAdmin = "0xF88E84728b0ca149CB0ba38427775418260Ad0c9"
+  SuperchainConfig = "0x8877c1CdF6Ff933A785C020D3d679Efce891FDf3"
+  AnchorStateRegistryProxy = "0x0f29542406f80220f5a67CD381389F1f03357A31"
+  DelayedWETHProxy = "0x34B239447c3257e1487206aE4E1D460262dd90B2"
+  DisputeGameFactoryProxy = "0xe1CF4Ba4a04F7Af49EaB32EDA62f9A903C52Dc39"
+  PermissionedDisputeGame = "0x1A41C2a611Bc07eE1F3015a98Ee58082510e4D9D"
