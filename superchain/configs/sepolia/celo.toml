@@ -1,0 +1,67 @@
+name = "Celo Sepolia"
+public_rpc = ""
+sequencer_rpc = "https://forno.celo-sepolia.celo-testnet.org"
+explorer = "https://celo-sepolia.blockscout.com"
+superchain_level = 2
+governed_by_optimism = true
+data_availability_type = "alt-da"
+chain_id = 11142220
+batch_inbox_addr = "0x00076c1f80cdb1d670046465c5ccd04e9e78c1f0"
+block_time = 1
+seq_window_size = 7200
+max_sequencer_drift = 600
+gas_paying_token = "0x3c7011fd5e6aed460caa4985cf8d8caba435b092"
+
+[hardforks]
+  canyon_time = 0
+  delta_time = 0
+  ecotone_time = 0
+  fjord_time = 0
+  granite_time = 0
+  holocene_time = 0
+  isthmus_time = 0
+
+[optimism]
+  eip1559_elasticity = 5
+  eip1559_denominator = 400
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1753283988
+  [genesis.l1]
+    hash = "0xeed417004236aa692023c216e8f1bd2185ac87a70c6f4393099f9c3777f05675"
+    number = 8825790
+  [genesis.l2]
+    hash = "0xabcc77fb92a7ea1e7d330042d81200585d251355b33408ed1c27fb54175b1fe2"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0xe80d3f16e4d44a5127e1bd6ad9ed4e17a96475f0"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x0100000000000000000000000000000000000000000000000000000000000000"
+    gasLimit = 60000000
+
+[roles]
+  SystemConfigOwner = "0x5e60d897cd62588291656b54655e98ee73f0aabf"
+  ProxyAdminOwner = "0x5e60d897cd62588291656b54655e98ee73f0aabf"
+  Guardian = "0x5e60d897cd62588291656b54655e98ee73f0aabf"
+  Challenger = "0xc813b28614bd4cfa3d5fdf153df41b273ab9d497"
+  Proposer = "0x640f7065c87c907c201b04d22f281d0586d4a85f"
+  UnsafeBlockSigner = "0xc01f0a060848058140296b0395663c67fdbbdbc4"
+  BatchSubmitter = "0xe80d3f16e4d44a5127e1bd6ad9ed4e17a96475f0"
+
+[addresses]
+  AddressManager = "0x8f0c6fc85a53551d87899ac2a5af2b48c793eb63"
+  L1CrossDomainMessengerProxy = "0x70b0e58e6039831954ede2ea1e9ef8a51680e4fd"
+  L1ERC721BridgeProxy = "0xb8c8dcbccd0f7c5e7a2184b13b85d461d8711e96"
+  L1StandardBridgeProxy = "0xec18a3c30131a0db4246e785355fbc16e2eaf408"
+  L2OutputOracleProxy = "0x0000000000000000000000000000000000000000"
+  OptimismMintableERC20FactoryProxy = "0x261be2ed7241fed9c746e0b5dff3a4a335991377"
+  OptimismPortalProxy = "0x44ae3d41a335a7d05eb533029917aad35662dcc2"
+  SystemConfigProxy = "0x760a5f022c9940f4a074e0030be682f560d29818"
+  ProxyAdmin = "0xf7d7a3d3bb8abb6829249b3d3ad3d525d052027e"
+  SuperchainConfig = "0x31beef32135c90ae8e56fb071b3587de289aaf77"
+  AnchorStateRegistryProxy = "0xd73ba8168a61f3e917f0930d5c0401aa47e269d6"
+  DelayedWETHProxy = "0x082f5f58b664cd1d51f9845fee322aba2ced9cba"
+  DisputeGameFactoryProxy = "0x57c45d82d1a995f1e135b8d7edc0a6bb5211cfaa"
+  MIPS = "0x0a691eed7be53f27f3c3b796061cdb8565da0b2a"
+  PreimageOracle = "0x855828ea44a0ce2596fdf49bea5b2859c0453704"

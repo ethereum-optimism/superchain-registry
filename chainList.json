@@ -1285,5 +1285,25 @@
     "faultProofs": {
       "status": "permissionless"
     }
+  },
+  {
+    "name": "Celo Sepolia",
+    "identifier": "sepolia/celo",
+    "chainId": 11142220,
+    "rpc": [
+      "https://forno.celo-sepolia.celo-testnet.org"
+    ],
+    "explorers": [],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    },
+    "gasPayingToken": "0x3c7011fd5e6aed460caa4985cf8d8caba435b092",
+    "faultProofs": {
+      "status": "permissioned"
+    }
   }
 ]

@@ -918,3 +918,19 @@
     chain = "rehearsal-0-bn"
   [chains.fault_proofs]
     status = "permissionless"
+
+[[chains]]
+  name = "Celo Sepolia"
+  identifier = "sepolia/celo"
+  chain_id = 11142220
+  rpc = ["https://forno.celo-sepolia.celo-testnet.org"]
+  explorers = ["https://celo-sepolia.blockscout.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  gas_paying_token = "0x3c7011fd5e6aed460caa4985cf8d8caba435b092"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
