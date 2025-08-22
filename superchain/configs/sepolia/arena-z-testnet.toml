@@ -11,13 +11,6 @@ batch_inbox_addr = "0x00894002C8CCC07469D2f98E575C375130761C35"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
-superchain = "sepolia"
-base_fee_vault_recipient = "0x9648CF2B93DdBbe120812a567294B2954bCc8568"
-l1_fee_vault_recipient = "0x9648CF2B93DdBbe120812a567294B2954bCc8568"
-sequencer_fee_vault_recipient = "0x9648CF2B93DdBbe120812a567294B2954bCc8568"
-deployment_tx_hash = "0x0000000000000000000000000000000000000000000000000000000000000000"
-deployment_l1_contracts_version = "tag://op-contracts/v3.0.0-rc.2"
-deployment_l2_contracts_version = "tag://op-contracts/v3.0.0-rc.2"
 
 [hardforks]
   canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC

@@ -1285,5 +1285,26 @@
     "faultProofs": {
       "status": "permissionless"
     }
+  },
+  {
+    "name": "arena-z-testnet",
+    "identifier": "sepolia/arena-z-testnet",
+    "chainId": 9899,
+    "rpc": [
+      "https://testnet-rpc.arena-z.gg"
+    ],
+    "explorers": [
+      "https://testnet-explorer.arena-z.gg"
+    ],
+    "superchainLevel": 1,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissioned"
+    }
   }
 ]
