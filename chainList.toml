@@ -923,7 +923,7 @@
   name = "Celo Sepolia"
   identifier = "sepolia/celo"
   chain_id = 11142220
-  rpc = ["https://forno.celo-sepolia.celo-testnet.org"]
+  rpc = [""]
   explorers = ["https://celo-sepolia.blockscout.com"]
   superchain_level = 0
   governed_by_optimism = false
