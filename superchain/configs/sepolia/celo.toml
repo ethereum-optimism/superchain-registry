@@ -6,11 +6,11 @@ superchain_level = 2
 governed_by_optimism = true
 data_availability_type = "alt-da"
 chain_id = 11142220
-batch_inbox_addr = "0x00076c1f80cdb1d670046465c5ccd04e9e78c1f0"
+batch_inbox_addr = "0x00076c1f80CdB1D670046465c5ccD04E9E78c1F0"
 block_time = 1
 seq_window_size = 7200
 max_sequencer_drift = 600
-gas_paying_token = "0x3c7011fd5e6aed460caa4985cf8d8caba435b092"
+gas_paying_token = "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092"
 
 [hardforks]
   canyon_time = 0
