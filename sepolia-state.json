@@ -111,7 +111,7 @@
       "delayedWETHPermissionedGameProxyAddress": "0x082f5f58b664cd1d51f9845fee322aba2ced9cba",
       "delayedWETHPermissionlessGameProxyAddress": "0x0000000000000000000000000000000000000000",
       "celoSuperchainConfigProxyAddress": "0x5c34140a1273372211bd75184ccc9e434b38d86b",
-      "celoTokenProxyAddress": "0x3c7011fd5e6aed460caa4985cf8d8caba435b092",
+      "celoTokenProxyAddress": "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092",
       "dataAvailabilityChallengeProxyAddress": "0x0000000000000000000000000000000000000000",
       "dataAvailabilityChallengeImplAddress": "0x0000000000000000000000000000000000000000",
       "additionalDisputeGames": null,

@@ -1301,7 +1301,7 @@
       "type": "L2",
       "chain": "mainnet"
     },
-    "gasPayingToken": "0x3c7011fd5e6aed460caa4985cf8d8caba435b092",
+    "gasPayingToken": "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092",
     "faultProofs": {
       "status": "permissioned"
     }
