@@ -1288,7 +1288,7 @@
   },
   {
     "name": "arena-z-testnet",
-    "identifier": "sepolia/arena-z-testnet",
+    "identifier": "sepolia/arena-z",
     "chainId": 9899,
     "rpc": [
       "https://testnet-rpc.arena-z.gg"
