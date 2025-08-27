@@ -4,7 +4,6 @@ sequencer_rpc = "https://testnet-rpc.arena-z.gg"
 explorer = "https://testnet-explorer.arena-z.gg"
 superchain_level = 1
 governed_by_optimism = true
-superchain_time = 0
 data_availability_type = "eth-da"
 chain_id = 9899
 batch_inbox_addr = "0x00894002C8CCC07469D2f98E575C375130761C35"
