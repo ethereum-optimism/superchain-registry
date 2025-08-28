@@ -918,3 +918,18 @@
     chain = "rehearsal-0-bn"
   [chains.fault_proofs]
     status = "permissionless"
+
+[[chains]]
+  name = "arena-z-testnet"
+  identifier = "sepolia/arena-z"
+  chain_id = 9899
+  rpc = ["https://testnet-rpc.arena-z.gg"]
+  explorers = ["https://testnet-explorer.arena-z.gg"]
+  superchain_level = 1
+  governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
