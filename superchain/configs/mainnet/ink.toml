@@ -61,7 +61,6 @@ max_sequencer_drift = 600
   SuperchainConfig = "0x95703e0982140D16f8ebA6d158FccEde42f04a4C"
   AnchorStateRegistryProxy = "0xEe018bAf058227872540AC60eFbd38b023d9dAe2"
   DelayedWETHProxy = "0xD5d9Eb5B1edce381C9f3377264e05c31f3036F32"
-  DelayedWETHPermissionless = "0x3F7b07A5D638024a37A776FA228fE90b317aF6dE"
   DisputeGameFactoryProxy = "0x10d7B35078d3baabB96Dd45a9143B94be65b12CD"
   FaultDisputeGame = "0x1a20c06a80260AA45adA0F9F59b334560eE3FEf1"
   MIPS = "0xA1B54D89e305bcd322Ba0C9C094093173C0d6b3a"
