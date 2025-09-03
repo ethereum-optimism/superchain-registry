@@ -525,7 +525,7 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "permissionless"
+    status = "permissioned"
 
 [[chains]]
   name = "Creator Chain Testnet"
@@ -931,5 +931,20 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
+    
+[[chains]]
+  name = "arena-z-testnet"
+  identifier = "sepolia/arena-z"
+  chain_id = 9899
+  rpc = ["https://testnet-rpc.arena-z.gg"]
+  explorers = ["https://testnet-explorer.arena-z.gg"]
+  superchain_level = 1
+  governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
   [chains.fault_proofs]
     status = "permissioned"

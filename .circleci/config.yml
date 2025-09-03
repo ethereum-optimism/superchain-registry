@@ -1,7 +1,6 @@
 version: 2.1
 
 orbs:
-  codecov: codecov/codecov@5.0.3
   utils: ethereum-optimism/circleci-utils@1.0.8
 
 executors:
@@ -61,9 +60,6 @@ jobs:
             MAINNET_RPC_URL: << pipeline.parameters.mainnet_rpc_url >>
       - store_test_results:
           path: << parameters.package >>/test-results.xml
-      - codecov/upload:
-          disable_search: true
-          files: ./<<parameters.package>>/coverage.out
 
   run-tool:
     circleci_ip_ranges: true
