@@ -40,13 +40,7 @@ data_availability_type = "eth-da"
     gasLimit = 30000000
 
 [roles]
-  SystemConfigOwner = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
   ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
-  Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
-  Challenger = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
-  Proposer = "0x49277EE36A024120Ee218127354c4a3591dc90A9"
-  UnsafeBlockSigner = "0x57CACBB0d30b01eb2462e5dC940c161aff3230D3"
-  BatchSubmitter = "0x8F23BB38F531600e5d8FDDaAEC41F13FaB46E98c"
 
 [addresses]
   AddressManager = "0x9bFE9c5609311DF1c011c47642253B78a4f33F4B"
