@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
@@ -12,6 +13,7 @@ import (
 func main() {
 	if err := mainErr(); err != nil {
 		output.WriteNotOK("%v\n", err)
+		os.Exit(1)
 	}
 }
 
