@@ -45,3 +45,4 @@ max_sequencer_drift = 600
   L1StandardBridgeProxy = "0xdc1664458d2f0B6090bEa60A8793A4E66c2F1c00"
   OptimismPortalProxy = "0x7B02D13904D8e6E0f0Efaf756aB14Cb0FF21eE7e"
   SystemConfigProxy = "0x158Fd5715F16Ac1F2Dc959A299B383aAaf9B59EB"
+  DisputeGameFactoryProxy = "0xF45a5f1e36fCeA3Cc830A98c6c3C5ceA7d6af852"
