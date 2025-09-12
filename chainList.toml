@@ -933,7 +933,7 @@
     chain = "mainnet"
   [chains.fault_proofs]
     status = "permissioned"
-    
+
 [[chains]]
   name = "arena-z-testnet"
   identifier = "sepolia/arena-z"
