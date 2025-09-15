@@ -97,6 +97,10 @@ func action(cliCtx *cli.Context) error {
 	output.WriteOK("inflating chain configs")
 	opDeployerVersion := cliCtx.String(OpDeployerVersion.Name)
 	opDeployerBinDir := cliCtx.String(OpDeployerBinDir.Name)
+
+	output.WriteWarn("⚠️  Config generation behavior has changed: now generates only essential addresses by default.")
+	output.WriteWarn("📄 All addresses are still available in addresses.json")
+
 	for i := 0; i < numChains; i++ {
 		chainID, err := st.GetChainID(i)
 		if err != nil {
