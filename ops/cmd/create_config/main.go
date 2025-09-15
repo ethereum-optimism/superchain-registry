@@ -58,6 +58,9 @@ func action(cliCtx *cli.Context) error {
 	statePath := cliCtx.String(StateFilename.Name)
 	opDeployerBinDir := cliCtx.String(OpDeployerBinDir.Name)
 
+	output.WriteWarn("⚠️  Config generation behavior has changed: now generates only essential addresses by default.")
+	output.WriteWarn("📄 All addresses are still available in addresses.json")
+
 	err = manage.GenerateChainArtifacts(statePath, wd, cliCtx.String(Shortname.Name), nil, nil, 0, "", opDeployerBinDir)
 	if err != nil {
 		return fmt.Errorf("failed to generate chain config: %w", err)
