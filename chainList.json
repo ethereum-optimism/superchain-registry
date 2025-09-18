@@ -1287,6 +1287,27 @@
     }
   },
   {
+    "name": "Silent Data Mainnet",
+    "identifier": "mainnet/silentdata-mainnet",
+    "chainId": 380929,
+    "rpc": [
+      "https://mainnet.silentdata.com/${SILENTDATA_AUTH_TOKEN}"
+    ],
+    "explorers": [
+      "https://explorer-mainnet.rollup.silentdata.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissioned"
+    }
+  },
+  {
     "name": "arena-z-testnet",
     "identifier": "sepolia/arena-z",
     "chainId": 9899,
