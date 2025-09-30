@@ -933,3 +933,18 @@
     chain = "sepolia"
   [chains.fault_proofs]
     status = "permissioned"
+
+[[chains]]
+  name = "Silent Data Mainnet"
+  identifier = "mainnet/silent-data-mainnet"
+  chain_id = 380929
+  rpc = ["https://mainnet.silentdata.com/${SILENTDATA_AUTH_TOKEN}"]
+  explorers = ["https://explorer-mainnet.rollup.silentdata.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
