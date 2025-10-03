@@ -1,5 +1,13 @@
 latest_stable = "1.6.1"
-latest_rc = "1.6.1-rc.1"
+latest_rc = "1.7.0-rc.1"
+
+[[prestates."1.7.0-rc.1]]
+type="cannon64"
+hash="0x03b38e0f14678bcf3a358e5e2593938337b991e3883f2be40213282dc6079d06"
+
+[[prestates."1.7.0-rc.1]]
+type="interop"
+hash="0x0376a85db8f1bdf7df83166deb35004de2041d070180755ebeb0368950d23c37"
 
 [[prestates."1.6.1"]]
 type = "cannon64"
