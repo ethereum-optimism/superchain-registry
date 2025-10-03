@@ -26,7 +26,6 @@ deployment_l2_contracts_version = "tag://op-contracts/v3.0.0"
   granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   isthmus_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-  interop_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
