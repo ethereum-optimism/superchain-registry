@@ -3,6 +3,27 @@
 #   * proxied             : specify a standard "implementation_address"
 #   * neither             : specify neither a standard "address" nor "implementation_address"
 
+# Upgrade 16a https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv4.1.0
+["op-contracts/v4.1.0"]
+system_config = { version = "3.7.0", implementation_address = "0x2bfe4a5bd5a41e9d848d843ebcdfa15954e9a557" }
+fault_dispute_game = { version = "1.7.0" }
+permissioned_dispute_game = { version = "1.7.0" }
+mips = { version = "1.8.0", address = "0x07babe08ee4d07dba236530183b24055535a7011" }
+optimism_portal = { version = "5.0.0", implementation_address = "0x381e729ff983fa4bced820e7b922d79bf653b999" }
+optimism_portal_interop = { version = "5.0.0+interop", implementation_address = "0xb0eb854fd842e0e564d49d2fe6b2ac25d035523c" }
+anchor_state_registry = { version = "3.5.0", implementation_address = "0xeb69cc681e8d4a557b30dffbad85affd47a2cf2e" }
+delayed_weth = { version = "1.5.0", implementation_address = "0x33dadc2d1aa9bb613a7ae6b28425ea00d44c6998" }
+eth_lockbox = { version = "1.2.0", implementation_address = "0x784d2f03593a42a6e4676a012762f18775ecbbe6" }
+dispute_game_factory = { version = "1.2.0", implementation_address = "0x33d1e8571a85a538ed3d5a4d88f46c112383439d" }
+preimage_oracle = { version = "1.1.4", address = "0x1fb8cdfc6831fc866ed9c51af8817da5c287add3" }
+l1_cross_domain_messenger = { version = "2.10.0", implementation_address = "0x22d12e0faebd62d429514a65ebae32dd316c12d6" }
+l1_erc721_bridge = { version = "2.8.0", implementation_address = "0x7f1d12fb2911eb095278085f721e644c1f675696" }
+l1_standard_bridge = { version = "2.7.0", implementation_address = "0xe32b192fb1dca88fcb1c56b3acb429e32238adcb" }
+optimism_mintable_erc20_factory = { version = "1.10.1", implementation_address = "0x5493f4677a186f64805fe7317d6993ba4863988f" }
+op_contracts_manager = { version = "3.2.0", address = "0x8123739c1368c2dedc8c564255bc417feeebff9d" }
+superchain_config = { version = "2.3.0", implementation_address = "0xce28685eb204186b557133766eca00334eb441e4" }
+protocol_versions = { version = "1.1.0", implementation_address = "0x37e15e4d6dffa9e5e320ee1ec036922e563cb76c" }
+
 # Upgrade 16a https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv4.1.0-rc.3
 ["op-contracts/v4.1.0-rc.3"]
 system_config = { version = "3.7.0", implementation_address = "0x2bfe4a5bd5a41e9d848d843ebcdfa15954e9a557" }
