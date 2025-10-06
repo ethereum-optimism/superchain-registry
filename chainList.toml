@@ -923,9 +923,9 @@
   name = "Celo Sepolia"
   identifier = "sepolia/celo"
   chain_id = 11142220
-  rpc = [""]
+  rpc = ["https://forno.celo-sepolia.celo-testnet.org"]
   explorers = ["https://celo-sepolia.blockscout.com"]
-  superchain_level = 0
+  superchain_level = 2
   governed_by_optimism = false
   data_availability_type = "alt-da"
   gas_paying_token = "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092"
@@ -947,5 +947,36 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "Celo Sepolia"
+  identifier = "sepolia/celo"
+  chain_id = 11142220
+  rpc = ["https://forno.celo-sepolia.celo-testnet.org"]
+  explorers = ["https://celo-sepolia.blockscout.com"]
+  superchain_level = 2
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  gas_paying_token = "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "arena-z-testnet"
+  identifier = "sepolia/arena-z"
+  chain_id = 9899
+  rpc = ["https://testnet-rpc.arena-z.gg"]
+  explorers = ["https://testnet-explorer.arena-z.gg"]
+  superchain_level = 1
+  governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
   [chains.fault_proofs]
     status = "permissioned"

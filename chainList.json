@@ -1296,7 +1296,7 @@
     "explorers": [
       "https://celo-sepolia.blockscout.com"
     ],
-    "superchainLevel": 0,
+    "superchainLevel": 2,
     "governedByOptimism": false,
     "dataAvailabilityType": "alt-da",
     "parent": {
@@ -1324,6 +1324,49 @@
     "parent": {
       "type": "L2",
       "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissioned"
+    }
+  },
+  {
+    "name": "Celo Sepolia",
+    "identifier": "sepolia/celo",
+    "chainId": 11142220,
+    "rpc": [
+      "https://forno.celo-sepolia.celo-testnet.org"
+    ],
+    "explorers": [
+      "https://celo-sepolia.blockscout.com"
+    ],
+    "superchainLevel": 2,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    },
+    "gasPayingToken": "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092",
+    "faultProofs": {
+      "status": "permissioned"
+    }
+  },
+  {
+    "name": "arena-z-testnet",
+    "identifier": "sepolia/arena-z",
+    "chainId": 9899,
+    "rpc": [
+      "https://testnet-rpc.arena-z.gg"
+    ],
+    "explorers": [
+      "https://testnet-explorer.arena-z.gg"
+    ],
+    "superchainLevel": 1,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
     },
     "faultProofs": {
       "status": "permissioned"
