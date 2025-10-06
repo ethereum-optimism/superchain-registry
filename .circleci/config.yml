@@ -193,6 +193,9 @@ jobs:
               echo "go run ./cmd/codegen \\"
               echo "  --l1-rpc-urls=\"<urls>\" \\"
               echo "  --superchains=\"$SUPERCHAINS\""
+              echo ""
+              echo "These are the expected changes:"
+              git diff
               exit 1
             else
               echo "\n✅ All codegen files are up to date"
