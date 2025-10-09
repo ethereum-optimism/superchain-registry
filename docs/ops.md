@@ -51,14 +51,7 @@ Where  `shortname` is your chain's name (e.g. `op`) and the path to the state fi
 > just create-config <shortname> <path to your state file> <op deployer version>
 > ```
 >
-> Currently supported values for the version are:
->
-> - `op-deployer/v0.0.14`
-> - `op-deployer/v0.0.14`
-> - `op-deployer/v0.0.14`
-> - `op-deployer/v0.2.3`
-> - `op-deployer/v0.3.2`
-> - `op-deployer/v0.4.0-rc.3`
+> Supported values for the `op-deployer` versions can be found in the <a href="/ops/internal/deployer/versions.json">`versions.json`</a> file.
 
 This will put two files in the `.staging` directory - `<shortname>.toml` and `<shortname>.json.zst`
 
