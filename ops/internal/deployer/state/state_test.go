@@ -1,4 +1,4 @@
-package deployer
+package state
 
 import (
 	"encoding/json"
@@ -6,13 +6,14 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/opaque_map"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMergeState(t *testing.T) {
 	tests := []struct {
 		Version int
-		Merger  func(state OpaqueState) (OpaqueMap, OpaqueState, error)
+		Merger  func(state OpaqueState) (opaque_map.OpaqueMap, OpaqueState, error)
 	}{
 		{1, MergeStateV1},
 		{2, MergeStateV2},

@@ -4,14 +4,14 @@ import (
 	"path"
 	"testing"
 
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/opaque_map"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/stretchr/testify/require"
 	"github.com/tomwright/dasel"
 )
 
 func TestOpaqueToGenesis(t *testing.T) {
-	om := new(deployer.OpaqueMap)
+	om := new(opaque_map.OpaqueMap)
 	err := paths.ReadJSONFile(path.Join("testdata", "expected-genesis.json"), om)
 	require.NoError(t, err)
 
