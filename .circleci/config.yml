@@ -1,6 +1,7 @@
 version: 2.1
 
 orbs:
+  go: circleci/go@2.0.0 # Use the latest version
   utils: ethereum-optimism/circleci-utils@1.0.8
 
 executors:
@@ -63,6 +64,9 @@ jobs:
 
   run-tool:
     circleci_ip_ranges: true
+    executor:
+      name: go/default
+      tag: 1.23.1
     parameters:
       tool:
         type: string
@@ -72,13 +76,19 @@ jobs:
       check_diff:
         type: boolean
         default: false
-    docker:
-      - image: <<pipeline.parameters.default_docker_image>>
     steps:
       - utils/checkout-with-mise
+      - go/load-mod-cache:
+          key: << parameters.tool >>-{{ checksum "go.sum"}}
+          working_directory: ops
+      - go/mod-download:
+          working_directory: ops
       - run:
           name: Run tool
           command: go run ./cmd/<< parameters.tool >>/main.go << parameters.args >>
+          working_directory: ops
+      - go/save-mod-cache:
+          key: << parameters.tool >>-{{ checksum "go.sum"}}
           working_directory: ops
       - when:
           condition: << parameters.check_diff >>
@@ -125,16 +135,14 @@ jobs:
               echo "Not a PR, skipping"
               circleci-agent step halt
             fi
-      - run:
+      - run-tool:
           name: Run staging report
           environment:
             SEPOLIA_RPC_URL: << pipeline.parameters.sepolia_rpc_url >>
             MAINNET_RPC_URL: << pipeline.parameters.mainnet_rpc_url >>
             GITHUB_REPO: << pipeline.parameters.github_repo >>
             DEPLOYER_CACHE_DIR: << pipeline.parameters.deployer_cache_dir >>
-          command: |
-            cd ops
-            go run ./cmd/print_staging_report/main.go
+          tool: print_staging_report
 
   check-codegen:
     circleci_ip_ranges: true
