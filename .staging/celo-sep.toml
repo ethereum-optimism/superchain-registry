@@ -1,4 +1,4 @@
-name = "Celo Sepolia"
+name = "Celo Sepolia Testnet"
 public_rpc = "https://forno.celo-sepolia.celo-testnet.org"
 sequencer_rpc = "https://forno.celo-sepolia.celo-testnet.org"
 explorer = "https://celo-sepolia.blockscout.com"
