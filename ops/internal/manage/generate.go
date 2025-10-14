@@ -10,6 +10,8 @@ import (
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/opaque_map"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/core"
@@ -31,7 +33,7 @@ func GenerateChainArtifacts(
 	opDeployerVersion string,
 	opDeployerBinDir string,
 ) error {
-	st, err := deployer.ReadOpaqueStateFile(statePath)
+	st, err := state.ReadOpaqueStateFile(statePath)
 	if err != nil {
 		return fmt.Errorf("failed to read opaque state file: %w", err)
 	}
@@ -52,7 +54,7 @@ func GenerateChainArtifacts(
 	} else {
 		// Otherwise, use the specified op-deployer version. The correct state merger to use will be
 		// autodetected based on the provided op-deployer version.
-		merger, err := deployer.GetStateMerger(opDeployerVersion)
+		merger, err := state.GetStateMerger(opDeployerVersion)
 		if err != nil {
 			return fmt.Errorf("failed to get state merger: %w", err)
 		}
@@ -124,7 +126,7 @@ func GenerateChainArtifacts(
 var ErrNotLossless = errors.New("conversion is not lossless, consider updating op-geth dependency")
 
 // Convert OpaqueMapping to core.Genesis
-func opaqueToGenesis(opaque *deployer.OpaqueMap) (*core.Genesis, error) {
+func opaqueToGenesis(opaque *opaque_map.OpaqueMap) (*core.Genesis, error) {
 	// Step 1: Marshal the OpaqueMapping to JSON
 	jsonData, err := json.MarshalIndent(opaque, "", "  ")
 	if err != nil {
@@ -144,7 +146,7 @@ func opaqueToGenesis(opaque *deployer.OpaqueMap) (*core.Genesis, error) {
 		return nil, fmt.Errorf("failed to marshal Genesis to JSON: %w", err)
 	}
 
-	checkOpaque := new(deployer.OpaqueMap)
+	checkOpaque := new(opaque_map.OpaqueMap)
 	if err := json.Unmarshal(jsonData2, checkOpaque); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal JSON to OpaqueMap: %w", err)
 	}
@@ -166,7 +168,7 @@ func opaqueToGenesis(opaque *deployer.OpaqueMap) (*core.Genesis, error) {
 }
 
 // containsAll checks if all the keys and values in b are present in a
-func containsAll(a, b deployer.OpaqueMap) bool {
+func containsAll(a, b opaque_map.OpaqueMap) bool {
 	for k, bv := range b {
 		av, ok := a[k]
 		if !ok {
