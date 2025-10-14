@@ -31,11 +31,11 @@ func ValidateUniqueness(
 ) error {
 	for _, chain := range chains {
 		if chain.Config.ChainID == in.ChainID {
-			return ErrDuplicateChainID
+			return fmt.Errorf("%w: chains %s and %s: %d", ErrDuplicateChainID, chain.ShortName, in.ShortName, in.ChainID)
 		}
 
 		if chain.ShortName == in.ShortName {
-			return ErrDuplicateShortName
+			return fmt.Errorf("%w: chains %d and %d: %s", ErrDuplicateShortName, chain.Config.ChainID, in.ChainID, chain.ShortName)
 		}
 	}
 	return nil
