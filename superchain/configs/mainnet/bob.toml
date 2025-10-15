@@ -4,7 +4,6 @@ sequencer_rpc = "https://rpc.gobob.xyz"
 explorer = "https://explorer.gobob.xyz"
 superchain_level = 0
 governed_by_optimism = false
-superchain_time = 0
 data_availability_type = "eth-da"
 chain_id = 60808
 batch_inbox_addr = "0x3A75346f81302aAc0333FB5DCDD407e12A6CfA83"
