@@ -17,7 +17,7 @@
 | HashKey Chain | ❌ | ❌ | https://explorer.hsk.xyz | `https://mainnet.hsk.xyz` | `https://hashkeychain-mainnet.alt.technology` |
 | Ink | ✅ | ✅ | https://explorer.inkonchain.com | `https://rpc-gel.inkonchain.com` | `https://rpc-gel.inkonchain.com` |
 | Lisk | ❌ | ✅ | https://blockscout.lisk.com | `https://rpc.api.lisk.com` | `https://rpc.api.lisk.com` |
-| Lyra Chain | ❌ | ✅ | https://explorer.lyra.finance | `https://rpc.lyra.finance` | `https://rpc.lyra.finance` |
+| Derive | ❌ | ✅ | https://explorer.lyra.finance | `https://rpc.lyra.finance` | `https://rpc.lyra.finance` |
 | Metal L2 | ✅ | ✅ | https://explorer.metall2.com | `https://rpc.metall2.com` | `https://rpc.metall2.com` |
 | Mint Mainnet | ❌ | ✅ | https://explorer.mintchain.io | `https://rpc.mintchain.io` | `https://rpc.mintchain.io` |
 | Mode | ✅ | ✅ | https://explorer.mode.network | `https://mainnet.mode.network` | `https://mainnet-sequencer.mode.network` |
