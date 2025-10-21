@@ -25,7 +25,9 @@ parameters:
   deployer_cache_dir:
     type: string
     default: /home/circleci/tmp/deployer-cache
-
+  daily_codegen_dispatch:
+    type: boolean
+    default: false
 
 jobs:
   go-lint-test:
@@ -200,6 +202,78 @@ jobs:
             else
               echo "\n✅ All codegen files are up to date"
             fi
+
+  daily-codegen:
+    circleci_ip_ranges: true
+    docker:
+      - image: <<pipeline.parameters.default_docker_image>>
+    steps:
+      - utils/checkout-with-mise
+      - run:
+          name: Run daily codegen
+          command: |
+            set -e
+
+            just codegen << pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>
+            if [ -n "$(git status --porcelain)" ]; then
+              echo "Changes detected after running codegen, will create a PR to update the codegen files"
+            else
+              echo "No changes detected after running codegen, halting job"
+              circleci-agent step halt
+            fi
+      - run:
+          name: Create PR to update codegen files
+          command: |
+            set -e
+
+            # Configure git
+            git config user.name "opgitgovernance"
+            git config user.email "188376469+opgitgovernance@users.noreply.github.com"
+
+            # Create a new branch
+            BRANCH_NAME="automated-codegen-$(date +%Y%m%d-%H%M%S)"
+            git checkout -b "$BRANCH_NAME"
+
+            # Commit and push changes
+            git add .
+            git commit -m "chore: automated daily codegen update $(date +%Y-%m-%d)"
+            git push https://x-access-token:${GITHUB_TOKEN_GOVERNANCE}@github.com/<< pipeline.parameters.github_repo >>.git "$BRANCH_NAME"
+
+            # Create PR
+            PR_RESPONSE=$(curl -s -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GITHUB_TOKEN_GOVERNANCE}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              -H "Content-Type: application/json" \
+              https://api.github.com/repos/<< pipeline.parameters.github_repo >>/pulls \
+              -d "{
+                \"title\": \"chore: automated codegen update $(date +%Y-%m-%d)\",
+                \"body\": \"This is an automated PR created by the daily-codegen circleci job.\\n\\nPlease review and merge if the changes look correct.\",
+                \"head\": \"$BRANCH_NAME\",
+                \"base\": \"main\"
+              }")
+
+            # Check if PR creation succeeded
+            PR_URL=$(echo "$PR_RESPONSE" | jq -r '.html_url')
+            if [ "$PR_URL" = "null" ] || [ -z "$PR_URL" ]; then
+              echo "Failed to create PR. API response:"
+              echo "$PR_RESPONSE"
+              exit 1
+            fi
+
+            echo "PR created: $PR_URL"
+            echo "export PR_URL=$PR_URL" >> $BASH_ENV
+      - run:
+          name: Send Slack notification
+          command: |
+            SLACK_MESSAGE="🤖 *Daily Codegen Update* <!subteam^S09D3DZ07M3>\n\n"
+            SLACK_MESSAGE="${SLACK_MESSAGE}The automated codegen job has detected changes and created a PR.\n\n"
+            SLACK_MESSAGE="${SLACK_MESSAGE}🔗 *PR:* <${PR_URL}|View Pull Request> \n"
+            SLACK_MESSAGE="${SLACK_MESSAGE}👀 *Action Required:* Please review and merge the PR.\n"
+
+            curl -X POST -H 'Content-type: application/json' \
+              --data "{\"text\":\"$(echo -e "$SLACK_MESSAGE")\"}" \
+              "$SLACK_WEBHOOK_URL"
 
   notify-when-chain-is-added-to-registry:
     executor: default
@@ -408,3 +482,14 @@ workflows:
             branches:
               only:
                 - main
+
+  daily-codegen:
+    when:
+      or:
+        - equal: ["build_daily", << pipeline.trigger_source >>]
+        - and:
+            - equal: [true, << pipeline.parameters.daily_codegen_dispatch >>]
+            - equal: ["api", << pipeline.trigger_source >>]
+    jobs:
+      - daily-codegen:
+          context: circleci-repo-superchain-registry
