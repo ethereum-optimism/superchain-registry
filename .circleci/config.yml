@@ -487,7 +487,7 @@ workflows:
   daily-codegen:
     when:
       or:
-        - equal: ["build_daily", << pipeline.trigger_source >>]
+        - equal: ["build_daily", << pipeline.schedule.name >>]
         - and:
             - equal: [true, << pipeline.parameters.daily_codegen_dispatch >>]
             - equal: ["api", << pipeline.trigger_source >>]
