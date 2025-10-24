@@ -4,6 +4,7 @@ sequencer_rpc = "https://testnet-rpc.arena-z.gg"
 explorer = "https://testnet-explorer.arena-z.gg"
 superchain_level = 1
 governed_by_optimism = true
+superchain_time = 1762272001
 data_availability_type = "eth-da"
 chain_id = 9899
 batch_inbox_addr = "0x00894002C8CCC07469D2f98E575C375130761C35"
@@ -19,6 +20,7 @@ max_sequencer_drift = 600
   granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   isthmus_time = 1747839600 # Wed 21 May 2025 15:00:00 UTC
+  jovian_time = 1762272001 # Tue 4 Nov 2025 16:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
