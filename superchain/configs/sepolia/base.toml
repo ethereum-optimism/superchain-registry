@@ -21,7 +21,7 @@ max_sequencer_drift = 600
   holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
   pectra_blob_schedule_time = 1742486400 # Thu 20 Mar 2025 16:00:00 UTC
   isthmus_time = 1744905600 # Thu 17 Apr 2025 16:00:00 UTC
-  jovian_time = 1762272001 # Tue 4 Nov 2025 16:00:01 UTC
+  jovian_time = 1762358401 # Wed 5 Nov 2025 16:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 10
