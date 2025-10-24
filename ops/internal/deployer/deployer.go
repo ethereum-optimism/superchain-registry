@@ -14,6 +14,8 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/opaque_map"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/state"
 	"github.com/ethereum/go-ethereum/log"
 )
 
@@ -25,23 +27,23 @@ var contractVersions map[string]string
 
 type BinaryPicker interface {
 	Path() string
-	Merger() StateMerger
+	Merger() state.StateMerger
 }
 
 type FixedBinaryPicker struct {
 	binaryPath string
-	merger     StateMerger
+	merger     state.StateMerger
 }
 
 func (f *FixedBinaryPicker) Path() string {
 	return f.binaryPath
 }
 
-func (f *FixedBinaryPicker) Merger() StateMerger {
+func (f *FixedBinaryPicker) Merger() state.StateMerger {
 	return f.merger
 }
 
-func WithFixedBinary(binaryPath string, merger StateMerger) *FixedBinaryPicker {
+func WithFixedBinary(binaryPath string, merger state.StateMerger) *FixedBinaryPicker {
 	return &FixedBinaryPicker{
 		binaryPath: binaryPath,
 		merger:     merger,
@@ -64,7 +66,7 @@ func WithReleaseBinary(binDir string, l1ContractsRelease string) (*FixedBinaryPi
 
 	binaryPath := VersionedBinaryPath(binDir, deployerVersion)
 
-	merger, err := GetStateMerger(deployerVersion)
+	merger, err := state.GetStateMerger(deployerVersion)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get state merger: %w", err)
 	}
@@ -86,7 +88,7 @@ func init() {
 // then shelling out to that binary for various cli commands
 type OpDeployer struct {
 	binaryPath string
-	merger     StateMerger
+	merger     state.StateMerger
 	lgr        log.Logger
 }
 
@@ -110,7 +112,7 @@ func NewOpDeployer(lgr log.Logger, binaryPicker BinaryPicker) (*OpDeployer, erro
 // in the specified working directory.
 func (d *OpDeployer) setupStateAndIntent(inputStatePath, workdir string) error {
 	// Read the state file
-	state, err := ReadOpaqueStateFile(inputStatePath)
+	state, err := state.ReadOpaqueStateFile(inputStatePath)
 	if err != nil {
 		return fmt.Errorf("failed to read state file: %w", err)
 	}
@@ -132,7 +134,7 @@ func (d *OpDeployer) setupStateAndIntent(inputStatePath, workdir string) error {
 	d.lgr.Info("Wrote state to temporary file", "path", stateTempPath)
 
 	// Write intent.toml in the temp directory
-	useInts(mergedIntent)
+	opaque_map.UseInts(mergedIntent)
 	intentTOML, err := toml.Marshal(mergedIntent)
 	if err != nil {
 		return fmt.Errorf("failed to marshal intent to TOML: %w", err)
@@ -176,7 +178,7 @@ func (d *OpDeployer) inspectCommand(workdir, chainId, subcommand string, result 
 
 // GenerateStandardGenesis runs op-deployer binary to generate a genesis
 // - l1RpcUrl must match the state's L1 and is required by op-deployer, even though we aren't sending any txs
-func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string) (*OpaqueMap, error) {
+func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string) (*opaque_map.OpaqueMap, error) {
 	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file to temporary directory: %w", err)
@@ -203,7 +205,7 @@ func (d *OpDeployer) GenerateStandardGenesis(statePath, chainId, l1RpcUrl string
 	}
 
 	// Run `op-deployer inspect genesis` to read the expected genesis
-	var genesis OpaqueMap
+	var genesis opaque_map.OpaqueMap
 	if err := d.inspectCommand(workdir, chainId, "genesis", &genesis); err != nil {
 		return nil, err
 	}
@@ -218,7 +220,7 @@ func (d *OpDeployer) copyStateFileToTempDir(statePath string) (string, error) {
 		return "", fmt.Errorf("failed to create temporary directory: %w", err)
 	}
 
-	state, err := ReadOpaqueStateFile(statePath)
+	state, err := state.ReadOpaqueStateFile(statePath)
 	if err != nil {
 		return "", fmt.Errorf("failed to read state file: %w", err)
 	}
@@ -238,14 +240,14 @@ func (d *OpDeployer) copyStateFileToTempDir(statePath string) (string, error) {
 	return workdir, nil
 }
 
-func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*OpaqueMap, error) {
+func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*opaque_map.OpaqueMap, error) {
 	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file: %w", err)
 	}
 	defer os.RemoveAll(workdir)
 
-	var genesis OpaqueMap
+	var genesis opaque_map.OpaqueMap
 	if err := d.inspectCommand(workdir, chainId, "genesis", &genesis); err != nil {
 		return nil, err
 	}
