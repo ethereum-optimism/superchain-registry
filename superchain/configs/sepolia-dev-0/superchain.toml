@@ -11,6 +11,7 @@ granite_time = 1723046400 # Wed Aug 7 16:00:00 UTC 2024
 holocene_time = 1731682800 # Fri Nov 15 15:00:00 UTC 2024
 pectra_blob_schedule_time = 1741687200 # Tue Mar 11 10:00:00 UTC 2025
 isthmus_time = 1744300800 # Thu Apr 10 16:00:00 UTC 2025
+jovian_time = 1761580800 # Mon Oct 27 16:00:00 UTC 2025
 
 [l1]
   chain_id = 11155111
