@@ -1,5 +1,29 @@
 latest_stable = "1.6.1"
-latest_rc = "1.7.0-rc.5"
+latest_rc = "1.8.0-rc.3"
+
+[[prestates."1.8.0-rc.3"]]
+type="cannon64"
+hash="0x03799051d2bfe459127d4597f469f535ff1bd2a6e1e2134443167620871c11f3"
+
+[[prestates."1.8.0-rc.3"]]
+type="interop"
+hash="0x0375052a8100e452f648435703f524245fadce6122fa99046921bdd84683a982"
+
+[[prestates."1.8.0-rc.2"]]
+type="cannon64"
+hash="0x034af54951ecf8f55535703eefcd7be0ea0f9069aae98a7ef7ba6c22a37b5886"
+
+[[prestates."1.8.0-rc.2"]]
+type="interop"
+hash="0x03ae7413794c442acf3052882c7da662253fcec05b2d7c0233818498ac178385"
+
+[[prestates."1.8.0-rc.1"]]
+type="cannon64"
+hash="0x037a3ca1eef17bc635b30edbe85d0336777c0f8cae5146701c408e797400cf4a"
+
+[[prestates."1.8.0-rc.1"]]
+type="interop"
+hash="0x0372009a06e322685f928679577e5aa0f5444839ae0b6db8c43ff529a4a34d73"
 
 [[prestates."1.7.0-rc.5"]]
 type="cannon64"
