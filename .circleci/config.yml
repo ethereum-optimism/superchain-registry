@@ -248,7 +248,7 @@ jobs:
               https://api.github.com/repos/<< pipeline.parameters.github_repo >>/pulls \
               -d "{
                 \"title\": \"chore: automated codegen update $(date +%Y-%m-%d)\",
-                \"body\": \"This is an automated PR created by the daily-codegen circleci job.\\n\\nPlease review and merge if the changes look correct.\",
+                \"body\": \"This is an automated PR created by the daily-codegen circleci job.\\n\\nPlease review and merge if the changes look correct.\\n\\nNote that only these files should have been modified:\\n\\n- [addresses.json](https://github.com/ethereum-optimism/superchain-registry/blob/main/superchain/extra/addresses/addresses.json)\\n- [chainList.json](https://github.com/ethereum-optimism/superchain-registry/blob/main/chainList.json)\\n- [chainList.toml](https://github.com/ethereum-optimism/superchain-registry/blob/main/chainList.toml)\\n\\nFor more details see the [runbook](https://www.notion.so/oplabs/superchain-registry-daily-codegen-294f153ee162803788cdee48ec542ca4?v=d784200583d9415587c4dcd2b0c64b2f).\",
                 \"head\": \"$BRANCH_NAME\",
                 \"base\": \"main\"
               }")
