@@ -328,3 +328,27 @@ hash = "0x038942ec840131a63c49fa514a3f0577ae401fd5584d56ad50cdf5a8b41d4538"
 [[prestates."0.0.1"]]
 type = "cannon32"
 hash = "0x03babef4b4c6d866d56e6356d961839fd9475931d11e0ea507420a87b0cadbdd"
+
+[[prestates."1.1.6"]]
+type="cannon64-kona"
+hash="0x034726fbf9eb7cb9aeb1633dc9a1434d161bb8875f15a940ddee07f9f7192b26"
+
+[[prestates."1.1.6"]]
+type="cannon64-kona-interop"
+hash="0x03e8bc1c6bf2d4c4920b0fad19e7717b44720721eb523e2c9d974816881a6894"
+
+[[prestates."1.2.0"]]
+type="cannon64-kona"
+hash="0x03723aeb1fe69eebd6b0155a4570f5944e9a2c1d918183a014b6da2fc2d1b5e5"
+
+[[prestates."1.2.0"]]
+type="cannon64-kona-interop"
+hash="0x03dd682a7c55084b42c4f4711f2c501126ed8dc05808c7ef19537dbf57bcbed7"
+
+[[prestates."1.2.1"]]
+type="cannon64-kona"
+hash="0x03723aeb1fe69eebd6b0155a4570f5944e9a2c1d918183a014b6da2fc2d1b5e5"
+
+[[prestates."1.2.1"]]
+type="cannon64-kona-interop"
+hash="0x03dd682a7c55084b42c4f4711f2c501126ed8dc05808c7ef19537dbf57bcbed7"
