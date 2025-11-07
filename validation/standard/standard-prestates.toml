@@ -337,6 +337,14 @@ hash="0x034726fbf9eb7cb9aeb1633dc9a1434d161bb8875f15a940ddee07f9f7192b26"
 type="cannon64-kona-interop"
 hash="0x03e8bc1c6bf2d4c4920b0fad19e7717b44720721eb523e2c9d974816881a6894"
 
+[[prestates."1.1.7"]]
+type="cannon64-kona"
+hash="0x03768f764f5581f686aa9cd53ad3c6a8222982482e28225a459c18041e57e5a3"
+
+[[prestates."1.1.7"]]
+type="cannon64-kona-interop"
+hash="0x03eb44879741b809d4ac67593c94008ff74f9345fcb0d2bb0b3ad887660a3a39"
+
 [[prestates."1.2.2"]]
 type="cannon64-kona"
 hash="0x03e183aa55db11aba6c1f2f7adccad15411d44fb54285e104cb73468927de0e7"
