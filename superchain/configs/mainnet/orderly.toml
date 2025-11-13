@@ -4,7 +4,6 @@ sequencer_rpc = "https://rpc.orderly.network"
 explorer = "https://explorer.orderly.network"
 superchain_level = 0
 governed_by_optimism = false
-#superchain_time = 0
 data_availability_type = "alt-da"
 chain_id = 291
 batch_inbox_addr = "0x08aA34cC843CeEBcC88A627F18430294aA9780be"
@@ -20,7 +19,6 @@ max_sequencer_drift = 600
   granite_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC
   holocene_time = 1736445601 # Thu 9 Jan 2025 18:00:01 UTC
   isthmus_time = 1746806401 # Fri 9 May 2025 16:00:01 UTC
-  #jovian_time = 1764691201 # Tue 2 Dec 2025 16:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
