@@ -7,6 +7,7 @@ import (
 	"math/big"
 
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/standard"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/gameargs"
 	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -146,7 +147,13 @@ func ScanL1(
 		return nil, fmt.Errorf("failed to validate ownership: %w", err)
 	}
 
-	permissionedGameReport, err := ScanFDG(ctx, rpcClient, deployedEvent.DeployOutput.PermissionedDisputeGame)
+	permissionedGameReport, err := ScanFDG(
+		ctx,
+		rpcClient,
+		1, // PERMISSIONED
+		deployedEvent.DeployOutput.DisputeGameFactoryProxy,
+		deployedEvent.DeployOutput.PermissionedDisputeGame,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to validate permissioned dispute game: %w", err)
 	}
@@ -194,10 +201,12 @@ func ScanOwnership(
 func ScanFDG(
 	ctx context.Context,
 	rpc *rpc.Client,
-	addr common.Address,
+	gameType uint32,
+	factoryAddr common.Address,
+	gameAddr common.Address,
 ) (L1FDGReport, error) {
 	w3Client := w3.NewClient(rpc)
-	makeBatchCall := bindBatchCallTo(addr)
+	makeBatchCall := bindBatchCallTo(gameAddr)
 
 	var maxGameDepth big.Int
 	var splitDepth big.Int
@@ -214,6 +223,29 @@ func ScanFDG(
 		makeBatchCall(clockExtensionABI, &report.ClockExtension),
 	); err != nil {
 		return report, fmt.Errorf("failed to get FDG data: %w", err)
+	}
+
+	if report.AbsolutePrestate == (common.Hash{}) {
+		// Absolute prestate wasn't available from the implementation contract.
+		// Try to fetch it from the game args instead.
+		// Note that gameArgs isn't available in older DisputeGameFactory implementations so this isn't requested
+		// as part of the above batch.
+		var gameArgs []byte
+		if err := CallBatch(
+			ctx,
+			w3Client,
+			batchCallMethod(factoryAddr, gameArgsABI, &gameArgs, gameType),
+		); err != nil {
+			return report, fmt.Errorf("failed to get FDG game args: %w", err)
+		}
+		prestate, err := gameargs.ParseAbsoluteState(gameArgs)
+		if err != nil {
+			return report, fmt.Errorf("failed to parse FDG game args: %w", err)
+		}
+		report.AbsolutePrestate = prestate
+		// When using game args, the game type is passed in by the DisputeGameFactory so always matches the game type
+		// the implementation is set as.
+		report.GameType = gameType
 	}
 
 	maxU64Big := new(big.Int).SetUint64(math.MaxUint64)
@@ -318,23 +350,23 @@ func ScanSemvers(
 	return report, nil
 }
 
-func bindBatchCallTo(to common.Address) func(fn *w3.Func, out any) BatchCall {
-	return func(fn *w3.Func, out any) BatchCall {
-		return batchCallMethod(to, fn, out)
+func bindBatchCallTo(to common.Address) func(fn *w3.Func, out any, args ...any) BatchCall {
+	return func(fn *w3.Func, out any, args ...any) BatchCall {
+		return batchCallMethod(to, fn, out, args...)
 	}
 }
 
-func bindBatchCallMethod(method *w3.Func) func(to common.Address, out any) BatchCall {
-	return func(to common.Address, out any) BatchCall {
-		return batchCallMethod(to, method, out)
+func bindBatchCallMethod(method *w3.Func) func(to common.Address, out any, args ...any) BatchCall {
+	return func(to common.Address, out any, args ...any) BatchCall {
+		return batchCallMethod(to, method, out, args...)
 	}
 }
 
-func batchCallMethod(to common.Address, fn *w3.Func, out any) BatchCall {
+func batchCallMethod(to common.Address, fn *w3.Func, out any, args ...any) BatchCall {
 	return BatchCall{
 		To: to,
 		Encoder: func() ([]byte, error) {
-			return fn.EncodeArgs()
+			return fn.EncodeArgs(args...)
 		},
 		Decoder: func(rawOutput []byte) error {
 			return fn.DecodeReturns(rawOutput, out)

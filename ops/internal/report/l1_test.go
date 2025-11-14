@@ -194,6 +194,56 @@ func TestScanSystemConfig(t *testing.T) {
 	}
 }
 
+func TestScanFDG(t *testing.T) {
+	factoryAddr := common.HexToAddress("0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1")
+	gameAddr := common.HexToAddress("0x034edD2A225f7f429A63E0f1D2084B9E0A93b538")
+
+	tests := []struct {
+		name     string
+		filename string
+		report   L1FDGReport
+	}{
+		{
+			"pre-game-args",
+			"test-scan-fdg-pre-game-args.json",
+			L1FDGReport{
+				GameType:         2,
+				AbsolutePrestate: common.HexToHash("0x03caa1871bb9fe7f9b11217c245c16e4ded33367df5b3ccb2c6d0a847a217d1b"),
+				MaxGameDepth:     78,
+				SplitDepth:       33,
+				MaxClockDuration: 987654,
+				ClockExtension:   4333,
+			},
+		},
+		{
+			"post-game-args",
+			"test-scan-fdg-post-game-args.json",
+			L1FDGReport{
+				GameType:         1,
+				AbsolutePrestate: common.HexToHash("0x03caa1871bb9fe7f9b11217c245c16e4ded33367df5b3ccb2c6d0a847a217d1b"),
+				MaxGameDepth:     78,
+				SplitDepth:       33,
+				MaxClockDuration: 987654,
+				ClockExtension:   4333,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			l1Client, mockRPC := mockRPCClient(t, tt.filename)
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			report, err := ScanFDG(ctx, l1Client, tt.report.GameType, factoryAddr, gameAddr)
+			require.NoError(t, err)
+			require.EqualValues(t, tt.report, report)
+			mockRPC.AssertExpectations(t)
+		})
+	}
+}
+
 func mockRPCClient(t *testing.T, p string) (*rpc.Client, *mockrpc.MockRPC) {
 	mockRPC := mockrpc.NewMockRPC(
 		t,
