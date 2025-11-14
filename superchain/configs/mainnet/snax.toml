@@ -1,12 +1,12 @@
-name = "Polynomial"
-public_rpc = "https://rpc.polynomial.fi"
-sequencer_rpc = "https://rpc.polynomial.fi"
-explorer = "https://polynomialscan.io"
-superchain_level = 1
+name = "SnaxChain"
+public_rpc = "https://mainnet.snaxchain.io"
+sequencer_rpc = "https://mainnet.snaxchain.io"
+explorer = "https://explorer.snaxchain.io"
+superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
-chain_id = 8008
-batch_inbox_addr = "0x0bd57e83B5E0f9eCD84d559bB58e1EcFEEdD2565"
+chain_id = 2192
+batch_inbox_addr = "0xFeC57BD3729a5F930d4Ee8ac5992Fdc8988426e4"
 block_time = 2
 seq_window_size = 3600
 max_sequencer_drift = 600
@@ -15,7 +15,7 @@ max_sequencer_drift = 600
   canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-  fjord_time = 1720627201 # Wed 10 Jul 2024 16:00:01 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   granite_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC
   holocene_time = 1736445601 # Thu 9 Jan 2025 18:00:01 UTC
   isthmus_time = 1746806401 # Fri 9 May 2025 16:00:01 UTC
@@ -26,15 +26,15 @@ max_sequencer_drift = 600
   eip1559_denominator_canyon = 250
 
 [genesis]
-  l2_time = 1718038175
+  l2_time = 1723562231
   [genesis.l1]
-    hash = "0xc6d18992ff6e4c9e4798d34a7b97423a7ec276e9f2bbecfd4bb69ccdd49f516a"
-    number = 20062729
+    hash = "0x920dc48c1f037d444cb4dee5c69f41853f469dd9e7751398458126a6f76ecea6"
+    number = 20520542
   [genesis.l2]
-    hash = "0x1b5e76ad2f290fb6fa2c60755d8c52942dbefedab76d01091e24080d5c129fd0"
+    hash = "0x518aadbc56e4ca8b03aa141c13b2fc246a9eae88edea09ee477f3d620b00d5ae"
     number = 0
   [genesis.system_config]
-    batcherAddress = "0x67a44CE38627F46F20b1293960559eD85Dd194F1"
+    batcherAddress = "0x060b915cA4904b56adA63565626b9c97F6CaD212"
     overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
     scalar = "0x00000000000000000000000000000000000000000000000000000000000a6fe0"
     gasLimit = 30000000
@@ -43,7 +43,7 @@ max_sequencer_drift = 600
   ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
 
 [addresses]
-  L1StandardBridgeProxy = "0x3Be64BF2b9C2dE637067C7AAb6baE5EDf9fEBA55"
-  OptimismPortalProxy = "0x034cbb620d1e0e4C2E29845229bEAc57083b04eC"
-  SystemConfigProxy = "0x58b51fb9FeeD00DD846f91D265Eba3cdd855A413"
-  DisputeGameFactoryProxy = "0xe9394679d0f0676E4a2dE99F8ed6B4aCb16c5f0f"
+  L1StandardBridgeProxy = "0xA5fb68C24b02852e8B514E98A1014faf12547Fa5"
+  OptimismPortalProxy = "0x936D881b4760D5e9b6D55b774f65c509236b4743"
+  SystemConfigProxy = "0x9c9B78f798F821C2f6398f603825fd175e2427f9"
+  DisputeGameFactoryProxy = "0x0fD13C7f11d95070cE5CF31BAf1aCf9355BF4578"

@@ -21,6 +21,8 @@ var (
 
 	ownerFnABI = w3.MustNewFunc("owner()", "address")
 
+	gameArgsABI = w3.MustNewFunc("gameArgs(uint32)", "bytes")
+
 	gameTypeABI = w3.MustNewFunc("gameType()", "uint32")
 
 	absolutePrestateFnABI = w3.MustNewFunc("absolutePrestate()", "bytes32")
