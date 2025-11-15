@@ -1,0 +1,56 @@
+name = ""
+public_rpc = ""
+sequencer_rpc = ""
+explorer = ""
+superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 120893
+batch_inbox_addr = "0x00E0CeEb893940a2B32A8bF223BcfD40F1d687aF"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+superchain = ""
+base_fee_vault_recipient = "0xaCD80b3344c8aef10FBF624c8B2608E129abe0d5"
+l1_fee_vault_recipient = "0xA1E9305Ac3d92F844B06d6Ab4cf9E2Beea6845C8"
+sequencer_fee_vault_recipient = "0x79c3F885542857A0e85F93d4fcc2c46CFf17e894"
+deployment_tx_hash = "0x0000000000000000000000000000000000000000000000000000000000000000"
+deployment_l1_contracts_version = "tag://op-contracts/v3.0.0"
+deployment_l2_contracts_version = "tag://op-contracts/v3.0.0"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  isthmus_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1753730532
+  [genesis.l1]
+    hash = "0x5122eb3e3fdf97ac7c34563da4522ffe6fe09df9bba2665086173d425ac4cfb1"
+    number = 8862943
+  [genesis.l2]
+    hash = "0x182bf02279c76f46a878c434ae12b47087402471a4a2c75103921a846658ccca"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0xdCe653bB7a2e5110d4C37224890D0F9e553e6165"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
+    gasLimit = 60000000
+
+[roles]
+  ProxyAdminOwner = "0x360AE051bBF8681d6Bcd8e26b3e0E3bC92543c19"
+
+[addresses]
+  L1StandardBridgeProxy = "0x22E040d829Ed86E8f01f2906F6f4FD395c81a342"
+  OptimismPortalProxy = "0x54467A873AB70934CC5119dec447dF0A5b733e31"
+  SystemConfigProxy = "0xE389B608DA827F58249675C541a0B53781F4Fcfd"
+  DisputeGameFactoryProxy = "0xe1CF4Ba4a04F7Af49EaB32EDA62f9A903C52Dc39"
