@@ -46,8 +46,8 @@ l1:
   public_rpc: https://ethereum-goerli-rpc.allthatnode.com
   explorer: https://eth-goerli.blockscout.com
 
-protocol_versions_addr: null # todo
-superchain_config_addr: null # todo
+protocol_versions_addr: "0x37E15e4d6DFFa9e5E320Ee1eC036922E563CB76C"
+superchain_config_addr: "0x4da82a327773965b8d4D85Fa3dB8249b387458E7"
 EOF
 ```
 
