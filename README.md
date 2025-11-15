@@ -1,7 +1,7 @@
 <img src=".github/readme-banner.png" alt="Welcome to the Superchain Registry"><br/>
 
 > [!WARNING]
-> Starting on March 1st, 2025, all standard chains who wish to be added to the Superchain registry **MUST** be deployed using [OP Deployer](https://docs.optimism.io/builders/chain-operators/tools/op-deployer).
+> Starting on March 1st, 2025, all standard chains who wish to be added to the Superchain registry **MUST** be deployed using [OP Deployer](https://docs.optimism.io/chain-operators/tools/op-deployer).
 
 The Superchain Registry is an index of chains which serves as the source of truth for who’s in the Superchain Ecosystem and what modifications they’ve made to their chains.
 
@@ -24,7 +24,7 @@ A glossary, with key terms and more information about Superchain levels and requ
 
 ### Downstream packages
 
-The Superchain configs are stored in a minimal form and embedded in downstream OP-Stack software ([`op-node`](https://github.com/ethereum-optimism/optimism) and [`op-geth`](https://github.com/ethereum-optimism/op-geth)). This means that after a chain has been added to the registry and the dependency on the registry updates in the downstream software, it is possible to start an `op-node` instance [using the `--network` flag](https://docs.optimism.io/builders/node-operators/configuration/consensus-config#network) (and also an `op-geth` instance [using the `--op-network` tag](https://docs.optimism.io/builders/node-operators/configuration/execution-config#op-network-betaop-network)) which will successfully sync with other nodes on that network.
+The Superchain configs are stored in a minimal form and embedded in downstream OP-Stack software ([`op-node`](https://github.com/ethereum-optimism/optimism) and [`op-geth`](https://github.com/ethereum-optimism/op-geth)). This means that after a chain has been added to the registry and the dependency on the registry updates in the downstream software, it is possible to start an `op-node` instance [using the `--network` flag](https://docs.optimism.io/node-operators/guides/consensus-config#network) (and also an `op-geth` instance [using the `--op-network` tag](https://docs.optimism.io/node-operators/guides/execution-config#op-network%2C-beta-op-network )) which will successfully sync with other nodes on that network.
 
 ### Hardfork activations
 If you would like your chain to automatically receive superchain-wide coordinated hardfork activations, you can enable this by:
