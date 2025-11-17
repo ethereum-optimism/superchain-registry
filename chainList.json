@@ -465,27 +465,6 @@
     }
   },
   {
-    "name": "SnaxChain",
-    "identifier": "mainnet/snax",
-    "chainId": 2192,
-    "rpc": [
-      "https://mainnet.snaxchain.io"
-    ],
-    "explorers": [
-      "https://explorer.snaxchain.io"
-    ],
-    "superchainLevel": 0,
-    "governedByOptimism": false,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    },
-    "faultProofs": {
-      "status": "permissioned"
-    }
-  },
-  {
     "name": "Soneium",
     "identifier": "mainnet/soneium",
     "chainId": 1868,
