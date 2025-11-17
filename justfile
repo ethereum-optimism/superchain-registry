@@ -60,3 +60,7 @@ build-deployer-binaries:
   @bash ops/internal/deployer/scripts/build-binaries.sh
 
 check-chainlist: (_run_ops_bin 'check_chainlist')
+
+remove-chain CHAIN_ID L1_RPC_URLS="$SEPOLIA_RPC_URL,$MAINNET_RPC_URL" SUPERCHAINS="":
+	@just _run_ops_bin "remove_chain" "--chain-id {{CHAIN_ID}}"
+	@just codegen {{L1_RPC_URLS}} {{SUPERCHAINS}}
