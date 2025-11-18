@@ -71,10 +71,35 @@ func NewCodegenSyncer(lgr log.Logger, wd string, chainCfgs map[uint64]script.Cha
 		diskChainCfgs[cfg.Config.ChainID] = cfg
 	}
 
+	// Filter ChainList and Addresses to only include chains that exist on disk
+	// This automatically removes entries for chains whose config TOML files were deleted
+	filteredChainList := make([]config.ChainListEntry, 0, len(chainList))
+	for _, entry := range chainList {
+		if _, exists := diskChainCfgs[entry.ChainID]; exists {
+			filteredChainList = append(filteredChainList, entry)
+		} else {
+			lgr.Info("filtering out chainList entry for removed chain", "chainID", entry.ChainID)
+		}
+	}
+
+	filteredAddresses := make(config.AddressesJSON)
+	for chainIDStr, addr := range addresses {
+		chainID, err := strconv.ParseUint(chainIDStr, 10, 64)
+		if err != nil {
+			// Skip invalid chain ID strings
+			continue
+		}
+		if _, exists := diskChainCfgs[chainID]; exists {
+			filteredAddresses[chainIDStr] = addr
+		} else {
+			lgr.Info("filtering out addresses entry for removed chain", "chainID", chainIDStr)
+		}
+	}
+
 	syncer := &CodegenSyncer{
 		lgr:         lgr,
-		ChainList:   chainList,
-		Addresses:   addresses,
+		ChainList:   filteredChainList,
+		Addresses:   filteredAddresses,
 		inputWd:     wd,
 		outputWd:    wd,
 		onchainCfgs: chainCfgs,
