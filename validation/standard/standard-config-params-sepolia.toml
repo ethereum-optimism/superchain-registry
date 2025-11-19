@@ -31,7 +31,7 @@ base_fee_scalar = [0, 10_000_000]
 gas_limit = [1000, 60_000_000]
 operator_fee_scalar = [0, 0]
 operator_fee_constant = [0, 0]
-minmum_base_fee = [0, 10_000_000_000] # 10 Gwei
+minimum_base_fee = [0, 10_000_000_000] # 10 Gwei
 
 [proofs.permissioned]
 game_type = 1
