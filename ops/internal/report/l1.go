@@ -279,8 +279,8 @@ func ScanSystemConfig(
 		return report, fmt.Errorf("failed to parse release: %w", err)
 	}
 
-	v180 := semver.MustParse("1.8.0")
-	v500 := semver.MustParse("5.0.0")
+	v180 := semver.MustParse("1.8.0-rc.4")
+	v500 := semver.MustParse("5.0.0-rc.2")
 
 	calls := []BatchCall{}
 
