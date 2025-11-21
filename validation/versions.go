@@ -21,7 +21,7 @@ const (
 	Semver300 Semver = "op-contracts/v3.0.0"
 	Semver400 Semver = "op-contracts/v4.0.0"
 	Semver410 Semver = "op-contracts/v4.1.0"
-	Semver500 Semver = "op-contracts/v5.0.0-rc.2"
+	Semver500 Semver = "op-contracts/v5.0.0"
 )
 
 var validSemvers = []Semver{

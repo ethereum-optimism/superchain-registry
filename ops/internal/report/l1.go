@@ -274,13 +274,17 @@ func ScanSystemConfig(
 	var report L1SystemConfigReport
 
 	versionStr := strings.TrimPrefix(release, "op-contracts/")
+	// Strip pre-release suffix (e.g., "-rc.2") to compare against base version
+	if idx := strings.Index(versionStr, "-"); idx != -1 {
+		versionStr = versionStr[:idx]
+	}
 	releaseSemver, err := semver.NewVersion(versionStr)
 	if err != nil {
 		return report, fmt.Errorf("failed to parse release: %w", err)
 	}
 
 	v180 := semver.MustParse("1.8.0-rc.4")
-	v500 := semver.MustParse("5.0.0-rc.2")
+	v500 := semver.MustParse("5.0.0")
 
 	calls := []BatchCall{}
 
