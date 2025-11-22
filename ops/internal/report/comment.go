@@ -85,6 +85,14 @@ var funcMap = template.FuncMap{
 		}
 		return "⚠️"
 	},
+	"checkmarkRangeUint64": func(r validation.Range, val uint64) string {
+		min := uint64(r[0])
+		max := uint64(r[1])
+		if val >= min && val <= max {
+			return "✅"
+		}
+		return "⚠️"
+	},
 }
 
 //go:embed comment.md.tmpl

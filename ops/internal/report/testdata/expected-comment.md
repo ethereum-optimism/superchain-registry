@@ -51,6 +51,16 @@
 
 </details>
 
+<details open>
+
+<summary>SystemConfig</summary>
+
+| | Parameter | Std Min | Std Max | Got Value |
+|---|----------|---------|---------|-----------|
+| ✅ | MinimumBaseFee | `0` | `10000000000` | `0` |
+
+</details>
+
 ## L2 Deployment
 
 **⚠️ Genesis does not match standard.** The state diff is listed below:

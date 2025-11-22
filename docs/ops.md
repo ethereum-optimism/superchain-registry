@@ -13,7 +13,7 @@ The following are the steps you need to take to add a chain to the registry:
 ### 0. Standard Chains: Deploy your chain with `op-deployer`
 
 If you are deploying a standard chain, it _must_ be deployed with `op-deployer` to be considered standard in the Superchain Registry. Check out
-the [docs](https://docs.optimism.io/builders/chain-operators/tools/op-deployer) for more information on how to use it.
+the [docs](https://docs.optimism.io/chain-operators/tools/op-deployer) for more information on how to use it.
 
 > [!TIP]
 > We recommend that most chains use `op-deployer`. `op-deployer` can be configured to support L3s, alt-DA and custom gas token chains.
