@@ -16,34 +16,38 @@ func TestScanL2(t *testing.T) {
 	require.NotEmpty(t, cacheDir)
 
 	tests := []struct {
-		name       string
-		chainId    uint64
-		statePath  string
-		wantErr    string
-		wantReport L2Report
+		name               string
+		chainId            uint64
+		statePath          string
+		l1ContractsVersion string
+		wantErr            string
+		wantReport         L2Report
 	}{
 		{
-			name:      "genesis match standard state_v1",
-			chainId:   uint64(1952805748),
-			statePath: path.Join("testdata", "state_v1.json"),
+			name:               "genesis match standard state_v1",
+			chainId:            uint64(1952805748),
+			statePath:          path.Join("testdata", "state_v1.json"),
+			l1ContractsVersion: string(validation.Semver180),
 			wantReport: L2Report{
 				Release:      string(validation.Semver170),
 				GenesisDiffs: []string{},
 			},
 		},
 		{
-			name:      "genesis match standard state_v2",
-			chainId:   uint64(336),
-			statePath: path.Join("testdata", "state_v2.json"),
+			name:               "genesis match standard state_v2",
+			chainId:            uint64(336),
+			statePath:          path.Join("testdata", "state_v2.json"),
+			l1ContractsVersion: string(validation.Semver200),
 			wantReport: L2Report{
 				Release:      string(validation.Semver170),
 				GenesisDiffs: []string{},
 			},
 		},
 		{
-			name:      "genesis match standard state_v3",
-			chainId:   uint64(336),
-			statePath: path.Join("testdata", "state_v3.json"),
+			name:               "genesis match standard state_v3",
+			chainId:            uint64(336),
+			statePath:          path.Join("testdata", "state_v3.json"),
+			l1ContractsVersion: string(validation.Semver300),
 			wantReport: L2Report{
 				Release:      string(validation.Semver300),
 				GenesisDiffs: []string{},
@@ -55,7 +59,7 @@ func TestScanL2(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			report, err := ScanL2(tt.statePath, tt.chainId, l1RpcUrl, cacheDir)
+			report, err := ScanL2(tt.statePath, tt.chainId, l1RpcUrl, cacheDir, tt.l1ContractsVersion)
 
 			if tt.wantErr == "" {
 				require.NoError(t, err)

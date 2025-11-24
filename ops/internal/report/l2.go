@@ -16,17 +16,9 @@ func ScanL2(
 	l2ChainId uint64,
 	l1RpcUrl string,
 	deployerCacheDir string,
+	l1ContractsVersion string,
 ) (*L2Report, error) {
-	st, err := deployer.ReadOpaqueStateFile(statePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read opaque state file: %w", err)
-	}
-	l1ContractsRelease, err := st.ReadL1ContractsLocator()
-	if err != nil {
-		return nil, fmt.Errorf("failed to read L1 contracts release: %w", err)
-	}
-
-	picker, err := deployer.WithReleaseBinary(deployerCacheDir, l1ContractsRelease)
+	picker, err := deployer.WithReleaseBinary(deployerCacheDir, l1ContractsVersion)
 	if err != nil {
 		return nil, fmt.Errorf("failed to autodetect binary: %w", err)
 	}
@@ -47,18 +39,31 @@ func ScanL2(
 		return nil, fmt.Errorf("failed to generate standard genesis: %w", err)
 	}
 
+	st, err := deployer.ReadOpaqueStateFile(statePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read opaque state file: %w", err)
+	}
+
 	l2contractsrelease, err := st.ReadL2ContractsLocator()
 	if err != nil {
 		return nil, fmt.Errorf("failed to read L2 contracts release: %w", err)
 	}
 
-	if !strings.HasPrefix(l2contractsrelease, "tag://") {
-		return nil, fmt.Errorf("L2 contracts release must have 'tag://' prefix, got: %s", l2contractsrelease)
+	// Handle "embedded" or "tag://" cases
+	var l2Release string
+	if l2contractsrelease == "embedded" {
+		// Use L1 version for L2 as well
+		l2Release = l1ContractsVersion
+	} else if strings.HasPrefix(l2contractsrelease, "tag://") {
+		// Legacy format - strip prefix
+		l2Release = strings.TrimPrefix(l2contractsrelease, "tag://")
+	} else {
+		// Assume it's already a clean version string
+		l2Release = l2contractsrelease
 	}
-	tagValue := strings.TrimPrefix(l2contractsrelease, "tag://")
 
 	var report L2Report
-	report.Release = tagValue
+	report.Release = l2Release
 
 	genesisDiffs := deployer.DiffOpaqueMaps("genesis", *originalGenesis, *standardGenesis)
 	report.GenesisDiffs = genesisDiffs

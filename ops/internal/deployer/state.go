@@ -37,8 +37,11 @@ var standardV3Intent []byte
 //go:embed configs/v4-state.json
 var standardV4State []byte
 
-//go:embed configs/v4-intent.toml
-var standardV4Intent []byte
+//go:embed configs/v4_0-intent.toml
+var standardV4_0Intent []byte
+
+//go:embed configs/v4_1-intent.toml
+var standardV4_1Intent []byte
 
 func ReadOpaqueStateFile(p string) (OpaqueState, error) {
 	f, err := os.Open(p)
@@ -57,32 +60,38 @@ func ReadOpaqueStateFile(p string) (OpaqueState, error) {
 type StateMerger = func(state OpaqueState) (OpaqueMap, OpaqueState, error)
 
 func GetStateMerger(version string) (StateMerger, error) {
-	// Extract the version number using regex
-	re := regexp.MustCompile(`op-deployer/v\d+\.(\d+)\.\d+`)
+	// Extract the version numbers
+	re := regexp.MustCompile(`op-deployer/v\d+\.(\d+)\.(\d+)`)
 	match := re.FindStringSubmatch(version)
 
-	if len(match) < 2 {
+	if len(match) < 3 {
 		return nil, fmt.Errorf("invalid deployer version format: %s", version)
 	}
 
-	// Get the middle version number
-	versionNum, err := strconv.Atoi(match[1])
+	minor, err := strconv.Atoi(match[1])
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse version number: %w", err)
+		return nil, fmt.Errorf("failed to parse minor version: %w", err)
 	}
 
-	// Return the appropriate merge function
-	switch versionNum {
-	case 0, 1:
+	patch, err := strconv.Atoi(match[2])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse patch version: %w", err)
+	}
+
+	// Return the appropriate merge function based on minor.patch
+	switch {
+	case minor <= 1:
 		return MergeStateV1, nil
-	case 2:
+	case minor == 2:
 		return MergeStateV2, nil
-	case 3:
+	case minor == 3:
 		return MergeStateV3, nil
-	case 4:
-		return MergeStateV4, nil
+	case minor == 4 && patch < 5:
+		return MergeStateV4_0, nil
+	case minor == 4 && patch >= 5:
+		return MergeStateV4_1, nil
 	default:
-		return nil, fmt.Errorf("unsupported deployer version: %d", versionNum)
+		return MergeStateV4_1, nil
 	}
 }
 
@@ -136,12 +145,28 @@ func MergeStateV3(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	return mergeStateV2(userState, stdIntent, stdState)
 }
 
-func MergeStateV4(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func MergeStateV4_0(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
 	}
-	stdIntent, err := StandardIntentV4(l1ChainID)
+	stdIntent, err := StandardIntentV4_0(l1ChainID)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create standard intent: %w", err)
+	}
+	stdState, err := StandardStateV4(l1ChainID)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create standard state: %w", err)
+	}
+	return mergeStateV4(userState, stdIntent, stdState)
+}
+
+func MergeStateV4_1(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
+	l1ChainID, err := userState.ReadL1ChainID()
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
+	}
+	stdIntent, err := StandardIntentV4_1(l1ChainID) // Uses v4_1-intent.toml with embedded
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard intent: %w", err)
 	}
@@ -172,6 +197,7 @@ func mergeStateV4(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueSta
 
 	// First, set up the intent
 	guard(copyValue(appliedIntentNode, stdIntentNode, "l1ChainID"))
+	guard(copyValue(appliedIntentNode, stdIntentNode, "opcmAddress"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].id"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].baseFeeVaultRecipient"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].l1FeeVaultRecipient"))
@@ -210,6 +236,13 @@ func mergeStateV4(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueSta
 	if !okIntent {
 		return nil, nil, fmt.Errorf("internal error: synthesized intent is not OpaqueMapping, but %T", stdIntentNode.InterfaceValue())
 	}
+
+	// Check if opcmAddress is non-zero
+	if opcmAddr, ok := intentResult["opcmAddress"].(string); ok && opcmAddr != "0x0000000000000000000000000000000000000000" && opcmAddr != "" {
+		// Remove superchainRoles when using existing OPCM
+		delete(intentResult, "superchainRoles")
+	}
+
 	stateResult, okState := stdStateNode.InterfaceValue().(OpaqueState)
 	if !okState {
 		return nil, nil, fmt.Errorf("internal error: synthesized state is not OpaqueMapping, but %T", stdStateNode.InterfaceValue())
@@ -242,6 +275,7 @@ func mergeStateV2(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueSta
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].baseFeeVaultRecipient"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].l1FeeVaultRecipient"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].sequencerFeeVaultRecipient"))
+	guard(copyValueIfExists(appliedIntentNode, stdIntentNode, "chains.[0].gasLimit"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].roles.l1ProxyAdminOwner"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].roles.l2ProxyAdminOwner"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].roles.systemConfigOwner"))
@@ -283,8 +317,12 @@ func mergeStateV2(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueSta
 	return intentResult, stateResult, nil
 }
 
-func StandardIntentV4(l1ChainID uint64) (OpaqueMap, error) {
-	return standardIntentV4(l1ChainID, standardV4Intent)
+func StandardIntentV4_1(l1ChainID uint64) (OpaqueMap, error) {
+	return standardIntentV4(l1ChainID, standardV4_1Intent)
+}
+
+func StandardIntentV4_0(l1ChainID uint64) (OpaqueMap, error) {
+	return standardIntentV4(l1ChainID, standardV4_0Intent)
 }
 
 func StandardIntentV3(l1ChainID uint64) (OpaqueMap, error) {
@@ -455,4 +493,12 @@ func copyValue(src *dasel.Node, dest *dasel.Node, sel string) error {
 		return fmt.Errorf("failed to read value: %w", err)
 	}
 	return dest.Put(sel, val.InterfaceValue())
+}
+
+func copyValueIfExists(src, dst *dasel.Node, selector string) error {
+	if _, err := src.Query(selector); err != nil {
+		// Field doesn't exist in source, skip it
+		return nil
+	}
+	return copyValue(src, dst, selector)
 }

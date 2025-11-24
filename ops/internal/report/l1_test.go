@@ -37,7 +37,7 @@ func TestParseDeployedEvent(t *testing.T) {
 		},
 	}
 
-	deployedEvent, err := ParseDeployedEvent(log)
+	deployedEvent, err := ParseDeployedEvent([]*types.Log{log})
 	require.NoError(t, err)
 
 	marshal := func(in any) string {
@@ -114,7 +114,7 @@ func TestScanL1(t *testing.T) {
 		{
 			"unauthorized OPCM address",
 			"test-scan-l1-unauthorized-opcm-address.json",
-			"unauthorized address for Deployed event",
+			"unauthorized OPCM address",
 		},
 		{
 			"multiple deployed events in tx",

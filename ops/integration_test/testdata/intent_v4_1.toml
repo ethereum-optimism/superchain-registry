@@ -1,0 +1,27 @@
+configType = "standard"
+l1ChainID = 11155111
+opcmAddress = "0x3bb6437aba031afbf9cb3538fa064161e2bf2d78"
+fundDevAccounts = false
+l1ContractsLocator = "embedded"
+l2ContractsLocator = "embedded"
+
+[[chains]]
+  id = "0x0000000000000000000000000000000000000000000000000000000000000150"
+  baseFeeVaultRecipient = "0x83D4eB702690413a0A1E5819ECc48b62160dFb42"
+  l1FeeVaultRecipient = "0x83D4eB702690413a0A1E5819ECc48b62160dFb42"
+  sequencerFeeVaultRecipient = "0x83D4eB702690413a0A1E5819ECc48b62160dFb42"
+  eip1559DenominatorCanyon = 250
+  eip1559Denominator = 50
+  eip1559Elasticity = 6
+  gasLimit = 60000000
+  operatorFeeScalar = 0
+  operatorFeeConstant = 0
+  [chains.roles]
+    l1ProxyAdminOwner = "0x1eb2ffc903729a0f03966b917003800b145f56e2"
+    l2ProxyAdminOwner = "0x2fc3ffc903729a0f03966b917003800b145f67f3"
+    systemConfigOwner = "0x83D4eB702690413a0A1E5819ECc48b62160dFb42"
+    unsafeBlockSigner = "0x83D4eB702690413a0A1E5819ECc48b62160dFb42"
+    batcher = "0x83D4eB702690413a0A1E5819ECc48b62160dFb42"
+    proposer = "0x83D4eB702690413a0A1E5819ECc48b62160dFb42"
+    challenger = "0xfd1d2e729ae8eee2e146c033bf4400fe75284301"
+
