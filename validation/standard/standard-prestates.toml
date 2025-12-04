@@ -360,3 +360,11 @@ hash="0x036d1def0a2815e1cb8370c17b4f6346cf83551d853f3bfe7b3ab4bfed935671"
 [[prestates."1.2.4"]]
 type="cannon64-kona-interop"
 hash="0x03bb838f039a019830e1b73b7fcddd28aa212ff78104a574bc5833e677bdb331"
+
+[[prestates."1.2.5"]]
+type="cannon64-kona"
+hash="0x03a3e430e333f55bee95f33bed41ebf4b1fa06b93fcc147321d0cf45c6e72bb2"
+
+[[prestates."1.2.5"]]
+type="cannon64-kona-interop"
+hash="0x039a77507aa70ab14718ee1c44affc7bfa0438cffc44a6bc0c630d03023a9d7f"
