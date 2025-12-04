@@ -10,85 +10,13 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/standard"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/gameargs"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/lmittmann/w3"
 )
-
-type DeployedEvent struct {
-	OutputVersion *big.Int
-	L2ChainID     common.Hash
-	Deployer      common.Address
-	DeployOutput  DeployOPChainOutput
-}
-
-type DeployOPChainOutput struct {
-	OpChainProxyAdmin                  common.Address
-	AddressManager                     common.Address
-	L1ERC721BridgeProxy                common.Address
-	SystemConfigProxy                  common.Address
-	OptimismMintableERC20FactoryProxy  common.Address
-	L1StandardBridgeProxy              common.Address
-	L1CrossDomainMessengerProxy        common.Address
-	OptimismPortalProxy                common.Address
-	DisputeGameFactoryProxy            common.Address
-	AnchorStateRegistryProxy           common.Address
-	AnchorStateRegistryImpl            common.Address
-	FaultDisputeGame                   common.Address
-	PermissionedDisputeGame            common.Address
-	DelayedWETHPermissionedGameProxy   common.Address
-	DelayedWETHPermissionlessGameProxy common.Address
-}
-
-func ParseDeployedEvent(log *types.Log) (*DeployedEvent, error) {
-	outVersion := new(big.Int)
-	var l2ChainID *big.Int
-	var deployer common.Address
-	var deployOutput []byte
-	if err := deployedEventABI.DecodeArgs(log, &outVersion, &l2ChainID, &deployer, &deployOutput); err != nil {
-		return nil, fmt.Errorf("failed to decode Deployed event: %w", err)
-	}
-	if outVersion.Cmp(common.Big0) != 0 {
-		return nil, fmt.Errorf("unexpected output version: %v", outVersion)
-	}
-
-	deployedEv := &DeployedEvent{
-		OutputVersion: outVersion,
-		L2ChainID:     common.BigToHash(l2ChainID),
-		Deployer:      deployer,
-	}
-
-	// Have to append the selector here since w3 only supports serializing
-	// methods and events, not structs.
-	deployOutputWithSel := make([]byte, 4+len(deployOutput))
-	copy(deployOutputWithSel, deployOutputEvV0ABI.Selector[:])
-	copy(deployOutputWithSel[4:], deployOutput)
-
-	if err := deployOutputEvV0ABI.DecodeArgs(
-		deployOutputWithSel,
-		&deployedEv.DeployOutput.OpChainProxyAdmin,
-		&deployedEv.DeployOutput.AddressManager,
-		&deployedEv.DeployOutput.L1ERC721BridgeProxy,
-		&deployedEv.DeployOutput.SystemConfigProxy,
-		&deployedEv.DeployOutput.OptimismMintableERC20FactoryProxy,
-		&deployedEv.DeployOutput.L1StandardBridgeProxy,
-		&deployedEv.DeployOutput.L1CrossDomainMessengerProxy,
-		&deployedEv.DeployOutput.OptimismPortalProxy,
-		&deployedEv.DeployOutput.DisputeGameFactoryProxy,
-		&deployedEv.DeployOutput.AnchorStateRegistryProxy,
-		&deployedEv.DeployOutput.AnchorStateRegistryImpl,
-		&deployedEv.DeployOutput.FaultDisputeGame,
-		&deployedEv.DeployOutput.PermissionedDisputeGame,
-		&deployedEv.DeployOutput.DelayedWETHPermissionedGameProxy,
-		&deployedEv.DeployOutput.DelayedWETHPermissionlessGameProxy,
-	); err != nil {
-		return nil, fmt.Errorf("failed to decode deploy output: %w", err)
-	}
-
-	return deployedEv, nil
-}
 
 func ScanL1(
 	ctx context.Context,
@@ -116,37 +44,37 @@ func ScanL1(
 		return nil, fmt.Errorf("deployment tx failed: %v", receipt.Status)
 	}
 
-	var deploymentLog *types.Log
-	for _, ev := range receipt.Logs {
-		if ev.Topics[0] != deployedEventABI.Topic0 {
-			continue
-		}
-		if deploymentLog != nil {
-			return nil, fmt.Errorf("multiple Deployed events in receipt, this is unsupported")
-		}
-		deploymentLog = ev
-	}
-	if deploymentLog == nil {
-		return nil, fmt.Errorf("no Deployed event in receipt")
-	}
-	if deploymentLog.Address != opcmAddr {
-		return nil, fmt.Errorf("unauthorized address for Deployed event: %v", deploymentLog.Address)
-	}
-
-	deployedEvent, err := ParseDeployedEvent(deploymentLog)
+	deployedEvent, err := ParseDeployedEvent(receipt.Logs)
 	if err != nil {
 		return nil, fmt.Errorf("malformed Deployed event: %w", err)
 	}
+
+	// Fetch the transaction to get the To address
+	tx, _, err := client.TransactionByHash(ctx, deploymentTx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get deployment transaction: %w", err)
+	}
+
+	// Validate that the transaction was sent to the expected OPCM address
+	if tx.To() == nil {
+		return nil, fmt.Errorf("deployment transaction has no To address (contract creation)")
+	}
+	if *tx.To() != opcmAddr {
+		return nil, fmt.Errorf("unauthorized OPCM address: got %v, expected %v", tx.To(), opcmAddr)
+	}
+	output.WriteOK("deployment transaction was sent to the expected OPCM address: %v", opcmAddr)
 
 	semversReport, err := ScanSemvers(ctx, rpcClient, deployedEvent.DeployOutput)
 	if err != nil {
 		return nil, fmt.Errorf("failed to validate semvers: %w", err)
 	}
+	output.WriteOK("validated semvers")
 
 	ownershipReport, err := ScanOwnership(ctx, rpcClient, deployedEvent.DeployOutput)
 	if err != nil {
 		return nil, fmt.Errorf("failed to validate ownership: %w", err)
 	}
+	output.WriteOK("validated ownership")
 
 	permissionedGameReport, err := ScanFDG(
 		ctx,
@@ -273,6 +201,13 @@ func ScanSystemConfig(
 	makeBatchCall := bindBatchCallTo(addr)
 	var report L1SystemConfigReport
 
+	// Set default gas paying token values
+	report.IsGasPayingToken = false
+	report.GasPayingToken = common.HexToAddress("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")
+	report.GasPayingTokenDecimals = 18
+	report.GasPayingTokenName = "Ether"
+	report.GasPayingTokenSymbol = "ETH"
+
 	versionStr := strings.TrimPrefix(release, "op-contracts/")
 	// Strip pre-release suffix (e.g., "-rc.2") to compare against base version
 	if idx := strings.Index(versionStr, "-"); idx != -1 {
@@ -283,12 +218,13 @@ func ScanSystemConfig(
 		return report, fmt.Errorf("failed to parse release: %w", err)
 	}
 
-	v180 := semver.MustParse("1.8.0-rc.4")
+	v180 := semver.MustParse("1.8.0")
+	v200 := semver.MustParse("2.0.0")
 	v500 := semver.MustParse("5.0.0")
 
 	calls := []BatchCall{}
 
-	// Always fetch these base fields
+	// Always fetch these fields
 	calls = append(
 		calls,
 		makeBatchCall(gasLimitABI, &report.GasLimit),
@@ -296,23 +232,10 @@ func ScanSystemConfig(
 		makeBatchCall(overheadABI, &report.Overhead),
 	)
 
-	// For versions < 1.8.0, set default gas paying token values
-	if releaseSemver.LessThan(v180) {
-		report.IsGasPayingToken = false
-		report.GasPayingToken = common.HexToAddress("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")
-		report.GasPayingTokenDecimals = 18
-		report.GasPayingTokenName = "Ether"
-		report.GasPayingTokenSymbol = "ETH"
-	}
-
-	// For versions >= 1.8.0, fetch additional fields
-	if releaseSemver.Compare(v180) >= 0 {
+	// Custom gas token functions removed in op-contracts/v2.0.0
+	if releaseSemver.Compare(v200) < 0 {
 		calls = append(
 			calls,
-			makeBatchCall(baseFeeScalarABI, &report.BaseFeeScalar),
-			makeBatchCall(blobBaseFeeScalarABI, &report.BlobBaseFeeScalar),
-			makeBatchCall(eip1559DenominatorABI, &report.EIP1559Denominator),
-			makeBatchCall(eip1559ElasticityABI, &report.EIP1559Elasticity),
 			makeBatchCall(isCustomGasTokenABI, &report.IsGasPayingToken),
 			BatchCall{
 				To: addr,
@@ -325,6 +248,17 @@ func ScanSystemConfig(
 			},
 			makeBatchCall(gasPayingTokenNameABI, &report.GasPayingTokenName),
 			makeBatchCall(gasPayingTokenSymbolABI, &report.GasPayingTokenSymbol),
+		)
+	}
+
+	// For versions >= 1.8.0, fetch additional fields
+	if releaseSemver.Compare(v180) >= 0 {
+		calls = append(
+			calls,
+			makeBatchCall(baseFeeScalarABI, &report.BaseFeeScalar),
+			makeBatchCall(blobBaseFeeScalarABI, &report.BlobBaseFeeScalar),
+			makeBatchCall(eip1559DenominatorABI, &report.EIP1559Denominator),
+			makeBatchCall(eip1559ElasticityABI, &report.EIP1559Elasticity),
 		)
 	}
 

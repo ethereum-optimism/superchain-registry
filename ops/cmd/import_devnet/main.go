@@ -10,6 +10,7 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/report"
 
 	"github.com/urfave/cli/v2"
 )
@@ -38,6 +39,12 @@ var (
 		EnvVars: []string{"DEPLOYER_CACHE_DIR"},
 		Value:   defaultBinDir(),
 	}
+	L1ContractsVersion = &cli.StringFlag{
+		Name:    "l1-contracts-version",
+		Usage:   "Version tag of the L1 contracts (e.g., 'op-contracts/v4.0.0'). If not specified, will be auto-detected from OPCM address.",
+		EnvVars: []string{"L1_CONTRACTS_VERSION"},
+		Value:   "",
+	}
 )
 
 func main() {
@@ -49,6 +56,7 @@ func main() {
 			ManifestPath,
 			OpDeployerVersion,
 			OpDeployerBinDir,
+			L1ContractsVersion,
 		},
 		Action: action,
 	}
@@ -66,6 +74,16 @@ func action(cliCtx *cli.Context) error {
 
 	statePath := cliCtx.String(StatePath.Name)
 	output.WriteStderr("reading state file from %s", statePath)
+
+	l1ContractsVersion := cliCtx.String(L1ContractsVersion.Name)
+	if l1ContractsVersion == "" {
+		var err error
+		l1ContractsVersion, err = report.GetContractsReleaseForOpcm(statePath)
+		if err != nil {
+			return fmt.Errorf("failed to determine L1 contracts version: %w", err)
+		}
+	}
+	output.WriteStderr("L1 contracts version: %s", l1ContractsVersion)
 
 	type manifest struct {
 		Name string `yaml:"name"`
@@ -121,6 +139,7 @@ func action(cliCtx *cli.Context) error {
 			i,
 			opDeployerVersion,
 			opDeployerBinDir,
+			l1ContractsVersion,
 		); err != nil {
 			return fmt.Errorf("failed to generate chain config: %w", err)
 		}
