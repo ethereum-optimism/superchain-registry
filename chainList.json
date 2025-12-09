@@ -1306,5 +1306,27 @@
     "faultProofs": {
       "status": "permissioned"
     }
+  },
+  {
+    "name": "Celo Sepolia Testnet",
+    "identifier": "sepolia/celo-sep",
+    "chainId": 11142220,
+    "rpc": [
+      "https://forno.celo-sepolia.celo-testnet.org"
+    ],
+    "explorers": [
+      "https://celo-sepolia.blockscout.com"
+    ],
+    "superchainLevel": 2,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    },
+    "gasPayingToken": "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092",
+    "faultProofs": {
+      "status": "permissionless"
+    }
   }
 ]
