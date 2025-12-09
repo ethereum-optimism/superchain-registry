@@ -20,6 +20,7 @@ max_sequencer_drift = 600
   granite_time = 1726070401 # Wed 11 Sep 2024 16:00:01 UTC
   holocene_time = 1736445601 # Thu 9 Jan 2025 18:00:01 UTC
   isthmus_time = 1746806401 # Fri 9 May 2025 16:00:01 UTC
+  jovian_time = 1764691201 # Tue 2 Dec 2025 16:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -41,23 +42,10 @@ max_sequencer_drift = 600
     gasLimit = 30000000
 
 [roles]
-  SystemConfigOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
   ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"
-  Guardian = "0x09f7150D8c019BeF34450d6920f6B3608ceFdAf2"
-  Challenger = "0x309Fe2536d01867018D120b40e4676723C53A14C"
-  Proposer = "0x674F64D64Ddc198db83cd9047dF54BF89cCD0ddB"
-  UnsafeBlockSigner = "0xa7fA9CA4ac88686A542C0f830d7378eAB4A0278F"
-  BatchSubmitter = "0x99199a22125034c808ff20f377d91187E8050F2E"
 
 [addresses]
-  AddressManager = "0x50eF494573f28Cad6B64C31b7a00Cdaa48306e15"
-  L1CrossDomainMessengerProxy = "0x95bDCA6c8EdEB69C98Bd5bd17660BaCef1298A6f"
-  L1ERC721BridgeProxy = "0x2901dA832a4D0297FF0691100A8E496626cc626D"
   L1StandardBridgeProxy = "0x735aDBbE72226BD52e818E7181953f42E3b0FF21"
-  OptimismMintableERC20FactoryProxy = "0x69216395A62dFb243C05EF4F1C27AF8655096a95"
   OptimismPortalProxy = "0x8B34b14c7c7123459Cf3076b8Cb929BE097d0C07"
   SystemConfigProxy = "0x5e6432F18Bc5d497B1Ab2288a025Fbf9D69E2221"
-  ProxyAdmin = "0x470d87b1dae09a454A43D1fD772A561a03276aB7"
   DisputeGameFactoryProxy = "0x6f13EFadABD9269D6cEAd22b448d434A1f1B433E"
-  MIPS = "0x5fE03a12C1236F9C22Cb6479778DDAa4bce6299C"
-  PermissionedDisputeGame = "0x75fa114D4286c7d1114CE773EfF0f1bDe0aF966a"

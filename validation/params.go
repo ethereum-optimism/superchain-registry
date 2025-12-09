@@ -54,6 +54,7 @@ type SystemConfigParams struct {
 	GasLimit            Range `toml:"gas_limit"`
 	OperatorFeeScalar   Range `toml:"operator_fee_scalar"`
 	OperatorFeeConstant Range `toml:"operator_fee_constant"`
+	MinimumBaseFee      Range `toml:"minimum_base_fee"`
 }
 
 type FDGParams struct {

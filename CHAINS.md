@@ -5,7 +5,7 @@
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
 | Automata Mainnet | ❌ | ❌ | https://explorer.ata.network | `https://rpc.ata.network` | `https://automata-mainnet.alt.technology/` |
-| BOB | ❌ | ✅ | https://explorer.gobob.xyz | `https://rpc.gobob.xyz` | `https://rpc.gobob.xyz` |
+| BOB | ❌ | ❌ | https://explorer.gobob.xyz | `https://rpc.gobob.xyz` | `https://rpc.gobob.xyz` |
 | Base | ❌ | ✅ | https://explorer.base.org | `https://mainnet.base.org` | `https://mainnet-sequencer.base.org` |
 | Binary Mainnet | ❌ | ✅ | https://explorer.thebinaryholdings.com | `https://rpc.zero.thebinaryholdings.com` | `https://sequencer.bnry.mainnet.zeeve.net` |
 | Boba Mainnet | ❌ | ❌ | https://bobascan.com | `https://mainnet.boba.network` | `https://mainnet.boba.network` |
@@ -17,22 +17,22 @@
 | HashKey Chain | ❌ | ❌ | https://explorer.hsk.xyz | `https://mainnet.hsk.xyz` | `https://hashkeychain-mainnet.alt.technology` |
 | Ink | ✅ | ✅ | https://explorer.inkonchain.com | `https://rpc-gel.inkonchain.com` | `https://rpc-gel.inkonchain.com` |
 | Lisk | ❌ | ✅ | https://blockscout.lisk.com | `https://rpc.api.lisk.com` | `https://rpc.api.lisk.com` |
-| Lyra Chain | ❌ | ✅ | https://explorer.lyra.finance | `https://rpc.lyra.finance` | `https://rpc.lyra.finance` |
+| Lyra Chain | ❌ | ❌ | https://explorer.lyra.finance | `https://rpc.lyra.finance` | `https://rpc.lyra.finance` |
 | Metal L2 | ✅ | ✅ | https://explorer.metall2.com | `https://rpc.metall2.com` | `https://rpc.metall2.com` |
-| Mint Mainnet | ❌ | ✅ | https://explorer.mintchain.io | `https://rpc.mintchain.io` | `https://rpc.mintchain.io` |
+| Mint Mainnet | ❌ | ❌ | https://explorer.mintchain.io | `https://rpc.mintchain.io` | `https://rpc.mintchain.io` |
 | Mode | ✅ | ✅ | https://explorer.mode.network | `https://mainnet.mode.network` | `https://mainnet-sequencer.mode.network` |
 | OP Mainnet | ✅ | ✅ | https://explorer.optimism.io | `https://mainnet.optimism.io` | `https://mainnet-sequencer.optimism.io` |
-| Orderly Mainnet | ❌ | ✅ | https://explorer.orderly.network | `https://rpc.orderly.network` | `https://rpc.orderly.network` |
-| Polynomial | ❌ | ✅ | https://polynomialscan.io | `https://rpc.polynomial.fi` | `https://rpc.polynomial.fi` |
+| Orderly Mainnet | ❌ | ❌ | https://explorer.orderly.network | `https://rpc.orderly.network` | `https://rpc.orderly.network` |
+| Polynomial | ❌ | ❌ | https://polynomialscan.io | `https://rpc.polynomial.fi` | `https://rpc.polynomial.fi` |
 | RACE Mainnet | ❌ | ❌ | https://racescan.io/ | `https://racemainnet.io` | `https://racemainnet.io` |
 | Redstone | ❌ | ❌ | https://explorer.redstone.xyz | `https://rpc.redstonechain.com` | `https://rpc.redstonechain.com` |
 | Settlus Mainnet | ❌ | ❌ | mainnet.settlus.network | `https://settlus-mainnet.g.alchemy.com/public` | `https://settlus-mainnet-sequencer.g.alchemy.com/` |
 | Shape | ❌ | ❌ | https://shape-mainnet.explorer.alchemy.com/ | `https://mainnet.shape.network/` | `https://shape-mainnet-sequencer.g.alchemy.com` |
-| SnaxChain | ❌ | ✅ | https://explorer.snaxchain.io | `https://mainnet.snaxchain.io` | `https://mainnet.snaxchain.io` |
+| Silent Data Mainnet | ❌ | ❌ | https://explorer-mainnet.rollup.silentdata.com | `https://mainnet.silentdata.com/${SILENTDATA_AUTH_TOKEN}` | `` |
 | Soneium | ✅ | ✅ | https://soneium.blockscout.com/ | `https://rpc.soneium.org` | `https://rpc.soneium.org` |
 | Superseed | ❌ | ❌ | https://explorer.superseed.xyz | `https://mainnet.superseed.xyz` | `https://mainnet.superseed.xyz` |
 | Swan Chain Mainnet | ❌ | ❌ | https://swanscan.io | `https://mainnet-rpc.swanchain.org` | `https://sequencer-mainnet.swanchain.org` |
-| Swellchain | ✅ | ❌ | https://explorer.swellnetwork.io | `https://swell-mainnet.alt.technology` | `https://swell-mainnet.alt.technology` |
+| Swellchain | ✅ | ✅ | https://explorer.swellnetwork.io | `https://swell-mainnet.alt.technology` | `https://swell-mainnet.alt.technology` |
 | Unichain | ✅ | ✅ | https://explorer.unichain.org | `https://mainnet.unichain.org` | `https://mainnet-sequencer.unichain.org` |
 | World Chain | ❌ | ❌ | https://worldchain-mainnet.explorer.alchemy.com/ | `https://worldchain-mainnet.g.alchemy.com/public` | `https://worldchain-mainnet-sequencer.g.alchemy.com` |
 | Xterio Chain (ETH) | ❌ | ❌ | https://eth.xterscan.io/ | `https://xterio-eth.alt.technology/` | `https://xterio-eth.alt.technology/` |
@@ -72,6 +72,7 @@
 | Unichain Sepolia Testnet | ✅ | ✅ | https://sepolia.uniscan.xyz | `https://sepolia.unichain.org` | `https://sepolia-sequencer.unichain.org` |
 | World Chain Sepolia Testnet | ❌ | ❌ | https://worldchain-sepolia.explorer.alchemy.com/ | `https://worldchain-sepolia.g.alchemy.com/public` | `https://worldchain-sepolia-sequencer.g.alchemy.com` |
 | Zora Sepolia Testnet | ✅ | ✅ | https://sepolia.explorer.zora.energy | `https://sepolia.rpc.zora.energy` | `https://sepolia.rpc.zora.energy` |
+| arena-z-testnet | ✅ | ✅ | https://testnet-explorer.arena-z.gg | `https://testnet-rpc.arena-z.gg` | `https://testnet-rpc.arena-z.gg` |
 ### sepolia-dev-0
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC

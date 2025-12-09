@@ -21,6 +21,7 @@ max_sequencer_drift = 600
   holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
   pectra_blob_schedule_time = 1742486400 # Thu 20 Mar 2025 16:00:00 UTC
   isthmus_time = 1744905600 # Thu 17 Apr 2025 16:00:00 UTC
+  jovian_time = 1763568001 # Wed 19 Nov 2025 16:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -42,27 +43,10 @@ max_sequencer_drift = 600
     gasLimit = 30000000
 
 [roles]
-  SystemConfigOwner = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
   ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
-  Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
-  Challenger = "0xfd1D2e729aE8eEe2E146c033bf4400fE75284301"
-  Proposer = "0x49277EE36A024120Ee218127354c4a3591dc90A9"
-  UnsafeBlockSigner = "0x57CACBB0d30b01eb2462e5dC940c161aff3230D3"
-  BatchSubmitter = "0x8F23BB38F531600e5d8FDDaAEC41F13FaB46E98c"
 
 [addresses]
-  AddressManager = "0x9bFE9c5609311DF1c011c47642253B78a4f33F4B"
-  L1CrossDomainMessengerProxy = "0x58Cc85b8D04EA49cC6DBd3CbFFd00B4B8D6cb3ef"
-  L1ERC721BridgeProxy = "0xd83e03D576d23C9AEab8cC44Fa98d058D2176D1f"
   L1StandardBridgeProxy = "0xFBb0621E0B23b5478B630BD55a5f21f67730B0F1"
-  OptimismMintableERC20FactoryProxy = "0x868D59fF9710159C2B330Cc0fBDF57144dD7A13b"
   OptimismPortalProxy = "0x16Fc5058F25648194471939df75CF27A2fdC48BC"
   SystemConfigProxy = "0x034edD2A225f7f429A63E0f1D2084B9E0A93b538"
-  ProxyAdmin = "0x189aBAAaa82DfC015A588A7dbaD6F13b1D3485Bc"
-  AnchorStateRegistryProxy = "0xDB2727Fc71176Bf8ED630F4142e0439733588e85"
-  DelayedWETHProxy = "0x9C7750C1c7b39E6b0eFeec06A1F2cf06190f6018"
   DisputeGameFactoryProxy = "0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1"
-  FaultDisputeGame = "0x38c2b9A214cDc3bBBc4915Dae8c2F0a7917952Dd"
-  MIPS = "0xF027F4A985560fb13324e943edf55ad6F1d15Dc1"
-  PermissionedDisputeGame = "0x3dbfB370be95Eb598C8b89B45d7c101dC1679AB9"
-  PreimageOracle = "0x1fb8cdFc6831fc866Ed9C51aF8817Da5c287aDD3"
