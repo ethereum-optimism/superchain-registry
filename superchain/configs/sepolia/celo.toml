@@ -1,9 +1,9 @@
 name = "Celo Sepolia"
-public_rpc = ""
+public_rpc = "https://forno.celo-sepolia.celo-testnet.org"
 sequencer_rpc = "https://forno.celo-sepolia.celo-testnet.org"
 explorer = "https://celo-sepolia.blockscout.com"
 superchain_level = 2
-governed_by_optimism = true
+governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 11142220
 batch_inbox_addr = "0x00076c1f80CdB1D670046465c5ccD04E9E78c1F0"

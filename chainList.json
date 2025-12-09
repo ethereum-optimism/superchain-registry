@@ -1296,7 +1296,7 @@
     "explorers": [
       "https://celo-sepolia.blockscout.com"
     ],
-    "superchainLevel": 0,
+    "superchainLevel": 2,
     "governedByOptimism": false,
     "dataAvailabilityType": "alt-da",
     "parent": {
@@ -1305,7 +1305,7 @@
     },
     "gasPayingToken": "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092",
     "faultProofs": {
-      "status": "permissioned"
+      "status": "permissionless"
     }
   }
 ]
