@@ -51,6 +51,17 @@
 | {{ checkmarkUint64 .StdConfig.Proofs.Permissioned.ClockExtension .Report.L1.Proofs.Permissioned.ClockExtension }} | ClockExtension | `{{ .StdConfig.Proofs.Permissioned.ClockExtension }}` | `{{ .Report.L1.Proofs.Permissioned.ClockExtension }}` |
 
 </details>
+
+<details open>
+
+<summary>SystemConfig</summary>
+
+| | Parameter | Std Min | Std Max | Got Value |
+|---|----------|---------|---------|-----------|
+| {{ checkmarkRangeUint64 .StdConfig.SystemConfig.MinimumBaseFee .Report.L1.SystemConfig.MinBaseFee }} | MinimumBaseFee | `{{ index .StdConfig.SystemConfig.MinimumBaseFee 0 }}` | `{{ index .StdConfig.SystemConfig.MinimumBaseFee 1 }}` | `{{ .Report.L1.SystemConfig.MinBaseFee }}` |
+
+</details>
+
 {{- else -}}
 > **Warning**
 > An error occurred while validating L1 data: `{{ .Report.L1Err }}`

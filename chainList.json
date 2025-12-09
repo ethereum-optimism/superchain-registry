@@ -103,7 +103,7 @@
       "chain": "mainnet"
     },
     "faultProofs": {
-      "status": "none"
+      "status": "permissioned"
     }
   },
   {
@@ -166,7 +166,7 @@
       "chain": "mainnet"
     },
     "faultProofs": {
-      "status": "none"
+      "status": "permissioned"
     }
   },
   {
@@ -454,27 +454,6 @@
       "https://shape-mainnet.explorer.alchemy.com/"
     ],
     "superchainLevel": 1,
-    "governedByOptimism": false,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    },
-    "faultProofs": {
-      "status": "permissioned"
-    }
-  },
-  {
-    "name": "SnaxChain",
-    "identifier": "mainnet/snax",
-    "chainId": 2192,
-    "rpc": [
-      "https://mainnet.snaxchain.io"
-    ],
-    "explorers": [
-      "https://explorer.snaxchain.io"
-    ],
-    "superchainLevel": 0,
     "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
     "parent": {
