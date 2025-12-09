@@ -73,7 +73,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Ethernity"
@@ -118,7 +118,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "HashKey Chain"
@@ -323,21 +323,6 @@
   rpc = ["https://mainnet.shape.network/"]
   explorers = ["https://shape-mainnet.explorer.alchemy.com/"]
   superchain_level = 1
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
-  name = "SnaxChain"
-  identifier = "mainnet/snax"
-  chain_id = 2192
-  rpc = ["https://mainnet.snaxchain.io"]
-  explorers = ["https://explorer.snaxchain.io"]
-  superchain_level = 0
   governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
@@ -919,6 +904,36 @@
   [chains.fault_proofs]
     status = "permissionless"
 
+[[chains]]
+  name = "arena-z-testnet"
+  identifier = "sepolia/arena-z"
+  chain_id = 9899
+  rpc = ["https://testnet-rpc.arena-z.gg"]
+  explorers = ["https://testnet-explorer.arena-z.gg"]
+  superchain_level = 1
+  governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "Silent Data Mainnet"
+  identifier = "mainnet/silent-data-mainnet"
+  chain_id = 380929
+  rpc = ["https://mainnet.silentdata.com/${SILENTDATA_AUTH_TOKEN}"]
+  explorers = ["https://explorer-mainnet.rollup.silentdata.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
+    
 [[chains]]
   name = "Celo Sepolia"
   identifier = "sepolia/celo"

@@ -103,7 +103,7 @@
       "chain": "mainnet"
     },
     "faultProofs": {
-      "status": "none"
+      "status": "permissioned"
     }
   },
   {
@@ -166,7 +166,7 @@
       "chain": "mainnet"
     },
     "faultProofs": {
-      "status": "none"
+      "status": "permissioned"
     }
   },
   {
@@ -454,27 +454,6 @@
       "https://shape-mainnet.explorer.alchemy.com/"
     ],
     "superchainLevel": 1,
-    "governedByOptimism": false,
-    "dataAvailabilityType": "eth-da",
-    "parent": {
-      "type": "L2",
-      "chain": "mainnet"
-    },
-    "faultProofs": {
-      "status": "permissioned"
-    }
-  },
-  {
-    "name": "SnaxChain",
-    "identifier": "mainnet/snax",
-    "chainId": 2192,
-    "rpc": [
-      "https://mainnet.snaxchain.io"
-    ],
-    "explorers": [
-      "https://explorer.snaxchain.io"
-    ],
-    "superchainLevel": 0,
     "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
     "parent": {
@@ -1286,6 +1265,47 @@
       "status": "permissionless"
     }
   },
+  {
+    "name": "arena-z-testnet",
+    "identifier": "sepolia/arena-z",
+    "chainId": 9899,
+    "rpc": [
+      "https://testnet-rpc.arena-z.gg"
+    ],
+    "explorers": [
+      "https://testnet-explorer.arena-z.gg"
+    ],
+    "superchainLevel": 1,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissioned"
+    }
+  },
+    {
+    "name": "Silent Data Mainnet",
+    "identifier": "mainnet/silent-data-mainnet",
+    "chainId": 380929,
+    "rpc": [
+      "https://mainnet.silentdata.com/${SILENTDATA_AUTH_TOKEN}"
+    ],
+    "explorers": [
+      "https://explorer-mainnet.rollup.silentdata.com"
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "mainnet"
+    },
+    "faultProofs": {
+      "status": "permissioned"
+    }
   {
     "name": "Celo Sepolia",
     "identifier": "sepolia/celo",

@@ -30,6 +30,12 @@ var (
 		EnvVars: []string{"DEPLOYER_CACHE_DIR"},
 		Value:   defaultBinDir(),
 	}
+	OpDeployerVersion = &cli.StringFlag{
+		Name:    "op-deployer-version",
+		Usage:   "Version of the op-deployer binary to use.",
+		EnvVars: []string{"DEPLOYER_VERSION"},
+		Value:   "",
+	}
 )
 
 func main() {
@@ -40,6 +46,7 @@ func main() {
 			StateFilename,
 			Shortname,
 			OpDeployerBinDir,
+			OpDeployerVersion,
 		},
 		Action: action,
 	}
@@ -57,8 +64,12 @@ func action(cliCtx *cli.Context) error {
 
 	statePath := cliCtx.String(StateFilename.Name)
 	opDeployerBinDir := cliCtx.String(OpDeployerBinDir.Name)
+	opDeployerVersion := cliCtx.String(OpDeployerVersion.Name)
 
-	err = manage.GenerateChainArtifacts(statePath, wd, cliCtx.String(Shortname.Name), nil, nil, 0, "", opDeployerBinDir)
+	output.WriteWarn("⚠️  Config generation behavior has changed: now generates only essential addresses by default.")
+	output.WriteWarn("📄 All addresses are still available in addresses.json")
+
+	err = manage.GenerateChainArtifacts(statePath, wd, cliCtx.String(Shortname.Name), nil, nil, 0, opDeployerVersion, opDeployerBinDir)
 	if err != nil {
 		return fmt.Errorf("failed to generate chain config: %w", err)
 	}

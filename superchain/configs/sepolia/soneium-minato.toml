@@ -21,6 +21,7 @@ max_sequencer_drift = 1800
   holocene_time = 1734685200 # Fri 20 Dec 2024 09:00:00 UTC
   pectra_blob_schedule_time = 1742486400 # Thu 20 Mar 2025 16:00:00 UTC
   isthmus_time = 1744905600 # Thu 17 Apr 2025 16:00:00 UTC
+  jovian_time = 1763568001 # Wed 19 Nov 2025 16:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
@@ -42,29 +43,10 @@ max_sequencer_drift = 1800
     gasLimit = 30000000
 
 [roles]
-  SystemConfigOwner = "0xB278818732E5BEbb742dc4Aa0617ccd1Dec76b65"
   ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
-  Guardian = "0x7a50f00e8D05b95F98fE38d8BeE366a7324dCf7E"
-  Challenger = "0xB278818732E5BEbb742dc4Aa0617ccd1Dec76b65"
-  Proposer = "0xa759A2C80Ec4C6421829862da30dD34436114502"
-  UnsafeBlockSigner = "0x55930859CD7003F32A2ba171297408476532E535"
-  BatchSubmitter = "0xF0AB0441c8f4B89b561aE685B98c6aD5175e0CAB"
 
 [addresses]
-  AddressManager = "0x6e8A77673109783001150DFA770E6c662f473DA9"
-  L1CrossDomainMessengerProxy = "0x0184245D202724dc28a2b688952Cb56C882c226F"
-  L1ERC721BridgeProxy = "0x2bfb22cd534a462028771a1cA9D6240166e450c4"
   L1StandardBridgeProxy = "0x5f5a404A5edabcDD80DB05E8e54A78c9EBF000C2"
-  L2OutputOracleProxy = "0x710e5286C746eC38beeB7538d0146f60D27be343"
-  OptimismMintableERC20FactoryProxy = "0x6069BC38c6185f2db0d161f08eC8d1657F6078Df"
   OptimismPortalProxy = "0x65ea1489741A5D72fFdD8e6485B216bBdcC15Af3"
   SystemConfigProxy = "0x4Ca9608Fef202216bc21D543798ec854539bAAd3"
-  ProxyAdmin = "0xff9d236641962Cebf9DBFb54E7b8e91F99f10Db0"
-  SuperchainConfig = "0xC2Be75506d5724086DEB7245bd260Cc9753911Be"
-  AnchorStateRegistryProxy = "0x2f3432d169128c49881Cc190520bE6096a9A8D2c"
-  DelayedWETHProxy = "0xf6Db90462FEbEB7567fBD064d2ff14a8d0280f3E"
   DisputeGameFactoryProxy = "0xB3Ad2c38E6e0640d7ce6aA952AB3A60E81bf7a01"
-  FaultDisputeGame = "0x0000000000000000000000000000000000000000"
-  MIPS = "0xF027F4A985560fb13324e943edf55ad6F1d15Dc1"
-  PermissionedDisputeGame = "0x697a4684576d8a76d4B11E83E9B6F3b61Bf04755"
-  PreimageOracle = "0x1fb8cdFc6831fc866Ed9C51aF8817Da5c287aDD3"
