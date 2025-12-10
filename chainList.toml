@@ -872,7 +872,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "permissioned"
+    status = "permissionless"
 
 [[chains]]
   name = "rehearsal-0-bn-0"
