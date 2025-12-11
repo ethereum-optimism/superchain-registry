@@ -27,7 +27,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "permissionless"
+    status = "permissioned"
 
 [[chains]]
   name = "Base"
@@ -872,7 +872,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "permissionless"
+    status = "permissioned"
 
 [[chains]]
   name = "rehearsal-0-bn-0"
@@ -948,4 +948,4 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "permissionless"
+    status = "permissioned"

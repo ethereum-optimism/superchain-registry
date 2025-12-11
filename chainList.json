@@ -39,7 +39,7 @@
       "chain": "mainnet"
     },
     "faultProofs": {
-      "status": "permissionless"
+      "status": "permissioned"
     }
   },
   {
@@ -1220,7 +1220,7 @@
     },
     "gasPayingToken": "0x057898f3C43F129a17517B9056D23851F124b19f",
     "faultProofs": {
-      "status": "permissionless"
+      "status": "permissioned"
     }
   },
   {
@@ -1326,7 +1326,7 @@
     },
     "gasPayingToken": "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092",
     "faultProofs": {
-      "status": "permissionless"
+      "status": "permissioned"
     }
   }
 ]
