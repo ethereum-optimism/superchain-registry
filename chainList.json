@@ -39,7 +39,7 @@
       "chain": "mainnet"
     },
     "faultProofs": {
-      "status": "permissionless"
+      "status": "permissioned"
     }
   },
   {
@@ -1220,7 +1220,7 @@
     },
     "gasPayingToken": "0x057898f3C43F129a17517B9056D23851F124b19f",
     "faultProofs": {
-      "status": "permissionless"
+      "status": "permissioned"
     }
   },
   {
@@ -1303,6 +1303,28 @@
       "type": "L2",
       "chain": "mainnet"
     },
+    "faultProofs": {
+      "status": "permissioned"
+    }
+  },
+  {
+    "name": "Celo Sepolia Testnet",
+    "identifier": "sepolia/celo-sep",
+    "chainId": 11142220,
+    "rpc": [
+      "https://forno.celo-sepolia.celo-testnet.org"
+    ],
+    "explorers": [
+      "https://celo-sepolia.blockscout.com"
+    ],
+    "superchainLevel": 2,
+    "governedByOptimism": false,
+    "dataAvailabilityType": "alt-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    },
+    "gasPayingToken": "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092",
     "faultProofs": {
       "status": "permissioned"
     }

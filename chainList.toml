@@ -27,7 +27,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "permissionless"
+    status = "permissioned"
 
 [[chains]]
   name = "Base"
@@ -872,7 +872,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "permissionless"
+    status = "permissioned"
 
 [[chains]]
   name = "rehearsal-0-bn-0"
@@ -931,5 +931,21 @@
   [chains.parent]
     type = "L2"
     chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "Celo Sepolia Testnet"
+  identifier = "sepolia/celo-sep"
+  chain_id = 11142220
+  rpc = ["https://forno.celo-sepolia.celo-testnet.org"]
+  explorers = ["https://celo-sepolia.blockscout.com"]
+  superchain_level = 2
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  gas_paying_token = "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
   [chains.fault_proofs]
     status = "permissioned"
