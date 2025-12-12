@@ -1241,7 +1241,7 @@
       "chain": "rehearsal-0-bn"
     },
     "faultProofs": {
-      "status": "permissionless"
+      "status": "permissioned"
     }
   },
   {
@@ -1262,7 +1262,7 @@
       "chain": "rehearsal-0-bn"
     },
     "faultProofs": {
-      "status": "permissionless"
+      "status": "permissioned"
     }
   },
   {
