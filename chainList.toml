@@ -736,7 +736,7 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "permissioned"
+    status = "permissionless"
 
 [[chains]]
   name = "Unichain Sepolia Testnet"
