@@ -1030,7 +1030,7 @@
       "chain": "sepolia"
     },
     "faultProofs": {
-      "status": "permissioned"
+      "status": "permissionless"
     }
   },
   {
