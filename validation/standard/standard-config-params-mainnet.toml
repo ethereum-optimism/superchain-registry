@@ -28,7 +28,7 @@ blob_base_fee_scalar = [0, 10_000_000]
 base_fee_scalar = [0, 10_000_000]
 
 [system_config]
-gas_limit = [8_000_000, 200_000_000]
+gas_limit = [8_000_000, 500_000_000]
 operator_fee_scalar = [0, 0]
 operator_fee_constant = [0, 0]
 minimum_base_fee = [0, 10_000_000_000] # 10 Gwei
