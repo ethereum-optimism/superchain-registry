@@ -1,4 +1,4 @@
-package deployer
+package opaque_map
 
 import (
 	"fmt"

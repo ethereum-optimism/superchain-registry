@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/state"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/stretchr/testify/require"
 )
@@ -17,35 +18,35 @@ func TestAutodetectBinary(t *testing.T) {
 	tests := []struct {
 		name               string
 		l1ContractsRelease string
-		merger             StateMerger
+		merger             state.StateMerger
 		binPath            string
 		shouldError        bool
 	}{
 		{
 			name:               "op-contracts/v1.6.0",
 			l1ContractsRelease: "tag://op-contracts/v1.6.0",
-			merger:             MergeStateV1,
+			merger:             state.MergeStateV1,
 			binPath:            "op-deployer_v0.0.14",
 			shouldError:        false,
 		},
 		{
 			name:               "op-contracts/v2.0.0",
 			l1ContractsRelease: "tag://op-contracts/v2.0.0",
-			merger:             MergeStateV2,
+			merger:             state.MergeStateV2,
 			binPath:            "op-deployer_v0.2.3",
 			shouldError:        false,
 		},
 		{
 			name:               "op-contracts/v3.0.0",
 			l1ContractsRelease: "tag://op-contracts/v3.0.0",
-			merger:             MergeStateV3,
+			merger:             state.MergeStateV3,
 			binPath:            "op-deployer_v0.3.2",
 			shouldError:        false,
 		},
 		{
 			name:               "op-contracts/v4.0.0",
 			l1ContractsRelease: "tag://op-contracts/v4.0.0",
-			merger:             MergeStateV4,
+			merger:             state.MergeStateV4,
 			binPath:            "op-deployer_v0.4.0-rc.3",
 			shouldError:        false,
 		},

@@ -10,11 +10,12 @@ import (
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, statePath string, idx int) (*config.StagedChain, error) {
+func InflateChainConfig(opd *deployer.OpDeployer, st state.OpaqueState, statePath string, idx int) (*config.StagedChain, error) {
 	chainId, err := st.ReadL2ChainId(idx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read chain ID: %w", err)
@@ -183,7 +184,7 @@ var (
 	ErrNoStagedSuperchainDefinition = errors.New("no staged superchain definition found")
 )
 
-func InflateSuperchainDefinition(name string, st deployer.OpaqueState) (*config.SuperchainDefinition, error) {
+func InflateSuperchainDefinition(name string, st state.OpaqueState) (*config.SuperchainDefinition, error) {
 	protocolVersionsProxyAddress, err := st.ReadProtocolVersionsProxy()
 	if err != nil {
 		return nil, fmt.Errorf("failed to read protocol versions proxy address: %w", err)
@@ -256,7 +257,7 @@ func StagedSuperchainDefinition(rootP string) (*config.SuperchainDefinition, err
 	return sM, err
 }
 
-func GetRolesFromState(st deployer.OpaqueState, idx int) (config.Roles, error) {
+func GetRolesFromState(st state.OpaqueState, idx int) (config.Roles, error) {
 	roles := config.Roles{}
 
 	systemConfigOwner, err := st.ReadSystemConfigOwner(idx)
@@ -304,7 +305,7 @@ func GetRolesFromState(st deployer.OpaqueState, idx int) (config.Roles, error) {
 	return roles, nil
 }
 
-func GetContractAddressesFromState(st deployer.OpaqueState, idx int) (config.Addresses, error) {
+func GetContractAddressesFromState(st state.OpaqueState, idx int) (config.Addresses, error) {
 	var addresses config.Addresses
 	var err error
 
@@ -336,7 +337,7 @@ func GetContractAddressesFromState(st deployer.OpaqueState, idx int) (config.Add
 }
 
 // ExtractInteropDepSet reads the interop dependency set from state and converts it to config.Interop
-func ExtractInteropDepSet(st deployer.OpaqueState) (*config.Interop, error) {
+func ExtractInteropDepSet(st state.OpaqueState) (*config.Interop, error) {
 	interopDepSet, err := st.ReadInteropDepSet()
 	if err != nil {
 		return nil, fmt.Errorf("failed to read interop dep set: %w", err)
