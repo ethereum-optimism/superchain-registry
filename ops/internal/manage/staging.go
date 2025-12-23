@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, statePath string, idx int) (*config.StagedChain, error) {
+func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, statePath string, idx int, l1ContractsVersion string) (*config.StagedChain, error) {
 	chainId, err := st.ReadL2ChainId(idx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read chain ID: %w", err)
@@ -30,14 +30,12 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 		return nil, fmt.Errorf("failed to inspect deploy config: %w", err)
 	}
 
-	l1Contracts, err := st.ReadL1ContractsLocator()
-	if err != nil {
-		return nil, fmt.Errorf("failed to read L1 contracts locator: %w", err)
-	}
-
 	l2Contracts, err := st.ReadL2ContractsLocator()
 	if err != nil {
 		return nil, fmt.Errorf("failed to read L2 contracts locator: %w", err)
+	}
+	if l2Contracts == "embedded" {
+		l2Contracts = l1ContractsVersion
 	}
 
 	cfg := new(config.StagedChain)
@@ -48,7 +46,7 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 	cfg.SeqWindowSize = dc.SequencerWindowSize
 	cfg.MaxSequencerDrift = dc.MaxSequencerDrift
 	cfg.DataAvailabilityType = "eth-da"
-	cfg.DeploymentL1ContractsVersion = l1Contracts
+	cfg.DeploymentL1ContractsVersion = l1ContractsVersion
 	cfg.DeploymentL2ContractsVersion = l2Contracts
 	cfg.DeploymentTxHash = new(common.Hash)
 	cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(dc.BaseFeeVaultRecipient)

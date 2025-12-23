@@ -11,8 +11,6 @@ import (
 )
 
 var (
-	deployedEventABI = w3.MustNewEvent(`Deployed(uint256 indexed, uint256 indexed, address indexed, bytes)`)
-
 	versionABI = w3.MustNewFunc("version()", "string")
 
 	guardianFnABI = w3.MustNewFunc("guardian()", "address")
@@ -58,26 +56,6 @@ var (
 	gasPayingTokenSymbolABI = w3.MustNewFunc("gasPayingTokenSymbol()", "string")
 
 	minBaseFeeABI = w3.MustNewFunc("minBaseFee()", "uint64")
-
-	deployOutputEvV0ABI = w3.MustNewFunc(`
-dummy(
-	address opChainProxyAdmin,
-	address addressManager,
-	address l1ERC721BridgeProxy,
-	address systemConfigProxy,
-	address optimismMintableERC20FactoryProxy,
-	address l1StandardBridgeProxy,
-	address l1CrossDomainMessengerProxy,
-	address optimismPortalProxy,
-	address disputeGameFactoryProxy,
-	address anchorStateRegistryProxy,
-	address anchorStateRegistryImpl,
-	address faultDisputeGame,
-	address permissionedDisputeGame,
-	address delayedWETHPermissionedGameProxy,
-	address delayedWETHPermissionlessGameProxy
-)
-`, "")
 )
 
 type BatchCall struct {

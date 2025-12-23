@@ -50,8 +50,8 @@ check-genesis-integrity: (_run_ops_bin 'check_genesis_integrity')
 codegen L1_RPC_URLS SUPERCHAINS="":
   @just _run_ops_bin "codegen" "--l1-rpc-urls {{L1_RPC_URLS}} --superchains={{SUPERCHAINS}}"
 
-create-config SHORTNAME FILENAME OPDEPLOYERVERSION="": build-deployer-binaries
-	@just _run_ops_bin "create_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{FILENAME}}) --op-deployer-version={{OPDEPLOYERVERSION}}"
+create-config SHORTNAME STATEFILE OPDEPLOYERVERSION="": build-deployer-binaries
+	@just _run_ops_bin "create_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{STATEFILE}}) --op-deployer-version={{OPDEPLOYERVERSION}}"
 
 import-devnet STATEFILE MANIFESTFILE OPDEPLOYERVERSION="":  build-deployer-binaries
 	@just _run_ops_bin "import_devnet" "--state-filename $(realpath {{STATEFILE}}) --manifest-path $(realpath {{MANIFESTFILE}}) --op-deployer-version={{OPDEPLOYERVERSION}}"
