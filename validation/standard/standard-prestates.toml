@@ -1,5 +1,21 @@
 latest_stable = "1.6.1"
-latest_rc = "1.8.0-rc.4"
+latest_rc = "1.9.0-rc.1"
+
+[[prestates."1.9.0-rc.1"]]
+type="cannon64"
+hash="0x033c000916b4a88cfffeceddd6cf0f4be3897a89195941e5a7c3f8209b4dbb6e"
+
+[[prestates."1.9.0-rc.1"]]
+type="interop"
+hash="0x03b985a286da46ca88c0a965a53942daade9ffe1ae6b854a8f2d083df1cfaf59"
+
+[[prestates."1.8.0"]]
+type="cannon64"
+hash="0x03caa1871bb9fe7f9b11217c245c16e4ded33367df5b3ccb2c6d0a847a217d1b"
+
+[[prestates."1.8.0"]]
+type="interop"
+hash="0x03455f7f2179327853a989648c3ac9f2d58be45137bae603271660519b4d5245"
 
 [[prestates."1.8.0-rc.4"]]
 type="cannon64"
@@ -360,3 +376,19 @@ hash="0x036d1def0a2815e1cb8370c17b4f6346cf83551d853f3bfe7b3ab4bfed935671"
 [[prestates."1.2.4"]]
 type="cannon64-kona-interop"
 hash="0x03bb838f039a019830e1b73b7fcddd28aa212ff78104a574bc5833e677bdb331"
+
+[[prestates."1.2.5"]]
+type="cannon64-kona"
+hash="0x03a3e430e333f55bee95f33bed41ebf4b1fa06b93fcc147321d0cf45c6e72bb2"
+
+[[prestates."1.2.5"]]
+type="cannon64-kona-interop"
+hash="0x039a77507aa70ab14718ee1c44affc7bfa0438cffc44a6bc0c630d03023a9d7f"
+
+[[prestates."1.2.7"]]
+type="cannon64-kona"
+hash="0x0323914d3050e80c3d09da528be54794fde60cd26849cd3410dde0da7cd7d4fa"
+
+[[prestates."1.2.7"]]
+type="cannon64-kona-interop"
+hash="0x03f03018773fae0603f7c110ef1defa8d19b601b32ee530f9951987baec435b0"

@@ -44,6 +44,7 @@ type L1SystemConfigReport struct {
 	GasLimit               uint64
 	Scalar                 *big.Int
 	Overhead               *big.Int
+	MinBaseFee             uint64
 	BaseFeeScalar          uint32
 	BlobBaseFeeScalar      uint32
 	EIP1559Denominator     uint32

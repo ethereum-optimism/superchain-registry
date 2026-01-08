@@ -1,7 +1,7 @@
 <img src=".github/readme-banner.png" alt="Welcome to the Superchain Registry"><br/>
 
 > [!WARNING]
-> Starting on March 1st, 2025, all standard chains who wish to be added to the Superchain registry **MUST** be deployed using [OP Deployer](https://docs.optimism.io/builders/chain-operators/tools/op-deployer).
+> Starting on March 1st, 2025, all standard chains who wish to be added to the Superchain registry **MUST** be deployed using [OP Deployer](https://docs.optimism.io/chain-operators/tools/op-deployer).
 
 The Superchain Registry is an index of chains which serves as the source of truth for who’s in the Superchain Ecosystem and what modifications they’ve made to their chains.
 

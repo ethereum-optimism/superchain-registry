@@ -57,6 +57,8 @@ var (
 
 	gasPayingTokenSymbolABI = w3.MustNewFunc("gasPayingTokenSymbol()", "string")
 
+	minBaseFeeABI = w3.MustNewFunc("minBaseFee()", "uint64")
+
 	deployOutputEvV0ABI = w3.MustNewFunc(`
 dummy(
 	address opChainProxyAdmin,
