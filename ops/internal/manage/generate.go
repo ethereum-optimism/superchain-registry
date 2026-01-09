@@ -30,6 +30,7 @@ func GenerateChainArtifacts(
 	idx int,
 	opDeployerVersion string,
 	opDeployerBinDir string,
+	l1ContractsVersion string,
 ) error {
 	st, err := deployer.ReadOpaqueStateFile(statePath)
 	if err != nil {
@@ -38,14 +39,9 @@ func GenerateChainArtifacts(
 
 	var picker deployer.BinaryPicker
 	if opDeployerVersion == "" {
-		// If no op-deployer version is specified, an appropriate version will be
-		// inferred from the state file.
-		l1ContractsRelease, err := st.ReadL1ContractsLocator()
-		if err != nil {
-			return fmt.Errorf("failed to read L1 contracts release: %w", err)
-		}
-
-		picker, err = deployer.WithReleaseBinary(opDeployerBinDir, l1ContractsRelease)
+		// If no op-deployer version is specified, use l1ContractsVersion to determine
+		// the appropriate one
+		picker, err = deployer.WithReleaseBinary(opDeployerBinDir, l1ContractsVersion)
 		if err != nil {
 			return fmt.Errorf("failed to autodetect binary: %w", err)
 		}
@@ -68,7 +64,7 @@ func GenerateChainArtifacts(
 	}
 
 	output.WriteOK("inflating chain config at index %d", idx)
-	cfg, err := InflateChainConfig(opd, st, statePath, idx)
+	cfg, err := InflateChainConfig(opd, st, statePath, idx, l1ContractsVersion)
 	if err != nil {
 		return fmt.Errorf("failed to inflate chain config at index %d: %w", idx, err)
 	}

@@ -8,6 +8,7 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/report"
 	"github.com/urfave/cli/v2"
 )
 
@@ -36,6 +37,12 @@ var (
 		EnvVars: []string{"DEPLOYER_VERSION"},
 		Value:   "",
 	}
+	L1ContractsVersion = &cli.StringFlag{
+		Name:    "l1-contracts-version",
+		Usage:   "Version tag of the L1 contracts (e.g., 'op-contracts/v1.6.0'). If not specified, will be auto-detected from state.json",
+		EnvVars: []string{"L1_CONTRACTS_VERSION"},
+		Value:   "",
+	}
 )
 
 func main() {
@@ -47,6 +54,7 @@ func main() {
 			Shortname,
 			OpDeployerBinDir,
 			OpDeployerVersion,
+			L1ContractsVersion,
 		},
 		Action: action,
 	}
@@ -65,11 +73,30 @@ func action(cliCtx *cli.Context) error {
 	statePath := cliCtx.String(StateFilename.Name)
 	opDeployerBinDir := cliCtx.String(OpDeployerBinDir.Name)
 	opDeployerVersion := cliCtx.String(OpDeployerVersion.Name)
+	l1ContractsVersion := cliCtx.String(L1ContractsVersion.Name)
+
+	if l1ContractsVersion == "" {
+		var err error
+		l1ContractsVersion, err = report.GetContractsReleaseForOpcm(statePath)
+		if err != nil {
+			return fmt.Errorf("failed to determine L1 contracts version: %w", err)
+		}
+	}
 
 	output.WriteWarn("⚠️  Config generation behavior has changed: now generates only essential addresses by default.")
 	output.WriteWarn("📄 All addresses are still available in addresses.json")
 
-	err = manage.GenerateChainArtifacts(statePath, wd, cliCtx.String(Shortname.Name), nil, nil, 0, opDeployerVersion, opDeployerBinDir)
+	err = manage.GenerateChainArtifacts(
+		statePath,
+		wd,
+		cliCtx.String(Shortname.Name),
+		nil, // name
+		nil, // superchain
+		0,   // idx
+		opDeployerVersion,
+		opDeployerBinDir,
+		l1ContractsVersion,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to generate chain config: %w", err)
 	}
