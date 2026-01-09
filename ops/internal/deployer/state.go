@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
+
+	"github.com/Masterminds/semver/v3"
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/validation"
@@ -60,39 +61,38 @@ func ReadOpaqueStateFile(p string) (OpaqueState, error) {
 type StateMerger = func(state OpaqueState) (OpaqueMap, OpaqueState, error)
 
 func GetStateMerger(version string) (StateMerger, error) {
-	// Extract the version numbers
-	re := regexp.MustCompile(`op-deployer/v\d+\.(\d+)\.(\d+)`)
+	// Extract version string (e.g., "0.4.5" from "op-deployer/v0.4.5")
+	re := regexp.MustCompile(`op-deployer/v(\d+\.\d+\.\d+)`)
 	match := re.FindStringSubmatch(version)
-
-	if len(match) < 3 {
+	if len(match) < 2 {
 		return nil, fmt.Errorf("invalid deployer version format: %s", version)
 	}
 
-	minor, err := strconv.Atoi(match[1])
+	v, err := semver.NewVersion(match[1])
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse minor version: %w", err)
+		return nil, fmt.Errorf("failed to parse version: %w", err)
 	}
 
-	patch, err := strconv.Atoi(match[2])
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse patch version: %w", err)
+	// Version constraints are much more readable
+	constraints := []struct {
+		constraint string
+		merger     StateMerger
+	}{
+		{"< 0.2.0", MergeStateV1},
+		{">= 0.2.0, < 0.3.0", MergeStateV2},
+		{">= 0.3.0, < 0.4.0", MergeStateV3},
+		{">= 0.4.0, < 0.4.5", MergeStateV4_0},
+		{">= 0.4.5", MergeStateV4_1},
 	}
 
-	// Return the appropriate merge function based on minor.patch
-	switch {
-	case minor <= 1:
-		return MergeStateV1, nil
-	case minor == 2:
-		return MergeStateV2, nil
-	case minor == 3:
-		return MergeStateV3, nil
-	case minor == 4 && patch < 5:
-		return MergeStateV4_0, nil
-	case minor == 4 && patch >= 5:
-		return MergeStateV4_1, nil
-	default:
-		return MergeStateV4_1, nil
+	for _, c := range constraints {
+		constraint, _ := semver.NewConstraint(c.constraint)
+		if constraint.Check(v) {
+			return c.merger, nil
+		}
 	}
+
+	return nil, fmt.Errorf("unsupported deployer version: %s", version)
 }
 
 func MergeStateV1(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
