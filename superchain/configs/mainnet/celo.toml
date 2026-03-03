@@ -22,7 +22,6 @@ gas_paying_token = "0x057898f3C43F129a17517B9056D23851F124b19f"
   pectra_blob_schedule_time = 1752073200 # Wed 9 Jul 2025 15:00:00 UTC
   isthmus_time = 1752073200 # Wed 9 Jul 2025 15:00:00 UTC
   cel2_time = 1742957258 # Wed 26 Mar 2025 02:47:38 UTC
-  gingerbread_block = 21616000
 
 [optimism]
   eip1559_elasticity = 5
@@ -31,6 +30,12 @@ gas_paying_token = "0x057898f3C43F129a17517B9056D23851F124b19f"
 
 [celo]
   eip1559_base_fee_floor = 25000000000
+
+[alt_da]
+  da_challenge_contract_address = "0x0000000000000000000000000000000000000000"
+  da_challenge_window = 1
+  da_resolve_window = 1
+  da_commitment_type = "GenericCommitment"
 
 [genesis]
   l2_time = 1742957258

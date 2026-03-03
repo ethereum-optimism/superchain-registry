@@ -120,8 +120,7 @@ type Hardforks struct {
 	InteropTime            *HardforkTime `toml:"interop_time"`
 	JovianTime             *HardforkTime `toml:"jovian_time"`
 	// Celo-specific forks
-	Cel2Time         *HardforkTime `toml:"cel2_time,omitempty"`
-	GingerbreadBlock *uint64       `toml:"gingerbread_block,omitempty"`
+	Cel2Time *HardforkTime `toml:"cel2_time,omitempty"`
 }
 
 type Genesis struct {

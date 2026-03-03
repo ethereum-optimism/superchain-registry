@@ -21,7 +21,6 @@ gas_paying_token = "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092"
   holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   isthmus_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   cel2_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-  gingerbread_block = 0
 
 [optimism]
   eip1559_elasticity = 5
