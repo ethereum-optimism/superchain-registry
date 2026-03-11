@@ -21,6 +21,7 @@ gas_paying_token = "0x057898f3C43F129a17517B9056D23851F124b19f"
   holocene_time = 1752073200 # Wed 9 Jul 2025 15:00:00 UTC
   pectra_blob_schedule_time = 1752073200 # Wed 9 Jul 2025 15:00:00 UTC
   isthmus_time = 1752073200 # Wed 9 Jul 2025 15:00:00 UTC
+  jovian_time = 1774958788 # Tue 31 Mar 2026 12:06:28 UTC
   cel2_time = 1742957258 # Wed 26 Mar 2025 02:47:38 UTC
 
 [optimism]
