@@ -20,6 +20,7 @@ gas_paying_token = "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092"
   granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   isthmus_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  jovian_time = 1773749037 # Tue 17 Mar 2026 12:03:57 UTC
   cel2_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
 
 [optimism]
