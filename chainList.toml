@@ -936,7 +936,7 @@
 
 [[chains]]
   name = "Celo Sepolia Testnet"
-  identifier = "sepolia/celo-sep"
+  identifier = "sepolia/celo"
   chain_id = 11142220
   rpc = ["https://forno.celo-sepolia.celo-testnet.org"]
   explorers = ["https://celo-sepolia.blockscout.com"]

@@ -1309,7 +1309,7 @@
   },
   {
     "name": "Celo Sepolia Testnet",
-    "identifier": "sepolia/celo-sep",
+    "identifier": "sepolia/celo",
     "chainId": 11142220,
     "rpc": [
       "https://forno.celo-sepolia.celo-testnet.org"
