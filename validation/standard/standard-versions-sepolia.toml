@@ -7,8 +7,8 @@
 # with updates to L2 contracts only.
 ["op-contracts/v6.0.0-rc.2"]
 system_config = { version = "3.13.1", implementation_address = "0xd392c27b84b1ca776528f2704bc67b82a62132d2" }
-fault_dispute_game = { version = "2.0.0" }
-permissioned_dispute_game = { version = "2.0.0" }
+fault_dispute_game = { version = "2.2.0" }
+permissioned_dispute_game = { version = "2.2.0" }
 mips = { version = "1.9.0", address = "0x6463dee3828677f6270d83d45408044fc5edb908" }
 optimism_portal = { version = "5.2.0", implementation_address = "0x97cebbf8959e2a5476fbe9b98a21806ec234609b" }
 optimism_portal_interop = { version = "5.1.0+interop", implementation_address = "0x5cb365a10e99335d8fedfa225aac5e21287302dd" }
@@ -28,8 +28,8 @@ protocol_versions = { version = "1.1.1", implementation_address = "0x1f734b89bb1
 # Upgrade 18 https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv6.0.0-rc.1
 ["op-contracts/v6.0.0-rc.1"]
 system_config = { version = "3.13.1", implementation_address = "0xd392c27b84b1ca776528f2704bc67b82a62132d2" }
-fault_dispute_game = { version = "2.0.0" }
-permissioned_dispute_game = { version = "2.0.0" }
+fault_dispute_game = { version = "2.2.0" }
+permissioned_dispute_game = { version = "2.2.0" }
 mips = { version = "1.9.0", address = "0x6463dee3828677f6270d83d45408044fc5edb908" }
 optimism_portal = { version = "5.2.0", implementation_address = "0x97cebbf8959e2a5476fbe9b98a21806ec234609b" }
 optimism_portal_interop = { version = "5.1.0+interop", implementation_address = "0x5cb365a10e99335d8fedfa225aac5e21287302dd" }
