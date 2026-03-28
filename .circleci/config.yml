@@ -153,7 +153,20 @@ jobs:
             CHANGED_FILES=$(git diff --name-only origin/main... | grep "^superchain/configs/.*\.toml$" || true)
 
             if [ -z "$CHANGED_FILES" ]; then
-              echo "No .toml files changed in superchain/configs, skipping codegen check"
+              # Check if Go code or dependencies changed
+              GO_CHANGES=$(git diff --name-only origin/main... | grep -E "^ops/(go\.(mod|sum)|.*\.go)$" || true)
+
+              if [ -z "$GO_CHANGES" ]; then
+                echo "No .toml or Go files changed, skipping codegen check"
+                exit 0
+              fi
+
+              echo "Go code/deps changed, running codegen smoke test for OP Mainnet (chain 10)"
+              cd ops
+              go run ./cmd/codegen \
+                --l1-rpc-urls="<< pipeline.parameters.sepolia_rpc_url >>,<< pipeline.parameters.mainnet_rpc_url >>" \
+                --chain-ids=10
+              echo "Codegen smoke test passed"
               exit 0
             fi
 
