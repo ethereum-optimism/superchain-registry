@@ -19,6 +19,8 @@ max_sequencer_drift = 1800
   granite_time = 1727780400 # Tue 1 Oct 2024 11:00:00 UTC
   holocene_time = 1738238400 # Thu 30 Jan 2025 12:00:00 UTC
   isthmus_time = 1764072000 # Tue 25 Nov 2025 12:00:00 UTC
+  jovian_time = 1777593600 # Fri 1 May 2026 00:00:00 UTC
+
 
 [optimism]
   eip1559_elasticity = 10
