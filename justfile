@@ -47,7 +47,20 @@ print-staging-report: (_run_ops_bin 'print_staging_report')
 
 check-genesis-integrity: (_run_ops_bin 'check_genesis_integrity')
 
-create-config SHORTNAME FILENAME:
-	@just _run_ops_bin "create_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{FILENAME}})"
+codegen L1_RPC_URLS SUPERCHAINS="":
+  @just _run_ops_bin "codegen" "--l1-rpc-urls {{L1_RPC_URLS}} --superchains={{SUPERCHAINS}}"
+
+create-config SHORTNAME STATEFILE OPDEPLOYERVERSION="": build-deployer-binaries
+	@just _run_ops_bin "create_config" "--shortname {{SHORTNAME}} --state-filename $(realpath {{STATEFILE}}) --op-deployer-version={{OPDEPLOYERVERSION}}"
+
+import-devnet STATEFILE MANIFESTFILE OPDEPLOYERVERSION="":  build-deployer-binaries
+	@just _run_ops_bin "import_devnet" "--state-filename $(realpath {{STATEFILE}}) --manifest-path $(realpath {{MANIFESTFILE}}) --op-deployer-version={{OPDEPLOYERVERSION}}"
+
+build-deployer-binaries:
+  @bash ops/internal/deployer/scripts/build-binaries.sh
 
 check-chainlist: (_run_ops_bin 'check_chainlist')
+
+remove-chain CHAIN_ID L1_RPC_URLS="$SEPOLIA_RPC_URL,$MAINNET_RPC_URL" SUPERCHAINS="":
+	@just _run_ops_bin "remove_chain" "--chain-id {{CHAIN_ID}}"
+	@just codegen {{L1_RPC_URLS}} {{SUPERCHAINS}}

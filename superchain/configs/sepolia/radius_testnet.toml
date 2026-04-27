@@ -1,0 +1,48 @@
+name = "Radius testnet"
+public_rpc = "testnet-rpc.theradius.xyz"
+sequencer_rpc = "dev-secure.rpc.theradius.xyz"
+explorer = "https://testnet-rpc.theradius.xyz/"
+superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 863
+batch_inbox_addr = "0x005585B57B62C1eae08e995aF66746CEa56EB9E4"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1743250684
+  [genesis.l1]
+    hash = "0xb4a93e1692ed6fcd3e196325471f653ff11ea4afb9618bf9ddc19d8d69d748be"
+    number = 8090957
+  [genesis.l2]
+    hash = "0x5ef69a0280793403064cafbb45a27371eb72baccb997e79bb7041785ecb6a799"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0xE58318A4bF1A27AB2F3dD0433e27d81C8CAaF04f"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
+    gasLimit = 60000000
+
+[roles]
+  ProxyAdminOwner = "0x4A0B7F6A778e3E91dBba791B7E43400A08735506"
+
+[addresses]
+  L1StandardBridgeProxy = "0xD5983849E1EBFDb97e66736962Dbf9dB4d2BDC08"
+  OptimismPortalProxy = "0x86897210aaD2861Aa603937762AC7c1E6Dfa9727"
+  SystemConfigProxy = "0x59b71c0a919bC1E8daE5488A562215494f1257fe"
+  DisputeGameFactoryProxy = "0x6D6eF1D3a2eCC7511a0881F460422B461CA7128a"

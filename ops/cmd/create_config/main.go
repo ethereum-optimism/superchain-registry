@@ -3,13 +3,12 @@ package main
 import (
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
 
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/report"
 	"github.com/urfave/cli/v2"
 )
 
@@ -26,6 +25,24 @@ var (
 		Required: true,
 		Value:    "newchain",
 	}
+	OpDeployerBinDir = &cli.StringFlag{
+		Name:    "op-deployer-bin-dir",
+		Usage:   "Path to the directory containing op-deployer binaries.",
+		EnvVars: []string{"DEPLOYER_CACHE_DIR"},
+		Value:   defaultBinDir(),
+	}
+	OpDeployerVersion = &cli.StringFlag{
+		Name:    "op-deployer-version",
+		Usage:   "Version of the op-deployer binary to use.",
+		EnvVars: []string{"DEPLOYER_VERSION"},
+		Value:   "",
+	}
+	L1ContractsVersion = &cli.StringFlag{
+		Name:    "l1-contracts-version",
+		Usage:   "Version tag of the L1 contracts (e.g., 'op-contracts/v1.6.0'). If not specified, will be auto-detected from state.json",
+		EnvVars: []string{"L1_CONTRACTS_VERSION"},
+		Value:   "",
+	}
 )
 
 func main() {
@@ -35,6 +52,9 @@ func main() {
 		Flags: []cli.Flag{
 			StateFilename,
 			Shortname,
+			OpDeployerBinDir,
+			OpDeployerVersion,
+			L1ContractsVersion,
 		},
 		Action: action,
 	}
@@ -51,37 +71,45 @@ func action(cliCtx *cli.Context) error {
 	}
 
 	statePath := cliCtx.String(StateFilename.Name)
-	output.WriteStderr("reading state file from %s", statePath)
-	var st state.State
-	if err := paths.ReadJSONFile(statePath, &st); err != nil {
-		return fmt.Errorf("failed to read state file: %w", err)
+	opDeployerBinDir := cliCtx.String(OpDeployerBinDir.Name)
+	opDeployerVersion := cliCtx.String(OpDeployerVersion.Name)
+	l1ContractsVersion := cliCtx.String(L1ContractsVersion.Name)
+
+	if l1ContractsVersion == "" {
+		var err error
+		l1ContractsVersion, err = report.GetContractsReleaseForOpcm(statePath)
+		if err != nil {
+			return fmt.Errorf("failed to determine L1 contracts version: %w", err)
+		}
 	}
 
-	output.WriteOK("inflating chain config")
-	cfg, err := manage.InflateChainConfig(&st)
+	output.WriteWarn("⚠️  Config generation behavior has changed: now generates only essential addresses by default.")
+	output.WriteWarn("📄 All addresses are still available in addresses.json")
+
+	err = manage.GenerateChainArtifacts(
+		statePath,
+		wd,
+		cliCtx.String(Shortname.Name),
+		nil, // name
+		nil, // superchain
+		0,   // idx
+		opDeployerVersion,
+		opDeployerBinDir,
+		l1ContractsVersion,
+	)
 	if err != nil {
-		return fmt.Errorf("failed to inflate chain config: %w", err)
-	}
-	cfg.ShortName = cliCtx.String(Shortname.Name)
-
-	output.WriteOK("reading genesis")
-	genesis, _, err := inspect.GenesisAndRollup(&st, st.AppliedIntent.Chains[0].ID)
-	if err != nil {
-		return fmt.Errorf("failed to get genesis: %w", err)
-	}
-
-	stagingDir := paths.StagingDir(wd)
-
-	output.WriteOK("writing chain config")
-	if err := paths.WriteTOMLFile(path.Join(stagingDir, cfg.ShortName+".toml"), cfg); err != nil {
-		return fmt.Errorf("failed to write chain config: %w", err)
-	}
-
-	output.WriteOK("writing genesis")
-	if err := manage.WriteGenesis(wd, path.Join(stagingDir, cfg.ShortName+".json.zst"), genesis); err != nil {
-		return fmt.Errorf("failed to write genesis: %w", err)
+		return fmt.Errorf("failed to generate chain config: %w", err)
 	}
 
 	output.WriteOK("done")
 	return nil
+}
+
+func defaultBinDir() string {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(fmt.Sprintf("failed to get home directory: %v", err))
+	}
+
+	return filepath.Join(homeDir, ".cache", "op-deployer")
 }

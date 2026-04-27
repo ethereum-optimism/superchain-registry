@@ -27,7 +27,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Base"
@@ -73,7 +73,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Ethernity"
@@ -84,6 +84,21 @@
   superchain_level = 1
   governed_by_optimism = false
   data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "none"
+
+[[chains]]
+  name = "Fraxtal"
+  identifier = "mainnet/fraxtal"
+  chain_id = 252
+  rpc = ["https://rpc.frax.com"]
+  explorers = ["https://fraxscan.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -103,7 +118,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "HashKey Chain"
@@ -149,7 +164,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Lyra Chain"
@@ -164,7 +179,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Metal L2"
@@ -179,7 +194,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Mint Mainnet"
@@ -194,7 +209,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Mode"
@@ -209,7 +224,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "OP Mainnet"
@@ -239,7 +254,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Polynomial"
@@ -254,7 +269,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "RACE Mainnet"
@@ -317,21 +332,6 @@
     status = "permissioned"
 
 [[chains]]
-  name = "SnaxChain"
-  identifier = "mainnet/snax"
-  chain_id = 2192
-  rpc = ["https://mainnet.snaxchain.io"]
-  explorers = ["https://explorer.snaxchain.io"]
-  superchain_level = 0
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "none"
-
-[[chains]]
   name = "Soneium"
   identifier = "mainnet/soneium"
   chain_id = 1868
@@ -359,7 +359,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Swan Chain Mainnet"
@@ -449,7 +449,7 @@
     type = "L2"
     chain = "mainnet"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "arena-z"
@@ -510,7 +510,7 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "permissionless"
+    status = "permissioned"
 
 [[chains]]
   name = "Creator Chain Testnet"
@@ -525,7 +525,7 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Cyber Testnet"
@@ -615,7 +615,7 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "Mode Testnet"
@@ -630,14 +630,14 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "none"
+    status = "permissioned"
 
 [[chains]]
   name = "OP Sepolia Testnet"
   identifier = "sepolia/op"
   chain_id = 11155420
   rpc = ["https://sepolia.optimism.io"]
-  explorers = ["https://sepolia-optimistic.etherscan.io"]
+  explorers = ["https://testnet-explorer.optimism.io"]
   superchain_level = 1
   governed_by_optimism = true
   data_availability_type = "eth-da"
@@ -646,6 +646,22 @@
     chain = "sepolia"
   [chains.fault_proofs]
     status = "permissionless"
+
+[[chains]]
+  name = "Ozean Poseidon Testnet"
+  identifier = "sepolia/ozean"
+  chain_id = 7849306
+  rpc = ["https://ozean-testnet.rpc.caldera.xyz/http"]
+  explorers = ["https://ozean-testnet.explorer.caldera.xyz"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  gas_paying_token = "0x43bd82D1e29a1bEC03AfD11D5a3252779b8c760c"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
 
 [[chains]]
   name = "Pivotal Sepolia"
@@ -720,7 +736,7 @@
     type = "L2"
     chain = "sepolia"
   [chains.fault_proofs]
-    status = "permissioned"
+    status = "permissionless"
 
 [[chains]]
   name = "Unichain Sepolia Testnet"
@@ -768,21 +784,6 @@
     status = "permissioned"
 
 [[chains]]
-  name = "arena-z-testnet"
-  identifier = "sepolia/arena-z-testnet"
-  chain_id = 9897
-  rpc = ["https://rpc.arena-z.t.raas.gelato.cloud"]
-  explorers = ["https://arena-z.blockscout.com"]
-  superchain_level = 1
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-  [chains.fault_proofs]
-    status = "none"
-
-[[chains]]
   name = "Base devnet 0"
   identifier = "sepolia-dev-0/base-devnet-0"
   chain_id = 11763072
@@ -811,3 +812,140 @@
     chain = "sepolia-dev-0"
   [chains.fault_proofs]
     status = "permissionless"
+
+[[chains]]
+  name = "Boba Mainnet"
+  identifier = "mainnet/boba"
+  chain_id = 288
+  rpc = ["https://mainnet.boba.network"]
+  explorers = ["https://bobascan.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "Radius testnet"
+  identifier = "sepolia/radius_testnet"
+  chain_id = 863
+  rpc = ["testnet-rpc.theradius.xyz"]
+  explorers = ["https://testnet-rpc.theradius.xyz/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "Camp Network Testnet V2"
+  identifier = "sepolia/camp"
+  chain_id = 325000
+  rpc = ["https://rpc.camp-network-testnet.gelato.digital"]
+  explorers = ["https://camp-network-testnet.blockscout.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "none"
+
+[[chains]]
+  name = "Celo"
+  identifier = "mainnet/celo"
+  chain_id = 42220
+  rpc = ["https://forno.celo.org"]
+  explorers = ["https://celoscan.io/"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  gas_paying_token = "0x057898f3C43F129a17517B9056D23851F124b19f"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "rehearsal-0-bn-0"
+  identifier = "rehearsal-0-bn/rehearsal-0-bn-0"
+  chain_id = 420120009
+  rpc = [""]
+  explorers = [""]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "rehearsal-0-bn"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "rehearsal-0-bn-1"
+  identifier = "rehearsal-0-bn/rehearsal-0-bn-1"
+  chain_id = 420120010
+  rpc = [""]
+  explorers = [""]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "rehearsal-0-bn"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "arena-z-testnet"
+  identifier = "sepolia/arena-z"
+  chain_id = 9899
+  rpc = ["https://testnet-rpc.arena-z.gg"]
+  explorers = ["https://testnet-explorer.arena-z.gg"]
+  superchain_level = 1
+  governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "Silent Data Mainnet"
+  identifier = "mainnet/silent-data-mainnet"
+  chain_id = 380929
+  rpc = ["https://mainnet.silentdata.com/${SILENTDATA_AUTH_TOKEN}"]
+  explorers = ["https://explorer-mainnet.rollup.silentdata.com"]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  [chains.parent]
+    type = "L2"
+    chain = "mainnet"
+  [chains.fault_proofs]
+    status = "permissioned"
+
+[[chains]]
+  name = "Celo Sepolia Testnet"
+  identifier = "sepolia/celo-sep"
+  chain_id = 11142220
+  rpc = ["https://forno.celo-sepolia.celo-testnet.org"]
+  explorers = ["https://celo-sepolia.blockscout.com"]
+  superchain_level = 2
+  governed_by_optimism = false
+  data_availability_type = "alt-da"
+  gas_paying_token = "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"

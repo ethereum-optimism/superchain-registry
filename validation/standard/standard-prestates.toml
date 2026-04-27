@@ -1,5 +1,129 @@
-latest_stable = "1.5.0"
-latest_rc = "1.6.0-rc.2"
+latest_stable = "1.9.0"
+latest_rc = "1.9.0-rc.1"
+
+[[prestates."1.9.0"]]
+type="cannon64"
+hash="0x033c000916b4a88cfffeceddd6cf0f4be3897a89195941e5a7c3f8209b4dbb6e"
+
+[[prestates."1.9.0"]]
+type="interop"
+hash="0x03b985a286da46ca88c0a965a53942daade9ffe1ae6b854a8f2d083df1cfaf59"
+
+[[prestates."1.9.0-rc.1"]]
+type="cannon64"
+hash="0x033c000916b4a88cfffeceddd6cf0f4be3897a89195941e5a7c3f8209b4dbb6e"
+
+[[prestates."1.9.0-rc.1"]]
+type="interop"
+hash="0x03b985a286da46ca88c0a965a53942daade9ffe1ae6b854a8f2d083df1cfaf59"
+
+[[prestates."1.8.0"]]
+type="cannon64"
+hash="0x03caa1871bb9fe7f9b11217c245c16e4ded33367df5b3ccb2c6d0a847a217d1b"
+
+[[prestates."1.8.0"]]
+type="interop"
+hash="0x03455f7f2179327853a989648c3ac9f2d58be45137bae603271660519b4d5245"
+
+[[prestates."1.8.0-rc.4"]]
+type="cannon64"
+hash="0x03caa1871bb9fe7f9b11217c245c16e4ded33367df5b3ccb2c6d0a847a217d1b"
+
+[[prestates."1.8.0-rc.4"]]
+type="interop"
+hash="0x03455f7f2179327853a989648c3ac9f2d58be45137bae603271660519b4d5245"
+
+[[prestates."1.8.0-rc.3"]]
+type="cannon64"
+hash="0x03799051d2bfe459127d4597f469f535ff1bd2a6e1e2134443167620871c11f3"
+
+[[prestates."1.8.0-rc.3"]]
+type="interop"
+hash="0x0375052a8100e452f648435703f524245fadce6122fa99046921bdd84683a982"
+
+[[prestates."1.8.0-rc.2"]]
+type="cannon64"
+hash="0x034af54951ecf8f55535703eefcd7be0ea0f9069aae98a7ef7ba6c22a37b5886"
+
+[[prestates."1.8.0-rc.2"]]
+type="interop"
+hash="0x03ae7413794c442acf3052882c7da662253fcec05b2d7c0233818498ac178385"
+
+[[prestates."1.8.0-rc.1"]]
+type="cannon64"
+hash="0x037a3ca1eef17bc635b30edbe85d0336777c0f8cae5146701c408e797400cf4a"
+
+[[prestates."1.8.0-rc.1"]]
+type="interop"
+hash="0x0372009a06e322685f928679577e5aa0f5444839ae0b6db8c43ff529a4a34d73"
+
+[[prestates."1.7.0-rc.5"]]
+type="cannon64"
+hash="0x038dca684026d946d1d0ddb05d50685d1a0dab350b89d10b6705e83c41ec8755"
+
+[[prestates."1.7.0-rc.5"]]
+type="interop"
+hash="0x038e08d045dd89be82372cd1272ce78ecc518b5dd489366adda87d931b826883"
+
+[[prestates."1.7.0-rc.4"]]
+type="cannon64"
+hash="0x03840cba7fc4c4e8243aa84a653c4aaebd1e429894c543e4ef4b2289932f1f14"
+
+[[prestates."1.7.0-rc.4"]]
+type="interop"
+hash="0x033fa1c5241768fc8c28fcae68c39e6f74531c682570ca0a56dd279467671eef"
+
+[[prestates."1.7.0-rc.3"]]
+type="cannon64"
+hash="0x0339db503776757491b9f3038bf6f1d37b7988a2f75e823fe2656c1352ef2f91"
+
+[[prestates."1.7.0-rc.3"]]
+type="interop"
+hash="0x037f9c12d13f6f0bf0675980fbdc2ec4ddc6eebeac752676fa1ed4b8ae4bd58f"
+
+[[prestates."1.7.0-rc.2"]]
+type="cannon64"
+hash="0x03f05793ed3abc475137f73b68c80593cbbf40f5d1059d2ad9b8bfcb97fa8929"
+
+[[prestates."1.7.0-rc.2"]]
+type="interop"
+hash="0x030a785016e71f45df2f1c6af24bc2aac730ee189ac76cd3fdea5b5cfbdf9919"
+
+[[prestates."1.7.0-rc.1"]]
+type="cannon64"
+hash="0x03b38e0f14678bcf3a358e5e2593938337b991e3883f2be40213282dc6079d06"
+
+[[prestates."1.7.0-rc.1"]]
+type="interop"
+hash="0x0376a85db8f1bdf7df83166deb35004de2041d070180755ebeb0368950d23c37"
+
+[[prestates."1.6.1"]]
+type = "cannon64"
+hash = "0x03eb07101fbdeaf3f04d9fb76526362c1eea2824e4c6e970bdb19675b72e4fc8"
+
+[[prestates."1.6.1"]]
+type = "interop"
+hash = "0x03fc3b4d091527d53f1ff369ea8ed65e5e17cc7fc98ebf75380238151cdc949c"
+
+[[prestates."1.6.1-rc.1"]]
+type = "cannon64"
+hash = "0x03eb07101fbdeaf3f04d9fb76526362c1eea2824e4c6e970bdb19675b72e4fc8"
+
+[[prestates."1.6.1-rc.1"]]
+  type = "interop"
+  hash = "0x03fc3b4d091527d53f1ff369ea8ed65e5e17cc7fc98ebf75380238151cdc949c"
+
+[[prestates."1.6.0"]]
+type = "cannon32"
+hash = "0x03513e996556589f633fe1d38d694f63bc93cca5df559af37631b30875a829e9"
+
+[[prestates."1.6.0"]]
+type = "cannon64"
+hash = "0x03682932cec7ce0a3874b19675a6bbc923054a7b321efc7d3835187b172494b6"
+
+[[prestates."1.6.0"]]
+  type = "interop"
+  hash = "0x0399cfb018011977a027d1e7a85eb7ff101aec9bfc7d6500abac944c47a4581f"
 
 [[prestates."1.6.0-rc.2"]]
 type = "cannon32"
@@ -9,6 +133,10 @@ hash = "0x03513e996556589f633fe1d38d694f63bc93cca5df559af37631b30875a829e9"
 type = "cannon64"
 hash = "0x03682932cec7ce0a3874b19675a6bbc923054a7b321efc7d3835187b172494b6"
 
+[[prestates."1.6.0-rc.2"]]
+  type = "interop"
+  hash = "0x0399cfb018011977a027d1e7a85eb7ff101aec9bfc7d6500abac944c47a4581f"
+
 [[prestates."1.6.0-rc.1"]]
 type = "cannon32"
 hash = "0x03526dfe02ab00a178e0ab77f7539561aaf5b5e3b46cd3be358f1e501b06d8a9"
@@ -17,6 +145,10 @@ hash = "0x03526dfe02ab00a178e0ab77f7539561aaf5b5e3b46cd3be358f1e501b06d8a9"
 type = "cannon64"
 hash = "0x03394563dd4a36e95e6d51ce7267ecceeb05fad23e68d2f9eed1affa73e5641a"
 
+[[prestates."1.6.0-rc.1"]]
+  type = "interop"
+  hash = "0x03ada038f8a81526c68596586dfc762eb5412d4d5bb7cb46110d8c47ee570d7e"
+
 [[prestates."1.5.1-rc.1"]]
 type = "cannon32"
 hash = "0x0354eee87a1775d96afee8977ef6d5d6bd3612b256170952a01bf1051610ee01"
@@ -24,6 +156,10 @@ hash = "0x0354eee87a1775d96afee8977ef6d5d6bd3612b256170952a01bf1051610ee01"
 [[prestates."1.5.1-rc.1"]]
 type = "cannon64"
 hash = "0x03ee2917da962ec266b091f4b62121dc9682bb0db534633707325339f99ee405"
+
+[[prestates."1.5.1-rc.1"]]
+  type = "interop"
+  hash = "0x03673e05a48799e6613325a3f194114c0427d5889cefc8f423eed02dfb881f23"
 
 [[prestates."1.5.0"]]
 type = "cannon32"
@@ -33,6 +169,10 @@ hash = "0x039facea52b20c605c05efb0a33560a92de7074218998f75bcdf61e8989cb5d9"
 type = "cannon64"
 hash = "0x039970872142f48b189d18dcbc03a3737338d098b0101713dc2d6710f9deb5ef"
 
+[[prestates."1.5.0"]]
+  type = "interop"
+  hash = "0x03a806c966e97816f1ff8d4f04a8ec823099e8f9c32e1d0cfca814f545b85115"
+
 [[prestates."1.5.0-rc.4"]]
 type = "cannon32"
 hash = "0x0354eee87a1775d96afee8977ef6d5d6bd3612b256170952a01bf1051610ee01"
@@ -41,6 +181,10 @@ hash = "0x0354eee87a1775d96afee8977ef6d5d6bd3612b256170952a01bf1051610ee01"
 type = "cannon64"
 hash = "0x03ee2917da962ec266b091f4b62121dc9682bb0db534633707325339f99ee405"
 
+[[prestates."1.5.0-rc.4"]]
+  type = "interop"
+  hash = "0x03673e05a48799e6613325a3f194114c0427d5889cefc8f423eed02dfb881f23"
+
 [[prestates."1.5.0-rc.3"]]
 type = "cannon32"
 hash = "0x039facea52b20c605c05efb0a33560a92de7074218998f75bcdf61e8989cb5d9"
@@ -48,6 +192,10 @@ hash = "0x039facea52b20c605c05efb0a33560a92de7074218998f75bcdf61e8989cb5d9"
 [[prestates."1.5.0-rc.3"]]
 type = "cannon64"
 hash = "0x039970872142f48b189d18dcbc03a3737338d098b0101713dc2d6710f9deb5ef"
+
+[[prestates."1.5.0-rc.3"]]
+  type = "interop"
+  hash = "0x03a806c966e97816f1ff8d4f04a8ec823099e8f9c32e1d0cfca814f545b85115"
 
 [[prestates."1.5.0-rc.2"]]
 type = "cannon32"
@@ -57,6 +205,10 @@ hash = "0x035ac388b5cb22acf52a2063cfde108d09b1888655d21f02f595f9c3ea6cbdcd"
 type = "cannon64"
 hash = "0x03a7d967025dc434a9ca65154acdb88a7b658147b9b049f0b2f5ecfb9179b0fe"
 
+[[prestates."1.5.0-rc.2"]]
+  type = "interop"
+  hash = "0x0379d61de1833af6766f07b4ed931d85b3f6282508bbcbf9f4637398d97b61c1"
+
 [[prestates."1.5.0-rc.1"]]
 type = "cannon32"
 hash = "0x03dfa3b3ac66e8fae9f338824237ebacff616df928cf7dada0e14be2531bc1f4"
@@ -65,6 +217,10 @@ hash = "0x03dfa3b3ac66e8fae9f338824237ebacff616df928cf7dada0e14be2531bc1f4"
 type = "cannon64"
 hash = "0x03f83792f653160f3274b0888e998077a27e1f74cb35bcb20d86021e769340aa"
 
+[[prestates."1.5.0-rc.1"]]
+  type = "interop"
+  hash = "0x03b7658b889796c1e372f57439e48eb46a5b008f6e6a4b7e5c8c2d3bddffa797"
+
 [[prestates."1.4.1-rc.3"]]
 type = "cannon64"
 hash = "0x03d7f817d7bb1321533aeeee5e0f2031cc69d167c4a17bf2816b4cc8b1be4077"
@@ -72,6 +228,10 @@ hash = "0x03d7f817d7bb1321533aeeee5e0f2031cc69d167c4a17bf2816b4cc8b1be4077"
 [[prestates."1.4.1-rc.3"]]
 type = "cannon32"
 hash = "0x03ea123151750b03569369130a73c390b0b5e10c722ab42d762d116318325bb7"
+
+[[prestates."1.4.1-rc.3"]]
+  type = "interop"
+  hash = "0x03865d2bf928cd692480154ce0f20c4f7658018189404d10e4f70f0daae1b695"
 
 [[prestates."1.4.1-rc.2"]]
 type = "cannon64"
@@ -192,3 +352,75 @@ hash = "0x038942ec840131a63c49fa514a3f0577ae401fd5584d56ad50cdf5a8b41d4538"
 [[prestates."0.0.1"]]
 type = "cannon32"
 hash = "0x03babef4b4c6d866d56e6356d961839fd9475931d11e0ea507420a87b0cadbdd"
+
+[[prestates."1.1.6"]]
+type="cannon64-kona"
+hash="0x034726fbf9eb7cb9aeb1633dc9a1434d161bb8875f15a940ddee07f9f7192b26"
+
+[[prestates."1.1.6"]]
+type="cannon64-kona-interop"
+hash="0x03e8bc1c6bf2d4c4920b0fad19e7717b44720721eb523e2c9d974816881a6894"
+
+[[prestates."1.1.7"]]
+type="cannon64-kona"
+hash="0x03768f764f5581f686aa9cd53ad3c6a8222982482e28225a459c18041e57e5a3"
+
+[[prestates."1.1.7"]]
+type="cannon64-kona-interop"
+hash="0x03eb44879741b809d4ac67593c94008ff74f9345fcb0d2bb0b3ad887660a3a39"
+
+[[prestates."1.2.2"]]
+type="cannon64-kona"
+hash="0x03e183aa55db11aba6c1f2f7adccad15411d44fb54285e104cb73468927de0e7"
+
+[[prestates."1.2.2"]]
+type="cannon64-kona-interop"
+hash="0x033f554908ed264b81963ad6bf8a856c7c114af950df5a6fff67c5db85886083"
+
+[[prestates."1.2.4"]]
+type="cannon64-kona"
+hash="0x036d1def0a2815e1cb8370c17b4f6346cf83551d853f3bfe7b3ab4bfed935671"
+
+[[prestates."1.2.4"]]
+type="cannon64-kona-interop"
+hash="0x03bb838f039a019830e1b73b7fcddd28aa212ff78104a574bc5833e677bdb331"
+
+[[prestates."1.2.5"]]
+type="cannon64-kona"
+hash="0x03a3e430e333f55bee95f33bed41ebf4b1fa06b93fcc147321d0cf45c6e72bb2"
+
+[[prestates."1.2.5"]]
+type="cannon64-kona-interop"
+hash="0x039a77507aa70ab14718ee1c44affc7bfa0438cffc44a6bc0c630d03023a9d7f"
+
+[[prestates."1.2.7"]]
+type="cannon64-kona"
+hash="0x0323914d3050e80c3d09da528be54794fde60cd26849cd3410dde0da7cd7d4fa"
+
+[[prestates."1.2.7"]]
+type="cannon64-kona-interop"
+hash="0x03f03018773fae0603f7c110ef1defa8d19b601b32ee530f9951987baec435b0"
+
+[[prestates."1.2.10-rc.1"]]
+type="cannon64-kona"
+hash="0x03838c1ea9534e538a41bc8a8facbdd71e16724ab96af53532454ca3a82a2e30"
+
+[[prestates."1.2.10-rc.1"]]
+type="cannon64-kona-interop"
+hash="0x03a5c095d40ab1a6631ea8f0e19efe3dc43b15c2832dba31533210075469f416"
+
+[[prestates."1.2.12"]]
+type="cannon64-kona"
+hash="0x0399b5b33a5c6d5970f1b326abfb79c25cce8faef14235a28d4c4fdf70190673"
+
+[[prestates."1.2.12"]]
+type="cannon64-kona-interop"
+hash="0x03a319937faf4147b0710e21392f776e1ec902050e0f0f1cb0dc95b59a5eda26"
+
+[[prestates."1.2.13"]]
+type="cannon64-kona"
+hash="0x034f407b2fbbdf34a966e03915d02da5e59259bf3eb729f823acdffb86a37c2e"
+
+[[prestates."1.2.13"]]
+type="cannon64-kona-interop"
+hash="0x035ef680a6fa34c50d8d8169075b5d133ecd7b38fe2b2a83cc76fc81ae5d7c52"

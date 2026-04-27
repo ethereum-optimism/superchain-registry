@@ -1,10 +1,10 @@
-# Standards Compliance Report
+# Standards Compliance Report for testChainShortName
 
 ## L1 Deployment
 
 **Release**: `op-contracts/v1.6.0`
 
-**Deployment Transaction Hash**: [0x0193884dc77ba74ca9ae23079edf91b81d49b0243c486fab5bbecd415d2dad68](https://sepolia.etherscan.io/tx/0x0193884dc77ba74ca9ae23079edf91b81d49b0243c486fab5bbecd415d2dad68)
+**Deployment Transaction Hash**: [0x0193884dc77ba74ca9ae23079edf91b81d49b0243c486fab5bbecd415d2dad68](https://eth-sepolia.blockscout.com/tx/0x0193884dc77ba74ca9ae23079edf91b81d49b0243c486fab5bbecd415d2dad68)
 
 <details open>
 
@@ -51,17 +51,25 @@
 
 </details>
 
+<details open>
+
+<summary>SystemConfig</summary>
+
+| | Parameter | Std Min | Std Max | Got Value |
+|---|----------|---------|---------|-----------|
+| ✅ | MinimumBaseFee | `0` | `10000000000` | `0` |
+
+</details>
+
 ## L2 Deployment
 
 **⚠️ Genesis does not match standard.** The state diff is listed below:
 
 ```diff
-+0x0000000000000000000000000000000000000123
-+code:0x010203
-+balance:100
-+nonce:1
-+storage:
-+  0x0000000000000000000000000000000000000000000000000000000000000456:0x0000000000000000000000000000000000000000000000000000000000000789
+genesis.alloc.0x0000000000000000000000000000000000000123: exists in second map but not in first (value: map[balance:0x64 code:0x010203 nonce:0x1 storage:map[0x456:0x789]])
+genesis.config.chainId: 1 => 11155111
+genesis.timestamp: 0x0 => 0x64
+genesis.difficulty: 0x1 => 0x0
 ```
 
 <small>Report generated on 1970-01-01T00:20:34Z for commit `1234567890abcdef`</small>

@@ -31,11 +31,11 @@ func ValidateUniqueness(
 ) error {
 	for _, chain := range chains {
 		if chain.Config.ChainID == in.ChainID {
-			return ErrDuplicateChainID
+			return fmt.Errorf("%w: chains %s and %s: %d", ErrDuplicateChainID, chain.ShortName, in.ShortName, in.ChainID)
 		}
 
 		if chain.ShortName == in.ShortName {
-			return ErrDuplicateShortName
+			return fmt.Errorf("%w: chains %d and %d: %s", ErrDuplicateShortName, chain.Config.ChainID, in.ChainID, chain.ShortName)
 		}
 	}
 	return nil
@@ -95,7 +95,7 @@ func ValidateGenesisIntegrity(cfg *config.Chain, genesis *core.Genesis) error {
 		MergeNetsplitBlock:      common.Big0,
 		ShanghaiTime:            cfg.Hardforks.CanyonTime.U64Ptr(),  // Shanghai activates with Canyon
 		CancunTime:              cfg.Hardforks.EcotoneTime.U64Ptr(), // Cancun activates with Ecotone
-		PragueTime:              nil,
+		PragueTime:              cfg.Hardforks.IsthmusTime.U64Ptr(), // Prague activates with Isthmus
 		BedrockBlock:            common.Big0,
 		RegolithTime:            &genesisActivation,
 		CanyonTime:              cfg.Hardforks.CanyonTime.U64Ptr(),
@@ -103,6 +103,9 @@ func ValidateGenesisIntegrity(cfg *config.Chain, genesis *core.Genesis) error {
 		FjordTime:               cfg.Hardforks.FjordTime.U64Ptr(),
 		GraniteTime:             cfg.Hardforks.GraniteTime.U64Ptr(),
 		HoloceneTime:            cfg.Hardforks.HoloceneTime.U64Ptr(),
+		IsthmusTime:             cfg.Hardforks.IsthmusTime.U64Ptr(),
+		InteropTime:             cfg.Hardforks.InteropTime.U64Ptr(),
+		JovianTime:              cfg.Hardforks.JovianTime.U64Ptr(),
 		TerminalTotalDifficulty: common.Big0,
 		Ethash:                  nil,
 		Clique:                  nil,

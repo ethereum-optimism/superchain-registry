@@ -8,43 +8,50 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/inspect"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/state"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
-	if len(st.AppliedIntent.Chains) != 1 {
-		return nil, errors.New("expected exactly one chain in state")
+func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, statePath string, idx int, l1ContractsVersion string) (*config.StagedChain, error) {
+	chainId, err := st.ReadL2ChainId(idx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read chain ID: %w", err)
 	}
 
-	chainIntent := st.AppliedIntent.Chains[0]
-	chainID := chainIntent.ID
-	dc, err := inspect.DeployConfig(st, chainID)
+	rollup, err := opd.InspectRollup(statePath, chainId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to inspect rollup: %w", err)
+	}
+
+	dc, err := opd.InspectDeployConfig(statePath, chainId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to inspect deploy config: %w", err)
 	}
 
-	_, rollup, err := inspect.GenesisAndRollup(st, chainID)
+	l2Contracts, err := st.ReadL2ContractsLocator()
 	if err != nil {
-		return nil, fmt.Errorf("failed to inspect genesis and rollup: %w", err)
+		return nil, fmt.Errorf("failed to read L2 contracts locator: %w", err)
+	}
+	if l2Contracts == "embedded" {
+		l2Contracts = l1ContractsVersion
 	}
 
 	cfg := new(config.StagedChain)
-	cfg.ChainID = chainID.Big().Uint64()
+
+	cfg.ChainID = uint64(common.HexToHash(chainId).Big().Int64())
 	cfg.BatchInboxAddr = config.NewChecksummedAddress(dc.BatchInboxAddress)
 	cfg.BlockTime = dc.L2BlockTime
 	cfg.SeqWindowSize = dc.SequencerWindowSize
 	cfg.MaxSequencerDrift = dc.MaxSequencerDrift
 	cfg.DataAvailabilityType = "eth-da"
-	cfg.DeploymentL1ContractsVersion = st.AppliedIntent.L1ContractsLocator
-	cfg.DeploymentL2ContractsVersion = st.AppliedIntent.L2ContractsLocator
+	cfg.DeploymentL1ContractsVersion = l1ContractsVersion
+	cfg.DeploymentL2ContractsVersion = l2Contracts
 	cfg.DeploymentTxHash = new(common.Hash)
-	cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.BaseFeeVaultRecipient)
-	cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.L1FeeVaultRecipient)
-	cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(chainIntent.SequencerFeeVaultRecipient)
+	cfg.BaseFeeVaultRecipient = *config.NewChecksummedAddress(dc.BaseFeeVaultRecipient)
+	cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(dc.L1FeeVaultRecipient)
+	cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(dc.SequencerFeeVaultRecipient)
 
 	if dc.CustomGasTokenAddress != (common.Address{}) {
 		cfg.GasPayingToken = config.NewChecksummedAddress(dc.CustomGasTokenAddress)
@@ -71,9 +78,8 @@ func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
 		cfg.DataAvailabilityType = "alt-da"
 	}
 
-	chainState := st.Chains[0]
 	cfg.Genesis = config.Genesis{
-		L2Time: uint64(chainState.StartBlock.Time),
+		L2Time: rollup.Genesis.L2Time,
 		L1: config.GenesisRef{
 			Hash:   rollup.Genesis.L1.Hash,
 			Number: rollup.Genesis.L1.Number,
@@ -90,31 +96,30 @@ func InflateChainConfig(st *state.State) (*config.StagedChain, error) {
 		},
 	}
 
-	cfg.Roles = config.Roles{
-		SystemConfigOwner: config.NewChecksummedAddress(chainIntent.Roles.SystemConfigOwner),
-		ProxyAdminOwner:   config.NewChecksummedAddress(chainIntent.Roles.L1ProxyAdminOwner),
-		Guardian:          config.NewChecksummedAddress(st.AppliedIntent.SuperchainRoles.Guardian),
-		Proposer:          config.NewChecksummedAddress(chainIntent.Roles.Proposer),
-		UnsafeBlockSigner: config.NewChecksummedAddress(chainIntent.Roles.UnsafeBlockSigner),
-		BatchSubmitter:    config.NewChecksummedAddress(chainIntent.Roles.Batcher),
-		Challenger:        config.NewChecksummedAddress(chainIntent.Roles.Challenger),
+	roles, err := GetRolesFromState(st, idx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read roles from state: %w", err)
 	}
 
-	cfg.Addresses = config.Addresses{
-		AddressManager:                    config.NewChecksummedAddress(chainState.AddressManagerAddress),
-		L1CrossDomainMessengerProxy:       config.NewChecksummedAddress(chainState.L1CrossDomainMessengerProxyAddress),
-		L1ERC721BridgeProxy:               config.NewChecksummedAddress(chainState.L1ERC721BridgeProxyAddress),
-		L1StandardBridgeProxy:             config.NewChecksummedAddress(chainState.L1StandardBridgeProxyAddress),
-		OptimismMintableERC20FactoryProxy: config.NewChecksummedAddress(chainState.OptimismMintableERC20FactoryProxyAddress),
-		OptimismPortalProxy:               config.NewChecksummedAddress(chainState.OptimismPortalProxyAddress),
-		SystemConfigProxy:                 config.NewChecksummedAddress(chainState.SystemConfigProxyAddress),
-		ProxyAdmin:                        config.NewChecksummedAddress(chainState.ProxyAdminAddress),
-		SuperchainConfig:                  config.NewChecksummedAddress(st.SuperchainDeployment.SuperchainConfigProxyAddress),
-		AnchorStateRegistryProxy:          config.NewChecksummedAddress(chainState.AnchorStateRegistryProxyAddress),
-		DelayedWETHProxy:                  config.NewChecksummedAddress(chainState.DelayedWETHPermissionedGameProxyAddress),
-		DisputeGameFactoryProxy:           config.NewChecksummedAddress(chainState.DisputeGameFactoryProxyAddress),
-		PermissionedDisputeGame:           config.NewChecksummedAddress(chainState.PermissionedDisputeGameAddress),
+	// For TOML generation only include ProxyAdminOwner
+	cfg.Roles = config.Roles{
+		ProxyAdminOwner: roles.ProxyAdminOwner,
 	}
+
+	addresses, err := GetContractAddressesFromState(st, idx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read addresses from OpaqueState: %w", err)
+	}
+
+	cfg.Addresses = addresses
+
+	// Check for depsets in the state.json
+	interop, err := ExtractInteropDepSet(st)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract interop dep set from state: %w", err)
+	}
+
+	cfg.Interop = interop
 
 	return cfg, nil
 }
@@ -172,27 +177,191 @@ func CopyDeployConfigHFTimes(src *genesis.UpgradeScheduleDeployConfig, dst *conf
 }
 
 var (
-	ErrNoStagedConfig  = errors.New("no staged chain config found")
-	ErrMultipleConfigs = errors.New("only one TOML file is allowed in the staging directory at a time")
+	ErrNoStagedConfig               = errors.New("no staged chain config found")
+	ErrNoStagedSuperchainDefinition = errors.New("no staged superchain definition found")
 )
 
-func StagedChainConfig(rootP string) (*config.StagedChain, error) {
-	tomls, err := paths.CollectFiles(paths.StagingDir(rootP), paths.FileExtMatcher(".toml"))
+func InflateSuperchainDefinition(name string, st deployer.OpaqueState) (*config.SuperchainDefinition, error) {
+	protocolVersionsProxyAddress, err := st.ReadProtocolVersionsProxy()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read protocol versions proxy address: %w", err)
+	}
+	superchainConfigProxyAddress, err := st.ReadSuperchainConfigProxy()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read superchain config proxy address: %w", err)
+	}
+	opcmAddress, err := st.ReadOpcmImpl()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read opcm address: %w", err)
+	}
+
+	l1ChainID, err := st.ReadL1ChainID()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read l1 chain id: %w", err)
+	}
+
+	sD := config.SuperchainDefinition{
+		Name:                   name,
+		ProtocolVersionsAddr:   config.NewChecksummedAddress(protocolVersionsProxyAddress),
+		SuperchainConfigAddr:   config.NewChecksummedAddress(superchainConfigProxyAddress),
+		OPContractsManagerAddr: config.NewChecksummedAddress(opcmAddress),
+		Hardforks:              config.Hardforks{}, // superchain wide hardforks are added after chains are in the registry.
+		L1: config.SuperchainL1{
+			ChainID: l1ChainID,
+		},
+	}
+
+	return &sD, nil
+}
+
+func StagedChainConfigs(rootP string) ([]*config.StagedChain, error) {
+	tomls, err := paths.CollectFiles(paths.StagingDir(rootP), paths.ChainConfigMatcher())
 	if err != nil {
 		return nil, fmt.Errorf("failed to collect staged chain configs: %w", err)
 	}
 	if len(tomls) == 0 {
 		return nil, ErrNoStagedConfig
 	}
-	if len(tomls) != 1 {
-		return nil, ErrMultipleConfigs
+
+	chainCfgs := make([]*config.StagedChain, len(tomls))
+	for i, cfgFilename := range tomls {
+
+		chainCfg := new(config.StagedChain)
+		if err := paths.ReadTOMLFile(cfgFilename, chainCfg); err != nil {
+			return nil, fmt.Errorf("failed to read %s: %w", cfgFilename, err)
+		}
+		chainCfg.ShortName = strings.TrimSuffix(filepath.Base(cfgFilename), ".toml")
+		chainCfgs[i] = chainCfg
+	}
+	return chainCfgs, nil
+}
+
+// StagedSuperchainDefinition finds a superchain.toml file in the staging directory
+// (if it exists) and returns the parsed SuperchainDefinition struct.
+func StagedSuperchainDefinition(rootP string) (*config.SuperchainDefinition, error) {
+	// find the superchain.toml file
+	files, err := paths.CollectFiles(paths.StagingDir(rootP), paths.SuperchainDefinitionMatcher())
+	if err != nil {
+		return nil, fmt.Errorf("failed to collect staged superchain definition: %w",
+			err)
+	}
+	if len(files) == 0 {
+		return nil, ErrNoStagedSuperchainDefinition
+	}
+	sM := new(config.SuperchainDefinition)
+	err = paths.ReadTOMLFile(files[0], sM)
+
+	return sM, err
+}
+
+func GetRolesFromState(st deployer.OpaqueState, idx int) (config.Roles, error) {
+	roles := config.Roles{}
+
+	systemConfigOwner, err := st.ReadSystemConfigOwner(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read system config owner: %w", err)
+	}
+	roles.SystemConfigOwner = config.NewChecksummedAddress(systemConfigOwner)
+
+	proxyAdminOwner, err := st.ReadProxyAdminOwner(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read proxy admin owner: %w", err)
+	}
+	roles.ProxyAdminOwner = config.NewChecksummedAddress(proxyAdminOwner)
+
+	guardian, err := st.ReadGuardian(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read guardian: %w", err)
+	}
+	roles.Guardian = config.NewChecksummedAddress(guardian)
+
+	challenger, err := st.ReadChallenger(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read challenger: %w", err)
+	}
+	roles.Challenger = config.NewChecksummedAddress(challenger)
+
+	proposer, err := st.ReadProposer(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read proposer: %w", err)
+	}
+	roles.Proposer = config.NewChecksummedAddress(proposer)
+
+	unsafeBlockSigner, err := st.ReadUnsafeBlockSigner(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read unsafe block signer: %w", err)
+	}
+	roles.UnsafeBlockSigner = config.NewChecksummedAddress(unsafeBlockSigner)
+
+	batchSubmitter, err := st.ReadBatchSubmitter(idx)
+	if err != nil {
+		return roles, fmt.Errorf("failed to read batch submitter: %w", err)
+	}
+	roles.BatchSubmitter = config.NewChecksummedAddress(batchSubmitter)
+
+	return roles, nil
+}
+
+func GetContractAddressesFromState(st deployer.OpaqueState, idx int) (config.Addresses, error) {
+	var addresses config.Addresses
+	var err error
+
+	l1StandardBridgeProxy, err := st.ReadL1StandardBridgeProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read L1StandardBridgeProxy: %w", err)
+	}
+	addresses.L1StandardBridgeProxy = config.NewChecksummedAddress(l1StandardBridgeProxy)
+
+	optimismPortalProxy, err := st.ReadOptimismPortalProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read OptimismPortalProxy: %w", err)
+	}
+	addresses.OptimismPortalProxy = config.NewChecksummedAddress(optimismPortalProxy)
+
+	systemConfigProxy, err := st.ReadSystemConfigProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read SystemConfigProxy: %w", err)
+	}
+	addresses.SystemConfigProxy = config.NewChecksummedAddress(systemConfigProxy)
+
+	disputeGameFactoryProxy, err := st.ReadDisputeGameFactoryProxy(idx)
+	if err != nil {
+		return addresses, fmt.Errorf("failed to read DisputeGameFactoryProxy: %w", err)
+	}
+	addresses.DisputeGameFactoryProxy = config.NewChecksummedAddress(disputeGameFactoryProxy)
+
+	return addresses, nil
+}
+
+// ExtractInteropDepSet reads the interop dependency set from state and converts it to config.Interop
+func ExtractInteropDepSet(st deployer.OpaqueState) (*config.Interop, error) {
+	interopDepSet, err := st.ReadInteropDepSet()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read interop dep set: %w", err)
 	}
 
-	cfgFilename := tomls[0]
-	chainCfg := new(config.StagedChain)
-	if err := paths.ReadTOMLFile(cfgFilename, chainCfg); err != nil {
-		return nil, fmt.Errorf("failed to read %s: %w", cfgFilename, err)
+	if interopDepSet == nil {
+		return nil, nil
 	}
-	chainCfg.ShortName = strings.TrimSuffix(filepath.Base(cfgFilename), ".toml")
-	return chainCfg, nil
+
+	// Check if dependencies exists and is a map
+	deps, ok := interopDepSet["dependencies"].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("dependencies field is not a map or is missing")
+	}
+
+	// Return nil if dependencies map is empty
+	if len(deps) == 0 {
+		return nil, nil
+	}
+
+	interop := &config.Interop{
+		Dependencies: make(map[string]config.StaticConfigDependency),
+	}
+
+	for key := range deps {
+		interop.Dependencies[key] = config.StaticConfigDependency{}
+	}
+
+	return interop, nil
 }

@@ -10,7 +10,6 @@ import (
 	"path"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
 	"github.com/ethereum-optimism/optimism/op-service/testlog"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/testutil/mockrpc"
 	"github.com/ethereum/go-ethereum/common"
@@ -20,7 +19,7 @@ import (
 )
 
 func TestParseDeployedEvent(t *testing.T) {
-	// Taken from the deployment at https://etherscan.io/tx/0x18c55303075270503bec79e66c444c15d943598f25fbf467044b3c5dda9e7d58.
+	// Taken from the deployment at https://eth.blockscout.com/tx/0x18c55303075270503bec79e66c444c15d943598f25fbf467044b3c5dda9e7d58.
 	rawLogF, err := os.Open("testdata/tx-18c55303075270503bec79e66c444c15d943598f25fbf467044b3c5dda9e7d58.bin")
 	require.NoError(t, err)
 	defer rawLogF.Close()
@@ -38,7 +37,7 @@ func TestParseDeployedEvent(t *testing.T) {
 		},
 	}
 
-	deployedEvent, err := ParseDeployedEvent(log)
+	deployedEvent, err := ParseDeployedEvent([]*types.Log{log})
 	require.NoError(t, err)
 
 	marshal := func(in any) string {
@@ -86,7 +85,7 @@ func TestScanL1(t *testing.T) {
 			ctx,
 			client,
 			deploymentTx,
-			&artifacts.Locator{Tag: release},
+			release,
 		)
 		require.ErrorContains(t, err, expErr)
 		mock.AssertExpectations(t)
@@ -115,7 +114,7 @@ func TestScanL1(t *testing.T) {
 		{
 			"unauthorized OPCM address",
 			"test-scan-l1-unauthorized-opcm-address.json",
-			"unauthorized address for Deployed event",
+			"unauthorized OPCM address",
 		},
 		{
 			"multiple deployed events in tx",
@@ -188,6 +187,56 @@ func TestScanSystemConfig(t *testing.T) {
 			defer cancel()
 
 			report, err := ScanSystemConfig(ctx, l1Client, tt.release, addr)
+			require.NoError(t, err)
+			require.EqualValues(t, tt.report, report)
+			mockRPC.AssertExpectations(t)
+		})
+	}
+}
+
+func TestScanFDG(t *testing.T) {
+	factoryAddr := common.HexToAddress("0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1")
+	gameAddr := common.HexToAddress("0x034edD2A225f7f429A63E0f1D2084B9E0A93b538")
+
+	tests := []struct {
+		name     string
+		filename string
+		report   L1FDGReport
+	}{
+		{
+			"pre-game-args",
+			"test-scan-fdg-pre-game-args.json",
+			L1FDGReport{
+				GameType:         2,
+				AbsolutePrestate: common.HexToHash("0x03caa1871bb9fe7f9b11217c245c16e4ded33367df5b3ccb2c6d0a847a217d1b"),
+				MaxGameDepth:     78,
+				SplitDepth:       33,
+				MaxClockDuration: 987654,
+				ClockExtension:   4333,
+			},
+		},
+		{
+			"post-game-args",
+			"test-scan-fdg-post-game-args.json",
+			L1FDGReport{
+				GameType:         1,
+				AbsolutePrestate: common.HexToHash("0x03caa1871bb9fe7f9b11217c245c16e4ded33367df5b3ccb2c6d0a847a217d1b"),
+				MaxGameDepth:     78,
+				SplitDepth:       33,
+				MaxClockDuration: 987654,
+				ClockExtension:   4333,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			l1Client, mockRPC := mockRPCClient(t, tt.filename)
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			report, err := ScanFDG(ctx, l1Client, tt.report.GameType, factoryAddr, gameAddr)
 			require.NoError(t, err)
 			require.EqualValues(t, tt.report, report)
 			mockRPC.AssertExpectations(t)

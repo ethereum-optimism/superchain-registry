@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/optimism/op-chain-ops/addresses"
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -81,7 +82,7 @@ func createTestChainConfigs(t *testing.T) map[uint64]script.ChainConfig {
 // convertToScriptChainConfig converts from config types to script types
 func convertToScriptChainConfig(t *testing.T, chainAddrs *config.AddressesWithRoles, faultProofStatus config.FaultProofs) script.ChainConfig {
 	var scriptAddrs script.Addresses
-	var scriptRoles script.Roles
+	var scriptRoles addresses.OpChainRoles
 
 	// First, convert to a map of string addresses
 	addressMap := make(map[string]string)

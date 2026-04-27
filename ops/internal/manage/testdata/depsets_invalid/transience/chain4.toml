@@ -1,0 +1,10 @@
+name = "Test Chain 4"
+chain_id = 904
+
+[hardforks]
+interop_time = 4424
+
+[interop]
+dependencies."901" = {}
+dependencies."904" = {}
+dependencies."905" = {}

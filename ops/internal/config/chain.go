@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/artifacts"
+	"github.com/ethereum-optimism/optimism/op-chain-ops/addresses"
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum/go-ethereum/common"
@@ -55,8 +55,14 @@ type StagedChain struct {
 	L1FeeVaultRecipient          ChecksummedAddress `toml:"l1_fee_vault_recipient"`
 	SequencerFeeVaultRecipient   ChecksummedAddress `toml:"sequencer_fee_vault_recipient"`
 	DeploymentTxHash             *common.Hash       `toml:"deployment_tx_hash"`
-	DeploymentL1ContractsVersion *artifacts.Locator `toml:"deployment_l1_contracts_version"`
-	DeploymentL2ContractsVersion *artifacts.Locator `toml:"deployment_l2_contracts_version"`
+	DeploymentL1ContractsVersion string             `toml:"deployment_l1_contracts_version"`
+	DeploymentL2ContractsVersion string             `toml:"deployment_l2_contracts_version"`
+}
+
+type StaticConfigDependency struct{}
+
+type Interop struct {
+	Dependencies map[string]StaticConfigDependency `json:"dependencies" toml:"dependencies"`
 }
 
 type Chain struct {
@@ -75,6 +81,7 @@ type Chain struct {
 	MaxSequencerDrift    uint64              `toml:"max_sequencer_drift"`
 	GasPayingToken       *ChecksummedAddress `toml:"gas_paying_token,omitempty"`
 	Hardforks            Hardforks           `toml:"hardforks"`
+	Interop              *Interop            `toml:"interop,omitempty"`
 	Optimism             Optimism            `toml:"optimism"`
 	AltDA                *AltDA              `toml:"alt_da"`
 	Genesis              Genesis             `toml:"genesis"`
@@ -109,6 +116,8 @@ type Hardforks struct {
 	HoloceneTime           *HardforkTime `toml:"holocene_time"`
 	PectraBlobScheduleTime *HardforkTime `toml:"pectra_blob_schedule_time,omitempty"`
 	IsthmusTime            *HardforkTime `toml:"isthmus_time"`
+	InteropTime            *HardforkTime `toml:"interop_time"`
+	JovianTime             *HardforkTime `toml:"jovian_time"`
 }
 
 type Genesis struct {
@@ -168,6 +177,7 @@ type Addresses struct {
 	SuperchainConfig                  *ChecksummedAddress `toml:"SuperchainConfig,omitempty" json:"SuperchainConfig,omitempty"`
 	AnchorStateRegistryProxy          *ChecksummedAddress `toml:"AnchorStateRegistryProxy,omitempty" json:"AnchorStateRegistryProxy,omitempty"`
 	DelayedWETHProxy                  *ChecksummedAddress `toml:"DelayedWETHProxy,omitempty" json:"DelayedWETHProxy,omitempty"`
+	EthLockboxProxy                   *ChecksummedAddress `toml:"EthLockboxProxy,omitempty" json:"EthLockboxProxy,omitempty"`
 	DisputeGameFactoryProxy           *ChecksummedAddress `toml:"DisputeGameFactoryProxy,omitempty" json:"DisputeGameFactoryProxy,omitempty"`
 	FaultDisputeGame                  *ChecksummedAddress `toml:"FaultDisputeGame,omitempty" json:"FaultDisputeGame,omitempty"`
 	MIPS                              *ChecksummedAddress `toml:"MIPS,omitempty" json:"MIPS,omitempty"`
@@ -183,30 +193,31 @@ type AddressesWithRoles struct {
 	Roles
 }
 
-func CreateAddressesWithRolesFromFetcher(addresses script.Addresses, roles script.Roles) AddressesWithRoles {
+func CreateAddressesWithRolesFromFetcher(addrs script.Addresses, roles addresses.OpChainRoles) AddressesWithRoles {
 	addressesWithRoles := AddressesWithRoles{
 		Addresses: Addresses{
-			AddressManager:                    NewChecksummedAddress(addresses.AddressManager),
-			L1CrossDomainMessengerProxy:       NewChecksummedAddress(addresses.L1CrossDomainMessengerProxy),
-			L1ERC721BridgeProxy:               NewChecksummedAddress(addresses.L1ERC721BridgeProxy),
-			L1StandardBridgeProxy:             NewChecksummedAddress(addresses.L1StandardBridgeProxy),
-			L2OutputOracleProxy:               NewChecksummedAddress(addresses.L2OutputOracleProxy),
-			OptimismMintableERC20FactoryProxy: NewChecksummedAddress(addresses.OptimismMintableERC20FactoryProxy),
-			OptimismPortalProxy:               NewChecksummedAddress(addresses.OptimismPortalProxy),
-			SystemConfigProxy:                 NewChecksummedAddress(addresses.SystemConfigProxy),
-			ProxyAdmin:                        NewChecksummedAddress(addresses.OpChainProxyAdmin),
-			SuperchainConfig:                  NewChecksummedAddress(addresses.SuperchainConfig),
-			AnchorStateRegistryProxy:          NewChecksummedAddress(addresses.AnchorStateRegistryProxy),
-			DisputeGameFactoryProxy:           NewChecksummedAddress(addresses.DisputeGameFactoryProxy),
-			FaultDisputeGame:                  NewChecksummedAddress(addresses.FaultDisputeGame),
-			MIPS:                              NewChecksummedAddress(addresses.Mips),
-			PermissionedDisputeGame:           NewChecksummedAddress(addresses.PermissionedDisputeGame),
-			PreimageOracle:                    NewChecksummedAddress(addresses.PreimageOracle),
+			AddressManager:                    NewChecksummedAddress(addrs.AddressManagerImpl),
+			L1CrossDomainMessengerProxy:       NewChecksummedAddress(addrs.L1CrossDomainMessengerProxy),
+			L1ERC721BridgeProxy:               NewChecksummedAddress(addrs.L1Erc721BridgeProxy),
+			L1StandardBridgeProxy:             NewChecksummedAddress(addrs.L1StandardBridgeProxy),
+			L2OutputOracleProxy:               NewChecksummedAddress(addrs.L2OutputOracleProxy),
+			OptimismMintableERC20FactoryProxy: NewChecksummedAddress(addrs.OptimismMintableErc20FactoryProxy),
+			OptimismPortalProxy:               NewChecksummedAddress(addrs.OptimismPortalProxy),
+			EthLockboxProxy:                   NewChecksummedAddress(addrs.EthLockboxProxy),
+			SystemConfigProxy:                 NewChecksummedAddress(addrs.SystemConfigProxy),
+			ProxyAdmin:                        NewChecksummedAddress(addrs.OpChainProxyAdminImpl),
+			SuperchainConfig:                  NewChecksummedAddress(addrs.SuperchainConfigProxy),
+			AnchorStateRegistryProxy:          NewChecksummedAddress(addrs.AnchorStateRegistryProxy),
+			DisputeGameFactoryProxy:           NewChecksummedAddress(addrs.DisputeGameFactoryProxy),
+			FaultDisputeGame:                  NewChecksummedAddress(addrs.FaultDisputeGameImpl),
+			MIPS:                              NewChecksummedAddress(addrs.MipsImpl),
+			PermissionedDisputeGame:           NewChecksummedAddress(addrs.PermissionedDisputeGameImpl),
+			PreimageOracle:                    NewChecksummedAddress(addrs.PreimageOracleImpl),
 		},
 		Roles: Roles{
 			SystemConfigOwner: NewChecksummedAddress(roles.SystemConfigOwner),
 			ProxyAdminOwner:   NewChecksummedAddress(roles.OpChainProxyAdminOwner),
-			Guardian:          NewChecksummedAddress(roles.Guardian),
+			Guardian:          NewChecksummedAddress(roles.OpChainGuardian),
 			Challenger:        NewChecksummedAddress(roles.Challenger),
 			Proposer:          NewChecksummedAddress(roles.Proposer),
 			UnsafeBlockSigner: NewChecksummedAddress(roles.UnsafeBlockSigner),
@@ -214,10 +225,10 @@ func CreateAddressesWithRolesFromFetcher(addresses script.Addresses, roles scrip
 		},
 	}
 	// Hack until we separate the permissioned and permissionless WETH proxies
-	if addresses.DelayedWETHPermissionlessGameProxy != (common.Address{}) {
-		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addresses.DelayedWETHPermissionlessGameProxy)
+	if addrs.DelayedWethPermissionlessGameProxy != (common.Address{}) {
+		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addrs.DelayedWethPermissionlessGameProxy)
 	} else {
-		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addresses.DelayedWETHPermissionedGameProxy)
+		addressesWithRoles.Addresses.DelayedWETHProxy = NewChecksummedAddress(addrs.DelayedWethPermissionedGameProxy)
 	}
 
 	return addressesWithRoles

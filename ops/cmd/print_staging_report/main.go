@@ -56,6 +56,11 @@ var (
 		EnvVars: []string{"GITHUB_REPO"},
 		Value:   "ethereum-optimism/superchain-registry",
 	}
+	DeployerCacheDirFlag = &cli.StringFlag{
+		Name:    "deployer-cache-dir",
+		Usage:   "The path to the op-deployer binaries cache directory.",
+		EnvVars: []string{"DEPLOYER_CACHE_DIR"},
+	}
 )
 
 func main() {
@@ -69,6 +74,7 @@ func main() {
 			GitSHAFlag,
 			GithubTokenFlag,
 			GithubRepoFlag,
+			DeployerCacheDirFlag,
 		},
 		Action: PrintStagingReport,
 	}
@@ -83,6 +89,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	gitSHA := cliCtx.String(GitSHAFlag.Name)
 	githubToken := cliCtx.String(GithubTokenFlag.Name)
 	githubRepo := cliCtx.String(GithubRepoFlag.Name)
+	deployerCacheDir := cliCtx.String(DeployerCacheDirFlag.Name)
 
 	wd, err := paths.FindRepoRoot()
 	if err != nil {
@@ -93,7 +100,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		return fmt.Errorf("root directory error: %w", err)
 	}
 
-	chainCfg, err := manage.StagedChainConfig(wd)
+	stagedChainCfgs, err := manage.StagedChainConfigs(wd)
 	if errors.Is(err, manage.ErrNoStagedConfig) {
 		output.WriteOK("no staged chain config found, exiting")
 		return nil
@@ -101,21 +108,11 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to get staged chain config: %w", err)
 	}
-
-	genesisFilename := chainCfg.ShortName + ".json.zst"
-	originalGenesis, err := manage.ReadGenesis(wd, path.Join(paths.StagingDir(wd), genesisFilename))
-	if err != nil {
-		return fmt.Errorf("failed to read genesis: %w", err)
+	if len(stagedChainCfgs) > 1 {
+		output.WriteWarn("multiple staged chain configs found, only the first one will be used")
 	}
 
-	if chainCfg.DeploymentTxHash == nil {
-		return fmt.Errorf("deployment tx hash is required")
-	}
-
-	contractsVersion := validation.Semver(chainCfg.DeploymentL1ContractsVersion.Tag)
-	stdPrestate := validation.StandardPrestates.StablePrestate()
-	stdVersions := validation.StandardVersionsMainnet[contractsVersion]
-
+	chainCfg := stagedChainCfgs[0]
 	var stdConfigs validation.ConfigParams
 	var stdRoles validation.RolesConfig
 	var l1RPCURL string
@@ -129,8 +126,18 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		stdRoles = validation.StandardConfigRolesSepolia
 		l1RPCURL = cliCtx.String(SepoliaRPCURLFlag.Name)
 	default:
-		return fmt.Errorf("unsupported superchain: %s", chainCfg.Superchain)
+		output.WriteWarn("skipping staging report for chain %s in unsupported superchain: %s",
+			chainCfg.ShortName, chainCfg.Superchain)
+		return nil
 	}
+
+	if chainCfg.DeploymentTxHash == nil {
+		return fmt.Errorf("deployment tx hash is required")
+	}
+
+	contractsVersion := validation.Semver(chainCfg.DeploymentL1ContractsVersion)
+	stdPrestate := validation.StandardPrestates.StablePrestate()
+	stdVersions := validation.StandardVersionsMainnet[contractsVersion]
 
 	rpcClient, err := rpc.Dial(l1RPCURL)
 	if err != nil {
@@ -138,14 +145,15 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	}
 
 	var params validation.ConfigParams
-	if err := paths.ReadTOMLFile(paths.ValidationsFile(wd, string(chainCfg.Superchain)), &params); err != nil {
+	if err := paths.ReadTOMLFile(paths.ValidationsFile(wd, chainCfg.Superchain), &params); err != nil {
 		return fmt.Errorf("failed to read standard params: %w", err)
 	}
 
 	ctx, cancel := context.WithTimeout(cliCtx.Context, 5*time.Minute)
 	defer cancel()
 
-	allReport := report.ScanAll(ctx, rpcClient, chainCfg, originalGenesis)
+	statePath := path.Join(paths.StagingDir(wd), "state.json")
+	allReport := report.ScanAll(ctx, l1RPCURL, rpcClient, statePath, chainCfg, deployerCacheDir)
 	output.WriteOK("scanned L1 and L2")
 
 	comment, err := report.RenderComment(
@@ -155,6 +163,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 		stdPrestate,
 		stdVersions,
 		gitSHA,
+		chainCfg.ShortName,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to render comment: %w", err)
@@ -169,7 +178,6 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	}
 
 	_, _ = fmt.Fprintf(os.Stdout, "%s\n", comment)
-
 	return nil
 }
 

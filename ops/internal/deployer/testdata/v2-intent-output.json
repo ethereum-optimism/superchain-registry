@@ -1,0 +1,33 @@
+{
+  "configType": "standard",
+  "fundDevAccounts": false,
+  "l1ChainID": 11155111,
+  "l1ContractsLocator": "tag://op-contracts/v2.0.0",
+  "l2ContractsLocator": "tag://op-contracts/v1.7.0-beta.1+l2-contracts",
+  "useInterop": false,
+  "chains": [
+    {
+      "baseFeeVaultRecipient": "0x0000000000000000000000000000000000000001",
+      "eip1559Denominator": 50,
+      "eip1559DenominatorCanyon": 250,
+      "eip1559Elasticity": 6,
+      "id": "0x00000000000000000000000000000000000000000000000000000000000004d2",
+      "l1FeeVaultRecipient": "0x0000000000000000000000000000000000000002",
+      "sequencerFeeVaultRecipient": "0x0000000000000000000000000000000000000003",
+      "roles": {
+        "batcher": "0x0000000000000000000000000000000000000006",
+        "challenger": "0xfd1d2e729ae8eee2e146c033bf4400fe75284301",
+        "l1ProxyAdminOwner": "0x1eb2ffc903729a0f03966b917003800b145f56e2",
+        "l2ProxyAdminOwner": "0x2fc3ffc903729a0f03966b917003800b145f67f3",
+        "proposer": "0x0000000000000000000000000000000000000007",
+        "systemConfigOwner": "0x0000000000000000000000000000000000000004",
+        "unsafeBlockSigner": "0x0000000000000000000000000000000000000005"
+      }
+    }
+  ],
+  "superchainRoles": {
+    "guardian": "0x7a50f00e8d05b95f98fe38d8bee366a7324dcf7e",
+    "protocolVersionsOwner": "0xfd1d2e729ae8eee2e146c033bf4400fe75284301",
+    "proxyAdminOwner": "0x1eb2ffc903729a0f03966b917003800b145f56e2"
+  }
+}

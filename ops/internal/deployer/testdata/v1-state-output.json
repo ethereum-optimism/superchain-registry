@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "create2Salt": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "superchainDeployment": {
+    "proxyAdminAddress": "0x0000000000000000000000000000000000000000",
+    "superchainConfigProxyAddress": "0xc2be75506d5724086deb7245bd260cc9753911be",
+    "superchainConfigImplAddress": "0x0000000000000000000000000000000000000000",
+    "protocolVersionsProxyAddress": "0x79add5713b383daa0a138d3c4780c7a1804a8090",
+    "protocolVersionsImplAddress": "0x0000000000000000000000000000000000000000"
+  },
+  "implementationsDeployment": {
+    "opcmAddress": "0x0000000000000000000000000000000000000000",
+    "delayedWETHImplAddress": "0x07f69b19532476c6cd03056d6bc3f1b110ab7538",
+    "optimismPortalImplAddress": "0x35028bae87d71cbc192d545d38f960ba30b4b233",
+    "preimageOracleSingletonAddress": "0x92240135b46fc1142da181f550ae8f595b858854",
+    "mipsSingletonAddress": "0x69470d6970cd2a006b84b1d4d70179c892cfce01",
+    "systemConfigImplAddress": "0x33b83e4c305c908b2fc181dda36e230213058d7d",
+    "l1CrossDomainMessengerImplAddress": "0xd3494713a5cfad3f5359379dfa074e2ac8c6fd65",
+    "l1ERC721BridgeImplAddress": "0xae2af01232a6c4a4d3012c5ec5b1b35059caf10d",
+    "l1StandardBridgeImplAddress": "0x64b5a5ed26dcb17370ff4d33a8d503f0fbd06cff",
+    "optimismMintableERC20FactoryImplAddress": "0xe01efbeb1089d1d1db9c6c8b135c934c0734c846",
+    "disputeGameFactoryImplAddress": "0xa51bea7e4d34206c0bcb04a776292f2f19f0beec",
+    "anchorStateRegistryImplAddress": "0x0000000000000000000000000000000000000000"
+  },
+  "opChainDeployments": [
+    {
+      "id": "0x0000000000000000000000000000000000000000000000000000000074657374",
+      "proxyAdminAddress": "0xc82bf6bd7245267a0cfb89e460435e12e981d818",
+      "addressManagerAddress": "0x24bf4a45510e79d70d4a8ca2651271f4238ee04f",
+      "l1ERC721BridgeProxyAddress": "0x963ac3496fedfa6a9747933c414cbbcf67d1a452",
+      "systemConfigProxyAddress": "0x5c4742c68069a97413cc11e0b405d3aca6302d2b",
+      "optimismMintableERC20FactoryProxyAddress": "0x1bad358f9dd2b3c0037f7480062375c412d71d11",
+      "l1StandardBridgeProxyAddress": "0xa8eec5da912d7f26a3dc2c7eb8ef00faaba4f358",
+      "l1CrossDomainMessengerProxyAddress": "0x6cc9793574c03da1b4f2e46be6bb24674e98a4c0",
+      "optimismPortalProxyAddress": "0x3a4ddfc053231970fa9c21effe21330f48efbdc1",
+      "disputeGameFactoryProxyAddress": "0x1e291fe575e1d62a6b0f16ed42fb1d3ed0fed46b",
+      "anchorStateRegistryProxyAddress": "0xc5fccd05af70b4787aed307c2a1ce7d750874fda",
+      "faultDisputeGameAddress": "0x0000000000000000000000000000000000000000",
+      "permissionedDisputeGameAddress": "0x12166c9dad759671f1e90d9214a4c2ebc08badbe",
+      "delayedWETHPermissionedGameProxyAddress": "0x67edfccecf5e7b220f290b9f44a55f98c82d28ac",
+      "delayedWETHPermissionlessGameProxyAddress": "0x0000000000000000000000000000000000000000",
+      "startBlock": {
+        "parentHash": "0xaf6993cef3df96291fb3e0084e8c0394f8b840a65ac57c50058ca4d39269757b",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "miner": "0x3826539cbd8d68dcf119e80b994557b4278cec9f",
+        "stateRoot": "0x1876fdcac1f750bad9a5e56a80241757d35f384abb3985b03bf404d506a92409",
+        "transactionsRoot": "0x09c5dd6edede3f4c25513adbf9a6d04bfefdb00da5c32c6b8a359b2a40610c4e",
+        "receiptsRoot": "0x10d65a8fe3b33cb7169d0d055dd9df64f80623c99c4e6f2e06d4e51c8a186ee9",
+        "logsBloom": "0x04040844c804550b88548636e2390220400b84413103561ae1a409f25c82249260c0e1900c0904180101217440a401b896542012624e2c221a003a8206a4a5110508c108170c1c484120200a401ac600440f8002a2062400d44440a7906013182664006422e1206888e620a336286af40a2978c66d0c00a80e629078848ad055826038001594444170ca1004637e835a94c10181d40ac200b0810b0d0ec800500ea8605a2000303c470943c120e5005c03e7e02b10123fe2e280300766a878611104952320088246410228d11c9700084dd40201c5088e478322f2f828446142505200200c88084c10301a01f4040e0893e2103448f600501601098938084b98",
+        "difficulty": "0x0",
+        "number": 7342352,
+        "gasLimit": "0x2255100",
+        "gasUsed": "0x1b7c590",
+        "timestamp": 1735008096,
+        "extraData": "0x",
+        "mixHash": "0xea5f2240cfe00e065cf8822a6534d761c126de3626094de9ca82cb9842842bf0",
+        "nonce": "0x0000000000000000",
+        "baseFeePerGas": "0x168f66701f",
+        "withdrawalsRoot": "0x1beb92227b20bd095fb1f1a634bf49ac932a722da2dddb1ce37a2814abd3b0a4",
+        "blobGasUsed": "0xc0000",
+        "excessBlobGas": "0x5220000",
+        "parentBeaconBlockRoot": "0x834a2cd4f7e6ee904da7ca939cef0113bc39c035c8b75d36f1e0f57045add6d6",
+        "requestsRoot": null,
+        "hash": "0xf2071c8d0ee5e344bb56290f6b0e47c0274795a2b2a42772a340ee9e04d1bda9"
+      }
+    }
+  ]
+}
+

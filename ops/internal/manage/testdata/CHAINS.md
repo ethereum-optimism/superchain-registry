@@ -4,7 +4,7 @@
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
-| OP Sepolia Testnet | ✅ | ✅ | https://sepolia-optimistic.etherscan.io | `https://sepolia.optimism.io` | `https://sepolia-sequencer.optimism.io` |
+| OP Sepolia Testnet | ✅ | ✅ | https://testnet-explorer.optimism.io | `https://sepolia.optimism.io` | `https://sepolia-sequencer.optimism.io` |
 | TestChain | ❌ | ✅ | https://foo.bar.net | `https://foo.bar.net` | `https://foo.bar.net` |
 
 

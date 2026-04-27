@@ -1,0 +1,48 @@
+name = "Camp Network Testnet V2"
+public_rpc = "https://rpc.camp-network-testnet.gelato.digital"
+sequencer_rpc = "https://rpc.camp-network-testnet.gelato.digital"
+explorer = "https://camp-network-testnet.blockscout.com"
+superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 325000
+batch_inbox_addr = "0xFf00000000000000000000000000000000325000"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 1723478400 # Mon 12 Aug 2024 16:00:00 UTC
+  holocene_time = 1732633200 # Tue 26 Nov 2024 15:00:00 UTC
+
+[optimism]
+  eip1559_elasticity = 10
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1718120160
+  [genesis.l1]
+    hash = "0x124b0011271c5810826f74bf8767467009e136fecf0f8e80327b0000fb0456e5"
+    number = 6086446
+  [genesis.l2]
+    hash = "0x7c7c4f48d2f33a04c5cbabc8b6ba6315f283d6ae0a874118ceb8881e21bfd05e"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x624811105f39936D5cE277d93292061ABfEDD4D5"
+    overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
+    scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
+    gasLimit = 30000000
+
+[roles]
+  ProxyAdminOwner = "0x6DCd6421558F1478251231798fe7500fB23a1E84"
+
+[addresses]
+  L1StandardBridgeProxy = "0x5c3Ec2182Be9FbeA0da50d517362a069e13FB50E"
+  OptimismPortalProxy = "0x4238fAb3746D41e18c87138b505B6857CeF6cd1F"
+  SystemConfigProxy = "0x7aA405B004401Be20d4A587de34aEeC99bE0b268"
+  DisputeGameFactoryProxy = "0x83BaE25FDa209b31E903D3DD932906E2718A6E89"

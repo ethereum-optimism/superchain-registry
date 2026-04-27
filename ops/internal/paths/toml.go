@@ -10,6 +10,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/fs"
+	"gopkg.in/yaml.v3"
 )
 
 func ReadTOMLFile(p string, out any) error {
@@ -48,6 +49,17 @@ func ReadJSONFile(p string, out any) error {
 		return fmt.Errorf("failed to unmarshal JSON: %w", err)
 	}
 
+	return nil
+}
+
+func ReadYAMLFile(p string, out any) error {
+	data, err := os.ReadFile(p)
+	if err != nil {
+		return fmt.Errorf("failed to read YAML file: %w", err)
+	}
+	if err := yaml.Unmarshal(data, out); err != nil {
+		return fmt.Errorf("failed to unmarshal YAML: %w", err)
+	}
 	return nil
 }
 

@@ -1,0 +1,51 @@
+name = "arena-z-testnet"
+public_rpc = "https://testnet-rpc.arena-z.gg"
+sequencer_rpc = "https://testnet-rpc.arena-z.gg"
+explorer = "https://testnet-explorer.arena-z.gg"
+superchain_level = 1
+governed_by_optimism = true
+superchain_time = 1763568001
+data_availability_type = "eth-da"
+chain_id = 9899
+batch_inbox_addr = "0x00894002C8CCC07469D2f98E575C375130761C35"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  isthmus_time = 1747839600 # Wed 21 May 2025 15:00:00 UTC
+  jovian_time = 1763568001 # Wed 19 Nov 2025 16:00:01 UTC
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1747822512
+  [genesis.l1]
+    hash = "0xc169b1762b3430dc19a3c380536edb770eba127aeb6f518ef5a685ae17a588a2"
+    number = 8374269
+  [genesis.l2]
+    hash = "0x29b5818dde83228647d69794cad3e28bfc2e99defc3696c46c068ba4a27b8d4a"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0xC7DBE00183Fef815DB161D61FaF3cb6A172D4Ea2"
+    overhead = "0x00000000000000000000000000000000000000000000000000000000000000bc"
+    scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
+    gasLimit = 60000000
+
+[roles]
+  ProxyAdminOwner = "0x1Eb2fFc903729a0F03966B917003800b145F56E2"
+
+[addresses]
+  L1StandardBridgeProxy = "0x23592510F948c1465294041b44192f9656146544"
+  OptimismPortalProxy = "0x90FdCE6eFFF020605462150cdE42257193d1e558"
+  SystemConfigProxy = "0x5357bE2D78aAd17860570E14B74561840e959D4D"
+  DisputeGameFactoryProxy = "0xd02dd46b73ff5f3eC3970f9A12f08Ad703c103df"

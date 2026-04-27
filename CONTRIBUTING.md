@@ -44,7 +44,7 @@ name: Goerli Dev 0
 l1:
   chain_id: 5
   public_rpc: https://ethereum-goerli-rpc.allthatnode.com
-  explorer: https://goerli.etherscan.io
+  explorer: https://eth-goerli.blockscout.com
 
 protocol_versions_addr: null # todo
 superchain_config_addr: null # todo

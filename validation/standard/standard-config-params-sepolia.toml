@@ -6,7 +6,7 @@ block_time = [1, 2]
 
 [optimism_portal_2]
 proof_maturity_delay_seconds = [604800, 604800]        # 7 days
-dispute_game_finality_delay_seconds = [302400, 302400] # 2.5 days
+dispute_game_finality_delay_seconds = [302400, 302400] # 3.5 days
 respected_game_type = 0
 
 [resource_config]
@@ -31,6 +31,7 @@ base_fee_scalar = [0, 10_000_000]
 gas_limit = [1000, 60_000_000]
 operator_fee_scalar = [0, 0]
 operator_fee_constant = [0, 0]
+minimum_base_fee = [0, 10_000_000_000] # 10 Gwei
 
 [proofs.permissioned]
 game_type = 1

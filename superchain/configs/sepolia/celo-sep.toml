@@ -1,0 +1,55 @@
+name = "Celo Sepolia Testnet"
+public_rpc = "https://forno.celo-sepolia.celo-testnet.org"
+sequencer_rpc = "https://forno.celo-sepolia.celo-testnet.org"
+explorer = "https://celo-sepolia.blockscout.com"
+superchain_level = 2
+governed_by_optimism = false
+data_availability_type = "alt-da"
+chain_id = 11142220
+batch_inbox_addr = "0x00076c1f80CdB1D670046465c5ccD04E9E78c1F0"
+block_time = 1
+seq_window_size = 7200
+max_sequencer_drift = 600
+gas_paying_token = "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092"
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+
+[optimism]
+  eip1559_elasticity = 5
+  eip1559_denominator = 400
+  eip1559_denominator_canyon = 250
+
+[alt_da]
+  da_challenge_contract_address = "0x0000000000000000000000000000000000000000"
+  da_challenge_window = 1
+  da_resolve_window = 1
+  da_commitment_type = "GenericCommitment"
+
+[genesis]
+  l2_time = 1753283988
+  [genesis.l1]
+    hash = "0xeed417004236aa692023c216e8f1bd2185ac87a70c6f4393099f9c3777f05675"
+    number = 8825790
+  [genesis.l2]
+    hash = "0x1b65cd292881564a4ba788e0822ef07f6dd558c76466ee9d1f07b57065b392f4"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0xE80D3F16E4D44A5127E1BD6ad9ed4E17A96475F0"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x0100000000000000000000000000000000000000000000000000000000000000"
+    gasLimit = 60000000
+
+[roles]
+  ProxyAdminOwner = "0x5e60d897Cd62588291656b54655e98ee73f0aabF"
+
+[addresses]
+  L1StandardBridgeProxy = "0xEc18a3c30131A0Db4246e785355fBc16E2eAF408"
+  OptimismPortalProxy = "0x44AE3D41a335a7d05EB533029917aAd35662dcC2"
+  SystemConfigProxy = "0x760a5F022C9940f4A074e0030be682F560d29818"
+  DisputeGameFactoryProxy = "0x57C45d82D1a995F1e135B8D7EDc0a6BB5211cfAA"

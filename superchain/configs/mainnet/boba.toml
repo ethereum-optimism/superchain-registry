@@ -1,0 +1,48 @@
+name = "Boba Mainnet"
+public_rpc = "https://mainnet.boba.network"
+sequencer_rpc = "https://mainnet.boba.network"
+explorer = "https://bobascan.com"
+superchain_level = 0
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 288
+batch_inbox_addr = "0xfFF0000000000000000000000000000000000288"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+
+[hardforks]
+  canyon_time = 1713302879 # Tue 16 Apr 2024 21:27:59 UTC
+  delta_time = 1713302879 # Tue 16 Apr 2024 21:27:59 UTC
+  ecotone_time = 1713302880 # Tue 16 Apr 2024 21:28:00 UTC
+  fjord_time = 1725951600 # Tue 10 Sep 2024 07:00:00 UTC
+  granite_time = 1729753200 # Thu 24 Oct 2024 07:00:00 UTC
+  holocene_time = 1738785600 # Wed 5 Feb 2025 20:00:00 UTC
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1713302879
+  [genesis.l1]
+    hash = "0x945d6244d259e63892abf93e5e6dd3388b79e25ae5ec0502e290a0d0163aa5cf"
+    number = 19670718
+  [genesis.l2]
+    hash = "0x0a555516317be2719d9befcbcca5f5516b6b7ce0f05b759f5a166b697a8a0fbd"
+    number = 1149019
+  [genesis.system_config]
+    batcherAddress = "0xe1B64045351B0B6e9821F19b39f81bc4711D2230"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000834"
+    scalar = "0x00000000000000000000000000000000000000000000000000000000000f4240"
+    gasLimit = 30000000
+
+[roles]
+  ProxyAdminOwner = "0x56121a8612474C3eB65D69a3b871f284705b9bC4"
+
+[addresses]
+  L1StandardBridgeProxy = "0xdc1664458d2f0B6090bEa60A8793A4E66c2F1c00"
+  OptimismPortalProxy = "0x7B02D13904D8e6E0f0Efaf756aB14Cb0FF21eE7e"
+  SystemConfigProxy = "0x158Fd5715F16Ac1F2Dc959A299B383aAaf9B59EB"
+  DisputeGameFactoryProxy = "0xF45a5f1e36fCeA3Cc830A98c6c3C5ceA7d6af852"
