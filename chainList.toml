@@ -30,21 +30,6 @@
     status = "permissioned"
 
 [[chains]]
-  name = "Base"
-  identifier = "mainnet/base"
-  chain_id = 8453
-  rpc = ["https://mainnet.base.org"]
-  explorers = ["https://explorer.base.org"]
-  superchain_level = 1
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "permissionless"
-
-[[chains]]
   name = "Binary Mainnet"
   identifier = "mainnet/tbn"
   chain_id = 624
@@ -467,21 +452,6 @@
     status = "permissioned"
 
 [[chains]]
-  name = "Base Sepolia Testnet"
-  identifier = "sepolia/base"
-  chain_id = 84532
-  rpc = ["https://sepolia.base.org"]
-  explorers = ["https://sepolia-explorer.base.org"]
-  superchain_level = 1
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
   name = "Binary Sepolia"
   identifier = "sepolia/tbn"
   chain_id = 625
@@ -782,21 +752,6 @@
     chain = "sepolia"
   [chains.fault_proofs]
     status = "permissioned"
-
-[[chains]]
-  name = "Base devnet 0"
-  identifier = "sepolia-dev-0/base-devnet-0"
-  chain_id = 11763072
-  rpc = [""]
-  explorers = [""]
-  superchain_level = 0
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia-dev-0"
-  [chains.fault_proofs]
-    status = "permissionless"
 
 [[chains]]
   name = "OP Labs Sepolia devnet 0"
