@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  utils: ethereum-optimism/circleci-utils@1.0.22
+  utils: ethereum-optimism/circleci-utils@1.0.27
 
 executors:
   default:
@@ -438,29 +438,35 @@ workflows:
     jobs:
       - build-deployer-binaries:
           name: build-deployer-binaries
+          context: circleci-repo-readonly-authenticated-github-token
       - go-lint-test:
           name: go-lint-test-ops
           package: ops
           requires:
             - build-deployer-binaries
+          context: circleci-repo-readonly-authenticated-github-token
       - go-lint-test:
           name: go-lint-test-validation
           package: validation
+          context: circleci-repo-readonly-authenticated-github-token
       - run-tool:
           name: check-genesis-integrity
           tool: check_genesis_integrity
           requires:
             - build-deployer-binaries
+          context: circleci-repo-readonly-authenticated-github-token
       - check-codegen:
           name: check-codegen
           requires:
             - build-deployer-binaries
+          context: circleci-repo-readonly-authenticated-github-token
       - run-tool:
           name: check-depsets
           tool: check_depsets
           requires:
             - check-codegen
             - build-deployer-binaries
+          context: circleci-repo-readonly-authenticated-github-token
       - run-tool:
           name: check-staging-synced
           tool: sync_staging
@@ -468,23 +474,28 @@ workflows:
           check_diff: true
           requires:
             - build-deployer-binaries
+          context: circleci-repo-readonly-authenticated-github-token
       - check-staging-empty:
           name: check-staging-empty
+          context: circleci-repo-readonly-authenticated-github-token
       - run-tool:
           name: check-apply-hardforks
           tool: apply_hardforks
           check_diff: true
           requires:
             - build-deployer-binaries
+          context: circleci-repo-readonly-authenticated-github-token
       - run-tool:
           name: check-chainlist
           tool: check_chainlist
           requires:
             - build-deployer-binaries
+          context: circleci-repo-readonly-authenticated-github-token
       - run-staging-report:
           name: run-staging-report
           requires:
             - build-deployer-binaries
+          context: circleci-repo-readonly-authenticated-github-token
 
   notify-when-chain-is-added-to-registry:
     when:
