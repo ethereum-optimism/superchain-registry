@@ -6,7 +6,6 @@
 |---|---|---|---|---|---|
 | Automata Mainnet | ❌ | ❌ | https://explorer.ata.network | `https://rpc.ata.network` | `https://automata-mainnet.alt.technology/` |
 | BOB | ❌ | ❌ | https://explorer.gobob.xyz | `https://rpc.gobob.xyz` | `https://rpc.gobob.xyz` |
-| Base | ❌ | ✅ | https://explorer.base.org | `https://mainnet.base.org` | `https://mainnet-sequencer.base.org` |
 | Binary Mainnet | ❌ | ✅ | https://explorer.thebinaryholdings.com | `https://rpc.zero.thebinaryholdings.com` | `https://sequencer.bnry.mainnet.zeeve.net` |
 | Boba Mainnet | ❌ | ❌ | https://bobascan.com | `https://mainnet.boba.network` | `https://mainnet.boba.network` |
 | Celo | ❌ | ❌ | https://celoscan.io/ | `https://forno.celo.org` | `https://cel2-sequencer.celo.org/` |
@@ -48,7 +47,6 @@
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
-| Base Sepolia Testnet | ❌ | ✅ | https://sepolia-explorer.base.org | `https://sepolia.base.org` | `https://sepolia-sequencer.base.org` |
 | Binary Sepolia | ❌ | ❌ | https://explorer.sepolia.thebinaryholdings.com | `https://rpc.testnet.thebinaryholdings.com` | `https://sequencer.rpc.bnry.testnet.zeeve.net` |
 | Boba Sepolia Testnet | ❌ | ❌ | https://testnet.bobascan.com | `https://sepolia.boba.network` | `https://sepolia.boba.network` |
 | Camp Network Testnet V2 | ❌ | ❌ | https://camp-network-testnet.blockscout.com | `https://rpc.camp-network-testnet.gelato.digital` | `https://rpc.camp-network-testnet.gelato.digital` |
@@ -77,7 +75,6 @@
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
-| Base devnet 0 | ❌ | ✅ |  | `` | `` |
 | OP Labs Sepolia devnet 0 | ✅ | ✅ |  | `` | `` |
 
 
