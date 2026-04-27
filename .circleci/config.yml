@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   utils: ethereum-optimism/circleci-utils@1.0.27
+  slack: circleci/slack@6.0.0
 
 executors:
   default:
@@ -275,6 +276,11 @@ jobs:
             curl -X POST -H 'Content-type: application/json' \
               --data "{\"text\":\"$(echo -e "$SLACK_MESSAGE")\"}" \
               "$SLACK_WEBHOOK_URL"
+      - slack/notify:
+          channel: C03N11M0BBN # notify-ci
+          event: fail
+          template: basic_fail_1
+          mentions: "<!subteam^S09PK357ZU7>" # @core-oncall
 
   notify-when-chain-is-added-to-registry:
     executor: default
