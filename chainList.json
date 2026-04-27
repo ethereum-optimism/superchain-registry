@@ -671,7 +671,7 @@
       "chain": "sepolia"
     },
     "faultProofs": {
-      "status": "permissionless"
+      "status": "permissioned"
     }
   },
   {
