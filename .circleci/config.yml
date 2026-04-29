@@ -268,7 +268,7 @@ jobs:
           name: Send Slack notification
           command: |
             SLACK_MESSAGE="🤖 *Daily Codegen Update*\n\n"
-            SLACK_MESSAGE="${SLACK_MESSAGE} <!subteam^S09PK357ZU7> - codegen job has detected diffs between onchain and superchain-registry data.\n\n"
+            SLACK_MESSAGE="${SLACK_MESSAGE} <!subteam^S09D3DZ07M3> - codegen job has detected diffs between onchain and superchain-registry data.\n\n"
             SLACK_MESSAGE="${SLACK_MESSAGE}👀 *Action Required:* Please review and merge PR to update the registry.\n"
             SLACK_MESSAGE="${SLACK_MESSAGE}🔗 *PR:* <${PR_URL}|View Pull Request> \n"
             SLACK_MESSAGE="${SLACK_MESSAGE}🔗 *Runbook:* <${RUNBOOK_DAILY_CODEGEN}|View Runbook> \n"
@@ -280,7 +280,7 @@ jobs:
           channel: C03N11M0BBN # notify-ci
           event: fail
           template: basic_fail_1
-          mentions: "<!subteam^S09PK357ZU7>" # @core-oncall
+          mentions: "<!subteam^S09D3DZ07M3>" # @core-oncall
 
   notify-when-chain-is-added-to-registry:
     executor: default
