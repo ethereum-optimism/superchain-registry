@@ -18,7 +18,7 @@ max_sequencer_drift = 600
   fjord_time = 1733947201 # Wed 11 Dec 2024 20:00:01 UTC
   granite_time = 1738958401 # Fri 7 Feb 2025 20:00:01 UTC
   holocene_time = 1744052401 # Mon 7 Apr 2025 19:00:01 UTC
-  isthmus_time = 1755716401 # Wed 20 Aug 2025 21:00:01 UTC
+  isthmus_time = 1755716401 # Wed 20 Aug 2025 19:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 10
