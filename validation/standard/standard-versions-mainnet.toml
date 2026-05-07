@@ -3,6 +3,26 @@
 #   * proxied             : specify a standard "implementation_address"
 #   * neither             : specify neither a standard "address" nor "implementation_address"
 
+# Upgrade 19 https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv7.0.0-rc.2
+["op-contracts/v7.0.0-rc.2"]
+system_config = { version = "3.14.2", implementation_address = "0x42ad0173051225ac784100e9acd43349707f4db9" }
+fault_dispute_game = { version = "2.4.2" }
+permissioned_dispute_game = { version = "2.4.0" }
+mips = { version = "1.10.1", address = "0xacc005dcd857b401e4732e6f7837135a22825cfa" }
+optimism_portal = { version = "5.6.1", implementation_address = "0xe89f13c5ee4033b2d3cd76c9d6958efbfe26d3c2" }
+anchor_state_registry = { version = "3.9.0", implementation_address = "0x8f40cc98d694ab986f026c5383a181fcc9b6b281" }
+delayed_weth = { version = "1.5.1", implementation_address = "0xe440cc08a71694c8229323803f59024e3144630e" }
+eth_lockbox = { version = "1.3.1", implementation_address = "0xb3a24db07038b51962026329b62e7a965d56a6ad" }
+dispute_game_factory = { version = "1.6.1", implementation_address = "0x72b971717e088b59f26d4236be222adb6acd393b" }
+preimage_oracle = { version = "1.1.5", address = "0x1e1d73536a081ef2f355d29794547a9770aeb1e0" }
+l1_cross_domain_messenger = { version = "2.11.1", implementation_address = "0x59d497530b00062f40950ba8eab88868bf7f86f0" }
+l1_erc721_bridge = { version = "2.9.1", implementation_address = "0x9f164f1d02a81e06d639e55f65a87f0070e3cb2e" }
+l1_standard_bridge = { version = "2.8.2", implementation_address = "0xb37a11aadf167b2f0b8dd85372de4bc66cd4a891" }
+optimism_mintable_erc20_factory = { version = "1.11.0", implementation_address = "0xaabea75da509fa518fd8a91eae4be5813b829b12" }
+op_contracts_manager = { version = "7.1.17", address = "0x9ce712ff84e02659846dc6450bb9b7642fe8be5d" }
+superchain_config = { version = "2.4.2", implementation_address = "0xe4f9779ab53070a55db24dfaeff9af147c6ed550" }
+protocol_versions = { version = "1.1.2", implementation_address = "0x15f5edb697f980b637470ae92ba12d9efc72a26b" }
+
 ["op-contracts/v6.0.0"]
 system_config = { version = "3.13.1", implementation_address = "0xd392c27b84b1ca776528f2704bc67b82a62132d2" }
 fault_dispute_game = { version = "2.2.0" }
