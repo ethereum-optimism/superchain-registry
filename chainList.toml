@@ -830,36 +830,6 @@
     status = "permissioned"
 
 [[chains]]
-  name = "rehearsal-0-bn-0"
-  identifier = "rehearsal-0-bn/rehearsal-0-bn-0"
-  chain_id = 420120009
-  rpc = [""]
-  explorers = [""]
-  superchain_level = 0
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "rehearsal-0-bn"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
-  name = "rehearsal-0-bn-1"
-  identifier = "rehearsal-0-bn/rehearsal-0-bn-1"
-  chain_id = 420120010
-  rpc = [""]
-  explorers = [""]
-  superchain_level = 0
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "rehearsal-0-bn"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
   name = "arena-z-testnet"
   identifier = "sepolia/arena-z"
   chain_id = 9899
