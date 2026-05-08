@@ -17,6 +17,6 @@ Chains in the superchain-registry are assigned a `superchain_level` (shown in in
 
 **Non-Standard** chains have `superchain_level = 0`. These are members of the Superchain ecosystem.
 
-**Standard Candidate** chains have `superchain_level = 1`. These are chains who conform to the standard blockchain charter, but haven't handed over their keys yet.
+**Standard Candidate** chains have `superchain_level = 1`. These are chains that conform to the standard rollup charter, but haven't handed over their keys yet.
 
-**Standard** chains have `superchain_level = 2`. These chains conform to the standard blockchain charter, _and_ have handed over their keys.
+**Standard** chains have `superchain_level = 2`. These chains conform to the standard rollup charter, _and_ have handed over their keys.
