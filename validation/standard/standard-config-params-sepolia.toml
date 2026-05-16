@@ -5,8 +5,8 @@ seq_window_size = [3600, 3600]
 block_time = [1, 2]
 
 [optimism_portal_2]
-proof_maturity_delay_seconds = [604800, 604800]        # 7 days
-dispute_game_finality_delay_seconds = [302400, 302400] # 3.5 days
+proof_maturity_delay_seconds = [43200, 43200]          # 12 hours
+dispute_game_finality_delay_seconds = [43200, 43200]   # 12 hours
 respected_game_type = 0
 
 [resource_config]
@@ -37,5 +37,5 @@ minimum_base_fee = [0, 10_000_000_000] # 10 Gwei
 game_type = 1
 max_game_depth = 73
 split_depth = 30
-max_clock_duration = 302400
+max_clock_duration = 561600
 clock_extension = 10800
