@@ -21,6 +21,7 @@ max_sequencer_drift = 600
   holocene_time = 1752732000 # Thu 17 Jul 2025 06:00:00 UTC
   isthmus_time = 1764648001 # Tue 2 Dec 2025 04:00:01 UTC
   jovian_time = 1764691201 # Tue 2 Dec 2025 16:00:01 UTC
+  karst_time = 1783526401 # Wed 8 Jul 2026 16:00:01 UTC
 
 [optimism]
   eip1559_elasticity = 6
