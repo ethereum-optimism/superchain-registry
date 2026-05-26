@@ -362,21 +362,6 @@
     status = "none"
 
 [[chains]]
-  name = "Swellchain"
-  identifier = "mainnet/swell"
-  chain_id = 1923
-  rpc = ["https://swell-mainnet.alt.technology"]
-  explorers = ["https://explorer.swellnetwork.io"]
-  superchain_level = 1
-  governed_by_optimism = true
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
   name = "Unichain"
   identifier = "mainnet/unichain"
   chain_id = 130
@@ -427,21 +412,6 @@
   chain_id = 7777777
   rpc = ["https://rpc.zora.energy"]
   explorers = ["https://explorer.zora.energy"]
-  superchain_level = 1
-  governed_by_optimism = true
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
-  name = "arena-z"
-  identifier = "mainnet/arena-z"
-  chain_id = 7897
-  rpc = ["https://rpc.arena-z.gg"]
-  explorers = ["https://explorer.arena-z.gg"]
   superchain_level = 1
   governed_by_optimism = true
   data_availability_type = "eth-da"
@@ -856,21 +826,6 @@
   [chains.parent]
     type = "L2"
     chain = "rehearsal-0-bn"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
-  name = "arena-z-testnet"
-  identifier = "sepolia/arena-z"
-  chain_id = 9899
-  rpc = ["https://testnet-rpc.arena-z.gg"]
-  explorers = ["https://testnet-explorer.arena-z.gg"]
-  superchain_level = 1
-  governed_by_optimism = true
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
   [chains.fault_proofs]
     status = "permissioned"
 

@@ -31,12 +31,10 @@
 | Soneium | ✅ | ✅ | https://soneium.blockscout.com/ | `https://rpc.soneium.org` | `https://rpc.soneium.org` |
 | Superseed | ❌ | ❌ | https://explorer.superseed.xyz | `https://mainnet.superseed.xyz` | `https://mainnet.superseed.xyz` |
 | Swan Chain Mainnet | ❌ | ❌ | https://swanscan.io | `https://mainnet-rpc.swanchain.org` | `https://sequencer-mainnet.swanchain.org` |
-| Swellchain | ✅ | ✅ | https://explorer.swellnetwork.io | `https://swell-mainnet.alt.technology` | `https://swell-mainnet.alt.technology` |
 | Unichain | ✅ | ✅ | https://explorer.unichain.org | `https://mainnet.unichain.org` | `https://mainnet-sequencer.unichain.org` |
 | World Chain | ❌ | ❌ | https://worldchain-mainnet.explorer.alchemy.com/ | `https://worldchain-mainnet.g.alchemy.com/public` | `https://worldchain-mainnet-sequencer.g.alchemy.com` |
 | Xterio Chain (ETH) | ❌ | ❌ | https://eth.xterscan.io/ | `https://xterio-eth.alt.technology/` | `https://xterio-eth.alt.technology/` |
 | Zora | ✅ | ✅ | https://explorer.zora.energy | `https://rpc.zora.energy` | `https://rpc.zora.energy` |
-| arena-z | ✅ | ✅ | https://explorer.arena-z.gg | `https://rpc.arena-z.gg` | `https://rpc.arena-z.gg` |
 ### rehearsal-0-bn
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
@@ -70,7 +68,6 @@
 | Unichain Sepolia Testnet | ✅ | ✅ | https://sepolia.uniscan.xyz | `https://sepolia.unichain.org` | `https://sepolia-sequencer.unichain.org` |
 | World Chain Sepolia Testnet | ❌ | ❌ | https://worldchain-sepolia.explorer.alchemy.com/ | `https://worldchain-sepolia.g.alchemy.com/public` | `https://worldchain-sepolia-sequencer.g.alchemy.com` |
 | Zora Sepolia Testnet | ✅ | ✅ | https://sepolia.explorer.zora.energy | `https://sepolia.rpc.zora.energy` | `https://sepolia.rpc.zora.energy` |
-| arena-z-testnet | ✅ | ✅ | https://testnet-explorer.arena-z.gg | `https://testnet-rpc.arena-z.gg` | `https://testnet-rpc.arena-z.gg` |
 ### sepolia-dev-0
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
