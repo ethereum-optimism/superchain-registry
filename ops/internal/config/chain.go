@@ -118,6 +118,7 @@ type Hardforks struct {
 	IsthmusTime            *HardforkTime `toml:"isthmus_time"`
 	InteropTime            *HardforkTime `toml:"interop_time"`
 	JovianTime             *HardforkTime `toml:"jovian_time"`
+	KarstTime              *HardforkTime `toml:"karst_time"`
 }
 
 type Genesis struct {
