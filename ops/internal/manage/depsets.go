@@ -142,7 +142,7 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 
 // checkOnchain ensures that DisputeGameFactoryProxy and EthLockboxProxy addresses read from onchain
 // are the same for all chains in a depset. These checks are only performed for chains who have
-// already activated interop (i.e. interop_time < current unix timestamp).
+// already activated interop (i.e. lagoon_time < current unix timestamp).
 func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 	if len(cfgs) == 0 {
 		return fmt.Errorf("no chain configs provided to checkOnchain")
@@ -156,8 +156,8 @@ func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 	now := time.Now().Unix()
 	var activatedChains []DiskChainConfig
 	for _, cfg := range cfgs {
-		interopTime := cfg.Config.Hardforks.InteropTime
-		if interopTime == nil || *interopTime.U64Ptr() > uint64(now) {
+		lagoonTime := cfg.Config.Hardforks.LagoonTime
+		if lagoonTime == nil || *lagoonTime.U64Ptr() > uint64(now) {
 			continue
 		}
 		activatedChains = append(activatedChains, cfg)

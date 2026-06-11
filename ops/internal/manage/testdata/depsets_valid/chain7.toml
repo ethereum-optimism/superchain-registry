@@ -2,7 +2,7 @@ name = "Test Chain 7"
 chain_id = 907
 
 [hardforks]
-interop_time = 7777
+lagoon_time = 7777
 
 [interop]
 dependencies."905" = {}
