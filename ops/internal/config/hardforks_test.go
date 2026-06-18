@@ -68,6 +68,35 @@ func TestCopyHardforks(t *testing.T) {
 	}, dest)
 }
 
+// keep_karst_upgrade_gas is a per-chain flag, not a hardfork time: CopyHardforks
+// must neither inherit it from the superchain nor clear a chain's own value.
+func TestCopyHardforks_KeepKarstUpgradeGas(t *testing.T) {
+	superchainTime := uint64(1)
+	genesisTime := uint64(0)
+
+	t.Run("does not propagate from src", func(t *testing.T) {
+		src := &Hardforks{KeepKarstUpgradeGas: true}
+		dest := &Hardforks{}
+		require.NoError(t, CopyHardforks(src, dest, &superchainTime, &genesisTime))
+		require.False(t, dest.KeepKarstUpgradeGas)
+	})
+
+	t.Run("preserves dest's own value", func(t *testing.T) {
+		src := &Hardforks{}
+		dest := &Hardforks{KeepKarstUpgradeGas: true}
+		require.NoError(t, CopyHardforks(src, dest, &superchainTime, &genesisTime))
+		require.True(t, dest.KeepKarstUpgradeGas)
+	})
+
+	t.Run("no panic on bool field with hardfork times present", func(t *testing.T) {
+		src := &Hardforks{CanyonTime: NewHardforkTime(2), KeepKarstUpgradeGas: true}
+		dest := &Hardforks{}
+		require.NoError(t, CopyHardforks(src, dest, &superchainTime, &genesisTime))
+		require.Equal(t, NewHardforkTime(2), dest.CanyonTime)
+		require.False(t, dest.KeepKarstUpgradeGas)
+	})
+}
+
 func TestCopyHardforksActivationSemantics(t *testing.T) {
 	canyonAt := func(t uint64) *Hardforks {
 		return &Hardforks{

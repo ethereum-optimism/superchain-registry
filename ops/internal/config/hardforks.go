@@ -43,6 +43,11 @@ func CopyHardforks(src, dst *Hardforks, superchainTime, genesisTime *uint64) err
 	for i := 0; i < srcVal.NumField(); i++ {
 		srcField := srcVal.Field(i)
 
+		// Only hardfork-time pointer fields participate in the activation-time copy.
+		if srcField.Kind() != reflect.Ptr {
+			continue
+		}
+
 		if srcField.IsNil() {
 			continue
 		}
