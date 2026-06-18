@@ -464,3 +464,11 @@ hash="0x0337ecb3604c0b40c352e0c7711beb17a212d583f4fe956fd8d66e29ad5f9025"
 [[prestates."1.6.0-rc.2"]]
 type="cannon64-kona-interop"
 hash="0x03e3a42cf9a1d116f414206c465c6cdb74556136090e7c9556329403da0f310f"
+
+[[prestates."1.6.0"]]
+type="cannon64-kona"
+hash="0x0337ecb3604c0b40c352e0c7711beb17a212d583f4fe956fd8d66e29ad5f9025"
+
+[[prestates."1.6.0"]]
+type="cannon64-kona-interop"
+hash="0x03e3a42cf9a1d116f414206c465c6cdb74556136090e7c9556329403da0f310f"
