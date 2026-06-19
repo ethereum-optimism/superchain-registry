@@ -19,6 +19,8 @@ max_sequencer_drift = 600
   granite_time = 1726470000 # Mon 16 Sep 2024 07:00:00 UTC
   holocene_time = 1736150400 # Mon 6 Jan 2025 08:00:00 UTC
   pectra_blob_schedule_time = 1743534000 # Tue 1 Apr 2025 19:00:00 UTC
+  isthmus_time = 1786579200 # Thu 13 Aug 2026 00:00:00 UTC
+  jovian_time = 1787184000 # Thu 20 Aug 2026 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
