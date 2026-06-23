@@ -116,9 +116,10 @@ type Hardforks struct {
 	HoloceneTime           *HardforkTime `toml:"holocene_time"`
 	PectraBlobScheduleTime *HardforkTime `toml:"pectra_blob_schedule_time,omitempty"`
 	IsthmusTime            *HardforkTime `toml:"isthmus_time"`
-	LagoonTime             *HardforkTime `toml:"lagoon_time"`
 	JovianTime             *HardforkTime `toml:"jovian_time"`
 	KarstTime              *HardforkTime `toml:"karst_time"`
+	KeepKarstUpgradeGas    bool          `toml:"keep_karst_upgrade_gas,omitempty"`
+	LagoonTime             *HardforkTime `toml:"lagoon_time"`
 }
 
 type Genesis struct {
