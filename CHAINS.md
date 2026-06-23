@@ -49,9 +49,7 @@
 | Boba Sepolia Testnet | ❌ | ❌ | https://testnet.bobascan.com | `https://sepolia.boba.network` | `https://sepolia.boba.network` |
 | Camp Network Testnet V2 | ❌ | ❌ | https://camp-network-testnet.blockscout.com | `https://rpc.camp-network-testnet.gelato.digital` | `https://rpc.camp-network-testnet.gelato.digital` |
 | Celo Sepolia Testnet | ❌ | ❌ | https://celo-sepolia.blockscout.com | `https://forno.celo-sepolia.celo-testnet.org` | `https://forno.celo-sepolia.celo-testnet.org` |
-| Creator Chain Testnet | ❌ | ✅ | https://explorer.creatorchain.io | `https://rpc.creatorchain.io` | `https://rpc.creatorchain.io` |
 | Cyber Testnet | ❌ | ❌ | https://testnet.cyberscan.co/ | `https://rpc.testnet.cyber.co` | `https://cyber.alt.technology/` |
-| Ethernity Testnet | ❌ | ✅ | https://testnet.ernscan.io | `https://testnet.ethernitychain.io` | `https://testnet.ethernitychain.io` |
 | Funki Sepolia Testnet | ❌ | ❌ | https://sepolia-sandbox.funkichain.com/ | `https://funki-testnet.alt.technology` | `https://funki-testnet.alt.technology` |
 | Ink Sepolia | ✅ | ✅ | https://explorer-sepolia.inkonchain.com | `https://rpc-gel-sepolia.inkonchain.com` | `https://rpc-gel-sepolia.inkonchain.com` |
 | Lisk Sepolia Testnet | ❌ | ✅ | https://sepolia-blockscout.lisk.com | `https://rpc.sepolia-api.lisk.com` | `https://rpc.sepolia-api.lisk.com` |
