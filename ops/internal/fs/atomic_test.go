@@ -3,6 +3,7 @@ package fs
 import (
 	"io"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -25,6 +26,25 @@ func TestAtomicWrite(t *testing.T) {
 	require.Empty(t, originalHandleData)
 
 	actData, err := os.ReadFile(f.Name())
+	require.NoError(t, err)
+	require.EqualValues(t, expData, actData)
+}
+
+// TestAtomicWriteSeparateTempDir ensures AtomicWrite does not depend on the
+// system temp dir, which may live on a different filesystem than the
+// destination. When it does, the final os.Rename fails with EXDEV
+// ("invalid cross-device link"). We reproduce that dependency by pointing the
+// system temp dir at an unusable path: AtomicWrite must still succeed by
+// staging its temp file alongside the destination.
+func TestAtomicWriteSeparateTempDir(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("TMPDIR", filepath.Join(dir, "nonexistent"))
+
+	dest := filepath.Join(dir, "out.txt")
+	expData := []byte("hello, world")
+	require.NoError(t, AtomicWrite(dest, 0o644, expData))
+
+	actData, err := os.ReadFile(dest)
 	require.NoError(t, err)
 	require.EqualValues(t, expData, actData)
 }
