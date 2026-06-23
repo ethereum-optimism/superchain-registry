@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 type AtomicWriter struct {
@@ -33,7 +34,9 @@ func (w *AtomicWriter) Write(data []byte) (int, error) {
 }
 
 func (w *AtomicWriter) Close() error {
-	tmp, err := os.CreateTemp("", "atomic")
+	// Stage the temp file in the destination's directory so the final rename
+	// stays on the same filesystem; renaming across filesystems fails with EXDEV.
+	tmp, err := os.CreateTemp(filepath.Dir(w.filename), "atomic")
 	if err != nil {
 		return fmt.Errorf("failed to create temp file: %w", err)
 	}
