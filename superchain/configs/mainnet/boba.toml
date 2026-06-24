@@ -18,6 +18,8 @@ max_sequencer_drift = 600
   fjord_time = 1725951600 # Tue 10 Sep 2024 07:00:00 UTC
   granite_time = 1729753200 # Thu 24 Oct 2024 07:00:00 UTC
   holocene_time = 1738785600 # Wed 5 Feb 2025 20:00:00 UTC
+  isthmus_time = 1787011200 # Tue 18 Aug 2026 00:00:00 UTC
+  jovian_time = 1787616000 # Tue 25 Aug 2026 00:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
