@@ -829,3 +829,18 @@
     chain = "sepolia"
   [chains.fault_proofs]
     status = "permissioned"
+
+[[chains]]
+  name = "sepolia-dev-1"
+  identifier = "sepolia-dev-1/sepolia-dev-1"
+  chain_id = 420130014
+  rpc = ["https://sepolia-dev-1.optimism.io"]
+  explorers = [""]
+  superchain_level = 0
+  governed_by_optimism = true
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia-dev-1"
+  [chains.fault_proofs]
+    status = "permissioned"
