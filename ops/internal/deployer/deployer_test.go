@@ -116,6 +116,10 @@ func TestVersionsMapInitialization(t *testing.T) {
 	require.Equal(t, actualVersion, expectedVersion)
 }
 
+func TestVersionedBinaryPathAcceptsBareVersion(t *testing.T) {
+	require.Equal(t, filepath.Join("cache", "op-deployer_v0.7.0-rc.1"), VersionedBinaryPath("cache", "0.7.0-rc.1"))
+}
+
 func TestBinaryInvocation(t *testing.T) {
 	cacheDir := os.Getenv("DEPLOYER_CACHE_DIR")
 	require.NotEmpty(t, cacheDir)

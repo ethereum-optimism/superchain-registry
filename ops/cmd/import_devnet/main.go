@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
@@ -13,6 +14,7 @@ import (
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/report"
 
 	"github.com/urfave/cli/v2"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -46,6 +48,22 @@ var (
 		Value:   "",
 	}
 )
+
+type manifestChainID int64
+
+func (id *manifestChainID) UnmarshalYAML(value *yaml.Node) error {
+	switch value.Tag {
+	case "!!int", "!!str":
+		parsed, err := strconv.ParseInt(value.Value, 10, 64)
+		if err != nil {
+			return fmt.Errorf("invalid chain_id %q: %w", value.Value, err)
+		}
+		*id = manifestChainID(parsed)
+		return nil
+	default:
+		return fmt.Errorf("invalid chain_id type %s", value.Tag)
+	}
+}
 
 func main() {
 	app := &cli.App{
@@ -89,8 +107,8 @@ func action(cliCtx *cli.Context) error {
 		Name string `yaml:"name"`
 		L2   struct {
 			Chains []struct {
-				Name    string `yaml:"name"`
-				ChainID int64  `yaml:"chain_id"`
+				Name    string          `yaml:"name"`
+				ChainID manifestChainID `yaml:"chain_id"`
 			} `yaml:"chains"`
 		} `yaml:"l2"`
 	}
@@ -125,7 +143,7 @@ func action(cliCtx *cli.Context) error {
 			return fmt.Errorf("failed to read chain id: %w", err)
 		}
 		chain := m.L2.Chains[i]
-		if chain.ChainID != int64(chainID) {
+		if int64(chain.ChainID) != int64(chainID) {
 			return fmt.Errorf("chain ID mismatch for chain at index %d : manifest %d, state %d",
 				i,
 				chain.ChainID, chainID)
