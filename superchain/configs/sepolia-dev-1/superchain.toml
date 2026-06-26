@@ -1,0 +1,11 @@
+name = "sepolia-dev-1"
+protocol_versions_addr = "0x478522cc306dF87e3E5b05e6F537065b4be18389"
+superchain_config_addr = "0x86806B8251D3d2007A38d647Ed80651b929F7DD6"
+op_contracts_manager_addr = "0x80DCEC9d21ce25B895ED26CA4AC8FEb88C159EeC"
+
+[hardforks]
+
+[l1]
+  chain_id = 11155111
+  public_rpc = "https://ethereum-sepolia-rpc.publicnode.com"
+  explorer = ""

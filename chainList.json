@@ -1160,5 +1160,26 @@
     "faultProofs": {
       "status": "permissioned"
     }
+  },
+  {
+    "name": "sepolia-dev-1",
+    "identifier": "sepolia-dev-1/sepolia-dev-1",
+    "chainId": 420130014,
+    "rpc": [
+      "https://sepolia-dev-1.optimism.io"
+    ],
+    "explorers": [
+      ""
+    ],
+    "superchainLevel": 0,
+    "governedByOptimism": true,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia-dev-1"
+    },
+    "faultProofs": {
+      "status": "permissioned"
+    }
   }
 ]
