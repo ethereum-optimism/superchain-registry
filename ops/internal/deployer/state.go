@@ -61,8 +61,8 @@ func ReadOpaqueStateFile(p string) (OpaqueState, error) {
 type StateMerger = func(state OpaqueState) (OpaqueMap, OpaqueState, error)
 
 func GetStateMerger(version string) (StateMerger, error) {
-	// Extract version string (e.g., "0.4.5" from "op-deployer/v0.4.5")
-	re := regexp.MustCompile(`op-deployer/v(\d+\.\d+\.\d+)`)
+	// Extract version string (e.g., "0.4.5" from "op-deployer/v0.4.5").
+	re := regexp.MustCompile(`(?:op-deployer/)?v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)`)
 	match := re.FindStringSubmatch(version)
 	if len(match) < 2 {
 		return nil, fmt.Errorf("invalid deployer version format: %s", version)
@@ -82,7 +82,7 @@ func GetStateMerger(version string) (StateMerger, error) {
 		{">= 0.2.0, < 0.3.0", MergeStateV2},
 		{">= 0.3.0, < 0.4.0", MergeStateV3},
 		{">= 0.4.0, < 0.4.5", MergeStateV4_0},
-		{">= 0.4.5", MergeStateV4_1},
+		{">= 0.4.5-0", MergeStateV4_1},
 	}
 
 	for _, c := range constraints {

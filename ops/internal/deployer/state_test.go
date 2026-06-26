@@ -42,3 +42,9 @@ func TestMergeState(t *testing.T) {
 		})
 	}
 }
+
+func TestGetStateMergerAcceptsBareReleaseCandidate(t *testing.T) {
+	merger, err := GetStateMerger("0.7.0-rc.1")
+	require.NoError(t, err)
+	require.Equal(t, fmt.Sprintf("%p", MergeStateV4_1), fmt.Sprintf("%p", merger))
+}

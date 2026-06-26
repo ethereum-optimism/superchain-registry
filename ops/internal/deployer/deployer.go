@@ -73,7 +73,11 @@ func WithReleaseBinary(binDir string, l1ContractsRelease string) (*FixedBinaryPi
 }
 
 func VersionedBinaryPath(binDir string, deployerVersion string) string {
-	return filepath.Join(binDir, fmt.Sprintf("op-deployer_%s", strings.TrimPrefix(deployerVersion, "op-deployer/")))
+	version := strings.TrimPrefix(deployerVersion, "op-deployer/")
+	if !strings.HasPrefix(version, "v") {
+		version = "v" + version
+	}
+	return filepath.Join(binDir, fmt.Sprintf("op-deployer_%s", version))
 }
 
 func init() {
