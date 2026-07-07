@@ -8,9 +8,9 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/standard"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/gameargs"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
+	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -31,7 +31,7 @@ func ScanL1(
 		return nil, fmt.Errorf("failed to get chain ID: %w", err)
 	}
 
-	opcmAddr, err := standard.OPCMImplAddressFor(chainID.Uint64(), release)
+	opcmAddr, err := opcmImplAddressFor(chainID.Uint64(), release)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get OPCM address: %w", err)
 	}
@@ -103,6 +103,30 @@ func ScanL1(
 		},
 		SystemConfig: systemConfigReport,
 	}, nil
+}
+
+func opcmImplAddressFor(chainID uint64, tag string) (common.Address, error) {
+	var versionsData validation.Versions
+	switch chainID {
+	case 1:
+		versionsData = validation.StandardVersionsMainnet
+	case 11155111:
+		versionsData = validation.StandardVersionsSepolia
+	default:
+		return common.Address{}, fmt.Errorf("unsupported chainID: %d", chainID)
+	}
+
+	versionData, ok := versionsData[validation.Semver(tag)]
+	if !ok {
+		return common.Address{}, fmt.Errorf("unsupported tag for chainID %d: %s", chainID, tag)
+	}
+	if versionData.OPContractsManager.Address != nil {
+		return common.Address(*versionData.OPContractsManager.Address), nil
+	}
+	if versionData.OPContractsManager.ImplementationAddress != nil {
+		return common.Address(*versionData.OPContractsManager.ImplementationAddress), nil
+	}
+	return common.Address{}, fmt.Errorf("OPContractsManager address is nil for tag %s", tag)
 }
 
 func ScanOwnership(

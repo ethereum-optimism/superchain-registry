@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"encoding/json"
 	"math/big"
 	"os"
 	"testing"
@@ -28,7 +29,15 @@ func TestGenesisCompression(t *testing.T) {
 	readGen, err := ReadSuperchainGenesis(wd, superchain, shortName)
 	require.NoError(t, err)
 
-	require.Equal(t, testGen, readGen)
+	require.JSONEq(t, marshalGenesis(t, testGen), marshalGenesis(t, readGen))
+}
+
+func marshalGenesis(t *testing.T, gen *core.Genesis) string {
+	t.Helper()
+
+	out, err := json.Marshal(gen)
+	require.NoError(t, err)
+	return string(out)
 }
 
 func makeTestGenesis() *core.Genesis {
