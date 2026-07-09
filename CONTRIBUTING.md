@@ -46,12 +46,11 @@ l1:
   public_rpc: https://ethereum-goerli-rpc.allthatnode.com
   explorer: https://eth-goerli.blockscout.com
 
-protocol_versions_addr: null # todo
 superchain_config_addr: null # todo
 EOF
 ```
 
-Superchain-wide configuration, like the `ProtocolVersions` contract address, should be configured here when available.
+Superchain-wide configuration, like the `SuperchainConfig` contract address, should be configured here when available.
 
 ## `superchain` Go Module
 
