@@ -2,9 +2,7 @@ package manage
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"io/fs"
 	"sync"
 
 	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch"
@@ -103,9 +101,6 @@ func collectChainsBySuperchain(wd string, chainIds []uint64, superchainsInput []
 		// Collect all chain configs from this superchain
 		configs, err := CollectChainConfigs(paths.SuperchainDir(wd, superchain))
 		if err != nil {
-			if len(superchainsInput) > 0 && errors.Is(err, fs.ErrNotExist) {
-				continue
-			}
 			return nil, fmt.Errorf("error collecting chain configs for superchain %s: %w", superchain, err)
 		}
 

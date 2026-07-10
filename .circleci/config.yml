@@ -160,6 +160,16 @@ jobs:
                 continue
               fi
 
+              if [ ! -d "superchain/configs/$SUPERCHAIN_NAME" ]; then
+                if [ "$SUPERCHAIN_NAME" = "rehearsal-0-bn" ]; then
+                  echo "Skipping deleted development superchain $SUPERCHAIN_NAME"
+                  continue
+                fi
+
+                echo "Deleted superchain $SUPERCHAIN_NAME is not allowed"
+                exit 1
+              fi
+
               # Check if this superchain is already in our list
               if [[ ! $SUPERCHAINS =~ (^|,)$SUPERCHAIN_NAME(,|$) ]] && [ -n "$SUPERCHAIN_NAME" ]; then
                 if [ -z "$SUPERCHAINS" ]; then
