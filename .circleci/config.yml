@@ -155,19 +155,16 @@ jobs:
               # Extract the superchain name (directory between configs/ and the filename)
               SUPERCHAIN_NAME=$(echo "$file" | sed -n 's|^superchain/configs/\([^/]*\)/.*$|\1|p')
 
-              # If this is a superchain.toml file, skip it
-              if [[ "$file" == *"superchain.toml" ]]; then
+              # A changed path whose superchain definition no longer exists represents
+              # the removal of an entire superchain.
+              if [ ! -f "superchain/configs/$SUPERCHAIN_NAME/superchain.toml" ]; then
+                echo "Found removed superchain $SUPERCHAIN_NAME"
                 continue
               fi
 
-              if [ ! -d "superchain/configs/$SUPERCHAIN_NAME" ]; then
-                if [ "$SUPERCHAIN_NAME" = "rehearsal-0-bn" ]; then
-                  echo "Skipping deleted development superchain $SUPERCHAIN_NAME"
-                  continue
-                fi
-
-                echo "Deleted superchain $SUPERCHAIN_NAME is not allowed"
-                exit 1
+              # If this is a superchain.toml file, skip it
+              if [[ "$file" == *"superchain.toml" ]]; then
+                continue
               fi
 
               # Check if this superchain is already in our list
@@ -189,13 +186,21 @@ jobs:
               go run ./cmd/codegen \
                 --l1-rpc-urls="$OP_CI_SEPOLIA_L1_RPC_URL,$OP_CI_MAINNET_L1_RPC_URL" \
                 --superchains="$SUPERCHAINS"
+            else
+              # No surviving changed superchain is available to trigger codegen.
+              echo "Pruning generated entries for removed superchains\n"
+              go run ./cmd/codegen --prune-removed
             fi
 
             if [ -n "$(git status --porcelain)" ]; then
               echo "\n❌ Changes detected after running codegen. Run the following command locally and commit the changes:\n"
-              echo "go run ./cmd/codegen \\"
-              echo "  --l1-rpc-urls=\"<urls>\" \\"
-              echo "  --superchains=\"$SUPERCHAINS\""
+              if [ -n "$SUPERCHAINS" ]; then
+                echo "go run ./cmd/codegen \\"
+                echo "  --l1-rpc-urls=\"<urls>\" \\"
+                echo "  --superchains=\"$SUPERCHAINS\""
+              else
+                echo "go run ./cmd/codegen --prune-removed"
+              fi
               echo ""
               echo "These are the expected changes:"
               git diff
