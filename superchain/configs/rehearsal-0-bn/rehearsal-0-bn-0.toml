@@ -25,7 +25,6 @@ max_sequencer_drift = 600
 [interop]
   [interop.dependencies]
     [interop.dependencies.420120009]
-    [interop.dependencies.420120010]
 
 [optimism]
   eip1559_elasticity = 6

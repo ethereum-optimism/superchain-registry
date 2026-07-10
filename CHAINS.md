@@ -40,7 +40,6 @@
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
 | rehearsal-0-bn-0 | ❌ | ✅ |  | `` | `` |
-| rehearsal-0-bn-1 | ❌ | ✅ |  | `` | `` |
 ### sepolia
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
