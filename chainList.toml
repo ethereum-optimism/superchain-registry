@@ -799,3 +799,18 @@
     chain = "sepolia"
   [chains.fault_proofs]
     status = "permissioned"
+
+[[chains]]
+  name = "sepolia-devnet-2"
+  identifier = "sepolia-devnet-2/sepolia-devnet-2"
+  chain_id = 420130015
+  rpc = ["https://sepolia-devnet-2.optimism.io/rpc"]
+  explorers = [""]
+  superchain_level = 0
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia-devnet-2"
+  [chains.fault_proofs]
+    status = "permissionless"
