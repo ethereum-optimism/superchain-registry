@@ -35,3 +35,9 @@ func TestCollectChainConfigs(t *testing.T) {
 		},
 	}, chains)
 }
+
+func TestCollectChainConfigsMissingDir(t *testing.T) {
+	chains, err := CollectChainConfigs(paths.SuperchainDir(t.TempDir(), "deleted"))
+	require.Error(t, err)
+	require.Nil(t, chains)
+}

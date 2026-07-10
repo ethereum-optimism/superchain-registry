@@ -57,6 +57,12 @@ func TestCollectChainsBySuperchain(t *testing.T) {
 		require.Equal(t, len(chains[config.SepoliaDev0Superchain]), 0)
 	})
 
+	t.Run("deleted superchain", func(t *testing.T) {
+		chains, err := collectChainsBySuperchain(t.TempDir(), []uint64{}, []config.Superchain{"deleted"})
+		require.NoError(t, err)
+		require.Empty(t, chains)
+	})
+
 	t.Run("fails if both chainIds and superchains are provided", func(t *testing.T) {
 		_, err := collectChainsBySuperchain(testdataDir, []uint64{opSepolia}, []config.Superchain{config.SepoliaSuperchain})
 		require.Error(t, err)

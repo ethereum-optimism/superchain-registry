@@ -27,6 +27,9 @@ func CollectChainConfigs(p string) ([]DiskChainConfig, error) {
 	var files []string
 
 	err := filepath.Walk(p, func(fp string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		basePath := filepath.Base(fp)
 		ext := filepath.Ext(basePath)
 		if info.IsDir() || basePath == "superchain.toml" || ext != ".toml" {
