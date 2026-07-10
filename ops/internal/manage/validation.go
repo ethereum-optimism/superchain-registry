@@ -104,7 +104,7 @@ func ValidateGenesisIntegrity(cfg *config.Chain, genesis *core.Genesis) error {
 		GraniteTime:             cfg.Hardforks.GraniteTime.U64Ptr(),
 		HoloceneTime:            cfg.Hardforks.HoloceneTime.U64Ptr(),
 		IsthmusTime:             cfg.Hardforks.IsthmusTime.U64Ptr(),
-		InteropTime:             cfg.Hardforks.LagoonTime.U64Ptr(), // op-geth still names this InteropTime; remove carveout once op-geth renames to LagoonTime
+		LagoonTime:              cfg.Hardforks.LagoonTime.U64Ptr(),
 		JovianTime:              cfg.Hardforks.JovianTime.U64Ptr(),
 		TerminalTotalDifficulty: common.Big0,
 		Ethash:                  nil,

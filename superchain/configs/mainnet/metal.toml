@@ -22,7 +22,6 @@ max_sequencer_drift = 600
   isthmus_time = 1746806401 # Fri 9 May 2025 16:00:01 UTC
   jovian_time = 1764691201 # Tue 2 Dec 2025 16:00:01 UTC
   karst_time = 1783526401 # Wed 8 Jul 2026 16:00:01 UTC
-  keep_karst_upgrade_gas = true
 
 [optimism]
   eip1559_elasticity = 6

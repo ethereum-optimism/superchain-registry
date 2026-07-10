@@ -453,7 +453,6 @@ func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (Opa
 
 	root := dasel.New(state)
 	mustPutLowerString(root, "superchainDeployment.superchainConfigProxyAddress", sc.SuperchainConfigAddr)
-	mustPutLowerString(root, "superchainDeployment.protocolVersionsProxyAddress", sc.ProtocolVersionsAddr)
 	if stdVals.OPContractsManager != nil && stdVals.OPContractsManager.Address != nil {
 		mustPutLowerString(root, "implementationsDeployment.opcmAddress", stdVals.OPContractsManager.Address)
 	}

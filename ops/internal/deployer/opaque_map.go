@@ -202,13 +202,6 @@ func (om OpaqueState) ReadPermissionedDisputeGameImpl(idx int) (common.Address, 
 	)
 }
 
-func (om OpaqueState) ReadProtocolVersionsProxy() (common.Address, error) {
-	return om.queryAddress(
-		"superchainContracts.ProtocolVersionsProxy",
-		"superchainDeployment.protocolVersionsProxyAddress",
-	)
-}
-
 func (om OpaqueState) ReadSuperchainConfigProxy() (common.Address, error) {
 	return om.queryAddress(
 		"superchainContracts.SuperchainConfigProxy",

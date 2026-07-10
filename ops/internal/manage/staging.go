@@ -178,10 +178,6 @@ var (
 )
 
 func InflateSuperchainDefinition(name string, st deployer.OpaqueState) (*config.SuperchainDefinition, error) {
-	protocolVersionsProxyAddress, err := st.ReadProtocolVersionsProxy()
-	if err != nil {
-		return nil, fmt.Errorf("failed to read protocol versions proxy address: %w", err)
-	}
 	superchainConfigProxyAddress, err := st.ReadSuperchainConfigProxy()
 	if err != nil {
 		return nil, fmt.Errorf("failed to read superchain config proxy address: %w", err)
@@ -198,7 +194,6 @@ func InflateSuperchainDefinition(name string, st deployer.OpaqueState) (*config.
 
 	sD := config.SuperchainDefinition{
 		Name:                   name,
-		ProtocolVersionsAddr:   config.NewChecksummedAddress(protocolVersionsProxyAddress),
 		SuperchainConfigAddr:   config.NewChecksummedAddress(superchainConfigProxyAddress),
 		OPContractsManagerAddr: config.NewChecksummedAddress(opcmAddress),
 		Hardforks:              config.Hardforks{}, // superchain wide hardforks are added after chains are in the registry.
