@@ -14,10 +14,9 @@ import (
 
 var (
 	L1RPCURLsFlag = &cli.StringSliceFlag{
-		Name:     "l1-rpc-urls",
-		Usage:    "comma-separated list of L1 RPC URLs (only need multiple if fetching from multiple superchains)",
-		EnvVars:  []string{"L1_RPC_URLS"},
-		Required: true,
+		Name:    "l1-rpc-urls",
+		Usage:   "comma-separated list of L1 RPC URLs (only need multiple if fetching from multiple superchains)",
+		EnvVars: []string{"L1_RPC_URLS"},
 	}
 	ChainIDFlag = &cli.Uint64SliceFlag{
 		Name:  "chain-ids",
@@ -26,6 +25,10 @@ var (
 	SuperchainsFlag = &cli.StringSliceFlag{
 		Name:  "superchains",
 		Usage: "comma-separated list of superchains to update (cannot provide both chain-ids and superchains flags, default to all superchains if not provided)",
+	}
+	PruneRemovedFlag = &cli.BoolFlag{
+		Name:  "prune-removed",
+		Usage: "remove generated entries for chain configs that no longer exist without fetching on-chain data",
 	}
 )
 
@@ -37,6 +40,7 @@ func main() {
 			L1RPCURLsFlag,
 			ChainIDFlag,
 			SuperchainsFlag,
+			PruneRemovedFlag,
 		},
 		Action: CodegenCLI,
 	}
@@ -50,6 +54,7 @@ func CodegenCLI(cliCtx *cli.Context) error {
 	l1RpcUrls := cliCtx.StringSlice("l1-rpc-urls")
 	chainIds := cliCtx.Uint64Slice("chain-ids")
 	superchainsRaw := cliCtx.StringSlice("superchains")
+	pruneRemoved := cliCtx.Bool("prune-removed")
 	// Filter out empty strings from superchains
 	var superchains []string
 	for _, sc := range superchainsRaw {
@@ -61,11 +66,26 @@ func CodegenCLI(cliCtx *cli.Context) error {
 	if len(chainIds) > 0 && len(superchains) > 0 {
 		return fmt.Errorf("cannot provide both chain-ids and superchains flags")
 	}
+	if pruneRemoved && (len(chainIds) > 0 || len(superchains) > 0) {
+		return fmt.Errorf("cannot provide chain-ids or superchains with prune-removed")
+	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
 	wd, err := paths.FindRepoRoot()
 	if err != nil {
 		return fmt.Errorf("failed to get working directory: %w", err)
+	}
+	if pruneRemoved {
+		if err := manage.PruneRemovedChains(lgr, wd); err != nil {
+			return fmt.Errorf("error pruning removed chains: %w", err)
+		}
+		return nil
+	}
+	if len(l1RpcUrls) == 0 {
+		return fmt.Errorf("l1-rpc-urls is required unless prune-removed is set")
+	}
+	if err := manage.ValidateRequiredSuperchains(wd); err != nil {
+		return err
 	}
 
 	var onchainCfgs map[uint64]script.ChainConfig
