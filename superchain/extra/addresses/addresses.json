@@ -704,6 +704,7 @@
     "Challenger": "0xC6c2bDF5fc9ACEd51955C72814fbDA1206d04D3e",
     "DelayedWETHProxy": "0x852e593a27AcB8EdeB3c3AC317aB1b71D9B349cb",
     "DisputeGameFactoryProxy": "0x900bcac02aBeA47CF0A5D6c5d2cdaCF2E831318d",
+    "FaultDisputeGame": "0x2DDA3584b51eF5236f7726Dea5A0FB6B3cA94AeC",
     "Guardian": "0xe934Dc97E347C6aCef74364B50125bb8689c40ff",
     "L1CrossDomainMessengerProxy": "0x152bE8D40BbAf237a23Baa831bE24aB318244fC5",
     "L1ERC721BridgeProxy": "0xbDba8Dc0B4F6Ed91D6643dC1AEaF366E6b86B4b6",
