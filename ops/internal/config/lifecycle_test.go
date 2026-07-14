@@ -20,6 +20,7 @@ func baseChain() *Chain {
 		Name:              "Test Chain",
 		PublicRPC:         "https://rpc.example",
 		ChainID:           42,
+		BatchInboxAddr:    addr,
 		BlockTime:         2,
 		SeqWindowSize:     3600,
 		MaxSequencerDrift: 600,
@@ -65,6 +66,13 @@ func TestCheckImmutableFields(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "batch_inbox_addr is immutable",
+			mutate: func(c *Chain) {
+				c.BatchInboxAddr = NewChecksummedAddress(common.HexToAddress("0x3333333333333333333333333333333333333333"))
+			},
+			wantErr: true,
+		},
+		{
 			name:    "block_time is immutable",
 			mutate:  func(c *Chain) { c.BlockTime = 1 },
 			wantErr: true,
@@ -97,6 +105,12 @@ func TestCheckImmutableFields(t *testing.T) {
 			name: "scheduling a future hardfork activation is allowed",
 			mutate: func(c *Chain) {
 				c.Hardforks.EcotoneTime = NewHardforkTime(testNow + 1000)
+			},
+		},
+		{
+			name: "adding the optional pectra_blob_schedule_time is allowed",
+			mutate: func(c *Chain) {
+				c.Hardforks.PectraBlobScheduleTime = NewHardforkTime(1500)
 			},
 		},
 	}
@@ -146,6 +160,79 @@ func TestFreezeJustActivatedHardfork(t *testing.T) {
 
 	require.Error(t, CheckImmutableFields(old, next, testNow),
 		"an activation at or before now must be frozen")
+}
+
+// TestFreezePastBlobSchedule ensures the optional pectra_blob_schedule_time, once its
+// activation is in the past, is frozen like any other hardfork activation.
+func TestFreezePastBlobSchedule(t *testing.T) {
+	t.Parallel()
+
+	old := baseChain()
+	old.Hardforks.PectraBlobScheduleTime = NewHardforkTime(1500) // in the past
+
+	next := baseChain()
+	next.Hardforks.PectraBlobScheduleTime = NewHardforkTime(1600) // attempt to move it
+
+	require.Error(t, CheckImmutableFields(old, next, testNow),
+		"a blob-schedule activation already in the past must be frozen")
+}
+
+// TestKeepKarstUpgradeGas covers the non-timestamp hardfork modifier. It is governed
+// by karst_time: freely changeable until Karst is in the past, frozen afterwards. A
+// bool has no "unset" state, so the freeze is driven by Karst's activation, not by the
+// flag's own value (false->true after activation must be rejected just like true->false).
+func TestKeepKarstUpgradeGas(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name      string
+		karstTime *HardforkTime
+		oldFlag   bool
+		newFlag   bool
+		wantErr   bool
+	}{
+		{name: "karst unset, flag may be set", karstTime: nil, oldFlag: false, newFlag: true},
+		{name: "karst in future, flag may be set", karstTime: NewHardforkTime(testNow + 1000), oldFlag: false, newFlag: true},
+		{name: "karst in future, flag may be cleared", karstTime: NewHardforkTime(testNow + 1000), oldFlag: true, newFlag: false},
+		{name: "karst in past, flag frozen (cleared)", karstTime: NewHardforkTime(1000), oldFlag: true, newFlag: false, wantErr: true},
+		{name: "karst in past, flag frozen (set)", karstTime: NewHardforkTime(1000), oldFlag: false, newFlag: true, wantErr: true},
+		{name: "karst in past, flag unchanged", karstTime: NewHardforkTime(1000), oldFlag: true, newFlag: true},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			old := baseChain()
+			old.Hardforks.KarstTime = tt.karstTime
+			old.Hardforks.KeepKarstUpgradeGas = tt.oldFlag
+
+			next := baseChain()
+			next.Hardforks.KarstTime = tt.karstTime
+			next.Hardforks.KeepKarstUpgradeGas = tt.newFlag
+
+			err := CheckImmutableFields(old, next, testNow)
+			if tt.wantErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+// TestHardforksFieldsClassified guards against silently adding a field to Hardforks
+// without teaching checkAppendOnly how it ages: every field must be either a
+// *HardforkTime activation or a registered non-timestamp modifier.
+func TestHardforksFieldsClassified(t *testing.T) {
+	tp := reflect.TypeOf(Hardforks{})
+	for i := 0; i < tp.NumField(); i++ {
+		field := tp.Field(i)
+		classified := isHardforkTime(field.Type) || hardforkModifiers[field.Name] != ""
+		require.Truef(t, classified,
+			"Hardforks field %q (%s) is unclassified: add a *HardforkTime activation or register it in hardforkModifiers",
+			field.Name, field.Type)
+	}
 }
 
 // TestEveryChainFieldHasLifecycle guards against silently adding a field without

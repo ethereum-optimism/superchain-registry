@@ -67,15 +67,32 @@ func CheckImmutableFields(old, new *Chain, now uint64) error {
 	return nil
 }
 
+// hardforkModifiers maps each non-timestamp field of [Hardforks] to the hardfork
+// whose activation governs when it freezes. Such a field is not itself an activation
+// but records how its hardfork behaved when it activated (e.g. keep_karst_upgrade_gas
+// records whether a chain kept the inflated gas limit that Karst introduced). It may
+// therefore be set or changed freely until its governing hardfork is in the past,
+// after which the fact is on-chain history and frozen. New non-timestamp fields added
+// to [Hardforks] must be registered here (TestHardforksFieldsClassified enforces it).
+var hardforkModifiers = map[string]string{
+	"KeepKarstUpgradeGas": "KarstTime",
+}
+
 // checkAppendOnly verifies the append-only contract for each entry of a struct field
-// (e.g. the activation times in [Hardforks]). For each entry that was already set in
-// the old version:
-//   - a hardfork activation whose time is at or before now is frozen and must be
-//     unchanged (it has activated on-chain and is historical fact);
-//   - a hardfork activation still in the future may be adjusted or removed;
-//   - any other already-set entry type is frozen (strict append-only).
+// (e.g. the activation times in [Hardforks]). Each entry is one of:
 //
-// Entries that were unset (nil/zero) in the old version may be freely added.
+//   - A hardfork activation (*HardforkTime). An unset activation may be added later; a
+//     set activation still in the future may be re-scheduled or removed; once its time
+//     is at or before now it has activated on-chain and is frozen forever.
+//   - A non-timestamp modifier recording how a hardfork behaved on activation (see
+//     [hardforkModifiers]). It may be set or changed freely until its governing
+//     hardfork is in the past, after which it is frozen. Because a bool has no "unset"
+//     state distinct from false, its freeze is driven by the governing hardfork's
+//     time rather than by the field's own value.
+//
+// A changed entry that is neither is a programming error — a new entry type was added
+// to an append-only struct without deciding how it ages — and is reported so it can
+// never slip through unchecked.
 func checkAppendOnly(parent string, oldV, newV reflect.Value, now uint64) []string {
 	if oldV.Kind() == reflect.Ptr {
 		if oldV.IsNil() {
@@ -93,29 +110,48 @@ func checkAppendOnly(parent string, oldV, newV reflect.Value, now uint64) []stri
 	var violations []string
 	t := oldV.Type()
 	for i := 0; i < t.NumField(); i++ {
-		of := oldV.Field(i)
-		if isNilOrZero(of) {
-			continue // unset entries may be added later
-		}
-		name := parent + "." + tomlName(t.Field(i))
+		of, nf := oldV.Field(i), newV.Field(i)
+		field := t.Field(i)
+		name := parent + "." + tomlName(field)
 
-		// A hardfork activation that is still in the future may be re-scheduled;
-		// only once it is in the past is it frozen.
-		if activation, ok := hardforkActivation(of); ok && activation > now {
-			continue
-		}
-
-		if !reflect.DeepEqual(of.Interface(), newV.Field(i).Interface()) {
-			violations = append(violations, fmt.Sprintf("%q is append-only; an activation already in the past must not change or be removed", name))
+		switch {
+		case isHardforkTime(field.Type):
+			if of.IsNil() {
+				continue // unset activation may be added later
+			}
+			if of.Elem().Uint() > now {
+				continue // future activation may still be re-scheduled or removed
+			}
+			if !reflect.DeepEqual(of.Interface(), nf.Interface()) {
+				violations = append(violations, fmt.Sprintf("%q is append-only; an activation already in the past must not change or be removed", name))
+			}
+		case hardforkModifiers[field.Name] != "":
+			gate, gated := hardforkActivation(oldV.FieldByName(hardforkModifiers[field.Name]))
+			if !gated || gate > now {
+				continue // governing hardfork not yet activated: modifier may still change
+			}
+			if !reflect.DeepEqual(of.Interface(), nf.Interface()) {
+				violations = append(violations, fmt.Sprintf("%q records how an already-activated hardfork behaved and must not change once that hardfork is in the past", name))
+			}
+		default:
+			// Fail closed: an unclassified change must not pass silently.
+			if !reflect.DeepEqual(of.Interface(), nf.Interface()) {
+				violations = append(violations, fmt.Sprintf("%q changed but has no append-only rule; classify it in checkAppendOnly before merging", name))
+			}
 		}
 	}
 	return violations
 }
 
+// isHardforkTime reports whether t is *HardforkTime.
+func isHardforkTime(t reflect.Type) bool {
+	return t.Kind() == reflect.Ptr && t.Elem() == hardforkTimeType
+}
+
 // hardforkActivation returns the activation time (Unix seconds) of a set
 // *HardforkTime field, and whether the field is in fact a non-nil HardforkTime.
 func hardforkActivation(v reflect.Value) (uint64, bool) {
-	if v.Kind() != reflect.Ptr || v.IsNil() || v.Type().Elem() != hardforkTimeType {
+	if !isHardforkTime(v.Type()) || v.IsNil() {
 		return 0, false
 	}
 	return v.Elem().Uint(), true
@@ -129,12 +165,4 @@ func tomlName(field reflect.StructField) string {
 		return field.Name
 	}
 	return strings.Split(tag, ",")[0]
-}
-
-// isNilOrZero reports whether a value is a nil pointer or the zero value of its type.
-func isNilOrZero(v reflect.Value) bool {
-	if v.Kind() == reflect.Ptr {
-		return v.IsNil()
-	}
-	return v.IsZero()
 }

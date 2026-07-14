@@ -91,7 +91,7 @@ type Chain struct {
 	SuperchainTime       *uint64             `toml:"superchain_time" lifecycle:"mutable"`
 	DataAvailabilityType string              `toml:"data_availability_type" lifecycle:"mutable"`
 	ChainID              uint64              `toml:"chain_id" lifecycle:"immutable"`
-	BatchInboxAddr       *ChecksummedAddress `toml:"batch_inbox_addr" lifecycle:"mutable"`
+	BatchInboxAddr       *ChecksummedAddress `toml:"batch_inbox_addr" lifecycle:"immutable"`
 	BlockTime            uint64              `toml:"block_time" lifecycle:"immutable"`
 	SeqWindowSize        uint64              `toml:"seq_window_size" lifecycle:"immutable"`
 	MaxSequencerDrift    uint64              `toml:"max_sequencer_drift" lifecycle:"immutable"`
