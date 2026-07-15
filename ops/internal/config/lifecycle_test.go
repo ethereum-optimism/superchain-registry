@@ -17,13 +17,14 @@ const testNow uint64 = 10000
 func baseChain() *Chain {
 	addr := NewChecksummedAddress(common.HexToAddress("0x1111111111111111111111111111111111111111"))
 	return &Chain{
-		Name:              "Test Chain",
-		PublicRPC:         "https://rpc.example",
-		ChainID:           42,
-		BatchInboxAddr:    addr,
-		BlockTime:         2,
-		SeqWindowSize:     3600,
-		MaxSequencerDrift: 600,
+		Name:                 "Test Chain",
+		PublicRPC:            "https://rpc.example",
+		DataAvailabilityType: "eth-da",
+		ChainID:              42,
+		BatchInboxAddr:       addr,
+		BlockTime:            2,
+		SeqWindowSize:        3600,
+		MaxSequencerDrift:    600,
 		Hardforks: Hardforks{
 			CanyonTime: NewHardforkTime(1000),
 			DeltaTime:  NewHardforkTime(2000),
@@ -70,6 +71,11 @@ func TestCheckImmutableFields(t *testing.T) {
 			mutate: func(c *Chain) {
 				c.BatchInboxAddr = NewChecksummedAddress(common.HexToAddress("0x3333333333333333333333333333333333333333"))
 			},
+			wantErr: true,
+		},
+		{
+			name:    "data_availability_type is immutable",
+			mutate:  func(c *Chain) { c.DataAvailabilityType = "alt-da" },
 			wantErr: true,
 		},
 		{

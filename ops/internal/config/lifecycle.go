@@ -12,8 +12,9 @@ import (
 type FieldLifecycle string
 
 const (
-	// LifecycleImmutable fields are fixed at chain creation and can never change.
-	// Changing one describes a different chain, so [CheckImmutableFields] rejects it.
+	// LifecycleImmutable fields are fixed at chain creation and describe the chain
+	// itself. Changing one normally means a different chain, so [CheckImmutableFields]
+	// reports it (advisory: the CI job warns rather than blocks).
 	LifecycleImmutable FieldLifecycle = "immutable"
 	// LifecycleAppendOnly fields grow over time as the protocol evolves. New entries
 	// may be added, and a not-yet-active entry may still be adjusted, but an entry
@@ -33,6 +34,9 @@ var hardforkTimeType = reflect.TypeOf(HardforkTime(0))
 // config have not changed in a disallowed way between a previously-committed version
 // (old) and a proposed version (new). It returns an error describing every violation
 // found, or nil if the change is permitted. Mutable fields are ignored entirely.
+//
+// Callers treat the returned error as advisory: the check-immutable-fields CI job
+// surfaces it as a warning so clean-ups (e.g. correcting bad data) are not blocked.
 //
 // now is the reference time (Unix seconds) used to decide whether an append-only
 // hardfork activation is already in the past (and therefore frozen) or still in the

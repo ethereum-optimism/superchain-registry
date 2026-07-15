@@ -69,18 +69,21 @@ type Interop struct {
 //
 // Every field carries a `lifecycle` tag describing how it may change over the
 // chain's lifetime (see [FieldLifecycle]). This contract is documented for humans
-// in superchain/configs/README.md and enforced by [CheckImmutableFields]:
+// in superchain/configs/README.md and checked by [CheckImmutableFields]:
 //
-//   - immutable:   fixed at chain creation and can never change. Changing one of
-//     these values describes a different chain, so it is rejected.
+//   - immutable:   fixed at chain creation and describes the chain itself. Changing
+//     one of these values normally means the file now describes a different chain.
 //   - append-only: grows over time (new hardfork activations). Existing entries are
-//     frozen once set, but new entries may be added.
+//     frozen once their activation is in the past, but new entries may be added.
 //   - mutable:     tracks live on-chain or operational state and may be updated
 //     freely (role rotations, contract upgrades, RPC URLs, etc.).
 //
-// When adding a field, classify it conservatively: prefer "mutable" unless a change
-// genuinely cannot happen without producing a different chain, since over-claiming
-// immutability turns a legitimate update into a CI failure.
+// Classify a field by what it genuinely represents, not by whether it has ever been
+// edited: correcting bad data in an immutable field (e.g. fixing a value that was
+// committed wrong) is legitimate but rare. The check is advisory — it warns on a
+// change to a frozen field rather than blocking it (see the check-immutable-fields
+// CI job) — so a genuine correction surfaces a warning a reviewer can acknowledge
+// instead of a hard failure.
 type Chain struct {
 	Name                 string              `toml:"name" lifecycle:"mutable"`
 	PublicRPC            string              `toml:"public_rpc" lifecycle:"mutable"`
@@ -89,7 +92,7 @@ type Chain struct {
 	SuperchainLevel      SuperchainLevel     `toml:"superchain_level" lifecycle:"mutable"`
 	GovernedByOptimism   bool                `toml:"governed_by_optimism" lifecycle:"mutable"`
 	SuperchainTime       *uint64             `toml:"superchain_time" lifecycle:"mutable"`
-	DataAvailabilityType string              `toml:"data_availability_type" lifecycle:"mutable"`
+	DataAvailabilityType string              `toml:"data_availability_type" lifecycle:"immutable"`
 	ChainID              uint64              `toml:"chain_id" lifecycle:"immutable"`
 	BatchInboxAddr       *ChecksummedAddress `toml:"batch_inbox_addr" lifecycle:"immutable"`
 	BlockTime            uint64              `toml:"block_time" lifecycle:"immutable"`
