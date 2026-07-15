@@ -37,6 +37,7 @@ func baseChain() *Chain {
 				GasLimit:    30000000,
 			},
 		},
+		Optimism:  Optimism{EIP1559Elasticity: 6, EIP1559Denominator: 50, EIP1559DenominatorCanyon: 250},
 		Roles:     Roles{ProxyAdminOwner: addr},
 		Addresses: Addresses{SystemConfigProxy: addr},
 	}
@@ -76,6 +77,16 @@ func TestCheckImmutableFields(t *testing.T) {
 		{
 			name:    "data_availability_type is immutable",
 			mutate:  func(c *Chain) { c.DataAvailabilityType = "alt-da" },
+			wantErr: true,
+		},
+		{
+			name:    "optimism eip1559 params are immutable",
+			mutate:  func(c *Chain) { c.Optimism.EIP1559Denominator = 250 },
+			wantErr: true,
+		},
+		{
+			name:    "adding interop is immutable",
+			mutate:  func(c *Chain) { c.Interop = &Interop{Dependencies: map[string]StaticConfigDependency{"10": {}}} },
 			wantErr: true,
 		},
 		{

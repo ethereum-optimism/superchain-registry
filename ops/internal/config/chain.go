@@ -71,8 +71,10 @@ type Interop struct {
 // chain's lifetime (see [FieldLifecycle]). This contract is documented for humans
 // in superchain/configs/README.md and checked by [CheckImmutableFields]:
 //
-//   - immutable:   fixed at chain creation and describes the chain itself. Changing
-//     one of these values normally means the file now describes a different chain.
+//   - immutable:   fixed at chain creation. Either it identifies the chain itself, or
+//     it is a consensus parameter that can only change via a mechanism synchronized
+//     across the network (an L1 SystemConfig event or a timestamped hardfork) — never
+//     by editing this registry. An edit here is therefore almost always accidental.
 //   - append-only: grows over time (new hardfork activations). Existing entries are
 //     frozen once their activation is in the past, but new entries may be added.
 //   - mutable:     tracks live on-chain or operational state and may be updated
@@ -100,8 +102,8 @@ type Chain struct {
 	MaxSequencerDrift    uint64              `toml:"max_sequencer_drift" lifecycle:"immutable"`
 	GasPayingToken       *ChecksummedAddress `toml:"gas_paying_token,omitempty" lifecycle:"immutable"`
 	Hardforks            Hardforks           `toml:"hardforks" lifecycle:"append-only"`
-	Interop              *Interop            `toml:"interop,omitempty" lifecycle:"mutable"`
-	Optimism             Optimism            `toml:"optimism" lifecycle:"mutable"`
+	Interop              *Interop            `toml:"interop,omitempty" lifecycle:"immutable"`
+	Optimism             Optimism            `toml:"optimism" lifecycle:"immutable"`
 	AltDA                *AltDA              `toml:"alt_da" lifecycle:"mutable"`
 	Genesis              Genesis             `toml:"genesis" lifecycle:"immutable"`
 	Roles                Roles               `toml:"roles" lifecycle:"mutable"`

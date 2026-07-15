@@ -14,9 +14,9 @@ the `Chain` type in [`ops/internal/config/chain.go`](../../ops/internal/config/c
 
 | Lifecycle | Meaning | Examples |
 | --- | --- | --- |
-| **immutable** | Fixed when the chain is created and describes the chain itself; changing one normally means the file now describes a *different* chain. | `chain_id`, `batch_inbox_addr`, `block_time`, `seq_window_size`, `max_sequencer_drift`, `gas_paying_token`, `data_availability_type`, the entire `[genesis]` block (including `[genesis.system_config]`) |
+| **immutable** | Fixed when the chain is created. Either it identifies the chain, or it is a consensus parameter that changes *only* via a network-synchronized mechanism (an L1 `SystemConfig` event or a timestamped hardfork) — never by editing this registry. An edit here is almost always accidental. | `chain_id`, `batch_inbox_addr`, `block_time`, `seq_window_size`, `max_sequencer_drift`, `gas_paying_token`, `data_availability_type`, `[optimism]` (EIP-1559 params), `[interop]` dependencies, the entire `[genesis]` block (including `[genesis.system_config]`) |
 | **append-only** | Grows over time as the protocol evolves. New entries may be added, and a not-yet-active entry may still be re-scheduled, but an entry whose activation is already in the past is frozen. | `[hardforks]` activation times — a new hardfork may be appended and an upcoming activation may be pushed out, but a hardfork that has **already activated** keeps its timestamp forever (it is on-chain history). A non-timestamp modifier such as `keep_karst_upgrade_gas` records how its hardfork activated, so it is adjustable until that hardfork is in the past and frozen thereafter. |
-| **mutable** | Tracks live on-chain or operational state and may be updated freely. | `[roles]` and `[addresses]` (key rotations, contract upgrades), `public_rpc`/`sequencer_rpc`/`explorer`, `superchain_level`, `[optimism]` |
+| **mutable** | Tracks live on-chain or operational state and may be updated freely. | `[roles]` and `[addresses]` (key rotations, contract upgrades), `public_rpc`/`sequencer_rpc`/`explorer`, `superchain_level` |
 
 This contract is **checked in CI, but the check is advisory**: the `check-immutable-fields`
 job (`ops/cmd/check_immutable_fields`, driven by the `lifecycle` tags on the `Chain`
