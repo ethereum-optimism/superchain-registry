@@ -72,9 +72,15 @@ type Interop struct {
 // in superchain/configs/README.md and checked by [CheckImmutableFields]:
 //
 //   - immutable:   fixed at chain creation. Either it identifies the chain itself, or
-//     it is a consensus parameter that can only change via a mechanism synchronized
-//     across the network (an L1 SystemConfig event or a timestamped hardfork) — never
-//     by editing this registry. An edit here is therefore almost always accidental.
+//     it is a consensus parameter whose source of truth is L1 (e.g. EIP-1559 params in
+//     the SystemConfig, the interop dependency set): the registry only mirrors it, and
+//     it changes solely via a network-synchronized mechanism such as an L1 event. No
+//     job currently syncs these back into the source configs and we have no process
+//     for changing them intentionally, so today an edit here is almost always
+//     accidental — hence "immutable". (Contrast append-only hardfork times, where the
+//     registry IS the source of truth and drives the activation.) If a sync job or
+//     change process is added later, such a field would become mutable-by-that-job,
+//     downstream of the real consensus change.
 //   - append-only: grows over time (new hardfork activations). Existing entries are
 //     frozen once their activation is in the past, but new entries may be added.
 //   - mutable:     tracks live on-chain or operational state and may be updated
