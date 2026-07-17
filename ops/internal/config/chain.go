@@ -65,28 +65,55 @@ type Interop struct {
 	Dependencies map[string]StaticConfigDependency `json:"dependencies" toml:"dependencies"`
 }
 
+// Chain is the configuration for a single OP Stack chain.
+//
+// Every field carries a `lifecycle` tag describing how it may change over the
+// chain's lifetime (see [FieldLifecycle]). This contract is documented for humans
+// in superchain/configs/README.md and checked by [CheckImmutableFields]:
+//
+//   - immutable:   fixed at chain creation. Either it identifies the chain itself, or
+//     it is a consensus parameter whose source of truth is L1 (e.g. EIP-1559 params in
+//     the SystemConfig, the interop dependency set): the registry only mirrors it, and
+//     it changes solely via a network-synchronized mechanism such as an L1 event. No
+//     job currently syncs these back into the source configs and we have no process
+//     for changing them intentionally, so today an edit here is almost always
+//     accidental — hence "immutable". (Contrast append-only hardfork times, where the
+//     registry IS the source of truth and drives the activation.) If a sync job or
+//     change process is added later, such a field would become mutable-by-that-job,
+//     downstream of the real consensus change.
+//   - append-only: grows over time (new hardfork activations). Existing entries are
+//     frozen once their activation is in the past, but new entries may be added.
+//   - mutable:     tracks live on-chain or operational state and may be updated
+//     freely (role rotations, contract upgrades, RPC URLs, etc.).
+//
+// Classify a field by what it genuinely represents, not by whether it has ever been
+// edited: correcting bad data in an immutable field (e.g. fixing a value that was
+// committed wrong) is legitimate but rare. The check is advisory — it warns on a
+// change to a frozen field rather than blocking it (see the check-immutable-fields
+// CI job) — so a genuine correction surfaces a warning a reviewer can acknowledge
+// instead of a hard failure.
 type Chain struct {
-	Name                 string              `toml:"name"`
-	PublicRPC            string              `toml:"public_rpc"`
-	SequencerRPC         string              `toml:"sequencer_rpc"`
-	Explorer             string              `toml:"explorer"`
-	SuperchainLevel      SuperchainLevel     `toml:"superchain_level"`
-	GovernedByOptimism   bool                `toml:"governed_by_optimism"`
-	SuperchainTime       *uint64             `toml:"superchain_time"`
-	DataAvailabilityType string              `toml:"data_availability_type"`
-	ChainID              uint64              `toml:"chain_id"`
-	BatchInboxAddr       *ChecksummedAddress `toml:"batch_inbox_addr"`
-	BlockTime            uint64              `toml:"block_time"`
-	SeqWindowSize        uint64              `toml:"seq_window_size"`
-	MaxSequencerDrift    uint64              `toml:"max_sequencer_drift"`
-	GasPayingToken       *ChecksummedAddress `toml:"gas_paying_token,omitempty"`
-	Hardforks            Hardforks           `toml:"hardforks"`
-	Interop              *Interop            `toml:"interop,omitempty"`
-	Optimism             Optimism            `toml:"optimism"`
-	AltDA                *AltDA              `toml:"alt_da"`
-	Genesis              Genesis             `toml:"genesis"`
-	Roles                Roles               `toml:"roles"`
-	Addresses            Addresses           `toml:"addresses"`
+	Name                 string              `toml:"name" lifecycle:"mutable"`
+	PublicRPC            string              `toml:"public_rpc" lifecycle:"mutable"`
+	SequencerRPC         string              `toml:"sequencer_rpc" lifecycle:"mutable"`
+	Explorer             string              `toml:"explorer" lifecycle:"mutable"`
+	SuperchainLevel      SuperchainLevel     `toml:"superchain_level" lifecycle:"mutable"`
+	GovernedByOptimism   bool                `toml:"governed_by_optimism" lifecycle:"mutable"`
+	SuperchainTime       *uint64             `toml:"superchain_time" lifecycle:"mutable"`
+	DataAvailabilityType string              `toml:"data_availability_type" lifecycle:"immutable"`
+	ChainID              uint64              `toml:"chain_id" lifecycle:"immutable"`
+	BatchInboxAddr       *ChecksummedAddress `toml:"batch_inbox_addr" lifecycle:"immutable"`
+	BlockTime            uint64              `toml:"block_time" lifecycle:"immutable"`
+	SeqWindowSize        uint64              `toml:"seq_window_size" lifecycle:"immutable"`
+	MaxSequencerDrift    uint64              `toml:"max_sequencer_drift" lifecycle:"immutable"`
+	GasPayingToken       *ChecksummedAddress `toml:"gas_paying_token,omitempty" lifecycle:"immutable"`
+	Hardforks            Hardforks           `toml:"hardforks" lifecycle:"append-only"`
+	Interop              *Interop            `toml:"interop,omitempty" lifecycle:"immutable"`
+	Optimism             Optimism            `toml:"optimism" lifecycle:"immutable"`
+	AltDA                *AltDA              `toml:"alt_da" lifecycle:"mutable"`
+	Genesis              Genesis             `toml:"genesis" lifecycle:"immutable"`
+	Roles                Roles               `toml:"roles" lifecycle:"mutable"`
+	Addresses            Addresses           `toml:"addresses" lifecycle:"mutable"`
 }
 
 func (c Chain) ChainListEntry(superchain Superchain, shortName string) ChainListEntry {

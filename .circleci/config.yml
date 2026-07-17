@@ -495,6 +495,14 @@ workflows:
           requires:
             - build-deployer-binaries
           context: circleci-repo-readonly-authenticated-github-token
+      # Advisory: warns when a PR changes a frozen chain-config field (immutable, or a
+      # past hardfork activation). Intentionally NOT a required status check so that
+      # legitimate clean-ups (e.g. correcting data committed wrong) are not blocked —
+      # a reviewer acknowledges the warning. See superchain/configs/README.md.
+      - run-tool:
+          name: check-immutable-fields
+          tool: check_immutable_fields
+          context: circleci-repo-readonly-authenticated-github-token
       - run-staging-report:
           name: run-staging-report
           requires:
