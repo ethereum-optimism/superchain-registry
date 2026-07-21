@@ -201,6 +201,45 @@ func TestCodegenSyncer_UpdateChainList(t *testing.T) {
 	require.Error(t, err)
 }
 
+func TestCodegenSyncer_UpdateChainListSuperGameTypes(t *testing.T) {
+	chainCfgs := createTestChainConfigs(t)
+	var testChainID uint64
+	for id := range chainCfgs {
+		testChainID = id
+		break
+	}
+
+	for _, test := range []struct {
+		name              string
+		respectedGameType uint32
+		expectedStatus    string
+	}{
+		{name: "super permissioned", respectedGameType: 5, expectedStatus: "permissioned"},
+		{name: "super cannon kona", respectedGameType: 9, expectedStatus: "permissionless"},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			lgr := log.NewLogger(log.DiscardHandler())
+			syncer, err := NewCodegenSyncer(lgr, "testdata", chainCfgs)
+			require.NoError(t, err)
+
+			err = syncer.UpdateChainList(fmt.Sprintf("%d", testChainID), script.ChainConfig{
+				FaultProofStatus: &script.FaultProofStatus{
+					RespectedGameType: test.respectedGameType,
+				},
+			})
+			require.NoError(t, err)
+
+			for _, chain := range syncer.ChainList {
+				if chain.ChainID == testChainID {
+					require.Equal(t, test.expectedStatus, chain.FaultProofs.Status)
+					return
+				}
+			}
+			require.Fail(t, "test chain not found")
+		})
+	}
+}
+
 func TestCodegenSyncer_SyncAll(t *testing.T) {
 	tempDir := t.TempDir()
 	chainCfgs := createTestChainConfigs(t)
