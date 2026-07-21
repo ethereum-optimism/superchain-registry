@@ -2,7 +2,6 @@ name = "Cyber Testnet"
 public_rpc = "https://rpc.testnet.cyber.co"
 sequencer_rpc = "https://cyber.alt.technology/"
 explorer = "https://testnet.cyberscan.co/"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 111557560

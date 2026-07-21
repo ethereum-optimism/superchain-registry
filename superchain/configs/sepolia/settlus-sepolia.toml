@@ -2,7 +2,6 @@ name = "Settlus Sepolia"
 public_rpc = "https://settlus-septestnet.g.alchemy.com/public"
 sequencer_rpc = "https://settlus-sep-testnet-sequencer.g.alchemy.com/"
 explorer = "sepolia.settlus.network"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 5373

@@ -2,7 +2,6 @@ name = "Ozean Poseidon Testnet"
 public_rpc = "https://ozean-testnet.rpc.caldera.xyz/http"
 sequencer_rpc = "https://ozean-testnet.rpc.caldera.xyz/http"
 explorer = "https://ozean-testnet.explorer.caldera.xyz"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 7849306

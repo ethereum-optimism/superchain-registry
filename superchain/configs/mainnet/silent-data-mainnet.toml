@@ -2,7 +2,6 @@ name = "Silent Data Mainnet"
 public_rpc = "https://mainnet.silentdata.com/${SILENTDATA_AUTH_TOKEN}"
 sequencer_rpc = ""
 explorer = "https://explorer-mainnet.rollup.silentdata.com"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 380929

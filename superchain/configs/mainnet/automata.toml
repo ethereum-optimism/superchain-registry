@@ -2,7 +2,6 @@ name = "Automata Mainnet"
 public_rpc = "https://rpc.ata.network"
 sequencer_rpc = "https://automata-mainnet.alt.technology/"
 explorer = "https://explorer.ata.network"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 65536

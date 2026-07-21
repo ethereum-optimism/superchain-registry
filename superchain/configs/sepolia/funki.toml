@@ -2,7 +2,6 @@ name = "Funki Sepolia Testnet"
 public_rpc = "https://funki-testnet.alt.technology"
 sequencer_rpc = "https://funki-testnet.alt.technology"
 explorer = "https://sepolia-sandbox.funkichain.com/"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 3397901

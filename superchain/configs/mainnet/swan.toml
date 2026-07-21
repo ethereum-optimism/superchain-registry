@@ -2,7 +2,6 @@ name = "Swan Chain Mainnet"
 public_rpc = "https://mainnet-rpc.swanchain.org"
 sequencer_rpc = "https://sequencer-mainnet.swanchain.org"
 explorer = "https://swanscan.io"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 254

@@ -113,7 +113,6 @@ name = "testchain"
 public_rpc = ""
 sequencer_rpc = ""
 explorer = ""
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 900
@@ -194,7 +193,6 @@ The first part of the config contains important metadata about your chain. These
 - `public_rpc`: Public RPC endpoint for your chain.
 - `sequencer_rpc`: Sequencer RPC endpoint for your chain.
 - `explorer`: Block explorer for your chain.
-- `superchain_level`: For custom chains, this must be `0`.
 - `governed_by_optimism`: For custom chains, this must be `false`.
 - `data_availability_type`: Which data availability layer your chain uses. Can be `eth-da` or `alt-da`.
 - `chain_id`: Your chain ID. Must match the ID specified in [ethereum-lists/chains](https://github.com/ethereum-lists/chains).

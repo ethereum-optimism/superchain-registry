@@ -2,7 +2,6 @@ name = "Redstone"
 public_rpc = "https://rpc.redstonechain.com"
 sequencer_rpc = "https://rpc.redstonechain.com"
 explorer = "https://explorer.redstone.xyz"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 690
