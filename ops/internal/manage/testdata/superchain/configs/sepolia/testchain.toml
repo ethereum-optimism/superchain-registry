@@ -2,7 +2,6 @@ name = "TestChain"
 public_rpc = "https://foo.bar.net"
 sequencer_rpc = "https://foo.bar.net"
 explorer = "https://foo.bar.net"
-superchain_level = 0
 governed_by_optimism = false
 superchain_time = 0
 data_availability_type = "eth-da"

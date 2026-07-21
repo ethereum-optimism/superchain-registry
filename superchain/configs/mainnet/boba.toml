@@ -2,7 +2,6 @@ name = "Boba Mainnet"
 public_rpc = "https://mainnet.boba.network"
 sequencer_rpc = "https://mainnet.boba.network"
 explorer = "https://bobascan.com"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 288

@@ -3,7 +3,6 @@ chain_id = 11155420
 public_rpc = "https://sepolia.optimism.io"
 sequencer_rpc = "https://sepolia-sequencer.optimism.io"
 explorer = "https://testnet-explorer.optimism.io"
-superchain_level = 1
 governed_by_optimism = true
 superchain_time = 0
 batch_inbox_addr = "0xff00000000000000000000000000000011155420"

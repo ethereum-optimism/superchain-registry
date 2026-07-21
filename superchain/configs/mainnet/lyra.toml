@@ -2,7 +2,6 @@ name = "Lyra Chain"
 public_rpc = "https://rpc.lyra.finance"
 sequencer_rpc = "https://rpc.lyra.finance"
 explorer = "https://explorer.lyra.finance"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 957

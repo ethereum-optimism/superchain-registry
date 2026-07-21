@@ -2,7 +2,6 @@ name = "Celo"
 public_rpc = "https://forno.celo.org"
 sequencer_rpc = "https://cel2-sequencer.celo.org/"
 explorer = "https://celoscan.io/"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 42220

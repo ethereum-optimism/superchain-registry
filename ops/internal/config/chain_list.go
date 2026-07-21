@@ -6,7 +6,6 @@ type ChainListEntry struct {
 	ChainID              uint64               `json:"chainId" toml:"chain_id"`
 	RPC                  []string             `json:"rpc" toml:"rpc"`
 	Explorers            []string             `json:"explorers" toml:"explorers"`
-	SuperchainLevel      SuperchainLevel      `json:"superchainLevel" toml:"superchain_level"`
 	GovernedByOptimism   bool                 `json:"governedByOptimism" toml:"governed_by_optimism"`
 	DataAvailabilityType string               `json:"dataAvailabilityType" toml:"data_availability_type"`
 	Parent               ChainListEntryParent `json:"parent" toml:"parent"`

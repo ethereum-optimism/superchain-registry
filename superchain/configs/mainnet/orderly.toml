@@ -2,7 +2,6 @@ name = "Orderly Mainnet"
 public_rpc = "https://rpc.orderly.network"
 sequencer_rpc = "https://rpc.orderly.network"
 explorer = "https://explorer.orderly.network"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 291

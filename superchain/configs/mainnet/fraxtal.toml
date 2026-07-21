@@ -2,7 +2,6 @@ name = "Fraxtal"
 public_rpc = "https://rpc.frax.com"
 sequencer_rpc = "https://rpc.frax.com"
 explorer = "https://fraxscan.com"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 252

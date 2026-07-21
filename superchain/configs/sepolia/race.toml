@@ -2,7 +2,6 @@ name = "RACE Testnet"
 public_rpc = "https://racetestnet.io"
 sequencer_rpc = "https://racetestnet.io"
 explorer = "https://testnet.racescan.io/"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 6806
