@@ -2,7 +2,6 @@ name = "Cyber Mainnet"
 public_rpc = "https://rpc.cyber.co"
 sequencer_rpc = "https://cyber.alt.technology/"
 explorer = "https://cyberscan.co/"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 7560

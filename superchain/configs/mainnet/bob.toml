@@ -2,7 +2,6 @@ name = "BOB"
 public_rpc = "https://rpc.gobob.xyz"
 sequencer_rpc = "https://rpc.gobob.xyz"
 explorer = "https://explorer.gobob.xyz"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 60808

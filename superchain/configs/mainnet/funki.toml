@@ -2,7 +2,6 @@ name = "Funki"
 public_rpc = "https://rpc-mainnet.funkichain.com"
 sequencer_rpc = "https://rpc-mainnet.funkichain.com"
 explorer = "https://funki.superscan.network"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "alt-da"
 chain_id = 33979

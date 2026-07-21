@@ -9,7 +9,6 @@
     "explorers": [
       "https://testnet-explorer.optimism.io"
     ],
-    "superchainLevel": 1,
     "governedByOptimism": true,
     "dataAvailabilityType": "eth-da",
     "parent": {
@@ -27,7 +26,6 @@
     "explorers": [
       "https://foo.bar.net"
     ],
-    "superchainLevel": 0,
     "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
     "parent": {

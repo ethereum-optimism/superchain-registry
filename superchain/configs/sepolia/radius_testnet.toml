@@ -2,7 +2,6 @@ name = "Radius testnet"
 public_rpc = "testnet-rpc.theradius.xyz"
 sequencer_rpc = "dev-secure.rpc.theradius.xyz"
 explorer = "https://testnet-rpc.theradius.xyz/"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 863

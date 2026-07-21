@@ -2,7 +2,6 @@ name = "RACE Mainnet"
 public_rpc = "https://racemainnet.io"
 sequencer_rpc = "https://racemainnet.io"
 explorer = "https://racescan.io/"
-superchain_level = 0
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 6805

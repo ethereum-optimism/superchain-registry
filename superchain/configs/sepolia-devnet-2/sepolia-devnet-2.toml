@@ -2,7 +2,6 @@ name = "sepolia-devnet-2"
 public_rpc = "https://sepolia-devnet-2.optimism.io/rpc"
 sequencer_rpc = ""
 explorer = ""
-superchain_level = 0
 governed_by_optimism = false
 superchain_time = 0
 data_availability_type = "eth-da"

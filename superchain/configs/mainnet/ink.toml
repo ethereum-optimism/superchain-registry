@@ -2,7 +2,6 @@ name = "Ink"
 public_rpc = "https://rpc-gel.inkonchain.com"
 sequencer_rpc = "https://rpc-gel.inkonchain.com"
 explorer = "https://explorer.inkonchain.com"
-superchain_level = 1
 governed_by_optimism = true
 superchain_time = 1742396400
 data_availability_type = "eth-da"

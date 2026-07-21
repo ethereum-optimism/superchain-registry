@@ -2,7 +2,6 @@ name = "Polynomial"
 public_rpc = "https://rpc.polynomial.fi"
 sequencer_rpc = "https://rpc.polynomial.fi"
 explorer = "https://polynomialscan.io"
-superchain_level = 1
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 8008
