@@ -1,0 +1,19 @@
+# Test file for address validation
+
+# Incorrect addresses (all lowercase)
+[version1.contracts.contract1]
+version = "1.0.0"
+address = "0x5aaeb6053f3e94c9b9a09f33669435e7ef1beaed"
+
+[version1.contracts.contract2]
+version = "1.0.0"
+implementation_address = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
+# Correct addresses (checksummed)
+[version2.contracts.contract1]
+version = "2.0.0"
+address = "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed"
+
+[version2.contracts.contract2]
+version = "2.0.0"
+implementation_address = "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa" 
