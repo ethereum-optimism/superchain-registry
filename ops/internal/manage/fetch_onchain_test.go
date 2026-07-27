@@ -22,7 +22,6 @@ func TestCollectChainsBySuperchain(t *testing.T) {
 
 		require.Equal(t, len(chains[config.SepoliaSuperchain]), 2)
 		require.Equal(t, len(chains[config.MainnetSuperchain]), 0)
-		require.Equal(t, len(chains[config.SepoliaDev0Superchain]), 0)
 	})
 
 	t.Run("single chain", func(t *testing.T) {
@@ -31,7 +30,6 @@ func TestCollectChainsBySuperchain(t *testing.T) {
 
 		require.Equal(t, len(chains[config.SepoliaSuperchain]), 1)
 		require.Equal(t, len(chains[config.MainnetSuperchain]), 0)
-		require.Equal(t, len(chains[config.SepoliaDev0Superchain]), 0)
 	})
 
 	t.Run("two chains", func(t *testing.T) {
@@ -40,7 +38,6 @@ func TestCollectChainsBySuperchain(t *testing.T) {
 
 		require.Equal(t, len(chains[config.SepoliaSuperchain]), 2)
 		require.Equal(t, len(chains[config.MainnetSuperchain]), 0)
-		require.Equal(t, len(chains[config.SepoliaDev0Superchain]), 0)
 	})
 
 	t.Run("fails for non-existent chainId", func(t *testing.T) {
@@ -54,7 +51,6 @@ func TestCollectChainsBySuperchain(t *testing.T) {
 
 		require.Equal(t, len(chains[config.SepoliaSuperchain]), 2)
 		require.Equal(t, len(chains[config.MainnetSuperchain]), 0)
-		require.Equal(t, len(chains[config.SepoliaDev0Superchain]), 0)
 	})
 
 	t.Run("fails for deleted superchain", func(t *testing.T) {

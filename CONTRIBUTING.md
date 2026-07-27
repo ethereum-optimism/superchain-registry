@@ -21,7 +21,6 @@ The Superchain Registry repository contains:
 A superchain target defines a set of layer 2 chains which share a `SuperchainConfig` and `ProtocolVersions` contract deployment on layer 1. It is usually named after the layer 1 chain, possibly with an extra identifier to distinguish devnets.
 
 > **Note**
-> Example: `sepolia` and `sepolia-dev-0` are distinct superchain targets, although they are on the same layer 1 chain.
 
 ### Adding a superchain target
 

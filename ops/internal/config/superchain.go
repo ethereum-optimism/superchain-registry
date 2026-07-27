@@ -14,7 +14,6 @@ type Superchain = string
 const (
 	MainnetSuperchain     Superchain = "mainnet"
 	SepoliaSuperchain     Superchain = "sepolia"
-	SepoliaDev0Superchain Superchain = "sepolia-dev-0"
 )
 
 // FindValidL1URL finds a valid l1-rpc-url for a given superchain by finding matching l1 chainId
