@@ -168,7 +168,7 @@ func (s *CodegenSyncer) UpdateChainList(chainID string, onchainCfg script.ChainC
 
 	if onchainCfg.FaultProofStatus == nil {
 		chainListEntry.FaultProofs = config.FaultProofs{Status: "none"}
-	} else if onchainCfg.FaultProofStatus.RespectedGameType == 0 || onchainCfg.FaultProofStatus.RespectedGameType == 8 {
+	} else if onchainCfg.FaultProofStatus.RespectedGameType == 0 || onchainCfg.FaultProofStatus.RespectedGameType == 8 || onchainCfg.FaultProofStatus.RespectedGameType == 9 {
 		chainListEntry.FaultProofs = config.FaultProofs{Status: "permissionless"}
 	} else {
 		chainListEntry.FaultProofs = config.FaultProofs{Status: "permissioned"}

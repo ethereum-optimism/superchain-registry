@@ -40,7 +40,7 @@ func TestPruneRemovedChains(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, os.WriteFile(paths.ChainListJsonFile(wd), chainListJSON, 0o644))
 
-	addresses := config.AddressesJSON{"123": {}}
+	addresses := config.AddressesJSON{"123": &config.AddressesWithRoles{}}
 	addressesJSON, err := json.Marshal(addresses)
 	require.NoError(t, err)
 	require.NoError(t, os.MkdirAll(filepath.Dir(paths.AddressesFile(wd)), 0o755))
