@@ -825,7 +825,7 @@
   "57073": {
     "AddressManager": "0x9b7C9BbD6d540A8A4dEDd935819fC4408Ba71153",
     "AnchorStateRegistryProxy": "0xEe018bAf058227872540AC60eFbd38b023d9dAe2",
-    "BatchSubmitter": "0x500d7Ea63CF2E501dadaA5feeC1FC19FE2Aa72Ac",
+    "BatchSubmitter": "0x6db6161fC5662450E801398Bad62dD9921216B98",
     "Challenger": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
     "DelayedWETHProxy": "0x57b4C29DAee99a28E6E86778b499361294c134eA",
     "DisputeGameFactoryProxy": "0x10d7B35078d3baabB96Dd45a9143B94be65b12CD",
@@ -846,7 +846,7 @@
     "SuperchainConfig": "0x95703e0982140D16f8ebA6d158FccEde42f04a4C",
     "SystemConfigOwner": "0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A",
     "SystemConfigProxy": "0x62C0a111929fA32ceC2F76aDba54C16aFb6E8364",
-    "UnsafeBlockSigner": "0x7D056B99AA2021864c42E25B4F8cE3BdEAc9463C"
+    "UnsafeBlockSigner": "0x7b322282DF45E537E5de76D60E1432Db3cF3F8E1"
   },
   "60808": {
     "AddressManager": "0xF2dc77c697e892542cC53336178a78Bb313DFDC7",
