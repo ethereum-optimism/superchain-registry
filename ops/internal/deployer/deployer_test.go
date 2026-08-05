@@ -57,6 +57,13 @@ func TestAutodetectBinary(t *testing.T) {
 			shouldError:        false,
 		},
 		{
+			name:               "op-contracts/v7.0.0-rc.4",
+			l1ContractsRelease: "tag://op-contracts/v7.0.0-rc.4",
+			merger:             MergeStateV4_1,
+			binPath:            "op-deployer_v0.7.1",
+			shouldError:        false,
+		},
+		{
 			name:               "op-contracts/v5.0.0",
 			l1ContractsRelease: "tag://op-contracts/v5.0.0",
 			shouldError:        true,

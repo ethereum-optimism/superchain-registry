@@ -212,7 +212,9 @@ func (om OpaqueState) ReadSuperchainConfigProxy() (common.Address, error) {
 func (om OpaqueState) ReadOpcmImpl() (common.Address, error) {
 	return om.queryAddress(
 		"implementationsDeployment.OpcmImpl",
+		"implementationsDeployment.OpcmV2Impl",
 		"implementationsDeployment.opcmAddress",
+		"appliedIntent.opcmAddress",
 	)
 }
 
