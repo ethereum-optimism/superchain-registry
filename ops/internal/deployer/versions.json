@@ -5,5 +5,6 @@
   "op-contracts/v2.0.0": "op-deployer/v0.2.3",
   "op-contracts/v3.0.0": "op-deployer/v0.3.2",
   "op-contracts/v4.0.0": "op-deployer/v0.4.2",
-  "op-contracts/v4.1.0": "op-deployer/v0.4.5"
+  "op-contracts/v4.1.0": "op-deployer/v0.4.5",
+  "op-contracts/v7.0.0": "op-deployer/v0.7.1"
 }
