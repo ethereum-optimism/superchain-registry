@@ -146,6 +146,12 @@ func (om OpaqueState) ReadOptimismPortalProxy(idx int) (common.Address, error) {
 	)
 }
 
+func (om OpaqueState) ReadEthLockboxProxy(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].EthLockboxProxy", idx),
+	)
+}
+
 func (om OpaqueState) ReadL1CrossDomainMessengerProxy(idx int) (common.Address, error) {
 	return om.queryAddress(
 		fmt.Sprintf("opChainDeployments.[%d].L1CrossDomainMessengerProxy", idx),
@@ -188,6 +194,13 @@ func (om OpaqueState) ReadDelayedWethPermissionedGameProxy(idx int) (common.Addr
 	)
 }
 
+func (om OpaqueState) ReadDelayedWethPermissionlessGameProxy(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].DelayedWethPermissionlessGameProxy", idx),
+		fmt.Sprintf("opChainDeployments.[%d].delayedWETHPermissionlessGameProxyAddress", idx),
+	)
+}
+
 func (om OpaqueState) ReadDisputeGameFactoryProxy(idx int) (common.Address, error) {
 	return om.queryAddress(
 		fmt.Sprintf("opChainDeployments.[%d].DisputeGameFactoryProxy", idx),
@@ -199,6 +212,13 @@ func (om OpaqueState) ReadPermissionedDisputeGameImpl(idx int) (common.Address, 
 	return om.queryAddress(
 		fmt.Sprintf("opChainDeployments.[%d].PermissionedDisputeGameImpl", idx),
 		fmt.Sprintf("opChainDeployments.[%d].permissionedDisputeGameAddress", idx),
+	)
+}
+
+func (om OpaqueState) ReadFaultDisputeGameImpl(idx int) (common.Address, error) {
+	return om.queryAddress(
+		fmt.Sprintf("opChainDeployments.[%d].FaultDisputeGameImpl", idx),
+		fmt.Sprintf("opChainDeployments.[%d].faultDisputeGameAddress", idx),
 	)
 }
 
