@@ -873,7 +873,6 @@
     "UnsafeBlockSigner": "0xB18AD28cB78fD2eAfAc6941c24c5135515B796f0"
   },
   "624": {
-    "AddressManager": "0x8173904703995c6BbA59a42B8bBf8405F978758a",
     "BatchSubmitter": "0x68d5BBf3a01ECbB47CE38Cf64a7d6C0eA618040f",
     "Guardian": "0x87aab081Ac9F8ce80fb048f23280DF019036BA1d",
     "L1CrossDomainMessengerProxy": "0x807d21e416434ae92c8E5bcA4d506781aFbBa380",
