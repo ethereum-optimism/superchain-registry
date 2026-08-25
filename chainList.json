@@ -1065,5 +1065,25 @@
     "faultProofs": {
       "status": "permissionless"
     }
+  },
+  {
+    "name": "sepolia-devnet-3",
+    "identifier": "sepolia-devnet-3/sepolia-devnet-3",
+    "chainId": 420130018,
+    "rpc": [
+      "https://sepolia-devnet-3.optimism.io/rpc"
+    ],
+    "explorers": [
+      ""
+    ],
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia-devnet-3"
+    },
+    "faultProofs": {
+      "status": "permissioned"
+    }
   }
 ]
