@@ -1,6 +1,7 @@
 package deployer
 
 import (
+	"bytes"
 	_ "embed"
 	"encoding/json"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/validation"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/superchain"
 	"github.com/hashicorp/go-multierror"
 	"github.com/tomwright/dasel"
@@ -45,17 +47,84 @@ var standardV4_0Intent []byte
 var standardV4_1Intent []byte
 
 func ReadOpaqueStateFile(p string) (OpaqueState, error) {
-	f, err := os.Open(p)
+	data, err := os.ReadFile(p)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open JSON file: %w", err)
 	}
-	defer f.Close()
 
 	var out OpaqueState
-	if err := json.NewDecoder(f).Decode(&out); err != nil {
+	if err := json.Unmarshal(data, &out); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal JSON: %w", err)
 	}
+	if err := rejectLegacyAltDAState(data); err != nil {
+		return nil, err
+	}
 	return out, nil
+}
+
+type legacyAltDAState struct {
+	AppliedIntent struct {
+		Chains []struct {
+			DangerousAltDAConfig json.RawMessage `json:"dangerousAltDAConfig"`
+		} `json:"chains"`
+	} `json:"appliedIntent"`
+	OpChainDeployments []struct {
+		DataAvailabilityChallengeProxyAddress json.RawMessage `json:"dataAvailabilityChallengeProxyAddress"`
+		DataAvailabilityChallengeImplAddress  json.RawMessage `json:"dataAvailabilityChallengeImplAddress"`
+		AltDAChallengeProxy                   json.RawMessage `json:"AltDAChallengeProxy"`
+		AltDAChallengeImpl                    json.RawMessage `json:"AltDAChallengeImpl"`
+	} `json:"opChainDeployments"`
+}
+
+func rejectLegacyAltDAState(data []byte) error {
+	var legacy legacyAltDAState
+	if err := json.Unmarshal(data, &legacy); err != nil {
+		return fmt.Errorf("failed to inspect legacy Alt-DA state: %w", err)
+	}
+
+	for i, chain := range legacy.AppliedIntent.Chains {
+		rawConfig := bytes.TrimSpace(chain.DangerousAltDAConfig)
+		if len(rawConfig) == 0 || bytes.Equal(rawConfig, []byte("null")) {
+			continue
+		}
+		var cfg legacyAltDADeployConfig
+		if err := json.Unmarshal(rawConfig, &cfg); err != nil {
+			return fmt.Errorf("%w: invalid dangerousAltDAConfig for chain %d: %w", ErrUnsupportedDataAvailability, i, err)
+		}
+		if cfg.isSet() {
+			return fmt.Errorf("%w: applied intent chain %d contains dangerousAltDAConfig", ErrUnsupportedDataAvailability, i)
+		}
+	}
+
+	for i, chain := range legacy.OpChainDeployments {
+		addresses := []struct {
+			name string
+			raw  json.RawMessage
+		}{
+			{"dataAvailabilityChallengeProxyAddress", chain.DataAvailabilityChallengeProxyAddress},
+			{"dataAvailabilityChallengeImplAddress", chain.DataAvailabilityChallengeImplAddress},
+			{"AltDAChallengeProxy", chain.AltDAChallengeProxy},
+			{"AltDAChallengeImpl", chain.AltDAChallengeImpl},
+		}
+		for _, address := range addresses {
+			if legacyAltDAAddressIsSet(address.raw) {
+				return fmt.Errorf("%w: deployed chain %d contains %s", ErrUnsupportedDataAvailability, i, address.name)
+			}
+		}
+	}
+	return nil
+}
+
+func legacyAltDAAddressIsSet(raw json.RawMessage) bool {
+	raw = bytes.TrimSpace(raw)
+	if len(raw) == 0 || bytes.Equal(raw, []byte("null")) {
+		return false
+	}
+	var value string
+	if err := json.Unmarshal(raw, &value); err != nil {
+		return true
+	}
+	return !common.IsHexAddress(value) || common.HexToAddress(value) != (common.Address{})
 }
 
 type StateMerger = func(state OpaqueState) (OpaqueMap, OpaqueState, error)

@@ -15,14 +15,88 @@ import (
 const chainListUrl = "https://chainid.network/chains_mini.json"
 
 var (
-	ErrDuplicateChainID    = fmt.Errorf("duplicate chain ID")
-	ErrDuplicateShortName  = fmt.Errorf("duplicate short name")
-	ErrGenesisHashMismatch = fmt.Errorf("genesis hash mismatch")
+	ErrDuplicateChainID            = fmt.Errorf("duplicate chain ID")
+	ErrDuplicateShortName          = fmt.Errorf("duplicate short name")
+	ErrGenesisHashMismatch         = fmt.Errorf("genesis hash mismatch")
+	ErrUnsupportedDataAvailability = fmt.Errorf("unsupported data availability for new registry entry")
 )
+
+// legacyAltDAChains identifies the existing deployed networks whose registry
+// metadata must remain readable. No new entries may be added to this list.
+var legacyAltDAChains = map[string]uint64{
+	"mainnet/automata":            65536,
+	"mainnet/celo":                42220,
+	"mainnet/cyber":               7560,
+	"mainnet/fraxtal":             252,
+	"mainnet/funki":               33979,
+	"mainnet/lyra":                957,
+	"mainnet/orderly":             291,
+	"mainnet/redstone":            690,
+	"mainnet/silent-data-mainnet": 380929,
+	"mainnet/xterio-eth":          2702128,
+	"sepolia/celo-sep":            11142220,
+	"sepolia/funki":               3397901,
+}
 
 type GlobalChainIDs struct {
 	ChainIDs   map[uint64]bool
 	ShortNames map[string]bool
+}
+
+// ValidateNewChainDataAvailability restricts registry intake to Ethereum DA without changing existing chain records.
+func ValidateNewChainDataAvailability(cfg *config.Chain) error {
+	if cfg.DataAvailabilityType != "eth-da" {
+		return fmt.Errorf(
+			"%w: data_availability_type must be %q, got %q",
+			ErrUnsupportedDataAvailability,
+			"eth-da",
+			cfg.DataAvailabilityType,
+		)
+	}
+	if cfg.AltDA != nil {
+		return fmt.Errorf("%w: alt_da must not be configured", ErrUnsupportedDataAvailability)
+	}
+	if cfg.Addresses.DAChallengeAddress != nil {
+		return fmt.Errorf("%w: addresses.DAChallengeAddress must not be configured", ErrUnsupportedDataAvailability)
+	}
+	return nil
+}
+
+// ValidateRegistryDataAvailability enforces Ethereum DA for the complete
+// registry tree while preserving the exact set of existing legacy networks.
+func ValidateRegistryDataAvailability(chains []DiskChainConfig) error {
+	seenLegacy := make(map[string]bool, len(legacyAltDAChains))
+	for _, chain := range chains {
+		key := fmt.Sprintf("%s/%s", chain.Superchain, chain.ShortName)
+		legacyChainID, isLegacy := legacyAltDAChains[key]
+		if !isLegacy {
+			if err := ValidateNewChainDataAvailability(chain.Config); err != nil {
+				return fmt.Errorf("chain %s: %w", key, err)
+			}
+			continue
+		}
+
+		if chain.Config.ChainID != legacyChainID {
+			return fmt.Errorf("legacy Alt-DA chain %s must have chain ID %d, got %d", key, legacyChainID, chain.Config.ChainID)
+		}
+		if chain.Config.DataAvailabilityType != "alt-da" {
+			return fmt.Errorf("legacy Alt-DA chain %s must retain data_availability_type %q", key, "alt-da")
+		}
+		if chain.Config.Addresses.DAChallengeAddress != nil {
+			return fmt.Errorf("legacy Alt-DA chain %s contains retired addresses.DAChallengeAddress", key)
+		}
+		if seenLegacy[key] {
+			return fmt.Errorf("legacy Alt-DA chain %s appears more than once", key)
+		}
+		seenLegacy[key] = true
+	}
+
+	for key := range legacyAltDAChains {
+		if !seenLegacy[key] {
+			return fmt.Errorf("legacy Alt-DA chain %s is missing from the registry", key)
+		}
+	}
+	return nil
 }
 
 func ValidateUniqueness(

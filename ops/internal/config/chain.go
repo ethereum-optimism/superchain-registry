@@ -47,10 +47,11 @@ type Chain struct {
 	Hardforks            Hardforks           `toml:"hardforks"`
 	Interop              *Interop            `toml:"interop,omitempty"`
 	Optimism             Optimism            `toml:"optimism"`
-	AltDA                *AltDA              `toml:"alt_da"`
-	Genesis              Genesis             `toml:"genesis"`
-	Roles                Roles               `toml:"roles"`
-	Addresses            Addresses           `toml:"addresses"`
+	// AltDA is retained only to decode existing registry entries. New staged chains must use Ethereum DA.
+	AltDA     *AltDA    `toml:"alt_da"`
+	Genesis   Genesis   `toml:"genesis"`
+	Roles     Roles     `toml:"roles"`
+	Addresses Addresses `toml:"addresses"`
 }
 
 func (c Chain) ChainListEntry(superchain Superchain, shortName string) ChainListEntry {
@@ -106,6 +107,7 @@ type SystemConfig struct {
 	BlobBaseFeeScalar *uint64            `json:"blobBaseFeeScalar,omitempty" toml:"blobBaseFeeScalar,omitempty"`
 }
 
+// AltDA contains compatibility metadata for existing registry entries.
 type AltDA struct {
 	DaChallengeContractAddress ChecksummedAddress `toml:"da_challenge_contract_address"`
 	DaChallengeWindow          uint64             `toml:"da_challenge_window"`
@@ -148,7 +150,8 @@ type Addresses struct {
 	MIPS                              *ChecksummedAddress `toml:"MIPS,omitempty" json:"MIPS,omitempty"`
 	PermissionedDisputeGame           *ChecksummedAddress `toml:"PermissionedDisputeGame,omitempty" json:"PermissionedDisputeGame,omitempty"`
 	PreimageOracle                    *ChecksummedAddress `toml:"PreimageOracle,omitempty" json:"PreimageOracle,omitempty"`
-	DAChallengeAddress                *ChecksummedAddress `toml:"DAChallengeAddress,omitempty" json:"DAChallengeAddress,omitempty"`
+	// DAChallengeAddress is retained only to detect and reject legacy staged configs.
+	DAChallengeAddress *ChecksummedAddress `toml:"DAChallengeAddress,omitempty" json:"DAChallengeAddress,omitempty"`
 }
 
 type AddressesJSON jsonutil.LazySortedJsonMap[string, *AddressesWithRoles]

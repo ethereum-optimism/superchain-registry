@@ -23,6 +23,15 @@ func mainErr() error {
 		return fmt.Errorf("failed to get working directory: %w", err)
 	}
 
+	chainCfgs, err := manage.CollectChainConfigs(paths.SuperchainConfigsDir(wd))
+	if err != nil {
+		return fmt.Errorf("failed to collect registry chain configs: %w", err)
+	}
+	if err := manage.ValidateRegistryDataAvailability(chainCfgs); err != nil {
+		return fmt.Errorf("invalid registry data availability: %w", err)
+	}
+	output.WriteOK("registry data availability check passed")
+
 	stagedChainCfgs, err := manage.StagedChainConfigs(wd)
 	if errors.Is(err, manage.ErrNoStagedConfig) {
 		output.WriteOK("no staged chain config found, exiting")
@@ -30,6 +39,11 @@ func mainErr() error {
 	}
 	if err != nil {
 		return fmt.Errorf("failed to get staged chain configs: %w", err)
+	}
+	for _, chainCfg := range stagedChainCfgs {
+		if err := manage.ValidateNewChainDataAvailability(&chainCfg.Chain); err != nil {
+			return fmt.Errorf("invalid data availability for staged chain %s: %w", chainCfg.ShortName, err)
+		}
 	}
 
 	globalChainData, err := manage.FetchGlobalChainIDs()

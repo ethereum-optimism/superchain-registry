@@ -4,6 +4,7 @@ import (
 	"bytes"
 	_ "embed"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -14,6 +15,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 )
 
@@ -22,6 +24,8 @@ var versionsJSON []byte
 
 // contractVersions maps contract versions to deployer versions
 var contractVersions map[string]string
+
+var ErrUnsupportedDataAvailability = errors.New("Alt-DA is not supported for new registry entries")
 
 type BinaryPicker interface {
 	Path() string
@@ -162,14 +166,67 @@ func (d *OpDeployer) runCommand(args ...string) ([]byte, error) {
 	return output, nil
 }
 
-// inspectCommand runs an inspect command and unmarshals the output
+func (d *OpDeployer) inspectCommandRaw(workdir, chainId, subcommand string) ([]byte, error) {
+	return d.runCommand("inspect", subcommand, "--workdir", workdir, chainId)
+}
+
+func decodeInspectOutput(subcommand string, output []byte, result interface{}) error {
+	if err := json.Unmarshal(output, result); err != nil {
+		return fmt.Errorf("failed to parse op-deployer inspect %s output: %w", subcommand, err)
+	}
+	return nil
+}
+
+// inspectCommand runs an inspect command and unmarshals the output.
 func (d *OpDeployer) inspectCommand(workdir, chainId, subcommand string, result interface{}) error {
-	output, err := d.runCommand("inspect", subcommand, "--workdir", workdir, chainId)
+	output, err := d.inspectCommandRaw(workdir, chainId, subcommand)
 	if err != nil {
 		return err
 	}
-	if err := json.Unmarshal(output, result); err != nil {
-		return fmt.Errorf("failed to parse op-deployer inspect %s output: %w", subcommand, err)
+	return decodeInspectOutput(subcommand, output, result)
+}
+
+type legacyAltDADeployConfig struct {
+	UseAltDA                   bool           `json:"useAltDA"`
+	DACommitmentType           string         `json:"daCommitmentType"`
+	DAChallengeWindow          uint64         `json:"daChallengeWindow"`
+	DAResolveWindow            uint64         `json:"daResolveWindow"`
+	DABondSize                 uint64         `json:"daBondSize"`
+	DAResolverRefundPercentage uint64         `json:"daResolverRefundPercentage"`
+	DAChallengeProxy           common.Address `json:"daChallengeProxy"`
+}
+
+func (c legacyAltDADeployConfig) isSet() bool {
+	return c.UseAltDA ||
+		c.DACommitmentType != "" ||
+		c.DAChallengeWindow != 0 ||
+		c.DAResolveWindow != 0 ||
+		c.DABondSize != 0 ||
+		c.DAResolverRefundPercentage != 0 ||
+		c.DAChallengeProxy != (common.Address{})
+}
+
+func rejectLegacyAltDADeployConfig(output []byte) error {
+	var legacy legacyAltDADeployConfig
+	if err := decodeInspectOutput("deploy-config", output, &legacy); err != nil {
+		return err
+	}
+	if legacy.isSet() {
+		return ErrUnsupportedDataAvailability
+	}
+	return nil
+}
+
+func rejectLegacyAltDARollupConfig(output []byte) error {
+	var compatibility struct {
+		AltDA json.RawMessage `json:"alt_da"`
+	}
+	if err := decodeInspectOutput("rollup", output, &compatibility); err != nil {
+		return err
+	}
+	altDA := bytes.TrimSpace(compatibility.AltDA)
+	if len(altDA) != 0 && !bytes.Equal(altDA, []byte("null")) {
+		return ErrUnsupportedDataAvailability
 	}
 	return nil
 }
@@ -260,8 +317,16 @@ func (d *OpDeployer) InspectRollup(statePath, chainId string) (*rollup.Config, e
 	}
 	defer os.RemoveAll(workdir)
 
+	output, err := d.inspectCommandRaw(workdir, chainId, "rollup")
+	if err != nil {
+		return nil, err
+	}
+	if err := rejectLegacyAltDARollupConfig(output); err != nil {
+		return nil, err
+	}
+
 	var rollupConfig rollup.Config
-	if err := d.inspectCommand(workdir, chainId, "rollup", &rollupConfig); err != nil {
+	if err := decodeInspectOutput("rollup", output, &rollupConfig); err != nil {
 		return nil, err
 	}
 
@@ -275,8 +340,16 @@ func (d *OpDeployer) InspectDeployConfig(statePath, chainId string) (*genesis.De
 	}
 	defer os.RemoveAll(workdir)
 
+	output, err := d.inspectCommandRaw(workdir, chainId, "deploy-config")
+	if err != nil {
+		return nil, err
+	}
+	if err := rejectLegacyAltDADeployConfig(output); err != nil {
+		return nil, err
+	}
+
 	var deployConfig genesis.DeployConfig
-	if err := d.inspectCommand(workdir, chainId, "deploy-config", &deployConfig); err != nil {
+	if err := decodeInspectOutput("deploy-config", output, &deployConfig); err != nil {
 		return nil, err
 	}
 
