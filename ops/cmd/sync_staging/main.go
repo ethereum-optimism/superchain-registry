@@ -116,6 +116,10 @@ func action(cliCtx *cli.Context) error {
 
 	var chainIds []uint64
 	for _, chainCfg := range stagedChainCfgs {
+		if err := manage.ValidateNewChainDataAvailability(&chainCfg.Chain); err != nil {
+			return fmt.Errorf("invalid data availability for staged chain %s: %w", chainCfg.ShortName, err)
+		}
+
 		genesisFilename := path.Join(stagingDir, chainCfg.ShortName+".json.zst")
 		genesis, err := manage.ReadGenesis(wd, genesisFilename)
 		if err != nil {

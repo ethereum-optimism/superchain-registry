@@ -63,17 +63,6 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 		EIP1559DenominatorCanyon: dc.EIP1559DenominatorCanyon,
 	}
 
-	if dc.UseAltDA {
-		cfg.AltDA = &config.AltDA{
-			DaChallengeContractAddress: config.ChecksummedAddress(dc.DAChallengeProxy),
-			DaChallengeWindow:          dc.DAChallengeWindow,
-			DaResolveWindow:            dc.DAResolveWindow,
-			DaCommitmentType:           dc.DACommitmentType,
-		}
-		cfg.Addresses.DAChallengeAddress = config.NewChecksummedAddress(dc.DAChallengeProxy)
-		cfg.DataAvailabilityType = "alt-da"
-	}
-
 	cfg.Genesis = config.Genesis{
 		L2Time: rollup.Genesis.L2Time,
 		L1: config.GenesisRef{

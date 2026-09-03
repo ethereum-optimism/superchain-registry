@@ -16,7 +16,7 @@ If you are deploying a standard chain, it _must_ be deployed with `op-deployer` 
 the [docs](https://docs.optimism.io/chain-operators/tools/op-deployer) for more information on how to use it.
 
 > [!TIP]
-> We recommend that most chains use `op-deployer`. `op-deployer` can be configured to support L3s, alt-DA and custom gas token chains.
+> We recommend that most chains use `op-deployer`. `op-deployer` can be configured to support L3s and custom gas token chains.
 > If you do not use `op-deployer`, you will need to manually create your config file.
 > See [Adding a custom chain](#adding-a-custom-chain) below for more.
 
@@ -94,7 +94,7 @@ A member of our team will review your PR. When ready, we will generate code from
 ## Adding a custom chain
 
 We **strongly recommend** that you use `op-deployer` to deploy your chain.
-`op-deployer` can be configured to create L3s, alt-DA and custom gas token chains.
+`op-deployer` can be configured to create L3s and custom gas token chains.
 (See the [`op-deployer` docs](https://devdocs.optimism.io/op-deployer/) for more.)
 However, if your chain requires further modifications, you may need to use a custom deployment method and
 manually create the files needed to add your chain to the Superchain Registry.
@@ -194,7 +194,8 @@ The first part of the config contains important metadata about your chain. These
 - `sequencer_rpc`: Sequencer RPC endpoint for your chain.
 - `explorer`: Block explorer for your chain.
 - `governed_by_optimism`: For custom chains, this must be `false`.
-- `data_availability_type`: Which data availability layer your chain uses. Can be `eth-da` or `alt-da`.
+- `data_availability_type`: Must be `eth-da` for new chains. Existing `alt-da` values are retained as legacy network
+  metadata and are not accepted for new registry entries.
 - `chain_id`: Your chain ID. Must match the ID specified in [ethereum-lists/chains](https://github.com/ethereum-lists/chains).
 - `deployment_tx_hash`: Transaction hash of the transaction generated to deploy your chain.
 - `deployment_l1_contracts_version`: Must match the OP Contracts version tag that was used to deploy your L1 contracts.

@@ -116,6 +116,70 @@ func TestVersionsMapInitialization(t *testing.T) {
 	require.Equal(t, actualVersion, expectedVersion)
 }
 
+func TestRejectLegacyAltDADeployConfig(t *testing.T) {
+	tests := []struct {
+		name    string
+		output  string
+		wantErr bool
+	}{
+		{name: "absent", output: `{}`},
+		{
+			name: "disabled zero values",
+			output: `{
+				"useAltDA": false,
+				"daCommitmentType": "",
+				"daChallengeWindow": 0,
+				"daResolveWindow": 0,
+				"daBondSize": 0,
+				"daResolverRefundPercentage": 0
+			}`,
+		},
+		{name: "enabled", output: `{"useAltDA":true}`, wantErr: true},
+		{name: "commitment type", output: `{"daCommitmentType":"KeccakCommitment"}`, wantErr: true},
+		{name: "challenge window", output: `{"daChallengeWindow":1}`, wantErr: true},
+		{name: "resolve window", output: `{"daResolveWindow":1}`, wantErr: true},
+		{name: "bond size", output: `{"daBondSize":1}`, wantErr: true},
+		{name: "resolver refund", output: `{"daResolverRefundPercentage":1}`, wantErr: true},
+		{name: "zero challenge proxy", output: `{"daChallengeProxy":"0x0000000000000000000000000000000000000000"}`},
+		{name: "challenge proxy", output: `{"daChallengeProxy":"0x1111111111111111111111111111111111111111"}`, wantErr: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := rejectLegacyAltDADeployConfig([]byte(tt.output))
+			if tt.wantErr {
+				require.ErrorIs(t, err, ErrUnsupportedDataAvailability)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestRejectLegacyAltDARollupConfig(t *testing.T) {
+	tests := []struct {
+		name    string
+		output  string
+		wantErr bool
+	}{
+		{name: "absent", output: `{}`},
+		{name: "null", output: `{"alt_da":null}`},
+		{name: "empty object", output: `{"alt_da":{}}`, wantErr: true},
+		{name: "configured", output: `{"alt_da":{"da_commitment_type":"KeccakCommitment"}}`, wantErr: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := rejectLegacyAltDARollupConfig([]byte(tt.output))
+			if tt.wantErr {
+				require.ErrorIs(t, err, ErrUnsupportedDataAvailability)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
 func TestBinaryInvocation(t *testing.T) {
 	cacheDir := os.Getenv("DEPLOYER_CACHE_DIR")
 	require.NotEmpty(t, cacheDir)
