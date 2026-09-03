@@ -6,7 +6,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
+	"github.com/tomwright/dasel"
 )
 
 func TestMergeState(t *testing.T) {
@@ -41,4 +43,30 @@ func TestMergeState(t *testing.T) {
 			require.JSONEq(t, string(expectedIntent), string(mergedIntentJSON), "expected intent invalid")
 		})
 	}
+}
+
+func TestMergeStateV4_1CopiesOperatorFeeVaultRecipient(t *testing.T) {
+	const expected = "0xea9ecc2f4d32e075e961afffd522bbf88bba40a9"
+
+	userIntent, err := StandardIntentV4_1(11155111)
+	require.NoError(t, err)
+	userIntentNode := dasel.New(userIntent)
+	require.NoError(t, userIntentNode.Put("l1ChainID", int64(11155111)))
+	mustPutString(userIntentNode, "chains.[0].operatorFeeVaultRecipient", common.HexToAddress(expected))
+
+	userState, err := StandardStateV4(11155111)
+	require.NoError(t, err)
+	userState["appliedIntent"] = userIntent
+	require.NoError(t, dasel.New(userState).Put("opChainDeployments.[0].startBlock", map[string]any{
+		"hash":      common.Hash{}.Hex(),
+		"number":    "0x0",
+		"timestamp": "0x0",
+	}))
+
+	mergedIntent, _, err := MergeStateV4_1(userState)
+	require.NoError(t, err)
+
+	actual, err := QueryOpaqueMap[string](OpaqueState(mergedIntent), "chains.[0].operatorFeeVaultRecipient")
+	require.NoError(t, err)
+	require.Equal(t, common.HexToAddress(expected).Hex(), actual)
 }
