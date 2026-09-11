@@ -115,15 +115,18 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	chainCfg := stagedChainCfgs[0]
 	var stdConfigs validation.ConfigParams
 	var stdRoles validation.RolesConfig
+	var standardVersions validation.Versions
 	var l1RPCURL string
 	switch chainCfg.Superchain {
 	case config.MainnetSuperchain:
 		stdConfigs = validation.StandardConfigParamsMainnet
 		stdRoles = validation.StandardConfigRolesMainnet
+		standardVersions = validation.StandardVersionsMainnet
 		l1RPCURL = cliCtx.String(MainnetRPCURLFlag.Name)
 	case config.SepoliaSuperchain:
 		stdConfigs = validation.StandardConfigParamsSepolia
 		stdRoles = validation.StandardConfigRolesSepolia
+		standardVersions = validation.StandardVersionsSepolia
 		l1RPCURL = cliCtx.String(SepoliaRPCURLFlag.Name)
 	default:
 		output.WriteWarn("skipping staging report for chain %s in unsupported superchain: %s",
@@ -137,7 +140,10 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 
 	contractsVersion := validation.Semver(chainCfg.DeploymentL1ContractsVersion)
 	stdPrestate := validation.StandardPrestates.StablePrestate()
-	stdVersions := validation.StandardVersionsMainnet[contractsVersion]
+	stdVersions, ok := standardVersions[contractsVersion]
+	if !ok {
+		return fmt.Errorf("standard contracts version not found for %s: %s", chainCfg.Superchain, contractsVersion)
+	}
 
 	rpcClient, err := rpc.Dial(l1RPCURL)
 	if err != nil {
