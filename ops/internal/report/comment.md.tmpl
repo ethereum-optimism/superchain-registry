@@ -45,12 +45,35 @@
 |---|-------------------|----------------------------------------------|----------------------------------------------|
 | {{ checkmarkUint .StdConfig.Proofs.Permissioned.GameType .Report.L1.Proofs.Permissioned.GameType }} | GameType | `{{ .StdConfig.Proofs.Permissioned.GameType }}` | `{{ .Report.L1.Proofs.Permissioned.GameType }}` |
 | {{ checkmarkHash .StdPrestate.Hash .Report.L1.Proofs.Permissioned.AbsolutePrestate }} | AbsolutePrestate | `{{ .StdPrestate.Hash }}` | `{{ .Report.L1.Proofs.Permissioned.AbsolutePrestate }}` |
+{{- /* Bisection parameters are only rendered when the standard defines them for this game type.
+       SUPER_PERMISSIONED (5) is not a bisection game, so the standard has no depth/clock params for it. */ -}}
+{{- if .StdConfig.Proofs.Permissioned.MaxGameDepth }}
 | {{ checkmarkUint64 .StdConfig.Proofs.Permissioned.MaxGameDepth .Report.L1.Proofs.Permissioned.MaxGameDepth }} | MaxGameDepth | `{{ .StdConfig.Proofs.Permissioned.MaxGameDepth }}` | `{{ .Report.L1.Proofs.Permissioned.MaxGameDepth }}` |
 | {{ checkmarkUint64 .StdConfig.Proofs.Permissioned.SplitDepth .Report.L1.Proofs.Permissioned.SplitDepth }} | SplitDepth | `{{ .StdConfig.Proofs.Permissioned.SplitDepth }}` | `{{ .Report.L1.Proofs.Permissioned.SplitDepth }}` |
 | {{ checkmarkUint64 .StdConfig.Proofs.Permissioned.MaxClockDuration .Report.L1.Proofs.Permissioned.MaxClockDuration }} | MaxClockDuration | `{{ .StdConfig.Proofs.Permissioned.MaxClockDuration }}` | `{{ .Report.L1.Proofs.Permissioned.MaxClockDuration }}` |
 | {{ checkmarkUint64 .StdConfig.Proofs.Permissioned.ClockExtension .Report.L1.Proofs.Permissioned.ClockExtension }} | ClockExtension | `{{ .StdConfig.Proofs.Permissioned.ClockExtension }}` | `{{ .Report.L1.Proofs.Permissioned.ClockExtension }}` |
+{{- end }}
 
 </details>
+{{- with .Report.L1.Proofs.Permissionless }}
+
+<details open>
+
+<summary>Permissionless Proofs</summary>
+
+| | Contract           | Std Param                                    | Got Param                                    |
+|---|-------------------|----------------------------------------------|----------------------------------------------|
+| {{ checkmarkUint $.StdConfig.Proofs.Permissionless.GameType .GameType }} | GameType | `{{ $.StdConfig.Proofs.Permissionless.GameType }}` | `{{ .GameType }}` |
+| {{ checkmarkHash $.StdPrestate.Hash .AbsolutePrestate }} | AbsolutePrestate | `{{ $.StdPrestate.Hash }}` | `{{ .AbsolutePrestate }}` |
+{{- if $.StdConfig.Proofs.Permissionless.MaxGameDepth }}
+| {{ checkmarkUint64 $.StdConfig.Proofs.Permissionless.MaxGameDepth .MaxGameDepth }} | MaxGameDepth | `{{ $.StdConfig.Proofs.Permissionless.MaxGameDepth }}` | `{{ .MaxGameDepth }}` |
+| {{ checkmarkUint64 $.StdConfig.Proofs.Permissionless.SplitDepth .SplitDepth }} | SplitDepth | `{{ $.StdConfig.Proofs.Permissionless.SplitDepth }}` | `{{ .SplitDepth }}` |
+| {{ checkmarkUint64 $.StdConfig.Proofs.Permissionless.MaxClockDuration .MaxClockDuration }} | MaxClockDuration | `{{ $.StdConfig.Proofs.Permissionless.MaxClockDuration }}` | `{{ .MaxClockDuration }}` |
+| {{ checkmarkUint64 $.StdConfig.Proofs.Permissionless.ClockExtension .ClockExtension }} | ClockExtension | `{{ $.StdConfig.Proofs.Permissionless.ClockExtension }}` | `{{ .ClockExtension }}` |
+{{- end }}
+
+</details>
+{{- end }}
 
 <details open>
 

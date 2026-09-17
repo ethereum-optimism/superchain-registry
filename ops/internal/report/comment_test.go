@@ -53,6 +53,82 @@ func TestRenderComment(t *testing.T) {
 		require.Equal(t, string(expComment), comment)
 	})
 
+	t.Run("proof sections follow the standard game types", func(t *testing.T) {
+		l1ReportJSON, err := os.ReadFile("testdata/l1-report.json")
+		require.NoError(t, err)
+
+		var l1Report L1Report
+		require.NoError(t, json.Unmarshal(l1ReportJSON, &l1Report))
+
+		stdPrestate := validation.Prestate{
+			Hash: validation.Hash(common.HexToHash("0x038512e02c4c3f7bdaec27d00edf55b7155e0905301e1a88083e4e0a6764d54c")),
+		}
+		render := func(t *testing.T, report L1Report, stdConfig validation.ConfigParams) string {
+			comment, err := RenderComment(
+				&Report{L1: &report, GeneratedAt: time.Unix(1234, 0)},
+				stdConfig,
+				validation.StandardConfigRolesSepolia,
+				stdPrestate,
+				validation.StandardVersionsSepolia[validation.Semver160],
+				"1234567890abcdef",
+				"testChainShortName",
+			)
+			require.NoError(t, err)
+			return comment
+		}
+
+		t.Run("super permissioned standard has no bisection rows", func(t *testing.T) {
+			std := validation.StandardConfigParamsSepolia
+			require.Zero(t, std.Proofs.Permissioned.MaxGameDepth, "SUPER_PERMISSIONED must not define bisection params")
+
+			comment := render(t, l1Report, std)
+			require.Contains(t, comment, "| ⚠️ | GameType | `5` | `1` |")
+			require.NotContains(t, comment, "| ⚠️ | MaxGameDepth | `0` |")
+			require.NotContains(t, comment, "Permissionless Proofs")
+		})
+
+		t.Run("legacy permissioned standard renders bisection rows", func(t *testing.T) {
+			std := validation.StandardConfigParamsSepolia
+			std.Proofs.Permissioned = validation.FDGParams{
+				GameType:         1,
+				MaxGameDepth:     73,
+				SplitDepth:       30,
+				MaxClockDuration: 302400,
+				ClockExtension:   10800,
+			}
+
+			comment := render(t, l1Report, std)
+			require.Contains(t, comment, "| ✅ | GameType | `1` | `1` |")
+			require.Contains(t, comment, "| ✅ | MaxGameDepth | `73` | `73` |")
+			require.Contains(t, comment, "| ✅ | SplitDepth | `30` | `30` |")
+			require.Contains(t, comment, "| ✅ | MaxClockDuration | `302400` | `302400` |")
+			require.Contains(t, comment, "| ✅ | ClockExtension | `10800` | `10800` |")
+		})
+
+		t.Run("permissionless report renders against permissionless standard", func(t *testing.T) {
+			std := validation.StandardConfigParamsSepolia
+			require.EqualValues(t, 9, std.Proofs.Permissionless.GameType)
+
+			report := l1Report
+			report.Proofs.Permissionless = &L1FDGReport{
+				GameType:         9,
+				AbsolutePrestate: common.Hash(stdPrestate.Hash),
+				MaxGameDepth:     73,
+				SplitDepth:       30,
+				MaxClockDuration: 302400,
+				ClockExtension:   10801,
+			}
+
+			comment := render(t, report, std)
+			require.Contains(t, comment, "<summary>Permissionless Proofs</summary>")
+			require.Contains(t, comment, "| ✅ | GameType | `9` | `9` |")
+			require.Contains(t, comment, "| ✅ | MaxGameDepth | `73` | `73` |")
+			require.Contains(t, comment, "| ✅ | SplitDepth | `30` | `30` |")
+			require.Contains(t, comment, "| ✅ | MaxClockDuration | `302400` | `302400` |")
+			require.Contains(t, comment, "| ⚠️ | ClockExtension | `10800` | `10801` |")
+		})
+	})
+
 	t.Run("error states", func(t *testing.T) {
 		comment, err := RenderComment(
 			&Report{
