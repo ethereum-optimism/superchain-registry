@@ -42,12 +42,8 @@
 
 | | Contract           | Std Param                                    | Got Param                                    |
 |---|-------------------|----------------------------------------------|----------------------------------------------|
-| ✅ | GameType | `1` | `1` |
+| ⚠️ | GameType | `5` | `1` |
 | ✅ | AbsolutePrestate | `0x038512e02c4c3f7bdaec27d00edf55b7155e0905301e1a88083e4e0a6764d54c` | `0x038512e02c4c3f7bdaec27d00edf55b7155e0905301e1a88083e4e0a6764d54c` |
-| ✅ | MaxGameDepth | `73` | `73` |
-| ✅ | SplitDepth | `30` | `30` |
-| ✅ | MaxClockDuration | `302400` | `302400` |
-| ✅ | ClockExtension | `10800` | `10800` |
 
 </details>
 
