@@ -147,6 +147,8 @@ type Addresses struct {
 	FaultDisputeGame                  *ChecksummedAddress `toml:"FaultDisputeGame,omitempty" json:"FaultDisputeGame,omitempty"`
 	MIPS                              *ChecksummedAddress `toml:"MIPS,omitempty" json:"MIPS,omitempty"`
 	PermissionedDisputeGame           *ChecksummedAddress `toml:"PermissionedDisputeGame,omitempty" json:"PermissionedDisputeGame,omitempty"`
+	SuperFaultDisputeGame             *ChecksummedAddress `toml:"SuperFaultDisputeGame,omitempty" json:"SuperFaultDisputeGame,omitempty"`
+	SuperPermissionedDisputeGame      *ChecksummedAddress `toml:"SuperPermissionedDisputeGame,omitempty" json:"SuperPermissionedDisputeGame,omitempty"`
 	PreimageOracle                    *ChecksummedAddress `toml:"PreimageOracle,omitempty" json:"PreimageOracle,omitempty"`
 	DAChallengeAddress                *ChecksummedAddress `toml:"DAChallengeAddress,omitempty" json:"DAChallengeAddress,omitempty"`
 }
@@ -177,6 +179,8 @@ func CreateAddressesWithRolesFromFetcher(addrs script.Addresses, roles addresses
 			FaultDisputeGame:                  NewChecksummedAddress(addrs.FaultDisputeGameImpl),
 			MIPS:                              NewChecksummedAddress(addrs.MipsImpl),
 			PermissionedDisputeGame:           NewChecksummedAddress(addrs.PermissionedDisputeGameImpl),
+			SuperFaultDisputeGame:             NewChecksummedAddress(addrs.SuperFaultDisputeGameImpl),
+			SuperPermissionedDisputeGame:      NewChecksummedAddress(addrs.SuperPermissionedDisputeGameImpl),
 			PreimageOracle:                    NewChecksummedAddress(addrs.PreimageOracleImpl),
 		},
 		Roles: Roles{
