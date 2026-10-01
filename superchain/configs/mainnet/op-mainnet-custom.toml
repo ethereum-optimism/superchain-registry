@@ -1,2 +1,8 @@
-[roles]
-ProxyAdminOwner = "0x06EE840642a33367ee59fCA237F270d5119d1356"
+git checkout main
+git pull origin main
+
+git rm superchain/configs/mainnet/op-mainnet-custom.toml
+
+git commit -m "Remove invalid custom OP Mainnet chain config"
+
+git push origin main
