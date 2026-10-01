@@ -665,7 +665,7 @@
   name = "Radius testnet"
   identifier = "sepolia/radius_testnet"
   chain_id = 863
-  rpc = ["testnet-rpc.theradius.xyz"]
+  rpc = ["https://testnet-rpc.theradius.xyz"]
   explorers = ["https://testnet-rpc.theradius.xyz/"]
   governed_by_optimism = false
   data_availability_type = "eth-da"
