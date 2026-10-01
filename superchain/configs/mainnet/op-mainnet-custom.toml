@@ -1,8 +1,0 @@
-git checkout main
-git pull origin main
-
-git rm superchain/configs/mainnet/op-mainnet-custom.toml
-
-git commit -m "Remove invalid custom OP Mainnet chain config"
-
-git push origin main
