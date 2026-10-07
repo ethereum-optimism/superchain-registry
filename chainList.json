@@ -949,7 +949,7 @@
     "identifier": "sepolia/radius_testnet",
     "chainId": 863,
     "rpc": [
-      "testnet-rpc.theradius.xyz"
+      "https://testnet-rpc.theradius.xyz"
     ],
     "explorers": [
       "https://testnet-rpc.theradius.xyz/"
