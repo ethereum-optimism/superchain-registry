@@ -45,7 +45,7 @@ gas_paying_token = "0x3C7011fD5e6Aed460cAa4985cF8d8Caba435b092"
     gasLimit = 60000000
 
 [roles]
-  ProxyAdminOwner = "0x5e60d897Cd62588291656b54655e98ee73f0aabF"
+  ProxyAdminOwner = "0x009A6Ac23EeBe98488ED28A52af69Bf46F1C18cb"
 
 [addresses]
   L1StandardBridgeProxy = "0xEc18a3c30131A0Db4246e785355fBc16E2eAF408"

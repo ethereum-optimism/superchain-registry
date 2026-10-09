@@ -39,7 +39,7 @@ max_sequencer_drift = 600
     gasLimit = 30000000
 
 [roles]
-  ProxyAdminOwner = "0x4a4962275DF8C60a80d3a25faEc5AA7De116A746"
+  ProxyAdminOwner = "0x1b99D8a4CE6883FA9Fc3538Ea518a4628aaC6135"
 
 [addresses]
   L1StandardBridgeProxy = "0x3Be64BF2b9C2dE637067C7AAb6baE5EDf9fEBA55"
