@@ -16,7 +16,9 @@ max_sequencer_drift = 1800
   ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
-  holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 1739966400 # Wed 19 Feb 2025 12:00:00 UTC
+  isthmus_time = 1763650800 # Thu 20 Nov 2025 15:00:00 UTC
+  jovian_time = 1777550400 # Thu 30 Apr 2026 12:00:00 UTC
 
 [optimism]
   eip1559_elasticity = 6
