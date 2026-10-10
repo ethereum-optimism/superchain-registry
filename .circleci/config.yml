@@ -286,6 +286,26 @@ jobs:
           template: basic_fail_1
           mentions: "<!subteam^S09D13R3HJ7>" # @protocol-oncall
 
+  check-onchain-configs:
+    docker:
+      - image: <<pipeline.parameters.default_docker_image>>
+    steps:
+      - utils/checkout-with-mise
+      - run:
+          name: Check chain TOML roles/addresses against onchain state
+          command: |
+            # Read-only: fails if any [roles]/[addresses] field present in a
+            # superchain/configs/<superchain>/<chain>.toml disagrees with onchain state.
+            # Fix by updating the listed TOML files.
+            go run ./cmd/check_onchain_configs \
+              --l1-rpc-urls="$OP_CI_SEPOLIA_L1_RPC_URL,$OP_CI_MAINNET_L1_RPC_URL"
+          working_directory: ops
+      - slack/notify:
+          channel: C03N11M0BBN # notify-ci
+          event: fail
+          template: basic_fail_1
+          mentions: "<!subteam^S09D13R3HJ7>" # @protocol-oncall
+
   notify-when-chain-is-added-to-registry:
     executor: default
     parameters:
@@ -523,6 +543,10 @@ workflows:
             - equal: ["api", << pipeline.trigger_source >>]
     jobs:
       - daily-codegen:
+          context:
+            - circleci-repo-superchain-registry
+            - circleci-repo-rpc-secrets
+      - check-onchain-configs:
           context:
             - circleci-repo-superchain-registry
             - circleci-repo-rpc-secrets
