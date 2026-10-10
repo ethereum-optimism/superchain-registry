@@ -202,6 +202,7 @@ func mergeStateV4(userState OpaqueState, stdIntent OpaqueMap, stdState OpaqueSta
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].baseFeeVaultRecipient"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].l1FeeVaultRecipient"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].sequencerFeeVaultRecipient"))
+	guard(copyValueIfExists(appliedIntentNode, stdIntentNode, "chains.[0].operatorFeeVaultRecipient"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].roles.l1ProxyAdminOwner"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].roles.l2ProxyAdminOwner"))
 	guard(copyValue(appliedIntentNode, stdIntentNode, "chains.[0].roles.systemConfigOwner"))

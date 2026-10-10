@@ -86,6 +86,7 @@ func TestScanL1(t *testing.T) {
 			client,
 			deploymentTx,
 			release,
+			nil,
 		)
 		require.ErrorContains(t, err, expErr)
 		mock.AssertExpectations(t)
