@@ -1,0 +1,10 @@
+name = "Plataberget"
+superchain_config_addr = "0x8c46E7CD3Dca25e740A25A0687E3A2A71AEC746c"
+op_contracts_manager_addr = "0x08bEcd0Af79C1929aC4077035a46061B2a7C67bD"
+
+[hardforks]
+
+[l1]
+  chain_id = 7091047534
+  public_rpc = "https://rpc.plataberget.ethpandaops.io/"
+  explorer = ""
