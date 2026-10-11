@@ -17,9 +17,9 @@
 | Ink | ✅ | ✅ | https://explorer.inkonchain.com | `https://rpc-gel.inkonchain.com` | `https://rpc-gel.inkonchain.com` |
 | Lisk | ❌ | ✅ | https://blockscout.lisk.com | `https://rpc.api.lisk.com` | `https://rpc.api.lisk.com` |
 | Lyra Chain | ❌ | ❌ | https://explorer.lyra.finance | `https://rpc.lyra.finance` | `https://rpc.lyra.finance` |
-| Metal L2 | ✅ | ✅ | https://explorer.metall2.com | `https://rpc.metall2.com` | `https://rpc.metall2.com` |
+| Metal L2 | ❌ | ✅ | https://explorer.metall2.com | `https://rpc.metall2.com` | `https://rpc.metall2.com` |
 | Mint Mainnet | ❌ | ❌ | https://explorer.mintchain.io | `https://rpc.mintchain.io` | `https://rpc.mintchain.io` |
-| Mode | ✅ | ✅ | https://explorer.mode.network | `https://mainnet.mode.network` | `https://mainnet-sequencer.mode.network` |
+| Mode | ❌ | ✅ | https://explorer.mode.network | `https://mainnet.mode.network` | `https://mainnet-sequencer.mode.network` |
 | OP Mainnet | ✅ | ✅ | https://explorer.optimism.io | `https://mainnet.optimism.io` | `https://mainnet-sequencer.optimism.io` |
 | Orderly Mainnet | ❌ | ❌ | https://explorer.orderly.network | `https://rpc.orderly.network` | `https://rpc.orderly.network` |
 | Polynomial | ❌ | ❌ | https://polynomialscan.io | `https://rpc.polynomial.fi` | `https://rpc.polynomial.fi` |
@@ -34,7 +34,7 @@
 | Unichain | ✅ | ✅ | https://explorer.unichain.org | `https://mainnet.unichain.org` | `https://mainnet-sequencer.unichain.org` |
 | World Chain | ❌ | ❌ | https://worldchain-mainnet.explorer.alchemy.com/ | `https://worldchain-mainnet.g.alchemy.com/public` | `https://worldchain-mainnet-sequencer.g.alchemy.com` |
 | Xterio Chain (ETH) | ❌ | ❌ | https://eth.xterscan.io/ | `https://xterio-eth.alt.technology/` | `https://xterio-eth.alt.technology/` |
-| Zora | ✅ | ✅ | https://explorer.zora.energy | `https://rpc.zora.energy` | `https://rpc.zora.energy` |
+| Zora | ❌ | ✅ | https://explorer.zora.energy | `https://rpc.zora.energy` | `https://rpc.zora.energy` |
 ### sepolia
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
@@ -47,8 +47,8 @@
 | Funki Sepolia Testnet | ❌ | ❌ | https://sepolia-sandbox.funkichain.com/ | `https://funki-testnet.alt.technology` | `https://funki-testnet.alt.technology` |
 | Ink Sepolia | ✅ | ✅ | https://explorer-sepolia.inkonchain.com | `https://rpc-gel-sepolia.inkonchain.com` | `https://rpc-gel-sepolia.inkonchain.com` |
 | Lisk Sepolia Testnet | ❌ | ✅ | https://sepolia-blockscout.lisk.com | `https://rpc.sepolia-api.lisk.com` | `https://rpc.sepolia-api.lisk.com` |
-| Metal L2 Testnet | ✅ | ✅ | https://testnet.explorer.metall2.com | `https://testnet.rpc.metall2.com` | `https://testnet.rpc.metall2.com` |
-| Mode Testnet | ✅ | ✅ | https://sepolia.explorer.mode.network | `https://sepolia.mode.network` | `https://sepolia.mode.network` |
+| Metal L2 Testnet | ❌ | ✅ | https://testnet.explorer.metall2.com | `https://testnet.rpc.metall2.com` | `https://testnet.rpc.metall2.com` |
+| Mode Testnet | ❌ | ✅ | https://sepolia.explorer.mode.network | `https://sepolia.mode.network` | `https://sepolia.mode.network` |
 | OP Sepolia Testnet | ✅ | ✅ | https://testnet-explorer.optimism.io | `https://sepolia.optimism.io` | `https://sepolia-sequencer.optimism.io` |
 | Ozean Poseidon Testnet | ❌ | ❌ | https://ozean-testnet.explorer.caldera.xyz | `https://ozean-testnet.rpc.caldera.xyz/http` | `https://ozean-testnet.rpc.caldera.xyz/http` |
 | Pivotal Sepolia | ❌ | ❌ | https://sepolia.pivotalscan.org/ | `https://sepolia.pivotalprotocol.com/` | `https://sepolia.pivotalprotocol.com/` |
@@ -59,7 +59,7 @@
 | Soneium Testnet Minato | ✅ | ✅ | https://soneium-minato.blockscout.com/ | `https://rpc.minato.soneium.org` | `https://rpc.minato.soneium.org` |
 | Unichain Sepolia Testnet | ✅ | ✅ | https://sepolia.uniscan.xyz | `https://sepolia.unichain.org` | `https://sepolia-sequencer.unichain.org` |
 | World Chain Sepolia Testnet | ❌ | ❌ | https://worldchain-sepolia.explorer.alchemy.com/ | `https://worldchain-sepolia.g.alchemy.com/public` | `https://worldchain-sepolia-sequencer.g.alchemy.com` |
-| Zora Sepolia Testnet | ✅ | ✅ | https://sepolia.explorer.zora.energy | `https://sepolia.rpc.zora.energy` | `https://sepolia.rpc.zora.energy` |
+| Zora Sepolia Testnet | ❌ | ✅ | https://sepolia.explorer.zora.energy | `https://sepolia.rpc.zora.energy` | `https://sepolia.rpc.zora.energy` |
 ### sepolia-devnet-2
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC

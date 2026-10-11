@@ -161,7 +161,7 @@
   chain_id = 1750
   rpc = ["https://rpc.metall2.com"]
   explorers = ["https://explorer.metall2.com"]
-  governed_by_optimism = true
+  governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -189,7 +189,7 @@
   chain_id = 34443
   rpc = ["https://mainnet.mode.network"]
   explorers = ["https://explorer.mode.network"]
-  governed_by_optimism = true
+  governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -385,7 +385,7 @@
   chain_id = 7777777
   rpc = ["https://rpc.zora.energy"]
   explorers = ["https://explorer.zora.energy"]
-  governed_by_optimism = true
+  governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -484,7 +484,7 @@
   chain_id = 1740
   rpc = ["https://testnet.rpc.metall2.com"]
   explorers = ["https://testnet.explorer.metall2.com"]
-  governed_by_optimism = true
+  governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -498,7 +498,7 @@
   chain_id = 919
   rpc = ["https://sepolia.mode.network"]
   explorers = ["https://sepolia.explorer.mode.network"]
-  governed_by_optimism = true
+  governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
@@ -639,7 +639,7 @@
   chain_id = 999999999
   rpc = ["https://sepolia.rpc.zora.energy"]
   explorers = ["https://sepolia.explorer.zora.energy"]
-  governed_by_optimism = true
+  governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
