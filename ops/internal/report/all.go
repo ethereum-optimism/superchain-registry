@@ -2,6 +2,7 @@ package report
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -70,7 +71,7 @@ func GetContractsReleaseForOpcm(statePath string) (string, error) {
 	}
 
 	if opcmImplAddr == (common.Address{}) {
-		return "", fmt.Errorf("OpcmImpl read from state is the zero address")
+		return "", errors.New("OpcmImpl read from state is the zero address")
 	}
 
 	l1ChainID, err := st.ReadL1ChainID()

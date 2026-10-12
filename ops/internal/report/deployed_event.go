@@ -1,6 +1,7 @@
 package report
 
 import (
+	"errors"
 	"fmt"
 	"math/big"
 
@@ -91,7 +92,7 @@ func ParseDeployedEvent(logs []*types.Log) (*DeployedEvent, error) {
 		// Try new signature first (v4.1+)
 		if log.Topics[0] == deployedEventABI_v2.Topic0 {
 			if deploymentLog != nil {
-				return nil, fmt.Errorf("multiple Deployed events in receipt, this is unsupported")
+				return nil, errors.New("multiple Deployed events in receipt, this is unsupported")
 			}
 			deploymentLog = log
 			useNewSignature = true
@@ -101,7 +102,7 @@ func ParseDeployedEvent(logs []*types.Log) (*DeployedEvent, error) {
 		// Fall back to old signature (v4.0 and earlier)
 		if log.Topics[0] == deployedEventABI_v1.Topic0 {
 			if deploymentLog != nil {
-				return nil, fmt.Errorf("multiple Deployed events in receipt, this is unsupported")
+				return nil, errors.New("multiple Deployed events in receipt, this is unsupported")
 			}
 			deploymentLog = log
 			useNewSignature = false
@@ -110,7 +111,7 @@ func ParseDeployedEvent(logs []*types.Log) (*DeployedEvent, error) {
 	}
 
 	if deploymentLog == nil {
-		return nil, fmt.Errorf("no Deployed event in receipt")
+		return nil, errors.New("no Deployed event in receipt")
 	}
 
 	if useNewSignature {

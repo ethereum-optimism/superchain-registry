@@ -338,7 +338,7 @@ func ExtractInteropDepSet(st deployer.OpaqueState) (*config.Interop, error) {
 	// Check if dependencies exists and is a map
 	deps, ok := interopDepSet["dependencies"].(map[string]interface{})
 	if !ok {
-		return nil, fmt.Errorf("dependencies field is not a map or is missing")
+		return nil, errors.New("dependencies field is not a map or is missing")
 	}
 
 	// Return nil if dependencies map is empty

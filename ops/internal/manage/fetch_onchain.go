@@ -2,6 +2,7 @@ package manage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 
@@ -76,7 +77,7 @@ func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []s
 func collectChainsBySuperchain(wd string, chainIds []uint64, superchainsInput []config.Superchain) (map[config.Superchain][]DiskChainConfig, error) {
 	result := make(map[config.Superchain][]DiskChainConfig)
 	if len(chainIds) > 0 && len(superchainsInput) > 0 {
-		return nil, fmt.Errorf("cannot provide both chainIds and superchains inputs")
+		return nil, errors.New("cannot provide both chainIds and superchains inputs")
 	}
 
 	superchains := superchainsInput

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -60,7 +61,7 @@ func mainErr() error {
 	}
 
 	if integrityCheckFailed {
-		return fmt.Errorf("one or more genesis integrity checks failed - see logs")
+		return errors.New("one or more genesis integrity checks failed - see logs")
 	}
 
 	return nil

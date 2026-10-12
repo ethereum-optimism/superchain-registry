@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -34,7 +35,7 @@ func mainErr() error {
 		return fmt.Errorf("error checking for superchain directory: %w", err)
 	}
 	if !exists {
-		return fmt.Errorf("superchain directory does not exist - check working directory")
+		return errors.New("superchain directory does not exist - check working directory")
 	}
 
 	superchains, err := paths.Superchains(wd)

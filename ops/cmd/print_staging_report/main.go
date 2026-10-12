@@ -132,7 +132,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	}
 
 	if chainCfg.DeploymentTxHash == nil {
-		return fmt.Errorf("deployment tx hash is required")
+		return errors.New("deployment tx hash is required")
 	}
 
 	contractsVersion := validation.Semver(chainCfg.DeploymentL1ContractsVersion)

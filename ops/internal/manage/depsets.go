@@ -99,7 +99,7 @@ func (dc *DepsetChecker) Check() error {
 // and consistent across all configs in the same set
 func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 	if len(cfgs) == 0 {
-		return fmt.Errorf("no chain configs provided to checkOffchain")
+		return errors.New("no chain configs provided to checkOffchain")
 	}
 
 	var firstSuperchain string
@@ -145,7 +145,7 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 // already activated interop (i.e. lagoon_time < current unix timestamp).
 func (dc *DepsetChecker) checkOnchain(cfgs []DiskChainConfig) error {
 	if len(cfgs) == 0 {
-		return fmt.Errorf("no chain configs provided to checkOnchain")
+		return errors.New("no chain configs provided to checkOnchain")
 	}
 
 	if len(cfgs) == 1 {

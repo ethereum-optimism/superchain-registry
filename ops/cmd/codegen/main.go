@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -64,10 +65,10 @@ func CodegenCLI(cliCtx *cli.Context) error {
 	}
 
 	if len(chainIds) > 0 && len(superchains) > 0 {
-		return fmt.Errorf("cannot provide both chain-ids and superchains flags")
+		return errors.New("cannot provide both chain-ids and superchains flags")
 	}
 	if pruneRemoved && (len(chainIds) > 0 || len(superchains) > 0) {
-		return fmt.Errorf("cannot provide chain-ids or superchains with prune-removed")
+		return errors.New("cannot provide chain-ids or superchains with prune-removed")
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
@@ -82,7 +83,7 @@ func CodegenCLI(cliCtx *cli.Context) error {
 		return nil
 	}
 	if len(l1RpcUrls) == 0 {
-		return fmt.Errorf("l1-rpc-urls is required unless prune-removed is set")
+		return errors.New("l1-rpc-urls is required unless prune-removed is set")
 	}
 	if err := manage.ValidateRequiredSuperchains(wd); err != nil {
 		return err

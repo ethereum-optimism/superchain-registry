@@ -2,6 +2,7 @@ package manage
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/big"
 	"net/http"
@@ -15,9 +16,9 @@ import (
 const chainListUrl = "https://chainid.network/chains_mini.json"
 
 var (
-	ErrDuplicateChainID    = fmt.Errorf("duplicate chain ID")
-	ErrDuplicateShortName  = fmt.Errorf("duplicate short name")
-	ErrGenesisHashMismatch = fmt.Errorf("genesis hash mismatch")
+	ErrDuplicateChainID    = errors.New("duplicate chain ID")
+	ErrDuplicateShortName  = errors.New("duplicate short name")
+	ErrGenesisHashMismatch = errors.New("genesis hash mismatch")
 )
 
 type GlobalChainIDs struct {

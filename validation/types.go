@@ -3,6 +3,7 @@ package validation
 import (
 	"bytes"
 	"encoding/hex"
+	"errors"
 	"fmt"
 )
 
@@ -48,7 +49,7 @@ func (h *Hash) UnmarshalText(text []byte) error {
 	}
 
 	if len(text) < 2 || !bytes.HasPrefix(text, []byte("0x")) {
-		return fmt.Errorf("hex string must have 0x prefix")
+		return errors.New("hex string must have 0x prefix")
 	}
 
 	b, err := hex.DecodeString(string(text[2:]))

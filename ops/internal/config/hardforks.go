@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"time"
@@ -33,7 +34,7 @@ func CopyHardforks(src, dst *Hardforks, superchainTime, genesisTime *uint64) err
 	}
 
 	if genesisTime == nil {
-		return fmt.Errorf("genesisTime is nil")
+		return errors.New("genesisTime is nil")
 	}
 
 	srcVal := reflect.ValueOf(src).Elem()

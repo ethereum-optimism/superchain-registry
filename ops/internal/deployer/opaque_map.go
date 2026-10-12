@@ -1,6 +1,7 @@
 package deployer
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -280,7 +281,7 @@ func (s OpaqueState) ReadInteropDepSet() (map[string]interface{}, error) {
 
 	depSet, ok := interopDepSet.(map[string]interface{})
 	if !ok {
-		return nil, fmt.Errorf("interopDepSet is not a map[string]interface{}")
+		return nil, errors.New("interopDepSet is not a map[string]interface{}")
 	}
 
 	return depSet, nil

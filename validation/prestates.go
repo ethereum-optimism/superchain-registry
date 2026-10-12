@@ -2,6 +2,7 @@ package validation
 
 import (
 	_ "embed"
+	"errors"
 	"fmt"
 
 	"github.com/BurntSushi/toml"
@@ -33,10 +34,10 @@ func init() {
 	}
 
 	if _, ok := StandardPrestates.Prestates[StandardPrestates.LatestRC]; !ok {
-		panic(fmt.Errorf("latest RC prestate not found in standard prestates"))
+		panic(errors.New("latest RC prestate not found in standard prestates"))
 	}
 
 	if _, ok := StandardPrestates.Prestates[StandardPrestates.LatestStable]; !ok {
-		panic(fmt.Errorf("latest stable prestate not found in standard prestates"))
+		panic(errors.New("latest stable prestate not found in standard prestates"))
 	}
 }

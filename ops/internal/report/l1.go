@@ -2,6 +2,7 @@ package report
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"math/big"
@@ -57,7 +58,7 @@ func ScanL1(
 
 	// Validate that the transaction was sent to the expected OPCM address
 	if tx.To() == nil {
-		return nil, fmt.Errorf("deployment transaction has no To address (contract creation)")
+		return nil, errors.New("deployment transaction has no To address (contract creation)")
 	}
 	if *tx.To() != opcmAddr {
 		return nil, fmt.Errorf("unauthorized OPCM address: got %v, expected %v", tx.To(), opcmAddr)
