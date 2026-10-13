@@ -2,11 +2,14 @@ package config
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/rpc"
 )
 
 type Superchain = string
@@ -27,7 +30,12 @@ func FindValidL1URL(ctx context.Context, lgr log.Logger, urls []string, supercha
 		}
 
 		if err := validateL1ChainID(ctx, url, superchainId); err != nil {
-			lgr.Warn("l1-rpc-url has mismatched l1 chainId", "urlIndex", i, "err", err)
+			var httpErr rpc.HTTPError
+			if errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusForbidden {
+				return "", fmt.Errorf("l1-rpc-url request forbidden at index %d: %w", i, err)
+			}
+
+			lgr.Warn("l1-rpc-url validation failed", "urlIndex", i, "err", err)
 			continue
 		}
 
