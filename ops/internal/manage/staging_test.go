@@ -13,18 +13,22 @@ import (
 
 func TestCopyDeployConfigHFTimes(t *testing.T) {
 	a := &genesis.UpgradeScheduleDeployConfig{
-		L2GenesisCanyonTimeOffset: new(hexutil.Uint64),
-		L2GenesisDeltaTimeOffset:  new(hexutil.Uint64),
+		L2GenesisCanyonTimeOffset:  new(hexutil.Uint64),
+		L2GenesisDeltaTimeOffset:   new(hexutil.Uint64),
+		L2GenesisEcotoneTimeOffset: new(hexutil.Uint64),
 	}
 	*a.L2GenesisCanyonTimeOffset = hexutil.Uint64(1)
 	*a.L2GenesisDeltaTimeOffset = hexutil.Uint64(2)
+	*a.L2GenesisEcotoneTimeOffset = hexutil.Uint64(0)
 
 	b := &config.Hardforks{}
 
-	require.NoError(t, CopyDeployConfigHFTimes(a, b))
+	// Offsets are relative to the L2 genesis time; a zero offset means active at genesis.
+	require.NoError(t, CopyDeployConfigHFTimes(a, b, 1000))
 	require.Equal(t, &config.Hardforks{
-		CanyonTime: config.NewHardforkTime(1),
-		DeltaTime:  config.NewHardforkTime(2),
+		CanyonTime:  config.NewHardforkTime(1001),
+		DeltaTime:   config.NewHardforkTime(1002),
+		EcotoneTime: config.NewHardforkTime(0),
 	}, b)
 }
 

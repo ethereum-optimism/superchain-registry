@@ -53,7 +53,7 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 	cfg.L1FeeVaultRecipient = *config.NewChecksummedAddress(dc.L1FeeVaultRecipient)
 	cfg.SequencerFeeVaultRecipient = *config.NewChecksummedAddress(dc.SequencerFeeVaultRecipient)
 
-	if err := CopyDeployConfigHFTimes(&dc.UpgradeScheduleDeployConfig, &cfg.Hardforks); err != nil {
+	if err := CopyDeployConfigHFTimes(&dc.UpgradeScheduleDeployConfig, &cfg.Hardforks, rollup.Genesis.L2Time); err != nil {
 		return nil, fmt.Errorf("failed to copy deploy config hardfork times: %w", err)
 	}
 
@@ -120,7 +120,10 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 	return cfg, nil
 }
 
-func CopyDeployConfigHFTimes(src *genesis.UpgradeScheduleDeployConfig, dst *config.Hardforks) error {
+// CopyDeployConfigHFTimes converts the deploy config's hardfork offsets, which are relative to
+// l2GenesisTime, into the absolute activation times the registry stores. A zero offset means the
+// fork is active at genesis and is stored as 0, matching op-chain-ops' offsetToUpgradeTime.
+func CopyDeployConfigHFTimes(src *genesis.UpgradeScheduleDeployConfig, dst *config.Hardforks, l2GenesisTime uint64) error {
 	if src == nil || dst == nil {
 		return errors.New("source and destination must not be nil")
 	}
@@ -161,9 +164,12 @@ func CopyDeployConfigHFTimes(src *genesis.UpgradeScheduleDeployConfig, dst *conf
 			return fmt.Errorf("destination field %s doesn't exist", dstFieldName)
 		}
 
-		// Create a new HardforkTime pointer and set its value
+		activationTime := uint64(0)
+		if offset := srcField.Elem().Uint(); offset > 0 {
+			activationTime = l2GenesisTime + offset
+		}
 		newHardforkTime := new(config.HardforkTime)
-		*newHardforkTime = config.HardforkTime(srcField.Elem().Uint())
+		*newHardforkTime = config.HardforkTime(activationTime)
 
 		// Set the destination field
 		dstField.Set(reflect.ValueOf(newHardforkTime))
