@@ -760,3 +760,17 @@
     chain = "sepolia-devnet-3"
   [chains.fault_proofs]
     status = "permissioned"
+
+[[chains]]
+  name = "GIWA Sepolia Testnet"
+  identifier = "sepolia/giwa"
+  chain_id = 91342
+  rpc = ["https://sepolia-rpc.giwa.io"]
+  explorers = ["https://sepolia-explorer.giwa.io"]
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia"
+  [chains.fault_proofs]
+    status = "permissioned"

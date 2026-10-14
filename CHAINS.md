@@ -45,6 +45,7 @@
 | Celo Sepolia Testnet | ❌ | ❌ | https://celo-sepolia.blockscout.com | `https://forno.celo-sepolia.celo-testnet.org` | `https://forno.celo-sepolia.celo-testnet.org` |
 | Cyber Testnet | ❌ | ❌ | https://testnet.cyberscan.co/ | `https://rpc.testnet.cyber.co` | `https://cyber.alt.technology/` |
 | Funki Sepolia Testnet | ❌ | ❌ | https://sepolia-sandbox.funkichain.com/ | `https://funki-testnet.alt.technology` | `https://funki-testnet.alt.technology` |
+| GIWA Sepolia Testnet | ❌ | ❌ | https://sepolia-explorer.giwa.io | `https://sepolia-rpc.giwa.io` | `https://sepolia-sequencer.giwa.io` |
 | Ink Sepolia | ✅ | ✅ | https://explorer-sepolia.inkonchain.com | `https://rpc-gel-sepolia.inkonchain.com` | `https://rpc-gel-sepolia.inkonchain.com` |
 | Lisk Sepolia Testnet | ❌ | ✅ | https://sepolia-blockscout.lisk.com | `https://rpc.sepolia-api.lisk.com` | `https://rpc.sepolia-api.lisk.com` |
 | Metal L2 Testnet | ❌ | ✅ | https://testnet.explorer.metall2.com | `https://testnet.rpc.metall2.com` | `https://testnet.rpc.metall2.com` |

@@ -1085,5 +1085,25 @@
     "faultProofs": {
       "status": "permissioned"
     }
+  },
+  {
+    "name": "GIWA Sepolia Testnet",
+    "identifier": "sepolia/giwa",
+    "chainId": 91342,
+    "rpc": [
+      "https://sepolia-rpc.giwa.io"
+    ],
+    "explorers": [
+      "https://sepolia-explorer.giwa.io"
+    ],
+    "governedByOptimism": false,
+    "dataAvailabilityType": "eth-da",
+    "parent": {
+      "type": "L2",
+      "chain": "sepolia"
+    },
+    "faultProofs": {
+      "status": "permissioned"
+    }
   }
 ]
