@@ -44,5 +44,10 @@
     "GasPayingTokenDecimals": 18,
     "GasPayingTokenName": "Ether",
     "GasPayingTokenSymbol": "ETH"
+  },
+  "ReviewPeriod": {
+    "ProofMaturityDelaySeconds": 604800,
+    "DisputeGameFinalityDelaySeconds": 302400,
+    "DelayedWETHDelaySeconds": 302400
   }
 }

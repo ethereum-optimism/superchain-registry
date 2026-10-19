@@ -85,6 +85,18 @@
 
 </details>
 
+<details open>
+
+<summary>Review Period Delays</summary>
+
+| | Parameter | Std Min | Std Max | Got Value |
+|---|----------|---------|---------|-----------|
+| {{ checkmarkRangeUint64 .StdConfig.OptimismPortal2.ProofMaturityDelaySeconds .Report.L1.ReviewPeriod.ProofMaturityDelaySeconds }} | ProofMaturityDelaySeconds | `{{ index .StdConfig.OptimismPortal2.ProofMaturityDelaySeconds 0 }}` | `{{ index .StdConfig.OptimismPortal2.ProofMaturityDelaySeconds 1 }}` | `{{ .Report.L1.ReviewPeriod.ProofMaturityDelaySeconds }}` |
+| {{ checkmarkRangeUint64 .StdConfig.OptimismPortal2.DisputeGameFinalityDelaySeconds .Report.L1.ReviewPeriod.DisputeGameFinalityDelaySeconds }} | DisputeGameFinalityDelaySeconds | `{{ index .StdConfig.OptimismPortal2.DisputeGameFinalityDelaySeconds 0 }}` | `{{ index .StdConfig.OptimismPortal2.DisputeGameFinalityDelaySeconds 1 }}` | `{{ .Report.L1.ReviewPeriod.DisputeGameFinalityDelaySeconds }}` |
+| {{ checkmarkRangeUint64 .StdConfig.DelayedWETH.DelaySeconds .Report.L1.ReviewPeriod.DelayedWETHDelaySeconds }} | DelayedWETHDelaySeconds | `{{ index .StdConfig.DelayedWETH.DelaySeconds 0 }}` | `{{ index .StdConfig.DelayedWETH.DelaySeconds 1 }}` | `{{ .Report.L1.ReviewPeriod.DelayedWETHDelaySeconds }}` |
+
+</details>
+
 {{- else -}}
 > **Warning**
 > An error occurred while validating L1 data: `{{ .Report.L1Err }}`

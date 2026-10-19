@@ -470,6 +470,16 @@ workflows:
             - build-deployer-binaries
           context: circleci-repo-readonly-authenticated-github-token
       - run-tool:
+          name: check-review-period-delays
+          tool: check_review_period_delays
+          args: --l1-rpc-urls="$OP_CI_SEPOLIA_L1_RPC_URL,$OP_CI_MAINNET_L1_RPC_URL"
+          requires:
+            - check-codegen
+            - build-deployer-binaries
+          context:
+            - circleci-repo-readonly-authenticated-github-token
+            - circleci-repo-rpc-secrets
+      - run-tool:
           name: check-staging-synced
           tool: sync_staging
           args: --l1-rpc-urls="$OP_CI_SEPOLIA_L1_RPC_URL,$OP_CI_MAINNET_L1_RPC_URL"
@@ -525,4 +535,12 @@ workflows:
       - daily-codegen:
           context:
             - circleci-repo-superchain-registry
+            - circleci-repo-rpc-secrets
+      # Delays change through superchain-ops tasks rather than registry PRs, so re-check them daily.
+      - run-tool:
+          name: daily-check-review-period-delays
+          tool: check_review_period_delays
+          args: --l1-rpc-urls="$OP_CI_SEPOLIA_L1_RPC_URL,$OP_CI_MAINNET_L1_RPC_URL"
+          context:
+            - circleci-repo-readonly-authenticated-github-token
             - circleci-repo-rpc-secrets

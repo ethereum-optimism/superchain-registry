@@ -4,10 +4,15 @@
 seq_window_size = [3600, 3600]
 block_time = [1, 2]
 
+# Review period delays are set per chain within the bounds fixed by the contract
+# implementations. Chains sharing an ETHLockbox must use the same values.
 [optimism_portal_2]
-proof_maturity_delay_seconds = [604800, 604800]        # 7 days
-dispute_game_finality_delay_seconds = [302400, 302400] # 3.5 days
+proof_maturity_delay_seconds = [86400, 604800]        # 1 to 7 days
+dispute_game_finality_delay_seconds = [43200, 302400] # 12 hours to 3.5 days
 respected_game_type = 9 # SUPER_CANNON_KONA; permissioned chains use SUPER_PERMISSIONED (5)
+
+[delayed_weth]
+delay_seconds = [43200, 604800] # 12 hours to 7 days
 
 [resource_config]
 max_resource_limit = 20000000
@@ -35,7 +40,7 @@ minimum_base_fee = [0, 10_000_000_000] # 10 Gwei
 
 # Post-Upgrade 20 (op-contracts/v8.0.0) chains use Super Root dispute games.
 # SUPER_PERMISSIONED (game type 5) is not a bisection game: it has no depth or clock
-# parameters and resolves immediately as DEFENDER_WINS, subject to the air-gap.
+# parameters and resolves immediately as DEFENDER_WINS, subject to the review period.
 [proofs.permissioned]
 game_type = 5
 

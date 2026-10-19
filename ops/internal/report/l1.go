@@ -92,6 +92,16 @@ func ScanL1(
 		return nil, fmt.Errorf("failed to validate system config: %w", err)
 	}
 
+	reviewPeriodReport, err := ScanReviewPeriod(
+		ctx,
+		rpcClient,
+		deployedEvent.DeployOutput.OptimismPortalProxy,
+		deployedEvent.DeployOutput.DelayedWETHPermissionedGameProxy,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to validate review period delays: %w", err)
+	}
+
 	return &L1Report{
 		Release:           release,
 		DeploymentTxHash:  deploymentTx,
@@ -102,6 +112,7 @@ func ScanL1(
 			Permissioned: permissionedGameReport,
 		},
 		SystemConfig: systemConfigReport,
+		ReviewPeriod: reviewPeriodReport,
 	}, nil
 }
 
@@ -303,6 +314,57 @@ func ScanSystemConfig(
 	}
 
 	return report, nil
+}
+
+// ScanReviewPeriod reads the review period delays. The dispute game finality delay is stored on the
+// AnchorStateRegistry since op-contracts/v4.0.0, but every OptimismPortal release keeps a legacy
+// getter that forwards to it, so both delays are read from the portal.
+func ScanReviewPeriod(
+	ctx context.Context,
+	rpc *rpc.Client,
+	portalAddr common.Address,
+	wethAddr common.Address,
+) (L1ReviewPeriodReport, error) {
+	w3Client := w3.NewClient(rpc)
+
+	var proofMaturity, finalityDelay, wethDelay big.Int
+	var report L1ReviewPeriodReport
+	if err := CallBatch(
+		ctx,
+		w3Client,
+		batchCallMethod(portalAddr, proofMaturityDelaySecondsABI, &proofMaturity),
+		batchCallMethod(portalAddr, disputeGameFinalityDelaySecondsABI, &finalityDelay),
+		batchCallMethod(wethAddr, delayABI, &wethDelay),
+	); err != nil {
+		return report, fmt.Errorf("failed to get review period data: %w", err)
+	}
+
+	for _, v := range []struct {
+		name string
+		val  *big.Int
+		out  *uint64
+	}{
+		{"proof maturity delay", &proofMaturity, &report.ProofMaturityDelaySeconds},
+		{"dispute game finality delay", &finalityDelay, &report.DisputeGameFinalityDelaySeconds},
+		{"DelayedWETH delay", &wethDelay, &report.DelayedWETHDelaySeconds},
+	} {
+		if !v.val.IsUint64() {
+			return report, fmt.Errorf("unexpectedly large %s: %s", v.name, v.val.String())
+		}
+		*v.out = v.val.Uint64()
+	}
+
+	return report, nil
+}
+
+// DelayedWETHAddress reads the DelayedWETH holding a chain's bonds from its SystemConfig. The getter
+// exists since op-contracts/v6.0.0.
+func DelayedWETHAddress(ctx context.Context, rpc *rpc.Client, systemConfigAddr common.Address) (common.Address, error) {
+	var addr common.Address
+	if err := CallBatch(ctx, w3.NewClient(rpc), batchCallMethod(systemConfigAddr, delayedWETHABI, &addr)); err != nil {
+		return addr, fmt.Errorf("failed to get DelayedWETH address: %w", err)
+	}
+	return addr, nil
 }
 
 func ScanSemvers(
