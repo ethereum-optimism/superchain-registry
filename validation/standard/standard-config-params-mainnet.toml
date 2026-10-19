@@ -4,8 +4,6 @@
 seq_window_size = [3600, 3600]
 block_time = [1, 2]
 
-# Review period delays are set per chain within the bounds fixed by the contract
-# implementations. Chains sharing an ETHLockbox must use the same values.
 [optimism_portal_2]
 proof_maturity_delay_seconds = [86400, 604800]        # 1 to 7 days
 dispute_game_finality_delay_seconds = [43200, 302400] # 12 hours to 3.5 days
