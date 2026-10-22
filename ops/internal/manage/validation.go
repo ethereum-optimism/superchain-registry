@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"net/http"
 
+	"github.com/ethereum-optimism/optimism/op-core/forks"
 	opgenesis "github.com/ethereum-optimism/optimism/op-core/genesis"
 	opparams "github.com/ethereum-optimism/optimism/op-core/params"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
@@ -80,7 +81,11 @@ func ValidateGenesisIntegrity(cfg *config.Chain, genesisJSON json.RawMessage) er
 	if err := json.Unmarshal(genesisJSON, &genesis); err != nil {
 		return fmt.Errorf("failed to decode genesis: %w", err)
 	}
-	genesis.Config = opChainConfig(cfg)
+	chainConfig, err := opChainConfig(cfg)
+	if err != nil {
+		return err
+	}
+	genesis.Config = chainConfig
 
 	block := genesis.ToBlock()
 	if block.Hash() != cfg.Genesis.L2.Hash {
@@ -91,29 +96,31 @@ func ValidateGenesisIntegrity(cfg *config.Chain, genesisJSON json.RawMessage) er
 }
 
 // opChainConfig returns the chain config of cfg's chain, as the OP Stack derives it from the
-// registry's chain config.
-func opChainConfig(cfg *config.Chain) *opparams.ChainConfig {
-	hardforks := cfg.Hardforks
+// registry's chain config. It fails for an execution-layer fork that the registry's chain config
+// has no field for.
+func opChainConfig(cfg *config.Chain) (*opparams.ChainConfig, error) {
 	out := &opparams.ChainConfig{
-		ChainID:      new(big.Int).SetUint64(cfg.ChainID),
+		ChainID: new(big.Int).SetUint64(cfg.ChainID),
+		// The registry has no fields for Bedrock and Regolith: every chain starts with both active.
 		BedrockBlock: common.Big0,
 		RegolithTime: new(uint64),
-		CanyonTime:   hardforks.CanyonTime.U64Ptr(),
-		EcotoneTime:  hardforks.EcotoneTime.U64Ptr(),
-		FjordTime:    hardforks.FjordTime.U64Ptr(),
-		GraniteTime:  hardforks.GraniteTime.U64Ptr(),
-		HoloceneTime: hardforks.HoloceneTime.U64Ptr(),
-		IsthmusTime:  hardforks.IsthmusTime.U64Ptr(),
-		JovianTime:   hardforks.JovianTime.U64Ptr(),
-		KarstTime:    hardforks.KarstTime.U64Ptr(),
-		LagoonTime:   hardforks.LagoonTime.U64Ptr(),
 		Optimism: &opparams.OptimismConfig{
 			EIP1559Elasticity:  cfg.Optimism.EIP1559Elasticity,
 			EIP1559Denominator: cfg.Optimism.EIP1559Denominator,
 		},
 	}
+	for _, fork := range forks.AllEL {
+		if fork == forks.Bedrock || fork == forks.Regolith {
+			continue
+		}
+		t, ok := cfg.Hardforks.ActivationTime(fork)
+		if !ok {
+			return nil, fmt.Errorf("chain config has no activation time field for fork %s", fork)
+		}
+		out.SetActivationTime(fork, t.U64Ptr())
+	}
 	if cfg.Optimism.EIP1559DenominatorCanyon != 0 {
 		out.Optimism.EIP1559DenominatorCanyon = &cfg.Optimism.EIP1559DenominatorCanyon
 	}
-	return out
+	return out, nil
 }

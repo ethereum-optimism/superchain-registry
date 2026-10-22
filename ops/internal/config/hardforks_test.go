@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/optimism/op-core/forks"
 	"github.com/stretchr/testify/require"
 )
 
@@ -145,5 +146,34 @@ func TestCopyHardforksActivationSemantics(t *testing.T) {
 				))
 			require.Equal(t, tc.expectedDest, tc.dest)
 		})
+	}
+}
+
+func TestHardforksActivationTime(t *testing.T) {
+	h := &Hardforks{CanyonTime: NewHardforkTime(1), PectraBlobScheduleTime: NewHardforkTime(2)}
+
+	canyon, ok := h.ActivationTime(forks.Canyon)
+	require.True(t, ok)
+	require.Equal(t, NewHardforkTime(1), canyon)
+
+	pectra, ok := h.ActivationTime(forks.PectraBlobSchedule)
+	require.True(t, ok)
+	require.Equal(t, NewHardforkTime(2), pectra)
+
+	ecotone, ok := h.ActivationTime(forks.Ecotone)
+	require.True(t, ok)
+	require.Nil(t, ecotone)
+
+	_, ok = h.ActivationTime(forks.Regolith)
+	require.False(t, ok)
+}
+
+func TestHardforksCoverExecutionLayerForks(t *testing.T) {
+	for _, fork := range forks.AllEL {
+		if fork == forks.Bedrock || fork == forks.Regolith {
+			continue
+		}
+		_, ok := new(Hardforks).ActivationTime(fork)
+		require.True(t, ok, "Hardforks has no activation time field for fork %s", fork)
 	}
 }
