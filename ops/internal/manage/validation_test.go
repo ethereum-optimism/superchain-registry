@@ -2,11 +2,12 @@ package manage
 
 import (
 	"encoding/json"
+	"math/big"
 	"testing"
 
+	opgenesis "github.com/ethereum-optimism/optimism/op-core/genesis"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/stretchr/testify/require"
 )
@@ -27,59 +28,57 @@ func TestValidateGenesisIntegrity(t *testing.T) {
 
 	type testCase struct {
 		name    string
-		mutator func(*core.Genesis, *config.Chain)
+		mutator func(*opgenesis.Genesis, *config.Chain)
 	}
 
 	tests := []testCase{
 		{
 			name: "fails when the hash is wrong in the config",
-			mutator: func(_ *core.Genesis, c *config.Chain) {
+			mutator: func(_ *opgenesis.Genesis, c *config.Chain) {
 				c.Genesis.L2.Hash = common.HexToHash("0x1234")
 			},
 		},
 		{
 			name: "fails when timestamp is modified",
-			mutator: func(g *core.Genesis, _ *config.Chain) {
+			mutator: func(g *opgenesis.Genesis, _ *config.Chain) {
 				g.Timestamp++
 			},
 		},
 		{
 			name: "fails when nonce is modified",
-			mutator: func(g *core.Genesis, _ *config.Chain) {
+			mutator: func(g *opgenesis.Genesis, _ *config.Chain) {
 				g.Nonce++
 			},
 		},
 		{
 			name: "fails when extradata is modified",
-			mutator: func(g *core.Genesis, _ *config.Chain) {
+			mutator: func(g *opgenesis.Genesis, _ *config.Chain) {
 				g.ExtraData = append(g.ExtraData, byte(0x00))
 			},
 		},
 		{
 			name: "fails when gas limit is modified",
-			mutator: func(g *core.Genesis, _ *config.Chain) {
+			mutator: func(g *opgenesis.Genesis, _ *config.Chain) {
 				g.GasLimit++
 			},
 		},
 		{
 			name: "fails when base fee is modified",
-			mutator: func(g *core.Genesis, _ *config.Chain) {
+			mutator: func(g *opgenesis.Genesis, _ *config.Chain) {
 				g.BaseFee.Add(g.BaseFee, common.Big1)
 			},
 		},
 		{
 			name: "fails when blob gas parameters are modified",
-			mutator: func(g *core.Genesis, _ *config.Chain) {
+			mutator: func(g *opgenesis.Genesis, _ *config.Chain) {
 				g.ExcessBlobGas = new(uint64)
 				*g.ExcessBlobGas = 1
 			},
 		},
 		{
-			name: "fails when state hash is modified",
-			mutator: func(g *core.Genesis, _ *config.Chain) {
-				g.StateHash = new(common.Hash)
-				g.StateHash[0] = 0x01
-				g.Alloc = types.GenesisAlloc{}
+			name: "fails when alloc is modified",
+			mutator: func(g *opgenesis.Genesis, _ *config.Chain) {
+				g.Alloc[common.Address{0x42}] = types.Account{Balance: big.NewInt(1)}
 			},
 		},
 	}
@@ -93,7 +92,7 @@ func TestValidateGenesisIntegrity(t *testing.T) {
 
 			genesisJSON, err := ReadSuperchainGenesis("testdata", "sepolia", "testchain")
 			require.NoError(t, err)
-			var genesis core.Genesis
+			var genesis opgenesis.Genesis
 			require.NoError(t, json.Unmarshal(genesisJSON, &genesis))
 
 			tt.mutator(&genesis, cfg)

@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"testing"
 
+	opgenesis "github.com/ethereum-optimism/optimism/op-core/genesis"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/stretchr/testify/require"
 )
@@ -67,8 +67,8 @@ func TestGenesisRoundTrip(t *testing.T) {
 	}
 }
 
-func makeTestGenesis() *core.Genesis {
-	testGenesis := &core.Genesis{
+func makeTestGenesis() *opgenesis.Genesis {
+	testGenesis := &opgenesis.Genesis{
 		Nonce:         0,
 		Timestamp:     1722432480,
 		ExtraData:     []byte("BEDROCK"),

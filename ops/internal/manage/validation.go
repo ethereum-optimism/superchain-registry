@@ -6,10 +6,10 @@ import (
 	"math/big"
 	"net/http"
 
+	opgenesis "github.com/ethereum-optimism/optimism/op-core/genesis"
+	opparams "github.com/ethereum-optimism/optimism/op-core/params"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/params"
 )
 
 const chainListUrl = "https://chainid.network/chains_mini.json"
@@ -76,80 +76,44 @@ func FetchGlobalChainIDs() (map[uint64]ChainEntry, error) {
 // ValidateGenesisIntegrity checks that the genesis JSON, with a chain config derived from cfg,
 // hashes to the genesis block hash in cfg.
 func ValidateGenesisIntegrity(cfg *config.Chain, genesisJSON json.RawMessage) error {
-	var genesis core.Genesis
+	var genesis opgenesis.Genesis
 	if err := json.Unmarshal(genesisJSON, &genesis); err != nil {
 		return fmt.Errorf("failed to decode genesis: %w", err)
 	}
+	genesis.Config = opChainConfig(cfg)
 
-	genesisActivation := uint64(0)
-	out := &params.ChainConfig{
-		ChainID:                 new(big.Int).SetUint64(cfg.ChainID),
-		HomesteadBlock:          common.Big0,
-		DAOForkBlock:            nil,
-		DAOForkSupport:          false,
-		EIP150Block:             common.Big0,
-		EIP155Block:             common.Big0,
-		EIP158Block:             common.Big0,
-		ByzantiumBlock:          common.Big0,
-		ConstantinopleBlock:     common.Big0,
-		PetersburgBlock:         common.Big0,
-		IstanbulBlock:           common.Big0,
-		MuirGlacierBlock:        common.Big0,
-		BerlinBlock:             common.Big0,
-		LondonBlock:             common.Big0,
-		ArrowGlacierBlock:       common.Big0,
-		GrayGlacierBlock:        common.Big0,
-		MergeNetsplitBlock:      common.Big0,
-		ShanghaiTime:            cfg.Hardforks.CanyonTime.U64Ptr(),  // Shanghai activates with Canyon
-		CancunTime:              cfg.Hardforks.EcotoneTime.U64Ptr(), // Cancun activates with Ecotone
-		PragueTime:              cfg.Hardforks.IsthmusTime.U64Ptr(), // Prague activates with Isthmus
-		BedrockBlock:            common.Big0,
-		RegolithTime:            &genesisActivation,
-		CanyonTime:              cfg.Hardforks.CanyonTime.U64Ptr(),
-		EcotoneTime:             cfg.Hardforks.EcotoneTime.U64Ptr(),
-		FjordTime:               cfg.Hardforks.FjordTime.U64Ptr(),
-		GraniteTime:             cfg.Hardforks.GraniteTime.U64Ptr(),
-		HoloceneTime:            cfg.Hardforks.HoloceneTime.U64Ptr(),
-		IsthmusTime:             cfg.Hardforks.IsthmusTime.U64Ptr(),
-		LagoonTime:              cfg.Hardforks.LagoonTime.U64Ptr(),
-		JovianTime:              cfg.Hardforks.JovianTime.U64Ptr(),
-		TerminalTotalDifficulty: common.Big0,
-		Ethash:                  nil,
-		Clique:                  nil,
-	}
-
-	out.Optimism = &params.OptimismConfig{
-		EIP1559Elasticity:  cfg.Optimism.EIP1559Elasticity,
-		EIP1559Denominator: cfg.Optimism.EIP1559Denominator,
-	}
-
-	if cfg.Optimism.EIP1559DenominatorCanyon != 0 {
-		out.Optimism.EIP1559DenominatorCanyon = &cfg.Optimism.EIP1559DenominatorCanyon
-	}
-
-	genCopy := &core.Genesis{
-		Config:        out,
-		Nonce:         genesis.Nonce,
-		Timestamp:     genesis.Timestamp,
-		ExtraData:     genesis.ExtraData,
-		GasLimit:      genesis.GasLimit,
-		Difficulty:    genesis.Difficulty,
-		Mixhash:       genesis.Mixhash,
-		Coinbase:      genesis.Coinbase,
-		Alloc:         genesis.Alloc,
-		Number:        genesis.Number,
-		GasUsed:       genesis.GasUsed,
-		ParentHash:    genesis.ParentHash,
-		BaseFee:       genesis.BaseFee,
-		ExcessBlobGas: genesis.ExcessBlobGas,
-		BlobGasUsed:   genesis.BlobGasUsed,
-		StateHash:     genesis.StateHash,
-	}
-	block := genCopy.ToBlock()
-
+	block := genesis.ToBlock()
 	if block.Hash() != cfg.Genesis.L2.Hash {
 		return fmt.Errorf("%w: expected %s, got %s", ErrGenesisHashMismatch, cfg.Genesis.L2.Hash.Hex(), block.Hash().Hex())
 	}
 
 	return nil
+}
+
+// opChainConfig returns the chain config of cfg's chain, as the OP Stack derives it from the
+// registry's chain config.
+func opChainConfig(cfg *config.Chain) *opparams.ChainConfig {
+	hardforks := cfg.Hardforks
+	out := &opparams.ChainConfig{
+		ChainID:      new(big.Int).SetUint64(cfg.ChainID),
+		BedrockBlock: common.Big0,
+		RegolithTime: new(uint64),
+		CanyonTime:   hardforks.CanyonTime.U64Ptr(),
+		EcotoneTime:  hardforks.EcotoneTime.U64Ptr(),
+		FjordTime:    hardforks.FjordTime.U64Ptr(),
+		GraniteTime:  hardforks.GraniteTime.U64Ptr(),
+		HoloceneTime: hardforks.HoloceneTime.U64Ptr(),
+		IsthmusTime:  hardforks.IsthmusTime.U64Ptr(),
+		JovianTime:   hardforks.JovianTime.U64Ptr(),
+		KarstTime:    hardforks.KarstTime.U64Ptr(),
+		LagoonTime:   hardforks.LagoonTime.U64Ptr(),
+		Optimism: &opparams.OptimismConfig{
+			EIP1559Elasticity:  cfg.Optimism.EIP1559Elasticity,
+			EIP1559Denominator: cfg.Optimism.EIP1559Denominator,
+		},
+	}
+	if cfg.Optimism.EIP1559DenominatorCanyon != 0 {
+		out.Optimism.EIP1559DenominatorCanyon = &cfg.Optimism.EIP1559DenominatorCanyon
+	}
+	return out
 }
