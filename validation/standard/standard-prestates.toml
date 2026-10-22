@@ -465,6 +465,22 @@ hash="0x03e384aad91052e86a9912ad763cd32027586d99b5e8e2024115c606f35b6afa"
 type="cannon64-kona-interop"
 hash="0x03d56f7fd7d39b381efc142e127f41109709812d788c436ebad8f6de0633bc39"
 
+[[prestates."1.8.1-rc.1"]]
+type="cannon64-kona"
+hash="0x03e384aad91052e86a9912ad763cd32027586d99b5e8e2024115c606f35b6afa"
+
+[[prestates."1.8.1-rc.1"]]
+type="cannon64-kona-interop"
+hash="0x03d56f7fd7d39b381efc142e127f41109709812d788c436ebad8f6de0633bc39"
+
+[[prestates."1.8.1"]]
+type="cannon64-kona"
+hash="0x03e384aad91052e86a9912ad763cd32027586d99b5e8e2024115c606f35b6afa"
+
+[[prestates."1.8.1"]]
+type="cannon64-kona-interop"
+hash="0x03d56f7fd7d39b381efc142e127f41109709812d788c436ebad8f6de0633bc39"
+
 [[prestates."1.9.0-rc.1"]]
 type="cannon64-kona"
 hash="0x03f872c2161174453f8841a1ebd1d22bca443a5045d53e662dd835f24e1b6b0b"
