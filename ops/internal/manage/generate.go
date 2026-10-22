@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -99,8 +100,12 @@ func GenerateChainArtifacts(
 	if err != nil {
 		return fmt.Errorf("failed to convert opaque genesis to core.Genesis: %w", err)
 	}
+	genesisJSON := new(bytes.Buffer)
+	if err := json.NewEncoder(genesisJSON).Encode(genesis); err != nil {
+		return fmt.Errorf("failed to encode genesis: %w", err)
+	}
 
-	if err := WriteGenesis(wd, path.Join(stagingDir, shortName+".json.zst"), genesis); err != nil {
+	if err := WriteGenesis(wd, path.Join(stagingDir, shortName+".json.zst"), genesisJSON.Bytes()); err != nil {
 		return fmt.Errorf("failed to write genesis at index %d: %w", idx, err)
 	}
 

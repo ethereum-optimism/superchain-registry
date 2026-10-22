@@ -1,11 +1,13 @@
 package manage
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -77,7 +79,7 @@ func TestValidateGenesisIntegrity(t *testing.T) {
 			mutator: func(g *core.Genesis, _ *config.Chain) {
 				g.StateHash = new(common.Hash)
 				g.StateHash[0] = 0x01
-				g.Alloc = nil
+				g.Alloc = types.GenesisAlloc{}
 			},
 		},
 	}
@@ -89,12 +91,16 @@ func TestValidateGenesisIntegrity(t *testing.T) {
 			cfg, err := ReadChainConfig("testdata", "sepolia", "testchain")
 			require.NoError(t, err)
 
-			genesis, err := ReadSuperchainGenesis("testdata", "sepolia", "testchain")
+			genesisJSON, err := ReadSuperchainGenesis("testdata", "sepolia", "testchain")
+			require.NoError(t, err)
+			var genesis core.Genesis
+			require.NoError(t, json.Unmarshal(genesisJSON, &genesis))
+
+			tt.mutator(&genesis, cfg)
+			genesisJSON, err = json.Marshal(&genesis)
 			require.NoError(t, err)
 
-			tt.mutator(genesis, cfg)
-
-			err = ValidateGenesisIntegrity(cfg, genesis)
+			err = ValidateGenesisIntegrity(cfg, genesisJSON)
 			require.Error(t, err)
 			require.ErrorContains(t, err, "genesis hash mismatch")
 		})
