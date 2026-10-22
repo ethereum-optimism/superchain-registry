@@ -92,12 +92,7 @@ func GenerateChainArtifacts(
 	}
 
 	output.WriteOK("writing genesis")
-	genesisJSON := new(bytes.Buffer)
-	if err := json.Compact(genesisJSON, genesis); err != nil {
-		return fmt.Errorf("failed to compact genesis: %w", err)
-	}
-
-	if err := WriteGenesis(wd, path.Join(stagingDir, shortName+".json.zst"), genesisJSON.Bytes()); err != nil {
+	if err := writeCompactGenesis(wd, path.Join(stagingDir, shortName+".json.zst"), genesis); err != nil {
 		return fmt.Errorf("failed to write genesis at index %d: %w", idx, err)
 	}
 
@@ -112,4 +107,14 @@ func GenerateChainArtifacts(
 		return fmt.Errorf("failed to write state file to staging directory: %w", err)
 	}
 	return nil
+}
+
+// writeCompactGenesis writes the genesis JSON that op-deployer printed to genPath, compacted but
+// otherwise as is, so that its fields and their order are kept.
+func writeCompactGenesis(rootP, genPath string, genesis json.RawMessage) error {
+	compact := new(bytes.Buffer)
+	if err := json.Compact(compact, genesis); err != nil {
+		return fmt.Errorf("failed to compact genesis: %w", err)
+	}
+	return WriteGenesis(rootP, genPath, compact.Bytes())
 }
