@@ -17,7 +17,7 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-github/v68 v68.0.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/klauspost/compress v1.18.0
+	github.com/klauspost/compress v1.18.7
 	github.com/tomwright/dasel v1.27.3
 	golang.org/x/sync v0.21.0
 	gopkg.in/yaml.v3 v3.0.1
