@@ -1,6 +1,7 @@
 package report
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
@@ -30,9 +31,13 @@ func ScanL2(
 		return nil, fmt.Errorf("failed to create op-deployer: %w", err)
 	}
 
-	originalGenesis, err := opd.InspectGenesis(statePath, strconv.FormatUint(l2ChainId, 10))
+	originalGenesisJSON, err := opd.InspectGenesis(statePath, strconv.FormatUint(l2ChainId, 10))
 	if err != nil {
 		return nil, fmt.Errorf("failed to inspect genesis: %w", err)
+	}
+	var originalGenesis deployer.OpaqueMap
+	if err := json.Unmarshal(originalGenesisJSON, &originalGenesis); err != nil {
+		return nil, fmt.Errorf("failed to decode genesis: %w", err)
 	}
 
 	standardGenesis, err := opd.GenerateStandardGenesis(statePath, strconv.FormatUint(l2ChainId, 10), l1RpcUrl)
@@ -66,7 +71,7 @@ func ScanL2(
 	var report L2Report
 	report.Release = l2Release
 
-	genesisDiffs := deployer.DiffOpaqueMaps("genesis", *originalGenesis, *standardGenesis)
+	genesisDiffs := deployer.DiffOpaqueMaps("genesis", originalGenesis, *standardGenesis)
 	report.GenesisDiffs = genesisDiffs
 
 	return &report, nil

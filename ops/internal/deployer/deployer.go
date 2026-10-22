@@ -242,19 +242,21 @@ func (d *OpDeployer) copyStateFileToTempDir(statePath string) (string, error) {
 	return workdir, nil
 }
 
-func (d *OpDeployer) InspectGenesis(statePath, chainId string) (*OpaqueMap, error) {
+// InspectGenesis returns the genesis JSON that op-deployer prints for the chain, undecoded so
+// that its fields and their order are kept.
+func (d *OpDeployer) InspectGenesis(statePath, chainId string) (json.RawMessage, error) {
 	workdir, err := d.copyStateFileToTempDir(statePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy state file: %w", err)
 	}
 	defer os.RemoveAll(workdir)
 
-	var genesis OpaqueMap
+	var genesis json.RawMessage
 	if err := d.inspectCommand(workdir, chainId, "genesis", &genesis); err != nil {
 		return nil, err
 	}
 
-	return &genesis, nil
+	return genesis, nil
 }
 
 func (d *OpDeployer) InspectRollup(statePath, chainId string) (*rollup.Config, error) {
