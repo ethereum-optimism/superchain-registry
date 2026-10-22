@@ -73,7 +73,14 @@ func FetchGlobalChainIDs() (map[uint64]ChainEntry, error) {
 	return out, nil
 }
 
-func ValidateGenesisIntegrity(cfg *config.Chain, genesis *core.Genesis) error {
+// ValidateGenesisIntegrity checks that the genesis JSON, with a chain config derived from cfg,
+// hashes to the genesis block hash in cfg.
+func ValidateGenesisIntegrity(cfg *config.Chain, genesisJSON json.RawMessage) error {
+	var genesis core.Genesis
+	if err := json.Unmarshal(genesisJSON, &genesis); err != nil {
+		return fmt.Errorf("failed to decode genesis: %w", err)
+	}
+
 	genesisActivation := uint64(0)
 	out := &params.ChainConfig{
 		ChainID:                 new(big.Int).SetUint64(cfg.ChainID),
