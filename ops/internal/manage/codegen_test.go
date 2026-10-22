@@ -12,11 +12,11 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/addresses"
-	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
+	"github.com/ethereum-optimism/optimism/op-fetcher/chaininfo"
+	"github.com/ethereum-optimism/optimism/op-service/log"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/stretchr/testify/require"
 )
 
@@ -62,28 +62,28 @@ func loadTestChainList(t *testing.T) []config.ChainListEntry {
 }
 
 // createTestChainConfigs creates chain configs for testing based on testdata
-func createTestChainConfigs(t *testing.T) map[uint64]script.ChainConfig {
+func createTestChainConfigs(t *testing.T) map[uint64]chaininfo.Config {
 	addresses := loadTestAddressesJSON(t)
 	chainList := loadTestChainList(t)
 
-	chainCfgs := make(map[uint64]script.ChainConfig)
+	chainCfgs := make(map[uint64]chaininfo.Config)
 	for _, entry := range chainList {
 		chainID := entry.ChainID
 		chainIDStr := fmt.Sprintf("%d", chainID)
 
 		// Only include chains that exist in addresses
 		if chainAddrs, ok := addresses[chainIDStr]; ok {
-			chainCfgs[chainID] = convertToScriptChainConfig(t, chainAddrs, entry.FaultProofs)
+			chainCfgs[chainID] = convertToChainInfoConfig(t, chainAddrs, entry.FaultProofs)
 		}
 	}
 
 	return chainCfgs
 }
 
-// convertToScriptChainConfig converts from config types to script types
-func convertToScriptChainConfig(t *testing.T, chainAddrs *config.AddressesWithRoles, faultProofStatus config.FaultProofs) script.ChainConfig {
-	var scriptAddrs script.Addresses
-	var scriptRoles addresses.OpChainRoles
+// convertToChainInfoConfig converts from config types to op-fetcher chaininfo types
+func convertToChainInfoConfig(t *testing.T, chainAddrs *config.AddressesWithRoles, faultProofStatus config.FaultProofs) chaininfo.Config {
+	var fetchedAddrs chaininfo.Addresses
+	var fetchedRoles addresses.OpChainRoles
 
 	// First, convert to a map of string addresses
 	addressMap := make(map[string]string)
@@ -92,9 +92,9 @@ func convertToScriptChainConfig(t *testing.T, chainAddrs *config.AddressesWithRo
 	err = json.Unmarshal(bytes, &addressMap)
 	require.NoError(t, err)
 
-	// Now populate the script structs manually using the map
-	// For each field in scriptAddrs struct
-	addressVal := reflect.ValueOf(&scriptAddrs).Elem()
+	// Now populate the chaininfo structs manually using the map
+	// For each field in fetchedAddrs struct
+	addressVal := reflect.ValueOf(&fetchedAddrs).Elem()
 	for i := 0; i < addressVal.NumField(); i++ {
 		field := addressVal.Type().Field(i)
 		jsonTag := strings.Split(field.Tag.Get("json"), ",")[0]
@@ -108,8 +108,8 @@ func convertToScriptChainConfig(t *testing.T, chainAddrs *config.AddressesWithRo
 		}
 	}
 
-	// For each field in scriptRoles struct
-	rolesVal := reflect.ValueOf(&scriptRoles).Elem()
+	// For each field in fetchedRoles struct
+	rolesVal := reflect.ValueOf(&fetchedRoles).Elem()
 	for i := 0; i < rolesVal.NumField(); i++ {
 		field := rolesVal.Type().Field(i)
 		jsonTag := strings.Split(field.Tag.Get("json"), ",")[0]
@@ -123,17 +123,17 @@ func convertToScriptChainConfig(t *testing.T, chainAddrs *config.AddressesWithRo
 		}
 	}
 
-	cfg := script.ChainConfig{
-		Addresses: scriptAddrs,
-		Roles:     scriptRoles,
+	cfg := chaininfo.Config{
+		Addresses: fetchedAddrs,
+		Roles:     fetchedRoles,
 	}
 	if faultProofStatus.Status == "permissioned" {
-		cfg.FaultProofStatus = &script.FaultProofStatus{
+		cfg.FaultProofStatus = &chaininfo.FaultProofStatus{
 			Permissioned:      true,
 			RespectedGameType: 1,
 		}
 	} else if faultProofStatus.Status == "permissionless" {
-		cfg.FaultProofStatus = &script.FaultProofStatus{
+		cfg.FaultProofStatus = &chaininfo.FaultProofStatus{
 			Permissioned:      true,
 			Permissionless:    true,
 			RespectedGameType: 0,
@@ -182,8 +182,8 @@ func TestCodegenSyncer_UpdateChainList(t *testing.T) {
 	syncer, err := NewCodegenSyncer(lgr, "testdata", chainCfgs)
 	require.NoError(t, err)
 
-	err = syncer.UpdateChainList(fmt.Sprintf("%d", testChainID), script.ChainConfig{
-		FaultProofStatus: &script.FaultProofStatus{
+	err = syncer.UpdateChainList(fmt.Sprintf("%d", testChainID), chaininfo.Config{
+		FaultProofStatus: &chaininfo.FaultProofStatus{
 			RespectedGameType: 0,
 		},
 	})
@@ -197,7 +197,7 @@ func TestCodegenSyncer_UpdateChainList(t *testing.T) {
 	}
 
 	// Test with invalid chain ID format
-	err = syncer.UpdateChainList("not-a-number", script.ChainConfig{})
+	err = syncer.UpdateChainList("not-a-number", chaininfo.Config{})
 	require.Error(t, err)
 }
 
@@ -222,8 +222,8 @@ func TestCodegenSyncer_UpdateChainListSuperGameTypes(t *testing.T) {
 			syncer, err := NewCodegenSyncer(lgr, "testdata", chainCfgs)
 			require.NoError(t, err)
 
-			err = syncer.UpdateChainList(fmt.Sprintf("%d", testChainID), script.ChainConfig{
-				FaultProofStatus: &script.FaultProofStatus{
+			err = syncer.UpdateChainList(fmt.Sprintf("%d", testChainID), chaininfo.Config{
+				FaultProofStatus: &chaininfo.FaultProofStatus{
 					RespectedGameType: test.respectedGameType,
 				},
 			})
@@ -246,7 +246,7 @@ func TestCodegenSyncer_SyncAll(t *testing.T) {
 
 	for chainID := range chainCfgs {
 		config := chainCfgs[chainID]
-		config.FaultProofStatus = &script.FaultProofStatus{
+		config.FaultProofStatus = &chaininfo.FaultProofStatus{
 			RespectedGameType: 1,
 		}
 		chainCfgs[chainID] = config
@@ -339,8 +339,8 @@ func TestCodegenSyncer_SyncAllUpdatesExistingAndPrunesRemovedChain(t *testing.T)
 	var updatedChainID uint64
 	for chainID, chainCfg := range chainCfgs {
 		updatedChainID = chainID
-		chainCfg.FaultProofStatus = &script.FaultProofStatus{RespectedGameType: 0}
-		chainCfgs = map[uint64]script.ChainConfig{chainID: chainCfg}
+		chainCfg.FaultProofStatus = &chaininfo.FaultProofStatus{RespectedGameType: 0}
+		chainCfgs = map[uint64]chaininfo.Config{chainID: chainCfg}
 		break
 	}
 
