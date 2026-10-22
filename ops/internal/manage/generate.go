@@ -58,7 +58,7 @@ func GenerateChainArtifacts(
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	opd, err := deployer.NewOpDeployer(lgr, picker)
+	opd, err := deployer.NewOpDeployer(lgr, wd, picker)
 	if err != nil {
 		return fmt.Errorf("failed to create op-deployer: %w", err)
 	}

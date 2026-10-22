@@ -87,11 +87,13 @@ func init() {
 type OpDeployer struct {
 	binaryPath string
 	merger     StateMerger
+	wd         string
 	lgr        log.Logger
 }
 
-// NewOpDeployer creates a new OpDeployer instance.
-func NewOpDeployer(lgr log.Logger, binaryPicker BinaryPicker) (*OpDeployer, error) {
+// NewOpDeployer creates a new OpDeployer instance. wd is the registry's repo root, which the
+// state merger reads the superchain definitions from.
+func NewOpDeployer(lgr log.Logger, wd string, binaryPicker BinaryPicker) (*OpDeployer, error) {
 	binaryPath := binaryPicker.Path()
 	if info, err := os.Stat(binaryPath); err != nil || info.Mode()&0o111 == 0 {
 		return nil, fmt.Errorf("op-deployer binary not found or not executable at %s", binaryPath)
@@ -102,6 +104,7 @@ func NewOpDeployer(lgr log.Logger, binaryPicker BinaryPicker) (*OpDeployer, erro
 	return &OpDeployer{
 		binaryPath: binaryPath,
 		merger:     binaryPicker.Merger(),
+		wd:         wd,
 		lgr:        lgr,
 	}, nil
 }
@@ -115,7 +118,7 @@ func (d *OpDeployer) setupStateAndIntent(inputStatePath, workdir string) error {
 		return fmt.Errorf("failed to read state file: %w", err)
 	}
 
-	mergedIntent, mergedState, err := d.merger(state)
+	mergedIntent, mergedState, err := d.merger(d.wd, state)
 	if err != nil {
 		return fmt.Errorf("failed to merge state: %w", err)
 	}

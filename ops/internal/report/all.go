@@ -15,6 +15,7 @@ import (
 
 func ScanAll(
 	ctx context.Context,
+	wd string,
 	l1RpcUrl string,
 	rpcClient *rpc.Client,
 	statePath string,
@@ -42,6 +43,7 @@ func ScanAll(
 	}
 
 	report.L2, err = ScanL2(
+		wd,
 		statePath,
 		chainCfg.ChainID,
 		l1RpcUrl,
