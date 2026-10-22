@@ -2,6 +2,7 @@ package report
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"math/big"
@@ -23,6 +24,7 @@ func ScanL1(
 	rpcClient *rpc.Client,
 	deploymentTx common.Hash,
 	release string,
+	stateDeployOutput *DeployOPChainOutput,
 ) (*L1Report, error) {
 	client := ethclient.NewClient(rpcClient)
 
@@ -44,9 +46,10 @@ func ScanL1(
 		return nil, fmt.Errorf("deployment tx failed: %v", receipt.Status)
 	}
 
-	deployedEvent, err := ParseDeployedEvent(receipt.Logs)
-	if err != nil {
-		return nil, fmt.Errorf("malformed Deployed event: %w", err)
+	deployedEvent, parseErr := ParseDeployedEvent(receipt.Logs)
+	useStateDeployOutput := errors.Is(parseErr, ErrNoDeployedEvent) && stateDeployOutput != nil
+	if parseErr != nil && !useStateDeployOutput {
+		return nil, fmt.Errorf("malformed Deployed event: %w", parseErr)
 	}
 
 	// Fetch the transaction to get the To address
@@ -63,6 +66,14 @@ func ScanL1(
 		return nil, fmt.Errorf("unauthorized OPCM address: got %v, expected %v", tx.To(), opcmAddr)
 	}
 	output.WriteOK("deployment transaction was sent to the expected OPCM address: %v", opcmAddr)
+
+	if useStateDeployOutput {
+		if err := ValidateDeployOutputInReceipt(receipt.Logs, *stateDeployOutput); err != nil {
+			return nil, fmt.Errorf("failed to validate state deployment output: %w", err)
+		}
+		deployedEvent = &DeployedEvent{DeployOutput: *stateDeployOutput}
+		output.WriteOK("validated OPCM V2 deployment addresses against receipt logs")
+	}
 
 	semversReport, err := ScanSemvers(ctx, rpcClient, deployedEvent.DeployOutput)
 	if err != nil {
@@ -148,6 +159,19 @@ func ScanOwnership(
 		return report, fmt.Errorf("failed to get ownership data: %w", err)
 	}
 
+	var gameArgs []byte
+	if err := CallBatch(
+		ctx,
+		w3Client,
+		batchCallMethod(deployOutput.DisputeGameFactoryProxy, gameArgsABI, &gameArgs, uint32(1)),
+	); err == nil {
+		challenger, err := gameargs.ParseChallenger(gameArgs)
+		if err != nil {
+			return report, fmt.Errorf("failed to parse permissioned game challenger: %w", err)
+		}
+		report.Challenger = challenger
+	}
+
 	return report, nil
 }
 
@@ -178,19 +202,15 @@ func ScanFDG(
 		return report, fmt.Errorf("failed to get FDG data: %w", err)
 	}
 
-	if report.AbsolutePrestate == (common.Hash{}) {
-		// Absolute prestate wasn't available from the implementation contract.
-		// Try to fetch it from the game args instead.
-		// Note that gameArgs isn't available in older DisputeGameFactory implementations so this isn't requested
-		// as part of the above batch.
-		var gameArgs []byte
-		if err := CallBatch(
-			ctx,
-			w3Client,
-			batchCallMethod(factoryAddr, gameArgsABI, &gameArgs, gameType),
-		); err != nil {
-			return report, fmt.Errorf("failed to get FDG game args: %w", err)
-		}
+	// Prefer game args when the factory supports them. Newer implementations
+	// use game args to override values exposed by the shared implementation.
+	var gameArgs []byte
+	gameArgsErr := CallBatch(
+		ctx,
+		w3Client,
+		batchCallMethod(factoryAddr, gameArgsABI, &gameArgs, gameType),
+	)
+	if gameArgsErr == nil {
 		prestate, err := gameargs.ParseAbsoluteState(gameArgs)
 		if err != nil {
 			return report, fmt.Errorf("failed to parse FDG game args: %w", err)
@@ -199,6 +219,8 @@ func ScanFDG(
 		// When using game args, the game type is passed in by the DisputeGameFactory so always matches the game type
 		// the implementation is set as.
 		report.GameType = gameType
+	} else if report.AbsolutePrestate == (common.Hash{}) {
+		return report, fmt.Errorf("failed to get FDG game args: %w", gameArgsErr)
 	}
 
 	maxU64Big := new(big.Int).SetUint64(math.MaxUint64)

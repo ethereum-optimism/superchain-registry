@@ -1,6 +1,7 @@
 package report
 
 import (
+	"errors"
 	"fmt"
 	"math/big"
 
@@ -8,6 +9,8 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/lmittmann/w3"
 )
+
+var ErrNoDeployedEvent = errors.New("no Deployed event in receipt")
 
 type DeployedEvent struct {
 	OutputVersion *big.Int
@@ -110,7 +113,7 @@ func ParseDeployedEvent(logs []*types.Log) (*DeployedEvent, error) {
 	}
 
 	if deploymentLog == nil {
-		return nil, fmt.Errorf("no Deployed event in receipt")
+		return nil, ErrNoDeployedEvent
 	}
 
 	if useNewSignature {

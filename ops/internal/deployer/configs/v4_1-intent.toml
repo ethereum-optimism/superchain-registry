@@ -10,6 +10,7 @@ l2ContractsLocator = "embedded"
   baseFeeVaultRecipient = "0x0000000000000000000000000000000000000000"
   l1FeeVaultRecipient = "0x0000000000000000000000000000000000000000"
   sequencerFeeVaultRecipient = "0x0000000000000000000000000000000000000000"
+  operatorFeeVaultRecipient = "0x0000000000000000000000000000000000000000"
   eip1559DenominatorCanyon = 250
   eip1559Denominator = 50
   eip1559Elasticity = 6

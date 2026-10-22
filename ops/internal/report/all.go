@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/validation"
@@ -31,11 +32,19 @@ func ScanAll(
 		}
 	}
 
+	var stateDeployOutput *DeployOPChainOutput
+	if st, readErr := deployer.ReadOpaqueStateFile(statePath); readErr == nil {
+		if deployOutput, outputErr := DeployOutputFromState(st, 0); outputErr == nil {
+			stateDeployOutput = &deployOutput
+		}
+	}
+
 	report.L1, err = ScanL1(
 		ctx,
 		rpcClient,
 		*chainCfg.DeploymentTxHash,
 		l1ContractsRelease,
+		stateDeployOutput,
 	)
 	if err != nil {
 		report.L1Err = err
@@ -89,16 +98,32 @@ func GetContractsReleaseForOpcm(statePath string) (string, error) {
 		return "", fmt.Errorf("unsupported L1 chain ID: %d", l1ChainID)
 	}
 
-	// Search for the version tag that has this OpcmImpl address
-	opcmAddrLower := strings.ToLower(opcmImplAddr.Hex())
+	return latestContractsReleaseForOpcm(opcmImplAddr, versions)
+}
+
+func latestContractsReleaseForOpcm(opcmAddr common.Address, versions validation.Versions) (string, error) {
+	opcmAddrLower := strings.ToLower(opcmAddr.Hex())
+	var latestTag string
+	var latestVersion *semver.Version
+
 	for versionTag, versionConfig := range versions {
 		if versionConfig.OPContractsManager != nil &&
 			versionConfig.OPContractsManager.Address != nil {
 			if strings.ToLower(versionConfig.OPContractsManager.Address.String()) == opcmAddrLower {
-				return string(versionTag), nil
+				parsed, err := semver.NewVersion(strings.TrimPrefix(string(versionTag), "op-contracts/v"))
+				if err != nil {
+					return "", fmt.Errorf("failed to parse contracts version %s: %w", versionTag, err)
+				}
+				if latestVersion == nil || parsed.GreaterThan(latestVersion) {
+					latestTag = string(versionTag)
+					latestVersion = parsed
+				}
 			}
 		}
 	}
 
-	return "", fmt.Errorf("OPCM address %s not found in standard versions", opcmImplAddr.Hex())
+	if latestVersion == nil {
+		return "", fmt.Errorf("OPCM address %s not found in standard versions", opcmAddr.Hex())
+	}
+	return latestTag, nil
 }
