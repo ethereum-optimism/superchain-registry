@@ -61,6 +61,9 @@ build-deployer-binaries:
 
 check-chainlist: (_run_ops_bin 'check_chainlist')
 
+check-review-period-delays L1_RPC_URLS="$SEPOLIA_RPC_URL,$MAINNET_RPC_URL":
+	@just _run_ops_bin "check_review_period_delays" "--l1-rpc-urls {{L1_RPC_URLS}}"
+
 remove-chain CHAIN_ID L1_RPC_URLS="$SEPOLIA_RPC_URL,$MAINNET_RPC_URL" SUPERCHAINS="":
 	@just _run_ops_bin "remove_chain" "--chain-id {{CHAIN_ID}}"
 	@just codegen {{L1_RPC_URLS}} {{SUPERCHAINS}}
