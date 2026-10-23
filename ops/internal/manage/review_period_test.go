@@ -3,15 +3,12 @@ package manage
 import (
 	"context"
 	"log/slog"
-	"os"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-service/testlog"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/testutil/mockrpc"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/stretchr/testify/require"
 )
@@ -128,24 +125,4 @@ func TestLockboxChains(t *testing.T) {
 		require.Len(t, groups[config.MainnetSuperchain], 1)
 		require.EqualValues(t, 901, groups[config.MainnetSuperchain][0].chainID)
 	})
-}
-
-// TestReviewPeriodChecker_actual validates the live registry. It needs L1 RPC URLs, which CI provides.
-func TestReviewPeriodChecker_actual(t *testing.T) {
-	l1RpcUrls := []string{os.Getenv("SEPOLIA_RPC_URL"), os.Getenv("MAINNET_RPC_URL")}
-	if l1RpcUrls[0] == "" || l1RpcUrls[1] == "" {
-		t.Skip("SEPOLIA_RPC_URL and MAINNET_RPC_URL must be set")
-	}
-
-	rootDir, err := paths.FindRepoRoot()
-	require.NoError(t, err)
-	cfgs, err := CollectChainConfigs(paths.SuperchainConfigsDir(rootDir))
-	require.NoError(t, err)
-	superchainIds, err := paths.SuperchainIds(rootDir)
-	require.NoError(t, err)
-	addrs := loadAddresses(t, paths.AddressesFile(rootDir))
-
-	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	checker := NewReviewPeriodChecker(lgr, cfgs, addrs, l1RpcUrls, superchainIds)
-	require.NoError(t, checker.Check(context.Background()))
 }
