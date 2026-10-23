@@ -2,31 +2,58 @@ package manage
 
 import (
 	"context"
+	"log/slog"
 	"os"
 	"testing"
 
+	"github.com/ethereum-optimism/optimism/op-service/testlog"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
-	"github.com/ethereum-optimism/superchain-registry/ops/internal/report"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/testutil/mockrpc"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/stretchr/testify/require"
 )
+
+func TestScanReviewPeriodDelays(t *testing.T) {
+	mockRPC := mockrpc.NewMockRPC(
+		t,
+		testlog.Logger(t, slog.LevelWarn),
+		mockrpc.WithExpectationsFile(t, "testdata/review_period_scan.json"),
+	)
+	client, err := rpc.Dial(mockRPC.Endpoint())
+	require.NoError(t, err)
+
+	delays, err := scanReviewPeriodDelays(
+		context.Background(),
+		client,
+		common.HexToAddress("0x034edD2A225f7f429A63E0f1D2084B9E0A93b538"),
+		common.HexToAddress("0x93dDE1822EfF3c3Bcdd7446c3E815EcF6952944c"),
+	)
+	require.NoError(t, err)
+	require.Equal(t, ReviewPeriodDelays{
+		ProofMaturityDelaySeconds:       604800,
+		DisputeGameFinalityDelaySeconds: 302400,
+		DelayedWETHDelaySeconds:         302400,
+	}, delays)
+	mockRPC.AssertExpectations(t)
+}
 
 func TestCheckReviewPeriodDelays(t *testing.T) {
 	lockboxA := config.ChecksummedAddress(common.HexToAddress("0xaaaa"))
 	lockboxB := config.ChecksummedAddress(common.HexToAddress("0xbbbb"))
-	standard := report.L1ReviewPeriodReport{
+	standard := ReviewPeriodDelays{
 		ProofMaturityDelaySeconds:       604800,
 		DisputeGameFinalityDelaySeconds: 302400,
 		DelayedWETHDelaySeconds:         302400,
 	}
-	shortened := report.L1ReviewPeriodReport{
+	shortened := ReviewPeriodDelays{
 		ProofMaturityDelaySeconds:       86400,
 		DisputeGameFinalityDelaySeconds: 43200,
 		DelayedWETHDelaySeconds:         43200,
 	}
-	chain := func(id uint64, lockbox config.ChecksummedAddress, delays report.L1ReviewPeriodReport) LockboxChainDelays {
+	chain := func(id uint64, lockbox config.ChecksummedAddress, delays ReviewPeriodDelays) LockboxChainDelays {
 		return LockboxChainDelays{ChainID: id, Superchain: config.MainnetSuperchain, Lockbox: lockbox, Delays: delays}
 	}
 

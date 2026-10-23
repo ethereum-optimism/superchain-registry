@@ -129,33 +129,6 @@ func TestRenderComment(t *testing.T) {
 		})
 	})
 
-	t.Run("review period delays are checked against the standard ranges", func(t *testing.T) {
-		l1ReportJSON, err := os.ReadFile("testdata/l1-report.json")
-		require.NoError(t, err)
-
-		var l1Report L1Report
-		require.NoError(t, json.Unmarshal(l1ReportJSON, &l1Report))
-		l1Report.ReviewPeriod = L1ReviewPeriodReport{
-			ProofMaturityDelaySeconds:       3600,
-			DisputeGameFinalityDelaySeconds: 43200,
-			DelayedWETHDelaySeconds:         604801,
-		}
-
-		comment, err := RenderComment(
-			&Report{L1: &l1Report, GeneratedAt: time.Unix(1234, 0)},
-			validation.StandardConfigParamsSepolia,
-			validation.StandardConfigRolesSepolia,
-			validation.StandardPrestates.StablePrestate(),
-			validation.StandardVersionsSepolia[validation.Semver160],
-			"1234567890abcdef",
-			"testChainShortName",
-		)
-		require.NoError(t, err)
-		require.Contains(t, comment, "| ⚠️ | ProofMaturityDelaySeconds | `86400` | `604800` | `3600` |")
-		require.Contains(t, comment, "| ✅ | DisputeGameFinalityDelaySeconds | `43200` | `302400` | `43200` |")
-		require.Contains(t, comment, "| ⚠️ | DelayedWETHDelaySeconds | `43200` | `604800` | `604801` |")
-	})
-
 	t.Run("error states", func(t *testing.T) {
 		comment, err := RenderComment(
 			&Report{

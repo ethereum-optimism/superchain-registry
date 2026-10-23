@@ -56,14 +56,6 @@ var (
 	gasPayingTokenSymbolABI = w3.MustNewFunc("gasPayingTokenSymbol()", "string")
 
 	minBaseFeeABI = w3.MustNewFunc("minBaseFee()", "uint64")
-
-	proofMaturityDelaySecondsABI = w3.MustNewFunc("proofMaturityDelaySeconds()", "uint256")
-
-	disputeGameFinalityDelaySecondsABI = w3.MustNewFunc("disputeGameFinalityDelaySeconds()", "uint256")
-
-	delayABI = w3.MustNewFunc("delay()", "uint256")
-
-	delayedWETHABI = w3.MustNewFunc("delayedWETH()", "address")
 )
 
 type BatchCall struct {

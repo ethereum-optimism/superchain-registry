@@ -57,18 +57,6 @@
 
 </details>
 
-<details open>
-
-<summary>Review Period Delays</summary>
-
-| | Parameter | Std Min | Std Max | Got Value |
-|---|----------|---------|---------|-----------|
-| ✅ | ProofMaturityDelaySeconds | `86400` | `604800` | `604800` |
-| ✅ | DisputeGameFinalityDelaySeconds | `43200` | `302400` | `302400` |
-| ✅ | DelayedWETHDelaySeconds | `43200` | `604800` | `302400` |
-
-</details>
-
 ## L2 Deployment
 
 **⚠️ Genesis does not match standard.** The state diff is listed below:

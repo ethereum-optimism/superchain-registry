@@ -194,35 +194,6 @@ func TestScanSystemConfig(t *testing.T) {
 	}
 }
 
-func TestScanReviewPeriod(t *testing.T) {
-	portalAddr := common.HexToAddress("0x034edD2A225f7f429A63E0f1D2084B9E0A93b538")
-	wethAddr := common.HexToAddress("0x490479B4064c5380cd959709c7cA7229A39878Dc")
-
-	l1Client, mockRPC := mockRPCClient(t, "test-scan-review-period.json")
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	report, err := ScanReviewPeriod(ctx, l1Client, portalAddr, wethAddr)
-	require.NoError(t, err)
-	require.Equal(t, L1ReviewPeriodReport{
-		ProofMaturityDelaySeconds:       604800,
-		DisputeGameFinalityDelaySeconds: 302400,
-		DelayedWETHDelaySeconds:         302400,
-	}, report)
-	mockRPC.AssertExpectations(t)
-}
-
-func TestDelayedWETHAddress(t *testing.T) {
-	l1Client, mockRPC := mockRPCClient(t, "test-delayed-weth-address.json")
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	addr, err := DelayedWETHAddress(ctx, l1Client, common.HexToAddress("0x93dDE1822EfF3c3Bcdd7446c3E815EcF6952944c"))
-	require.NoError(t, err)
-	require.Equal(t, common.HexToAddress("0x490479B4064c5380cd959709c7cA7229A39878Dc"), addr)
-	mockRPC.AssertExpectations(t)
-}
-
 func TestScanFDG(t *testing.T) {
 	factoryAddr := common.HexToAddress("0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1")
 	gameAddr := common.HexToAddress("0x034edD2A225f7f429A63E0f1D2084B9E0A93b538")

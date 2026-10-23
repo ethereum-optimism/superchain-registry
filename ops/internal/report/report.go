@@ -56,15 +56,6 @@ type L1SystemConfigReport struct {
 	GasPayingTokenSymbol   string
 }
 
-// L1ReviewPeriodReport holds the delays that gate withdrawals: the proof maturity delay on the
-// OptimismPortal, the dispute game finality delay on the AnchorStateRegistry and the DelayedWETH
-// withdrawal delay.
-type L1ReviewPeriodReport struct {
-	ProofMaturityDelaySeconds       uint64
-	DisputeGameFinalityDelaySeconds uint64
-	DelayedWETHDelaySeconds         uint64
-}
-
 type L1Report struct {
 	Release           string
 	DeploymentChainID uint64
@@ -73,7 +64,6 @@ type L1Report struct {
 	Ownership         L1OwnershipReport
 	Proofs            L1ProofsReport
 	SystemConfig      L1SystemConfigReport
-	ReviewPeriod      L1ReviewPeriodReport
 }
 
 type L2Report struct {

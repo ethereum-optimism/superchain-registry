@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"math/big"
 
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
@@ -13,19 +14,34 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/lmittmann/w3"
 )
 
 var (
 	errReviewPeriodOutOfRange = errors.New("review period delay outside the standard range")
 	errLockboxDelayMismatch   = errors.New("review period delays differ between chains sharing a lockbox")
+
+	delayedWETHABI                     = w3.MustNewFunc("delayedWETH()", "address")
+	proofMaturityDelaySecondsABI       = w3.MustNewFunc("proofMaturityDelaySeconds()", "uint256")
+	disputeGameFinalityDelaySecondsABI = w3.MustNewFunc("disputeGameFinalityDelaySeconds()", "uint256")
+	delayABI                           = w3.MustNewFunc("delay()", "uint256")
 )
+
+// ReviewPeriodDelays holds the delays that gate withdrawals: the proof maturity delay on the
+// OptimismPortal, the dispute game finality delay on the AnchorStateRegistry and the DelayedWETH
+// withdrawal delay.
+type ReviewPeriodDelays struct {
+	ProofMaturityDelaySeconds       uint64
+	DisputeGameFinalityDelaySeconds uint64
+	DelayedWETHDelaySeconds         uint64
+}
 
 // LockboxChainDelays holds the review period delays read from one chain that has an ETHLockbox.
 type LockboxChainDelays struct {
 	ChainID    uint64
 	Superchain config.Superchain
 	Lockbox    config.ChecksummedAddress
-	Delays     report.L1ReviewPeriodReport
+	Delays     ReviewPeriodDelays
 }
 
 // ReviewPeriodChecker validates the review period delays of every chain that has an ETHLockbox.
@@ -95,14 +111,12 @@ func (c *ReviewPeriodChecker) readDelays(ctx context.Context) ([]LockboxChainDel
 		}
 
 		for _, chain := range chains {
-			// addresses.json only lists a DelayedWETH for chains with a bisection game, so read it from the
-			// SystemConfig instead. Every lockbox chain runs op-contracts/v6.0.0 or later, where the getter exists.
-			wethAddr, err := report.DelayedWETHAddress(ctx, client, common.Address(*chain.addrs.SystemConfigProxy))
-			if err != nil {
-				client.Close()
-				return nil, fmt.Errorf("failed to read DelayedWETH address for chain %d: %w", chain.chainID, err)
-			}
-			delays, err := report.ScanReviewPeriod(ctx, client, common.Address(*chain.addrs.OptimismPortalProxy), wethAddr)
+			delays, err := scanReviewPeriodDelays(
+				ctx,
+				client,
+				common.Address(*chain.addrs.OptimismPortalProxy),
+				common.Address(*chain.addrs.SystemConfigProxy),
+			)
 			if err != nil {
 				client.Close()
 				return nil, fmt.Errorf("failed to read review period delays for chain %d: %w", chain.chainID, err)
@@ -124,6 +138,59 @@ func (c *ReviewPeriodChecker) readDelays(ctx context.Context) ([]LockboxChainDel
 		client.Close()
 	}
 	return out, nil
+}
+
+// scanReviewPeriodDelays reads a chain's review period delays from its OptimismPortal and SystemConfig
+// proxies. The DelayedWETH is resolved through `SystemConfig.delayedWETH()`
+func scanReviewPeriodDelays(
+	ctx context.Context,
+	client *rpc.Client,
+	portalAddr common.Address,
+	systemConfigAddr common.Address,
+) (ReviewPeriodDelays, error) {
+	w3Client := w3.NewClient(client)
+	var delays ReviewPeriodDelays
+
+	var wethAddr common.Address
+	if err := report.CallBatch(ctx, w3Client, batchCall(systemConfigAddr, delayedWETHABI, &wethAddr)); err != nil {
+		return delays, fmt.Errorf("failed to get DelayedWETH address: %w", err)
+	}
+
+	var proofMaturity, finalityDelay, wethDelay big.Int
+	if err := report.CallBatch(
+		ctx,
+		w3Client,
+		batchCall(portalAddr, proofMaturityDelaySecondsABI, &proofMaturity),
+		batchCall(portalAddr, disputeGameFinalityDelaySecondsABI, &finalityDelay),
+		batchCall(wethAddr, delayABI, &wethDelay),
+	); err != nil {
+		return delays, fmt.Errorf("failed to get review period delays: %w", err)
+	}
+
+	for _, v := range []struct {
+		name string
+		val  *big.Int
+		out  *uint64
+	}{
+		{"proof maturity delay", &proofMaturity, &delays.ProofMaturityDelaySeconds},
+		{"dispute game finality delay", &finalityDelay, &delays.DisputeGameFinalityDelaySeconds},
+		{"DelayedWETH delay", &wethDelay, &delays.DelayedWETHDelaySeconds},
+	} {
+		if !v.val.IsUint64() {
+			return delays, fmt.Errorf("unexpectedly large %s: %s", v.name, v.val.String())
+		}
+		*v.out = v.val.Uint64()
+	}
+
+	return delays, nil
+}
+
+func batchCall(to common.Address, fn *w3.Func, out any) report.BatchCall {
+	return report.BatchCall{
+		To:      to,
+		Encoder: func() ([]byte, error) { return fn.EncodeArgs() },
+		Decoder: func(rawOutput []byte) error { return fn.DecodeReturns(rawOutput, out) },
+	}
 }
 
 type lockboxChain struct {
