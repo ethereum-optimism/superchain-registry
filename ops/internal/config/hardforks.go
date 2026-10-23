@@ -3,7 +3,10 @@ package config
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
+
+	"github.com/ethereum-optimism/optimism/op-core/forks"
 )
 
 type HardforkTime uint64
@@ -24,6 +27,23 @@ func (h *HardforkTime) U64Ptr() *uint64 {
 	}
 
 	return (*uint64)(h)
+}
+
+// ActivationTime returns the activation time of fork f, and whether Hardforks has a field for f.
+// A fork's field is the one tagged "<fork>_time", where the fork name may be split by underscores.
+func (h *Hardforks) ActivationTime(f forks.Name) (*HardforkTime, bool) {
+	val := reflect.ValueOf(h).Elem()
+	typ := val.Type()
+	for i := 0; i < typ.NumField(); i++ {
+		tag, _, _ := strings.Cut(typ.Field(i).Tag.Get("toml"), ",")
+		name, ok := strings.CutSuffix(tag, "_time")
+		if !ok || strings.ReplaceAll(name, "_", "") != string(f) {
+			continue
+		}
+		t, ok := val.Field(i).Interface().(*HardforkTime)
+		return t, ok
+	}
+	return nil, false
 }
 
 func CopyHardforks(src, dst *Hardforks, superchainTime, genesisTime *uint64) error {

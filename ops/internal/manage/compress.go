@@ -3,18 +3,20 @@ package manage
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path"
 
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/fs"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
-	"github.com/ethereum/go-ethereum/core"
 	"github.com/klauspost/compress/zstd"
 )
 
-func WriteSuperchainGenesis(rootP string, superchain config.Superchain, shortName string, gen *core.Genesis) error {
+// WriteSuperchainGenesis writes a new chain's genesis JSON into the superchain's genesis directory.
+func WriteSuperchainGenesis(rootP string, superchain config.Superchain, shortName string, gen json.RawMessage) error {
 	genPath := paths.GenesisFile(rootP, superchain, shortName)
 	exists, err := fs.FileExists(genPath)
 	if err != nil {
@@ -31,7 +33,14 @@ func WriteSuperchainGenesis(rootP string, superchain config.Superchain, shortNam
 	return WriteGenesis(rootP, genPath, gen)
 }
 
-func WriteGenesis(rootP string, genPath string, gen *core.Genesis) error {
+// WriteGenesis compresses the genesis JSON gen with the registry's dictionary and writes it to
+// genPath. gen is stored byte for byte rather than decoded into a genesis type, which would drop
+// any field that type doesn't know.
+func WriteGenesis(rootP string, genPath string, gen json.RawMessage) error {
+	if !json.Valid(gen) {
+		return errors.New("genesis is not valid JSON")
+	}
+
 	dictPath := path.Join(paths.ExtraDir(rootP), "dictionary")
 	dict, err := os.ReadFile(dictPath)
 	if err != nil {
@@ -43,8 +52,8 @@ func WriteGenesis(rootP string, genPath string, gen *core.Genesis) error {
 	if err != nil {
 		return fmt.Errorf("failed to create zstd writer: %w", err)
 	}
-	if err := json.NewEncoder(zr).Encode(gen); err != nil {
-		return fmt.Errorf("failed to encode genesis: %w", err)
+	if _, err := zr.Write(gen); err != nil {
+		return fmt.Errorf("failed to compress genesis: %w", err)
 	}
 	if err := zr.Close(); err != nil {
 		return fmt.Errorf("failed to close zstd writer: %w", err)
@@ -57,7 +66,8 @@ func WriteGenesis(rootP string, genPath string, gen *core.Genesis) error {
 	return nil
 }
 
-func ReadSuperchainGenesis(rootP string, superchain config.Superchain, shortName string) (*core.Genesis, error) {
+// ReadSuperchainGenesis reads a chain's genesis JSON from the superchain's genesis directory.
+func ReadSuperchainGenesis(rootP string, superchain config.Superchain, shortName string) (json.RawMessage, error) {
 	genPath := paths.GenesisFile(rootP, superchain, shortName)
 	exists, err := fs.FileExists(genPath)
 	if err != nil {
@@ -70,7 +80,8 @@ func ReadSuperchainGenesis(rootP string, superchain config.Superchain, shortName
 	return ReadGenesis(rootP, genPath)
 }
 
-func ReadGenesis(rootP string, genPath string) (*core.Genesis, error) {
+// ReadGenesis decompresses the genesis at genPath and returns its JSON byte for byte.
+func ReadGenesis(rootP string, genPath string) (json.RawMessage, error) {
 	dictPath := path.Join(paths.ExtraDir(rootP), "dictionary")
 	dict, err := os.ReadFile(dictPath)
 	if err != nil {
@@ -89,10 +100,13 @@ func ReadGenesis(rootP string, genPath string) (*core.Genesis, error) {
 	}
 	defer zr.Close()
 
-	var gen core.Genesis
-	if err := json.NewDecoder(zr).Decode(&gen); err != nil {
-		return nil, fmt.Errorf("failed to decode genesis: %w", err)
+	gen, err := io.ReadAll(zr)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decompress genesis: %w", err)
+	}
+	if !json.Valid(gen) {
+		return nil, errors.New("genesis is not valid JSON")
 	}
 
-	return &gen, nil
+	return gen, nil
 }
