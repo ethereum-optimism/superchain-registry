@@ -11,8 +11,9 @@ import (
 	"github.com/Masterminds/semver/v3"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum-optimism/superchain-registry/validation"
-	"github.com/ethereum/go-ethereum/superchain"
 	"github.com/hashicorp/go-multierror"
 	"github.com/tomwright/dasel"
 )
@@ -58,7 +59,7 @@ func ReadOpaqueStateFile(p string) (OpaqueState, error) {
 	return out, nil
 }
 
-type StateMerger = func(state OpaqueState) (OpaqueMap, OpaqueState, error)
+type StateMerger = func(wd string, state OpaqueState) (OpaqueMap, OpaqueState, error)
 
 func GetStateMerger(version string) (StateMerger, error) {
 	// Extract version string (e.g., "0.4.5" from "op-deployer/v0.4.5")
@@ -95,7 +96,7 @@ func GetStateMerger(version string) (StateMerger, error) {
 	return nil, fmt.Errorf("unsupported deployer version: %s", version)
 }
 
-func MergeStateV1(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func MergeStateV1(wd string, userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -104,14 +105,14 @@ func MergeStateV1(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard intent: %w", err)
 	}
-	stdState, err := StandardStateV1(l1ChainID)
+	stdState, err := StandardStateV1(wd, l1ChainID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard state: %w", err)
 	}
 	return mergeStateV2(userState, stdIntent, stdState)
 }
 
-func MergeStateV2(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func MergeStateV2(wd string, userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -120,14 +121,14 @@ func MergeStateV2(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard intent: %w", err)
 	}
-	stdState, err := StandardStateV2(l1ChainID)
+	stdState, err := StandardStateV2(wd, l1ChainID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard state: %w", err)
 	}
 	return mergeStateV2(userState, stdIntent, stdState)
 }
 
-func MergeStateV3(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func MergeStateV3(wd string, userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -136,7 +137,7 @@ func MergeStateV3(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard intent: %w", err)
 	}
-	stdState, err := StandardStateV3(l1ChainID)
+	stdState, err := StandardStateV3(wd, l1ChainID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard state: %w", err)
 	}
@@ -145,7 +146,7 @@ func MergeStateV3(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	return mergeStateV2(userState, stdIntent, stdState)
 }
 
-func MergeStateV4_0(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func MergeStateV4_0(wd string, userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -154,14 +155,14 @@ func MergeStateV4_0(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard intent: %w", err)
 	}
-	stdState, err := StandardStateV4(l1ChainID)
+	stdState, err := StandardStateV4(wd, l1ChainID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard state: %w", err)
 	}
 	return mergeStateV4(userState, stdIntent, stdState)
 }
 
-func MergeStateV4_1(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
+func MergeStateV4_1(wd string, userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	l1ChainID, err := userState.ReadL1ChainID()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to read L1 chain ID: %w", err)
@@ -170,7 +171,7 @@ func MergeStateV4_1(userState OpaqueState) (OpaqueMap, OpaqueState, error) {
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard intent: %w", err)
 	}
-	stdState, err := StandardStateV4(l1ChainID)
+	stdState, err := StandardStateV4(wd, l1ChainID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create standard state: %w", err)
 	}
@@ -406,23 +407,23 @@ func standardIntentV1(l1ChainID uint64, data []byte) (OpaqueMap, error) {
 	return intent, nil
 }
 
-func StandardStateV4(l1ChainID uint64) (OpaqueState, error) {
-	return standardState(l1ChainID, validation.Semver400, standardV4State)
+func StandardStateV4(wd string, l1ChainID uint64) (OpaqueState, error) {
+	return standardState(wd, l1ChainID, validation.Semver400, standardV4State)
 }
 
-func StandardStateV3(l1ChainID uint64) (OpaqueState, error) {
-	return standardState(l1ChainID, validation.Semver300, standardV3State)
+func StandardStateV3(wd string, l1ChainID uint64) (OpaqueState, error) {
+	return standardState(wd, l1ChainID, validation.Semver300, standardV3State)
 }
 
-func StandardStateV2(l1ChainID uint64) (OpaqueState, error) {
-	return standardState(l1ChainID, validation.Semver200, standardV2State)
+func StandardStateV2(wd string, l1ChainID uint64) (OpaqueState, error) {
+	return standardState(wd, l1ChainID, validation.Semver200, standardV2State)
 }
 
-func StandardStateV1(l1ChainID uint64) (OpaqueState, error) {
-	return standardState(l1ChainID, validation.Semver180, standardV1State)
+func StandardStateV1(wd string, l1ChainID uint64) (OpaqueState, error) {
+	return standardState(wd, l1ChainID, validation.Semver180, standardV1State)
 }
 
-func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (OpaqueState, error) {
+func standardState(wd string, l1ChainID uint64, semver validation.Semver, data []byte) (OpaqueState, error) {
 	state := make(OpaqueState)
 	if err := json.Unmarshal(data, &state); err != nil {
 		panic(err)
@@ -446,9 +447,12 @@ func standardState(l1ChainID uint64, semver validation.Semver, data []byte) (Opa
 		return nil, fmt.Errorf("semver not found in stdVersions: %s", semver)
 	}
 
-	sc, err := superchain.GetSuperchain(scNetwork)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get superchain: %w", err)
+	var sc config.SuperchainDefinition
+	if err := paths.ReadTOMLFile(paths.SuperchainDefinitionPath(wd, config.Superchain(scNetwork)), &sc); err != nil {
+		return nil, fmt.Errorf("failed to read %s superchain definition: %w", scNetwork, err)
+	}
+	if sc.SuperchainConfigAddr == nil {
+		return nil, fmt.Errorf("%s superchain definition has no superchain_config_addr", scNetwork)
 	}
 
 	root := dasel.New(state)

@@ -12,6 +12,7 @@ import (
 
 // ScanL2 uses op-deployer to generate a standard genesis and diffs it against the provided genesis
 func ScanL2(
+	wd string,
 	statePath string,
 	l2ChainId uint64,
 	l1RpcUrl string,
@@ -24,7 +25,7 @@ func ScanL2(
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	opd, err := deployer.NewOpDeployer(lgr, picker)
+	opd, err := deployer.NewOpDeployer(lgr, wd, picker)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create op-deployer: %w", err)
 	}
