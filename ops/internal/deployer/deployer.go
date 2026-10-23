@@ -87,12 +87,13 @@ func init() {
 type OpDeployer struct {
 	binaryPath string
 	merger     StateMerger
-	wd         string
-	lgr        log.Logger
+	// wd is the registry's repo root, which the state merger reads the superchain definitions from.
+	wd  string
+	lgr log.Logger
 }
 
-// NewOpDeployer creates a new OpDeployer instance. wd is the registry's repo root, which the
-// state merger reads the superchain definitions from.
+// NewOpDeployer creates a new OpDeployer instance whose state merger reads the superchain
+// definitions from the registry at wd.
 func NewOpDeployer(lgr log.Logger, wd string, binaryPicker BinaryPicker) (*OpDeployer, error) {
 	binaryPath := binaryPicker.Path()
 	if info, err := os.Stat(binaryPath); err != nil || info.Mode()&0o111 == 0 {
