@@ -5,23 +5,23 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch"
-	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
+	"github.com/ethereum-optimism/optimism/op-fetcher/chaininfo"
+	"github.com/ethereum-optimism/optimism/op-fetcher/fetch"
+	"github.com/ethereum-optimism/optimism/op-service/log"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
 	"golang.org/x/sync/errgroup"
 )
 
 // FetchChains fetches chain configurations for specified chain IDs or all chains if none specified
-func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []string, chainIds []uint64, superchains []config.Superchain) (map[uint64]script.ChainConfig, error) {
+func FetchChains(egCtx context.Context, lgr log.Logger, wd string, l1RpcUrls []string, chainIds []uint64, superchains []config.Superchain) (map[uint64]chaininfo.Config, error) {
 	chainsBySuperchain, err := collectChainsBySuperchain(wd, chainIds, superchains)
 	if err != nil {
 		return nil, err
 	}
 
-	allChainConfigs := make(map[uint64]script.ChainConfig)
+	allChainConfigs := make(map[uint64]chaininfo.Config)
 	var mu sync.Mutex
 	eg, egCtx := errgroup.WithContext(egCtx)
 
@@ -137,7 +137,7 @@ func collectChainsBySuperchain(wd string, chainIds []uint64, superchainsInput []
 }
 
 // fetchChainInfo handles the common logic for creating an op-fetcher instance using it to fetch chain info
-func fetchChainInfo(ctx context.Context, lgr log.Logger, l1RpcUrl string, cfg DiskChainConfig) (script.ChainConfig, error) {
+func fetchChainInfo(ctx context.Context, lgr log.Logger, l1RpcUrl string, cfg DiskChainConfig) (chaininfo.Config, error) {
 	fetcher, err := fetch.NewFetcher(
 		lgr,
 		l1RpcUrl,
@@ -145,13 +145,13 @@ func fetchChainInfo(ctx context.Context, lgr log.Logger, l1RpcUrl string, cfg Di
 		common.HexToAddress(cfg.Config.Addresses.L1StandardBridgeProxy.String()),
 	)
 	if err != nil {
-		return script.ChainConfig{}, fmt.Errorf("error creating fetcher for chain %d: %w", cfg.Config.ChainID, err)
+		return chaininfo.Config{}, fmt.Errorf("error creating fetcher for chain %d: %w", cfg.Config.ChainID, err)
 	}
 
 	result, err := fetcher.FetchChainInfo(ctx)
 	if err != nil {
-		return script.ChainConfig{}, fmt.Errorf("error fetching chain info for chain %d: %w", cfg.Config.ChainID, err)
+		return chaininfo.Config{}, fmt.Errorf("error fetching chain info for chain %d: %w", cfg.Config.ChainID, err)
 	}
 
-	return script.CreateChainConfig(result), nil
+	return result.Config(), nil
 }

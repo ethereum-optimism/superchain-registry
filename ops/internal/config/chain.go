@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/addresses"
-	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
+	"github.com/ethereum-optimism/optimism/op-fetcher/chaininfo"
 	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -160,7 +160,7 @@ type AddressesWithRoles struct {
 	Roles
 }
 
-func CreateAddressesWithRolesFromFetcher(addrs script.Addresses, roles addresses.OpChainRoles) AddressesWithRoles {
+func CreateAddressesWithRolesFromFetcher(addrs chaininfo.Addresses, roles addresses.OpChainRoles) AddressesWithRoles {
 	addressesWithRoles := AddressesWithRoles{
 		Addresses: Addresses{
 			AddressManager:                    NewChecksummedAddress(addrs.AddressManagerImpl),

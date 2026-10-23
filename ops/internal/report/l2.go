@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ethereum-optimism/optimism/op-service/log"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
-	"github.com/ethereum/go-ethereum/log"
 )
 
 // ScanL2 uses op-deployer to generate a standard genesis and diffs it against the provided genesis
