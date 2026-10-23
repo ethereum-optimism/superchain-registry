@@ -93,10 +93,6 @@ func (c *ReviewPeriodChecker) readDelays(ctx context.Context) ([]LockboxChainDel
 
 	var out []LockboxChainDelays
 	for superchain, chains := range bySuperchain {
-		if _, ok := standardConfigParams(superchain); !ok {
-			c.lgr.Info("skipping superchain without standard config params", "superchain", superchain)
-			continue
-		}
 		superchainId, ok := c.superchainIds[superchain]
 		if !ok {
 			return nil, fmt.Errorf("missing superchain chainId for superchain %s", superchain)
@@ -198,11 +194,15 @@ type lockboxChain struct {
 	addrs   *config.AddressesWithRoles
 }
 
-// lockboxChains returns, per superchain, the chains whose addresses include an ETHLockbox. Such
-// chains must also expose the portal and system config proxies the delays are read from.
+// lockboxChains returns, per superchain with standard config params, the chains whose addresses
+// include an ETHLockbox. Such chains must also expose the portal and system config proxies the
+// delays are read from.
 func lockboxChains(cfgs []DiskChainConfig, addrs config.AddressesJSON) (map[config.Superchain][]lockboxChain, error) {
 	out := make(map[config.Superchain][]lockboxChain)
 	for _, cfg := range cfgs {
+		if _, ok := standardConfigParams(cfg.Superchain); !ok {
+			continue
+		}
 		chainID := cfg.Config.ChainID
 		chainAddrs, ok := addrs[eth.ChainIDFromUInt64(chainID).String()]
 		if !ok || chainAddrs == nil || isZeroAddress(chainAddrs.EthLockboxProxy) {
@@ -224,7 +224,12 @@ func lockboxChains(cfgs []DiskChainConfig, addrs config.AddressesJSON) (map[conf
 // CheckReviewPeriodDelays asserts that every delay is within the standard range of its superchain
 // and that chains sharing a lockbox have identical delays.
 func CheckReviewPeriodDelays(chains []LockboxChainDelays) error {
-	byLockbox := make(map[config.ChecksummedAddress]LockboxChainDelays)
+	// Proxies are deployed with CREATE2, so the same lockbox address can exist on several L1s.
+	type lockboxKey struct {
+		superchain config.Superchain
+		lockbox    config.ChecksummedAddress
+	}
+	byLockbox := make(map[lockboxKey]LockboxChainDelays)
 	for _, chain := range chains {
 		std, ok := standardConfigParams(chain.Superchain)
 		if !ok {
@@ -246,9 +251,10 @@ func CheckReviewPeriodDelays(chains []LockboxChainDelays) error {
 			}
 		}
 
-		first, seen := byLockbox[chain.Lockbox]
+		key := lockboxKey{superchain: chain.Superchain, lockbox: chain.Lockbox}
+		first, seen := byLockbox[key]
 		if !seen {
-			byLockbox[chain.Lockbox] = chain
+			byLockbox[key] = chain
 			continue
 		}
 		if first.Delays != chain.Delays {

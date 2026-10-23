@@ -76,6 +76,12 @@ func TestCheckReviewPeriodDelays(t *testing.T) {
 		require.ErrorContains(t, err, "delayedWETHDelaySeconds is 604801")
 	})
 
+	t.Run("same lockbox address on another superchain is a different lockbox", func(t *testing.T) {
+		sepolia := chain(2, lockboxA, shortened)
+		sepolia.Superchain = config.SepoliaSuperchain
+		require.NoError(t, CheckReviewPeriodDelays([]LockboxChainDelays{chain(1, lockboxA, standard), sepolia}))
+	})
+
 	t.Run("mismatch within a lockbox", func(t *testing.T) {
 		err := CheckReviewPeriodDelays([]LockboxChainDelays{
 			chain(1, lockboxA, standard),
@@ -106,6 +112,14 @@ func TestLockboxChains(t *testing.T) {
 	t.Run("chains without a lockbox are skipped", func(t *testing.T) {
 		addrs["903"] = &config.AddressesWithRoles{}
 		groups, err := lockboxChains(cfgs(903), addrs)
+		require.NoError(t, err)
+		require.Empty(t, groups)
+	})
+
+	t.Run("superchains without standard config params are skipped before address checks", func(t *testing.T) {
+		devnet := cfgs(901)
+		devnet[0].Superchain = "sepolia-devnet-2"
+		groups, err := lockboxChains(devnet, addrs)
 		require.NoError(t, err)
 		require.Empty(t, groups)
 	})
