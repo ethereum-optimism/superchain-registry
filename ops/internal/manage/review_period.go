@@ -36,11 +36,13 @@ type ReviewPeriodDelays struct {
 	DelayedWETHDelaySeconds         uint64
 }
 
-// LockboxChainDelays holds the review period delays read from one chain that has an ETHLockbox.
+// LockboxChainDelays holds the review period delays read from one chain that has an ETHLockbox,
+// together with the standard config params of its superchain.
 type LockboxChainDelays struct {
 	ChainID    uint64
 	Superchain config.Superchain
 	Lockbox    config.ChecksummedAddress
+	Standard   validation.ConfigParams
 	Delays     ReviewPeriodDelays
 }
 
@@ -94,7 +96,7 @@ func (c *ReviewPeriodChecker) readDelays(ctx context.Context) ([]LockboxChainDel
 	}
 
 	var out []LockboxChainDelays
-	for superchain, chains := range bySuperchain {
+	for superchain, group := range bySuperchain {
 		superchainId, ok := c.superchainIds[superchain]
 		if !ok {
 			return nil, fmt.Errorf("missing superchain chainId for superchain %s", superchain)
@@ -108,7 +110,7 @@ func (c *ReviewPeriodChecker) readDelays(ctx context.Context) ([]LockboxChainDel
 			return nil, fmt.Errorf("failed to dial L1 RPC for superchain %s: %w", superchain, err)
 		}
 
-		for _, chain := range chains {
+		for _, chain := range group.chains {
 			delays, err := scanReviewPeriodDelays(
 				ctx,
 				client,
@@ -130,6 +132,7 @@ func (c *ReviewPeriodChecker) readDelays(ctx context.Context) ([]LockboxChainDel
 				ChainID:    chain.chainID,
 				Superchain: superchain,
 				Lockbox:    *chain.addrs.EthLockboxProxy,
+				Standard:   group.standard,
 				Delays:     delays,
 			})
 		}
@@ -196,13 +199,20 @@ type lockboxChain struct {
 	addrs   *config.AddressesWithRoles
 }
 
-// lockboxChains returns, per superchain with standard config params, the chains whose addresses
-// include an ETHLockbox. Such chains must also expose the portal and system config proxies the
-// delays are read from.
-func lockboxChains(cfgs []DiskChainConfig, addrs config.AddressesJSON) (map[config.Superchain][]lockboxChain, error) {
-	out := make(map[config.Superchain][]lockboxChain)
+// lockboxGroup is the set of lockbox chains of one superchain and the standard params they are
+// checked against.
+type lockboxGroup struct {
+	standard validation.ConfigParams
+	chains   []lockboxChain
+}
+
+// lockboxChains returns, per superchain, the chains whose addresses include an ETHLockbox.
+// Lockbox chains must also expose the portal and system config proxies the delays are read from.
+func lockboxChains(cfgs []DiskChainConfig, addrs config.AddressesJSON) (map[config.Superchain]*lockboxGroup, error) {
+	out := make(map[config.Superchain]*lockboxGroup)
 	for _, cfg := range cfgs {
-		if _, ok := standardConfigParams(cfg.Superchain); !ok {
+		standard, ok := standardConfigParams(cfg.Superchain)
+		if !ok {
 			continue
 		}
 		chainID := cfg.Config.ChainID
@@ -218,14 +228,19 @@ func lockboxChains(cfgs []DiskChainConfig, addrs config.AddressesJSON) (map[conf
 				return nil, fmt.Errorf("%w: no %s found for lockbox chain %d", errMissingAddress, name, chainID)
 			}
 		}
-		out[cfg.Superchain] = append(out[cfg.Superchain], lockboxChain{chainID: chainID, addrs: chainAddrs})
+		group, ok := out[cfg.Superchain]
+		if !ok {
+			group = &lockboxGroup{standard: standard}
+			out[cfg.Superchain] = group
+		}
+		group.chains = append(group.chains, lockboxChain{chainID: chainID, addrs: chainAddrs})
 	}
 	return out, nil
 }
 
-// CheckReviewPeriodDelays asserts that every delay is within the standard range of its superchain
-// and that chains sharing a lockbox have identical delays, including the per-portal proof maturity
-// delay.
+// CheckReviewPeriodDelays asserts that every delay is within the standard range carried by its
+// entry and that chains sharing a lockbox have identical delays, including the per-portal proof
+// maturity delay.
 func CheckReviewPeriodDelays(chains []LockboxChainDelays) error {
 	// Proxies are deployed with CREATE2, so the same lockbox address can exist on several L1s.
 	type lockboxKey struct {
@@ -234,11 +249,7 @@ func CheckReviewPeriodDelays(chains []LockboxChainDelays) error {
 	}
 	byLockbox := make(map[lockboxKey]LockboxChainDelays)
 	for _, chain := range chains {
-		std, ok := standardConfigParams(chain.Superchain)
-		if !ok {
-			return fmt.Errorf("no standard config params for superchain %s (chain %d)", chain.Superchain, chain.ChainID)
-		}
-
+		std := chain.Standard
 		for _, d := range []struct {
 			name  string
 			std   validation.Range

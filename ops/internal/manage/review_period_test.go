@@ -8,6 +8,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-service/testlog"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/testutil/mockrpc"
+	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/stretchr/testify/require"
@@ -51,7 +52,13 @@ func TestCheckReviewPeriodDelays(t *testing.T) {
 		DelayedWETHDelaySeconds:         43200,
 	}
 	chain := func(id uint64, lockbox config.ChecksummedAddress, delays ReviewPeriodDelays) LockboxChainDelays {
-		return LockboxChainDelays{ChainID: id, Superchain: config.MainnetSuperchain, Lockbox: lockbox, Delays: delays}
+		return LockboxChainDelays{
+			ChainID:    id,
+			Superchain: config.MainnetSuperchain,
+			Lockbox:    lockbox,
+			Standard:   validation.StandardConfigParamsMainnet,
+			Delays:     delays,
+		}
 	}
 
 	t.Run("in range and consistent per lockbox", func(t *testing.T) {
@@ -90,12 +97,6 @@ func TestCheckReviewPeriodDelays(t *testing.T) {
 		require.ErrorIs(t, err, errLockboxDelayMismatch)
 		require.ErrorContains(t, err, "chain 1")
 		require.ErrorContains(t, err, "chain 2")
-	})
-
-	t.Run("unsupported superchain", func(t *testing.T) {
-		c := chain(1, lockboxA, standard)
-		c.Superchain = "sepolia-devnet-2"
-		require.Error(t, CheckReviewPeriodDelays([]LockboxChainDelays{c}))
 	})
 }
 
@@ -136,7 +137,8 @@ func TestLockboxChains(t *testing.T) {
 		addrs["901"].SystemConfigProxy = &full
 		groups, err := lockboxChains(cfgs(901, 903), addrs)
 		require.NoError(t, err)
-		require.Len(t, groups[config.MainnetSuperchain], 1)
-		require.EqualValues(t, 901, groups[config.MainnetSuperchain][0].chainID)
+		require.Len(t, groups[config.MainnetSuperchain].chains, 1)
+		require.EqualValues(t, 901, groups[config.MainnetSuperchain].chains[0].chainID)
+		require.Equal(t, validation.StandardConfigParamsMainnet, groups[config.MainnetSuperchain].standard)
 	})
 }
