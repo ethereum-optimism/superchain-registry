@@ -24,6 +24,10 @@ type OptimismPortal2Params struct {
 	RespectedGameType               int   `toml:"respected_game_type"`
 }
 
+type DelayedWETHParams struct {
+	DelaySeconds Range `toml:"delay_seconds"`
+}
+
 type ResourceConfigParams struct {
 	MaxResourceLimit            int    `toml:"max_resource_limit"`
 	ElasticityMultiplier        int    `toml:"elasticity_multiplier"`
@@ -73,6 +77,7 @@ type ProofsParams struct {
 type ConfigParams struct {
 	RollupConfig    RollupConfigParams    `toml:"rollup_config"`
 	OptimismPortal2 OptimismPortal2Params `toml:"optimism_portal_2"`
+	DelayedWETH     DelayedWETHParams     `toml:"delayed_weth"`
 	ResourceConfig  ResourceConfigParams  `toml:"resource_config"`
 	GasPriceOracle  GasPriceOracleParams  `toml:"gas_price_oracle"`
 	SystemConfig    SystemConfigParams    `toml:"system_config"`

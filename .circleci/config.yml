@@ -286,6 +286,21 @@ jobs:
           template: basic_fail_1
           mentions: "<!subteam^S09D13R3HJ7>" # @protocol-oncall
 
+  daily-check-review-period-delays:
+    docker:
+      - image: <<pipeline.parameters.default_docker_image>>
+    steps:
+      - utils/checkout-with-mise
+      - run:
+          name: Check review period delays
+          command: go run ./cmd/check_review_period_delays/main.go --l1-rpc-urls="$OP_CI_SEPOLIA_L1_RPC_URL,$OP_CI_MAINNET_L1_RPC_URL"
+          working_directory: ops
+      - slack/notify:
+          channel: C03N11M0BBN # notify-ci
+          event: fail
+          template: basic_fail_1
+          mentions: "<!subteam^S07K486JEH4>" # EVM security on-call
+
   notify-when-chain-is-added-to-registry:
     executor: default
     parameters:
@@ -523,6 +538,10 @@ workflows:
             - equal: ["api", << pipeline.trigger_source >>]
     jobs:
       - daily-codegen:
+          context:
+            - circleci-repo-superchain-registry
+            - circleci-repo-rpc-secrets
+      - daily-check-review-period-delays:
           context:
             - circleci-repo-superchain-registry
             - circleci-repo-rpc-secrets
