@@ -46,8 +46,10 @@ type LockboxChainDelays struct {
 
 // ReviewPeriodChecker validates the review period delays of every chain that has an ETHLockbox.
 // Each delay must be within the standard range of its superchain, and chains sharing a lockbox
-// must use the same delays: a lockbox is only as safe as the shortest delay of any portal that
-// can withdraw from it.
+// must use the same delays. The AnchorStateRegistry and DelayedWETH are shared by chains in an
+// interop set, so their delays are equal by construction. The proof maturity delay is per portal and
+// the contracts allow it to differ. Keeping it uniform across chains in an interop set is a policy
+// enforced off-chain, so a single chain cannot shorten the review period of the entire set.
 type ReviewPeriodChecker struct {
 	lgr           log.Logger
 	cfgs          []DiskChainConfig
@@ -222,7 +224,8 @@ func lockboxChains(cfgs []DiskChainConfig, addrs config.AddressesJSON) (map[conf
 }
 
 // CheckReviewPeriodDelays asserts that every delay is within the standard range of its superchain
-// and that chains sharing a lockbox have identical delays.
+// and that chains sharing a lockbox have identical delays, including the per-portal proof maturity
+// delay.
 func CheckReviewPeriodDelays(chains []LockboxChainDelays) error {
 	// Proxies are deployed with CREATE2, so the same lockbox address can exist on several L1s.
 	type lockboxKey struct {
