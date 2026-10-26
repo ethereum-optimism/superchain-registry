@@ -8,7 +8,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/addresses"
-	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
+	"github.com/ethereum-optimism/optimism/op-fetcher/chaininfo"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 )
@@ -77,12 +77,12 @@ func TestCreateAddressesWithRolesFromFetcher(t *testing.T) {
 	// addresses, so the marshalled map holds exactly the game impls set below.
 	tests := []struct {
 		name   string
-		addrs  script.Addresses
+		addrs  chaininfo.Addresses
 		expect map[string]string
 	}{
 		{
 			name: "legacy cannon game types",
-			addrs: script.Addresses{
+			addrs: chaininfo.Addresses{
 				OpChainContracts: addresses.OpChainContracts{
 					OpChainFaultProofsContracts: addresses.OpChainFaultProofsContracts{
 						FaultDisputeGameImpl:        legacyFDG,
@@ -99,7 +99,7 @@ func TestCreateAddressesWithRolesFromFetcher(t *testing.T) {
 			// A chain that has migrated to super-root games registers only
 			// SUPER_CANNON_KONA and SUPER_PERMISSIONED, so the legacy impls read back zero.
 			name: "super-root game types only",
-			addrs: script.Addresses{
+			addrs: chaininfo.Addresses{
 				OpChainContracts: addresses.OpChainContracts{
 					OpChainFaultProofsContracts: addresses.OpChainFaultProofsContracts{
 						SuperFaultDisputeGameImpl:        superFDG,

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
+	"github.com/ethereum-optimism/optimism/op-fetcher/chaininfo"
+	"github.com/ethereum-optimism/optimism/op-service/log"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
-	"github.com/ethereum/go-ethereum/log"
 )
 
 var requiredSuperchains = []config.Superchain{
@@ -30,7 +30,7 @@ func PruneRemovedChains(lgr log.Logger, wd string) error {
 		return err
 	}
 
-	syncer, err := NewCodegenSyncer(lgr, wd, make(map[uint64]script.ChainConfig))
+	syncer, err := NewCodegenSyncer(lgr, wd, make(map[uint64]chaininfo.Config))
 	if err != nil {
 		return fmt.Errorf("error creating codegen syncer: %w", err)
 	}

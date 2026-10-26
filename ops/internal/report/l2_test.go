@@ -5,6 +5,7 @@ import (
 	"path"
 	"testing"
 
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum-optimism/superchain-registry/validation"
 	"github.com/stretchr/testify/require"
 )
@@ -14,6 +15,8 @@ func TestScanL2(t *testing.T) {
 	require.NotEmpty(t, l1RpcUrl)
 	cacheDir := os.Getenv("DEPLOYER_CACHE_DIR")
 	require.NotEmpty(t, cacheDir)
+	wd, err := paths.FindRepoRoot()
+	require.NoError(t, err)
 
 	tests := []struct {
 		name               string
@@ -59,7 +62,7 @@ func TestScanL2(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			report, err := ScanL2(tt.statePath, tt.chainId, l1RpcUrl, cacheDir, tt.l1ContractsVersion)
+			report, err := ScanL2(wd, tt.statePath, tt.chainId, l1RpcUrl, cacheDir, tt.l1ContractsVersion)
 
 			if tt.wantErr == "" {
 				require.NoError(t, err)

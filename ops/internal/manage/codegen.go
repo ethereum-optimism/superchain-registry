@@ -13,11 +13,11 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
-	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
+	"github.com/ethereum-optimism/optimism/op-fetcher/chaininfo"
+	"github.com/ethereum-optimism/optimism/op-service/log"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/fs"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
-	"github.com/ethereum/go-ethereum/log"
 )
 
 // CodegenSyncer manages syncing of codegen files with on-chain data
@@ -27,7 +27,7 @@ type CodegenSyncer struct {
 	Addresses   config.AddressesJSON
 	inputWd     string
 	outputWd    string
-	onchainCfgs map[uint64]script.ChainConfig
+	onchainCfgs map[uint64]chaininfo.Config
 	diskCfgs    map[uint64]DiskChainConfig
 }
 
@@ -39,7 +39,7 @@ func WithOutputDirectory(outputDir string) CodegenSyncerOption {
 	}
 }
 
-func NewCodegenSyncer(lgr log.Logger, wd string, chainCfgs map[uint64]script.ChainConfig, opts ...CodegenSyncerOption) (*CodegenSyncer, error) {
+func NewCodegenSyncer(lgr log.Logger, wd string, chainCfgs map[uint64]chaininfo.Config, opts ...CodegenSyncerOption) (*CodegenSyncer, error) {
 	// Load addresses.json data
 	var addresses config.AddressesJSON
 	addressesData, err := os.ReadFile(paths.AddressesFile(wd))
@@ -123,7 +123,7 @@ func (s *CodegenSyncer) SyncAll() error {
 }
 
 // ProcessSingleChain updates syncer's internal data for a given chain
-func (s *CodegenSyncer) ProcessSingleChain(chainId uint64, onchainCfg script.ChainConfig) error {
+func (s *CodegenSyncer) ProcessSingleChain(chainId uint64, onchainCfg chaininfo.Config) error {
 	s.lgr.Info("processing chain", "chainId", chainId)
 	chainIdStr := strconv.FormatUint(chainId, 10)
 	addressesWithRoles := config.CreateAddressesWithRolesFromFetcher(onchainCfg.Addresses, onchainCfg.Roles)
@@ -148,7 +148,7 @@ func (s *CodegenSyncer) ProcessAllChains() error {
 }
 
 // UpdateChainList updates the ChainList entry for the given chain ID
-func (s *CodegenSyncer) UpdateChainList(chainID string, onchainCfg script.ChainConfig) error {
+func (s *CodegenSyncer) UpdateChainList(chainID string, onchainCfg chaininfo.Config) error {
 	chainIdUint64, err := strconv.ParseUint(chainID, 10, 64)
 	if err != nil {
 		return fmt.Errorf("error converting chainID to uint64: %w", err)

@@ -8,12 +8,12 @@ import (
 	"path"
 	"strconv"
 
+	"github.com/ethereum-optimism/optimism/op-service/log"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/google/go-cmp/cmp"
 	"github.com/tomwright/dasel"
 )
@@ -58,7 +58,7 @@ func GenerateChainArtifacts(
 	}
 
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
-	opd, err := deployer.NewOpDeployer(lgr, picker)
+	opd, err := deployer.NewOpDeployer(lgr, wd, picker)
 	if err != nil {
 		return fmt.Errorf("failed to create op-deployer: %w", err)
 	}

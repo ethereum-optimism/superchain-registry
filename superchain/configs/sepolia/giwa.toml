@@ -1,0 +1,50 @@
+name = "GIWA Sepolia Testnet"
+public_rpc = "https://sepolia-rpc.giwa.io"
+sequencer_rpc = "https://sepolia-sequencer.giwa.io"
+explorer = "https://sepolia-explorer.giwa.io"
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 91342
+batch_inbox_addr = "0x00Ef2e3B7754f2a65F1e897a27A3306D9B52F544"
+block_time = 1
+seq_window_size = 3600
+max_sequencer_drift = 600
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  isthmus_time = 1753349700 # Thu 24 Jul 2025 09:35:00 UTC
+  jovian_time = 1767070800 # Tue 30 Dec 2025 05:00:00 UTC
+  karst_time = 1783317600 # Mon 6 Jul 2026 06:00:00 UTC
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 50
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1753345116
+  [genesis.l1]
+    hash = "0xa8abf5bcc0d58df55c95bd5b7d197e91a7c10d05eed3ac17362ede48fc87cae1"
+    number = 8830872
+  [genesis.l2]
+    hash = "0xca1b5fee64a196abfca007b3a4d4e3ec2b37be83a452d452bf4e45937004cab2"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x1cAaaA58002A7e8B4c6F427AC2c943767b4d6cd7"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x010000000000000000000000000000000000000000000000000c5fc500000558"
+    gasLimit = 60000000
+
+[roles]
+  ProxyAdminOwner = "0x0B266965c88C78f17e1F9f59784249bf8Da1CB9E"
+
+[addresses]
+  L1StandardBridgeProxy = "0x77b2ffc0F57598cAe1DB76cb398059cF5d10A7E7"
+  OptimismPortalProxy = "0x956962C34687A954e611A83619ABaA37Ce6bC78A"
+  SystemConfigProxy = "0x8352825bA56C32d816Dd906Ad4A392B5BC9eC984"
+  DisputeGameFactoryProxy = "0x37347caB2afaa49B776372279143D71ad1f354F6"

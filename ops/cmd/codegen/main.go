@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ethereum-optimism/optimism/op-fetcher/pkg/fetcher/fetch/script"
+	"github.com/ethereum-optimism/optimism/op-fetcher/chaininfo"
+	"github.com/ethereum-optimism/optimism/op-service/log"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/manage"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/output"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/urfave/cli/v2"
 )
 
@@ -88,7 +88,7 @@ func CodegenCLI(cliCtx *cli.Context) error {
 		return err
 	}
 
-	var onchainCfgs map[uint64]script.ChainConfig
+	var onchainCfgs map[uint64]chaininfo.Config
 	ctx := cliCtx.Context
 	onchainCfgs, err = manage.FetchChains(ctx, lgr, wd, l1RpcUrls, chainIds, superchains)
 	if err != nil {

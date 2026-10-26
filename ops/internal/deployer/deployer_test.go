@@ -9,7 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum-optimism/optimism/op-service/log"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/stretchr/testify/require"
 )
 
@@ -121,10 +122,13 @@ func TestBinaryInvocation(t *testing.T) {
 	require.NotEmpty(t, cacheDir)
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
 
+	wd, err := paths.FindRepoRoot()
+	require.NoError(t, err)
+
 	picker, err := WithReleaseBinary(cacheDir, "tag://op-contracts/v1.6.0")
 	require.NoError(t, err)
 
-	deployer, err := NewOpDeployer(lgr, picker)
+	deployer, err := NewOpDeployer(lgr, wd, picker)
 	require.NoError(t, err)
 
 	output, err := deployer.runCommand("--help")

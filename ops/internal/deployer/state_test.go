@@ -6,13 +6,17 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMergeState(t *testing.T) {
+	wd, err := paths.FindRepoRoot()
+	require.NoError(t, err)
+
 	tests := []struct {
 		Version int
-		Merger  func(state OpaqueState) (OpaqueMap, OpaqueState, error)
+		Merger  StateMerger
 	}{
 		{1, MergeStateV1},
 		{2, MergeStateV2},
@@ -29,7 +33,7 @@ func TestMergeState(t *testing.T) {
 			expectedIntent, err := os.ReadFile(fmt.Sprintf("testdata/v%d-intent-output.json", tt.Version))
 			require.NoError(t, err)
 
-			mergedIntent, mergedState, err := tt.Merger(input)
+			mergedIntent, mergedState, err := tt.Merger(wd, input)
 			require.NoError(t, err)
 
 			mergedStateJSON, err := json.Marshal(mergedState)
