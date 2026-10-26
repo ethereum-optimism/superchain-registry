@@ -1,15 +1,17 @@
 package manage
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"math/big"
 	"net/http"
 
+	"github.com/BurntSushi/toml"
 	opgenesis "github.com/ethereum-optimism/optimism/op-core/genesis"
 	opparams "github.com/ethereum-optimism/optimism/op-core/params"
+	"github.com/ethereum-optimism/optimism/op-core/superchain"
+	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
-	"github.com/ethereum/go-ethereum/common"
 )
 
 const chainListUrl = "https://chainid.network/chains_mini.json"
@@ -80,7 +82,11 @@ func ValidateGenesisIntegrity(cfg *config.Chain, genesisJSON json.RawMessage) er
 	if err := json.Unmarshal(genesisJSON, &genesis); err != nil {
 		return fmt.Errorf("failed to decode genesis: %w", err)
 	}
-	genesis.Config = opChainConfig(cfg)
+	chainConfig, err := opChainConfig(cfg)
+	if err != nil {
+		return err
+	}
+	genesis.Config = chainConfig
 
 	block := genesis.ToBlock()
 	if block.Hash() != cfg.Genesis.L2.Hash {
@@ -90,30 +96,25 @@ func ValidateGenesisIntegrity(cfg *config.Chain, genesisJSON json.RawMessage) er
 	return nil
 }
 
-// opChainConfig returns the chain config of cfg's chain, as the OP Stack derives it from the
-// registry's chain config.
-func opChainConfig(cfg *config.Chain) *opparams.ChainConfig {
-	hardforks := cfg.Hardforks
-	out := &opparams.ChainConfig{
-		ChainID:      new(big.Int).SetUint64(cfg.ChainID),
-		BedrockBlock: common.Big0,
-		RegolithTime: new(uint64),
-		CanyonTime:   hardforks.CanyonTime.U64Ptr(),
-		EcotoneTime:  hardforks.EcotoneTime.U64Ptr(),
-		FjordTime:    hardforks.FjordTime.U64Ptr(),
-		GraniteTime:  hardforks.GraniteTime.U64Ptr(),
-		HoloceneTime: hardforks.HoloceneTime.U64Ptr(),
-		IsthmusTime:  hardforks.IsthmusTime.U64Ptr(),
-		JovianTime:   hardforks.JovianTime.U64Ptr(),
-		KarstTime:    hardforks.KarstTime.U64Ptr(),
-		LagoonTime:   hardforks.LagoonTime.U64Ptr(),
-		Optimism: &opparams.OptimismConfig{
+// opChainConfig returns the chain config of cfg's chain, as op-core builds it from the registry's
+// chain config. It fails for a hardfork field that op-core's registry types do not know.
+func opChainConfig(cfg *config.Chain) (*opparams.ChainConfig, error) {
+	hardforks, err := toml.Marshal(cfg.Hardforks)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode hardforks: %w", err)
+	}
+	chain := &superchain.ChainConfig{
+		ChainID: cfg.ChainID,
+		Optimism: &superchain.OptimismConfig{
 			EIP1559Elasticity:  cfg.Optimism.EIP1559Elasticity,
 			EIP1559Denominator: cfg.Optimism.EIP1559Denominator,
 		},
 	}
-	if cfg.Optimism.EIP1559DenominatorCanyon != 0 {
-		out.Optimism.EIP1559DenominatorCanyon = &cfg.Optimism.EIP1559DenominatorCanyon
+	if err := jsonutil.DecodeTOMLStrict(bytes.NewReader(hardforks), &chain.Hardforks, nil); err != nil {
+		return nil, fmt.Errorf("failed to decode hardforks with op-core: %w", err)
 	}
-	return out
+	if cfg.Optimism.EIP1559DenominatorCanyon != 0 {
+		chain.Optimism.EIP1559DenominatorCanyon = &cfg.Optimism.EIP1559DenominatorCanyon
+	}
+	return chain.OpChainConfig(), nil
 }
