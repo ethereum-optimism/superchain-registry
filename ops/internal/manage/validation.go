@@ -1,15 +1,17 @@
 package manage
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"math/big"
 	"net/http"
 
+	"github.com/BurntSushi/toml"
+	opgenesis "github.com/ethereum-optimism/optimism/op-core/genesis"
+	opparams "github.com/ethereum-optimism/optimism/op-core/params"
+	"github.com/ethereum-optimism/optimism/op-core/superchain"
+	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/params"
 )
 
 const chainListUrl = "https://chainid.network/chains_mini.json"
@@ -73,76 +75,46 @@ func FetchGlobalChainIDs() (map[uint64]ChainEntry, error) {
 	return out, nil
 }
 
-func ValidateGenesisIntegrity(cfg *config.Chain, genesis *core.Genesis) error {
-	genesisActivation := uint64(0)
-	out := &params.ChainConfig{
-		ChainID:                 new(big.Int).SetUint64(cfg.ChainID),
-		HomesteadBlock:          common.Big0,
-		DAOForkBlock:            nil,
-		DAOForkSupport:          false,
-		EIP150Block:             common.Big0,
-		EIP155Block:             common.Big0,
-		EIP158Block:             common.Big0,
-		ByzantiumBlock:          common.Big0,
-		ConstantinopleBlock:     common.Big0,
-		PetersburgBlock:         common.Big0,
-		IstanbulBlock:           common.Big0,
-		MuirGlacierBlock:        common.Big0,
-		BerlinBlock:             common.Big0,
-		LondonBlock:             common.Big0,
-		ArrowGlacierBlock:       common.Big0,
-		GrayGlacierBlock:        common.Big0,
-		MergeNetsplitBlock:      common.Big0,
-		ShanghaiTime:            cfg.Hardforks.CanyonTime.U64Ptr(),  // Shanghai activates with Canyon
-		CancunTime:              cfg.Hardforks.EcotoneTime.U64Ptr(), // Cancun activates with Ecotone
-		PragueTime:              cfg.Hardforks.IsthmusTime.U64Ptr(), // Prague activates with Isthmus
-		BedrockBlock:            common.Big0,
-		RegolithTime:            &genesisActivation,
-		CanyonTime:              cfg.Hardforks.CanyonTime.U64Ptr(),
-		EcotoneTime:             cfg.Hardforks.EcotoneTime.U64Ptr(),
-		FjordTime:               cfg.Hardforks.FjordTime.U64Ptr(),
-		GraniteTime:             cfg.Hardforks.GraniteTime.U64Ptr(),
-		HoloceneTime:            cfg.Hardforks.HoloceneTime.U64Ptr(),
-		IsthmusTime:             cfg.Hardforks.IsthmusTime.U64Ptr(),
-		LagoonTime:              cfg.Hardforks.LagoonTime.U64Ptr(),
-		JovianTime:              cfg.Hardforks.JovianTime.U64Ptr(),
-		TerminalTotalDifficulty: common.Big0,
-		Ethash:                  nil,
-		Clique:                  nil,
+// ValidateGenesisIntegrity checks that the genesis JSON, with a chain config derived from cfg,
+// hashes to the genesis block hash in cfg.
+func ValidateGenesisIntegrity(cfg *config.Chain, genesisJSON json.RawMessage) error {
+	var genesis opgenesis.Genesis
+	if err := json.Unmarshal(genesisJSON, &genesis); err != nil {
+		return fmt.Errorf("failed to decode genesis: %w", err)
 	}
-
-	out.Optimism = &params.OptimismConfig{
-		EIP1559Elasticity:  cfg.Optimism.EIP1559Elasticity,
-		EIP1559Denominator: cfg.Optimism.EIP1559Denominator,
+	chainConfig, err := opChainConfig(cfg)
+	if err != nil {
+		return err
 	}
+	genesis.Config = chainConfig
 
-	if cfg.Optimism.EIP1559DenominatorCanyon != 0 {
-		out.Optimism.EIP1559DenominatorCanyon = &cfg.Optimism.EIP1559DenominatorCanyon
-	}
-
-	genCopy := &core.Genesis{
-		Config:        out,
-		Nonce:         genesis.Nonce,
-		Timestamp:     genesis.Timestamp,
-		ExtraData:     genesis.ExtraData,
-		GasLimit:      genesis.GasLimit,
-		Difficulty:    genesis.Difficulty,
-		Mixhash:       genesis.Mixhash,
-		Coinbase:      genesis.Coinbase,
-		Alloc:         genesis.Alloc,
-		Number:        genesis.Number,
-		GasUsed:       genesis.GasUsed,
-		ParentHash:    genesis.ParentHash,
-		BaseFee:       genesis.BaseFee,
-		ExcessBlobGas: genesis.ExcessBlobGas,
-		BlobGasUsed:   genesis.BlobGasUsed,
-		StateHash:     genesis.StateHash,
-	}
-	block := genCopy.ToBlock()
-
+	block := genesis.ToBlock()
 	if block.Hash() != cfg.Genesis.L2.Hash {
 		return fmt.Errorf("%w: expected %s, got %s", ErrGenesisHashMismatch, cfg.Genesis.L2.Hash.Hex(), block.Hash().Hex())
 	}
 
 	return nil
+}
+
+// opChainConfig returns the chain config of cfg's chain, as op-core builds it from the registry's
+// chain config. It fails for a hardfork field that op-core's registry types do not know.
+func opChainConfig(cfg *config.Chain) (*opparams.ChainConfig, error) {
+	hardforks, err := toml.Marshal(cfg.Hardforks)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode hardforks: %w", err)
+	}
+	chain := &superchain.ChainConfig{
+		ChainID: cfg.ChainID,
+		Optimism: &superchain.OptimismConfig{
+			EIP1559Elasticity:  cfg.Optimism.EIP1559Elasticity,
+			EIP1559Denominator: cfg.Optimism.EIP1559Denominator,
+		},
+	}
+	if err := jsonutil.DecodeTOMLStrict(bytes.NewReader(hardforks), &chain.Hardforks, nil); err != nil {
+		return nil, fmt.Errorf("failed to decode hardforks with op-core: %w", err)
+	}
+	if cfg.Optimism.EIP1559DenominatorCanyon != 0 {
+		chain.Optimism.EIP1559DenominatorCanyon = &cfg.Optimism.EIP1559DenominatorCanyon
+	}
+	return chain.OpChainConfig(), nil
 }

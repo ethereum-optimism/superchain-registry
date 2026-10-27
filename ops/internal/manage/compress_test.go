@@ -1,15 +1,17 @@
 package manage
 
 import (
+	"bytes"
 	"encoding/json"
 	"math/big"
 	"os"
+	"path/filepath"
 	"testing"
 
+	opgenesis "github.com/ethereum-optimism/optimism/op-core/genesis"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/stretchr/testify/require"
 )
@@ -20,7 +22,10 @@ func TestGenesisCompression(t *testing.T) {
 	shortName := "test"
 	testGen := makeTestGenesis()
 
-	require.NoError(t, WriteSuperchainGenesis(wd, superchain, shortName, testGen))
+	testGenJSON, err := json.Marshal(testGen)
+	require.NoError(t, err)
+
+	require.NoError(t, WriteSuperchainGenesis(wd, superchain, shortName, testGenJSON))
 	require.FileExists(t, paths.GenesisFile(wd, superchain, shortName))
 	t.Cleanup(func() {
 		require.NoError(t, os.Remove(paths.GenesisFile(wd, superchain, shortName)))
@@ -29,19 +34,41 @@ func TestGenesisCompression(t *testing.T) {
 	readGen, err := ReadSuperchainGenesis(wd, superchain, shortName)
 	require.NoError(t, err)
 
-	require.JSONEq(t, marshalGenesis(t, testGen), marshalGenesis(t, readGen))
+	require.JSONEq(t, string(testGenJSON), string(readGen))
 }
 
-func marshalGenesis(t *testing.T, gen *core.Genesis) string {
-	t.Helper()
-
-	out, err := json.Marshal(gen)
+// TestGenesisRoundTrip checks that every genesis file in the registry reads and writes back to the
+// same JSON bytes, so syncing a genesis never changes or drops any of its fields.
+func TestGenesisRoundTrip(t *testing.T) {
+	wd, err := paths.FindRepoRoot()
 	require.NoError(t, err)
-	return string(out)
+
+	genPaths, err := filepath.Glob(filepath.Join(paths.ExtraDir(wd), "genesis", "*", "*.json.zst"))
+	require.NoError(t, err)
+	require.NotEmpty(t, genPaths)
+
+	for _, genPath := range genPaths {
+		name, err := filepath.Rel(filepath.Join(paths.ExtraDir(wd), "genesis"), genPath)
+		require.NoError(t, err)
+
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			gen, err := ReadGenesis(wd, genPath)
+			require.NoError(t, err)
+
+			outPath := filepath.Join(t.TempDir(), "genesis.json.zst")
+			require.NoError(t, WriteGenesis(wd, outPath, gen))
+
+			roundTripped, err := ReadGenesis(wd, outPath)
+			require.NoError(t, err)
+			require.True(t, bytes.Equal(gen, roundTripped), "genesis JSON changed in a write/read round trip")
+		})
+	}
 }
 
-func makeTestGenesis() *core.Genesis {
-	testGenesis := &core.Genesis{
+func makeTestGenesis() *opgenesis.Genesis {
+	testGenesis := &opgenesis.Genesis{
 		Nonce:         0,
 		Timestamp:     1722432480,
 		ExtraData:     []byte("BEDROCK"),
