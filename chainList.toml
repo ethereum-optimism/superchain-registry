@@ -774,3 +774,45 @@
     chain = "sepolia"
   [chains.fault_proofs]
     status = "permissioned"
+
+[[chains]]
+  name = "sepolia-devnet-4"
+  identifier = "sepolia-devnet-4/sepolia-devnet-4"
+  chain_id = 420130019
+  rpc = ["https://sepolia-devnet-4.optimism.io/rpc"]
+  explorers = [""]
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia-devnet-4"
+  [chains.fault_proofs]
+    status = "permissionless"
+
+[[chains]]
+  name = "sepolia-devnet-5"
+  identifier = "sepolia-devnet-5/sepolia-devnet-5"
+  chain_id = 420130020
+  rpc = ["https://sepolia-devnet-5.optimism.io/rpc"]
+  explorers = [""]
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia-devnet-5"
+  [chains.fault_proofs]
+    status = "permissionless"
+
+[[chains]]
+  name = "sepolia-devnet-6"
+  identifier = "sepolia-devnet-6/sepolia-devnet-6"
+  chain_id = 420130021
+  rpc = ["https://sepolia-devnet-6.optimism.io/rpc"]
+  explorers = [""]
+  governed_by_optimism = false
+  data_availability_type = "eth-da"
+  [chains.parent]
+    type = "L2"
+    chain = "sepolia-devnet-6"
+  [chains.fault_proofs]
+    status = "permissioned"
