@@ -104,6 +104,14 @@ type SystemConfig struct {
 	GasLimit          uint64             `json:"gasLimit" toml:"gasLimit"`
 	BaseFeeScalar     *uint64            `json:"baseFeeScalar,omitempty" toml:"baseFeeScalar,omitempty"`
 	BlobBaseFeeScalar *uint64            `json:"blobBaseFeeScalar,omitempty" toml:"blobBaseFeeScalar,omitempty"`
+	// Genesis values of the post-Isthmus (operator fee) and post-Jovian (min base fee, DA footprint
+	// gas scalar) system config params. Optional: only set when non-zero at genesis. Absent decodes
+	// to zero downstream, which is equivalent (clients apply their own defaults, e.g. 400 for the DA
+	// footprint gas scalar). Key names follow kona's SystemConfig, which already models all four.
+	OperatorFeeScalar    *uint32 `json:"operatorFeeScalar,omitempty" toml:"operatorFeeScalar,omitempty"`
+	OperatorFeeConstant  *uint64 `json:"operatorFeeConstant,omitempty" toml:"operatorFeeConstant,omitempty"`
+	MinBaseFee           *uint64 `json:"minBaseFee,omitempty" toml:"minBaseFee,omitempty"`
+	DAFootprintGasScalar *uint16 `json:"daFootprintGasScalar,omitempty" toml:"daFootprintGasScalar,omitempty"`
 }
 
 type AltDA struct {
