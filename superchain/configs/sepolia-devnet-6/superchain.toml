@@ -1,0 +1,9 @@
+name = "sepolia-devnet-6"
+superchain_config_addr = "0xBbe108882084b30B4acB1Da19abc3E512678Cc5A"
+
+[hardforks]
+
+[l1]
+  chain_id = 11155111
+  public_rpc = "https://ethereum-sepolia-rpc.publicnode.com"
+  explorer = ""
