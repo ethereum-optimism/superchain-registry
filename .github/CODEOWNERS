@@ -6,3 +6,9 @@
 *.go @ethereum-optimism/superchain-registry-reviewers
 
 /validation/standard/standard-prestates.toml @ethereum-optimism/proofs @ethereum-optimism/superchain-registry-reviewers
+
+# GitHub Actions inputs
+/.github/workflows/ @ethereum-optimism/cloud-security
+/.github/actions/   @ethereum-optimism/cloud-security
+/.github/scripts/   @ethereum-optimism/cloud-security
+/.github/CODEOWNERS @ethereum-optimism/cloud-security
