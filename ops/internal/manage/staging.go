@@ -116,10 +116,8 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 	return cfg, nil
 }
 
-// SystemConfigFromRollup converts the genesis system config of an op-node rollup config into the
-// registry's representation. The post-Isthmus/Jovian params (operator fee, min base fee, DA
-// footprint gas scalar) are only recorded when non-zero: omitting them keeps configs of chains that
-// launched without them byte-identical, and a nil/absent value decodes to zero downstream anyway.
+// SystemConfigFromRollup converts a rollup genesis system config to the registry's form; see
+// config.SystemConfig for the zero-omission rule.
 func SystemConfigFromRollup(sysCfg eth.SystemConfig) config.SystemConfig {
 	out := config.SystemConfig{
 		BatcherAddr: *config.NewChecksummedAddress(sysCfg.BatcherAddr),
