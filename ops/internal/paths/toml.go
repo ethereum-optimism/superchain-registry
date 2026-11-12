@@ -9,21 +9,23 @@ import (
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/fs"
 	"gopkg.in/yaml.v3"
 )
 
+// ReadTOMLFile decodes p into out, rejecting keys out does not model.
+//
+// Registry configs are rewritten from their structs, so a leniently dropped key would vanish
+// silently while every downstream consumer decodes strictly.
 func ReadTOMLFile(p string, out any) error {
-	data, err := os.ReadFile(p)
+	f, err := os.Open(p)
 	if err != nil {
 		return fmt.Errorf("failed to read TOML file: %w", err)
 	}
+	defer f.Close()
 
-	if err := toml.Unmarshal(data, out); err != nil {
-		return fmt.Errorf("failed to unmarshal TOML: %w", err)
-	}
-
-	return nil
+	return jsonutil.DecodeTOMLStrict(f, out, nil)
 }
 
 func ReadJSONFile(p string, out any) error {

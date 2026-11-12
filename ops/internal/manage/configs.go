@@ -1,11 +1,13 @@
 package manage
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/fs"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -48,7 +50,7 @@ func ReadChainConfig(rootP string, superchain config.Superchain, shortName strin
 	}
 
 	var out config.Chain
-	if err := toml.Unmarshal(data, &out); err != nil {
+	if err := jsonutil.DecodeTOMLStrict(bytes.NewReader(data), &out, nil); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal toml: %w", err)
 	}
 
