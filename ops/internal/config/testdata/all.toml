@@ -40,6 +40,10 @@ max_sequencer_drift = 600
     gasLimit = 30000000
     baseFeeScalar = 123
     blobBaseFeeScalar = 456
+    operatorFeeScalar = 7
+    operatorFeeConstant = 8
+    minBaseFee = 5000000000
+    daFootprintGasScalar = 1234
 
 [roles]
   ProxyAdminOwner = "0x5a0Aae59D09fccBdDb6C6CcEB07B7279367C3d2A"

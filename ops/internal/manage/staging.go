@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/genesis"
+	"github.com/ethereum-optimism/optimism/op-service/eth"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/deployer"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
@@ -84,12 +85,7 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 			Hash:   rollup.Genesis.L2.Hash,
 			Number: rollup.Genesis.L2.Number,
 		},
-		SystemConfig: config.SystemConfig{
-			BatcherAddr: *config.NewChecksummedAddress(rollup.Genesis.SystemConfig.BatcherAddr),
-			Overhead:    common.Hash(rollup.Genesis.SystemConfig.Overhead),
-			Scalar:      common.Hash(rollup.Genesis.SystemConfig.Scalar),
-			GasLimit:    rollup.Genesis.SystemConfig.GasLimit,
-		},
+		SystemConfig: SystemConfigFromRollup(rollup.Genesis.SystemConfig),
 	}
 
 	roles, err := GetRolesFromState(st, idx)
@@ -118,6 +114,28 @@ func InflateChainConfig(opd *deployer.OpDeployer, st deployer.OpaqueState, state
 	cfg.Interop = interop
 
 	return cfg, nil
+}
+
+// SystemConfigFromRollup converts a rollup genesis system config to the registry's form; see
+// config.SystemConfig for the zero-omission rule.
+func SystemConfigFromRollup(sysCfg eth.SystemConfig) config.SystemConfig {
+	out := config.SystemConfig{
+		BatcherAddr: *config.NewChecksummedAddress(sysCfg.BatcherAddr),
+		Overhead:    common.Hash(sysCfg.Overhead),
+		Scalar:      common.Hash(sysCfg.Scalar),
+		GasLimit:    sysCfg.GasLimit,
+	}
+	if ofp := eth.DecodeOperatorFeeParams(sysCfg.OperatorFeeParams); ofp.Scalar != 0 || ofp.Constant != 0 {
+		out.OperatorFeeScalar = &ofp.Scalar
+		out.OperatorFeeConstant = &ofp.Constant
+	}
+	if v := sysCfg.MinBaseFee; v != 0 {
+		out.MinBaseFee = &v
+	}
+	if v := sysCfg.DAFootprintGasScalar; v != 0 {
+		out.DAFootprintGasScalar = &v
+	}
+	return out
 }
 
 // CopyDeployConfigHFTimes converts the deploy config's hardfork offsets, which are relative to

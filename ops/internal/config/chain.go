@@ -104,6 +104,12 @@ type SystemConfig struct {
 	GasLimit          uint64             `json:"gasLimit" toml:"gasLimit"`
 	BaseFeeScalar     *uint64            `json:"baseFeeScalar,omitempty" toml:"baseFeeScalar,omitempty"`
 	BlobBaseFeeScalar *uint64            `json:"blobBaseFeeScalar,omitempty" toml:"blobBaseFeeScalar,omitempty"`
+	// Genesis operator fee (Isthmus), min base fee and DA footprint gas scalar (Jovian). Recorded
+	// only when non-zero; absent decodes to zero downstream.
+	OperatorFeeScalar    *uint32 `json:"operatorFeeScalar,omitempty" toml:"operatorFeeScalar,omitempty"`
+	OperatorFeeConstant  *uint64 `json:"operatorFeeConstant,omitempty" toml:"operatorFeeConstant,omitempty"`
+	MinBaseFee           *uint64 `json:"minBaseFee,omitempty" toml:"minBaseFee,omitempty"`
+	DAFootprintGasScalar *uint16 `json:"daFootprintGasScalar,omitempty" toml:"daFootprintGasScalar,omitempty"`
 }
 
 type AltDA struct {
