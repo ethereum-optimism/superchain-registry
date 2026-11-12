@@ -15,7 +15,7 @@ func TestSystemConfigFromRollup_CarriesGenesisParams(t *testing.T) {
 		GasLimit:             40_000_000,
 		OperatorFeeParams:    eth.EncodeOperatorFeeParams(eth.OperatorFeeParams{Scalar: 7, Constant: 8}),
 		MinBaseFee:           5_000_000_000,
-		DAFootprintGasScalar: 400,
+		DAFootprintGasScalar: 1234,
 	}
 	out := SystemConfigFromRollup(in)
 
@@ -27,7 +27,7 @@ func TestSystemConfigFromRollup_CarriesGenesisParams(t *testing.T) {
 	require.NotNil(t, out.OperatorFeeConstant)
 	require.EqualValues(t, 8, *out.OperatorFeeConstant)
 	require.NotNil(t, out.DAFootprintGasScalar)
-	require.EqualValues(t, 400, *out.DAFootprintGasScalar)
+	require.EqualValues(t, 1234, *out.DAFootprintGasScalar)
 }
 
 func TestSystemConfigFromRollup_OmitsZeroValues(t *testing.T) {
