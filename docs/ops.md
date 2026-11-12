@@ -157,7 +157,8 @@ deployment_l2_contracts_version = "tag://op-contracts/v1.7.0-beta.1+l2-contracts
     # Optional: only for chains whose genesis system config set these (post-Isthmus operator fee,
     # post-Jovian min base fee / DA footprint gas scalar). `minBaseFee` and `daFootprintGasScalar`
     # come straight from rollup.json `genesis.system_config`; the operator fee is stored there packed
-    # as `operatorFeeParams` (`create-config` unpacks it for you). Omit when zero.
+    # as `operatorFeeParams` (`create-config` unpacks it for you). Omit when zero (the operator fee
+    # pair is written together).
     # operatorFeeScalar = 0
     # operatorFeeConstant = 0
     # minBaseFee = 0
