@@ -1,0 +1,58 @@
+name = "Whitechain Sepolia"
+public_rpc = "https://rpc.testnet.whitechain.io"
+sequencer_rpc = "https://rpc.testnet.whitechain.io"
+explorer = "https://explorer.testnet.whitechain.io"
+governed_by_optimism = false
+data_availability_type = "eth-da"
+chain_id = 1874
+batch_inbox_addr = "0x00be0E81141C6Fb68542d5F4B29900c42AD8d43e"
+block_time = 1
+seq_window_size = 3600
+max_sequencer_drift = 600
+superchain = "sepolia"
+base_fee_vault_recipient = "0x044a91B182C3B4c1b645421d9a3c498Dfa7cCb85"
+l1_fee_vault_recipient = "0x044a91B182C3B4c1b645421d9a3c498Dfa7cCb85"
+sequencer_fee_vault_recipient = "0x044a91B182C3B4c1b645421d9a3c498Dfa7cCb85"
+deployment_tx_hash = "0x830fa41261f3f18d04bd0958392eaa7c25416aac65d89d8ef023a331f939cb75"
+deployment_l1_contracts_version = "tag://op-contracts/v6.0.0"
+deployment_l2_contracts_version = "tag://op-contracts/v6.0.0"
+
+[hardforks]
+  canyon_time = 0
+  delta_time = 0
+  ecotone_time = 0
+  fjord_time = 0
+  granite_time = 0
+  holocene_time = 0
+  isthmus_time = 0
+  jovian_time = 0
+  # karst_time intentionally absent — not present in their rollup.json
+
+[optimism]
+  eip1559_elasticity = 6
+  eip1559_denominator = 100
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1781596368
+  [genesis.l1]
+    hash = "0x6a6d405dd0870380b008eb3eb5a7408c6062acf3038395dd1d20815af1ef6f5b"
+    number = 11071328
+  [genesis.l2]
+    hash = "0xb92575f4a11271b5fe065eb8289be17906302e1c23218c5a67c2871a99e6f0d5"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x7D451299Ab21Bfa7132c690b91D749756ec1Dbb7"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x010000000000000000000000000000000000000000000000000c3c9d00000558"
+    gasLimit = 40000000
+    minBaseFee = 5000000000
+
+[roles]
+  ProxyAdminOwner = "0x044a91B182C3B4c1b645421d9a3c498Dfa7cCb85"
+
+[addresses]
+  L1StandardBridgeProxy = "0x0c50bE539AB5D72d226038928F2eB25100899DED"
+  OptimismPortalProxy = "0xFF9b597b0781457ae6aa7256Ca5ed5839bF7D0C3"
+  SystemConfigProxy = "0x9328Ea869949f33c57B7b680B6EdB58769e2181c"
+  DisputeGameFactoryProxy = "0xfaa2fAA8912C069c01abc169c33713c79027c833"
