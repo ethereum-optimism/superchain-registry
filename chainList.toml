@@ -791,7 +791,7 @@
 
 [[chains]]
   name = "sepolia-devnet-5"
-  identifier = "sepolia-devnet-5/sepolia-devnet-5"
+  identifier = "sepolia-devnet-4/sepolia-devnet-5"
   chain_id = 420130020
   rpc = ["https://sepolia-devnet-5.optimism.io/rpc"]
   explorers = [""]
@@ -799,7 +799,7 @@
   data_availability_type = "eth-da"
   [chains.parent]
     type = "L2"
-    chain = "sepolia-devnet-5"
+    chain = "sepolia-devnet-4"
   [chains.fault_proofs]
     status = "permissionless"
 
