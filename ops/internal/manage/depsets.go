@@ -10,26 +10,40 @@ import (
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 	"github.com/ethereum-optimism/optimism/op-service/log"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
+	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
 )
 
 var (
 	errDepsetLengths       = errors.New("inconsistent depset lengths")
 	errInconsistentDepsets = errors.New("inconsistent depset values")
 	errMissingAddress      = errors.New("missing address")
+	errMismatchedL1        = errors.New("depset members settle to different L1s")
+	errMismatchedSCAddr    = errors.New("depset members use different SuperchainConfig addresses")
+	errMissingSuperchain   = errors.New("missing superchain definition")
 )
 
 type DepsetChecker struct {
 	lgr             log.Logger
 	addrs           config.AddressesJSON
+	superchains     map[config.Superchain]*config.SuperchainDefinition
 	diskChainCfgs   map[uint64]DiskChainConfig
 	processedChains map[uint64]bool
 	chainsProcessed int
 }
 
-func NewDepsetChecker(logger log.Logger, cfgs []DiskChainConfig, addrs config.AddressesJSON) *DepsetChecker {
+// NewDepsetChecker returns a checker for the depsets in cfgs. superchains holds the superchain.toml
+// definition of every superchain dir in cfgs; it is only consulted for depsets whose members span
+// more than one superchain dir.
+func NewDepsetChecker(
+	logger log.Logger,
+	cfgs []DiskChainConfig,
+	addrs config.AddressesJSON,
+	superchains map[config.Superchain]*config.SuperchainDefinition,
+) *DepsetChecker {
 	dc := &DepsetChecker{
 		lgr:             logger,
 		addrs:           addrs,
+		superchains:     superchains,
 		diskChainCfgs:   make(map[uint64]DiskChainConfig),
 		processedChains: make(map[uint64]bool),
 	}
@@ -102,17 +116,15 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 		return fmt.Errorf("no chain configs provided to checkOffchain")
 	}
 
-	var firstSuperchain string
 	var firstDepset map[string]config.StaticConfigDependency
 	for i, cfg := range cfgs {
 		if i == 0 {
-			firstSuperchain = cfg.Superchain
 			firstDepset = cfg.Config.Interop.Dependencies
 		}
 
-		// check that all chains in the depset are part of the same superchain
-		if cfg.Superchain != firstSuperchain {
-			return fmt.Errorf("chain %d is part of superchain %s, expected superchain %s", cfg.Config.ChainID, cfg.Superchain, firstSuperchain)
+		// check that all chains in the depset settle to the same L1 and share a SuperchainConfig
+		if err := dc.checkSameSuperchainConfig(cfgs[0], cfg); err != nil {
+			return err
 		}
 
 		// check equality of dependency sets
@@ -135,6 +147,44 @@ func (dc *DepsetChecker) checkOffchain(cfgs []DiskChainConfig) error {
 				}
 			}
 		}
+	}
+
+	return nil
+}
+
+// checkSameSuperchainConfig ensures that two depset members settle to the same L1 and use the same
+// SuperchainConfig. Members may live in different superchain dirs (e.g. one dir per devnet), so a
+// depset never forces chains to move dirs, which would rename their node network names.
+func (dc *DepsetChecker) checkSameSuperchainConfig(first, cfg DiskChainConfig) error {
+	if cfg.Superchain == first.Superchain {
+		return nil
+	}
+
+	firstDef, ok := dc.superchains[first.Superchain]
+	if !ok || firstDef == nil {
+		return fmt.Errorf("%w: %s (chain %d)", errMissingSuperchain, first.Superchain, first.Config.ChainID)
+	}
+	def, ok := dc.superchains[cfg.Superchain]
+	if !ok || def == nil {
+		return fmt.Errorf("%w: %s (chain %d)", errMissingSuperchain, cfg.Superchain, cfg.Config.ChainID)
+	}
+
+	if def.L1.ChainID != firstDef.L1.ChainID {
+		return fmt.Errorf("%w: chain %d (superchain %s) settles to L1 %d, chain %d (superchain %s) settles to L1 %d",
+			errMismatchedL1,
+			cfg.Config.ChainID, cfg.Superchain, def.L1.ChainID,
+			first.Config.ChainID, first.Superchain, firstDef.L1.ChainID)
+	}
+
+	zeroAddress := config.ChecksummedAddress{}
+	if firstDef.SuperchainConfigAddr == nil || *firstDef.SuperchainConfigAddr == zeroAddress {
+		return fmt.Errorf("%w: superchain %s has no superchain_config_addr", errMismatchedSCAddr, first.Superchain)
+	}
+	if def.SuperchainConfigAddr == nil || *def.SuperchainConfigAddr != *firstDef.SuperchainConfigAddr {
+		return fmt.Errorf("%w: chain %d (superchain %s) uses %v, chain %d (superchain %s) uses %s",
+			errMismatchedSCAddr,
+			cfg.Config.ChainID, cfg.Superchain, def.SuperchainConfigAddr,
+			first.Config.ChainID, first.Superchain, firstDef.SuperchainConfigAddr)
 	}
 
 	return nil
@@ -219,4 +269,23 @@ func (dc *DepsetChecker) getAndValidateAddresses(chainID uint64) (*config.Addres
 		return nil, fmt.Errorf("%w: no EthLockboxProxy found for chain %d", errMissingAddress, chainID)
 	}
 	return addrs, nil
+}
+
+// LoadSuperchainDefinitions reads the superchain.toml of every superchain dir in the repo at wd,
+// keyed by dir name.
+func LoadSuperchainDefinitions(wd string) (map[config.Superchain]*config.SuperchainDefinition, error) {
+	superchains, err := paths.Superchains(wd)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list superchains: %w", err)
+	}
+
+	defs := make(map[config.Superchain]*config.SuperchainDefinition, len(superchains))
+	for _, superchain := range superchains {
+		var def config.SuperchainDefinition
+		if err := paths.ReadTOMLFile(paths.SuperchainDefinitionPath(wd, superchain), &def); err != nil {
+			return nil, fmt.Errorf("failed to read superchain definition for %s: %w", superchain, err)
+		}
+		defs[superchain] = &def
+	}
+	return defs, nil
 }

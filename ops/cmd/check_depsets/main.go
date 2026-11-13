@@ -42,7 +42,12 @@ func CheckDepsetsCLI(cliCtx *cli.Context) error {
 		return fmt.Errorf("failed to read addresses.json file: %w", err)
 	}
 
-	checker := manage.NewDepsetChecker(lgr, cfgs, addrs)
+	superchains, err := manage.LoadSuperchainDefinitions(wd)
+	if err != nil {
+		return fmt.Errorf("failed to load superchain definitions: %w", err)
+	}
+
+	checker := manage.NewDepsetChecker(lgr, cfgs, addrs, superchains)
 	if err := checker.Check(); err != nil {
 		return fmt.Errorf("failed to validate depsets: %w", err)
 	}

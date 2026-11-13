@@ -7,6 +7,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-service/log"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/paths"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 )
 
@@ -40,7 +41,7 @@ func TestDepsetChecker(t *testing.T) {
 		cfgs, err := CollectChainConfigs("testdata/depsets_valid")
 		require.NoError(t, err)
 
-		checker := NewDepsetChecker(lgr, cfgs, addrs)
+		checker := NewDepsetChecker(lgr, cfgs, addrs, nil)
 		require.NoError(t, checker.Check())
 	})
 
@@ -55,8 +56,10 @@ func TestDepsetChecker(t *testing.T) {
 		addrs := loadAddresses(t, paths.AddressesFile(rootDir))
 		cfgs, err := CollectChainConfigs(superchainCfgsDir)
 		require.NoError(t, err)
+		superchains, err := LoadSuperchainDefinitions(rootDir)
+		require.NoError(t, err)
 
-		checker := NewDepsetChecker(lgr, cfgs, addrs)
+		checker := NewDepsetChecker(lgr, cfgs, addrs, superchains)
 		require.NoError(t, checker.Check())
 	})
 
@@ -65,7 +68,7 @@ func TestDepsetChecker(t *testing.T) {
 		chains, err := CollectChainConfigs("testdata/depsets_invalid/transience")
 		require.NoError(t, err)
 
-		checker := NewDepsetChecker(lgr, chains, addrs)
+		checker := NewDepsetChecker(lgr, chains, addrs, nil)
 		err = checker.Check()
 		require.Error(t, err)
 		require.ErrorIs(t, err, errInconsistentDepsets)
@@ -76,7 +79,7 @@ func TestDepsetChecker_checkOffchain(t *testing.T) {
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
 
 	t.Run("no chain configs", func(t *testing.T) {
-		checker := NewDepsetChecker(lgr, nil, nil)
+		checker := NewDepsetChecker(lgr, nil, nil, nil)
 		err := checker.checkOffchain(nil)
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "no chain configs provided to checkOffchain")
@@ -97,10 +100,71 @@ func TestDepsetChecker_checkOffchain(t *testing.T) {
 			{Config: &cfg2, Superchain: "test"},
 		}
 
-		checker := NewDepsetChecker(lgr, chains, addrs)
+		checker := NewDepsetChecker(lgr, chains, addrs, nil)
 		err = checker.checkOffchain(chains)
 		require.Error(t, err)
 		require.ErrorIs(t, err, errDepsetLengths)
+	})
+}
+
+func TestDepsetChecker_checkOffchain_crossSuperchain(t *testing.T) {
+	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
+
+	scAddr := config.NewChecksummedAddress(common.HexToAddress("0x289d2A1b1AE6E0470D8B72E53B6E3f485f251DBb"))
+	otherSCAddr := config.NewChecksummedAddress(common.HexToAddress("0xBbe108882084b30B4acB1Da19abc3E512678Cc5A"))
+	def := func(l1 uint64, addr *config.ChecksummedAddress) *config.SuperchainDefinition {
+		return &config.SuperchainDefinition{SuperchainConfigAddr: addr, L1: config.SuperchainL1{ChainID: l1}}
+	}
+
+	chain1 := loadChainConfig(t, "testdata/depsets_valid/chain1.toml")
+	chain2 := loadChainConfig(t, "testdata/depsets_valid/chain2.toml")
+	chains := []DiskChainConfig{
+		{Config: chain1, Superchain: "devnet-a"},
+		{Config: chain2, Superchain: "devnet-b"},
+	}
+
+	t.Run("same L1 and SuperchainConfig", func(t *testing.T) {
+		superchains := map[config.Superchain]*config.SuperchainDefinition{
+			"devnet-a": def(11155111, scAddr),
+			"devnet-b": def(11155111, scAddr),
+		}
+		checker := NewDepsetChecker(lgr, chains, nil, superchains)
+		require.NoError(t, checker.checkOffchain(chains))
+	})
+
+	t.Run("different L1", func(t *testing.T) {
+		superchains := map[config.Superchain]*config.SuperchainDefinition{
+			"devnet-a": def(11155111, scAddr),
+			"devnet-b": def(1, scAddr),
+		}
+		checker := NewDepsetChecker(lgr, chains, nil, superchains)
+		require.ErrorIs(t, checker.checkOffchain(chains), errMismatchedL1)
+	})
+
+	t.Run("different SuperchainConfig", func(t *testing.T) {
+		superchains := map[config.Superchain]*config.SuperchainDefinition{
+			"devnet-a": def(11155111, scAddr),
+			"devnet-b": def(11155111, otherSCAddr),
+		}
+		checker := NewDepsetChecker(lgr, chains, nil, superchains)
+		require.ErrorIs(t, checker.checkOffchain(chains), errMismatchedSCAddr)
+	})
+
+	t.Run("missing SuperchainConfig", func(t *testing.T) {
+		superchains := map[config.Superchain]*config.SuperchainDefinition{
+			"devnet-a": def(11155111, nil),
+			"devnet-b": def(11155111, nil),
+		}
+		checker := NewDepsetChecker(lgr, chains, nil, superchains)
+		require.ErrorIs(t, checker.checkOffchain(chains), errMismatchedSCAddr)
+	})
+
+	t.Run("missing superchain definition", func(t *testing.T) {
+		superchains := map[config.Superchain]*config.SuperchainDefinition{
+			"devnet-a": def(11155111, scAddr),
+		}
+		checker := NewDepsetChecker(lgr, chains, nil, superchains)
+		require.ErrorIs(t, checker.checkOffchain(chains), errMissingSuperchain)
 	})
 }
 
@@ -108,7 +172,7 @@ func TestDepsetChecker_checkOnchain(t *testing.T) {
 	lgr := log.NewLogger(log.NewTerminalHandlerWithLevel(os.Stderr, log.LevelInfo, false))
 
 	t.Run("no chain configs", func(t *testing.T) {
-		checker := NewDepsetChecker(lgr, nil, nil)
+		checker := NewDepsetChecker(lgr, nil, nil, nil)
 		err := checker.checkOnchain(nil)
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "no chain configs provided to checkOnchain")
@@ -121,7 +185,7 @@ func TestDepsetChecker_checkOnchain(t *testing.T) {
 			{Config: chain1, Superchain: "test"},
 		}
 
-		checker := NewDepsetChecker(lgr, chains, addrs)
+		checker := NewDepsetChecker(lgr, chains, addrs, nil)
 		require.NoError(t, checker.checkOnchain(chains))
 	})
 
@@ -134,7 +198,7 @@ func TestDepsetChecker_checkOnchain(t *testing.T) {
 			{Config: chain2, Superchain: "test"},
 		}
 
-		checker := NewDepsetChecker(lgr, chains, addrs)
+		checker := NewDepsetChecker(lgr, chains, addrs, nil)
 		require.NoError(t, checker.checkOnchain(chains))
 	})
 
@@ -147,7 +211,7 @@ func TestDepsetChecker_checkOnchain(t *testing.T) {
 			{Config: chain2, Superchain: "test"},
 		}
 
-		checker := NewDepsetChecker(lgr, chains, addrs)
+		checker := NewDepsetChecker(lgr, chains, addrs, nil)
 		err := checker.checkOnchain(chains)
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "DisputeGameFactoryProxy address mismatch")
@@ -162,7 +226,7 @@ func TestDepsetChecker_checkOnchain(t *testing.T) {
 			{Config: chain2, Superchain: "test"},
 		}
 
-		checker := NewDepsetChecker(lgr, chains, addrs)
+		checker := NewDepsetChecker(lgr, chains, addrs, nil)
 		err := checker.checkOnchain(chains)
 		require.Error(t, err)
 		require.ErrorIs(t, err, errMissingAddress)
@@ -177,7 +241,7 @@ func TestDepsetChecker_checkOnchain(t *testing.T) {
 			{Config: chain2, Superchain: "test"},
 		}
 
-		checker := NewDepsetChecker(lgr, chains, addrs)
+		checker := NewDepsetChecker(lgr, chains, addrs, nil)
 		err := checker.checkOnchain(chains)
 		require.Error(t, err)
 		require.ErrorIs(t, err, errMissingAddress)
