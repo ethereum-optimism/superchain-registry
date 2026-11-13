@@ -21,6 +21,7 @@ max_sequencer_drift = 600
   isthmus_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   jovian_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
   karst_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  lagoon_time = 1794603601 # Fri 13 Nov 2026 21:00:01 UTC
 
 [interop]
   [interop.dependencies]
