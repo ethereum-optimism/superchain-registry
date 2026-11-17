@@ -1,19 +1,4 @@
 [[chains]]
-  name = "Automata Mainnet"
-  identifier = "mainnet/automata"
-  chain_id = 65536
-  rpc = ["https://rpc.ata.network"]
-  explorers = ["https://explorer.ata.network"]
-  governed_by_optimism = false
-  data_availability_type = "alt-da"
-  gas_paying_token = "0xA2120b9e674d3fC3875f415A7DF52e382F141225"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "none"
-
-[[chains]]
   name = "BOB"
   identifier = "mainnet/bob"
   chain_id = 60808
@@ -128,20 +113,6 @@
     status = "permissionless"
 
 [[chains]]
-  name = "Lisk"
-  identifier = "mainnet/lisk"
-  chain_id = 1135
-  rpc = ["https://rpc.api.lisk.com"]
-  explorers = ["https://blockscout.lisk.com"]
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
   name = "Lyra Chain"
   identifier = "mainnet/lyra"
   chain_id = 957
@@ -161,20 +132,6 @@
   chain_id = 1750
   rpc = ["https://rpc.metall2.com"]
   explorers = ["https://explorer.metall2.com"]
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
-  name = "Mint Mainnet"
-  identifier = "mainnet/mint"
-  chain_id = 185
-  rpc = ["https://rpc.mintchain.io"]
-  explorers = ["https://explorer.mintchain.io"]
   governed_by_optimism = false
   data_availability_type = "eth-da"
   [chains.parent]
@@ -226,20 +183,6 @@
     status = "permissioned"
 
 [[chains]]
-  name = "Polynomial"
-  identifier = "mainnet/polynomial"
-  chain_id = 8008
-  rpc = ["https://rpc.polynomial.fi"]
-  explorers = ["https://polynomialscan.io"]
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
   name = "RACE Mainnet"
   identifier = "mainnet/race"
   chain_id = 6805
@@ -247,20 +190,6 @@
   explorers = ["https://racescan.io/"]
   governed_by_optimism = false
   data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "none"
-
-[[chains]]
-  name = "Redstone"
-  identifier = "mainnet/redstone"
-  chain_id = 690
-  rpc = ["https://rpc.redstonechain.com"]
-  explorers = ["https://explorer.redstone.xyz"]
-  governed_by_optimism = false
-  data_availability_type = "alt-da"
   [chains.parent]
     type = "L2"
     chain = "mainnet"
@@ -310,20 +239,6 @@
     status = "permissioned"
 
 [[chains]]
-  name = "Superseed"
-  identifier = "mainnet/sseed"
-  chain_id = 5330
-  rpc = ["https://mainnet.superseed.xyz"]
-  explorers = ["https://explorer.superseed.xyz"]
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "permissioned"
-
-[[chains]]
   name = "Swan Chain Mainnet"
   identifier = "mainnet/swan"
   chain_id = 254
@@ -364,20 +279,6 @@
     chain = "mainnet"
   [chains.fault_proofs]
     status = "permissioned"
-
-[[chains]]
-  name = "Xterio Chain (ETH)"
-  identifier = "mainnet/xterio-eth"
-  chain_id = 2702128
-  rpc = ["https://xterio-eth.alt.technology/"]
-  explorers = ["https://eth.xterscan.io/"]
-  governed_by_optimism = false
-  data_availability_type = "alt-da"
-  [chains.parent]
-    type = "L2"
-    chain = "mainnet"
-  [chains.fault_proofs]
-    status = "none"
 
 [[chains]]
   name = "Zora"
@@ -463,20 +364,6 @@
     chain = "sepolia"
   [chains.fault_proofs]
     status = "permissionless"
-
-[[chains]]
-  name = "Lisk Sepolia Testnet"
-  identifier = "sepolia/lisk"
-  chain_id = 4202
-  rpc = ["https://rpc.sepolia-api.lisk.com"]
-  explorers = ["https://sepolia-blockscout.lisk.com"]
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia"
-  [chains.fault_proofs]
-    status = "none"
 
 [[chains]]
   name = "Metal L2 Testnet"
