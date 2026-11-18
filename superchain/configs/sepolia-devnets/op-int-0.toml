@@ -1,0 +1,57 @@
+name = "op-int-0"
+public_rpc = "https://op-int-0.optimism.io/rpc"
+sequencer_rpc = ""
+explorer = ""
+governed_by_optimism = false
+superchain_time = 0
+data_availability_type = "eth-da"
+chain_id = 420130023
+batch_inbox_addr = "0x00567b95108871582477D51e4B09aBf9001A0f46"
+block_time = 2
+seq_window_size = 3600
+max_sequencer_drift = 600
+
+[hardforks]
+  canyon_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  delta_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  ecotone_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  fjord_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  granite_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  holocene_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  isthmus_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  jovian_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  karst_time = 0 # Thu 1 Jan 1970 00:00:00 UTC
+  lagoon_time = 1796054401 # Mon 30 Nov 2026 16:00:01 UTC
+
+[interop]
+  [interop.dependencies]
+    [interop.dependencies.420130023]
+    [interop.dependencies.420130024]
+
+[optimism]
+  eip1559_elasticity = 2
+  eip1559_denominator = 250
+  eip1559_denominator_canyon = 250
+
+[genesis]
+  l2_time = 1795035012
+  [genesis.l1]
+    hash = "0xcbe79e000204e691988796adaeb8b7dcda98e1b82c1e29ee56b8efffc433b5b9"
+    number = 12163027
+  [genesis.l2]
+    hash = "0x2cc30ed52bca5fe1f92ec6c97655e7acc2a41c3b940b148a8a4bb25f2ecc9462"
+    number = 0
+  [genesis.system_config]
+    batcherAddress = "0x6E4b915Cadbda30c88F23a2737413b53D34D6b98"
+    overhead = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    scalar = "0x010000000000000000000000000000000000000000000000000c3c9d00000558"
+    gasLimit = 40000000
+
+[roles]
+  ProxyAdminOwner = "0xe934Dc97E347C6aCef74364B50125bb8689c40ff"
+
+[addresses]
+  L1StandardBridgeProxy = "0x099F3aad30F5a6Aa4fF3d1e68c3BcCaac21e7A88"
+  OptimismPortalProxy = "0x43090F6Cd0d3f7970B35F9348E411474f0E7942d"
+  SystemConfigProxy = "0x2fB895799975C47285f950171dABaa873b158793"
+  DisputeGameFactoryProxy = "0xe235da77a0A13C4B47A303898d99B7ba2c3dB09d"
