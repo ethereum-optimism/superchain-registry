@@ -24,6 +24,11 @@ max_sequencer_drift = 600
   keep_karst_upgrade_gas = true
   lagoon_time = 1799683201 # Mon 11 Jan 2027 16:00:01 UTC
 
+[interop]
+  [interop.dependencies]
+    [interop.dependencies.10]
+    [interop.dependencies.130]
+
 [optimism]
   eip1559_elasticity = 6
   eip1559_denominator = 50
