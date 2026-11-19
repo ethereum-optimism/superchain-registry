@@ -5,7 +5,6 @@ explorer = "https://foo.bar.net"
 governed_by_optimism = false
 superchain_time = 0
 data_availability_type = "eth-da"
-deployment_tx_hash = "0x0193884dc77ba74ca9ae23079edf91b81d49b0243c486fab5bbecd415d2dad68"
 chain_id = 1952805748
 batch_inbox_addr = "0x00BAA763833a726F122be49cd713dafbE7254e04"
 block_time = 2

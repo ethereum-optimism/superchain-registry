@@ -70,6 +70,7 @@ func getL1ChainId(ctx context.Context, rpcURL string) (uint64, error) {
 type SuperchainDefinition struct {
 	Name                   string              `toml:"name"`
 	SuperchainConfigAddr   *ChecksummedAddress `toml:"superchain_config_addr"`
+	SaferSafesAddr         *ChecksummedAddress `toml:"safer_safes_addr"`
 	OPContractsManagerAddr *ChecksummedAddress `toml:"op_contracts_manager_addr"`
 	Hardforks              Hardforks           `toml:"hardforks"`
 	L1                     SuperchainL1        `toml:"l1"`

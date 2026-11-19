@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"bytes"
 	"fmt"
 	"io/fs"
 	"os"
@@ -9,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/BurntSushi/toml"
+	"github.com/ethereum-optimism/optimism/op-service/jsonutil"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/util"
 )
@@ -60,7 +61,7 @@ func CollectChainConfigs(p string) ([]DiskChainConfig, error) {
 
 			basename := filepath.Base(file)
 			var chain config.Chain
-			if err := toml.Unmarshal(data, &chain); err != nil {
+			if err := jsonutil.DecodeTOMLStrict(bytes.NewReader(data), &chain, nil); err != nil {
 				firstErr.Set(fmt.Errorf("failed to unmarshal toml %s: %w", basename, err))
 				return
 			}

@@ -8,7 +8,6 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/BurntSushi/toml"
 	"github.com/ethereum-optimism/superchain-registry/ops/internal/config"
 )
 
@@ -60,15 +59,9 @@ func SuperchainIds(wd string) (map[config.Superchain]uint64, error) {
 
 	superchainIds := make(map[config.Superchain]uint64)
 	for _, superchain := range superchains {
-		superchainFile := SuperchainConfig(wd, superchain)
-		data, err := os.ReadFile(superchainFile)
-		if err != nil {
-			return nil, fmt.Errorf("failed to read superchain config: %w", err)
-		}
-
 		var superchainDef config.SuperchainDefinition
-		if err := toml.Unmarshal(data, &superchainDef); err != nil {
-			return nil, fmt.Errorf("failed to unmarshal superchain config: %w", err)
+		if err := ReadTOMLFile(SuperchainConfig(wd, superchain), &superchainDef); err != nil {
+			return nil, fmt.Errorf("failed to read superchain config: %w", err)
 		}
 		superchainIds[superchain] = superchainDef.L1.ChainID
 	}
