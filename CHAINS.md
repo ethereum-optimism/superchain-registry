@@ -62,12 +62,10 @@
 
 | Chain Name | OP Governed[^1] | Superchain Hardforks[^2] | Explorer | Public RPC | Sequencer RPC
 |---|---|---|---|---|---|
-| op-int-0 | ❌ | ✅ |  | `https://op-int-0.optimism.io/rpc` | `` |
 | sepolia-devnet-2 | ❌ | ✅ |  | `https://sepolia-devnet-2.optimism.io/rpc` | `` |
 | sepolia-devnet-3 | ❌ | ✅ |  | `https://sepolia-devnet-3.optimism.io/rpc` | `` |
 | sepolia-devnet-4 | ❌ | ✅ |  | `https://sepolia-devnet-4.optimism.io/rpc` | `` |
 | sepolia-devnet-5 | ❌ | ✅ |  | `https://sepolia-devnet-5.optimism.io/rpc` | `` |
-| uni-int-0 | ❌ | ✅ |  | `https://uni-int-0.optimism.io/rpc` | `` |
 
 
 [^1]: Chains are governed by Optimism if their `L1ProxyAdminOwner` is set to the value specified by the standard config and [configurability.md](https://github.com/ethereum-optimism/specs/blob/main/specs/protocol/configurability.md#l1-proxyadmin-owner).

@@ -703,31 +703,3 @@
     chain = "sepolia-devnet-6"
   [chains.fault_proofs]
     status = "permissioned"
-
-[[chains]]
-  name = "uni-int-0"
-  identifier = "sepolia-devnets/uni-int-0"
-  chain_id = 420130024
-  rpc = ["https://uni-int-0.optimism.io/rpc"]
-  explorers = [""]
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia-devnets"
-  [chains.fault_proofs]
-    status = "permissionless"
-
-[[chains]]
-  name = "op-int-0"
-  identifier = "sepolia-devnets/op-int-0"
-  chain_id = 420130023
-  rpc = ["https://op-int-0.optimism.io/rpc"]
-  explorers = [""]
-  governed_by_optimism = false
-  data_availability_type = "eth-da"
-  [chains.parent]
-    type = "L2"
-    chain = "sepolia-devnets"
-  [chains.fault_proofs]
-    status = "permissionless"
