@@ -119,7 +119,7 @@ func TestLockboxChains(t *testing.T) {
 
 	t.Run("superchains without standard config params are skipped before address checks", func(t *testing.T) {
 		devnet := cfgs(901)
-		devnet[0].Superchain = "sepolia-devnet-2"
+		devnet[0].Superchain = "sepolia-devnets"
 		groups, err := lockboxChains(devnet, addrs)
 		require.NoError(t, err)
 		require.Empty(t, groups)
