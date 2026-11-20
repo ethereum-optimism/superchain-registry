@@ -11,7 +11,7 @@ For a chain to "receive" a particular default (superchain-wide) hardfork activat
 
 To "receive" a hardfork activation time for a given chain means that the downstream OP Stack components will apply that activation time when starting up using a network flag specifying the chain in question.
 
-At the time of writing, this is implemented for
+This is implemented for
 * [op-node](https://docs.optimism.io/node-operators/reference/op-node-config#network-and-rollup-config)
 * [kona-node](https://docs.optimism.io/node-operators/kona-node/configuration#global-arguments)
 * [op-reth](https://docs.optimism.io/node-operators/guides/configuration/execution-clients#execution-clients)

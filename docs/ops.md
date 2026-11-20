@@ -95,7 +95,7 @@ A member of our team will review your PR. When ready, we will generate code from
 
 We **strongly recommend** that you use `op-deployer` to deploy your chain.
 `op-deployer` can be configured to create L3s, alt-DA and custom gas token chains.
-(See the [`op-deployer` docs](https://devdocs.optimism.io/op-deployer/) for more.)
+(See the [`op-deployer` docs](https://docs.optimism.io/chain-operators/tools/op-deployer) for more.)
 However, if your chain requires further modifications, you may need to use a custom deployment method and
 manually create the files needed to add your chain to the Superchain Registry.
 
@@ -216,7 +216,7 @@ You can leave all these values as `0` if your chain has opted in to Superchain-w
 
 #### Genesis
 
-The `[genesis]` section contains the hashes for the L1 start block of the rollup and the hash of the genesis of the L2. The L2 genesis hash is generated from its genesis file. Note that this is unrelated to the ZST encoding in step 4.
+The `[genesis]` section contains the hashes for the L1 start block of the rollup and the hash of the genesis of the L2. The L2 genesis hash is generated from its genesis file. Note that this is unrelated to the ZST encoding in step 3.
 
 #### Roles and addresses
 
@@ -224,7 +224,7 @@ The `[genesis]` section contains the hashes for the L1 start block of the rollup
 (If you deploy your chain using a custom tool, you will need to specify them at some point.
 Keep them handy so you can add your chain to the Superchain Registry!)
 
-### 4. ZST-encode your genesis file.
+### 3. ZST-encode your genesis file.
 
 The Superchain Registry requires ZST-encoded genesis files.
 To ZST-encode your genesis file, run
