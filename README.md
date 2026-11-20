@@ -24,14 +24,14 @@ A glossary, with key terms and definitions, is available [here](docs/glossary.md
 
 ### Downstream packages
 
-The Superchain configs are stored in a minimal form and embedded in downstream OP-Stack software ([`op-node`](https://github.com/ethereum-optimism/optimism) and [`op-geth`](https://github.com/ethereum-optimism/op-geth)). This means that after a chain has been added to the registry and the dependency on the registry updates in the downstream software, it is possible to start an `op-node` instance [using the `--network` flag](https://docs.optimism.io/node-operators/guides/consensus-config#network) (and also an `op-geth` instance [using the `--op-network` tag](https://docs.optimism.io/node-operators/guides/execution-config#op-network%2C-beta-op-network )) which will successfully sync with other nodes on that network.
+The Superchain configs are stored in a minimal form and embedded in downstream OP-Stack software ([`op-node`](https://github.com/ethereum-optimism/optimism/tree/develop/op-node), [`kona-node`](https://github.com/ethereum-optimism/optimism/tree/develop/rust/kona) and [`op-reth`](https://github.com/ethereum-optimism/optimism/tree/develop/rust/op-reth)). This means that after a chain has been added to the registry and the dependency on the registry updates in the downstream software, it is possible to start an `op-node` instance [using the `--network` flag](https://docs.optimism.io/node-operators/reference/op-node-config#network-and-rollup-config) or a `kona-node` instance [using the `--chain` flag](https://docs.optimism.io/node-operators/kona-node/configuration#global-arguments) (and also an `op-reth` instance [using the `--chain` flag](https://docs.optimism.io/node-operators/guides/configuration/execution-clients#execution-clients)) which will successfully sync with other nodes on that network.
 
 ### Hardfork activations
 If you would like your chain to automatically receive superchain-wide coordinated hardfork activations, you can enable this by:
 1. Adding your chain [as above](/docs/ops.md#adding-a-chain)
 2. Ensuring the `superchain_time` in your chain's config is set to an appropriate value.
 Set it to `0` if you want to receive all superchain forks that occur after your chain's genesis, and you have activated all superchain forks up to your genesis time at genesis.
-3. Having that value reflected in the `main` branch well in advance of the testnet (resp. mainnet) release of `op-geth` and `op-node`.
+3. Having that value reflected in the `main` branch well in advance of the testnet (resp. mainnet) release of `op-node`, `kona-node` and `op-reth`.
 4. Having your chain's nodes started with the network flags.
 
 This is explained in more detail in this [specification on hardfork activation inheritance behavior](./docs/hardfork-activation-inheritance.md).

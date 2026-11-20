@@ -11,9 +11,10 @@ For a chain to "receive" a particular default (superchain-wide) hardfork activat
 
 To "receive" a hardfork activation time for a given chain means that the downstream OP Stack components will apply that activation time when starting up using a network flag specifying the chain in question.
 
-At the time of writing, this is implemented for
-* [op-geth](https://docs.optimism.io/node-operators/guides/base-config#initialization-via-network-flags)
-* [op-node](https://docs.optimism.io/node-operators/guides/base-config#configuring-op-node)
+This is implemented for
+* [op-node](https://docs.optimism.io/node-operators/reference/op-node-config#network-and-rollup-config)
+* [kona-node](https://docs.optimism.io/node-operators/kona-node/configuration#global-arguments)
+* [op-reth](https://docs.optimism.io/node-operators/guides/configuration/execution-clients#execution-clients)
 
 > [!NOTE]
 > Since [version 2.0](https://github.com/ethereum-optimism/superchain-registry/pull/816) of the superchain registry, the inherited hardfork activation times are applied directly to each chain's individual chain config TOML file. What you see is what you get (unlike in previous iterations of the registry, where the inheritance was applied "magically" by Go bindings).
