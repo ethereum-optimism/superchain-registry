@@ -3,6 +3,26 @@
 #   * proxied             : specify a standard "implementation_address"
 #   * neither             : specify neither a standard "address" nor "implementation_address"
 
+# Upgrade 22 release candidate https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv10.0.0-rc.2
+# OPCM deployed 2026-11-23 from tag op-contracts/v10.0.0-rc.2 (b4f9de4eec86e0470e3a6a758c0abb30ae4f08de).
+["op-contracts/v10.0.0-rc.2"]
+system_config = { version = "4.4.0", implementation_address = "0x66b88c1303a1c2ff4af31626f59b44a3a9ee85a4" }
+fault_dispute_game = { version = "2.4.2" }
+permissioned_dispute_game = { version = "2.4.0" }
+mips = { version = "1.10.1", address = "0xacc005dcd857b401e4732e6f7837135a22825cfa" }
+optimism_portal = { version = "7.5.1", implementation_address = "0x3fdbe48f21e9509f815c7482ab213c16403cd414" }
+anchor_state_registry = { version = "5.1.0", implementation_address = "0xb11be60743211fde36786e4a27f07fab11f94165" }
+delayed_weth = { version = "3.0.0", implementation_address = "0x03e166fb7c8c536bedeb5164fbc28ad57afd4660" }
+eth_lockbox = { version = "2.1.0", implementation_address = "0x406948c860f07b24ad910f9c48c2677cc7eb78d1" }
+dispute_game_factory = { version = "1.6.1", implementation_address = "0x72b971717e088b59f26d4236be222adb6acd393b" }
+preimage_oracle = { version = "1.1.5", address = "0x1e1d73536a081ef2f355d29794547a9770aeb1e0" }
+l1_cross_domain_messenger = { version = "3.4.0", implementation_address = "0x8765c0ca048ad8879a712376d99ec427af8e7df2" }
+l1_erc721_bridge = { version = "2.9.1", implementation_address = "0x9f164f1d02a81e06d639e55f65a87f0070e3cb2e" }
+l1_standard_bridge = { version = "2.9.0", implementation_address = "0x6689ae0ce25899a9a5ef22ddd453d56edabba36e" }
+optimism_mintable_erc20_factory = { version = "1.11.0", implementation_address = "0xaabea75da509fa518fd8a91eae4be5813b829b12" }
+op_contracts_manager = { version = "10.0.0", address = "0x91c167c7afbd0d0acc0aa7e4525e90b5cccb76a7" }
+superchain_config = { version = "2.5.0", implementation_address = "0xa303a644cfbc0c34f6a9dbeafdeba4c967ea01e7" }
+
 # Upgrade 21 https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv9.0.0
 # Final release of v9.0.0-rc.1 (same commit, contracts not redeployed).
 ["op-contracts/v9.0.0"]
