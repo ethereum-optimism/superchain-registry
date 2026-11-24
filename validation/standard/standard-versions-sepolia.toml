@@ -3,9 +3,9 @@
 #   * proxied             : specify a standard "implementation_address"
 #   * neither             : specify neither a standard "address" nor "implementation_address"
 
-# Upgrade 22 release candidate https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv10.0.0-rc.2
-# OPCM deployed 2026-11-23 from tag op-contracts/v10.0.0-rc.2 (b4f9de4eec86e0470e3a6a758c0abb30ae4f08de).
-["op-contracts/v10.0.0-rc.2"]
+# Upgrade 22 https://github.com/ethereum-optimism/optimism/releases/tag/op-contracts%2Fv10.0.0
+# OPCM deployed 2026-11-23 from tag op-contracts/v10.0.0-rc.2 (b4f9de4eec86e0470e3a6a758c0abb30ae4f08de), the same commit as op-contracts/v10.0.0.
+["op-contracts/v10.0.0"]
 system_config = { version = "4.4.0", implementation_address = "0x66b88c1303a1c2ff4af31626f59b44a3a9ee85a4" }
 fault_dispute_game = { version = "2.4.2" }
 permissioned_dispute_game = { version = "2.4.0" }
