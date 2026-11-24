@@ -500,3 +500,7 @@ hash="0x03e5a54835d39c1d83b198314473e1f111c3539c04f65c3e8a9b8ccebe3737c9"
 [[prestates."0.0.1"]]
 type="kona-sp1"
 hash="0x007a57c684472769fa73877d2fae9feef79fb64a5f833f8e4fe40ed63ca4286c"
+
+[[prestates."1.0.0-rc.1"]]
+type="kona-sp1"
+hash="0x0073def5ff73ea4fa3adb828fa0839943e1fbf439e669779c66dcea387d71562"
