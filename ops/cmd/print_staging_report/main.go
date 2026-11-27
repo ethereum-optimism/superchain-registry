@@ -56,6 +56,11 @@ var (
 		EnvVars: []string{"GITHUB_REPO"},
 		Value:   "ethereum-optimism/superchain-registry",
 	}
+	GithubCommentAuthorFlag = &cli.StringFlag{
+		Name:    "comment-author",
+		Usage:   "The login of the account that posts the report comment. Only comments from this account or from bot accounts are updated.",
+		EnvVars: []string{"GITHUB_COMMENT_AUTHOR"},
+	}
 	DeployerCacheDirFlag = &cli.StringFlag{
 		Name:    "deployer-cache-dir",
 		Usage:   "The path to the op-deployer binaries cache directory.",
@@ -74,6 +79,7 @@ func main() {
 			GitSHAFlag,
 			GithubTokenFlag,
 			GithubRepoFlag,
+			GithubCommentAuthorFlag,
 			DeployerCacheDirFlag,
 		},
 		Action: PrintStagingReport,
@@ -89,6 +95,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	gitSHA := cliCtx.String(GitSHAFlag.Name)
 	githubToken := cliCtx.String(GithubTokenFlag.Name)
 	githubRepo := cliCtx.String(GithubRepoFlag.Name)
+	commentAuthor := cliCtx.String(GithubCommentAuthorFlag.Name)
 	deployerCacheDir := cliCtx.String(DeployerCacheDirFlag.Name)
 
 	wd, err := paths.FindRepoRoot()
@@ -172,7 +179,7 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	if githubToken == "" {
 		output.WriteOK("skipping GitHub comment, no token provided")
 	} else {
-		if err := postGithubComment(ctx, prURL, githubRepo, githubToken, comment); err != nil {
+		if err := postGithubComment(ctx, prURL, githubRepo, githubToken, commentAuthor, comment); err != nil {
 			output.WriteNotOK("failed to post comment: %v", err)
 		}
 	}
@@ -181,13 +188,8 @@ func PrintStagingReport(cliCtx *cli.Context) error {
 	return nil
 }
 
-func postGithubComment(ctx context.Context, prURL string, githubRepo string, ghToken string, comment string) error {
+func postGithubComment(ctx context.Context, prURL string, githubRepo string, ghToken string, commentAuthor string, comment string) error {
 	ghClient := github.NewClient(nil).WithAuthToken(ghToken)
-
-	currUser, _, err := ghClient.Users.Get(ctx, "")
-	if err != nil {
-		return fmt.Errorf("failed to get authenticated GitHub user: %w", err)
-	}
 
 	prNum, err := gh.GetPRNumberFromURL(prURL)
 	if err != nil {
@@ -195,27 +197,20 @@ func postGithubComment(ctx context.Context, prURL string, githubRepo string, ghT
 	}
 
 	commenter := gh.NewGithubCommenter(githubRepo, ghClient)
-
-	existingComment, err := commenter.FindComment(
-		ctx,
-		prNum,
-		gh.CommentContaining(report.CommentMagic),
-		gh.CommentFrom(currUser.GetLogin()),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to find existing comment: %w", err)
+	selector := gh.CommentSelector{
+		Marker: report.CommentMagic,
+		Author: commentAuthor,
 	}
 
-	if existingComment == nil {
-		if err := commenter.PostComment(ctx, prNum, comment); err != nil {
-			return fmt.Errorf("failed to post comment: %w", err)
-		}
-		output.WriteOK("posted comment on PR %d", prNum)
-	} else {
-		if err := commenter.EditComment(ctx, existingComment.GetID(), comment); err != nil {
-			return fmt.Errorf("failed to edit comment: %w", err)
-		}
+	edited, err := gh.UpsertComment(ctx, commenter, prNum, selector, comment)
+	if err != nil {
+		return err
+	}
+
+	if edited {
 		output.WriteOK("edited comment on PR %d", prNum)
+	} else {
+		output.WriteOK("posted comment on PR %d", prNum)
 	}
 	return nil
 }
