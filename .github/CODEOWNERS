@@ -11,4 +11,5 @@
 /.github/workflows/ @ethereum-optimism/cloud-security
 /.github/actions/   @ethereum-optimism/cloud-security
 /.github/scripts/   @ethereum-optimism/cloud-security
+/.github/chainguard/ @ethereum-optimism/cloud-security
 /.github/CODEOWNERS @ethereum-optimism/cloud-security
