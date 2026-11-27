@@ -58,7 +58,7 @@ var (
 	}
 	GithubCommentAuthorFlag = &cli.StringFlag{
 		Name:    "comment-author",
-		Usage:   "The login of the account that posts the report comment. Used to pick the comment to update when several match.",
+		Usage:   "The login of the account that posts the report comment. Only comments from this account or from bot accounts are updated.",
 		EnvVars: []string{"GITHUB_COMMENT_AUTHOR"},
 	}
 	DeployerCacheDirFlag = &cli.StringFlag{

@@ -10,7 +10,7 @@ import (
 
 // CommentSelector identifies a previously posted comment by a marker string
 // contained in its body. Author optionally names the login expected to have
-// written it.
+// written it. Comments written by other non-bot accounts never match.
 type CommentSelector struct {
 	Marker string
 	Author string
@@ -106,8 +106,9 @@ func (gc *GithubCommenter) FindComment(ctx context.Context, pr int, selector Com
 }
 
 // SelectComment returns the comment that best matches the selector, or nil if
-// no comment contains the marker. Comments written by the selector's author
-// rank first, then comments written by bot accounts, then any other comment.
+// there is none. A comment is eligible only if it contains the marker and was
+// written by the selector's author or by a bot account. Comments written by
+// the selector's author rank first, then comments written by bot accounts.
 // Within the same rank the most recent comment wins.
 func SelectComment(comments []*github.IssueComment, selector CommentSelector) *github.IssueComment {
 	var best *github.IssueComment
@@ -117,6 +118,9 @@ func SelectComment(comments []*github.IssueComment, selector CommentSelector) *g
 			continue
 		}
 		rank := selector.rank(comment)
+		if rank == 0 {
+			continue
+		}
 		if best == nil || rank > bestRank || (rank == bestRank && isMoreRecent(comment, best)) {
 			best = comment
 			bestRank = rank

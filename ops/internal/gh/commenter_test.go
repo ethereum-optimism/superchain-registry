@@ -51,10 +51,24 @@ func TestSelectComment(t *testing.T) {
 			},
 		},
 		{
-			name: "single match from a user",
+			name: "user comment with the marker is ignored",
 			comments: []*github.IssueComment{
 				testComment(1, "alice", "User", "unrelated", t0),
 				testComment(2, "bob", "User", withMarker, t0),
+			},
+		},
+		{
+			name: "user comment with the marker is ignored when an author is set",
+			comments: []*github.IssueComment{
+				testComment(1, "bob", "User", withMarker, t0),
+			},
+			author: "reporter",
+		},
+		{
+			name: "single match from a bot",
+			comments: []*github.IssueComment{
+				testComment(1, "alice", "User", withMarker, t0),
+				testComment(2, "ci[bot]", "Bot", withMarker, t0),
 			},
 			wantID: 2,
 		},
@@ -121,11 +135,10 @@ func TestSelectComment(t *testing.T) {
 			wantID: 7,
 		},
 		{
-			name: "comment without a user",
+			name: "comment without a user is ignored",
 			comments: []*github.IssueComment{
 				{ID: github.Ptr(int64(1)), Body: github.Ptr(withMarker)},
 			},
-			wantID: 1,
 		},
 	}
 
@@ -247,6 +260,22 @@ func TestUpsertComment(t *testing.T) {
 	t.Run("posts when there is no existing comment", func(t *testing.T) {
 		fake, commenter := newFakeGithub(t, []*github.IssueComment{
 			testComment(1, "alice", "User", "hello", t0),
+		})
+
+		edited, err := UpsertComment(context.Background(), commenter, 42, selector, "new "+testMarker)
+		require.NoError(t, err)
+		require.False(t, edited)
+		require.Equal(t, []string{"new " + testMarker}, fake.posted)
+		require.Empty(t, fake.edited)
+		require.Equal(t, []string{
+			"GET /repos/test-org/test-repo/issues/42/comments",
+			"POST /repos/test-org/test-repo/issues/42/comments",
+		}, fake.requests)
+	})
+
+	t.Run("posts when only a user comment carries the marker", func(t *testing.T) {
+		fake, commenter := newFakeGithub(t, []*github.IssueComment{
+			testComment(1, "alice", "User", "old "+testMarker, t0),
 		})
 
 		edited, err := UpsertComment(context.Background(), commenter, 42, selector, "new "+testMarker)
