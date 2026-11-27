@@ -1,0 +1,50 @@
+name: staging-report
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions: {}
+
+concurrency:
+  group: staging-report-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  staging-report:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5
+        with:
+          go-version-file: ops/go.mod
+          cache: false
+
+      - name: Build deployer binaries
+        env:
+          DEPLOYER_CACHE_DIR: ${{ runner.temp }}/deployer-cache
+        run: bash ops/internal/deployer/scripts/build-binaries.sh
+
+      - name: Run staging report
+        working-directory: ops
+        env:
+          DEPLOYER_CACHE_DIR: ${{ runner.temp }}/deployer-cache
+          SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
+          MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GIT_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_COMMENT_AUTHOR: github-actions[bot]
+        run: go run ./cmd/print_staging_report
