@@ -79,8 +79,8 @@ jobs:
       - name: Open pull request
         shell: bash
         env:
-          STS_URL: ${{ vars.STS_URL }}
-          STS_AUDIENCE: ${{ vars.STS_AUDIENCE }}
+          STS_URL: ${{ secrets.STS_URL }}
+          STS_AUDIENCE: ${{ secrets.STS_AUDIENCE }}
         run: |
           set -euo pipefail
 
@@ -124,7 +124,7 @@ jobs:
           done
 
           if [ -z "$STS_URL" ] || [ -z "$STS_AUDIENCE" ]; then
-            echo "::error::the STS_URL and STS_AUDIENCE repository variables must be set"
+            echo "::error::the STS_URL and STS_AUDIENCE environment secrets must be set"
             exit 1
           fi
 
