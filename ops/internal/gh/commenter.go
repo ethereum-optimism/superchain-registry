@@ -8,12 +8,18 @@ import (
 	"github.com/google/go-github/v68/github"
 )
 
-type FindCommentPred func(comment *github.IssueComment) bool
+// CommentSelector identifies a previously posted comment by a marker string
+// contained in its body. Author optionally names the login expected to have
+// written it.
+type CommentSelector struct {
+	Marker string
+	Author string
+}
 
 type Commenter interface {
 	PostComment(ctx context.Context, pr int, message string) error
 	EditComment(ctx context.Context, commentID int64, message string) error
-	FindComment(ctx context.Context, pr int, preds ...FindCommentPred) (*github.IssueComment, error)
+	FindComment(ctx context.Context, pr int, selector CommentSelector) (*github.IssueComment, error)
 }
 
 type GithubCommenter struct {
@@ -69,13 +75,14 @@ func (gc *GithubCommenter) EditComment(ctx context.Context, commentID int64, mes
 	return nil
 }
 
-func (gc *GithubCommenter) FindComment(ctx context.Context, pr int, preds ...FindCommentPred) (*github.IssueComment, error) {
+func (gc *GithubCommenter) FindComment(ctx context.Context, pr int, selector CommentSelector) (*github.IssueComment, error) {
 	opts := &github.IssueListCommentsOptions{
 		ListOptions: github.ListOptions{
 			PerPage: 100,
 		},
 	}
 
+	var all []*github.IssueComment
 	for {
 		comments, resp, err := gc.ghClient.Issues.ListComments(
 			ctx,
@@ -87,14 +94,7 @@ func (gc *GithubCommenter) FindComment(ctx context.Context, pr int, preds ...Fin
 		if err != nil {
 			return nil, fmt.Errorf("failed to list comments: %w", err)
 		}
-
-		for _, comment := range comments {
-			for _, pred := range preds {
-				if pred(comment) {
-					return comment, nil
-				}
-			}
-		}
+		all = append(all, comments...)
 
 		if resp.NextPage == 0 {
 			break
@@ -102,17 +102,67 @@ func (gc *GithubCommenter) FindComment(ctx context.Context, pr int, preds ...Fin
 		opts.Page = resp.NextPage
 	}
 
-	return nil, nil
+	return SelectComment(all, selector), nil
 }
 
-func CommentContaining(substring string) FindCommentPred {
-	return func(comment *github.IssueComment) bool {
-		return strings.Contains(comment.GetBody(), substring)
+// SelectComment returns the comment that best matches the selector, or nil if
+// no comment contains the marker. Comments written by the selector's author
+// rank first, then comments written by bot accounts, then any other comment.
+// Within the same rank the most recent comment wins.
+func SelectComment(comments []*github.IssueComment, selector CommentSelector) *github.IssueComment {
+	var best *github.IssueComment
+	bestRank := -1
+	for _, comment := range comments {
+		if comment == nil || !strings.Contains(comment.GetBody(), selector.Marker) {
+			continue
+		}
+		rank := selector.rank(comment)
+		if best == nil || rank > bestRank || (rank == bestRank && isMoreRecent(comment, best)) {
+			best = comment
+			bestRank = rank
+		}
+	}
+	return best
+}
+
+// UpsertComment edits the existing comment matching the selector, or posts a
+// new comment if there is none. It reports whether an existing comment was
+// edited.
+func UpsertComment(ctx context.Context, commenter Commenter, pr int, selector CommentSelector, message string) (bool, error) {
+	existing, err := commenter.FindComment(ctx, pr, selector)
+	if err != nil {
+		return false, fmt.Errorf("failed to find existing comment: %w", err)
+	}
+
+	if existing == nil {
+		if err := commenter.PostComment(ctx, pr, message); err != nil {
+			return false, err
+		}
+		return false, nil
+	}
+
+	if err := commenter.EditComment(ctx, existing.GetID(), message); err != nil {
+		return true, err
+	}
+	return true, nil
+}
+
+func (s CommentSelector) rank(comment *github.IssueComment) int {
+	user := comment.GetUser()
+	switch {
+	case s.Author != "" && strings.EqualFold(user.GetLogin(), s.Author):
+		return 2
+	case user.GetType() == "Bot":
+		return 1
+	default:
+		return 0
 	}
 }
 
-func CommentFrom(user string) FindCommentPred {
-	return func(comment *github.IssueComment) bool {
-		return comment.User.GetLogin() == user
+func isMoreRecent(a, b *github.IssueComment) bool {
+	at, bt := a.GetCreatedAt().Time, b.GetCreatedAt().Time
+	if !at.Equal(bt) {
+		return at.After(bt)
 	}
+	return a.GetID() > b.GetID()
 }

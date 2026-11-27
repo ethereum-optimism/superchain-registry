@@ -24,6 +24,67 @@ parameters:
     type: boolean
     default: false
 
+commands:
+  github-token-exchange:
+    parameters:
+      identity:
+        type: string
+      env_var:
+        type: string
+        default: GITHUB_TOKEN
+      fail_on_error:
+        type: boolean
+        default: true
+    steps:
+      - run:
+          name: Exchange OIDC token for GitHub token (<< parameters.identity >>)
+          environment:
+            STS_IDENTITY: << parameters.identity >>
+            STS_TOKEN_ENV_VAR: << parameters.env_var >>
+            STS_FAIL_ON_ERROR: "<< parameters.fail_on_error >>"
+          command: |
+            set -euo pipefail
+
+            fail() {
+              if [ "$STS_FAIL_ON_ERROR" = "true" ]; then
+                echo "Error: $1" >&2
+                exit 1
+              fi
+              echo "Warning: $1, continuing without setting $STS_TOKEN_ENV_VAR"
+              exit 0
+            }
+
+            if [ -z "${STS_URL:-}" ] || [ -z "${STS_AUDIENCE:-}" ]; then
+              fail "STS_URL or STS_AUDIENCE is not set"
+            fi
+
+            oidc_token=$(circleci run oidc get --claims "{\"aud\":\"${STS_AUDIENCE}\"}" 2>/dev/null) || oidc_token=""
+            if [ -z "$oidc_token" ]; then
+              fail "could not obtain a CircleCI OIDC token"
+            fi
+
+            response_file=$(mktemp)
+            trap 'rm -f "$response_file"' EXIT
+
+            status=$(curl -sS -o "$response_file" -w '%{http_code}' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              "${STS_URL%/}/sts/exchange?scope=ethereum-optimism&identity=${STS_IDENTITY}") || status="000"
+            unset oidc_token
+
+            if [ "$status" != "200" ]; then
+              message=$(jq -r '.message // .error // empty' "$response_file" 2>/dev/null || true)
+              fail "token exchange for identity $STS_IDENTITY failed with HTTP status $status: ${message:-no error message}"
+            fi
+
+            token=$(jq -r '.token // empty' "$response_file" 2>/dev/null || true)
+            if [ -z "$token" ]; then
+              fail "token exchange for identity $STS_IDENTITY returned no token"
+            fi
+
+            echo "export ${STS_TOKEN_ENV_VAR}=${token}" >> "$BASH_ENV"
+            unset token
+            echo "Token exchange for identity $STS_IDENTITY succeeded with HTTP status $status"
+
 jobs:
   go-lint-test:
     parameters:
@@ -119,6 +180,10 @@ jobs:
               echo "Not a PR, skipping"
               circleci-agent step halt
             fi
+      - github-token-exchange:
+          identity: superchain-registry-staging-report
+          env_var: GITHUB_TOKEN
+          fail_on_error: false
       - run:
           name: Run staging report
           environment:
@@ -226,14 +291,18 @@ jobs:
               echo "No changes detected after running codegen, halting job"
               circleci-agent step halt
             fi
+      - github-token-exchange:
+          identity: superchain-registry-codegen
+          env_var: GH_APP_TOKEN
+          fail_on_error: true
       - run:
           name: Create PR to update codegen files
           command: |
             set -e
 
             # Configure git
-            git config user.name "opgitgovernance"
-            git config user.email "188376469+opgitgovernance@users.noreply.github.com"
+            git config user.name "${BOT_GIT_NAME:?BOT_GIT_NAME must be set}"
+            git config user.email "${BOT_GIT_EMAIL:?BOT_GIT_EMAIL must be set}"
 
             # Create a new branch
             BRANCH_NAME="automated-codegen-$(date +%Y%m%d-%H%M%S)"
@@ -242,12 +311,12 @@ jobs:
             # Commit and push changes
             git add .
             git commit -m "chore: automated daily codegen update $(date +%Y-%m-%d)"
-            git push https://x-access-token:${GITHUB_TOKEN_GOVERNANCE}@github.com/<< pipeline.parameters.github_repo >>.git "$BRANCH_NAME"
+            git push https://x-access-token:${GH_APP_TOKEN}@github.com/<< pipeline.parameters.github_repo >>.git "$BRANCH_NAME"
 
             # Create PR
             PR_RESPONSE=$(curl -s -X POST \
               -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${GITHUB_TOKEN_GOVERNANCE}" \
+              -H "Authorization: Bearer ${GH_APP_TOKEN}" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
               -H "Content-Type: application/json" \
               https://api.github.com/repos/<< pipeline.parameters.github_repo >>/pulls \
