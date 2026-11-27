@@ -1,7 +1,7 @@
 name = "World Chain Sepolia Testnet"
-public_rpc = "https://worldchain-sepolia.g.alchemy.com/public"
-sequencer_rpc = "https://worldchain-sepolia-sequencer.g.alchemy.com"
-explorer = "https://worldchain-sepolia.explorer.alchemy.com/"
+public_rpc = "https://rpc.worldchain-sepolia.worldcoin.org"
+sequencer_rpc = "https://sequencer.worldchain-sepolia.worldcoin.org"
+explorer = "https://explorer.worldchain-sepolia.worldcoin.org/"
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 4801

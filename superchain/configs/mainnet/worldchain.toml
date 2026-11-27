@@ -1,7 +1,7 @@
 name = "World Chain"
-public_rpc = "https://worldchain-mainnet.g.alchemy.com/public"
-sequencer_rpc = "https://worldchain-mainnet-sequencer.g.alchemy.com"
-explorer = "https://worldchain-mainnet.explorer.alchemy.com/"
+public_rpc = "https://rpc.worldchain.worldcoin.org"
+sequencer_rpc = "https://sequencer.worldchain.worldcoin.org"
+explorer = "https://explorer.worldchain.worldcoin.org/"
 governed_by_optimism = false
 data_availability_type = "eth-da"
 chain_id = 480
