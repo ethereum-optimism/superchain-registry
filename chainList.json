@@ -386,10 +386,10 @@
     "identifier": "mainnet/worldchain",
     "chainId": 480,
     "rpc": [
-      "https://worldchain-mainnet.g.alchemy.com/public"
+      "https://rpc.worldchain.worldcoin.org"
     ],
     "explorers": [
-      "https://worldchain-mainnet.explorer.alchemy.com/"
+      "https://explorer.worldchain.worldcoin.org/"
     ],
     "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
@@ -728,10 +728,10 @@
     "identifier": "sepolia/worldchain",
     "chainId": 4801,
     "rpc": [
-      "https://worldchain-sepolia.g.alchemy.com/public"
+      "https://rpc.worldchain-sepolia.worldcoin.org"
     ],
     "explorers": [
-      "https://worldchain-sepolia.explorer.alchemy.com/"
+      "https://explorer.worldchain-sepolia.worldcoin.org/"
     ],
     "governedByOptimism": false,
     "dataAvailabilityType": "eth-da",
