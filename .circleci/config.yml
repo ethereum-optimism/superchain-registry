@@ -107,29 +107,6 @@ jobs:
               exit 1
             fi
 
-  run-staging-report:
-    docker:
-      - image: <<pipeline.parameters.default_docker_image>>
-    steps:
-      - utils/checkout-with-mise
-      - run:
-          name: Check if PR
-          command: |
-            if [ -z "$CIRCLE_PULL_REQUEST" ]; then
-              echo "Not a PR, skipping"
-              circleci-agent step halt
-            fi
-      - run:
-          name: Run staging report
-          environment:
-            GITHUB_REPO: << pipeline.parameters.github_repo >>
-            DEPLOYER_CACHE_DIR: << pipeline.parameters.deployer_cache_dir >>
-          command: |
-            export SEPOLIA_RPC_URL="$OP_CI_SEPOLIA_L1_RPC_URL"
-            export MAINNET_RPC_URL="$OP_CI_MAINNET_L1_RPC_URL"
-            cd ops
-            go run ./cmd/print_staging_report/main.go
-
   check-codegen:
     docker:
       - image: <<pipeline.parameters.default_docker_image>>
@@ -510,13 +487,6 @@ workflows:
           requires:
             - build-deployer-binaries
           context: circleci-repo-readonly-authenticated-github-token
-      - run-staging-report:
-          name: run-staging-report
-          requires:
-            - build-deployer-binaries
-          context:
-            - circleci-repo-readonly-authenticated-github-token
-            - circleci-repo-rpc-secrets
 
   notify-when-chain-is-added-to-registry:
     when:
